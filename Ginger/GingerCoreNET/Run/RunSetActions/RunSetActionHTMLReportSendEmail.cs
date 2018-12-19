@@ -42,6 +42,7 @@ using GingerCore.GeneralLib;
 using Ginger.Reports;
 using Amdocs.Ginger;
 using GingerCoreNET.ReporterLib;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 
 namespace Ginger.Run.RunSetActions
 {

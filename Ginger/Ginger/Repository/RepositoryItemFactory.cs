@@ -62,10 +62,7 @@ namespace Ginger.Repository
             return new ObservableList<IDataSourceBase>();
         }
 
-        public IGingerRunner RunExecutioFrom(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
-        {
-            return new GingerRunner(executedFrom);
-        }
+  
 
         public Type GetRepositoryItemTypeFromInterface(Type interfaceType)
         {

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
-namespace Amdocs.Ginger.Common.InterfacesLib
+namespace Amdocs.Ginger.CoreNET.InterfacesLib
 {
     public enum eContinueLevel
     {
@@ -22,7 +24,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
     public interface IGingerRunner
     {
         double? Elapsed { get;  }
-        IExecutionLogger ExecutionLogger { get; }
+        ExecutionLogger ExecutionLogger { get; }
         object CurrentSolution { get; set; }
         ObservableList<IAgent> SolutionAgents { get; set; }
         ObservableList<IDataSourceBase> DSList { get; set; }
@@ -37,7 +39,11 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         Guid Guid { get; }
         ObservableList<IApplicationAgent> ApplicationAgents { get; set; }
         bool IsRunning { get; }
-        
+        int ExecutionLogBusinessFlowCounter { get; set; }
+        string ExecutionLogFolder { get; set; }
+     
+        eRunStatus RunsetStatus { get;  }
+
         ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false, string GingerRunnerName = "");
         void SetExecutionEnvironment(IProjEnvironment runsetExecutionEnvironment, ObservableList<IProjEnvironment> observableList);
         void RunRunner(bool run= false);
@@ -48,5 +54,9 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         void StopRun();
         bool ContinueRun(eContinueLevel continueLevel, eContinueFrom continueFrom, IBusinessFlow specificBusinessFlow = null, IActivity specificActivity = null, IAct specificAction = null);
         void UpdateApplicationAgents();
+        void CalculateBusinessFlowFinalStatus(IBusinessFlow BF, bool considrePendingAsSkipped = false);
+        void CalculateActivityFinalStatus(IActivity activity);
+        void SetActivityGroupsExecutionStatus(IBusinessFlow automateTab = null, bool offlineMode = false, ExecutionLogger executionLogger = null);
+
     }
 }

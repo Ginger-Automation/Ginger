@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using System.Data;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Reports
 {

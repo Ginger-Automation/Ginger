@@ -2653,7 +2653,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 return string.Empty;
             }
 
-            HTMLReportsConfiguration currentConf = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (!calledFromAutomateTab)
             {
                 if ((mHTMLReportsFolder != null) && (mHTMLReportsFolder != string.Empty))
@@ -2685,7 +2685,7 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 CleanDirectory(l.HTMLReportMainFolder);
             }
-            string Folder = App.UserProfile.Solution.ContainingFolderFullPath.ToString() + "\\HTMLReports\\";
+            string Folder = WorkSpace.Instance.Solution.Folder.ToString() + "\\HTMLReports\\";
 
             if (currentConf.LimitReportFolderSize)
             {
@@ -2833,7 +2833,7 @@ namespace Ginger.Reports.GingerExecutionReport
         {
             try
             {
-                logsFolder = logsFolder.Replace(@"~", App.UserProfile.Solution.Folder);
+                logsFolder = logsFolder.Replace(@"~", WorkSpace.Instance.Solution.Folder);
                 if (Directory.Exists(logsFolder))
                 {
                     return logsFolder;
@@ -2846,9 +2846,9 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             catch (Exception)
             {
-                logsFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"HTMLReports\");
+                logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"HTMLReports\");
                 System.IO.Directory.CreateDirectory(logsFolder);
-                App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
+                WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
             }
 
             return logsFolder;

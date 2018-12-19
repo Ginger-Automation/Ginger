@@ -10,5 +10,6 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         string Name { get; set; }
         ePlatformType Platform { get; }
         bool UsedForAutoMapping { get; set; }
+        Guid Guid { get; set; }
     }
 }

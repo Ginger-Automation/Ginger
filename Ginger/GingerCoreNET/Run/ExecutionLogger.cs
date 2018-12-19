@@ -38,6 +38,7 @@ using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.Run;
 using GingerCoreNET.ReporterLib;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 
 namespace Ginger.Run
 {
@@ -319,9 +320,9 @@ namespace Ginger.Run
         }
 
 
-        public void GingerEnd(IGingerRunner GRN = null, string filename = null, int runnerCount = 0)
+        public void GingerEnd(IGingerRunner GR = null, string filename = null, int runnerCount = 0)
         {
-            GingerRunner GR = (GingerRunner)GRN;
+          
             if (GR == null)
             {
                 if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
@@ -347,7 +348,7 @@ namespace Ginger.Run
                 gingerReport.GUID = GR.Guid.ToString();
                 gingerReport.Name = GR.Name;
                 gingerReport.ApplicationAgentsMappingList = GR.ApplicationAgents.Select(a => a.AgentName+ "_:_" + a.AppName).ToList();
-                gingerReport.EnvironmentName = GR.ProjEnvironment != null ? GR.ProjEnvironment.Name : string.Empty;
+                gingerReport.EnvironmentName = GR.projEnvironment != null ? GR.projEnvironment.Name : string.Empty;
                 gingerReport.Elapsed = (double)GR.Elapsed / 1000;
                 gingerReport.LogFolder = filename;
                 SaveObjToJSonFile(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");
@@ -909,7 +910,7 @@ namespace Ginger.Run
                 WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = exec_folder;
                 int RunnerCount = 1;
 
-                foreach (GingerRunner gingerrunner in WorkSpace.RunsetExecutor.RunSetConfig.GingerRunners)
+                foreach (IGingerRunner gingerrunner in WorkSpace.RunsetExecutor.RunSetConfig.GingerRunners)
                 {
                     string folder = exec_folder + "\\" + RunnerCount.ToString() + " " + gingerrunner.Name + "\\";
                     if (System.IO.Directory.Exists(folder))
@@ -1067,7 +1068,7 @@ namespace Ginger.Run
                     CleanDirectory(logFolderPath);
                 else
                     Directory.CreateDirectory(logFolderPath);
-                GingerRunner Gr = new GingerRunner();
+                IGingerRunner Gr = WorkSpace.Helper.RuntimeObjectFactory.CreateGingerRunner();
 
                 businessFlow.ExecutionLogFolder = logFolderPath;
                 businessFlow.VariablesBeforeExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();

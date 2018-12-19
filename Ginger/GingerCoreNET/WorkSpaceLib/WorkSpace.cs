@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
@@ -41,13 +42,13 @@ namespace amdocs.ginger.GingerCoreNET
         // public UserProfile UserProfile;
 
         public SolutionRepository SolutionRepository;
-       
+
 
         // Will be back when we moved GR to GingerCoreNET
         // public GingerRunner GingerRunner;
 
         // public ProjEnvironment CurrentEnvironment;
-
+        public static Helper Helper;
         public SourceControlBase SourceControl;
         public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
         public static string AppVersion;

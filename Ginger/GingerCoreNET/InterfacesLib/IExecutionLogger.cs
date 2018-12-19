@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Ginger.Reports;
 using Ginger.Run;
 

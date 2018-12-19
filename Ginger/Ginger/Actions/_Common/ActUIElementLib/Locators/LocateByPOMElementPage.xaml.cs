@@ -215,13 +215,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private void HighlightElementClicked(object sender, RoutedEventArgs e)
         {
             ApplicationAgent currentAgent = (ApplicationAgent)App.AutomateTabGingerRunner.ApplicationAgents.Where(z => z.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
-            if ((currentAgent == null) || !(currentAgent.Agent.Driver is IWindowExplorer) || (currentAgent.Agent.Status != Agent.eStatus.Running))
+            if ((currentAgent == null) || !(((Agent)currentAgent.Agent).Driver is IWindowExplorer) || (((Agent)currentAgent.Agent).Status != Agent.eStatus.Running))
             {
                 Reporter.ToUser(eUserMsgKeys.NoRelevantAgentInRunningStatus);
             }
             else
             {
-                ((IWindowExplorer)currentAgent.Agent.Driver).HighLightElement((ElementInfo)xPOMElementsGrid.Grid.SelectedItem, true);
+                ((IWindowExplorer)((Agent)currentAgent.Agent).Driver).HighLightElement((ElementInfo)xPOMElementsGrid.Grid.SelectedItem, true);
             }
         }
 

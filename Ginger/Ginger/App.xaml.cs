@@ -396,7 +396,7 @@ namespace Ginger
             string phase = string.Empty;
 
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
-
+            WorkSpace.Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
 
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);

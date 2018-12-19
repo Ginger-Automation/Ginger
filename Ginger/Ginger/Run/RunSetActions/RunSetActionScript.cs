@@ -24,6 +24,7 @@ using System.Windows.Controls;
 using Ginger.Reports;
 using GingerCore.Actions;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 
 namespace Ginger.Run.RunSetActions
 {

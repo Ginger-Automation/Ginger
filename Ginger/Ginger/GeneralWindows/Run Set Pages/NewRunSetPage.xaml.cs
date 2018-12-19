@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.AnalyzerLib;
@@ -370,13 +371,13 @@ namespace Ginger.Run
                     switch (EventArgs.RunnerItemType)
                     {
                         case RunnerItemPage.eRunnerItemType.BusinessFlow:
-                            await currentSelectedRunner.ContinueRunAsync(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.Runner, Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificBusinessFlow, (BusinessFlow)EventArgs.RunnerItemObject, null, null);
+                            await currentSelectedRunner.ContinueRunAsync(eContinueLevel.Runner, eContinueFrom.SpecificBusinessFlow, (BusinessFlow)EventArgs.RunnerItemObject, null, null);
                             break;
                         case RunnerItemPage.eRunnerItemType.Activity:
-                            await currentSelectedRunner.ContinueRunAsync(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.Runner, Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificActivity, mCurrentBusinessFlowRunnerItemObject, (Activity)EventArgs.RunnerItemObject, null);
+                            await currentSelectedRunner.ContinueRunAsync(eContinueLevel.Runner, eContinueFrom.SpecificActivity, mCurrentBusinessFlowRunnerItemObject, (Activity)EventArgs.RunnerItemObject, null);
                             break;
                         case RunnerItemPage.eRunnerItemType.Action:
-                            await currentSelectedRunner.ContinueRunAsync(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.Runner, Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificAction, mCurrentBusinessFlowRunnerItemObject, mCurrentActivityRunnerItemObject, (Act)EventArgs.RunnerItemObject);
+                            await currentSelectedRunner.ContinueRunAsync(eContinueLevel.Runner, eContinueFrom.SpecificAction, mCurrentBusinessFlowRunnerItemObject, mCurrentActivityRunnerItemObject, (Act)EventArgs.RunnerItemObject);
                             break;
                     }
                     break;

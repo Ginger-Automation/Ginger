@@ -36,7 +36,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCoreNET.ReporterLib;
 using Amdocs.Ginger;
 using Amdocs.Ginger.CoreNET.Execution;
-
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 
 namespace Ginger.Run
 {
@@ -213,7 +213,7 @@ namespace Ginger.Run
                         ////gr.ProjEnvironment.CloseEnvironment();
                 }
             }
-            if (RepositoryItemHelper.RepositoryItemFactory.RunExecutioFrom(eExecutedFrom.Automation).projEnvironment != null) { }
+            if (WorkSpace.Helper.RuntimeObjectFactory.RunExecutioFrom(eExecutedFrom.Automation).projEnvironment != null) { }
                 ////RepositoryItemHelper.RepositoryItemFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment.CloseEnvironment();
         }
 

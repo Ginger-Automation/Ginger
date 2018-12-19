@@ -54,6 +54,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using static Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue;
 using static GingerCore.ErrorHandler;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 
 //   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //
@@ -130,7 +131,7 @@ namespace Ginger.Run
         public bool AgentsRunning = false;
         public ExecutionWatch RunnerExecutionWatch = new ExecutionWatch();        
         public eExecutedFrom ExecutedFrom;
-        public IExecutionLogger ExecutionLogger { get; set; }
+        public ExecutionLogger ExecutionLogger { get; set; }
         public string CurrentGingerLogFolder = string.Empty;
         public string CurrentHTMLReportFolder = string.Empty;
         public int ExecutionLogBusinessFlowCounter { get; set; }
@@ -2333,7 +2334,7 @@ namespace Ginger.Run
             }            
         }
 
-        public void CalculateActivityFinalStatus(Activity a)
+        public void CalculateActivityFinalStatus(IActivity a)
         {
             a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
 
@@ -3249,7 +3250,7 @@ namespace Ginger.Run
             }
         }
 
-        public void CalculateBusinessFlowFinalStatus(BusinessFlow BF, bool considrePendingAsSkipped= false)
+        public void CalculateBusinessFlowFinalStatus(IBusinessFlow BF, bool considrePendingAsSkipped= false)
         {
             // A flow is blocked if some activity failed and all the activities after it failed
             // A Flow is failed if one or more activities failed
@@ -3396,11 +3397,11 @@ namespace Ginger.Run
             }
         }
 
-        public void SetActivityGroupsExecutionStatus(BusinessFlow automateTab = null, bool offlineMode = false, ExecutionLogger executionLogger = null)
+        public void SetActivityGroupsExecutionStatus(IBusinessFlow automateTab = null, bool offlineMode = false, ExecutionLogger executionLogger = null)
         {
             if ((CurrentBusinessFlow == null) && (automateTab != null) && offlineMode)
             {
-                CurrentBusinessFlow = automateTab;
+                CurrentBusinessFlow =(BusinessFlow) automateTab;
                 CurrentBusinessFlow.ActivitiesGroups.ToList().ForEach(x => x.ExecutionLoggerStatus = executionLoggerStatus.StartedNotFinishedYet);
             }
             foreach (ActivitiesGroup currentActivityGroup in CurrentBusinessFlow.ActivitiesGroups)

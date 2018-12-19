@@ -39,6 +39,7 @@ using Amdocs.Ginger.Common.Enums;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.Environments;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 
 namespace Ginger.Run
 {
@@ -378,7 +379,7 @@ namespace Ginger.Run
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    mBFESs = (BusinessFlow)mRunner.BusinessFlows;
+                    mBFESs = mRunner.BusinessFlows;
                     //Business Flows
                     List<GingerCoreNET.GeneralLib.StatItem> bizsList = new List<GingerCoreNET.GeneralLib.StatItem>();
                     var bizGroups = mBFESs
@@ -630,7 +631,7 @@ namespace Ginger.Run
                 return;
             }
             App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
-            await mRunner.ContinueRunAsync(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.Runner, Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.LastStoppedAction);
+            await mRunner.ContinueRunAsync(eContinueLevel.Runner,eContinueFrom.LastStoppedAction);
         }
         private void ViewReportBtn_Click(object sender, RoutedEventArgs e)
         {

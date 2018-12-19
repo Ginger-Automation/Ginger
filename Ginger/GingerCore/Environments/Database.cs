@@ -32,6 +32,7 @@ using Npgsql;
 using GingerCore.DataSource;
 using GingerCore.NoSqlBase;
 using MySql.Data.MySqlClient;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.Environments
 {
@@ -86,7 +87,7 @@ namespace GingerCore.Environments
         private DbConnection oConn = null;
         private DbTransaction tran = null;
 
-        public ObservableList<DataSourceBase> DSList { get; set; }
+        public ObservableList<IDataSourceBase> DSList { get; set; }
         public bool mKeepConnectionOpen;
         [IsSerializedForLocalRepository(true)]
         public bool KeepConnectionOpen

@@ -39,7 +39,7 @@ namespace Amdocs.Ginger.Common
 
         IValueExpression CreateValueExpression(IProjEnvironment Env, IBusinessFlow BF, ObservableList<IDataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null);
 
-        IGingerRunner RunExecutioFrom(eExecutedFrom eExecutedFrom);
+       
         ObservableList<IDataSourceBase> GetDatasourceList();
         ObservableList<IDatabase> GetDatabaseList();
         Type GetRepositoryItemTypeFromInterface(Type interfaceType);
