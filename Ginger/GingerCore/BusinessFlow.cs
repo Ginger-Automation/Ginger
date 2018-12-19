@@ -534,13 +534,10 @@ namespace GingerCore
                     if (!string.IsNullOrEmpty(activityGroupName))
                     {
                         ActivitiesGroup activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == activityGroupName).FirstOrDefault();
-                        
-                        while (!string.IsNullOrEmpty(CurrentActivity.ActivitiesGroupID) && CurrentActivity.ActivitiesGroupID.Equals(activitiesGroup.FileName) == true )
+                        selectedActivityIndex = Activities.IndexOf(CurrentActivity);
+                        while (!string.IsNullOrEmpty(Activities[selectedActivityIndex].ActivitiesGroupID) && Activities[selectedActivityIndex].ActivitiesGroupID.Equals(activitiesGroup.Name) == true )
                         {
-                            selectedActivityIndex = Activities.IndexOf(CurrentActivity) + 1;
-                            CurrentActivity = (Activity)Activities.CurrentItem;
-                            Activities.MoveNext();
-                            CurrentActivity = (Activity)Activities.CurrentItem;
+                            selectedActivityIndex++;
                         }
                     }
                 }
@@ -656,16 +653,6 @@ namespace GingerCore
             while ((this.ActivitiesGroups.Where(obj => obj.Name == activitiesGroup.Name + "_" + counter.ToString()).FirstOrDefault()) != null)
                 counter++;
             activitiesGroup.Name = activitiesGroup.Name + "_" + counter.ToString();
-        }
-
-        public void ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup, ObservableList<Activity> activitiesRepository, bool inSilentMode)
-        {
-            ImportActivitiesGroupActivitiesFromRepository(activitiesGroup, activitiesRepository, inSilentMode, false, null);
-        }
-
-        public void ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup, ObservableList<Activity> activitiesRepository, bool inSilentMode, bool keepOriginalTargetApplicationMapping)
-        {
-            ImportActivitiesGroupActivitiesFromRepository(activitiesGroup, activitiesRepository, inSilentMode, keepOriginalTargetApplicationMapping, null);
         }
 
         public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup,ObservableList<Activity> activitiesRepository, bool inSilentMode, bool keepOriginalTargetApplicationMapping, Activity indexActivity)
