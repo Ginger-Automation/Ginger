@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Repository;
+﻿using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger;
 using Ginger.Agents;
@@ -52,7 +53,12 @@ namespace GingerTest.POMs
             SleepWithDoEvents(20000);
 
 
+            ucGrid ucGrid = (ucGrid)wizard.CurrentPage["AutoMapElementTypesGrid AID"].dependencyObject;
 
+            ucGridPOM gridPOM = new ucGridPOM(ucGrid);
+
+            gridPOM.ClickOnCheckBox(nameof(UIElementFilter.ElementType), eElementType.Button.ToString());
+            
 
 
             //UIElementPOM mUcAgentControl = wizard.CurrentPage["ucAgentControl AID"];

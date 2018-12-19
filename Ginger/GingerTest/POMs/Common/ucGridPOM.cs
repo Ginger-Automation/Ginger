@@ -43,12 +43,21 @@ namespace GingerTest.POMs.Common
                 if (item.GetType().GetProperty(property).GetValue(item).ToString() == value)
                 {
                     mGrid.DataSourceList.CurrentItem = item;                             
-                    SleepWithDoEvents(100);         
-                    return;
                 }
             }
             
             throw new Exception("Grid item not found for: " + property + "=" + value);
+        }
+
+        public void ClickOnCheckBox(string property, string value)
+        {
+            foreach (var item in mGrid.DataSourceList)
+            {
+                if (item.GetType().GetProperty(property).GetValue(item).ToString() == value)
+                {
+                    
+                }
+            }
         }
     }
 }
