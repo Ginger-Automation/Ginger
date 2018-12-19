@@ -17,8 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Repository;
-using Ginger.Actions;
 using Ginger.UserControls;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -26,7 +26,6 @@ using System.Dynamic;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 {
@@ -57,28 +56,22 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         }
 
         private void SetControlToInputValue()
-        {           
+        {
             // simple string or number or unknown type show text box
-            if  (mActInputValue.ParamType == typeof(string) || mActInputValue.ParamType == typeof(int) || mActInputValue.ParamType == null)
+            if (mActInputValue.ParamType == typeof(string) || mActInputValue.ParamType == typeof(int) || mActInputValue.ParamType == null)
             {
                 xTextBoxInputPnl.Visibility = Visibility.Visible;
                 xTextBoxInputLabel.Content = string.Format("{0}:", GetInputFieldformatedName());
-                xTextBoxInputTextBox.Init(mActInputValue, nameof(ActInputValue.Value));          
+                xTextBoxInputTextBox.Init(mActInputValue, nameof(ActInputValue.Value));
                 return;
             }
 
-            if (mActInputValue.ParamType.IsEnum)
-            {
-                xComboBoxInputPnl.Visibility = Visibility.Visible;
-                xComboBoxInputLabel.Content = string.Format("{0}:", GetInputFieldformatedName());
-                xComboBoxInputComboBox.BindControl(mActInputValue, nameof(ActInputValue.Value));
-                return;
-            }
+           
 
             if (mActInputValue.ParamType == typeof(bool))
             {
                 xCheckBoxInput.Visibility = Visibility.Visible;
-                xCheckBoxInput.Content =  GetInputFieldformatedName();
+                xCheckBoxInput.Content = GetInputFieldformatedName();
                 xCheckBoxInput.BindControl(mActInputValue, nameof(ActInputValue.Value));
                 return;
             }
@@ -86,8 +79,8 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             if (mActInputValue.ParamType == typeof(DynamicListWrapper))
             {
                 xListInputGrid.Visibility = Visibility.Visible;
-                xListInputGrid.Title = GetInputFieldformatedName();          
-                
+                xListInputGrid.Title = GetInputFieldformatedName();
+
                 //set data
                 ObservableList<dynamic> DynList = mActInputValue.ListDynamicValue;
                 xListInputGrid.DataSourceList = DynList;
@@ -100,6 +93,20 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                 SetListGridView();
                 return;
             }
+
+            if (mActInputValue.ParamType == typeof(EnumParamWrapper))
+            {
+                xComboBoxInputPnl.Visibility = Visibility.Visible;
+                xComboBoxInputLabel.Content = string.Format("{0}:", GetInputFieldformatedName());
+                //FIXME to get enum vals from plugin service action info
+                xComboBoxInputComboBox.Items.Add("not impl yet! 1");
+                xComboBoxInputComboBox.Items.Add("not impl yet! 2");
+                // xComboBoxInputComboBox.BindControl(mActInputValue, nameof(ActInputValue.Value));
+                return;
+            }
+
+            throw new System.Exception("unknown param type to create control: " + mActInputValue.ParamType.FullName);
+
         }
 
         private string GetInputFieldformatedName()
