@@ -46,7 +46,7 @@ namespace Ginger.Reports
             public static string Seq = "Seq";
             public static string Name = "Name";
             public static string Description = "Description";
-            public static string ExecutionDescription = "ExecutionDescription";
+            public static string RunDescription = "RunDescription";
             public static string StartTimeStamp = "StartTimeStamp";
             public static string EndTimeStamp = "EndTimeStamp";
             public static string ExecutionDuration = "ExecutionDuration";
@@ -127,21 +127,22 @@ namespace Ginger.Reports
         [FieldParamsIsSelected(true)]
         public string Description { get { return mBusinessFlow.Description; } set { mBusinessFlow.Description = value; } }
 
+
         [JsonProperty]
         [FieldParams]
         [FieldParamsNameCaption("Business Flow Run Description")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public string RunDescription { get { return mBusinessFlow.RunDescription; } set { mBusinessFlow.RunDescription = value; } }
+        public string RunDescription { get; set; }
 
-        [JsonProperty]
-        [FieldParams]
-        [FieldParamsNameCaption("Business Flow Execution Description")]
-        [FieldParamsFieldType(FieldsType.Field)]
-        [FieldParamsIsNotMandatory(true)]
-        [FieldParamsIsSelected(true)]
-        public string ExecutionDescription { get { return mBusinessFlow.RunDescription; } set { mBusinessFlow.RunDescription = value; } }
+        //[JsonProperty]
+        //[FieldParams]
+        //[FieldParamsNameCaption("Business Flow Execution Description")]
+        //[FieldParamsFieldType(FieldsType.Field)]
+        //[FieldParamsIsNotMandatory(true)]
+        //[FieldParamsIsSelected(true)]
+        //public string ExecutionDescription { get { return mBusinessFlow.RunDescription; } set { mBusinessFlow.RunDescription = value; } } //Duplicated with RunDescription field
 
         [JsonProperty]
         [FieldParams]

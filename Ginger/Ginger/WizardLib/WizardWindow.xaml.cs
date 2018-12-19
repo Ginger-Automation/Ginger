@@ -155,7 +155,7 @@ namespace GingerWPF.WizardLib
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantMoveNextWhileInProcess);
+                Reporter.ToUser(eUserMsgKeys.WizardCantMoveWhileInProcess, "Next");
             }
             else
             {
@@ -271,7 +271,7 @@ namespace GingerWPF.WizardLib
         {
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantMovePrevWhileInProcess);
+                Reporter.ToUser(eUserMsgKeys.WizardCantMoveWhileInProcess, "Previous");
             }
             else
             {
@@ -288,7 +288,7 @@ namespace GingerWPF.WizardLib
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantFinishWhileInProcess);
+                Reporter.ToUser(eUserMsgKeys.WizardCantMoveWhileInProcess, "Finish");
             }
             else
             {
@@ -311,7 +311,7 @@ namespace GingerWPF.WizardLib
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantFinishWhileInProcess);
+                Reporter.ToUser(eUserMsgKeys.WizardCantMoveWhileInProcess, "Finish");
             }
             else
             {
