@@ -154,10 +154,12 @@ namespace GingerCoreNET.RunLib
             // TODO: send ShutDown to each node
             //foreach (GingerNodeInfo GNI in NodeList)
             //{
-            //    GNI.
+            //    GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(GNI);
+            //    gingerNodeProxy.GingerGrid = this;
+            //    gingerNodeProxy.Shutdown();
+            //    NodeList.Remove(GNI);
             //}
-
-            NodeList.Clear();
+            //}
         }
     }
 }
