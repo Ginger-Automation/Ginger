@@ -39,7 +39,7 @@ namespace Ginger.Variables
 
         private void mVariableDynamic_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == VariableBase.Fields.Formula)
+            if (e.PropertyName == nameof(VariableBase.Formula))
             {
                 ValueExpressionTextBox.Init(mVariableDynamic, nameof(VariableDynamic.ValueExpression));
             }
