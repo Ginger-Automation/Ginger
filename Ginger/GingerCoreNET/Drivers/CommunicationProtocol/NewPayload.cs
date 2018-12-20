@@ -71,6 +71,10 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         const byte BytesType = 7;    // Byte[]
         const byte GuidType = 8;    // GUID
 
+        // bool is special case we save one byte as the type include the value
+        const byte BoolFalse = 9;    // bool = false
+        const byte BoolTrue = 10;    // bool = true
+
         // Last char is 255 - looks like space but is not and marking end of packaet
         const byte LastByteMarker = 255;
         const int cNULLStringLen = -1;    // if the string we write is null we write len = -1 - save space and parsing time
@@ -441,6 +445,22 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             mBufferIndex += 16;
         }
 
+        // 9/10 Add bool = false/true
+        public void AddValue(bool value)
+        {
+            CheckBuffer(1);  // we write bool in one byte since the ValueType type is also the value
+            if (value)
+            {
+                WriteValueType(BoolTrue);
+            }
+            else
+            {
+                WriteValueType(BoolFalse);
+            }            
+        }
+
+
+
         public void AddValueByObjectType(object obj)
         {
             string pType = obj.GetType().Name;            
@@ -451,6 +471,9 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                     break;
                 case "Int32": // nameof(int)?
                     AddValue((int)obj);
+                    break;
+                case "bool": // nameof(bool)?
+                    AddValue((bool)obj);
                     break;
                 default:
                     throw new Exception("Unhandled param type - " + pType);
@@ -476,6 +499,10 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                     {
                         return s;
                     }
+                case BoolFalse:
+                    return false;
+                case BoolTrue:
+                    return true;
                 //TODO: add other types
                 default:
                     throw new Exception("unhandled return type - " + bType);
@@ -601,6 +628,20 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
         }
 
+        public bool GetValueBool()
+        {
+            byte b = ReadValueType();
+            if (b == BoolTrue)
+            {
+                return true;
+            }
+            if (b == BoolFalse)
+            {
+                return false;
+            }
+            throw new Exception("bool Parsing Error/wrong value type (not 9 or 10)");
+        }
+
         // Use to write screen shot or any binary data
         private void WriteBytes(byte[] Bytes)
         {
@@ -706,6 +747,12 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                         Guid g = GetGuid();                                              
                         s += "GUID= " + g.ToString() + Environment.NewLine;
                         break;
+                    case 9: // bool false                        
+                        s += "bool=false " + Environment.NewLine;
+                        break;
+                    case 10: // bool true                        
+                        s += "bool=true " + Environment.NewLine;
+                        break;
                     default:
                         throw new Exception("Payload.ToString() Error - Unknown ValueType: " + ValueType);
                 }
@@ -755,7 +802,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
         }
 
-        // Cretae a Payload with data in one line of code and Closethe Package
+        // Cretae a Payload with data in one line of code and Close the Package
         // I.E.:  PayLoad p = new PayLoad("PLName", 123, "aaaa", "koko");
         public NewPayLoad(string Name, params object[] items)
         {
@@ -763,36 +810,42 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             WritePayloadType();
             WriteString(Name);            
 
-            foreach (object o in items)
+            foreach (object item in items)
             {
-                if (o is string)
+                if (item is string)
                 {
-                    AddValue((string)o);
+                    AddValue((string)item);
                 }
-                else if (o is int)
+                else if (item is int)
                 {
-                    AddValue((int)o);
+                    AddValue((int)item);
                 }
-                else if (o is List<string>)
+                else if (item is List<string>)
                 {
-                    AddValue((List<string>)o);
+                    AddValue((List<string>)item);
                 }
-                else if (o is List<NewPayLoad>)
+                else if (item is List<NewPayLoad>)
                 {
-                    AddListPayLoad((List<NewPayLoad>)o);
+                    AddListPayLoad((List<NewPayLoad>)item);
                 }
-                else if (o is Enum)
+                else if (item is Enum)
                 {
-                    AddEnumValue(o);
+                    AddEnumValue(item);
                 }
-                else if (o is Guid)
+                else if (item is Guid)
                 {
-                    AddValue((Guid)o);
+                    AddValue((Guid)item);
                 }
+                else if (item is bool)
+                {
+                    AddValue((bool)item);
+                }
+
+
                 //TODO: add all types...
                 else
                 {
-                    throw new Exception("Unhandled PayLoad item type: " + o.GetType().Name + "  - " + o.ToString());
+                    throw new Exception("Unhandled PayLoad item type: " + item.GetType().Name + "  - " + item.ToString());
                 }
             }
             ClosePackage();

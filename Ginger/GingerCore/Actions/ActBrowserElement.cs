@@ -63,9 +63,10 @@ namespace GingerCore.Actions
                     {
                         mPlatforms.Add(ePlatformType.Java);
                         mPlatforms.Add(ePlatformType.Web);
+                        mPlatforms.Add(ePlatformType.Mobile);
                         mPlatforms.Add(ePlatformType.PowerBuilder);
                         mPlatforms.Add(ePlatformType.Windows);
-                }
+                    }
                     return mPlatforms;
                 }
             }

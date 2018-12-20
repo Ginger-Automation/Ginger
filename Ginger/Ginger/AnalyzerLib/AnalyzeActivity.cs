@@ -70,10 +70,10 @@ namespace Ginger.AnalyzerLib
             //Check only when there is  target app, since the user will get no target err before
             if (!string.IsNullOrEmpty(Activity.TargetApplication))
             {
-                string AppName = (from x in BusinessFlow.TargetApplications where x.AppName == Activity.TargetApplication select x.AppName).FirstOrDefault();
+                string AppName = (from x in BusinessFlow.TargetApplications where x.Name == Activity.TargetApplication select x.Name).FirstOrDefault();
                 if (string.IsNullOrEmpty(AppName))
                 {
-                    string BFApps = string.Join(";", BusinessFlow.TargetApplications.Select(p => p.AppName).ToList());
+                    string BFApps = string.Join(";", BusinessFlow.TargetApplications.Select(p => p.Name).ToList());
 
                     AnalyzeActivity AA = CreateNewIssue(BusinessFlow, Activity);
                     AA.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " target application not found in " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
@@ -96,7 +96,7 @@ namespace Ginger.AnalyzerLib
             AnalyzeActivity AA = (AnalyzeActivity)sender;
             if (string.IsNullOrEmpty(AA.mActivity.TargetApplication))
             {
-                AA.mActivity.TargetApplication = AA.mBusinessFlow.TargetApplications[0].AppName;
+                AA.mActivity.TargetApplication = AA.mBusinessFlow.TargetApplications[0].Name;
                 AA.Status = eStatus.Fixed;
             }
         }

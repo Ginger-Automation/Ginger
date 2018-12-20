@@ -1,0 +1,66 @@
+[
+  {
+    "InputValues": [
+      {
+        "Param": "GA",
+        "ParamTypeName": "IGingerAction"
+      },
+      {
+        "Param": "text",
+        "ParamTypeName": "string"
+      }
+    ],
+    "ActionId": "Say",
+    "PluginId": "Memo",
+    "ServiceId": "MyDriver",
+    "Description": "Say text"
+  },
+  {
+    "InputValues": [
+      {
+        "Param": "GA",
+        "ParamTypeName": "IGingerAction"
+      },
+      {
+        "Param": "key",
+        "ParamTypeName": "string"
+      },
+      {
+        "Param": "value",
+        "ParamTypeName": "string"
+      }
+    ],
+    "ActionId": "Memorize",
+    "PluginId": "Memo",
+    "ServiceId": "MyDriver",
+    "Description": "Say text"
+  },
+  {
+    "InputValues": [
+      {
+        "Param": "GA",
+        "ParamTypeName": "IGingerAction"
+      },
+      {
+        "Param": "key",
+        "ParamTypeName": "string"
+      }
+    ],
+    "ActionId": "GetMemo",
+    "PluginId": "Memo",
+    "ServiceId": "MyDriver",
+    "Description": "Get item from memory"
+  },
+  {
+    "InputValues": [
+      {
+        "Param": "GA",
+        "ParamTypeName": "IGingerAction"
+      }
+    ],
+    "ActionId": "ClearMemo",
+    "PluginId": "Memo",
+    "ServiceId": "MyDriver",
+    "Description": "Clear memory"
+  }
+]

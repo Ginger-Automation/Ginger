@@ -84,7 +84,11 @@ namespace GingerCoreNET.RunLib
                     {
                         Guid SessionID = p.GetGuid();
                         GingerNodeInfo GNI = (from x in mGingerNodeInfo where x.SessionID == SessionID select x).FirstOrDefault();
-                        //TODO - if not found return err
+                        if (GNI == null)
+                        {
+                            gingerSocketInfo.Response =  new NewPayLoad("Error", "Ginger node info not found for session id " + SessionID.ToString());
+                        }
+
                         mGingerNodeInfo.Remove(GNI);
 
                         NewPayLoad RC = new NewPayLoad("OK");
@@ -141,9 +145,9 @@ namespace GingerCoreNET.RunLib
         }
         
 
-        internal NewPayLoad SendRequestPayLoad(Guid sessionID, NewPayLoad pL)
+        internal NewPayLoad SendRequestPayLoad(Guid sessionID, NewPayLoad payload)
         {
-            NewPayLoad rc = mGingerSocketServer.SendPayLoad(sessionID, pL);
+            NewPayLoad rc = mGingerSocketServer.SendPayLoad(sessionID, payload);
             return rc;
         }
 

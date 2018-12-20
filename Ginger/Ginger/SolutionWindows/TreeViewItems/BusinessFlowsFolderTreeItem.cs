@@ -218,7 +218,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     //customize the imported BF
                     importedBF.Guid = Guid.NewGuid();
                     for (int i = 0; i < importedBF.TargetApplications.Count; i++)
-                        if (App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == importedBF.TargetApplications[i].AppName).FirstOrDefault() == null)
+                        if (App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == importedBF.TargetApplications[i].Name).FirstOrDefault() == null)
                         {
                             importedBF.TargetApplications.RemoveAt(i);//No such Application so Delete it
                             i--;
