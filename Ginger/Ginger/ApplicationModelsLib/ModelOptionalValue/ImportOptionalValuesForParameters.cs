@@ -469,10 +469,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 IsUpdate = false;
                 if (tuple.x.RequiredAsInput)//selected
                 {
-                    var item = ParameterValuesByNameDic.FirstOrDefault(o => o.ParamName == tuple.y.ItemName);
+                    var item = ParameterValuesByNameDic.Find(o => o.ParamName == tuple.y.ItemName);
                     if (item != null)
                     {
-                        string str = ParameterValuesByNameDic.FirstOrDefault(x => x.ParamName == CURRENT_VAL_PARAMETER).ParamName;
+                        string str = ParameterValuesByNameDic.Where(x => x.ParamName == CURRENT_VAL_PARAMETER).Select(x => x.ParamName).FirstOrDefault();
                         tuple.y.OptionalValuesList = new ObservableList<OptionalValue>();
                         if (string.IsNullOrEmpty(str))
                         {
