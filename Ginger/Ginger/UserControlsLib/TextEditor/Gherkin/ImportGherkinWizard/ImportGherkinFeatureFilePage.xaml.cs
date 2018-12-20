@@ -61,33 +61,14 @@ namespace Ginger.GherkinLib
         {
             InitializeComponent();            
             FetaureFileName.FileExtensions.Add(".feature");            
-            FileContentViewer.Visibility = System.Windows.Visibility.Collapsed;
-            FetaureFileName.FilePathTextBox.TextChanged += FilePathTextBox_TextChanged;
+            FileContentViewer.Visibility = System.Windows.Visibility.Collapsed;            
 
             FileContentViewer.SetContentEditorTitleLabel("Selected Gherkin Feature File Preview");
             FileContentViewer.ToolBarRow.Height = new GridLength(0);
             FileContentViewer.ToolBarTray.Visibility = Visibility.Collapsed;
             FileContentViewer.lblTitle.Content = "Text";
             FileContentViewer.toolbar.Visibility = Visibility.Collapsed;
-        }       
-
-        private void FilePathTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(FetaureFileName.FilePathTextBox.Text))
-                return;
-            if (Path.GetExtension(FetaureFileName.FilePathTextBox.Text).ToUpper() != ".FEATURE")
-            {
-                Reporter.ToUser(eUserMsgKeys.GherkinFeatureFileImportOnlyFeatureFileAllowedErrorMessage);
-                FetaureFileName.FilePathTextBox.Text = string.Empty;                
-                return;
-            }
-            else
-            {
-                FileContentViewer.Visibility = System.Windows.Visibility.Visible;
-                FileContentViewer.Init(FetaureFileName.FilePathTextBox.Text, new GherkinDcoumentEditor(), false);
-            }
-            mWizard.mFeatureFile = FetaureFileName.FilePathTextBox.Text;
-        }
+        }               
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
@@ -139,8 +120,9 @@ namespace Ginger.GherkinLib
                 case EventType.Init:
                     mWizard = (ImportGherkinFeatureWizard)WizardArgs.Wizard;
                     //TO DO::Feature File Cannot BE NULL
-                    FetaureFileName.FilePathTextBox.BindControl(mWizard, nameof(ImportGherkinFeatureWizard.mFeatureFile));
-                    FetaureFileName.FilePathTextBox.AddValidationRule(new FileValidationRule());
+                    FetaureFileName.FilePathTextBox.BindControl(mWizard, nameof(ImportGherkinFeatureWizard.mFeatureFile));                    
+                    FetaureFileName.FilePathTextBox.AddValidationRule(new FileValidationRule(".feature"));
+                    FetaureFileName.FilePathTextBox.Focus();
                     break;
                 case EventType.LeavingForNextPage:
                     if (!File.Exists(FetaureFileName.FilePathTextBox.Text))

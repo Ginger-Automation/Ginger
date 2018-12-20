@@ -213,12 +213,13 @@ namespace GingerWPF.WizardLib
                         {
                             Ginger.Agents.ucAgentControl agentControl = (Ginger.Agents.ucAgentControl)child;
                             bindingExpression = agentControl.GetBindingExpression(Ginger.Agents.ucAgentControl.SelectedAgentProperty);
-                        }
+                        }                        
 
                         if (bindingExpression != null)
                         {
                             // do if there is validation bindingExpression.
-                            bindingExpression.UpdateSource();
+                            bindingExpression.UpdateSource();                            
+                            
                             if (bindingExpression.HasValidationError)
                             {
                                 errorsFound = true;
