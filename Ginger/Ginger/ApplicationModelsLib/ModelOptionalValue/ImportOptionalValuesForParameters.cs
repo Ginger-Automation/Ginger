@@ -398,7 +398,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 
                 IsUpdate = false;
-                if (tuple.x.RequiredAsInput)//selected
+                if (tuple.x.RequiredAsInput) //selected
                 {
                     var item = ParameterValuesByNameDic.FirstOrDefault(o => o.ParamName == tuple.y.ItemName);
                     if (item != null)

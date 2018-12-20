@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
+﻿using System.Collections.Generic;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Newtonsoft.Json;
 
@@ -12,7 +9,7 @@ namespace Amdocs.Ginger.Common
     {        
         [JsonProperty]
         public string ServiceId { get; set; }
-
+      
         [JsonProperty]
         public string Description { get; set; }
 
@@ -20,11 +17,11 @@ namespace Amdocs.Ginger.Common
         public bool IsSession { get; set; }
 
 
-        List<PluginServiceActionInfo> mActions = new List<PluginServiceActionInfo>();
+        readonly List<PluginServiceActionInfo> mActions = new List<PluginServiceActionInfo>();
 
         [JsonProperty]
         public List<PluginServiceActionInfo> Actions { get { return mActions; } }
 
-      
+        
     }
 }

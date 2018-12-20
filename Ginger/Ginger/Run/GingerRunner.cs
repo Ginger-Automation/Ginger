@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
@@ -75,8 +74,7 @@ namespace Ginger.Run
             RunWithoutDriver,
             RunOnDriver,
             RunInSimulationMode,
-            RunOnPlugIn,
-            // RunOnPlugInDriver
+            RunOnPlugIn
         }
 
         public enum eRunOptions
@@ -284,7 +282,22 @@ namespace Ginger.Run
         [IsSerializedForLocalRepository]
         public bool FilterExecutionByTags { get; set; }
 
-        public ProjEnvironment ProjEnvironment { get; set; }
+        ProjEnvironment mProjEnvironment;
+        public ProjEnvironment ProjEnvironment
+        {
+            get
+            {
+                return mProjEnvironment;
+            }
+            set
+            {
+                mProjEnvironment = value;
+                if (ExecutionLogger != null)
+                {
+                    ExecutionLogger.ExecutionEnvironment = value;
+                }
+            }
+        }
 
         public ObservableList<DataSourceBase> DSList { get; set; }
 
@@ -305,13 +318,13 @@ namespace Ginger.Run
         public GingerRunner()
         {
             ExecutedFrom = eExecutedFrom.Run;
-            ExecutionLogger = new ExecutionLogger(eExecutedFrom.Run);            
+            ExecutionLogger = new ExecutionLogger(ProjEnvironment, eExecutedFrom.Run);            
         }
        
         public GingerRunner(eExecutedFrom executedFrom)
         {
             ExecutedFrom = executedFrom;
-            ExecutionLogger = new ExecutionLogger(ExecutedFrom);
+            ExecutionLogger = new ExecutionLogger(ProjEnvironment, ExecutedFrom);
         }
 
 
@@ -816,12 +829,7 @@ namespace Ginger.Run
 
         private void RunActionWithRetryMechanism(Act act, bool checkIfActionAllowedToRun = true)
         {
-            //Keep DebugStopWatch when testing performance
-            //Stopwatch DebugStopWatch = new Stopwatch();
-            //DebugStopWatch.Reset();
-            //DebugStopWatch.Start();
-            //Not suppose to happen but just in case
-            
+                //Not suppose to happen but just in case        
                 if (act == null)
                 {
                     Reporter.ToUser(eUserMsgKeys.AskToSelectAction);
@@ -1594,9 +1602,6 @@ namespace Ginger.Run
 
                         case eActionExecutorType.RunOnPlugIn:
                             GingerNodeInfo GNI = GetGNIFor((ActPlugIn)act);
-                            // TODO: keep the GNI on activity or BF atrget app
-                            // CurrentBusinessFlow.TargetApplications.
-                            gingerNodeInfo = GNI; // tmep - assuming one service !!!!!!!!!!!!!!!!!!!!!!!!!!! FIXME
                             if (GNI != null)
                             {
                                 ExecutePlugInAction((ActPlugIn)act, GNI);
@@ -1773,7 +1778,11 @@ namespace Ginger.Run
             Agent.eStatus agentStatus = AA.Agent.Status;
             if (agentStatus != Agent.eStatus.Running && agentStatus != Agent.eStatus.Starting && agentStatus != Agent.eStatus.FailedToStart)
             {
-                StartAgent(AA.Agent);
+                int count = (from x in CurrentBusinessFlow.CurrentActivity.Acts where x.GetType() != typeof(ActPlugIn) select x).Count();
+                if (count > 0)
+                {
+                    StartAgent(AA.Agent);
+                }
             }
 
             CurrentBusinessFlow.CurrentActivity.CurrentAgent = AA.Agent;
@@ -1849,48 +1858,51 @@ namespace Ginger.Run
             }
         }
 
-        //private void ExecutePlugInActionOnDriver(ActPlugIn actPlugin)
-        //{
-        //    // SetCurrentActivityAgent();            
-        //    GingerNodeInfo GNI = CurrentBusinessFlow.CurrentActivity.CurrentAgent.GingerNodeInfo;
-        //    ExecutePlugInAction(actPlugin, GNI);
-        //}
+       
 
-
-        // tmep !!!!!!!!! will work only for one time one service FIXME !!!!!!!!!!!!!
-        GingerNodeInfo gingerNodeInfo;
+       // keep list of GNI for Plugin which are session
+        Dictionary<string, GingerNodeInfo> dic = new Dictionary<string, GingerNodeInfo>();
 
         private GingerNodeInfo GetGNIFor(ActPlugIn actPlugin)
         {
-            if (gingerNodeInfo != null)
-            {
-                return gingerNodeInfo;
-            }
-
-            GingerNodeInfo GNI = null;
             bool DoStartSession = false;
             bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, actPlugin.ServiceId);
-           
-                // running stand alone plugin action
-            GNI = GetGingerNode(actPlugin);
+            GingerNodeInfo gingerNodeInfo;
+            string key = actPlugin.PluginId + "." + actPlugin.ServiceId;
+            
+            if (IsSessionService)
+            {
+                bool found = dic.TryGetValue(key, out gingerNodeInfo);
+                if (found)
+                {
+                    if (gingerNodeInfo.IsAlive())
+                    {
+                        return gingerNodeInfo;
+                    }
+                    else
+                    {
+                        dic.Remove(key);
+                    }
+                }
+            }
 
-            if (GNI == null)
+            gingerNodeInfo = GetGingerNode(actPlugin);
+
+            if (gingerNodeInfo == null)
             {
                 // call plugin to start service and wait for ready
-                WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId);
+                WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId, actPlugin.ServiceId);
 
                 Stopwatch stopwatch = Stopwatch.StartNew();
-                while (GNI == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
+                while (gingerNodeInfo == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
                 {
                     Thread.Sleep(500);
-                    GNI = GetGingerNode(actPlugin);
+                    gingerNodeInfo = GetGingerNode(actPlugin);
                 }
-                if (GNI == null)
+                if (gingerNodeInfo == null)
                 {
-                    actPlugin.Error = "GNI not found";  //temp fix me!!!   !!!!
-                    actPlugin.Error += "Timeout waiting for service to be available in GingerGrid";
+                    actPlugin.Error = "GNI not found, Timeout waiting for service to be available in GingerGrid";
                     return null;
-                    // throw new Exception("Timeout waiting for service to start");
                 }
             }
 
@@ -1901,22 +1913,23 @@ namespace Ginger.Run
             }
             else
             {
-                GNI.Status = "Reserved";
+                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
             }
             
 
             // keep the proxy on agent
-            GingerNodeProxy GNP = new GingerNodeProxy(GNI);
+            GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
             GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
 
             //TODO: check if service is session start session only once
             if (DoStartSession)
             {
-                GNI.Status = "Reserved";
+                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
                 GNP.StartDriver();
+                dic.Add(key, gingerNodeInfo);
             }
-
-            return GNI;
+            
+            return gingerNodeInfo;
         }
 
         private void ExecutePlugInAction(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo)     
@@ -1959,12 +1972,12 @@ namespace Ginger.Run
                     {
                         case nameof(OutputValueType.String):
                             string stringValue = OPL.GetValueString();
-                            actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Path = path, Actual = stringValue});
+                            actPlugin.AddOrUpdateReturnParamActualWithPath(PName, stringValue, path);
                             break;
                         case nameof(OutputValueType.ByteArray):
                             byte[] b = OPL.GetBytes();
-                            // GA.Output.Values.Add(new NodeActionOutputValue() { Param = PName, ValueByteArray = b });
-                            actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Path= path, Actual = "aaaaaaa" });   //FIXME!!! when act can have values types
+                            //actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Path= path, Actual = "aaaaaaa" });   //FIXME!!! when act can have values types
+                            actPlugin.AddOrUpdateReturnParamActualWithPath(PName, "aaa", path);   //FIXME!!! when act can have values types
                             break;
                         default:
                             throw new Exception("Unknown param type: " + mOutputValueType);
@@ -1986,7 +1999,7 @@ namespace Ginger.Run
             if (!IsSessionService) 
             {
                 // standalone plugin action release the node
-                gingerNodeInfo.Status = "Ready";
+                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
             }
             st.Stop();
             long millis = st.ElapsedMilliseconds;
@@ -1999,7 +2012,7 @@ namespace Ginger.Run
 
             GingerNodeInfo GNI = (from x in gingerGrid.NodeList
                                     where x.ServiceId == actPlugin.ServiceId
-                                         && x.Status == "Ready"
+                                         && x.Status == GingerNodeInfo.eStatus.Ready
                                     select x).FirstOrDefault();
 
             return GNI;
@@ -3254,10 +3267,10 @@ namespace Ginger.Run
 
         private void UpdateLastExecutingAgent()
         {
-            foreach (TargetApplication TA in CurrentBusinessFlow.TargetApplications)
+            foreach (TargetBase target in CurrentBusinessFlow.TargetApplications)
             {
-                string a = (from x in ApplicationAgents where x.AppName == TA.AppName select x.AgentName).FirstOrDefault();
-                TA.LastExecutingAgentName = a;
+                string a = (from x in ApplicationAgents where x.AppName == target.Name select x.AgentName).FirstOrDefault();
+                target.LastExecutingAgentName = a;
             }
         }
 

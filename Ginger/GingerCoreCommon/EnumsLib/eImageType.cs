@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -39,6 +39,7 @@ namespace Amdocs.Ginger.Common.Enums
         GingerLogoGray,
         GingerIconWhite,
         GingerIconGray,
+        GingerSplash,
         #endregion
 
 
@@ -211,6 +212,7 @@ namespace Amdocs.Ginger.Common.Enums
         Elements,
         LocationPointer,
         GitHub,
+        Ping,
         #endregion
 
         #region Other Images
