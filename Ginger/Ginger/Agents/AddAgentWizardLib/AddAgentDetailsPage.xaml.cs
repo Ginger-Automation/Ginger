@@ -18,7 +18,9 @@ limitations under the License.
 
 using GingerCore;
 using GingerWPF.WizardLib;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static Ginger.ExtensionMethods;
@@ -52,14 +54,22 @@ namespace Ginger.Agents.AddAgentWizardLib
                     xAgentTagsViewer.Init(mWizard.Agent.Tags);
 
                     xPlatformTypeComboBox.SelectionChanged += xPlatformTypeComboBox_SelectionChanged;
-                    App.FillComboFromEnumVal(xPlatformTypeComboBox, mWizard.Agent.Platform);
 
-                    //Removing ASCF type from combobox list
-                    xPlatformTypeComboBox.SelectedValue = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF;
-                    var itemToRemove = xPlatformTypeComboBox.SelectedIndex;
+                    Type Etype = mWizard.Agent.Platform.GetType();
+                    Array platformEnumList = Etype.GetEnumValues();
+
+                    List<object> platformList = new List<object>();
+                    foreach (var item in platformEnumList)
+                    {
+                        if(item.ToString() != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF.ToString())
+                        {
+                            platformList.Add(item);
+                        }
+                    }
+
+                    xPlatformTypeComboBox.BindControl(platformList);
                     xPlatformTypeComboBox.SelectedIndex = 0;
-                    xPlatformTypeComboBox.Items.RemoveAt(itemToRemove);
-                    
+
                     xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverType));
                     xDriverTypeComboBox.SelectionChanged += xDriverTypeComboBox_SelectionChanged;
                     xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);
