@@ -18,12 +18,15 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Reports;
-using Ginger.SolutionWindows;
+using Ginger.Run;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Activities;
 using GingerCore.Environments;
-using GingerCore.SourceControl;
+using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
@@ -34,11 +37,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using GingerCore.Variables;
-using Ginger.Run;
-using GingerCore.Activities;
 
 namespace Ginger.SourceControl
 {
@@ -126,9 +124,11 @@ namespace Ginger.SourceControl
                          {
                              if (SCFI.Path.ToUpper().Contains(".GINGER.") && SCFI.Path.ToUpper().Contains(".XML"))
                              {
+                                 NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
                                  //try to unserialize
-                                 object item = RepositoryItem.LoadFromFile(SCFI.Path);
-                                 SCFI.Name = ((RepositoryItem)item).GetNameForFileName();
+                                 RepositoryItemBase item = newRepositorySerializer.DeserializeFromFile(SCFI.Path);
+                                 //object item = RepositoryItem.LoadFromFile(SCFI.Path);
+                                 SCFI.Name = item.GetNameForFileName();
                              }
                              else
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
