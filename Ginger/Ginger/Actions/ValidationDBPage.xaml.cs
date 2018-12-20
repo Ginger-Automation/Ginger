@@ -265,6 +265,16 @@ namespace Ginger.Actions
                 {
                     KeySpaceComboBox.Items.Add(s);
                 }
+            }else if (db.DBType == Database.eDBTypes.Couchbase)
+            {
+                NoSqlBase NoSqlDriver = null;
+                NoSqlDriver = new GingerCouchbase(db);
+
+                List<string> keyspace = NoSqlDriver.GetKeyspaceList();
+                foreach (string s in keyspace)
+                {
+                    KeySpaceComboBox.Items.Add(s);
+                }
             }
         }
 

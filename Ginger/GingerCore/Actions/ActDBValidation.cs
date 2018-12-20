@@ -274,6 +274,11 @@ namespace GingerCore.Actions
                     NoSqlDriver.PerformDBAction();
                    
                     break;
+                case Database.eDBTypes.Couchbase:
+                    NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
+                    NoSqlDriver.PerformDBAction();
+
+                    break;
             }
         }
 
