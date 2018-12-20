@@ -212,6 +212,7 @@ namespace Amdocs.Ginger.Common.Enums
         Elements,
         LocationPointer,
         GitHub,
+        Ping,
         #endregion
 
         #region Other Images
