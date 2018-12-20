@@ -71,7 +71,7 @@ namespace Ginger.Run.RunSetActions
             App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.ConfigureCredential);
             if (string.IsNullOrEmpty(runSetActionHTMLReportSendEmail.MailTo))
             {
-                runSetActionHTMLReportSendEmail.MailTo = App.UserProfile.UserEmail;
+                runSetActionHTMLReportSendEmail.MailFrom = App.UserProfile.UserEmail;
             }
             InitAttachmentsGrid();
             RadioButtonInit();

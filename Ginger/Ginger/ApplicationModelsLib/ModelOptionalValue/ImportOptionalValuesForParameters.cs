@@ -398,7 +398,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 
                 IsUpdate = false;
-                if (tuple.x.RequiredAsInput)//selected
+                if (tuple.x.RequiredAsInput) //selected
                 {
                     var item = ParameterValuesByNameDic.FirstOrDefault(o => o.ParamName == tuple.y.ItemName);
                     if (item != null)
@@ -472,7 +472,13 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     var item = ParameterValuesByNameDic.FirstOrDefault(o => o.ParamName == tuple.y.ItemName);
                     if (item != null)
                     {
-                        string str = ParameterValuesByNameDic.FirstOrDefault(x => x.ParamName == CURRENT_VAL_PARAMETER).ParamName;
+                        string str = string.Empty;
+
+                        if(ParameterValuesByNameDic.FirstOrDefault(x => x.ParamName == CURRENT_VAL_PARAMETER) != null)
+                        {
+                            str = ParameterValuesByNameDic.FirstOrDefault(x => x.ParamName == CURRENT_VAL_PARAMETER).ParamName;
+                        }
+
                         tuple.y.OptionalValuesList = new ObservableList<OptionalValue>();
                         if (string.IsNullOrEmpty(str))
                         {

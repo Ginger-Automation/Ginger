@@ -31,6 +31,7 @@ using GingerCore;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common;
 using amdocs.ginger.GingerCoreNET;
+using GingerCore.Environments;
 
 namespace Ginger.Reports.GingerExecutionReport
 {
@@ -477,7 +478,7 @@ namespace Ginger.Reports.GingerExecutionReport
                                         }
                                         fieldsValuesHTMLTableOneCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) != null ? br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString() : string.Empty) + "</td>");
                                     }
-                                    else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.ExecutionDescription)
+                                    else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.RunDescription)
                                     {
                                         if (firstIteration)
                                         {
@@ -1946,6 +1947,11 @@ namespace Ginger.Reports.GingerExecutionReport
             foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.ActivityFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
             {
                 fieldsNamesHTMLTableCells.Append("<td>" + selectedField.FieldName + "</td>");
+                if (((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue((ActivityReport)ActivityReport) == null)
+                {
+                    fieldsValuesHTMLTableCells.Append("<td> N/A </td>");
+                    continue;
+                }
 
                 if (selectedField.FieldKey == ActivityReport.Fields.RunStatus)
                 {
@@ -2710,7 +2716,7 @@ namespace Ginger.Reports.GingerExecutionReport
             return l.HTMLReportMainFolder;
         }
 
-        public static string CreateActivitiesGroupReportsOfBusinessFlow(BusinessFlow BF, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null)
+        public static string CreateActivitiesGroupReportsOfBusinessFlow(ProjEnvironment environment, BusinessFlow BF, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null)
         {
             Ginger.Reports.GingerExecutionReport.GingerExecutionReport l = new Ginger.Reports.GingerExecutionReport.GingerExecutionReport();
             l.TemplatesFolder = (ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
@@ -2727,7 +2733,7 @@ namespace Ginger.Reports.GingerExecutionReport
             if (string.IsNullOrEmpty(BF.ExecutionFullLogFolder))
             {
                 string exec_folder = string.Empty;
-                exec_folder = Ginger.Run.ExecutionLogger.GenerateBusinessflowOfflineExecutionLogger(BF);
+                exec_folder = Ginger.Run.ExecutionLogger.GenerateBusinessflowOfflineExecutionLogger(environment, BF);
                 if (string.IsNullOrEmpty(exec_folder))
                 {
                     return string.Empty;
