@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -94,7 +94,7 @@ namespace GingerCore.Environments
             {
                 foreach (EnvApplication ea in Applications)
                 {
-                    foreach (Database db in ea.Dbs)
+                    foreach (IDatabase db in ea.Dbs)
                     {
                         if (ea.Dbs != null)
                         {

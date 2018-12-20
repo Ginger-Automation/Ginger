@@ -20,14 +20,14 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
-using Ginger.SolutionGeneral;
-using Ginger.Extensions;
 using Ginger.Reports;
 using Ginger.Repository;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using GingerCore;
@@ -40,7 +40,6 @@ using GingerCore.Repository;
 using GingerCore.Repository.UpgradeLib;
 using GingerCore.SourceControl;
 using GingerCore.Variables;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -56,9 +55,8 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Threading;
 using System.Windows.Input;
-using Amdocs.Ginger.Common.Repository;
+using System.Windows.Threading;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -374,7 +372,7 @@ namespace Ginger
 
             AppSplashWindow.LoadingInfo("Init Application");
 
-            // We init the classed dictionary for the Repository Serialize only once
+            // We init the classes dictionary for the Repository Serializer only once
             InitClassTypesDictionary();
 
             // TODO: need to add a switch what we get from old ginger based on magic key
@@ -486,7 +484,7 @@ namespace Ginger
             NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
 
             // Add all RI classes from GingerCore
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(Act).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActButton).Assembly); // GingerCore.dll
 
             // add  old Plugins - TODO: remove later when we change to new plugins
             NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerPlugIns.ActionsLib.PlugInActionsBase).Assembly);

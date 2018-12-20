@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -22,6 +22,9 @@ namespace Amdocs.Ginger.Common
     {
         IBusinessFlow CreateBusinessFlow();
         IValueExpression CreateValueExpression(IProjEnvironment mProjEnvironment, IBusinessFlow mBusinessFlow);
+
+        IValueExpression CreateValueExpression(IProjEnvironment mProjEnvironment, IBusinessFlow mBusinessFlow, object DSList); // object =  ObservableList<IDataSourceBase>
+
         ObservableList<IDatabase> GetDatabaseList();
     }
 }

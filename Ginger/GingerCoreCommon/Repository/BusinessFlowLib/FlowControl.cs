@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.Utils;
 using GingerCore.Actions;
 using GingerCore.DataSource;
 using System;
@@ -196,7 +197,7 @@ namespace GingerCore.FlowControlLib
                 Condition = Condition.Replace("Fail", "Failed");
             }
 
-            ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow,DSList);
+            IValueExpression VE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ProjEnvironment, BusinessFlow, DSList);  
             VE.Value = Condition;
             
             foreach (ActReturnValue ARC in act.ReturnValues)
@@ -205,7 +206,7 @@ namespace GingerCore.FlowControlLib
                 {
                     if (VE.Value.Contains("{Actual}"))
                     {
-                        if ((ARC.Actual != null) && GingerCore.General.IsNumeric(ARC.Actual))
+                        if ((ARC.Actual != null) && StringManager.IsNumeric(ARC.Actual))
                         {
                             VE.Value = VE.Value.Replace("{Actual}", ARC.Actual.ToString());
                         }
@@ -239,7 +240,7 @@ namespace GingerCore.FlowControlLib
                 Condition = Condition.Replace("Fail", "Failed");
             }
 
-            ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow,DSList);
+            IValueExpression VE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ProjEnvironment, BusinessFlow,DSList);
             VE.Value = Condition;
 
             
@@ -250,7 +251,7 @@ namespace GingerCore.FlowControlLib
 
         public void CalcualtedValue(BusinessFlow BusinessFlow, Environments.ProjEnvironment ProjEnvironment, ObservableList<DataSourceBase> DSList)
         {
-            ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList);
+            IValueExpression VE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ProjEnvironment, BusinessFlow, DSList);
             VE.Value = Value;
             ValueCalculated = VE.ValueCalculated;
         }

@@ -543,7 +543,7 @@ namespace GingerCore
                 {
                     this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                 }
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
         }
@@ -564,72 +564,72 @@ namespace GingerCore
             }
         }
 
-        public bool WarnFromMissingVariablesUse(ObservableList<VariableBase> solutionVars, ObservableList<VariableBase> bfVars, bool silentMode = true, bool autoAddMissingVars = true)
-        {
-            List<string> usedVariables = new List<string>();
-            foreach (Act action in this.Acts)
-                VariableBase.GetListOfUsedVariables(action, ref usedVariables);
+        //public bool WarnFromMissingVariablesUse(ObservableList<VariableBase> solutionVars, ObservableList<VariableBase> bfVars, bool silentMode = true, bool autoAddMissingVars = true)
+        //{
+        //    List<string> usedVariables = new List<string>();
+        //    foreach (Act action in this.Acts)
+        //        VariableBase.GetListOfUsedVariables(action, ref usedVariables);
 
-            for (int indx = 0; indx < usedVariables.Count; indx++)
-            {
-                if (this.Variables.Where(x => x.Name == usedVariables[indx]).FirstOrDefault() != null)
-                {
-                    usedVariables.RemoveAt(indx);
-                    indx--;
-                }
-            }
+        //    for (int indx = 0; indx < usedVariables.Count; indx++)
+        //    {
+        //        if (this.Variables.Where(x => x.Name == usedVariables[indx]).FirstOrDefault() != null)
+        //        {
+        //            usedVariables.RemoveAt(indx);
+        //            indx--;
+        //        }
+        //    }
 
-            if (usedVariables.Count > 0)
-            {
-                string missingVars = string.Empty;
-                foreach (string var in usedVariables)
-                    missingVars += "'" + var + "',";
-                missingVars = missingVars.TrimEnd(new char[] { ',' });
+        //    if (usedVariables.Count > 0)
+        //    {
+        //        string missingVars = string.Empty;
+        //        foreach (string var in usedVariables)
+        //            missingVars += "'" + var + "',";
+        //        missingVars = missingVars.TrimEnd(new char[] { ',' });
 
-                if (!silentMode)
-                    if (Reporter.ToUser(eUserMsgKeys.WarnRegradingMissingVariablesUse, ActivityName, missingVars) == MessageBoxResult.Yes)
-                        autoAddMissingVars = true;
-                    else
-                        autoAddMissingVars = false;
+        //        if (!silentMode)
+        //            if (AppReporter.ToUser(eUserMsgKeys.WarnRegradingMissingVariablesUse, ActivityName, missingVars) == MessageBoxResult.Yes)
+        //                autoAddMissingVars = true;
+        //            else
+        //                autoAddMissingVars = false;
 
-                if (autoAddMissingVars)
-                {
-                    //add missing vars from bf / global vars
-                    for (int indx = 0; indx < usedVariables.Count; indx++)
-                    {
-                        VariableBase var = bfVars.Where(x => x.Name == usedVariables[indx]).FirstOrDefault();
-                        if (var == null)
-                            var = solutionVars.Where(x => x.Name == usedVariables[indx]).FirstOrDefault();
-                        if (var != null)
-                        {
-                            this.Variables.Add(var);
-                            usedVariables.RemoveAt(indx);
-                            indx--;
-                        }
-                    }
+        //        if (autoAddMissingVars)
+        //        {
+        //            //add missing vars from bf / global vars
+        //            for (int indx = 0; indx < usedVariables.Count; indx++)
+        //            {
+        //                VariableBase var = bfVars.Where(x => x.Name == usedVariables[indx]).FirstOrDefault();
+        //                if (var == null)
+        //                    var = solutionVars.Where(x => x.Name == usedVariables[indx]).FirstOrDefault();
+        //                if (var != null)
+        //                {
+        //                    this.Variables.Add(var);
+        //                    usedVariables.RemoveAt(indx);
+        //                    indx--;
+        //                }
+        //            }
 
-                    if (usedVariables.Count > 0)
-                    {
-                        //not all vars were found and added automatically
-                        if (!silentMode)
-                            Reporter.ToUser(eUserMsgKeys.NotAllMissingVariablesWereAdded, missingVars);
-                        return true;//not all missing vars were added automatically
-                    }
-                    else
-                    {
-                        return false;//missing vars were added automatically
-                    }
-                }
-                else
-                {
-                    return true; //not auto adding the missing vars
-                }
-            }
+        //            if (usedVariables.Count > 0)
+        //            {
+        //                //not all vars were found and added automatically
+        //                if (!silentMode)
+        //                    AppReporter.ToUser(eUserMsgKeys.NotAllMissingVariablesWereAdded, missingVars);
+        //                return true;//not all missing vars were added automatically
+        //            }
+        //            else
+        //            {
+        //                return false;//missing vars were added automatically
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return true; //not auto adding the missing vars
+        //        }
+        //    }
 
-            return false; //no missing vars
-        }
+        //    return false; //no missing vars
+        //}
 
-        public Agent CurrentAgent { get; set; }
+        public dynamic CurrentAgent { get; set; }  // Agent
 
         public override string ItemName
         {
@@ -763,7 +763,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 

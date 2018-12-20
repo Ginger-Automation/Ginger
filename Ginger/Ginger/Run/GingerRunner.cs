@@ -2472,7 +2472,7 @@ namespace Ginger.Run
                     if (ve.Value.Contains("{Actual}"))
                     {
                         //Replace to 
-                        if ((ARC.Actual != null) && GingerCore.General.IsNumeric(ARC.Actual))
+                        if ((ARC.Actual != null) && Ginger.Utils.StringManager.IsNumeric(ARC.Actual))
                         {
                             ve.Value = ve.Value.Replace("{Actual}", ARC.Actual);
                         }
@@ -2625,7 +2625,7 @@ namespace Ginger.Run
         public static void ReplaceActualPlaceHolder(ActReturnValue ARC)//currently used only for unit tests
         {
             string sEval;
-            if (GingerCore.General.IsNumeric(ARC.Actual))
+            if (Ginger.Utils.StringManager.IsNumeric(ARC.Actual))
             {
                 sEval = ARC.ExpectedCalculated.Replace("{Actual}", ARC.Actual);
             }

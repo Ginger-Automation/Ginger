@@ -34,6 +34,11 @@ namespace Ginger.Repository
             return new ValueExpression(mProjEnvironment, mBusinessFlow);
         }
 
+        public IValueExpression CreateValueExpression(IProjEnvironment mProjEnvironment, IBusinessFlow mBusinessFlow, object DSList)
+        {
+            return new ValueExpression(mProjEnvironment, mBusinessFlow, (ObservableList<GingerCore.DataSource.DataSourceBase>)DSList);
+        }
+
         public ObservableList<IDatabase> GetDatabaseList()
         {
             return new ObservableList<IDatabase>();

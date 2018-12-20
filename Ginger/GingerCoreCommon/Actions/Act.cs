@@ -16,9 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -26,16 +32,8 @@ using GingerCore.Actions.Common;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
-using GingerCore.Properties;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Windows.Controls;
 
 namespace GingerCore.Actions
 {
@@ -374,7 +372,7 @@ namespace GingerCore.Actions
 
 
         // show image base on Act type near the line number
-        public virtual System.Drawing.Image Image { get { return Resources.Act; } } //TODO: to be replaced with ItemImageType for all Actions types
+        public virtual System.Drawing.Image Image { get { return null; } } //TODO: to be replaced with ItemImageType for all Actions types
 
 
         // [IsSerializedForLocalRepository]
@@ -820,7 +818,10 @@ namespace GingerCore.Actions
             string filename = System.IO.Path.GetRandomFileName();
             string filePath = string.Empty;
             filePath = System.IO.Path.Combine(Actions.Act.ScreenshotTempFolder, filename);
-            return GingerCore.General.BitmapImageToFile(screenshot, filePath);
+            // check if folder exist else create
+
+            Ginger.Utils.BitmapManager.SaveBitmapToPng(screenshot, filePath);
+            return filePath;
         }
 
         //public override string GetNameForFileName() { return Description; }
@@ -851,7 +852,7 @@ namespace GingerCore.Actions
 
         public void ParseJSONToOutputValues(string ResponseMessage, int i)// added i especially for cassandra, for retrieving path , other cases give i=1
         {
-            Dictionary<string, object> outputValues = GingerCore.General.DeserializeJson(ResponseMessage);
+            Dictionary<string, object> outputValues = Ginger.Utils.JSONManager.DeserializeJson(ResponseMessage);
             foreach (KeyValuePair<string, object> entry in outputValues)
             {
                 AddJsonKeyValueToOutputValue(entry.Value, entry.Key, i);
@@ -1162,27 +1163,27 @@ namespace GingerCore.Actions
         }
 
 
-        public void ActionDescriptionTextBlock(TextBlock ActionRecUseCaseTextBlock)
-        {
-            TextBlockHelper TBH = new TextBlockHelper(ActionRecUseCaseTextBlock);
-            TBH.AddHeader1("Description:");
-            TBH.AddLineBreak();
-            TBH.AddText(ActionUserDescription);
-            TBH.AddLineBreak();
-            TBH.AddLineBreak();
+        //public void ActionDescriptionTextBlock(TextBlock ActionRecUseCaseTextBlock)
+        //{
+        //    TextBlockHelper TBH = new TextBlockHelper(ActionRecUseCaseTextBlock);
+        //    TBH.AddHeader1("Description:");
+        //    TBH.AddLineBreak();
+        //    TBH.AddText(ActionUserDescription);
+        //    TBH.AddLineBreak();
+        //    TBH.AddLineBreak();
 
-            TBH.AddHeader1("Supported Platforms:");
-            TBH.AddLineBreak();
-            TBH.AddText(SupportedPlatforms);
-            TBH.AddLineBreak();
-            TBH.AddLineBreak();
+        //    TBH.AddHeader1("Supported Platforms:");
+        //    TBH.AddLineBreak();
+        //    TBH.AddText(SupportedPlatforms);
+        //    TBH.AddLineBreak();
+        //    TBH.AddLineBreak();
 
-            TBH.AddHeader1("Recommended Use Case/s and Guidelines:");
-            TBH.AddLineBreak();
-            // Let the action return the full help info which can be formatted using TBH
-            // Free text from here 
-            ActionUserRecommendedUseCase(TBH);
-        }
+        //    TBH.AddHeader1("Recommended Use Case/s and Guidelines:");
+        //    TBH.AddLineBreak();
+        //    // Let the action return the full help info which can be formatted using TBH
+        //    // Free text from here 
+        //    ActionUserRecommendedUseCase(TBH);
+        //}
 
 
 

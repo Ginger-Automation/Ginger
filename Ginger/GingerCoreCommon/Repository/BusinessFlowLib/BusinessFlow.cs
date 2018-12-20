@@ -298,7 +298,7 @@ namespace GingerCore
         //TODO: remove and make it only platform, otherwise is save also the agent details and make isDirsty too sensitive
 
         //TODO:  Delete not used anymore , but keep so old BF can load till conv part is done
-        public ObservableList<Platform> Platforms;
+        // public ObservableList<Platform> Platforms;
 
         [IsSerializedForLocalRepository]
         public ObservableList<TargetBase> TargetApplications = new ObservableList<TargetBase>();       
@@ -702,15 +702,15 @@ namespace GingerCore
                 if (missingActivities != string.Empty && inSilentMode == false)
                 {
                     missingActivities = missingActivities.TrimEnd(new char[] { ',', ' ' });
-                    AppReporter.ToUser(eUserMsgKeys.PartOfActivitiesGroupActsNotFound, missingActivities);
+                    // AppReporter.ToUser(eUserMsgKeys.PartOfActivitiesGroupActsNotFound, missingActivities);
                     return false;
                 }
                 else
                     return true;
             }
 
-            if (inSilentMode == false)
-                AppReporter.ToUser(eUserMsgKeys.ActivitiesGroupActivitiesNotFound);
+            //if (inSilentMode == false)
+            //    AppReporter.ToUser(eUserMsgKeys.ActivitiesGroupActivitiesNotFound);
             return false;
         }
 

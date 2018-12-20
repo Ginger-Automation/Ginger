@@ -637,21 +637,7 @@ namespace GingerCore
             return exeLocation;
         }
 
-        public static bool IsNumeric(string sValue)
-        {
-            // simple method to check is strign is number
-            // there are many other alternatives, just keep it simple and make sure it run fast as it is going to be used a lot, for every return value calc   
-            // regec and other are more expensive
-
-        foreach (char c in sValue)
-            {
-                if (!char.IsDigit(c) && c != '.')
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        
 
         public static List<GingerCore.General.ComboEnumItem> GetEnumValuesForCombo(Type Etype)
         {
@@ -765,31 +751,7 @@ namespace GingerCore
                 }
             }
         }
-        public static Dictionary<string, object> DeserializeJson(string json)
-        {
-            if (json.StartsWith("["))
-            {
-                Dictionary<string, object> dictionary = new Dictionary<string, object>();
-
-                JArray a = JArray.Parse(json);
-
-                int ArrayCount = 1;
-                foreach (JObject o in a.Children<JObject>())
-                {
-                    dictionary.Add(ArrayCount.ToString(), o);
-                    ArrayCount++;
-
-                }
-                return dictionary;
-            }
-            else
-            {
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                Dictionary<string, object> dictionary =
-                    serializer.Deserialize<Dictionary<string, object>>(json);
-                return dictionary;
-            }
-        }
+       
 
         public static List<XmlNodeItem> GetXMLNodesItems(XmlDocument xmlDoc,bool DisableProhibitDtd = false)
         {

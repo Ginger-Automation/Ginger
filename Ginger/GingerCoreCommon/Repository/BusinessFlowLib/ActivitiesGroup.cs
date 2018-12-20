@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,15 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
-using GingerCore.Properties;
-using GingerCore.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Activities
 {
