@@ -49,6 +49,8 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
 
         List<GingerNode> GingerNodes = new List<GingerNode>();
 
+
+        // DELETE Not used or change to new approuch
         public void StartNode(string Name, string ID, string GingerGridHost = "127.0.0.1", int GingerGridPort = 15001)
         {
             //Console.WriteLine("* StartNode - " + Name);
