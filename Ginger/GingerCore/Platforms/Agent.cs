@@ -519,8 +519,7 @@ namespace GingerCore
 
         System.Diagnostics.Process mProcess;
         private void StartPluginService()
-        {
-
+        {            
             /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< MyDriver
             // Find the first service which match
             mGingerNodeInfo = (from x in WorkSpace.Instance.LocalGingerGrid.NodeList where x.ServiceId == "SeleniumChromeDriver" select x).FirstOrDefault();  // Keep First!!!
@@ -530,7 +529,7 @@ namespace GingerCore
             if (mGingerNodeInfo == null)
             {
                 // Dup with GR consolidate with timeout
-                mProcess = WorkSpace.Instance.PlugInsManager.StartService(PluginId);    
+                mProcess = WorkSpace.Instance.PlugInsManager.StartService(PluginId, "SeleniumChromeDriver");       // TEMP!!!!!!!!!!!!!!!!!!!!!!
             }
 
             Stopwatch st = Stopwatch.StartNew();

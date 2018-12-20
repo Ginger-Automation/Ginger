@@ -28,6 +28,8 @@ using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Linq;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
@@ -130,6 +132,39 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(v1.Value, initialValue);
         }
 
+        [TestMethod]
+        public void TestVariable_StringClearSpecialChar()
+        {
+            //Arrange
+            string initialValue = "S$tr!ing@123#";
+            string variableName = "V1";
+            string specialCharacters = "$@#!";
+            string expectedValue = RemoveSpecialCharacters(initialValue, specialCharacters.ToCharArray());
+            ResetBusinessFlow();
+
+            Activity activity1 = new Activity() { Active = true };
+            mBF.Activities.Add(activity1);
+
+            VariableString v1 = new VariableString() { Name = variableName, InitialStringValue = initialValue };
+            activity1.AddVariable(v1);
+
+            ActSetVariableValue actSetVariableValue = new ActSetVariableValue() { VariableName = variableName, SetVariableValueOption = VariableBase.eSetValueOptions.ClearSpecialChar, Active = true, Value = specialCharacters };
+            activity1.Acts.Add(actSetVariableValue);
+
+            //Act            
+            mGR.RunRunner();
+
+            //Assert
+            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
+            Assert.AreEqual(activity1.Status, eRunStatus.Passed);
+            Assert.AreEqual(expectedValue, mBF.Activities[0].Variables[0].Value);
+            Assert.AreEqual(expectedValue, v1.Value);
+        }
+
+        private string RemoveSpecialCharacters(string value, char[] specialCharacters)
+        {
+            return new String(value.Except(specialCharacters).ToArray());
+        }
 
         [TestMethod]
         public void TestVariable_PasswordStringSetValue()
@@ -157,6 +192,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(eRunStatus.Passed, activity1.Status);
             Assert.AreEqual(initialValue, v1.Value);
         }
+
 
         [TestMethod]
         public void TestVariable_RandomNumberSetValue()
