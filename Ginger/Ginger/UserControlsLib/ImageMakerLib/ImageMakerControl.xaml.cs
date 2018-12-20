@@ -651,6 +651,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.GitHub:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Github);
                     break;
+                case eImageType.Ping:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
+                    break;
                 #endregion
 
                 #region Other Images

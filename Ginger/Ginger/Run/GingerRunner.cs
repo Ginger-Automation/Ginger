@@ -1891,7 +1891,7 @@ namespace Ginger.Run
             if (gingerNodeInfo == null)
             {
                 // call plugin to start service and wait for ready
-                WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId);
+                WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId, actPlugin.ServiceId);
 
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 while (gingerNodeInfo == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start

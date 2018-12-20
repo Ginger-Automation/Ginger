@@ -20,6 +20,8 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
+using System.Linq;
 
 namespace GingerCoreNETUnitTest.PluginsLib
 {
@@ -53,20 +55,39 @@ namespace GingerCoreNETUnitTest.PluginsLib
         //public void AddPluginPackage()
         
         [TestMethod]
-        public void GetInstalledPluginPackages()
+        public void InstalledPluginPackageFromOnline()
         {
-            //Arrange       
-            //string folder = Path.Combine(Common.GetTestResourcesFolder(), @"PluginPackages\SeleniumPluginPackage.1.0.0");
+            //Arrange   
+
+            // TODO: create a simple plugin for unit test which will download faster.
+
+            string PluginId = "PACT";
+            string PluginVersion = "1.6";
+            string path = TestResources.getGingerUnitTesterTempFolder(@"Solutions\PluginsManagerSR1");
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path, true);
+            }
+
+            SolutionRepository solutionRepository = new SolutionRepository();
+            solutionRepository.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", PropertyNameForFileName: nameof(PluginPackage.PluginId));
+            solutionRepository.CreateRepository(path);
+            solutionRepository.Open(path);            
+            
+            PluginsManager pluginsManager = new PluginsManager(solutionRepository);
+            ObservableList<PluginPackage> pluginPackages =  solutionRepository.GetAllRepositoryItems<PluginPackage>();
 
             // Act            
-            //mPlugInsManager.AddPluginPackage(folder);
-            //int count = mPlugInsManager.GetInstalledPluginPackages().Count;
+            var p = pluginsManager.GetOnlinePluginsIndex();
+            OnlinePluginPackage onlinePluginPackage = (from x in p where x.Id == PluginId select x).SingleOrDefault();
+            //OnlinePluginPackageRelease onlinePluginPackageRelease 
+            pluginsManager.InstallPluginPackage(onlinePluginPackage, onlinePluginPackage.Releases[0]);
+            //string folder = Path.Combine(Common.GetTestResourcesFolder(), @"PluginPackages\SeleniumPluginPackage.1.0.0");
 
+            
             //Assert
-            //Assert.AreEqual(1, count);
-            // Assert.AreEqual("Selenium Driver", list[0].Name );
-            //Assert.AreEqual("SeleniumDriver", d.Name);
-
+            Assert.AreEqual(1, pluginPackages.Count);
+            Assert.AreEqual("PACT", pluginPackages[0].PluginId);            
         }
 
         [TestMethod]
