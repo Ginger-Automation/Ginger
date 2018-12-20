@@ -1778,7 +1778,8 @@ namespace Ginger.Run
             Agent.eStatus agentStatus = AA.Agent.Status;
             if (agentStatus != Agent.eStatus.Running && agentStatus != Agent.eStatus.Starting && agentStatus != Agent.eStatus.FailedToStart)
             {
-                int count = (from x in CurrentBusinessFlow.CurrentActivity.Acts where x.GetType() != typeof(ActPlugIn) select x).Count();
+                // start the agent if one of the action s is not subclass of  ActWithoutDriver = driver action
+                int count = (from x in CurrentBusinessFlow.CurrentActivity.Acts where typeof(ActWithoutDriver).IsAssignableFrom(x.GetType()) == false select x).Count();
                 if (count > 0)
                 {
                     StartAgent(AA.Agent);
