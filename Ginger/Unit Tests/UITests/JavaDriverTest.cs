@@ -69,9 +69,7 @@ namespace UnitTests.UITests.JavaDriverTest
                 mBF.Activities = new ObservableList<Activity>();
                 mBF.Name = "BF Test Java Driver";
                 Platform p = new Platform();
-                p.PlatformType = ePlatformType.Java;
-                mBF.Platforms = new ObservableList<Platform>();
-                mBF.Platforms.Add(p);
+                p.PlatformType = ePlatformType.Java;                
                 mBF.TargetApplications.Add(new TargetApplication() { AppName = "JavaTestApp" });
                 Activity activity = new Activity();
                 activity.TargetApplication = "JavaTestApp";

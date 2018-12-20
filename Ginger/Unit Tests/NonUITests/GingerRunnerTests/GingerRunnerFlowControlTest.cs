@@ -54,9 +54,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.Name = "BF Test Flow Control";
             mBF.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.Web;            
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "App1" });
 
             mGR = new GingerRunner();

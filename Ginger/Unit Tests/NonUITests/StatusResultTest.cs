@@ -60,11 +60,7 @@ namespace UnitTests.NonUITests
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Status Result Test";
-            mBF.Active = true;
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            mBF.Active = true;            
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };

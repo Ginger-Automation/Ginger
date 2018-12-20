@@ -48,12 +48,8 @@ namespace UnitTests.NonUITests
             mBF.Name = "Output Simulation";
             mBF.Active = true;
 
-
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.WebServices;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
-
+            p.PlatformType = ePlatformType.WebServices;            
 
             wsAgent = new Agent();
             wsAgent.DriverType = Agent.eDriverType.WebServices;

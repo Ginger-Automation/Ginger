@@ -57,9 +57,7 @@ namespace UnitTests.NonUITests
             mBF.Activities.Add(aaa);
 
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.Web;            
            
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "App1" });
 

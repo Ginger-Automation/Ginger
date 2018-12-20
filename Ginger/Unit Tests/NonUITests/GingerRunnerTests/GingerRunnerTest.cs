@@ -51,9 +51,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.Name = "BF Test Fire Fox";
             mBF.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.Web;            
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };

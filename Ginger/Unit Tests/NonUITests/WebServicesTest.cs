@@ -60,9 +60,7 @@ namespace UnitTests.NonUITests
 
 
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.WebServices;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.WebServices;            
 
 
             mDriver = new WebServicesDriver(mBF);

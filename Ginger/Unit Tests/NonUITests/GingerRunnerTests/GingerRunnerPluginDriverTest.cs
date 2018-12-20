@@ -35,9 +35,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBusinessFlow.Name = "MyDriver BF";
             mBusinessFlow.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.NA; 
-            mBusinessFlow.Platforms = new ObservableList<Platform>();
-            mBusinessFlow.Platforms.Add(p);
+            p.PlatformType = ePlatformType.NA;             
             mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = mAppName });
 
             mGingerRunner = new GingerRunner();
