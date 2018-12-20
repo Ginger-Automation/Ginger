@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -22,18 +22,6 @@ namespace GingerCore.Environments
 {
     public class UnixServer : RepositoryItemBase
     {        
-
-        public  static class Fields
-        {
-            public static string Name = "Name";
-            public static string Description = "Description";
-            public static string Host = "Host";
-            public static string Username = "Username";
-            public static string Password = "Password";
-            public static string PrivateKey = "PrivateKey";
-            public static string PrivateKeyPassPhrase = "PrivateKeyPassPhrase";
-            public static string RootPath = "RootPath";
-        }
 
         [IsSerializedForLocalRepository]
         public string Name { get; set; }

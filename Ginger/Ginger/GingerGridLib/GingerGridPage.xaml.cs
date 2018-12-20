@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using GingerCoreNET.RunLib;
 using System;
 using System.Linq;
@@ -38,6 +39,12 @@ namespace Ginger.GingerGridLib
             StatusLabel.BindControl(GingerGrid, nameof(GingerGrid.Status));
             mGingerGrid.NodeList.CollectionChanged += NodeList_CollectionChanged;
             ShowNodes();
+            ShowProcesses();
+        }
+
+        private void ShowProcesses()
+        {
+            xProcessesDataGrid.ItemsSource = WorkSpace.Instance.PlugInsManager.PluginProcesses;
         }
 
         private void NodeList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -59,19 +66,21 @@ namespace Ginger.GingerGridLib
             // Base on view type we can show simple list or screen shots or...
             if (mGingerGrid.NodeList.Count == 0)
             {
-                GingersGrid.Children.Clear();
+                xGingersGrid.Children.Clear();
                 // TODO: show a label no nodes found
                 return;
             }
             ShowNodeList();
         }
 
+
+
         private void ShowNodeList()
         {
             DataGrid DG = new DataGrid();
             DG.IsReadOnly = true;            
             DG.ItemsSource = mGingerGrid.NodeList.ToList();
-            GingersGrid.Children.Add(DG);
+            xGingersGrid.Children.Add(DG);
         }
 
         private void ShowUIGrid()
@@ -87,13 +96,13 @@ namespace Ginger.GingerGridLib
                 // Connect to LiveView Channel - this is not via Run act
                 Frame f = new Frame();
                 f.Content = p;
-                GingersGrid.Children.Add(f);
+                xGingersGrid.Children.Add(f);
 
                 Grid.SetRow(f, row);
                 Grid.SetColumn(f, col);
 
                 col++;
-                if (col > GingersGrid.ColumnDefinitions.Count)
+                if (col > xGingersGrid.ColumnDefinitions.Count)
                 {
                     col = 0;
                     row++;
@@ -115,21 +124,21 @@ namespace Ginger.GingerGridLib
             for (int r = 0; r < rows; r++)
             {
                 RowDefinition RD = new RowDefinition() { Height = new GridLength(100, GridUnitType.Star) };
-                GingersGrid.RowDefinitions.Add(RD);
+                xGingersGrid.RowDefinitions.Add(RD);
             }
 
             for (int c = 0; c < columns; c++)
             {
                 ColumnDefinition CD = new ColumnDefinition() { Width = new GridLength(100, GridUnitType.Star) };
-                GingersGrid.ColumnDefinitions.Add(CD);
+                xGingersGrid.ColumnDefinitions.Add(CD);
             }
         }
 
         private void ClearGingersGrid()
         {
-            GingersGrid.RowDefinitions.Clear();
-            GingersGrid.ColumnDefinitions.Clear();
-            GingersGrid.Children.Clear();
+            xGingersGrid.RowDefinitions.Clear();
+            xGingersGrid.ColumnDefinitions.Clear();
+            xGingersGrid.Children.Clear();
         }
 
         private void xUIViewButton_Click(object sender, RoutedEventArgs e)
@@ -145,16 +154,19 @@ namespace Ginger.GingerGridLib
         }
 
         private void xPingButton_Click(object sender, RoutedEventArgs e)
-        {
-            //TODO: make me work to ping each node
+        {            
             foreach  (GingerNodeInfo GNI in  mGingerGrid.NodeList)
             {
                 GingerNodeProxy GNA = new GingerNodeProxy(GNI);
+                GNA.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
                 GNA.Reserve();
                 string rc = GNA.Ping();
                 GNI.Ping = rc;
                 GNA.Disconnect();
             }
+            ShowProcesses();
+
+
         }
 
         private void xClearButton_Click(object sender, RoutedEventArgs e)

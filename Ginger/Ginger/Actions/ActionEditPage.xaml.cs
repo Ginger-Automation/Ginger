@@ -654,7 +654,6 @@ namespace Ginger.Actions
         {
             this.Dispatcher.Invoke(() =>
             {
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 mAction.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                 if (mAction.GetType() == typeof(ActLowLevelClicks))
                     App.MainWindow.WindowState = WindowState.Minimized;

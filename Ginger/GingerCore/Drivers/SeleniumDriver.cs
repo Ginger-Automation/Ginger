@@ -3620,8 +3620,8 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
-                            Driver.SwitchTo().DefaultContent();
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, learnFullElementInfoDetails);                            
+                            Driver.SwitchTo().ParentFrame();
                         }
 
                     }
@@ -4399,11 +4399,6 @@ namespace GingerCore.Drivers
                 list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = name, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
             }
             list.Add(new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = ElementInfo.XPath, Help = "Recommended (sensitive to page design changes)", Active = true, IsAutoLearned = true });
-            string eClass = e.GetAttribute("class");
-            if (!string.IsNullOrEmpty(eClass) && eClass != "GingerHighlight")
-            {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByClassName, LocateValue = eClass, Help = "Not Recommended (usually not unique)", Active = true, IsAutoLearned = true });
-            }
 
             return list;
         }
@@ -5562,7 +5557,7 @@ namespace GingerCore.Drivers
         // New HandleActUIElement - will replace ActGenElement
         // ----------------------------------------------------------------------------------------------------------------------------------
 
-        private void HandleActUIElement(ActUIElement act)
+        public void HandleActUIElement(ActUIElement act)
         {
             IWebElement e = null;
 
