@@ -63,8 +63,8 @@ namespace Ginger.SourceControl
             SourceControlURLTextBox.IsReadOnly = true;
             SourceControlURLTextBox.IsEnabled = false;
 
-            App.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlUser);
-            App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlPass);
+            App.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlUser));
+            App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlPass));
             if (SourceControlClassTextBox.Text == SourceControlBase.eSourceControlType.GIT.ToString())
             {
                 xTimeoutPanel.Visibility = Visibility.Hidden;
@@ -76,8 +76,8 @@ namespace Ginger.SourceControl
                
               
             }
-            App.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SolutionSourceControlAuthorName);
-            App.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SolutionSourceControlAuthorEmail);
+            App.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SolutionSourceControlAuthorName));
+            App.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SolutionSourceControlAuthorEmail));
 
             if (App.UserProfile.Solution.SourceControl.IsSupportingLocks)
             {
