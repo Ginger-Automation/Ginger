@@ -207,10 +207,9 @@ namespace Amdocs.Ginger.GingerConsole
             {
                 count++;
                 Console.WriteLine("# " + count + " - " + BF.Name);
-                foreach (BusinessFlow BF in BFs)
+                foreach (Activity activity in BF.Activities)
                 {
-                    count++;
-                    Console.WriteLine("# " + count + " - " + BF.Name);
+                    Console.WriteLine("# " + count + " - " + activity.ActivityName);
                 }
             }
         }
