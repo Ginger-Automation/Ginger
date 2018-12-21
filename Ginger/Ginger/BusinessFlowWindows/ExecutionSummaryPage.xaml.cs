@@ -32,6 +32,7 @@ using Ginger.Run;
 using GingerCoreNET.GeneralLib;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -190,11 +191,11 @@ namespace Ginger.BusinessFlowWindows
 
         private void ExportExecutionDetails(object sender, RoutedEventArgs e)
         {            
-            ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
+            ObservableList<IBusinessFlow> bfs = new ObservableList<IBusinessFlow>();
             bfs.Add(mBusinessFlow);           
             if(!ExportResultsToALMConfigPage.Instance.IsProcessing)
             {
-                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables));
+                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables));
                 ExportResultsToALMConfigPage.Instance.ShowAsWindow();
             }
             else

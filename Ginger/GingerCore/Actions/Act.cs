@@ -143,7 +143,7 @@ namespace GingerCore.Actions
         // -----------------------------------------------------------------------------------------------------------------------------------------------
 
         [IsSerializedForLocalRepository]
-        public ActionLogConfig ActionLogConfig;
+        public ActionLogConfig ActionLogConfig { get; set; }
 
         private bool mEnableActionLogConfig;
         [IsSerializedForLocalRepository]
@@ -1010,7 +1010,11 @@ namespace GingerCore.Actions
         public void AddOrUpdateReturnParamActualWithPath(string ParamName, string ActualValue, string sPath)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActReturnValue ARC = (from arc in ReturnValues where arc.Param == ParamName && arc.PathCalculated == sPath select arc).FirstOrDefault();
+            if (sPath == null)
+            {
+                sPath = string.Empty;
+            }
+            ActReturnValue ARC = (from arc in ReturnValues where arc.ParamCalculated == ParamName && arc.PathCalculated == sPath select arc).FirstOrDefault();
             if (ARC == null && (AddNewReturnParams == true || ConfigOutputDS == true))
             {
                 ARC = new ActReturnValue();

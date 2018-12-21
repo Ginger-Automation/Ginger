@@ -42,6 +42,7 @@ using GingerCore.GeneralLib;
 using Ginger.Reports;
 using Amdocs.Ginger;
 using GingerCoreNET.ReporterLib;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -613,7 +614,7 @@ namespace Ginger.Run.RunSetActions
                                             fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'></td>");
                                         }
                                     }
-                                    else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.ExecutionDescription)
+                                    else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.RunDescription)
                                     {
                                         if (firstIteration)
                                         {

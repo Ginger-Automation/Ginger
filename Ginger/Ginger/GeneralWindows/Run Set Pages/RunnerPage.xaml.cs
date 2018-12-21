@@ -39,6 +39,7 @@ using Amdocs.Ginger.Common.Enums;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.Environments;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 
 namespace Ginger.Run
 {
@@ -79,7 +80,7 @@ namespace Ginger.Run
             Legend
         }
         StatusColorSelector ColorSelector = new StatusColorSelector();
-        ObservableList<BusinessFlow> mBFESs;
+        ObservableList<IBusinessFlow> mBFESs;
         ObservableList<RunnerItemPage> mBusinessflowRunnerItems = null;
         public ObservableList<RunnerItemPage> BusinessflowRunnerItems
         {
@@ -305,7 +306,7 @@ namespace Ginger.Run
             }
             else
             {
-                ExecutionLogger.GenerateBusinessFlowOfflineReport(currentConf.HTMLReportsFolder + bf.Name, bf, App.RunsetExecutor.RunSetConfig.Name);
+                ExecutionLogger.GenerateBusinessFlowOfflineReport(mRunner.ProjEnvironment, currentConf.HTMLReportsFolder + bf.Name, bf, App.RunsetExecutor.RunSetConfig.Name);
             }
         }
         private void Businessflow_ClickActive(object sender, RoutedEventArgs e)
@@ -630,7 +631,7 @@ namespace Ginger.Run
                 return;
             }
             App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
-            await mRunner.ContinueRunAsync(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.Runner, Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.LastStoppedAction);
+            await mRunner.ContinueRunAsync(eContinueLevel.Runner,eContinueFrom.LastStoppedAction);
         }
         private void ViewReportBtn_Click(object sender, RoutedEventArgs e)
         {

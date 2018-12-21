@@ -39,6 +39,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     {
         RepositoryFolder<ApplicationPOMModel> mPomModelsFolder;
         public ApplicationPOMModel POM;
+
         public string POMFolder;
         public ObservableList<UIElementFilter> AutoMapElementTypesList = new ObservableList<UIElementFilter>();
         public ObservableList<Agent> OptionalAgentsList = null;
@@ -92,6 +93,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public override void Finish()
         {
+
             if (ScreenShot != null)
             {
                 using (var ms = new MemoryStream())
@@ -99,12 +101,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     POM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShot);
                 }
             }
-
             if (mPomModelsFolder != null)
                 mPomModelsFolder.AddRepositoryItem(POM);
             else
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
-
             //close all Agents raised in Wizard
             CloseStartedAgents();
         }
@@ -119,7 +119,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             //close all Agents raised in Wizard
             CloseStartedAgents();
-
             base.Cancel();
         }
 

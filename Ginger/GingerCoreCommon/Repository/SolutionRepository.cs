@@ -189,6 +189,7 @@ namespace Amdocs.Ginger.Repository
             RepositoryFolderBase repoFolder = null;
             Parallel.ForEach(mSolutionRootFolders, folder =>
             {
+
                 if (repoFolder == null)
                 {
                     if (Path.GetFullPath(folderPath) == Path.GetFullPath(folder.FolderFullPath))
@@ -399,7 +400,7 @@ namespace Amdocs.Ginger.Repository
 
         public void AddItemInfo<T>(string pattern, string rootFolder, bool containRepositoryItems, string displayName, string PropertyNameForFileName)
         {
-            Type type = RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(typeof(T));
+          // Type type = RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(typeof(T));
           
             SolutionRepositoryItemInfo<T> SRII = new SolutionRepositoryItemInfo<T>();
             SRII.ItemFileSystemRootFolder = rootFolder;
@@ -407,7 +408,7 @@ namespace Amdocs.Ginger.Repository
             SRII.Pattern = pattern;
             SRII.ItemRootReposiotryfolder = new RepositoryFolder<T>(this, SRII, pattern, rootFolder, containRepositoryItems, displayName, true);
 
-            mSolutionRepositoryItemInfoDictionary.Add(type, SRII);
+            mSolutionRepositoryItemInfoDictionary.Add(typeof(T), SRII);
             mSolutionRootFolders.Add((RepositoryFolderBase)SRII.ItemRootRepositoryFolder);
         }
 
@@ -415,7 +416,7 @@ namespace Amdocs.Ginger.Repository
         {
             SolutionRepositoryItemInfoBase SRII;
 
-           type= RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(type);
+           //type= RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(type);
 
             mSolutionRepositoryItemInfoDictionary.TryGetValue(type, out SRII);
 
@@ -433,13 +434,12 @@ namespace Amdocs.Ginger.Repository
             return SRII;
         }
 
-        
+
 
         private SolutionRepositoryItemInfo<T> GetSolutionRepositoryItemInfo<T>()
         {
-            Type type= RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(typeof(T));
             SolutionRepositoryItemInfoBase SRIIBase = GetSolutionRepositoryItemInfo(typeof(T));
-        SolutionRepositoryItemInfo<T> SRII = (SolutionRepositoryItemInfo<T>)SRIIBase;
+            SolutionRepositoryItemInfo<T> SRII = (SolutionRepositoryItemInfo<T>)SRIIBase;
             return SRII;
         }
 

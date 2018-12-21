@@ -16,33 +16,24 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore.FlowControlLib;
-using Newtonsoft.Json;
+using GingerCore.Variables;
 
 namespace Ginger.Reports
 {
-    // Json will serialize onlu marked attr and not all
-    [JsonObject(MemberSerialization.OptIn)]
-    public class FlowControlReport
+    public class VariableReport
     {
-        private FlowControl mFlowControl;
+        private VariableBase mVariable;
 
-        public FlowControlReport(FlowControl ARV)
+        public VariableReport(VariableBase Variable)
         {
-            mFlowControl = ARV;
+            mVariable = Variable;
         }
 
+        // Put here everything we want to make public for users customizing the reports, never give direct access to the activity iteself.
+        // serve as facade to expose only what we want
+        // must not change as it will break existing reports, no compile check on XAML
         public int Seq { get; set; }
-
-        [JsonProperty]
-        public bool Active { get { return mFlowControl.Active; } }
-
-        [JsonProperty]
-        public string Condition { get { return mFlowControl.Condition; } }
-
-        [JsonProperty]
-        public string ConditionCalculated { get { return mFlowControl.ConditionCalculated; } }
-        
-        //TODO: add the rest of the properties
+        public string Name { get { return mVariable.Name; } }
+        public string Value { get { return mVariable.Value; } }        
     }
 }

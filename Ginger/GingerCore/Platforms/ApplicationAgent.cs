@@ -55,13 +55,13 @@ namespace GingerCore.Platforms
         }
         
         // No need to serialized as it used only in runtime        
-        public Agent Agent 
+        public IAgent Agent 
         {
             get { return mAgent; }
             set
             {
                 if (mAgent != null) mAgent.PropertyChanged -= Agent_OnPropertyChange;
-                mAgent = value;
+                mAgent =(Agent) value;
                 if (mAgent != null)
                 {
                     AgentName = mAgent.Name;
@@ -116,7 +116,7 @@ namespace GingerCore.Platforms
 
         private void Agent_OnPropertyChange(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == Agent.Fields.Name)
+            if (e.PropertyName == GingerCore.Agent.Fields.Name)
             {
                OnPropertyChanged(Fields.AgentName);
             }

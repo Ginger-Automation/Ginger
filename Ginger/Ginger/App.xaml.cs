@@ -60,6 +60,7 @@ using System.Windows.Threading;
 using System.Windows.Input;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -184,8 +185,18 @@ namespace Ginger
         /// <summary>
         /// Hold all Run Set execution data + execution methods
         /// </summary>        
-        public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
+        public static RunsetExecutor RunsetExecutor
+        {
+            get
+            {
+                return WorkSpace.RunsetExecutor;
+            }
 
+            set
+            {
+                WorkSpace.RunsetExecutor = value;
+            }
+        }
         //TODO: whenever changed check if isDirty - and ask the user if to save
         public static RepositoryItemBase CurrentRepositoryItem { get; set; }
 
@@ -195,7 +206,18 @@ namespace Ginger
         public static IEnumerable<object> CurrentFolderItem { get; set; }
 
         // Business Flow Objects        
-        private static ProjEnvironment mAutomateTabEnvironment;
+        private static ProjEnvironment mAutomateTabEnvironment
+        {
+            get
+            {
+                return (ProjEnvironment)WorkSpace.AutomateTabEnvironment;
+
+            }
+            set{
+
+                WorkSpace.AutomateTabEnvironment = value;
+            }
+        }
         public static ProjEnvironment AutomateTabEnvironment
         {
             get
@@ -210,7 +232,8 @@ namespace Ginger
             }
         }
 
-        public static GingerRunner AutomateTabGingerRunner = new GingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
+
+        public static GingerRunner AutomateTabGingerRunner;
 
 
         public static AppProgressBar AppProgressBar { get; set; }
@@ -234,7 +257,17 @@ namespace Ginger
 
 
         public static BusinessFlow LastBusinessFlow { get; set; }
-        private static BusinessFlow mBusinessFlow;
+        private static BusinessFlow mBusinessFlow
+        {
+            get
+            {
+                return(BusinessFlow) WorkSpace.Businessflow;
+            }
+            set
+            {
+                WorkSpace.Businessflow = value;
+            }
+        }
         public static BusinessFlow BusinessFlow
         {
             get { return mBusinessFlow; }
@@ -285,7 +318,17 @@ namespace Ginger
         //    }
         //}
 
-        public static bool RunningFromConfigFile = false;
+        public static bool RunningFromConfigFile
+        {
+            get
+            {
+                return WorkSpace.RunningFromConfigFile;
+            }
+            set
+            {
+                WorkSpace.RunningFromConfigFile = value;
+            }
+        }
 
         public static bool RunningFromUnitTest = false;
 
@@ -356,6 +399,9 @@ namespace Ginger
 
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
 
+            Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
+
+            AutomateTabGingerRunner = new GingerRunner(eExecutedFrom.Automation);
 
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
@@ -368,6 +414,7 @@ namespace Ginger
             if (WorkSpace.Instance.BetaFeatures.ShowDebugConsole)
             {
                 DebugConsoleWindow.Show();
+                WorkSpace.Instance.BetaFeatures.DisplayStatus();
                 WorkSpace.Instance.BetaFeatures.DisplayStatus();
             }
 
@@ -456,7 +503,11 @@ namespace Ginger
             }
             Reporter.ToLog(eAppReporterLogLevel.FATAL, ">>>>>>>>>>>>>> Error occurred on stand alone thread(non UI) - " + e.ExceptionObject);
             //Reporter.ToUser(eUserMsgKeys.ThreadError, "Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
-            App.AppSolutionAutoSave.DoAutoSave();
+
+            if (App.RunningFromConfigFile == false)
+            {
+                App.AppSolutionAutoSave.DoAutoSave();
+            }
 
             /// if (e.IsTerminating)...
             /// 
@@ -647,7 +698,7 @@ namespace Ginger
         }
 
         private static void SolutionCleanup()
-        {
+        {            
             App.UserProfile.Solution = null;
             App.AutomateTabGingerRunner.ClearAgents();
             App.BusinessFlow = null;
@@ -665,8 +716,15 @@ namespace Ginger
                 mLoadingSolution = true;
                 OnPropertyChanged(nameof(LoadingSolution));
 
-                // Cleanup last loaded solution 
-                WorkSpace.Instance.LocalGingerGrid.Reset();  //Clear the grid
+                // Cleanup last loaded solution Plugins 
+                // WorkSpace.Instance.LocalGingerGrid.Reset();  //Clear the grid
+
+                if (WorkSpace.Instance.SolutionRepository != null)
+                {
+                    WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
+                }
+
+
                 if (!App.RunningFromConfigFile)
                 {
                     AppSolutionAutoSave.SolutionAutoSaveEnd();
@@ -829,9 +887,12 @@ namespace Ginger
         private static void HandleAutomateRunner(Solution solution)
         {
             App.AutomateTabGingerRunner.SolutionFolder = solution.Folder;
-            App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IAgent>();
+            List<IAgent> IAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x);
+            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<IAgent>(IAgents);
             App.AutomateTabGingerRunner.SolutionApplications = solution.ApplicationPlatforms;
-            App.AutomateTabGingerRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>();
+            List<IDataSourceBase> IDataSourceBases = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().ListItems.ConvertAll(x => (IDataSourceBase)x); ;
+            App.AutomateTabGingerRunner.DSList= new ObservableList<IDataSourceBase>(IDataSourceBases);
+
             App.AutomateTabGingerRunner.CurrentSolution = solution;
         }
 
@@ -1005,7 +1066,7 @@ namespace Ginger
             }
 
             if (App.UserProfile.Solution != null)
-                App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IAgent>();
+                App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<IAgent>( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x=>(IAgent)x).ToList());
             else
                 App.AutomateTabGingerRunner.SolutionAgents = null;
             App.AutomateTabGingerRunner.UpdateApplicationAgents();

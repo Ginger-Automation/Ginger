@@ -29,6 +29,7 @@ using System.IO;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
 using Amdocs.Ginger.CoreNET.Run.RunsetActions;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Reports
 {
@@ -88,7 +89,7 @@ namespace Ginger.Reports
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpression mVE=new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
+            ValueExpression mVE=new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
             string extraInformationCalculated = string.Empty;
             mVE.Value = mEmailAttachment.ExtraInformation;
             extraInformationCalculated = mVE.ValueCalculated;

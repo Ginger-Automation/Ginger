@@ -20,6 +20,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using GingerCore.Environments;
 using GingerCore.DataSource;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.Actions
 {
@@ -27,7 +28,7 @@ namespace GingerCore.Actions
     {
         public BusinessFlow RunOnBusinessFlow;
         public ProjEnvironment RunOnEnvironment;
-        public ObservableList<DataSourceBase> DSList;
+        public ObservableList<IDataSourceBase> DSList;
         public abstract void Execute();
     }
 }

@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.AnalyzerLib;
@@ -271,7 +272,7 @@ namespace Ginger.Run
                 {
                     Parallel.ForEach(mRunSetConfig.GingerRunners, Runner =>
                     {
-                        Runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IAgent>();
+                        Runner.SolutionAgents = new ObservableList<IAgent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x).ToList());
                         //to get the latest list of applications agents
                         Runner.UpdateApplicationAgents();
                     });
@@ -370,13 +371,13 @@ namespace Ginger.Run
                     switch (EventArgs.RunnerItemType)
                     {
                         case RunnerItemPage.eRunnerItemType.BusinessFlow:
-                            await currentSelectedRunner.ContinueRunAsync(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.Runner, Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificBusinessFlow, (BusinessFlow)EventArgs.RunnerItemObject, null, null);
+                            await currentSelectedRunner.ContinueRunAsync(eContinueLevel.Runner, eContinueFrom.SpecificBusinessFlow, (BusinessFlow)EventArgs.RunnerItemObject, null, null);
                             break;
                         case RunnerItemPage.eRunnerItemType.Activity:
-                            await currentSelectedRunner.ContinueRunAsync(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.Runner, Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificActivity, mCurrentBusinessFlowRunnerItemObject, (Activity)EventArgs.RunnerItemObject, null);
+                            await currentSelectedRunner.ContinueRunAsync(eContinueLevel.Runner, eContinueFrom.SpecificActivity, mCurrentBusinessFlowRunnerItemObject, (Activity)EventArgs.RunnerItemObject, null);
                             break;
                         case RunnerItemPage.eRunnerItemType.Action:
-                            await currentSelectedRunner.ContinueRunAsync(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.Runner, Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificAction, mCurrentBusinessFlowRunnerItemObject, mCurrentActivityRunnerItemObject, (Act)EventArgs.RunnerItemObject);
+                            await currentSelectedRunner.ContinueRunAsync(eContinueLevel.Runner, eContinueFrom.SpecificAction, mCurrentBusinessFlowRunnerItemObject, mCurrentActivityRunnerItemObject, (Act)EventArgs.RunnerItemObject);
                             break;
                     }
                     break;
@@ -443,7 +444,7 @@ namespace Ginger.Run
             }
             this.Dispatcher.Invoke(() =>
             {
-                mCurrentSelectedRunner.Runner.TotalBusinessflow = ((IList<BusinessFlow>)sender).Count;
+                mCurrentSelectedRunner.Runner.TotalBusinessflow = ((IList<IBusinessFlow>)sender).Count;
                 mCurrentSelectedRunner.UpdateExecutionStats();
                 UpdateBusinessflowCounter();
                 mCurrentSelectedRunner.UpdateRunnerInfo();
@@ -2146,7 +2147,7 @@ namespace Ginger.Run
 
         private void xExportToAlmBtn_Click(object sender, RoutedEventArgs e)
         {            
-            ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
+            ObservableList<IBusinessFlow> bfs = new ObservableList<IBusinessFlow>();
             
             foreach (GingerRunner GR in App.RunsetExecutor.Runners)
             {

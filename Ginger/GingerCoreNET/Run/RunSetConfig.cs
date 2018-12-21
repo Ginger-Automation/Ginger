@@ -23,6 +23,7 @@ using GingerCore.GeneralLib;
 using Amdocs.Ginger.Common.Enums;
 using System;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 
 namespace Ginger.Run
 {

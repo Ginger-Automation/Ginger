@@ -253,11 +253,11 @@ namespace Ginger.WindowExplorer
             }
 
             App.AutomateTabGingerRunner.PrepActionVE(act);
-            ApplicationAgent ag = App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent ag =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
             if (ag != null)
             {
                 App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
-                ag.Agent.RunAction(act);
+               ((Agent) ag.Agent).RunAction(act);
             }
             
             TestStatusTextBlock.Text = string.Empty;

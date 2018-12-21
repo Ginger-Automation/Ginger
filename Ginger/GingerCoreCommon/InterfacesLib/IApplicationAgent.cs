@@ -7,7 +7,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
     public interface IApplicationAgent
     {
         string AgentName { get; set; }
-        IAgent agent { get; set; }
+        IAgent Agent { get; set; }
         string AppName { get; }
     }
 }

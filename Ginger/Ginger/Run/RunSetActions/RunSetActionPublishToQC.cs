@@ -32,6 +32,7 @@ using GingerCore.ALM;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -46,7 +47,7 @@ namespace Ginger.Run.RunSetActions
             public static string toAttachActivitiesGroupReport = "toAttachActivitiesGroupReport";
         }
         PublishToALMConfig PublishToALMConfig = new PublishToALMConfig();
-        readonly ValueExpression mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);                
+        readonly ValueExpression mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);                
 
         private string mVariableForTCRunName;
         [IsSerializedForLocalRepository]
@@ -100,7 +101,7 @@ namespace Ginger.Run.RunSetActions
         public override void Execute(ReportInfo RI)
         {
             string result = string.Empty;
-            ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
+            ObservableList<IBusinessFlow> bfs = new ObservableList<IBusinessFlow>();
             SetExportToALMConfig();
             foreach (BusinessFlowReport BFR in RI.BusinessFlows)
             {

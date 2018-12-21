@@ -20,6 +20,8 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.ALM;
+using Ginger.GeneralLib;
 using Ginger.Reports;
 using GingerCore;
 using GingerCore.Variables;
@@ -31,14 +33,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text;
-using GingerCoreNET.ReporterLib;
-using GingerCoreNET.ALMLib;
-using GingerCoreNET.GeneralLib;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.SolutionGeneral
 {
-    public class Solution : RepositoryItemBase
+    public class Solution : RepositoryItemBase,ISolution
     {
         public SourceControlBase SourceControl { get; set; }
 
@@ -193,10 +191,10 @@ namespace Ginger.SolutionGeneral
                 {
                     extraChangedItems= extraChangedItems.TrimEnd();
                     extraChangedItems= extraChangedItems.TrimEnd(new char[] { ',' });                    
-                    ////if (Reporter.ToUser(eUserMsgKeys.SolutionSaveWarning, extraChangedItems) == System.Windows.MessageBoxResult.Yes)
-                    ////{
-                    ////    doSave = true;
-                    ////}
+                    if (Reporter.ToUser(eUserMsgKeys.SolutionSaveWarning, extraChangedItems) == System.Windows.MessageBoxResult.Yes)
+                    {
+                        doSave = true;
+                    }
                 }
             }
 
@@ -305,12 +303,11 @@ namespace Ginger.SolutionGeneral
                 HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
             }
             Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
-            RepositoryItemHelper.RepositoryItemFactory.RunExecutioFrom(eExecutedFrom.Automation).ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            //App.AutomateTabGingerRunner.ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            App.AutomateTabGingerRunner.ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ApplicationPlatform> ApplicationPlatforms;
+        public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
 
         public string MainApplication
         {
@@ -424,39 +421,39 @@ namespace Ginger.SolutionGeneral
             });
         }
 
-        public IReportTemplate CreateNewReportTemplate(string path = "")
+        internal ReportTemplate CreateNewReportTemplate(string path = "")
         {
-            IReportTemplate NewReportTemplate = null;//new ReportTemplate() { Name = "New Report Template", Status = ReportTemplate.eReportStatus.Development };
+            ReportTemplate NewReportTemplate = new ReportTemplate() { Name = "New Report Template", Status = ReportTemplate.eReportStatus.Development };
             
-            //ReportTemplateSelector RTS = new ReportTemplateSelector();
-            //RTS.ShowAsWindow();
+            ReportTemplateSelector RTS = new ReportTemplateSelector();
+            RTS.ShowAsWindow();
 
-            //if (RTS.SelectedReportTemplate != null)
-            //{
+            if (RTS.SelectedReportTemplate != null)
+            {
 
-            //    NewReportTemplate.Xaml = RTS.SelectedReportTemplate.Xaml;
+                NewReportTemplate.Xaml = RTS.SelectedReportTemplate.Xaml;
 
-            //    //Make it Generic or Const string for names used for File
-            //    string NewReportName = string.Empty;
-            //    if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
-            //    {
-            //        NewReportTemplate.Name = NewReportName;                    
-            //        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(()NewReportTemplate);
-            //    }
-             return NewReportTemplate;
-            //}
-           // return null;
+                //Make it Generic or Const string for names used for File
+                string NewReportName = string.Empty;
+                if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
+                {
+                    NewReportTemplate.Name = NewReportName;                    
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);
+                }
+                return NewReportTemplate;
+            }
+            return null;
         }
 
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList = new ObservableList<ExecutionLoggerConfiguration>();
+        public ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList { get; set; } = new ObservableList<ExecutionLoggerConfiguration>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
+        public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList { get; set; } = new ObservableList<HTMLReportsConfiguration>();
 
         //public string VariablesNames
         //{

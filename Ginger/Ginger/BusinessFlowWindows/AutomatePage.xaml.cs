@@ -21,6 +21,7 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
 using Ginger.Actions.ActionConversion;
@@ -41,6 +42,7 @@ using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
+using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Variables;
 using GingerCoreNET.RunLib;
@@ -165,10 +167,10 @@ namespace Ginger
                     RunActivity();
                     break;
                 case AutomateEventArgs.eEventType.ContinueActionRun:
-                    ContinueRunFRomAutomateTab(Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificAction);
+                    ContinueRunFRomAutomateTab(eContinueFrom.SpecificAction);
                     break;
                 case AutomateEventArgs.eEventType.ContinueActivityRun:
-                    ContinueRunFRomAutomateTab(Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificActivity);
+                    ContinueRunFRomAutomateTab(eContinueFrom.SpecificActivity);
                     break;
                 case AutomateEventArgs.eEventType.StopRun:
                     StopAutomateRun();
@@ -861,13 +863,13 @@ namespace Ginger
                 switch (resetFrom)
                 {
                     case Run.GingerRunner.eResetStatus.All:
-                        App.AutomateTabGingerRunner.ResetStatus(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.All, App.BusinessFlow);
+                        App.AutomateTabGingerRunner.ResetStatus(eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.All, App.BusinessFlow);
                         break;
                     case Run.GingerRunner.eResetStatus.FromSpecificActivityOnwards:
-                        App.AutomateTabGingerRunner.ResetStatus(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActivityOnwards, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity);
+                        App.AutomateTabGingerRunner.ResetStatus(eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActivityOnwards, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity);
                         break;
                     case Run.GingerRunner.eResetStatus.FromSpecificActionOnwards:
-                        App.AutomateTabGingerRunner.ResetStatus(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActionOnwards, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity, (Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem);
+                        App.AutomateTabGingerRunner.ResetStatus(eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActionOnwards, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity, (Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -967,8 +969,8 @@ namespace Ginger
         {
             App.AutomateTabGingerRunner.projEnvironment = App.AutomateTabEnvironment;
             App.AutomateTabGingerRunner.SolutionFolder = App.UserProfile.Solution.Folder;
-            App.AutomateTabGingerRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>();
-            App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IAgent>();            
+            App.AutomateTabGingerRunner.DSList = new ObservableList<IDataSourceBase>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().ListItems.ConvertAll(x => (IDataSourceBase)x).ToList());
+            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<IAgent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x).ToList());
             App.AutomateTabGingerRunner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
 
             SetGingerRunnerSpeed();
@@ -1171,7 +1173,6 @@ namespace Ginger
             {
                 App.AutomateTabGingerRunner.SetCurrentActivityAgent();
             }
-
             
             if ((typeof(ActPlugIn).IsAssignableFrom(actType)))
             {
@@ -1210,15 +1211,15 @@ namespace Ginger
 
         private void btnContinute_Click(object sender, RoutedEventArgs e)
         {
-            ContinueRunFRomAutomateTab(Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.LastStoppedAction);
+            ContinueRunFRomAutomateTab(eContinueFrom.LastStoppedAction);
         }
 
         private void ContinuteRunActiviytButton_Click(object sender, RoutedEventArgs e)
         {
-            ContinueRunFRomAutomateTab(Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificActivity);
+            ContinueRunFRomAutomateTab(eContinueFrom.SpecificActivity);
         }
 
-        private async Task ContinueRunFRomAutomateTab(Amdocs.Ginger.Common.InterfacesLib.eContinueFrom continueFrom)
+        private async Task ContinueRunFRomAutomateTab(eContinueFrom continueFrom)
         {
             try
             {
@@ -1229,14 +1230,14 @@ namespace Ginger
                 App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
                 switch (continueFrom)
                 {
-                    case Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.LastStoppedAction:
-                        await App.AutomateTabGingerRunner.ContinueRunAsync(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.StandalonBusinessFlow, Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.LastStoppedAction);
+                    case eContinueFrom.LastStoppedAction:
+                        await App.AutomateTabGingerRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.LastStoppedAction);
                         break;
-                    case Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificAction:
-                        await App.AutomateTabGingerRunner.ContinueRunAsync(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.StandalonBusinessFlow, Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificAction, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity, (Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem);
+                    case eContinueFrom.SpecificAction:
+                        await App.AutomateTabGingerRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificAction, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity, (Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem);
                         break;
-                    case Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificActivity:
-                        await App.AutomateTabGingerRunner.ContinueRunAsync(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.StandalonBusinessFlow, Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificActivity, App.BusinessFlow,(Activity) App.BusinessFlow.CurrentActivity);
+                    case eContinueFrom.SpecificActivity:
+                        await App.AutomateTabGingerRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificActivity, App.BusinessFlow,(Activity) App.BusinessFlow.CurrentActivity);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -1256,7 +1257,7 @@ namespace Ginger
 
         private void ContinuteRunButton_Click(object sender, RoutedEventArgs e)
         {
-            ContinueRunFRomAutomateTab(Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificAction);
+            ContinueRunFRomAutomateTab(eContinueFrom.SpecificAction);
         }
 
         private void StartAgent_Click(object sender, RoutedEventArgs e)
@@ -1412,7 +1413,7 @@ namespace Ginger
 
         private void ExportExecutionResultsToALM_Click(object sender, RoutedEventArgs e)
         {
-            ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
+            ObservableList<IBusinessFlow> bfs = new ObservableList<IBusinessFlow>();
             bfs.Add(App.BusinessFlow);
             ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables));
             ExportResultsToALMConfigPage.Instance.ShowAsWindow();

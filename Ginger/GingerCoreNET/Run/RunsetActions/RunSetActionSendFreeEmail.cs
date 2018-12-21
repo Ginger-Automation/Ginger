@@ -5,6 +5,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore.GeneralLib;

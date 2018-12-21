@@ -36,7 +36,8 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCoreNET.ReporterLib;
 using Amdocs.Ginger;
 using Amdocs.Ginger.CoreNET.Execution;
-
+using Amdocs.Ginger.CoreNET.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 
 namespace Ginger.Run
 {
@@ -117,12 +118,12 @@ namespace Ginger.Run
 
         public void ConfigureRunnerForExecution(IGingerRunner runner)
         {
-            runner.SetExecutionEnvironment(RunsetExecutionEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IProjEnvironment>());
+            runner.SetExecutionEnvironment(RunsetExecutionEnvironment, RepositoryItemHelper.RepositoryItemFactory.GetAllEnvironments());
             
             runner.CurrentSolution = WorkSpace.Instance.Solution;
-            runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IAgent>();
+            runner.SolutionAgents = RepositoryItemHelper.RepositoryItemFactory.GetAllIAgents();
             // runner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
-            runner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>();
+            runner.DSList = RepositoryItemHelper.RepositoryItemFactory.GetDatasourceList();
             runner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             runner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
         }
@@ -137,14 +138,17 @@ namespace Ginger.Run
             foreach (IApplicationAgent p in runner.ApplicationAgents)
             {
                 if (p.AgentName != null)
-                   p.Agent = (from a in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IAgent>() where a.Name == p.AgentName select a).FirstOrDefault();
+                {
+                    ObservableList<IAgent> IAgents = RepositoryItemHelper.RepositoryItemFactory.GetAllIAgents();
+                    p.Agent = (from a in IAgents where a.Name == p.AgentName select a).FirstOrDefault();
+                }
             }
 
             //Load the biz flows     
             ////runner.BusinessFlows.Clear();
             foreach (BusinessFlowRun bf in runner.BusinessFlowsRunList)
             {
-                ObservableList<IBusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IBusinessFlow>();
+                ObservableList<IBusinessFlow> businessFlows = RepositoryItemHelper.RepositoryItemFactory.GetListofBusinessFlow();
                 IBusinessFlow BF1 = (from bfr in businessFlows where bfr.Guid == bf.BusinessFlowGuid select bfr).FirstOrDefault();
                 if (BF1 == null)
                     BF1 = (from bfr in businessFlows where bfr.Name == bf.BusinessFlowName select bfr).FirstOrDefault();
@@ -213,7 +217,7 @@ namespace Ginger.Run
                         ////gr.ProjEnvironment.CloseEnvironment();
                 }
             }
-            if (RepositoryItemHelper.RepositoryItemFactory.RunExecutioFrom(eExecutedFrom.Automation).projEnvironment != null) { }
+            if (Helper.RuntimeObjectFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment != null) { }
                 ////RepositoryItemHelper.RepositoryItemFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment.CloseEnvironment();
         }
 

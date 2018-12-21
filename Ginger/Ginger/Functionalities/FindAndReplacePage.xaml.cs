@@ -623,7 +623,7 @@ namespace Ginger.Functionalities
                     }
 
                     //pull variables from all repository BF's
-                    AddVariableFromBusinessFlowList(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
+                    AddVariableFromBusinessFlowList(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IBusinessFlow>());
 
                     //pull variables from shared repository activities
                     ObservableList<Activity> RepoActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
@@ -646,7 +646,7 @@ namespace Ginger.Functionalities
                     break;
 
                 case eContext.AutomatePage:
-                    AddVariableFromBusinessFlowList(new ObservableList<BusinessFlow>() { App.BusinessFlow });
+                    AddVariableFromBusinessFlowList(new ObservableList<IBusinessFlow>() { App.BusinessFlow });
                     break;
 
                 case eContext.RunsetPage:
@@ -656,7 +656,7 @@ namespace Ginger.Functionalities
             }
         }
 
-        private void AddVariableFromBusinessFlowList(ObservableList<BusinessFlow> businessFlowList, string itemPathPrefix="", RepositoryItemBase parent = null)
+        private void AddVariableFromBusinessFlowList(ObservableList<IBusinessFlow> businessFlowList, string itemPathPrefix="", RepositoryItemBase parent = null)
         {
             foreach (BusinessFlow BF in businessFlowList)
             {

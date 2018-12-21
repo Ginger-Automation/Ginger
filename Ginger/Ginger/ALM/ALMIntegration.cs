@@ -235,7 +235,7 @@ namespace Ginger.ALM
         }
 
 
-        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false)
+        public bool ExportBusinessFlowsResultToALM(ObservableList<IBusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false)
         {
             ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
             bool isExportSucc = false;
@@ -254,7 +254,7 @@ namespace Ginger.ALM
 
                                 if (publishToALMConfig.ToAttachActivitiesGroupReport)
                                 {
-                                    Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateActivitiesGroupReportsOfBusinessFlow(BizFlow);
+                                    Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateActivitiesGroupReportsOfBusinessFlow(null, BizFlow);//need to find a way to specify the releveant environment 
                                 }
                                                    
                                 isExportSucc = AlmCore.ExportExecutionDetailsToALM(BizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig);

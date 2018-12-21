@@ -122,8 +122,8 @@
       <HintPath>..\packages\Gherkin.4.0.0\lib\net45\Gherkin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="GingerPluginCore, Version=3.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ginger.Plugin.Core.3.0.3\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
+    <Reference Include="GingerPluginCore, Version=3.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ginger.Plugin.Core.3.0.5\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.6.13.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.6.13\lib\Net45\HtmlAgilityPack.dll</HintPath>
@@ -221,8 +221,8 @@
       <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.3.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Drawing.Common.4.5.0\lib\net461\System.Drawing.Common.dll</HintPath>
+    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Drawing.Common.4.5.1\lib\net461\System.Drawing.Common.dll</HintPath>
     </Reference>
     <Reference Include="System.Globalization.Calendars, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Globalization.Calendars.4.3.0\lib\net46\System.Globalization.Calendars.dll</HintPath>
@@ -517,6 +517,8 @@
     </Compile>
     <Compile Include="Reports\ReportTemplate.cs" />
     <Compile Include="Repository\RepositoryItemFactory.cs" />
+    <Compile Include="Run\RuntimeObjectFactory.cs" />
+    <Compile Include="Solution.cs" />
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>
@@ -656,7 +658,6 @@
     <Compile Include="SolutionWindows\TargetApplicationsPage.xaml.cs">
       <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\GingerRunnerLogger.cs" />
     <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceBrowseFile.xaml.cs">
       <DependentUpon>ImportDataSourceBrowseFile.xaml</DependentUpon>
     </Compile>
@@ -1400,25 +1401,21 @@
     <Compile Include="Help\TreeViewItems\HelpDocumentsFolderTreeItem.cs" />
     <Compile Include="Help\TreeViewItems\VideoHelpFileTreeItem.cs" />
     <Compile Include="Help\TreeViewItems\MHTHelpFileTreeItem.cs" />
-    <Compile Include="Reports\HTMLReportConfiguration.cs" />
     <Compile Include="Reports\Designer\HTMLReportTemplateDesignerPage .xaml.cs">
       <DependentUpon>HTMLReportTemplateDesignerPage .xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\Designer\ReportTemplateDesignerPage.xaml.cs">
       <DependentUpon>ReportTemplateDesignerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\FlowControlReport.cs" />
     <Compile Include="Reports\HTMLReportPage .xaml.cs">
       <DependentUpon>HTMLReportPage .xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\ExecutionResultsConfiguration.xaml.cs">
       <DependentUpon>ExecutionResultsConfiguration.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\ExecutionLogger.cs" />
     <Compile Include="Reports\ReportPage.xaml.cs">
       <DependentUpon>ReportPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportList.cs" />
     <Compile Include="Reports\HTMLReportTemplateSelector.xaml.cs">
       <DependentUpon>HTMLReportTemplateSelector.xaml</DependentUpon>
     </Compile>
@@ -3017,6 +3014,7 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconInGrayNoBackground.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerSplashImage.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -4441,8 +4439,6 @@
     <Resource Include="GingerAgentStarter.xml" />
     <Content Include="CI\increasebuildNum.vbs" />
     <Resource Include="Reports\Designer\ScreenShot1.png" />
-    <EmbeddedResource Include="Reports\HTMLTemplates\SummaryHTMLReport.html" />
-    <EmbeddedResource Include="Reports\HTMLTemplates\SkeletonHTMLReport.html" />
     <Content Include="Reports\GingerExecutionReport\ActionReport.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -4474,7 +4470,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\GingerExecutionReport.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\RunSetReport.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

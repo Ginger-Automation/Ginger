@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -23,8 +23,8 @@ using System.Linq;
 using Newtonsoft.Json;
 using System.Data;
 using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Reports
 {
@@ -88,7 +88,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(false)]
         [FieldParamsIsSelected(true)]
-        public string RunDescription { get { return mAction != null ? mAction.RunDescription : runDescription; } set { runDescription = value; } }
+        public string RunDescription { get; set; }
 
         [JsonProperty]
         [FieldParams]

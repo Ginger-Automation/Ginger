@@ -47,6 +47,10 @@ namespace Amdocs.Ginger.Common
         double? Elapsed { get; set; }
         bool Mandatory { get; set; }
         string ExecutionFullLogFolder { get; set; }
+        ObservableList<IActivitiesGroup> ActivitiesGroups { get; set; }
+        List<string> VariablesBeforeExec { get; set; }
+        List<string> SolutionVariablesBeforeExec { get; set; }
+        int ExecutionLogActivityCounter { get; set; }
 
         ObservableList<VariableBase> GetVariables();
 

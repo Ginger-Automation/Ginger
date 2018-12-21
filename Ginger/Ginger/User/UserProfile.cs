@@ -97,7 +97,16 @@ namespace Ginger
 
         public string LocalWorkingFolder { get; set; }
 
-        public Solution mSolution { get; set; }
+        public Solution mSolution {
+            get
+            {
+                return (Solution)WorkSpace.Instance.Solution;
+            }
+            set
+            {
+                WorkSpace.Instance.Solution = value;
+            }
+        }
 
         public Solution Solution
         {

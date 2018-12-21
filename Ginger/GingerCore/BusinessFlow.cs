@@ -140,7 +140,21 @@ namespace GingerCore
         /// Used by the user to describe the logic of the BF run with a specific set of variables values
         /// </summary>
         [IsSerializedForLocalRepository]
-        public string RunDescription { get { return mRunDescription; } set { if (mRunDescription != value) { mRunDescription = value; OnPropertyChanged(Fields.RunDescription); } } }
+        public string RunDescription
+        {
+            get
+            {
+                return mRunDescription;
+            }
+            set
+            {
+              if (mRunDescription != value)
+                {
+                    mRunDescription = value;
+                    OnPropertyChanged(Fields.RunDescription);
+                }
+            }
+        }
 
         double? mElapsed; 
         [IsSerializedForLocalRepository]     // TODO: Needed?
@@ -600,7 +614,7 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IActivitiesGroup> ActivitiesGroups = new ObservableList<IActivitiesGroup>();
+        public ObservableList<IActivitiesGroup> ActivitiesGroups { get; set; } = new ObservableList<IActivitiesGroup>();
 
         public void AddActivitiesGroup(ActivitiesGroup activitiesGroup = null)
         {

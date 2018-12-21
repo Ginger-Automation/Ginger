@@ -75,7 +75,7 @@
 //            a.Driver = new InternalBrowser(mBF);
 //            a2.DriverType = DriverType;
 //            p22.Agent = a2;
-//            mGR2.SolutionAgents = new ObservableList<Agent>();
+//            mGR2.SolutionAgents = new ObservableList<IAgent>();
 //            mGR2.SolutionAgents.Add(a2);
 //            mGR2.Platforms.Add(p22);
 //            for (int i = 1; i < 3; i++)

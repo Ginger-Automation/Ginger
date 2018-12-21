@@ -45,6 +45,7 @@ using Ginger.SolutionGeneral;
 using System.IO;
 using System.Dynamic;
 using Newtonsoft.Json.Linq;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger
 {
@@ -53,7 +54,7 @@ namespace Ginger
     /// </summary>
     public partial class ValueExpressionEditorPage : Page
     {        
-        ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, App.BusinessFlow,WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(),false,"",false);
+        ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, App.BusinessFlow,WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>(),false,"",false);
         GenericWindow mWin;
         object mObj;
         string mAttrName;

@@ -33,6 +33,7 @@ using Amdocs.Ginger.CoreNET.Execution;
 using GingerTestHelper;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace UnitTests.UITests.JavaDriverTest
 {
@@ -103,7 +104,7 @@ namespace UnitTests.UITests.JavaDriverTest
                 a.Name = "Java Agent";
                 a.Driver = mDriver;
 
-                mGR.SolutionAgents = new ObservableList<Agent>();
+                mGR.SolutionAgents = new ObservableList<IAgent>();
                 mGR.SolutionAgents.Add(a);
 
                 ApplicationAgent AA = new ApplicationAgent();

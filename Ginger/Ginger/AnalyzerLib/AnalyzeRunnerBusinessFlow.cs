@@ -25,6 +25,7 @@ using GingerCore.Platforms;
 using GingerCore.FlowControlLib;
 using Ginger.Run;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.AnalyzerLib
 {
@@ -53,21 +54,21 @@ namespace Ginger.AnalyzerLib
                                 guidToLookBy = Guid.Parse(f.GetGuidFromValue().ToString());
                             }
 
-                            List<BusinessFlow> lstBusinessFlow = null;
+                            List<IBusinessFlow> lstBusinessFlow = null;
                             if (guidToLookBy != Guid.Empty)
                                 lstBusinessFlow =  GR.BusinessFlows.Where(x => x.InstanceGuid == guidToLookBy).ToList();
 
                             if (lstBusinessFlow == null || lstBusinessFlow.Count == 0)
                                 bf = null;
                             else if (lstBusinessFlow.Count == 1)
-                                bf = lstBusinessFlow[0];
+                                bf =(BusinessFlow) lstBusinessFlow[0];
                             else//we have more than 1
                             {
-                                BusinessFlow firstActive = lstBusinessFlow.Where(x => x.Active == true).FirstOrDefault();
+                                BusinessFlow firstActive =(BusinessFlow) lstBusinessFlow.Where(x => x.Active == true).FirstOrDefault();
                                 if (firstActive != null)
                                     bf = firstActive;
                                 else
-                                    bf = lstBusinessFlow[0];//no one is Active so returning the first one
+                                    bf =(BusinessFlow) lstBusinessFlow[0];//no one is Active so returning the first one
                             }
                             if (bf == null)
                             {

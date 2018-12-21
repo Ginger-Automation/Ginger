@@ -213,81 +213,20 @@ namespace Ginger.Reports
 
         private static ObservableList<HTMLReportConfigFieldToSelect> GetReportLevelMembers(Type reportLevelType)
         {
-            ObservableList<HTMLReportConfigFieldToSelect> fieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
-            MemberInfo[] members = reportLevelType.GetMembers();
-            FieldParams token = null;
 
-            foreach (MemberInfo mi in members)
-            {
-                token = Attribute.GetCustomAttribute(mi, typeof(FieldParams), false) as FieldParams;
 
-                if (token == null)
-                    continue;
-
-                fieldsToSelect.Add(new HTMLReportConfigFieldToSelect(mi.Name.ToString(),
-                                                                     (Attribute.GetCustomAttribute(mi, typeof(FieldParamsNameCaption), false) as FieldParamsNameCaption).NameCaption,
-                                                                     (Attribute.GetCustomAttribute(mi, typeof(FieldParamsIsSelected), false) as FieldParamsIsSelected).IsSelected,
-                                                                     (Attribute.GetCustomAttribute(mi, typeof(FieldParamsIsNotMandatory), false) as FieldParamsIsNotMandatory).IsNotMandatory,
-                                                                     (Attribute.GetCustomAttribute(mi, typeof(FieldParamsFieldType), false) as FieldParamsFieldType).FieldType.ToString(),
-                                                                     false));
-            }
-            return fieldsToSelect;
+            return HTMLReportConfiguration.GetReportLevelMembers(reportLevelType);
         }
 
         public static HTMLReportConfiguration EnchancingLoadedFieldsWithDataAndValidating(HTMLReportConfiguration HTMLReportConfiguration)
         {
-            HTMLReportConfiguration.RunSetFieldsToSelect =
-                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.RunSetFieldsToSelect, typeof(RunSetReport), HTMLReportConfiguration);
-            HTMLReportConfiguration.EmailSummaryViewFieldsToSelect =
-               EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.EmailSummaryViewFieldsToSelect, typeof(RunSetReport), HTMLReportConfiguration);
-            HTMLReportConfiguration.GingerRunnerFieldsToSelect =
-                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.GingerRunnerFieldsToSelect, typeof(GingerReport), HTMLReportConfiguration);
-            HTMLReportConfiguration.BusinessFlowFieldsToSelect =
-                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.BusinessFlowFieldsToSelect, typeof(BusinessFlowReport), HTMLReportConfiguration);
-            HTMLReportConfiguration.ActivityGroupFieldsToSelect =
-                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.ActivityGroupFieldsToSelect, typeof(ActivityGroupReport), HTMLReportConfiguration);
-            HTMLReportConfiguration.ActivityFieldsToSelect =
-                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.ActivityFieldsToSelect, typeof(ActivityReport), HTMLReportConfiguration);
-            HTMLReportConfiguration.ActionFieldsToSelect =
-                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.ActionFieldsToSelect, typeof(ActionReport), HTMLReportConfiguration);
-
-            if (HTMLReportConfiguration.ReportLowerLevelToShow == null)
-            {
-                HTMLReportConfiguration.ReportLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActionLevel.ToString();
-            }
-
-            return HTMLReportConfiguration;
+      
+            return HTMLReportConfiguration.EnchancingLoadedFieldsWithDataAndValidating(HTMLReportConfiguration);
         }
 
         private static ObservableList<HTMLReportConfigFieldToSelect> EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames fieldsToSelectListName, Type reportType, HTMLReportConfiguration HTMLReportConfiguration)
         {
-            ObservableList<HTMLReportConfigFieldToSelect> savedFieldSelections = (ObservableList<HTMLReportConfigFieldToSelect>)HTMLReportConfiguration.GetType().GetField(fieldsToSelectListName.ToString()).GetValue(HTMLReportConfiguration);
-            ObservableList<HTMLReportConfigFieldToSelect> referenceFieldSelections = GetReportLevelMembers(reportType);
-            // swap should be done between two below lists. Previose saved selection should be performed on the referenceFieldSelections
-            foreach (var saved_item in savedFieldSelections)
-            {
-                var savedref_item = referenceFieldSelections.Where(x => x.FieldKey == saved_item.FieldKey).FirstOrDefault();
-                if (savedref_item != null)
-                {
-                    if (!savedref_item.IsNotMandatory)     // if field is mandatory
-                    {                                       // select it anyway
-                        saved_item.IsSelected = true;
-                    }
-                    saved_item.FieldName = savedref_item.FieldName;
-                    saved_item.FieldType = savedref_item.FieldType;
-                    saved_item.IsNotMandatory = savedref_item.IsNotMandatory;
-                }
-            }
-            //adding missing fields
-            foreach (var reference_item in referenceFieldSelections)
-            {
-                var savedref_item = savedFieldSelections.Where(x => x.FieldKey == reference_item.FieldKey).FirstOrDefault();
-                if (savedref_item == null)
-                {
-                    savedFieldSelections.Add(reference_item);
-                }
-            }
-            return savedFieldSelections;
+            return HTMLReportConfiguration.EnchancingLoadedFieldsWithDataAndValidatingPerLevel(fieldsToSelectListName, reportType, HTMLReportConfiguration);
         }
 
         private void SetControls()

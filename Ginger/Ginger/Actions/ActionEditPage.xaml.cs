@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
@@ -35,6 +36,7 @@ using GingerCore.Actions.Common;
 using GingerCore.Actions.Java;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
+using GingerCore.Environments;
 using GingerCore.Platforms;
 using System;
 using System.Collections.Generic;
@@ -61,7 +63,7 @@ namespace Ginger.Actions
 
         bool IsPageClosing = false;
 
-        ObservableList<DataSourceBase> mDSList = new ObservableList<DataSourceBase>();
+        ObservableList<IDataSourceBase> mDSList = new ObservableList<IDataSourceBase>();
         ObservableList<DataSourceTable> mDSTableList = new ObservableList<DataSourceTable>();
         List<string> mDSNames = new List<string>();
         private DataSourceTable mDSTable;
@@ -169,7 +171,7 @@ namespace Ginger.Actions
             LoadActionFlowcontrols(mAction);
             TagsViewer.Init(mAction.Tags);
 
-            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>();
             if (mDSList.Count == 0)
                 AddOutDS.IsEnabled = false;
 
@@ -534,8 +536,8 @@ namespace Ginger.Actions
                     // For no driver actions we give the BF and env - used for example in set var value.
                     if (typeof(ActWithoutDriver).IsAssignableFrom(a.GetType()))
                     {
-                        ((ActWithoutDriver)a).RunOnBusinessFlow = App.AutomateTabGingerRunner.CurrentBusinessFlow;
-                        ((ActWithoutDriver)a).RunOnEnvironment = App.AutomateTabGingerRunner.projEnvironment;
+                        ((ActWithoutDriver)a).RunOnBusinessFlow = (BusinessFlow)App.AutomateTabGingerRunner.CurrentBusinessFlow;
+                        ((ActWithoutDriver)a).RunOnEnvironment =(ProjEnvironment) App.AutomateTabGingerRunner.ProjEnvironment;
                         ((ActWithoutDriver)a).DSList = App.AutomateTabGingerRunner.DSList;
                     }
 
@@ -654,7 +656,6 @@ namespace Ginger.Actions
         {
             this.Dispatcher.Invoke(() =>
             {
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 mAction.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                 if (mAction.GetType() == typeof(ActLowLevelClicks))
                     App.MainWindow.WindowState = WindowState.Minimized;
@@ -1100,10 +1101,10 @@ namespace Ginger.Actions
         private void HighLightElementButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: fixme - Currently working with first agent
-            ApplicationAgent aa = App.AutomateTabGingerRunner.ApplicationAgents[0];
+            ApplicationAgent aa =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents[0];
             if (aa != null)
             {
-                DriverBase driver = aa.Agent.Driver;
+                DriverBase driver =((Agent) aa.Agent).Driver;
                 App.AutomateTabGingerRunner.PrepActionVE(mAction);
                 if (driver != null)
                 {
@@ -1118,15 +1119,15 @@ namespace Ginger.Actions
 
         private void ControlSelectorButton_Click(object sender, RoutedEventArgs e)
         {
-            ApplicationAgent aa = App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent aa =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
             if (aa != null)
             {
-                if (aa.Agent.Driver == null)
+                if (((Agent)aa.Agent).Driver == null)
                 {
-                    aa.Agent.DSList = mDSList;
-                    aa.Agent.StartDriver();
+                    ((Agent)aa.Agent).DSList = mDSList;
+                    ((Agent)aa.Agent).StartDriver();
                 }
-                DriverBase driver = aa.Agent.Driver;
+                DriverBase driver = ((Agent)aa.Agent).Driver;
                 //Instead of check make it disabled ?
                 if (driver is IWindowExplorer)
                 {
@@ -1326,7 +1327,7 @@ namespace Ginger.Actions
 
         private void AddOutDS_Checked(object sender, RoutedEventArgs e)
         {
-            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>();
             if (mDSList.Count == 0)
                 return;
             mDSNames.Clear();
