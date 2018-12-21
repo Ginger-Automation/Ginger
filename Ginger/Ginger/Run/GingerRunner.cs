@@ -289,13 +289,14 @@ namespace Ginger.Run
             }
         }
 
-        public ObservableList<DataSourceBase> DSList { get; set; } = RepositoryItemHelper.RepositoryItemFactory.GetDatasourceList();
+        public ObservableList<DataSourceBase> DSList {get; set;} = new ObservableList<DataSourceBase>();
+             
 
         private bool mRunInSimulationMode;
         public bool RunInSimulationMode
         {
             get
-            {
+            {                
                 return mRunInSimulationMode;
             }
             set

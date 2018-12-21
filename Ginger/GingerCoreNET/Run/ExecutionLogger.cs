@@ -496,7 +496,7 @@ namespace Ginger.Run
                 {
                     if (mVE == null)
                     {
-                        mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, RepositoryItemHelper.RepositoryItemFactory.GetDatasourceList(), false, "", false, WorkSpace.Instance.Solution.Variables);
+                        mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
                     }
                     mVE.Value = BusinessFlow.RunDescription;
                     BFR.RunDescription = mVE.ValueCalculated;
@@ -585,7 +585,7 @@ namespace Ginger.Run
                 {
                     if (mVE == null)
                     {
-                        mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, RepositoryItemHelper.RepositoryItemFactory.GetDatasourceList(), false, "", false, WorkSpace.Instance.Solution.Variables);
+                        mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
                     }
                     mVE.Value = Activity.RunDescription;
                     AR.RunDescription = mVE.ValueCalculated;
@@ -695,7 +695,7 @@ namespace Ginger.Run
                             {
                                 if (mVE == null)
                                 {
-                                    mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, RepositoryItemHelper.RepositoryItemFactory.GetDatasourceList(), false, "", false, WorkSpace.Instance.Solution.Variables);
+                                    mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
                                 }
                                 mVE.Value = act.RunDescription;
                                 AR.RunDescription = mVE.ValueCalculated;

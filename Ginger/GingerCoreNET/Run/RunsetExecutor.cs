@@ -124,7 +124,7 @@ namespace Ginger.Run
             runner.CurrentSolution = WorkSpace.Instance.Solution;
             runner.SolutionAgents = RepositoryItemHelper.RepositoryItemFactory.GetAllIAgents();
             // runner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
-            runner.DSList = RepositoryItemHelper.RepositoryItemFactory.GetDatasourceList();
+            runner.DSList = new ObservableList<GingerCore.DataSource.DataSourceBase>();
             runner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             runner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
         }

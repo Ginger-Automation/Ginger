@@ -44,7 +44,7 @@ namespace Amdocs.Ginger.Common
         IValueExpression CreateValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null);
 
        
-        ObservableList<DataSourceBase> GetDatasourceList();
+        
         ObservableList<IDatabase> GetDatabaseList();
         ObservableList<IAgent> GetAllIAgents();
         ObservableList<ProjEnvironment> GetAllEnvironments();
