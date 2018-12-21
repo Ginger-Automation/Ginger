@@ -208,8 +208,8 @@ namespace Amdocs.Ginger.GingerConsole
                 count++;
                 Console.WriteLine("# " + count + " - " + BF.Name);
                 foreach (Activity activity in BF.Activities)
-                {
-                    Console.WriteLine("# " + count + " - " + activity.ActivityName);
+                {                    
+                    Console.WriteLine("Activity: " + activity.ActivityName);
                 }
             }
         }
