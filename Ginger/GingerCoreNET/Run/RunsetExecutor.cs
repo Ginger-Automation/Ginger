@@ -213,7 +213,7 @@ namespace Ginger.Run
             {
                 if (gr.UseSpecificEnvironment)
                 {
-                    if (gr.projEnvironment != null) { }
+                    if (gr.ProjEnvironment != null) { }
                         ////gr.ProjEnvironment.CloseEnvironment();
                 }
             }
