@@ -82,13 +82,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     { 
                         wiz.bizFlowTargetFolder = (ITreeViewItem)mTargetFolder;
                     }
-                    break;
-                case EventType.Validate:                    
-                    if (mTargetFolder == null)
-                    {                        
-                        
-                    }
-                    break;                                    
+                    break;                       
             }
 
         }

@@ -890,11 +890,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             bool validationRes = false;
             foreach (eUcTreeValidationRules rule in ValidationRules)
             {
-                switch (rule)
-                {
-                    case eUcTreeValidationRules.NoItemSelected:
-                        if (Tree.SelectedItem == null) validationRes = true;
-                        break;                    
+                if(rule == eUcTreeValidationRules.NoItemSelected)
+                {                    
+                    if (Tree.SelectedItem == null)
+                    {
+                        validationRes = true;
+                    }                    
                 }
             }
            
