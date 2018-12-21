@@ -379,7 +379,7 @@ namespace Ginger.Run
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    mBFESs = (BusinessFlow)mRunner.BusinessFlows;
+                    mBFESs = mRunner.BusinessFlows;
                     //Business Flows
                     List<GingerCoreNET.GeneralLib.StatItem> bizsList = new List<GingerCoreNET.GeneralLib.StatItem>();
                     var bizGroups = mBFESs

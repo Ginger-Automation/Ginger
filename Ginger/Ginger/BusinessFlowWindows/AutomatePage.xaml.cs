@@ -967,7 +967,7 @@ namespace Ginger
         // Run Preparations before execution of Action/activity/Flow/start agent
         public void SetAutomateTabRunnerForExecution()
         {
-            App.AutomateTabGingerRunner.projEnvironment = App.AutomateTabEnvironment;
+            App.AutomateTabGingerRunner.ProjEnvironment = App.AutomateTabEnvironment;
             App.AutomateTabGingerRunner.SolutionFolder = App.UserProfile.Solution.Folder;
             App.AutomateTabGingerRunner.DSList = new ObservableList<IDataSourceBase>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().ListItems.ConvertAll(x => (IDataSourceBase)x).ToList());
             App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<IAgent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x).ToList());
