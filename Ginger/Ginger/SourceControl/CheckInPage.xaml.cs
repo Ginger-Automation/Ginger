@@ -125,10 +125,9 @@ namespace Ginger.SourceControl
                              if (SCFI.Path.ToUpper().Contains(".GINGER.") && SCFI.Path.ToUpper().Contains(".XML"))
                              {
                                  NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
-                                 //try to unserialize
+                                 //unserialize the item
                                  RepositoryItemBase item = newRepositorySerializer.DeserializeFromFile(SCFI.Path);
-                                 //object item = RepositoryItem.LoadFromFile(SCFI.Path);
-                                 SCFI.Name = item.GetNameForFileName();
+                                 SCFI.Name = item.ItemName;
                              }
                              else
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
