@@ -57,8 +57,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     {
                         BusinessFlowsFolderTreeItem bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(),eBusinessFlowsTreeViewMode.ReadOnly);
                         
-                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);
-                        mTargetFolderSelectionPage.xTreeView.Tree.Tree.BindControl(wiz, nameof(ImportGherkinFeatureWizard.bizFlowTargetFolder));
+                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);                        
                     }
                     else if(mContext == eImportGherkinFileContext.BusinessFlowFolder)
                     {
@@ -66,10 +65,10 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                         documentsFolderRoot.IsGingerDefualtFolder = true;
                         documentsFolderRoot.Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents");
                         documentsFolderRoot.Folder = "Documents";
-                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage("Documents", eImageType.File, documentsFolderRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);
-                        mTargetFolderSelectionPage.xTreeView.Tree.Tree.BindControl(wiz, nameof(ImportGherkinFeatureWizard.featureTargetFolder));
-                    }
-                    mTargetFolderSelectionPage.xTreeView.Tree.Tree.AddValidationRule(new EmptyValidationRule());
+                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage("Documents", eImageType.File, documentsFolderRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);                        
+                    }                    
+                    mTargetFolderSelectionPage.xTreeView.xTreeViewTree.ValidationRules.Add(UCTreeView.eUcTreeValidationRules.NoItemSelected);
+
                     mTargetFolderSelectionPage.OnSelect += MTargetFolderSelectionPage_OnSelectItem;
                     
                     TargetPath.Content = mTargetFolderSelectionPage;

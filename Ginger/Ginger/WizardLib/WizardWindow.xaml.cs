@@ -24,6 +24,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using GingerWPF.UserControlsLib.UCTreeView;
 
 namespace GingerWPF.WizardLib
 {
@@ -230,7 +231,13 @@ namespace GingerWPF.WizardLib
                         if (errorsFound == false)
                         {
                             if (child is ucGrid)
+                            { 
                                 errorsFound = ((ucGrid)child).HasValidationError();
+                            }
+                            else if (child is UCTreeView)
+                            { 
+                                errorsFound = ((UCTreeView)child).HasValidationError();
+                            }
                         }
                     }
 
