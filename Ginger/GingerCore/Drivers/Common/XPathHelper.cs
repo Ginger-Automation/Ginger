@@ -425,9 +425,13 @@ namespace GingerCore.Drivers.Common
                     if (!string.IsNullOrEmpty(name))
                     {
                         if(relxpath == "")
+                        { 
                             relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@name='" + name + "']");
+                        }
                         else
+                        { 
                             relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@id='" + id + "' and @name ='" + name + "']");
+                        }
                         elemsList = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath, relxpath);
                         if (elemsList == null || (elemsList != null && elemsList.Count() < 2))
                         {

@@ -3779,9 +3779,9 @@ namespace GingerCore.Drivers
             if (elNode != null)
             {
                 EI.XPath = elNode.XPath;
-            }                
+            }
             else
-            { 
+            {
                 EI.XPath = string.Empty;
             }
             EI.ElementObject = el;
@@ -4227,7 +4227,13 @@ namespace GingerCore.Drivers
                     else
                     {
                         if (string.IsNullOrEmpty(ElementInfo.XPath))
+                        { 
                             ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+                        }
+                        if (ElementInfo is HTMLElementInfo && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).RelXpath))
+                        { 
+                            ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
+                        }
                         el = Driver.FindElement(By.XPath(ElementInfo.XPath));
                     }
                 }
