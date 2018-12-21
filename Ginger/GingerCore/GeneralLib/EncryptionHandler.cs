@@ -104,12 +104,12 @@ namespace GingerCore
             }
         }        
 
-        public static string DecryptString(string strToDecrypt, ref bool result)
+        public static string DecryptString(string strToDecrypt, ref bool result, bool UserDefinedString = false)
         {
             //Convert strings defining encryption key characteristics into byte arrays
             byte[] _initVectorBytes = Encoding.UTF8.GetBytes(INIT_VECTOR);
             byte[] _saltValueBytes = Encoding.UTF8.GetBytes(SALT_VALUE);
-
+            
             // Create a password, from which the key will be derived
             PasswordDeriveBytes _password = new PasswordDeriveBytes(PASS_PHRASE, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
 
@@ -170,11 +170,26 @@ namespace GingerCore
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    if(!UserDefinedString)
+                    {
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    } 
+                    else
+                    {
+                        Reporter.ToLog(eAppReporterLogLevel.INFO, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    }
                     result = false;
                     return string.Empty;
                 }
             }            
+        }
+
+        public static bool IsStringEncrypted(string strToEncrypt, bool UserDefinedString)
+        {
+            bool checkValueDecrypt;            
+            checkValueDecrypt = true;
+            DecryptString(strToEncrypt, ref checkValueDecrypt, UserDefinedString);
+            return checkValueDecrypt;
         }
 
         public static RijndaelManaged GetRijndaelManaged(String secretKey)

@@ -255,9 +255,7 @@ namespace Ginger.Run.RunSetActions
         {
             bool res, checkValueDecrypt;
             res = false;
-            checkValueDecrypt = true;                  
-            EncryptionHandler.DecryptString(xSMTPPassTextBox.Text, ref checkValueDecrypt);
-
+            checkValueDecrypt = EncryptionHandler.IsStringEncrypted(xSMTPPassTextBox.Text, true);                              
             if (!checkValueDecrypt) xSMTPPassTextBox.Text = EncryptionHandler.EncryptString(xSMTPPassTextBox.Text, ref res);
         }
 

@@ -95,7 +95,7 @@ namespace Ginger.Environments
                         bool res = false;
 
 
-                        String deCryptValue = EncryptionHandler.DecryptString(intialValue, ref res);
+                        String deCryptValue = EncryptionHandler.DecryptString(intialValue, ref res, true);
 
                         if (res == true)
                         {
@@ -209,7 +209,7 @@ namespace Ginger.Environments
                         bool res = false;
 
 
-                        String deCryptValue = EncryptionHandler.DecryptString(intialValue, ref res);
+                        String deCryptValue = EncryptionHandler.DecryptString(intialValue, ref res, true);
 
                         if (res == true)
                         {

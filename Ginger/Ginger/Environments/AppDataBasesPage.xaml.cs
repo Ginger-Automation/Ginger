@@ -58,7 +58,7 @@ namespace Ginger.Environments
                 if (intialValue != null)
                 {
                     bool res = false;
-                    String deCryptValue = EncryptionHandler.DecryptString(intialValue, ref res);
+                    String deCryptValue = EncryptionHandler.DecryptString(intialValue, ref res, true);
                     selectedEnvDB.Pass = null;
                     if (res == false)
                     {

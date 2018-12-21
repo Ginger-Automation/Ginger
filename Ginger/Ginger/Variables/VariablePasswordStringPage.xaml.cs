@@ -57,9 +57,7 @@ namespace Ginger.Variables
         {
             bool res, checkValueDecrypt;
             res = false;
-            checkValueDecrypt = true;
-            EncryptionHandler.DecryptString(txtPasswordValue.Text, ref checkValueDecrypt);
-
+            checkValueDecrypt = EncryptionHandler.IsStringEncrypted(txtPasswordValue.Text, true); ;            
             if (!checkValueDecrypt) txtPasswordValue.Text = EncryptionHandler.EncryptString(txtPasswordValue.Text, ref res);
 
         }
