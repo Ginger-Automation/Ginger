@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
@@ -68,7 +69,7 @@ namespace UnitTests.NonUITests
             a.DriverType = Agent.eDriverType.SeleniumFireFox;
             p2.Agent = a;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(a); 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "App1", Agent = a });
             // mGR.Platforms.Add(p2);

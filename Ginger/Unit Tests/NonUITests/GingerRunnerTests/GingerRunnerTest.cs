@@ -31,6 +31,7 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
 using GingerTestHelper;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
@@ -64,7 +65,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //a.DriverType = Agent.eDriverType.SeleniumFireFox;//have known firefox issues with selenium 3
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(a);
             // p2.Agent = a;
 

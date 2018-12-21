@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -32,7 +33,7 @@ using System.Linq;
 
 namespace GingerCore
 {
-    public class BusinessFlow : RepositoryItemBase, IBusinessFlow
+    public class BusinessFlow : RepositoryItemBase
     {        
 
         public BusinessFlow()
@@ -49,7 +50,7 @@ namespace GingerCore
 
             Activity a = new Activity() { Active = true };
             a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
-            a.Acts = new ObservableList<Act>();
+            a.Acts = new ObservableList<IAct>();
             Activities.Add(a);
             Activities.CurrentItem = a;
             CurrentActivity = a;
@@ -322,7 +323,7 @@ namespace GingerCore
 
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
 
         static public ObservableList<VariableBase> SolutionVariables;
@@ -613,7 +614,7 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActivitiesGroup> ActivitiesGroups = new ObservableList<ActivitiesGroup>();
+        public ObservableList<IActivitiesGroup> ActivitiesGroups { get; set; } = new ObservableList<IActivitiesGroup>();
 
         public void AddActivitiesGroup(ActivitiesGroup activitiesGroup = null)
         {
@@ -648,8 +649,8 @@ namespace GingerCore
         {
             if (this.ActivitiesGroups.Where(ag => ag.Name == activitiesGroup.Name).FirstOrDefault() == null) return; //no name like it in the group
 
-            List<ActivitiesGroup> sameNameObjList =
-                this.ActivitiesGroups.Where(obj => obj.Name == activitiesGroup.Name).ToList<ActivitiesGroup>();
+            List<IActivitiesGroup> sameNameObjList =
+                this.ActivitiesGroups.Where(obj => obj.Name == activitiesGroup.Name).ToList();
             if (sameNameObjList.Count == 1 && sameNameObjList[0] == activitiesGroup) return; //Same internal object
 
             //Set unique name
@@ -677,7 +678,7 @@ namespace GingerCore
                         repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
                     if (repoAct != null)
                     {
-                        Activity actInstance = (Activity)repoAct.CreateInstance(true);
+                        Activity actInstance = (Activity)((Activity)repoAct).CreateInstance(true);
                         actInstance.ActivitiesGroupID = activitiesGroup.Name;
                         if (keepOriginalTargetApplicationMapping == false)
                             SetActivityTargetApplication(actInstance);
@@ -720,7 +721,7 @@ namespace GingerCore
             {
                 for (int indx = 0; indx < group.ActivitiesIdentifiers.Count;)
                 {
-                    ActivityIdentifiers actIdentifis = group.ActivitiesIdentifiers[indx];
+                    ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[indx];
                     Activity activ = this.Activities.Where(act => act.ActivityName == actIdentifis.ActivityName && act.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
                     if (activ == null)
                         activ = this.Activities.Where(act => act.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
@@ -728,7 +729,7 @@ namespace GingerCore
                         activ = this.Activities.Where(act => act.ParentGuid == actIdentifis.ActivityGuid).FirstOrDefault();
                     if (activ != null)
                     {
-                        actIdentifis.IdentifiedActivity = activ;
+                        actIdentifis.IdentifiedActivity =(Activity) activ;
                         activ.ActivitiesGroupID = group.Name;
                         indx++;
                     }
@@ -755,7 +756,7 @@ namespace GingerCore
                 case (eUpdateActivitiesGroupDetailsType.FreeUnAttachedActivities):
                     foreach (Activity act in this.Activities)
                     {
-                        ActivitiesGroup group = this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault();
+                        IActivitiesGroup group = this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault();
                         if (group != null)
                             if ((group.ActivitiesIdentifiers.Where(actidnt => actidnt.ActivityName == act.ActivityName && actidnt.ActivityGuid == act.Guid).FirstOrDefault()) == null)
                                 act.ActivitiesGroupID = string.Empty;
@@ -856,8 +857,7 @@ namespace GingerCore
         {
             get
             {
-                List<Activity> automatedActs = Activities.Where(x => x.AutomationStatus ==
-                                                                               Activity.eActivityAutomationStatus.Automated).ToList();
+                List<Activity> automatedActs = Activities.Where(x => x.AutomationStatus == eActivityAutomationStatus.Automated).ToList();
                 double automatedActsPrecantge;
                 if (automatedActs == null || automatedActs.Count == 0)
                 {
@@ -1106,8 +1106,23 @@ namespace GingerCore
             return Variables;
         }
 
+        //ObservableList<VariableBase> BusinessFlow.GetVariables()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //VariableBase BusinessFlow.GetHierarchyVariableByName(string varName, bool considerLinkedVar)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //BusinessFlow BusinessFlow.CreateCopy(bool v)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
         [IsSerializedForLocalRepository]
-        public ObservableList<FlowControl> BFFlowControls = new ObservableList<FlowControl>();
+        public ObservableList<IFlowControl> BFFlowControls { get; set; } = new ObservableList<IFlowControl>();
 
 
         public string Applications

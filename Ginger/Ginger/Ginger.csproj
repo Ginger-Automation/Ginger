@@ -515,7 +515,10 @@
     <Compile Include="PluginsLibNew\PluginsIndexPage.xaml.cs">
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportTemplate.cs" />
     <Compile Include="Repository\RepositoryItemFactory.cs" />
+    <Compile Include="Run\RuntimeObjectFactory.cs" />
+    <Compile Include="Solution.cs" />
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>
@@ -652,15 +655,12 @@
     <Compile Include="MenusLib\ResourcesMenu.cs" />
     <Compile Include="MenusLib\RunMenu.cs" />
     <Compile Include="RunSetLib\RunSetOperations.cs" />
-    <Compile Include="Run\RunSetConfig.cs" />
     <Compile Include="SolutionWindows\TargetApplicationsPage.xaml.cs">
       <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\GingerRunnerLogger.cs" />
     <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceBrowseFile.xaml.cs">
       <DependentUpon>ImportDataSourceBrowseFile.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TelemertryLib\AutoLogProxy.cs" />
     <Compile Include="TestLib\WizardLib\MyWizard.cs" />
     <Compile Include="TestLib\WizardLib\MyWizardDetailsPage.xaml.cs">
       <DependentUpon>MyWizardDetailsPage.xaml</DependentUpon>
@@ -853,7 +853,6 @@
     <Compile Include="GeneralWindows\Run Set Pages\NewRunSetPage.xaml.cs">
       <DependentUpon>NewRunSetPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ActivityGroupReport.cs" />
     <Compile Include="Repository\AddItemToRepositoryWizard\UploadSelectionItem.cs" />
     <Compile Include="Repository\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml.cs">
       <DependentUpon>UploadItemsSelectionPage.xaml</DependentUpon>
@@ -874,16 +873,13 @@
     <Compile Include="Run\FailedActionsScreenshotsPage.xaml.cs">
       <DependentUpon>FailedActionsScreenshotsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\DefectSuggestion.cs" />
     <Compile Include="Run\BusinessFlowRunFlowControlPage.xaml.cs">
       <DependentUpon>BusinessFlowRunFlowControlPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionAutomatedALMDefects.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionAutomatedALMDefectsEditPage.xaml.cs">
       <DependentUpon>RunSetActionAutomatedALMDefectsEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\RunSetActions\ExportResultsToALMConfigPage.xaml.cs" />
-    <Compile Include="Run\RunSetActions\RunSetActionSendFreeEmail.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionSendFreeEmailEditPage.xaml.cs">
       <DependentUpon>RunSetActionSendFreeEmailEditPage.xaml</DependentUpon>
     </Compile>
@@ -1066,7 +1062,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\EmailHtmlReportAttachment.cs" />
     <Compile Include="SourceControl\SourceControlIntegration.cs" />
     <Compile Include="SourceControl\SourceControlItemInfoPage.xaml.cs">
       <DependentUpon>SourceControlItemInfoPage.xaml</DependentUpon>
@@ -1080,7 +1075,6 @@
     <Compile Include="Reports\HTMLReportAttachmentConfigurationPage.xaml.cs">
       <DependentUpon>HTMLReportAttachmentConfigurationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionHTMLReportSendEmail.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionHTMLReportSendEmailEditPage.xaml.cs">
       <DependentUpon>RunSetActionHTMLReportSendEmailEditPage.xaml</DependentUpon>
     </Compile>
@@ -1105,7 +1099,6 @@
     <Compile Include="DataSource\DataSourcesPage.xaml.cs">
       <DependentUpon>DataSourcesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\HTMLReportsConfiguration.cs" />
     <Compile Include="Reports\HTMLReportsConfigurationPage.xaml.cs">
       <DependentUpon>HTMLReportsConfigurationPage.xaml</DependentUpon>
     </Compile>
@@ -1118,7 +1111,6 @@
     <Compile Include="Run\RunSetActions\RunSetActionHTMLReportEditPage.xaml.cs">
       <DependentUpon>RunSetActionHTMLReportEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionHTMLReport.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\DataSourceTableTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\HTMLGingerReportsTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\HTMLGingerReportTreeItem.cs" />
@@ -1409,39 +1401,21 @@
     <Compile Include="Help\TreeViewItems\HelpDocumentsFolderTreeItem.cs" />
     <Compile Include="Help\TreeViewItems\VideoHelpFileTreeItem.cs" />
     <Compile Include="Help\TreeViewItems\MHTHelpFileTreeItem.cs" />
-    <Compile Include="Reports\ActionReport.cs" />
-    <Compile Include="Reports\ActivityReport.cs" />
-    <Compile Include="Reports\BusinessFlowReport.cs" />
-    <Compile Include="Reports\ReportInfoAttribute.cs" />
-    <Compile Include="Reports\HTMLReportConfiguration.cs" />
-    <Compile Include="Reports\RunSetReport.cs" />
-    <Compile Include="Reports\GingerReport.cs" />
     <Compile Include="Reports\Designer\HTMLReportTemplateDesignerPage .xaml.cs">
       <DependentUpon>HTMLReportTemplateDesignerPage .xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\Designer\ReportTemplateDesignerPage.xaml.cs">
       <DependentUpon>ReportTemplateDesignerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\EnvironmentReport.cs" />
-    <Compile Include="Reports\FlowControlReport.cs" />
-    <Compile Include="Reports\HTMLReports\HTMLPlainReport.cs" />
-    <Compile Include="Reports\HTMLReports\HTMLSummaryReport.cs" />
     <Compile Include="Reports\HTMLReportPage .xaml.cs">
       <DependentUpon>HTMLReportPage .xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\GingerExecutionReport\GingerExecutionReport.cs" />
     <Compile Include="Reports\ExecutionResultsConfiguration.xaml.cs">
       <DependentUpon>ExecutionResultsConfiguration.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ExecutionLoggerConfiguration.cs" />
-    <Compile Include="Run\ExecutionLogger.cs" />
     <Compile Include="Reports\ReportPage.xaml.cs">
       <DependentUpon>ReportPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\HTMLReportTemplate.cs" />
-    <Compile Include="Reports\ReportTemplate.cs" />
-    <Compile Include="Reports\ReportInfo.cs" />
-    <Compile Include="Reports\ReportList.cs" />
     <Compile Include="Reports\HTMLReportTemplateSelector.xaml.cs">
       <DependentUpon>HTMLReportTemplateSelector.xaml</DependentUpon>
     </Compile>
@@ -1454,22 +1428,16 @@
     <Compile Include="Reports\ReportTemplatesPage.xaml.cs">
       <DependentUpon>ReportTemplatesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReturnValueReport.cs" />
     <Compile Include="Reports\RTFtoPDF.cs" />
     <Compile Include="Reports\SpecialReports\XMLReportBase.cs" />
     <Compile Include="Reports\SpecialReports\TestNGResultReport.cs" />
-    <Compile Include="Reports\VariableReport.cs" />
-    <Compile Include="Run\RunSetActions\EmailAttachment.cs" />
-    <Compile Include="Run\RunSetActions\RunSetActionBase.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionEditPage.xaml.cs">
       <DependentUpon>RunSetActionEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\RunSetActions\RunSetActionPublishToQC.cs" />
-    <Compile Include="Run\RunSetActions\RunSetActionSaveResults.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionSaveResultsEditPage.xaml.cs">
       <DependentUpon>RunSetActionSaveResultsEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionGenerateTestNGReport.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionScript.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionGenerateTestNGReportEditPage.xaml.cs">
       <DependentUpon>RunSetActionGenerateTestNGReportEditPage.xaml</DependentUpon>
@@ -1477,14 +1445,12 @@
     <Compile Include="Run\RunSetActions\RunSetActionScriptEditPage.xaml.cs">
       <DependentUpon>RunSetActionScriptEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionSendEmail.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionSendSMSditPage.xaml.cs">
       <DependentUpon>RunSetActionSendSMSditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\RunSetActions\RunSetActionSendEmailEditPage.xaml.cs">
       <DependentUpon>RunSetActionSendEmailEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionSendSMS.cs" />
     <Compile Include="Run\RunSetsExecutionsHistoryPage.xaml.cs">
       <DependentUpon>RunSetsExecutionsHistoryPage.xaml</DependentUpon>
     </Compile>
@@ -1756,7 +1722,6 @@
     <Compile Include="Environments\EnvsListPage.xaml.cs">
       <DependentUpon>EnvsListPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Solution.cs" />
     <Compile Include="GeneralLib\GeneralErrorWindow.xaml.cs">
       <DependentUpon>GeneralErrorWindow.xaml</DependentUpon>
     </Compile>
@@ -1777,7 +1742,6 @@
     <Compile Include="Repository\RepositoryItemUsagePage.xaml.cs">
       <DependentUpon>RepositoryItemUsagePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\HTMLReports\HTMLDetailedReport.cs" />
     <Compile Include="SolutionWindows\AddApplicationPage.xaml.cs">
       <DependentUpon>AddApplicationPage.xaml</DependentUpon>
     </Compile>
@@ -1849,13 +1813,9 @@
     <Compile Include="Run\AutoRunWindow.xaml.cs">
       <DependentUpon>AutoRunWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\BusinessFlowExecutionSummary.cs" />
-    <Compile Include="Run\BusinessFlowRun.cs" />
     <Compile Include="Run\BusinessFlowRunConfigurationsPage.xaml.cs">
       <DependentUpon>BusinessFlowRunConfigurationsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunsetExecutor.cs" />
-    <Compile Include="Reports\HTMLReports\HTMLReportBase.cs" />
     <Compile Include="SolutionWindows\AddSolutionPage.xaml.cs">
       <DependentUpon>AddSolutionPage.xaml</DependentUpon>
     </Compile>
@@ -4411,7 +4371,9 @@
     <Folder Include="Dictionaries\Languages\" />
     <Folder Include="Help\Library\" />
     <Folder Include="LicenseControl\" />
+    <Folder Include="Reports\HTMLReports\" />
     <Folder Include="Settings\TreeViewItems\" />
+    <Folder Include="TelemertryLib\" />
     <Folder Include="UserControlsLib\TextEditor\Java\" />
     <Folder Include="WindowExplorer\InternalBrowser\" />
   </ItemGroup>
@@ -4481,8 +4443,6 @@
     <Resource Include="GingerAgentStarter.xml" />
     <Content Include="CI\increasebuildNum.vbs" />
     <Resource Include="Reports\Designer\ScreenShot1.png" />
-    <EmbeddedResource Include="Reports\HTMLTemplates\SummaryHTMLReport.html" />
-    <EmbeddedResource Include="Reports\HTMLTemplates\SkeletonHTMLReport.html" />
     <Content Include="Reports\GingerExecutionReport\ActionReport.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -4514,7 +4474,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\GingerExecutionReport.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\RunSetReport.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

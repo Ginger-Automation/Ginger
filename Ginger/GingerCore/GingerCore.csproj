@@ -737,7 +737,6 @@
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v10203_TO_v1020000.cs" />
     <Compile Include="GeneralFunctions\RegistryFunctions.cs" />
     <Compile Include="GeneralLib\SMS.cs" />
-    <Compile Include="GeneralLib\Email.cs" />
     <Compile Include="GeneralLib\InputBoxWindow.xaml.cs">
       <DependentUpon>InputBoxWindow.xaml</DependentUpon>
     </Compile>

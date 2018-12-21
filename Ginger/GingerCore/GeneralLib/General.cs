@@ -826,20 +826,13 @@ namespace GingerCore
 
         public static void ClearDirectoryContent(string DirPath)
         {
-            //clear directory
-            System.IO.DirectoryInfo di = new DirectoryInfo(DirPath);
-            foreach (FileInfo file in di.GetFiles())
-                file.Delete();
-            foreach (DirectoryInfo dir in di.GetDirectories())
-                dir.Delete(true);
+            Amdocs.Ginger.Common.GeneralLib.General.ClearDirectoryContent(DirPath);
         }
 
         //HTML Report related methods added here 
         public static string TimeConvert(string s)
         {
-            double seconds = Convert.ToDouble(s);
-            TimeSpan ts = TimeSpan.FromSeconds(seconds);
-            return ts.ToString(@"hh\:mm\:ss");
+            return Amdocs.Ginger.Common.GeneralLib.General.TimeConvert(s);
         }
 
         public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)

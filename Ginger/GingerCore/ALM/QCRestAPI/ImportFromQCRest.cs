@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Variables;
@@ -32,7 +33,7 @@ namespace GingerCore.ALM.QCRestAPI
 {
     public static class ImportFromQCRest
     {
-        public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
+        public static ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
 
         #region Public Functions
@@ -200,7 +201,7 @@ namespace GingerCore.ALM.QCRestAPI
                 {
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
-                    ActivitiesGroup repoActivsGroup = null;
+                    IActivitiesGroup repoActivsGroup = null;
                     if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
                     if (repoActivsGroup == null)
@@ -210,7 +211,7 @@ namespace GingerCore.ALM.QCRestAPI
                         List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
                                                                                        .Where(x => !tc.Steps.Select(y => y.StepID).ToList().Contains(x.ExternalID)).ToList();
 
-                        tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance();
+                        tcActivsGroup =(ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance();
 
                         var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID));
                         for (int indx = 0; indx < tcActivsGroup.ActivitiesIdentifiers.Count; indx++)
@@ -252,15 +253,15 @@ namespace GingerCore.ALM.QCRestAPI
                         bool toAddStepActivity = false;
 
                         //check if mapped activity exist in repository
-                        Activity repoStepActivity = GingerActivitiesRepo.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
+                        Activity repoStepActivity =(Activity) GingerActivitiesRepo.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
                         if (repoStepActivity != null)
                         {
                             //check if it is part of the Activities Group
-                            ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                            ActivityIdentifiers groupStepActivityIdent =(ActivityIdentifiers) tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it
-                                stepActivity = busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                                stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
                                 // in any case update description/expected/name - even if "step" was taken from repository
                                 stepActivity.Description = StripHTML(step.Description);
                                 stepActivity.Expected = StripHTML(step.Expected);
@@ -348,7 +349,7 @@ namespace GingerCore.ALM.QCRestAPI
                                     stepActivityVar = new VariableSelectionList();
                                     stepActivityVar.Name = param;
                                     stepActivity.AddVariable(stepActivityVar);
-                                    stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new flow control param was added
+                                    stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
                                 }
                                 else
                                 {
@@ -371,7 +372,7 @@ namespace GingerCore.ALM.QCRestAPI
                                         stepActivityVar = new VariableSelectionList();
                                         stepActivityVar.Name = param;
                                         stepActivity.AddVariable(stepActivityVar);
-                                        stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because flow control param was added
+                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                                     }
                                 }
                                 else if (isflowControlParam == false)
@@ -384,7 +385,7 @@ namespace GingerCore.ALM.QCRestAPI
                                         stepActivityVar.Name = param;
                                         ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                         stepActivity.AddVariable(stepActivityVar);
-                                        stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because flow control param was removed
+                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
                                     }
                                 }
                             }
@@ -399,7 +400,7 @@ namespace GingerCore.ALM.QCRestAPI
                                     stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
                                     ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);                                    
                                     if (isflowControlParam == true)
-                                        stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
+                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
                                 }
                                 //set the selected value
                                 ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
@@ -433,9 +434,9 @@ namespace GingerCore.ALM.QCRestAPI
                         foreach (QC.QCTSTestStep step in tc.Steps)
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
-                            ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                            ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
                             if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
-                            Activity act = actIdent.IdentifiedActivity;
+                            Activity act =(Activity) actIdent.IdentifiedActivity;
                             int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                             int bfActIndx = busFlow.Activities.IndexOf(act);
 
@@ -452,7 +453,7 @@ namespace GingerCore.ALM.QCRestAPI
 
                                 if (numOfSeenSteps >= stepIndx) break;
                             }
-                            ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                            ActivityIdentifiers identOnPlace =(ActivityIdentifiers) tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                             if (identOnPlace.ActivityGuid != act.Guid)
                             {
                                 //replace places in group
@@ -520,9 +521,9 @@ namespace GingerCore.ALM.QCRestAPI
                         foreach (QCTestCaseStep step in tSTestCaseSteps)
                         {
                             int stepIndx = int.Parse(step.StepOrder) + 1;
-                            ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.Id).FirstOrDefault();
+                            ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.Id).FirstOrDefault();
                             if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
-                            Activity act = actIdent.IdentifiedActivity;
+                            Activity act = (Activity)actIdent.IdentifiedActivity;
                             int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                             int bfActIndx = busFlow.Activities.IndexOf(act);
 
@@ -539,7 +540,7 @@ namespace GingerCore.ALM.QCRestAPI
 
                                 if (numOfSeenSteps >= stepIndx) break;
                             }
-                            ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                            ActivityIdentifiers identOnPlace = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                             if (identOnPlace.ActivityGuid != act.Guid)
                             {
                                 //replace places in group
@@ -682,7 +683,7 @@ namespace GingerCore.ALM.QCRestAPI
         private static ActivitiesGroup CheckIfTCAlreadyExistInRepo(BusinessFlow busFlow, QCTestInstance testInstance, QCTestCaseStepsColl tSTestCaseSteps)
         {
             ActivitiesGroup tcActivsGroup;
-            ActivitiesGroup repoActivsGroup = null;
+            IActivitiesGroup repoActivsGroup = null;
             QCTestCaseStepsColl relevantTestCaseSteps = QCRestAPIConnect.GetTestCaseSteps(testInstance.TestId);
             QCTestCaseStep relevantStep = null;
             foreach (QCTestCaseStep testcaseStep in relevantTestCaseSteps)
@@ -700,7 +701,7 @@ namespace GingerCore.ALM.QCRestAPI
                 List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
                                                                                .Where(x => !tSTestCaseSteps.Where(item => item.TestId == testInstance.TestId).Select(y => y.Id).ToList().Contains(x.ExternalID)).ToList();
 
-                tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance();
+                tcActivsGroup =(ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance();
 
                 var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID));
                 for (int indx = 0; indx < tcActivsGroup.ActivitiesIdentifiers.Count; indx++)
@@ -747,11 +748,11 @@ namespace GingerCore.ALM.QCRestAPI
                 bool toAddStepActivity = false;
 
                 //check if mapped activity exist in repository
-                Activity repoStepActivity = GingerActivitiesRepo.Where(x => x.ExternalID == step.Id).FirstOrDefault();
+                Activity repoStepActivity =(Activity) GingerActivitiesRepo.Where(x => x.ExternalID == step.Id).FirstOrDefault();
                 if (repoStepActivity != null)
                 {
                     //check if it is part of the Activities Group
-                    ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.Id).FirstOrDefault();
+                    ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.Id).FirstOrDefault();
                     if (groupStepActivityIdent != null)
                     {
                         stepActivity = LinkStepAndUpdate(busFlow, groupStepActivityIdent, step, testInstance);
@@ -786,7 +787,7 @@ namespace GingerCore.ALM.QCRestAPI
             Activity stepActivity;
 
             //already in Activities Group so get link to it
-            stepActivity = busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+            stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
             // in any case update description/expected/name - even if "step" was taken from repository
             stepActivity.Description = StripHTML(step.Description);
             stepActivity.Expected = StripHTML(step.ElementsField["expected"].ToString());
@@ -867,7 +868,7 @@ namespace GingerCore.ALM.QCRestAPI
                         stepActivityVar = new VariableSelectionList();
                         stepActivityVar.Name = param;
                         stepActivity.AddVariable(stepActivityVar);
-                        stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new flow control param was added
+                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
                     }
                     else
                     {
@@ -890,7 +891,7 @@ namespace GingerCore.ALM.QCRestAPI
                             stepActivityVar = new VariableSelectionList();
                             stepActivityVar.Name = param;
                             stepActivity.AddVariable(stepActivityVar);
-                            stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because flow control param was added
+                            stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                         }
                     }
                     else if (isflowControlParam == false)
@@ -903,7 +904,7 @@ namespace GingerCore.ALM.QCRestAPI
                             stepActivityVar.Name = param;
                             ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                             stepActivity.AddVariable(stepActivityVar);
-                            stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because flow control param was removed
+                            stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
                         }
                     }
                 }
@@ -919,7 +920,7 @@ namespace GingerCore.ALM.QCRestAPI
                         ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
                         //((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
                         if (isflowControlParam == true)
-                            stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
+                            stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
                     }
                     //set the selected value
                     ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;

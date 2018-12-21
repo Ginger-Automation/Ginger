@@ -32,6 +32,7 @@ using Npgsql;
 using GingerCore.DataSource;
 using GingerCore.NoSqlBase;
 using MySql.Data.MySqlClient;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.Environments
 {
@@ -55,10 +56,10 @@ namespace GingerCore.Environments
             ConnectionString =1,            
         }
 
-        public IProjEnvironment ProjEnvironment { get; set; }
+        public ProjEnvironment ProjEnvironment { get; set; }
        
-        private IBusinessFlow mBusinessFlow;
-        public IBusinessFlow BusinessFlow
+        private BusinessFlow mBusinessFlow;
+        public BusinessFlow BusinessFlow
         {
             get { return mBusinessFlow; }
             set

@@ -22,6 +22,7 @@ using System.ComponentModel;
 using System.IO.Compression;
 using System.Linq;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
@@ -96,7 +97,7 @@ namespace GingerCore.ALM
             return ExportToQCRestAPI.ExportExceutionDetailsToALM(bizFlow, ref result, runFields, exectutedFromAutomateTab, publishToALMConfig);
         }
 
-        public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
+        public override ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo
         {
             get { return ImportFromQCRest.GingerActivitiesGroupsRepo; }
             set { ImportFromQCRest.GingerActivitiesGroupsRepo = value; }

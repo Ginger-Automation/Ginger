@@ -34,6 +34,7 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace UnitTests.NonUITests
 {
@@ -63,7 +64,7 @@ namespace UnitTests.NonUITests
             Agent a = new Agent();            
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(a);
             
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "VM", Agent = a });

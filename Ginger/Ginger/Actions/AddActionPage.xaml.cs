@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Repository;
@@ -45,7 +46,7 @@ namespace Ginger.Actions
     public partial class AddActionPage : Page
     {
         GenericWindow _pageGenericWin = null;
-        ObservableList<Act> mActionsList;
+        ObservableList<IAct> mActionsList;
         // bool IsPlugInAvailable = false;
 
         public AddActionPage()
@@ -259,7 +260,7 @@ namespace Ginger.Actions
                     int selectedActIndex = -1;
                     if (mActionsList.CurrentItem != null)
                     {
-                        selectedActIndex = mActionsList.IndexOf((Act)mActionsList.CurrentItem);
+                        selectedActIndex = mActionsList.IndexOf((IAct)mActionsList.CurrentItem);
                     }
                     mActionsList.Add(aNew);
                     if (selectedActIndex >= 0)
@@ -326,7 +327,7 @@ namespace Ginger.Actions
         /// </summary>
         /// <param name="ActionsList"></param>
         /// <param name="windowStyle"></param>
-        public void ShowAsWindow(ObservableList<Act> ActionsList, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        public void ShowAsWindow(ObservableList<IAct> ActionsList, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             mActionsList = ActionsList;
 

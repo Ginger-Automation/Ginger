@@ -16,32 +16,92 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Ginger.Run;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Activities;
+using GingerCore.DataSource;
 using GingerCore.Environments;
+using GingerCore.Variables;
+using System;
+using System.Collections.Generic;
 
 namespace Ginger.Repository
 {
     public class RepositoryItemFactory : IRepositoryItemFactory
     {
-        public IBusinessFlow CreateBusinessFlow()
-        {
-            return new BusinessFlow();
-        }
-
-        public IValueExpression CreateValueExpression(IProjEnvironment mProjEnvironment, IBusinessFlow mBusinessFlow)
+        
+        public IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow)
         {
             return new ValueExpression(mProjEnvironment, mBusinessFlow);
         }
 
-        public IValueExpression CreateValueExpression(IProjEnvironment mProjEnvironment, IBusinessFlow mBusinessFlow, object DSList)
+        public IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow, object DSList)
         {
             return new ValueExpression(mProjEnvironment, mBusinessFlow, (ObservableList<GingerCore.DataSource.DataSourceBase>)DSList);
         }
 
+        public IValueExpression CreateValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null)
+        {
+            throw new System.NotImplementedException();
+        }
+        public IActivitiesGroup CreateActivitiesGroup()
+        {
+            return new ActivitiesGroup();
+        }
         public ObservableList<IDatabase> GetDatabaseList()
         {
             return new ObservableList<IDatabase>();
+        }
+
+        public ObservableList<DataSourceBase> GetDatasourceList()
+        {
+            return new ObservableList<DataSourceBase>();
+        }
+
+
+
+        public Type GetRepositoryItemTypeFromInterface(Type interfaceType)
+        {
+            if (interfaceType.IsInterface)
+            {
+                if (interfaceType == typeof(IAct))
+                {
+                    return typeof(Act);
+                }
+                else if (interfaceType == typeof(Activity))
+                {
+                    return typeof(Activity);
+                }
+                else if (interfaceType == typeof(IActivitiesGroup))
+                {
+                    return typeof(ActivitiesGroup);
+                }
+                else if (interfaceType == typeof(IAgent))
+                {
+                    return typeof(Agent);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return interfaceType;
+            }
+        }
+
+        public ObservableList<IAgent> GetAllIAgents()
+        {
+            return new ObservableList<IAgent>( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x));
+        }
+        public ObservableList<ProjEnvironment> GetAllEnvironments()
+        {
+            return new ObservableList<ProjEnvironment>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ListItems.ConvertAll(x => (ProjEnvironment)x));
         }
     }
 }

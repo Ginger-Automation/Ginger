@@ -450,17 +450,17 @@ namespace GingerCore.Variables
                         int originalIndex = 0;
 
                         //TODO: Fix the issues
-                        if (hostItem is IActivity)
+                        if (hostItem is Activity)
                         {
-                            originalIndex = ((IActivity)hostItem).GetVariables().IndexOf(variableBaseInstance);
-                            ((IActivity)hostItem).GetVariables().Remove(variableBaseInstance);
-                            ((IActivity)hostItem).GetVariables().Insert(originalIndex, newInstance);
+                            originalIndex = ((Activity)hostItem).GetVariables().IndexOf(variableBaseInstance);
+                            ((Activity)hostItem).GetVariables().Remove(variableBaseInstance);
+                            ((Activity)hostItem).GetVariables().Insert(originalIndex, newInstance);
                         }
                         else
                         {
-                            originalIndex = ((IBusinessFlow)hostItem).GetVariables().IndexOf(variableBaseInstance);
-                            ((IBusinessFlow)hostItem).GetVariables().Remove(variableBaseInstance);
-                            ((IBusinessFlow)hostItem).GetVariables().Insert(originalIndex, newInstance);
+                            originalIndex = ((BusinessFlow)hostItem).GetVariables().IndexOf(variableBaseInstance);
+                            ((BusinessFlow)hostItem).GetVariables().Remove(variableBaseInstance);
+                            ((BusinessFlow)hostItem).GetVariables().Insert(originalIndex, newInstance);
                         }
                     }
                     break;

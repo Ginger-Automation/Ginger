@@ -31,6 +31,7 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace UnitTest {
     [Level3]
@@ -79,7 +80,7 @@ namespace UnitTest {
                 a.Driver = mDriver;
                 a.DriverType = Agent.eDriverType.PowerBuilder;
 
-                mGR.SolutionAgents = new ObservableList<Agent>();
+                mGR.SolutionAgents = new ObservableList<IAgent>();
                 mGR.SolutionAgents.Add(a);
 
                 ApplicationAgent AA = new ApplicationAgent();

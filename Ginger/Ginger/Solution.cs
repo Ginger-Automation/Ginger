@@ -36,7 +36,7 @@ using System.Text;
 
 namespace Ginger.SolutionGeneral
 {
-    public class Solution : RepositoryItemBase
+    public class Solution : RepositoryItemBase,ISolution
     {
         public SourceControlBase SourceControl { get; set; }
 
@@ -307,7 +307,7 @@ namespace Ginger.SolutionGeneral
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ApplicationPlatform> ApplicationPlatforms;
+        public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
 
         public string MainApplication
         {
@@ -447,13 +447,13 @@ namespace Ginger.SolutionGeneral
 
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList = new ObservableList<ExecutionLoggerConfiguration>();
+        public ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList { get; set; } = new ObservableList<ExecutionLoggerConfiguration>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
+        public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList { get; set; } = new ObservableList<HTMLReportsConfiguration>();
 
         //public string VariablesNames
         //{

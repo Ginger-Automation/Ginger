@@ -34,19 +34,21 @@ namespace Amdocs.Ginger.Common
             }
         }
 
-        internal static void ToLog(eAppReporterLogLevel logLevel, string logMessage, Exception exceptionToRecord = null, bool logOnlyOnDebugMode=false)
+        public static void ToLog(eAppReporterLogLevel logLevel, string logMessage, Exception exceptionToRecord = null, bool logOnlyOnDebugMode=false)
         {
             OnReportEvent(reportType: eAppReportType.ToLog, reportMessage: logMessage, reportLogLevel: logLevel, reportExceptionToRecord: exceptionToRecord, logOnlyOnDebugMode: logOnlyOnDebugMode);
         }
 
-        internal static void ToConsole(string consoleMessage, Exception exceptionToRecord = null)
+        public static void ToConsole(string consoleMessage, Exception exceptionToRecord = null)
         {
             OnReportEvent(reportType: eAppReportType.ToConsole, reportMessage: consoleMessage, reportExceptionToRecord: exceptionToRecord);
         }
 
-        internal static void ToUser(eAppReporterMessageType reportMessageType, string message)
+        public static void ToUser(eAppReporterMessageType reportMessageType, string message)
         {
             OnReportEvent(reportType: eAppReportType.ToUser, reportMessage: message, reportMessageType: reportMessageType);
         }
+
+      
     }
 }

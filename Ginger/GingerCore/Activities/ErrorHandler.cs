@@ -17,15 +17,21 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Properties;
 
 //TODO: change add core
 namespace GingerCore
 {
+    public enum eHandlerType
+    {
+        Error_Handler = 0,
+        Popup_Handler = 1
+    }
     //Activity can have several steps - Acts
     // The activities can come from external like: QC TC Step, vStorm    
-    public class ErrorHandler : Activity
+    public class ErrorHandler : Activity, IErrorHandler
     {
         public new static class Fields
         {
@@ -35,11 +41,7 @@ namespace GingerCore
             public static string IsSelected = "IsSelected";
         }
 
-        public enum eHandlerType
-        {             
-            Error_Handler = 0,
-            Popup_Handler = 1
-        }       
+        
 
         private eHandlerType mHandlerType;
         public bool IsSelected { get; set; }

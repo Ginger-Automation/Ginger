@@ -38,6 +38,16 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using System;
+using System.Diagnostics;
+using Ginger.Actions;
+using System.Windows.Data;
+using GingerCore.Platforms;
+using Ginger.Imports.UFT;
+using GingerCore.Actions.Common;
+using Amdocs.Ginger.Common.UIElement;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Imports.QTP
 {
@@ -390,7 +400,7 @@ namespace Ginger.Imports.QTP
         private void AddAction(object sender, RoutedEventArgs e)
         {
 
-            ObservableList<Act> ActionsList = new ObservableList<Act>();
+            ObservableList<IAct> ActionsList = new ObservableList<IAct>();
 
             // We create one dummy activity in case we convert code without function
             mBusinessFlow.Activities = new ObservableList<Activity>();
@@ -405,7 +415,7 @@ namespace Ginger.Imports.QTP
             addAction.ShowAsWindow(ActionsList);
 
             // We will get only one action currently
-            Act a = ActionsList[0];
+            Act a =(Act) ActionsList[0];
 
             CommonFunctionMapping CFM = new CommonFunctionMapping();                        
             CFM.TargetAction = a;

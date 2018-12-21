@@ -32,6 +32,7 @@ using System.IO.Compression;
 using Newtonsoft.Json;
 using GingerCore.External;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.ALM
 {
@@ -81,7 +82,7 @@ namespace GingerCore.ALM
         {
             return ExportToRQM.Instance.ExportExecutionDetailsToRQM(bizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig );
         }
-        public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups, ref string result)
+        public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> grdActivitiesGroups, ref string result)
         {
             return ExportToRQM.Instance.ExportBfActivitiesGroupsToALM(businessFlow, grdActivitiesGroups, ref result);
         }
@@ -101,7 +102,7 @@ namespace GingerCore.ALM
             return null;
         }
 
-        public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
+        public override ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo
         {
             get { return ImportFromRQM.GingerActivitiesGroupsRepo; }
             set { ImportFromRQM.GingerActivitiesGroupsRepo = value; }

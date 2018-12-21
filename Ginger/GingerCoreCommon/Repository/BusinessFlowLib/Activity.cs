@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -32,41 +33,45 @@ using System.Windows;
 //TODO: change add core
 namespace GingerCore
 {
+
+    public enum eActivityAutomationStatus
+    {
+        Development = 0,
+        Automated = 1
+    }
+
+    public enum eActionRunOption
+    {
+        [EnumValueDescription("Stop Actions Run on Failure")]
+        StopActionsRunOnFailure = 0,
+        [EnumValueDescription("Continue Actions Run on Failure")]
+        ContinueActionsRunOnFailure = 1,
+    }
+
+    public enum eItemParts
+    {
+        All,
+        Details,
+        Actions,
+        Variables
+    }
+    public enum eHandlerMappingType
+    {
+        [EnumValueDescription("All Available Error Handlers ")]
+        AllAvailableHandlers = 0,
+        None = 1,
+        [EnumValueDescription("Specific Error Handlers")]
+        SpecificErrorHandlers = 2
+    }
+
+
     // Activity can have several steps - Acts
     // The activities can come from external like: QC TC Step, vStorm    
-    public class Activity : RepositoryItemBase, IActivity
+    public class Activity : RepositoryItemBase
     {
-        public enum eActivityAutomationStatus
-        {
-            Development = 0,
-            Automated = 1
-        }
-       
-        public enum eActionRunOption
-        {
-            [EnumValueDescription("Stop Actions Run on Failure")]
-            StopActionsRunOnFailure = 0,
-            [EnumValueDescription("Continue Actions Run on Failure")]
-            ContinueActionsRunOnFailure = 1,
-        }
+    
 
-        public enum eItemParts
-        {
-            All,
-            Details,
-            Actions,
-            Variables
-        }
-
-
-        public enum eHandlerMappingType
-        {
-            [EnumValueDescription("All Available Error Handlers ")]
-            AllAvailableHandlers = 0,
-            None = 1,
-            [EnumValueDescription("Specific Error Handlers")]
-            SpecificErrorHandlers = 2
-        }
+    
         
         public new static class Fields
         {            
@@ -104,12 +109,12 @@ namespace GingerCore
 
         #region Activity-Error Handler Mapping
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> MappedErrorHandlers = new ObservableList<Guid>();
+        public ObservableList<Guid> MappedErrorHandlers { get; set; } = new ObservableList<Guid>();
 
-        Activity.eHandlerMappingType mErrorHandlerMappingType;
+        eHandlerMappingType mErrorHandlerMappingType;
 
         [IsSerializedForLocalRepository]
-        public Activity.eHandlerMappingType  ErrorHandlerMappingType
+        public eHandlerMappingType  ErrorHandlerMappingType
         {
             get { return mErrorHandlerMappingType; }
             set
@@ -342,14 +347,14 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Act> Acts = new ObservableList<Act>();
+        public ObservableList<IAct> Acts { get; set; } = new ObservableList<IAct>();
 
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> Tags = new ObservableList<Guid>();
+        public ObservableList<Guid> Tags { get; set; } = new ObservableList<Guid>();
 
         public override bool FilterBy(eFilterBy filterType, object obj)
         {
@@ -472,7 +477,7 @@ namespace GingerCore
         public override string GetNameForFileName() { return ActivityName; }
       
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableDependency> VariablesDependencies = new ObservableList<VariableDependency>();
+        public ObservableList<VariableDependency> VariablesDependencies { get; set; } = new ObservableList<VariableDependency>();
         
         /// <summary>
         /// Check if the Activity supposed to be executed according to it variables dependencies configurations
@@ -629,7 +634,7 @@ namespace GingerCore
         //    return false; //no missing vars
         //}
 
-        public dynamic CurrentAgent { get; set; }  // Agent
+        public IAgent CurrentAgent { get; set; }
 
         public override string ItemName
         {
@@ -653,7 +658,7 @@ namespace GingerCore
             newInstance.IsSharedRepositoryInstance = true;
 
             //update required part
-            Activity.eItemParts ePartToUpdate = (Activity.eItemParts)Enum.Parse(typeof(Activity.eItemParts), partToUpdate);
+            eItemParts ePartToUpdate = (eItemParts)Enum.Parse(typeof(eItemParts), partToUpdate);
             switch (ePartToUpdate)
             {
                 case eItemParts.All:
@@ -695,7 +700,7 @@ namespace GingerCore
             Activity updatedActivity = null;
             
             //update required part
-            eItemParts ePartToUpdate = (eItemParts)Enum.Parse(typeof(Activity.eItemParts), itemPartToUpdate);
+            eItemParts ePartToUpdate = (eItemParts)Enum.Parse(typeof(eItemParts), itemPartToUpdate);
 
             switch (ePartToUpdate)
             {
@@ -750,7 +755,7 @@ namespace GingerCore
                                 {
                                     //add the val
                                     repoVarList.OptionalValuesList.Add(usageValue);                                    
-                                    repositoryItem.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset the status because new variable optional value was added
+                                    repositoryItem.AutomationStatus = eActivityAutomationStatus.Development;//reset the status because new variable optional value was added
                                 }
                             }
 
@@ -767,9 +772,9 @@ namespace GingerCore
             }
         }
 
-        public Act GetAct(Guid guidValue, string nameValue = null)
+        public IAct GetAct(Guid guidValue, string nameValue = null)
         {
-            Act foundAct = null;
+            IAct foundAct = null;
             if (guidValue != null && guidValue != Guid.Empty)
                 foundAct = GetActFromPossibleList(guidValue.ToString());
             if (foundAct == null && guidValue == Guid.Empty && nameValue != null)//look by name only if do not have GUID so only old flows will still work with name mapping
@@ -777,7 +782,7 @@ namespace GingerCore
             return foundAct;
         }
 
-        private Act GetActFromPossibleList(String guidToLookByString = null, string nameToLookBy = null)
+        private IAct GetActFromPossibleList(String guidToLookByString = null, string nameToLookBy = null)
         {
             Guid guidToLookBy = Guid.Empty;
             if (!string.IsNullOrEmpty(guidToLookByString))
@@ -785,7 +790,7 @@ namespace GingerCore
                 guidToLookBy = Guid.Parse(guidToLookByString);
             }
            
-            List<Act> lstActions = null;
+            List<IAct> lstActions = null;
             if (guidToLookBy != Guid.Empty)
                 lstActions = Acts.Where(x => x.Guid == guidToLookBy).ToList();
             else
@@ -797,7 +802,7 @@ namespace GingerCore
                 return lstActions[0];
             else//we have more than 1
             {
-                Act firstActive = lstActions.Where(x => x.Active == true).FirstOrDefault();
+                IAct firstActive = lstActions.Where(x => x.Active == true).FirstOrDefault();
                 if (firstActive != null)
                     return firstActive;
                 else

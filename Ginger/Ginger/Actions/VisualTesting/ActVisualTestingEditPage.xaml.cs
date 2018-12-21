@@ -288,7 +288,7 @@ namespace Ginger.Actions.VisualTesting
         private IVisualTestingDriver GetVisualTestingDriver()
         {
             App.AutomateTabGingerRunner.SetCurrentActivityAgent();
-            Agent a = App.BusinessFlow.CurrentActivity.CurrentAgent;
+            Agent a = (Agent)App.BusinessFlow.CurrentActivity.CurrentAgent;
 
             if (a.Driver is IVisualTestingDriver)
             {

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
 using GingerCore.DataSource;
@@ -111,13 +112,13 @@ namespace GingerCore
 
         ObservableList<DataSourceBase> DSList;
 
-        IBusinessFlow BF;
-        IProjEnvironment Env;
+        BusinessFlow BF;
+        ProjEnvironment Env;
         bool bUpdate;
         string updateValue;
         bool bDone;
 
-        public bool DecryptFlag = false;
+        public bool DecryptFlag { get; set; } = false;
         private string mValueCalculated = null;
 
         ObservableList<VariableBase> mSolutionVariables = null;
@@ -138,7 +139,7 @@ namespace GingerCore
             return Value;
         }
 
-        public ValueExpression(IProjEnvironment Env, IBusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null)
+        public ValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null)
         {
             this.Env = Env;
             this.BF = BF;
@@ -1018,7 +1019,7 @@ namespace GingerCore
         /// <param name="BusinessFlow">Business Flow containing the Variables</param>
         /// <param name="Value">the Expression string</param>
         /// <returns></returns>
-        public static string Calculate(IProjEnvironment ProjEnvironment, IBusinessFlow BusinessFlow, string Value,ObservableList <DataSourceBase> DSList,bool bUpdate = false, string UpdateValue = "")
+        public static string Calculate(ProjEnvironment ProjEnvironment, BusinessFlow BusinessFlow, string Value,ObservableList <DataSourceBase> DSList,bool bUpdate = false, string UpdateValue = "")
         {
             //TODO: this is static func, we can later on do cache and other stuff for performence if needed
             ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList, bUpdate,UpdateValue);

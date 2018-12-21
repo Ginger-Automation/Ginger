@@ -29,6 +29,7 @@ using Ginger.Reports;
 using GingerCore.Actions;
 using Ginger.Actions;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.CoreNET.Run.RunsetActions;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -48,7 +49,7 @@ namespace Ginger.Run.RunSetActions
         public RunSetActionHTMLReportSendEmailEditPage(RunSetActionHTMLReportSendEmail runSetActionHTMLReportSendEmail)
         {
             InitializeComponent();
-            this.runSetActionHTMLReportSendEmail = runSetActionHTMLReportSendEmail;
+         /*   this.runSetActionHTMLReportSendEmail = runSetActionHTMLReportSendEmail;
             if (runSetActionHTMLReportSendEmail.Email == null)
             {
                 runSetActionHTMLReportSendEmail.Email = new Email();                
@@ -74,7 +75,7 @@ namespace Ginger.Run.RunSetActions
                 runSetActionHTMLReportSendEmail.MailFrom = App.UserProfile.UserEmail;
             }
             InitAttachmentsGrid();
-            RadioButtonInit();
+            RadioButtonInit();*/
         }
         public void RadioButtonInit()
         {

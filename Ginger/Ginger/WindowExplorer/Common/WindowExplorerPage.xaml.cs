@@ -97,17 +97,17 @@ namespace Ginger.WindowExplorer
 
             mContext = Context;
             
-            mPlatform = PlatformInfoBase.GetPlatformImpl(ApplicationAgent.Agent.Platform);
+            mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
 
             //Instead of check make it disabled ?
-            if ((ApplicationAgent.Agent.Driver is IWindowExplorer) == false)
+            if ((((Agent)ApplicationAgent.Agent).Driver is IWindowExplorer) == false)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Control selection is not available yet for driver - " + ApplicationAgent.Agent.Driver.GetType().ToString());
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Control selection is not available yet for driver - " + ((Agent)ApplicationAgent.Agent).Driver.GetType().ToString());
                 _GenWin.Close();
                 return;                
             }
             
-            IWindowExplorer WindowExplorerDriver = (IWindowExplorer)ApplicationAgent.Agent.Driver;
+            IWindowExplorer WindowExplorerDriver = (IWindowExplorer)((Agent)ApplicationAgent.Agent).Driver;
                 
             mWindowExplorerDriver = WindowExplorerDriver;
             mAction = Act;
@@ -1149,7 +1149,7 @@ namespace Ginger.WindowExplorer
         private void SetAutoMapElementTypes()
         {
             List<eElementType> UIElementsTypeList = null;
-            switch (mApplicationAgent.Agent.Platform)
+            switch (((Agent)mApplicationAgent.Agent).Platform)
             {
                 case ePlatformType.Web:
                     WebPlatform webPlatformInfo = new WebPlatform();

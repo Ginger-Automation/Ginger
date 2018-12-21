@@ -28,6 +28,7 @@ using System.IO.Compression;
 using System.Reflection;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.IO;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.ALM.QC
 {
@@ -54,13 +55,13 @@ namespace GingerCore.ALM.QC
                     List<TSTest> qcTSTests = ImportFromQC.GetTSTestsList(testSet); //list of TSTest's on main TestSet in TestLab 
 
                     //get all BF Activities groups
-                    ObservableList<ActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
+                    ObservableList<IActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
                     if (activGroups.Count > 0)
                     {
                         foreach (ActivitiesGroup activGroup in activGroups)
                         {
-                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == ActivitiesGroup.eActivitiesGroupRunStatus.Passed)
-                            || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == ActivitiesGroup.eActivitiesGroupRunStatus.Failed)
+                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
+                            || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
                             || publishToALMConfig.FilterStatus == FilterByStatus.All)
                             {
                                 TSTest tsTest = null;
@@ -144,7 +145,7 @@ namespace GingerCore.ALM.QC
                                             {
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed:
                                                     step.Status = "Failed";
-                                                    List<Act> failedActs= matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
+                                                    List<IAct> failedActs= matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
                                                     string errors = string.Empty;
                                                     foreach (Act act in failedActs) errors += act.Error + Environment.NewLine;
                                                     step["ST_ACTUAL"] = errors;
@@ -310,7 +311,7 @@ namespace GingerCore.ALM.QC
 
                 //Add/update all test steps + Parameters
                 foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
-                    ExportActivityAsTestStep(test, actIdent.IdentifiedActivity);
+                    ExportActivityAsTestStep(test, (Activity)actIdent.IdentifiedActivity);
 
                 return true;
             }
@@ -396,7 +397,7 @@ namespace GingerCore.ALM.QC
         public static bool ExportBusinessFlowToQC(BusinessFlow businessFlow, TestSet mappedTestSet, string uploadPath, ObservableList<ExternalItemFieldBase> testSetFields, ref string result)
         {
             TestSet testSet;
-            ObservableList<ActivitiesGroup> existingActivitiesGroups = new ObservableList<ActivitiesGroup>();
+            ObservableList<IActivitiesGroup> existingActivitiesGroups = new ObservableList<IActivitiesGroup>();
             try
             {
                 if (mappedTestSet == null)
@@ -420,7 +421,7 @@ namespace GingerCore.ALM.QC
                     List tsTestsList = testsF.NewList("");
                     foreach (TSTest tsTest in tsTestsList)
                     {
-                        ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == tsTest.TestId.ToString() && x.ExternalID2 == tsTest.ID.ToString())).FirstOrDefault();
+                        IActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == tsTest.TestId.ToString() && x.ExternalID2 == tsTest.ID.ToString())).FirstOrDefault();
                         if (ag == null)
                             testsF.RemoveItem(tsTest.ID);
                         else
@@ -502,7 +503,7 @@ namespace GingerCore.ALM.QC
                     {
                         foreach (ActivityIdentifiers actIdent in ag.ActivitiesIdentifiers)
                         {
-                            ExportActivityAsTestStep(ImportFromQC.GetQCTest(ag.ExternalID), actIdent.IdentifiedActivity);
+                            ExportActivityAsTestStep(ImportFromQC.GetQCTest(ag.ExternalID),(Activity) actIdent.IdentifiedActivity);
                         }
                     }
                 }

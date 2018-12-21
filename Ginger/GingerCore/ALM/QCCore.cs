@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using TDAPIOLELib;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.ALM
 {
@@ -66,7 +67,7 @@ namespace GingerCore.ALM
             return QCConnect.DisconnectQCProjectStayLoggedIn();
         }
 
-        public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
+        public override ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo
         {
             get { return ImportFromQC.GingerActivitiesGroupsRepo; }
             set { ImportFromQC.GingerActivitiesGroupsRepo = value; }

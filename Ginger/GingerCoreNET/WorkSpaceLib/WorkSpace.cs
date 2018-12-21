@@ -18,7 +18,13 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
+using Ginger.Run;
+using GingerCore;
+using GingerCore.Environments;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SourceControl;
 using System;
@@ -31,7 +37,7 @@ namespace amdocs.ginger.GingerCoreNET
     // WorkSpace is one object per user accessible from anywhere and hold the current status of the user selection
     // For GingerWPF it is one per running app
     // For Web it can be one per user connected
-    public class WorkSpace
+    public class WorkSpace : RepositoryItemBase
     {
         private static WorkSpace mWorkSpace;
 
@@ -39,13 +45,36 @@ namespace amdocs.ginger.GingerCoreNET
 
         public SolutionRepository SolutionRepository;
 
+
         // Will be back when we moved GR to GingerCoreNET
         // public GingerRunner GingerRunner;
 
         // public ProjEnvironment CurrentEnvironment;
-
+  
         public SourceControlBase SourceControl;
+        public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
+        public static string AppVersion="0.0.0.0.0";
+        //public static IGingerRunner AutomateTabGingerRunner = new IGingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
+        public  ISolution mSolution { get; set; }
+        public  ISolution Solution
+        {
+            get { return mSolution; }
+            set
+            {
+                mSolution = value;
+                OnPropertyChanged(nameof(Solution));
+            }
+        }
 
+        public static eRunStatus RunSetExecutionStatus = eRunStatus.Failed;
+
+        public static string TempFolder
+        {
+            get
+            {
+                return System.IO.Path.GetDirectoryName(System.IO.Path.GetTempFileName()) + "\\Ginger_Email_Reports";
+            }
+        }
         PluginsManager mPluginsManager = null;
         public PluginsManager PlugInsManager
         {
@@ -112,6 +141,7 @@ namespace amdocs.ginger.GingerCoreNET
         public static void Init(IWorkSpaceEventHandler WSEH)
         {
             mWorkSpace = new WorkSpace();
+            WorkSpace.AppVersion = AppVersion;
             mWorkSpace.EventHandler = WSEH;
         }
 
@@ -146,6 +176,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+
         public string DefualtUserLocalWorkingFolder
         {
             get
@@ -155,6 +186,7 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public BetaFeatures mBetaFeatures;
+
         public BetaFeatures BetaFeatures
         {
             get
@@ -171,6 +203,12 @@ namespace amdocs.ginger.GingerCoreNET
                 mBetaFeatures = value;
             }
         }
+
+        public static BusinessFlow Businessflow { get;  set; }
+        public static bool RunningFromConfigFile = false;
+        public static ProjEnvironment AutomateTabEnvironment;
+        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
 
         //TODO: move to GingerRunner - pass the obj needed
         private void HookAgents()
@@ -309,6 +347,10 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+
+    }
+    public interface IUserprofile
+    {
 
     }
 }

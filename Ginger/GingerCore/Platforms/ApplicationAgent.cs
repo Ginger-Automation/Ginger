@@ -16,12 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using System.ComponentModel;
 
 namespace GingerCore.Platforms
 {
-    public class ApplicationAgent : RepositoryItemBase
+    public class ApplicationAgent : RepositoryItemBase, IApplicationAgent
     {
         private Agent mAgent;
 
@@ -60,7 +61,7 @@ namespace GingerCore.Platforms
             set
             {
                 if (mAgent != null) mAgent.PropertyChanged -= Agent_OnPropertyChange;
-                mAgent = value;
+                mAgent =(Agent) value;
                 if (mAgent != null)
                 {
                     AgentName = mAgent.Name;
@@ -71,7 +72,7 @@ namespace GingerCore.Platforms
                 OnPropertyChanged(Fields.AppAndAgent);                
             }
         }
-
+       // public IAgent agent { get; set; } 
         private string mAgentName;
         [IsSerializedForLocalRepository]
         public string AgentName
@@ -115,7 +116,7 @@ namespace GingerCore.Platforms
 
         private void Agent_OnPropertyChange(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == Agent.Fields.Name)
+            if (e.PropertyName == GingerCore.Agent.Fields.Name)
             {
                OnPropertyChanged(Fields.AgentName);
             }
@@ -131,6 +132,12 @@ namespace GingerCore.Platforms
             {
                 return;
             }
+        }
+
+        IAgent IApplicationAgent.Agent
+        {
+            get { return Agent; }
+            set { Agent = (Agent)value; }
         }
     }
 }

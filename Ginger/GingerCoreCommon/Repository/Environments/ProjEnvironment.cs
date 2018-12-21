@@ -26,7 +26,7 @@ using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Environments
 {
-    public class ProjEnvironment : RepositoryItemBase, IProjEnvironment
+    public class ProjEnvironment : RepositoryItemBase
     {        
 
         public  static class Fields
@@ -132,5 +132,7 @@ namespace GingerCore.Environments
                 return nameof(this.Name);
             }
         }
+
+        // object ProjEnvironment.Guid => throw new NotImplementedException();
     }
 }

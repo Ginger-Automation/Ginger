@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
@@ -534,12 +535,12 @@ namespace UnitTests.NonUITests
             act1.InputValues.Add(new ActInputValue() { Param = "Param2" });
 
             //add flow control
-            act1.FlowControls = new ObservableList<GingerCore.FlowControlLib.FlowControl>();
-            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "A=B", FlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.GoToActivity });
-            GingerCore.FlowControlLib.FlowControl.eFlowControlAction secondFlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.RerunAction;
+            act1.FlowControls = new ObservableList<IFlowControl>();
+            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "A=B", FlowControlAction =eFlowControlAction.GoToActivity });
+           eFlowControlAction secondFlowControlAction =eFlowControlAction.RerunAction;
             GingerCore.FlowControlLib.FlowControl secondFlowControl = new GingerCore.FlowControlLib.FlowControl() { Condition = "C>123", FlowControlAction = secondFlowControlAction };
             act1.FlowControls.Add(secondFlowControl);
-            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "D=111", FlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.StopRun });
+            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "D=111", FlowControlAction =eFlowControlAction.StopRun });
 
             //BF Variables
             VariableString v = new VariableString();
@@ -570,7 +571,7 @@ namespace UnitTests.NonUITests
             act1.InputValues[0].Param = "qqq";
             act1.InputValues.Remove(act1.InputValues[1]);
 
-            act1.FlowControls[1].FlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.MessageBox;
+            act1.FlowControls[1].FlowControlAction =eFlowControlAction.MessageBox;
             act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "Val=123" });
             act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "Val=555" });
 
@@ -921,13 +922,13 @@ namespace UnitTests.NonUITests
             FlowControl flowControl = new FlowControl();
             flowControl.Active = true;
             flowControl.Condition = "1=1";
-            flowControl.FlowControlAction = FlowControl.eFlowControlAction.GoToActivity;
+            flowControl.FlowControlAction = eFlowControlAction.GoToActivity;
             flowControl.Value = activity2.Guid + flowControl.GUID_NAME_SEPERATOR + activity2.ItemName;
 
             FlowControl flowControl2 = new FlowControl();
             flowControl2.Active = true;
             flowControl2.Condition = "2=2";
-            flowControl2.FlowControlAction = FlowControl.eFlowControlAction.GoToAction;
+            flowControl2.FlowControlAction = eFlowControlAction.GoToAction;
             flowControl2.Value = act2.Guid + flowControl.GUID_NAME_SEPERATOR + act2.ItemName;
 
 
@@ -973,7 +974,7 @@ namespace UnitTests.NonUITests
             FlowControl flowControl = new FlowControl();
             flowControl.Active = true;
             flowControl.Condition = "1=1";
-            flowControl.FlowControlAction = FlowControl.eFlowControlAction.GoToAction;
+            flowControl.FlowControlAction = eFlowControlAction.GoToAction;
             flowControl.Value = act2.Guid + flowControl.GUID_NAME_SEPERATOR + act2.ItemName;
 
 

@@ -90,7 +90,7 @@ namespace Ginger.Repository
                                     type = RepositoryItemUsage.eUsageTypes.Instance;
 
                                 RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = BF.ContainingFolder + BF.Name, UsageItem = a, UsageItemName = a.ActivityName, UsageExtraDetails = "Number of Actions: " + a.Acts.Count().ToString(), UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated};
-                                itemUsage.SetItemPartesFromEnum(typeof(Activity.eItemParts));
+                                itemUsage.SetItemPartesFromEnum(typeof(eItemParts));
                                 RepoItemUsages.Add(itemUsage);
                             }
                         }

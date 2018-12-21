@@ -32,6 +32,7 @@ using System.Windows.Input;
 using System.Linq;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Activities
 {
@@ -233,7 +234,7 @@ namespace Ginger.Activities
         {
             if (grdGroups.Grid.SelectedItems != null)
             {
-                ObservableList<ActivitiesGroup> selectedAGs = new ObservableList<ActivitiesGroup>();
+                ObservableList<IActivitiesGroup> selectedAGs = new ObservableList<IActivitiesGroup>();
                 foreach (ActivitiesGroup ag in grdGroups.Grid.SelectedItems) selectedAGs.Add(ag);
                 ALMIntegration.Instance.ExportBfActivitiesGroupsToALM(App.BusinessFlow, selectedAGs);
             }

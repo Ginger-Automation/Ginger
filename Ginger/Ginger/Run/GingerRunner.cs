@@ -49,7 +49,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using static Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 
 //   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //
@@ -61,14 +63,8 @@ using static Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue;
 //TODO: move this class to GingerCore
 namespace Ginger.Run
 {
-    public class GingerRunner : RepositoryItemBase
+    public class GingerRunner : RepositoryItemBase, IGingerRunner
     {
-        public enum eExecutedFrom
-        {
-            Automation,
-            Run
-        }
-
         public enum eActionExecutorType
         {
             RunWithoutDriver,
@@ -85,19 +81,9 @@ namespace Ginger.Run
             StopAllBusinessFlows = 1,
         }
 
-        public enum eContinueLevel
-        {
-            StandalonBusinessFlow,
-            Runner
-        }
+        
         public PublishToALMConfig PublishToALMConfig = null;
-        public enum eContinueFrom
-        {
-            LastStoppedAction,
-            SpecificAction,
-            SpecificActivity,
-            SpecificBusinessFlow
-        }
+        
         public enum eResetStatus
         {
             All,
@@ -141,7 +127,7 @@ namespace Ginger.Run
         public bool AgentsRunning = false;
         public ExecutionWatch RunnerExecutionWatch = new ExecutionWatch();        
         public eExecutedFrom ExecutedFrom;
-        public ExecutionLogger ExecutionLogger;
+        public ExecutionLogger ExecutionLogger { get; set; }
         public string CurrentGingerLogFolder = string.Empty;
         public string CurrentHTMLReportFolder = string.Empty;
         public int ExecutionLogBusinessFlowCounter { get; set; }
@@ -208,14 +194,15 @@ namespace Ginger.Run
         public ObservableList<Platform> Platforms = new ObservableList<Platform>();//TODO: delete me once projects moved to new Apps/Platform config, meanwhile enable to load old run set config, but ignore the value
         
         [IsSerializedForLocalRepository]
-        public ObservableList<ApplicationAgent> ApplicationAgents = new ObservableList<ApplicationAgent>();
-
+        public ObservableList<IApplicationAgent> ApplicationAgents { get; set; } = new ObservableList<IApplicationAgent>();
+        
         [IsSerializedForLocalRepository]
         public ObservableList<Guid> FilterExecutionTags = new ObservableList<Guid>();
 
-        public ObservableList<Agent> SolutionAgents;
+        //public ObservableList<Agent> SolutionAgents;
+        public ObservableList<IAgent> SolutionAgents { get; set; } = new ObservableList<IAgent>();
 
-        public ObservableList<ApplicationPlatform> SolutionApplications;
+        public ObservableList<ApplicationPlatform> SolutionApplications { get; set; }
 
         private string mName;
         [IsSerializedForLocalRepository]
@@ -291,7 +278,7 @@ namespace Ginger.Run
             }
             set
             {
-                mProjEnvironment = value;
+                mProjEnvironment = (ProjEnvironment)value;
                 if (ExecutionLogger != null)
                 {
                     ExecutionLogger.ExecutionEnvironment = value;
@@ -299,7 +286,7 @@ namespace Ginger.Run
             }
         }
 
-        public ObservableList<DataSourceBase> DSList { get; set; }
+        public ObservableList<DataSourceBase> DSList { get; set; } = RepositoryItemHelper.RepositoryItemFactory.GetDatasourceList();
 
         private bool mRunInSimulationMode;
         public bool RunInSimulationMode
@@ -320,8 +307,8 @@ namespace Ginger.Run
             ExecutedFrom = eExecutedFrom.Run;
             ExecutionLogger = new ExecutionLogger(ProjEnvironment, eExecutedFrom.Run);            
         }
-       
-        public GingerRunner(eExecutedFrom executedFrom)
+
+        public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             ExecutedFrom = executedFrom;
             ExecutionLogger = new ExecutionLogger(ProjEnvironment, ExecutedFrom);
@@ -333,7 +320,7 @@ namespace Ginger.Run
             ProjEnvironment = null;
             if (UseSpecificEnvironment == true && string.IsNullOrEmpty(SpecificEnvironmentName) == false)
             {
-                ProjEnvironment specificEnv = (from x in allEnvs where x.Name == SpecificEnvironmentName select x).FirstOrDefault();
+                ProjEnvironment specificEnv = (from x in allEnvs where x.Name == SpecificEnvironmentName select (ProjEnvironment)x).FirstOrDefault();
                 if (specificEnv != null)
                 {
                     ProjEnvironment = specificEnv;
@@ -346,10 +333,10 @@ namespace Ginger.Run
             }
         }
 
-        public Solution CurrentSolution { get; set; }
+        public ISolution CurrentSolution { get; set; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<BusinessFlowRun> BusinessFlowsRunList = new ObservableList<BusinessFlowRun>();
+        public ObservableList<BusinessFlowRun> BusinessFlowsRunList { get; set; } = new ObservableList<BusinessFlowRun>();
 
         public Amdocs.Ginger.CoreNET.Execution.eRunStatus RunsetStatus
         {
@@ -410,7 +397,7 @@ namespace Ginger.Run
             }
         }
 
-        public ObservableList<BusinessFlow> BusinessFlows = new ObservableList<BusinessFlow>();
+        public ObservableList<BusinessFlow> BusinessFlows { get; set; } = new ObservableList<BusinessFlow>();
 
         public async Task<int> RunRunnerAsync()
         {
@@ -467,7 +454,7 @@ namespace Ginger.Run
                 int? flowControlIndx = null;                
                 for (int bfIndx = startingBfIndx; bfIndx < BusinessFlows.Count; CalculateNextBFIndx(ref flowControlIndx, ref bfIndx))
                 {
-                    BusinessFlow executedBusFlow = BusinessFlows[bfIndx];
+                    BusinessFlow executedBusFlow =(BusinessFlow) BusinessFlows[bfIndx];
 
                     //stop if needed before executing next BF
                     if (mStopRun)
@@ -583,7 +570,7 @@ namespace Ginger.Run
             ObservableList<BusinessFlow> prevBFs = new ObservableList<BusinessFlow>();
             for (int i = 0; i < BusinessFlows.IndexOf(bfToUpdate); i++)
             {
-                prevBFs.Add(BusinessFlows[i]);
+                prevBFs.Add((BusinessFlow)BusinessFlows[i]);
             }
             foreach (BusinessFlow bf in prevBFs.Reverse())//doing in reverse for passing the most updated value of variables with similar name
             {
@@ -646,7 +633,7 @@ namespace Ginger.Run
         {
             try
             {
-                Agent.ProjEnvironment = ProjEnvironment;
+                Agent.ProjEnvironment = (ProjEnvironment)ProjEnvironment;
                 Agent.BusinessFlow = CurrentBusinessFlow;
                 Agent.SolutionFolder = SolutionFolder;
                 Agent.DSList = DSList;                
@@ -668,9 +655,9 @@ namespace Ginger.Run
         {
             foreach (ApplicationAgent AA in ApplicationAgents)
             {
-                if (AA.Agent != null)
+                if (((Agent)AA.Agent) != null)
                 {
-                    AA.Agent.Close();
+                    ((Agent)AA.Agent).Close();
                 }
             }
             AgentsRunning = false;
@@ -685,19 +672,19 @@ namespace Ginger.Run
 
             foreach (ApplicationAgent AA in ApplicationAgents)
             {
-                if (AA.Agent == null)
+                if (((Agent)AA.Agent) == null)
                 {
                     //TODO: else ask user to define agent  
                 }
                 else
                 {    
-                    if (AA.Agent.Driver == null)
+                    if (((Agent)AA.Agent).Driver == null)
                     {
                         //what is this? hard coded? - if we need to set agents order let's add a way to sort the agents
-                        if (AA.Agent.DriverType == Agent.eDriverType.UnixShell)
+                        if (((Agent)AA.Agent).DriverType == Agent.eDriverType.UnixShell)
                             ApplicationAgentsToStartLast.Add(AA);
                         else
-                            StartAgent(AA.Agent);
+                            StartAgent(((Agent)AA.Agent));
                     }
                 }
             }
@@ -706,17 +693,17 @@ namespace Ginger.Run
             {
                 foreach (ApplicationAgent AA in ApplicationAgentsToStartLast)
                 {
-                    if (AA.Agent.Driver == null)
-                        StartAgent(AA.Agent);
+                    if (((Agent)AA.Agent).Driver == null)
+                        StartAgent(((Agent)AA.Agent));
                 }
             }
 
             //Wait for all agents to be running            
             foreach (ApplicationAgent AA in ApplicationAgents)
             {
-                if (AA.Agent != null)
+                if (((Agent)AA.Agent) != null)
                 {
-                    AA.Agent.WaitForAgentToBeReady();
+                    ((Agent)AA.Agent).WaitForAgentToBeReady();
                 }
             }
             AgentsRunning = true;
@@ -845,7 +832,7 @@ namespace Ginger.Run
                         act.ExInfo = "Action is not active.";
                         return;
                     }
-                    if (act.CheckIfVaribalesDependenciesAllowsToRun(CurrentBusinessFlow.CurrentActivity, true) == false)
+                    if (act.CheckIfVaribalesDependenciesAllowsToRun((Activity)(CurrentBusinessFlow.CurrentActivity), true) == false)
                         return;
                 }
                 if (act.BreakPoint)
@@ -865,14 +852,14 @@ namespace Ginger.Run
                 }
                 if (GiveUserFeedback) OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.DoEventsRequired, null);
 
-                ExecutionLogger.ActionStart(CurrentBusinessFlow, CurrentBusinessFlow.CurrentActivity, act);
+                ExecutionLogger.ActionStart(CurrentBusinessFlow,((Activity)CurrentBusinessFlow.CurrentActivity), act);
 
                 while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
                 {
                     RunActionWithTimeOutControl(act, ActionExecutorType);
                     CalculateActionFinalStatus(act);
                     // fetch all pop-up handlers
-                    ObservableList<ErrorHandler> lstPopUpHandlers = GetAllErrorHandlersByType(ErrorHandler.eHandlerType.Popup_Handler);
+                    ObservableList<ErrorHandler> lstPopUpHandlers = GetAllErrorHandlersByType(eHandlerType.Popup_Handler);
                     if (lstPopUpHandlers.Count > 0)
                     {
                         executeErrorAndPopUpHandler(lstPopUpHandlers);
@@ -932,12 +919,12 @@ namespace Ginger.Run
                 if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && act.EnableRetryMechanism && act.RetryMechanismCount < act.MaxNumberOfRetries)
                 {
                     //since we return and don't do flow control the action is going to run again
-                    ExecutionLogger.ActionEnd(CurrentBusinessFlow.CurrentActivity, act);
+                    ExecutionLogger.ActionEnd((Activity)CurrentBusinessFlow.CurrentActivity, act);
                     return;
                 }
                 // we capture current activity and action to use it for execution logger,
                 // because in DoFlowControl(act) it will point to the other action/activity(as flow control will be applied)
-                Activity activity = CurrentBusinessFlow.CurrentActivity;
+                Activity activity =(Activity) CurrentBusinessFlow.CurrentActivity;
                 Act action = act;
 
                 DoFlowControl(act);
@@ -946,7 +933,7 @@ namespace Ginger.Run
                 ExecutionLogger.ActionEnd(activity, action);
             }
             
-        private ObservableList<ErrorHandler> GetAllErrorHandlersByType(ErrorHandler.eHandlerType errHandlerType)
+        private ObservableList<ErrorHandler> GetAllErrorHandlersByType(eHandlerType errHandlerType)
         {
             ObservableList<ErrorHandler> lstErrorHandler = new ObservableList<ErrorHandler>(CurrentBusinessFlow.Activities.Where(a => a.GetType() == typeof(ErrorHandler) && a.Active == true
               && ((GingerCore.ErrorHandler)a).HandlerType == errHandlerType).Cast<ErrorHandler>().ToList());
@@ -958,18 +945,18 @@ namespace Ginger.Run
         {
             ObservableList<ErrorHandler> errorHandlersToExecute = new ObservableList<ErrorHandler>();
 
-            ErrorHandler.eHandlerMappingType typeHandlerMapping = (ErrorHandler.eHandlerMappingType)CurrentBusinessFlow.CurrentActivity.ErrorHandlerMappingType;
+            eHandlerMappingType typeHandlerMapping = (eHandlerMappingType)((Activity)CurrentBusinessFlow.CurrentActivity).ErrorHandlerMappingType;
 
-            if (typeHandlerMapping == ErrorHandler.eHandlerMappingType.None)
+            if (typeHandlerMapping == eHandlerMappingType.None)
             {
                 // if set to NONE then, return an empty list. Nothing to execute!
                 return errorHandlersToExecute;
             }
 
-            if (typeHandlerMapping == ErrorHandler.eHandlerMappingType.SpecificErrorHandlers)
+            if (typeHandlerMapping == eHandlerMappingType.SpecificErrorHandlers)
             {
                 // fetch list of all error handlers in the current business flow
-                ObservableList<ErrorHandler> allCurrentBusinessFlowErrorHandlers = GetAllErrorHandlersByType(ErrorHandler.eHandlerType.Error_Handler);
+                ObservableList<ErrorHandler> allCurrentBusinessFlowErrorHandlers = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
 
                 ObservableList<ErrorHandler> lstMappedErrorHandler = new ObservableList<ErrorHandler>();
                 foreach (Guid _guid in CurrentBusinessFlow.CurrentActivity.MappedErrorHandlers)
@@ -984,10 +971,10 @@ namespace Ginger.Run
                 // pass only specific mapped error handlers present the business flow
                 errorHandlersToExecute = lstMappedErrorHandler;
             }
-            else if (typeHandlerMapping == ErrorHandler.eHandlerMappingType.AllAvailableHandlers)
+            else if (typeHandlerMapping == eHandlerMappingType.AllAvailableHandlers)
             {
                 // pass all error handlers, by default
-                errorHandlersToExecute = GetAllErrorHandlersByType(ErrorHandler.eHandlerType.Error_Handler);
+                errorHandlersToExecute = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
             }
             return errorHandlersToExecute;
 
@@ -1035,7 +1022,7 @@ namespace Ginger.Run
                 if (DataSource.FilePath.StartsWith("~"))
                 {
                     DataSource.FileFullPath = DataSource.FilePath.Replace(@"~\", "").Replace("~", "");
-                    DataSource.FileFullPath = System.IO.Path.Combine(Ginger.App.UserProfile.Solution.Folder, DataSource.FileFullPath);
+                  //  DataSource.FileFullPath = System.IO.Path.Combine(Ginger.App.UserProfile.Solution.Folder, DataSource.FileFullPath);
                 }
                 DataSource.Init(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dstTables = DataSource.DSC.GetTablesList();
@@ -1313,7 +1300,7 @@ namespace Ginger.Run
                     st.Start();
                     if (act.Active)
                     {
-                        if (errActivity.HandlerType == ErrorHandler.eHandlerType.Popup_Handler)
+                        if (errActivity.HandlerType == eHandlerType.Popup_Handler)
                             act.Timeout = 1;
                         PrepAction(act, ref ActionExecutorType, st);
                         RunActionWithTimeOutControl(act, ActionExecutorType);
@@ -1430,7 +1417,7 @@ namespace Ginger.Run
 
                             if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                                 ASS.WindowsToCapture = ActScreenShot.eWindowsToCapture.AllAvailableWindows;
-                            Agent a = CurrentBusinessFlow.CurrentActivity.CurrentAgent;
+                            Agent a =(Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
                             if (a == null)
                             {
                                 msg = "Missing Agent for taking screen shot for the action: '" + act.Description + "'";
@@ -1535,7 +1522,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    GingerCore.Drivers.DriverBase driver = CurrentBusinessFlow.CurrentActivity.CurrentAgent.Driver;
+                    GingerCore.Drivers.DriverBase driver = ((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).Driver;
                     if (act.Timeout == null)
                     {
                         if (driver != null && driver.ActionTimeout != -1)
@@ -1559,7 +1546,7 @@ namespace Ginger.Run
                     }
                 }
 
-                Agent currentAgent = CurrentBusinessFlow.CurrentActivity.CurrentAgent;
+                Agent currentAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
                 bool bCompleted = ExecuteActionWithTimeLimit(act, TS, () =>
                 {                    
                     switch (ActExecutorType)
@@ -1591,7 +1578,7 @@ namespace Ginger.Run
                                 }
                                 else
                                 {
-                                    CurrentBusinessFlow.CurrentActivity.CurrentAgent.RunAction(act);
+                                 ((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).RunAction(act);
                                 }
                             }
                             break;
@@ -1764,8 +1751,8 @@ namespace Ginger.Run
                 return;
             }
 
-            ApplicationAgent AA = (from x in ApplicationAgents where x.AppName == AppName select x).FirstOrDefault();
-            if (AA == null || AA.Agent == null)
+            ApplicationAgent AA = (ApplicationAgent)(from x in ApplicationAgents where x.AppName == AppName select x).FirstOrDefault();
+            if (AA == null || ((Agent)AA.Agent) == null)
             {
 
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "The current target application, " + AppName + ", doesn't have a mapped agent assigned to it");
@@ -1773,20 +1760,20 @@ namespace Ginger.Run
                 return;
             }
 
-            AA.Agent.BusinessFlow = CurrentBusinessFlow;
+            ((Agent)AA.Agent).BusinessFlow = CurrentBusinessFlow;
             // Verify the Agent for the action is running 
-            Agent.eStatus agentStatus = AA.Agent.Status;
+            Agent.eStatus agentStatus = ((Agent)AA.Agent).Status;
             if (agentStatus != Agent.eStatus.Running && agentStatus != Agent.eStatus.Starting && agentStatus != Agent.eStatus.FailedToStart)
             {
                 // start the agent if one of the action s is not subclass of  ActWithoutDriver = driver action
                 int count = (from x in CurrentBusinessFlow.CurrentActivity.Acts where typeof(ActWithoutDriver).IsAssignableFrom(x.GetType()) == false select x).Count();
                 if (count > 0)
                 {
-                    StartAgent(AA.Agent);
+                    StartAgent((Agent)AA.Agent);
                 }
             }
 
-            CurrentBusinessFlow.CurrentActivity.CurrentAgent = AA.Agent;
+            CurrentBusinessFlow.CurrentActivity.CurrentAgent = ((Agent)AA.Agent);
         }
         
         private void ProcessStoretoValue(Act act)
@@ -1841,7 +1828,7 @@ namespace Ginger.Run
             ActWithoutDriver AWD = (ActWithoutDriver)act;
             AWD.RunOnBusinessFlow = CurrentBusinessFlow;
 
-            AWD.RunOnEnvironment = ProjEnvironment;
+            AWD.RunOnEnvironment = (ProjEnvironment)ProjEnvironment;
             // avoid NPE when running UT
 
             AWD.SolutionFolder = SolutionFolder;
@@ -1971,11 +1958,11 @@ namespace Ginger.Run
                    
                     switch (mOutputValueType)
                     {
-                        case nameof(OutputValueType.String):
+                        case nameof(Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue.OutputValueType.String):
                             string stringValue = OPL.GetValueString();
                             actPlugin.AddOrUpdateReturnParamActualWithPath(PName, stringValue, path);
                             break;
-                        case nameof(OutputValueType.ByteArray):
+                        case nameof(Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue.OutputValueType.ByteArray):
                             byte[] b = OPL.GetBytes();
                             //actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Path= path, Actual = "aaaaaaa" });   //FIXME!!! when act can have values types
                             actPlugin.AddOrUpdateReturnParamActualWithPath(PName, "aaa", path);   //FIXME!!! when act can have values types
@@ -2098,11 +2085,11 @@ namespace Ginger.Run
                 {
                     if (FC.Active == false)
                     {
-                        FC.Status = FlowControl.eStatus.Skipped;
+                        FC.Status = eStatus.Skipped;
                         continue;
                     }
 
-                    FC.CalculateCondition(CurrentBusinessFlow, ProjEnvironment, act, this.DSList);
+                    FC.CalculateCondition(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, act, this.DSList);
 
                     //TODO: Move below condition inside calculate condition once move execution logger to Ginger core
 
@@ -2117,7 +2104,7 @@ namespace Ginger.Run
                             FC.ConditionCalculated = FC.ConditionCalculated.Replace("{LastActivityStatus}", "Last executed Activity Status not available");
                         }
                     }
-                    FC.CalcualtedValue(CurrentBusinessFlow, ProjEnvironment, this.DSList);
+                    FC.CalcualtedValue(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, this.DSList);
 
                     string rc = VBS.ExecuteVBSEval(FC.ConditionCalculated.Trim());
 
@@ -2138,52 +2125,52 @@ namespace Ginger.Run
                         //Perform the action as condition is true
                         switch (FC.FlowControlAction)
                         {
-                            case FlowControl.eFlowControlAction.MessageBox:
-                                VE.Value = FC.Value;
+                            case eFlowControlAction.MessageBox:
+                                VE.Value = FC.Value;                                
                                 Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, VE.ValueCalculated);
                                 break;
-                            case FlowControl.eFlowControlAction.GoToAction:
+                            case eFlowControlAction.GoToAction:
                                 if (GotoAction(FC, act))
                                     IsStopLoop = true;
                                 else
-                                    FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                    FC.Status = eStatus.Action_Execution_Failed;
                                 break;
-                            case FlowControl.eFlowControlAction.GoToNextAction:
+                            case eFlowControlAction.GoToNextAction:
                                 if (FlowControlGotoNextAction(act))
                                     IsStopLoop = true;
                                 else
-                                    FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                    FC.Status = eStatus.Action_Execution_Failed;
                                 break;
-                            case FlowControl.eFlowControlAction.GoToActivity:
-                            case FlowControl.eFlowControlAction.GoToActivityByName:
+                            case eFlowControlAction.GoToActivity:
+                            case eFlowControlAction.GoToActivityByName:
                                 if (GotoActivity(FC, act))
                                     IsStopLoop = true;
                                 else
-                                    FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                    FC.Status = eStatus.Action_Execution_Failed;
                                 break;
-                            case FlowControl.eFlowControlAction.GoToNextActivity:
+                            case eFlowControlAction.GoToNextActivity:
                                 if (FlowControlGotoNextActivity(act))
                                     IsStopLoop = true;
                                 else
-                                    FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                    FC.Status = eStatus.Action_Execution_Failed;
                                 break;
-                            case FlowControl.eFlowControlAction.RerunAction:
+                            case eFlowControlAction.RerunAction:
                                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                                 IsStopLoop = true;
                                 break;
-                            case FlowControl.eFlowControlAction.RerunActivity:
+                            case eFlowControlAction.RerunActivity:
                                 ResetActivity(CurrentBusinessFlow.CurrentActivity);
                                 CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts[0];
                                 IsStopLoop = true;
                                 break;
-                            case FlowControl.eFlowControlAction.StopBusinessFlow:
+                            case eFlowControlAction.StopBusinessFlow:
                                 mStopBusinessFlow = true;
                                 CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.LastOrDefault();
                                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                                 CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.LastOrDefault();
                                 IsStopLoop = true;
                                 break;
-                            case FlowControl.eFlowControlAction.FailActionAndStopBusinessFlow:
+                            case eFlowControlAction.FailActionAndStopBusinessFlow:
                                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                                 act.Error = "Failed due to Flow Control rule";
                                 act.ExInfo += FC.ConditionCalculated;
@@ -2193,11 +2180,11 @@ namespace Ginger.Run
                                 CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.LastOrDefault();
                                 IsStopLoop = true;
                                 break;
-                            case FlowControl.eFlowControlAction.StopRun:
+                            case eFlowControlAction.StopRun:
                                 StopRun();
                                 IsStopLoop = true;
                                 break;
-                            case FlowControl.eFlowControlAction.SetVariableValue:
+                            case eFlowControlAction.SetVariableValue:
                                 try
                                 {
                                     VE.Value = FC.Value;
@@ -2214,27 +2201,27 @@ namespace Ginger.Run
                                     }
                                     else
                                     {
-                                        FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                        FC.Status = eStatus.Action_Execution_Failed;
                                     }
                                 }
                                 catch (Exception ex)
                                 {
                                     Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do Set Variable Value Flow Control", ex);
-                                    FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                    FC.Status = eStatus.Action_Execution_Failed;
                                 }
                                 break;
-                            case FlowControl.eFlowControlAction.RunSharedRepositoryActivity:
+                            case eFlowControlAction.RunSharedRepositoryActivity:
                                 try
                                 {
                                     if (RunSharedRepositoryActivity(FC))
                                         IsStopLoop = true;
                                     else
-                                        FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                        FC.Status = eStatus.Action_Execution_Failed;
                                 }
                                 catch (Exception ex)
                                 {
                                     Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do RunSharedRepositoryActivity Flow Control", ex);
-                                    FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                    FC.Status = eStatus.Action_Execution_Failed;
                                 }
                                 break;
 
@@ -2243,14 +2230,14 @@ namespace Ginger.Run
                                 break;
                         }
 
-                        if (FC.Status == FlowControl.eStatus.Pending)
+                        if (FC.Status == eStatus.Pending)
                         {
-                            FC.Status = FlowControl.eStatus.Action_Executed;
+                            FC.Status = eStatus.Action_Executed;
                         }
                     }
                     else
                     {
-                        FC.Status = FlowControl.eStatus.Action_Not_Executed;
+                        FC.Status = eStatus.Action_Not_Executed;
                     }
 
                     // Go out the foreach in case we have a goto so no need to process the rest of FCs
@@ -2283,7 +2270,7 @@ namespace Ginger.Run
         
         private bool GotoActivity(FlowControl fc, Act act)
         {
-            Activity a = CurrentBusinessFlow.GetActivity(fc.GetGuidFromValue(), fc.GetNameFromValue());
+            Activity a =(Activity) CurrentBusinessFlow.GetActivity(fc.GetGuidFromValue(), fc.GetNameFromValue());
 
             if (a != null)
             {
@@ -2302,7 +2289,7 @@ namespace Ginger.Run
         private bool GotoAction(FlowControl fc, Act act)
         {
             //Act a = (from a1 in CurrentBusinessFlow.CurrentActivity.Acts where a1.Guid == GUID select a1).FirstOrDefault();
-            Act a = CurrentBusinessFlow.CurrentActivity.GetAct(fc.GetGuidFromValue(), fc.GetNameFromValue());
+            Act a =(Act)((Activity)CurrentBusinessFlow.CurrentActivity).GetAct(fc.GetGuidFromValue(), fc.GetNameFromValue());
 
             if (a != null)
             {
@@ -2385,7 +2372,7 @@ namespace Ginger.Run
             //find activity            
             string activityName = fc.GetNameFromValue().ToUpper();
             ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-            Activity sharedActivity = activities.Where(x => x.ActivityName.ToUpper() == activityName).FirstOrDefault();
+            Activity sharedActivity = (Activity)activities.Where(x => x.ActivityName.ToUpper() == activityName).FirstOrDefault();
 
             if (sharedActivity != null)
             {
@@ -2520,19 +2507,19 @@ namespace Ginger.Run
 
         private void DoStatusConversion(Act act)
         {
-            if (act.StatusConverter == Act.eStatusConverterOptions.None)
+            if (act.StatusConverter == eStatusConverterOptions.None)
             {
                 return;
             }
-            if (act.StatusConverter == Act.eStatusConverterOptions.AlwaysPass)
+            if (act.StatusConverter == eStatusConverterOptions.AlwaysPass)
             {
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
             }
-            else if (act.StatusConverter == Act.eStatusConverterOptions.IgnoreFail && act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+            else if (act.StatusConverter == eStatusConverterOptions.IgnoreFail && act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
             {
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.FailIgnored;
             }
-            else if (act.StatusConverter == Act.eStatusConverterOptions.InvertStatus)
+            else if (act.StatusConverter == eStatusConverterOptions.InvertStatus)
             {
                 if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
                 {
@@ -2687,19 +2674,19 @@ namespace Ginger.Run
             }
 
             // handling ActivityGroup execution
-            ActivitiesGroup currentActivityGroup = CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(Activity.Guid)).FirstOrDefault();
+            ActivitiesGroup currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(Activity.Guid)).FirstOrDefault();
             if (currentActivityGroup != null)
             {
                 switch (currentActivityGroup.ExecutionLoggerStatus)
                 {
-                    case ActivitiesGroup.executionLoggerStatus.NotStartedYet:
-                        currentActivityGroup.ExecutionLoggerStatus = ActivitiesGroup.executionLoggerStatus.StartedNotFinishedYet;
+                    case executionLoggerStatus.NotStartedYet:
+                        currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.StartedNotFinishedYet;
                         ExecutionLogger.ActivityGroupStart(currentActivityGroup, CurrentBusinessFlow);
                         break;
-                    case ActivitiesGroup.executionLoggerStatus.StartedNotFinishedYet:
+                    case executionLoggerStatus.StartedNotFinishedYet:
                         // do nothing
                         break;
-                    case ActivitiesGroup.executionLoggerStatus.Finished:
+                    case executionLoggerStatus.Finished:
                         // do nothing
                         break;
                 }
@@ -2740,7 +2727,7 @@ namespace Ginger.Run
             if (SolutionApplications != null && SolutionApplications.Where(x => (x.AppName == Activity.TargetApplication && x.Platform == ePlatformType.NA)).FirstOrDefault() == null)
             {
                 //load Agent only if Activity includes Actions which needs it
-                List<Act> driverActs = Activity.Acts.Where(x => (x is ActWithoutDriver && x.GetType() != typeof(ActAgentManipulation)) == false && x.Active == true).ToList();
+                List<IAct> driverActs = Activity.Acts.Where(x => (x is ActWithoutDriver && x.GetType() != typeof(ActAgentManipulation)) == false && x.Active == true).ToList();
                 if (driverActs.Count >0)
                 {
                     //make sure not running in Simulation mode
@@ -2765,7 +2752,7 @@ namespace Ginger.Run
 
                 // if it is not continue mode then goto first Action
                 if (!doContinueRun)
-                    act = Activity.Acts.FirstOrDefault();
+                    act = (Act)Activity.Acts.FirstOrDefault();
                 else
                     act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
 
@@ -2786,7 +2773,7 @@ namespace Ginger.Run
                             {
                                 Activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
 
-                                if (Activity.ActionRunOption == Activity.eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
+                                if (Activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
                                 {
                                     SetNextActionsBlockedStatus();
                                     statusCalculationIsDone = true;
@@ -2802,7 +2789,7 @@ namespace Ginger.Run
                         {
                             Activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
 
-                            if (Activity.ActionRunOption == Activity.eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
+                            if (Activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
                             {
                                 SetNextActionsBlockedStatus();
                                 statusCalculationIsDone = true;
@@ -2877,10 +2864,10 @@ namespace Ginger.Run
                 {
                     switch (currentActivityGroup.ExecutionLoggerStatus)
                     {
-                        case ActivitiesGroup.executionLoggerStatus.NotStartedYet:
+                        case executionLoggerStatus.NotStartedYet:
                             // do nothing
                             break;
-                        case ActivitiesGroup.executionLoggerStatus.StartedNotFinishedYet:
+                        case executionLoggerStatus.StartedNotFinishedYet:
                             if (currentActivityGroup.ExecutedActivities.ContainsKey(Activity.Guid))
                             {
                                 currentActivityGroup.ExecutedActivities[Activity.Guid] = DateTime.Now.ToUniversalTime();
@@ -2891,7 +2878,7 @@ namespace Ginger.Run
                             }
                             // do nothing
                             break;
-                        case ActivitiesGroup.executionLoggerStatus.Finished:
+                        case executionLoggerStatus.Finished:
                             // do nothing
                             break;
                     }
@@ -3029,7 +3016,7 @@ namespace Ginger.Run
             return true;
         }
 
-        public bool ContinueRun(eContinueLevel continueLevel, eContinueFrom continueFrom, BusinessFlow specificBusinessFlow = null, Activity specificActivity = null, Act specificAction = null)
+        public bool ContinueRun(eContinueLevel continueLevel, eContinueFrom continueFrom, BusinessFlow specificBusinessFlow = null, Activity specificActivity = null, IAct specificAction = null)
         {
             switch (continueFrom)
             {
@@ -3049,19 +3036,19 @@ namespace Ginger.Run
                     break;
 
                 case eContinueFrom.SpecificBusinessFlow:
-                    CurrentBusinessFlow = specificBusinessFlow;
+                    CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
                     CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.FirstOrDefault();
                     CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.FirstOrDefault();
                     break;
 
                 case eContinueFrom.SpecificActivity:
-                    CurrentBusinessFlow = specificBusinessFlow;
+                    CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
                     CurrentBusinessFlow.CurrentActivity = specificActivity;
                     CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = specificActivity.Acts.FirstOrDefault();
                     break;
 
                 case eContinueFrom.SpecificAction:
-                    CurrentBusinessFlow = specificBusinessFlow;
+                    CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
                     CurrentBusinessFlow.CurrentActivity = specificActivity;
                     CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = specificAction;
                     break;
@@ -3101,7 +3088,7 @@ namespace Ginger.Run
                 if (doContinueRun == false)
                 {
                     CurrentBusinessFlow = businessFlow;
-                    Activity bfFirstActivity = CurrentBusinessFlow.Activities.FirstOrDefault();
+                    Activity bfFirstActivity = (Activity)CurrentBusinessFlow.Activities.FirstOrDefault();
                     CurrentBusinessFlow.Activities.CurrentItem = bfFirstActivity;
                     CurrentBusinessFlow.CurrentActivity = bfFirstActivity;
                     bfFirstActivity.Acts.CurrentItem = bfFirstActivity.Acts.FirstOrDefault();
@@ -3144,7 +3131,7 @@ namespace Ginger.Run
                 if (doContinueRun == false)
                 {
                     CurrentBusinessFlow.ExecutionLogActivityCounter = 0;
-                    ExecutionLogger.BusinessFlowStart(CurrentBusinessFlow);
+               ((ExecutionLogger)ExecutionLogger).BusinessFlowStart(CurrentBusinessFlow);
                 }
 
                 //Executing the Activities
@@ -3348,13 +3335,13 @@ namespace Ginger.Run
             bool Stopped = false;
 
             // Assume pass unless error
-            AG.RunStatus = ActivitiesGroup.eActivitiesGroupRunStatus.Passed;
+            AG.RunStatus = eActivitiesGroupRunStatus.Passed;
             
 
             if (AG.ActivitiesIdentifiers.Count == 0 ||
             AG.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped).ToList().Count == AG.ActivitiesIdentifiers.Count)
             {
-                AG.RunStatus = ActivitiesGroup.eActivitiesGroupRunStatus.Skipped;
+                AG.RunStatus = eActivitiesGroupRunStatus.Skipped;
                 return;
             }
 
@@ -3380,19 +3367,19 @@ namespace Ginger.Run
 
             if (Blocked)
             {
-                AG.RunStatus = ActivitiesGroup.eActivitiesGroupRunStatus.Blocked;
+                AG.RunStatus = eActivitiesGroupRunStatus.Blocked;
             }
             else if (Failed)
             {
-                AG.RunStatus = ActivitiesGroup.eActivitiesGroupRunStatus.Failed;
+                AG.RunStatus = eActivitiesGroupRunStatus.Failed;
             }
             else if (Stopped)
             {
-                AG.RunStatus = ActivitiesGroup.eActivitiesGroupRunStatus.Stopped;
+                AG.RunStatus = eActivitiesGroupRunStatus.Stopped;
             }
             else
             {
-                AG.RunStatus = ActivitiesGroup.eActivitiesGroupRunStatus.Passed;
+                AG.RunStatus = eActivitiesGroupRunStatus.Passed;
             }
         }
 
@@ -3426,27 +3413,27 @@ namespace Ginger.Run
         {
             if ((CurrentBusinessFlow == null) && (automateTab != null) && offlineMode)
             {
-                CurrentBusinessFlow = automateTab;
-                CurrentBusinessFlow.ActivitiesGroups.ToList().ForEach(x => x.ExecutionLoggerStatus = ActivitiesGroup.executionLoggerStatus.StartedNotFinishedYet);
+                CurrentBusinessFlow =(BusinessFlow) automateTab;
+                CurrentBusinessFlow.ActivitiesGroups.ToList().ForEach(x => x.ExecutionLoggerStatus = executionLoggerStatus.StartedNotFinishedYet);
             }
             foreach (ActivitiesGroup currentActivityGroup in CurrentBusinessFlow.ActivitiesGroups)
             {
                 CalculateActivitiesGroupFinalStatus(currentActivityGroup, CurrentBusinessFlow);
                 if (currentActivityGroup != null)
                 {
-                    if (currentActivityGroup.RunStatus != ActivitiesGroup.eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != ActivitiesGroup.eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != ActivitiesGroup.eActivitiesGroupRunStatus.Stopped)
+                    if (currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Stopped)
                     {
-                        currentActivityGroup.ExecutionLoggerStatus = ActivitiesGroup.executionLoggerStatus.NotStartedYet;
+                        currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.NotStartedYet;
                     }
                     else
                     {
                         switch (currentActivityGroup.ExecutionLoggerStatus)
                         {
-                            case ActivitiesGroup.executionLoggerStatus.NotStartedYet:
+                            case executionLoggerStatus.NotStartedYet:
                                 // do nothing
                                 break;
-                            case ActivitiesGroup.executionLoggerStatus.StartedNotFinishedYet:
-                                currentActivityGroup.ExecutionLoggerStatus = ActivitiesGroup.executionLoggerStatus.Finished;
+                            case executionLoggerStatus.StartedNotFinishedYet:
+                                currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.Finished;
                                 if (executionLogger != null)
                                 {
                                     executionLogger.ActivityGroupEnd(currentActivityGroup, CurrentBusinessFlow, offlineMode);
@@ -3456,7 +3443,7 @@ namespace Ginger.Run
                                     ExecutionLogger.ActivityGroupEnd(currentActivityGroup, CurrentBusinessFlow, offlineMode);
                                 }
                                 break;
-                            case ActivitiesGroup.executionLoggerStatus.Finished:
+                            case executionLoggerStatus.Finished:
                                 // do nothing
                                 break;
                         }
@@ -3591,7 +3578,7 @@ namespace Ginger.Run
             }            
         }
 
-        internal void CloseAgents()
+        public void CloseAgents()
         {
             foreach (ApplicationAgent p in ApplicationAgents)
             {
@@ -3599,7 +3586,7 @@ namespace Ginger.Run
                 {
                     try
                     {
-                        p.Agent.Close();
+                      ((Agent)p.Agent).Close();
                     }
                     catch (Exception ex)
                     {
@@ -3608,19 +3595,19 @@ namespace Ginger.Run
                         else
                             Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to Close the Agent", ex);
                     }
-                    p.Agent.IsFailedToStart = false;
+                    ((Agent)p.Agent).IsFailedToStart = false;
                 }
             }
             AgentsRunning = false;
         }
 
-        internal void ResetFailedToStartFlagForAgents()
+        public void ResetFailedToStartFlagForAgents()
         {
             foreach (ApplicationAgent p in ApplicationAgents)
             {
                 if (p.Agent != null)
                 {                   
-                    p.Agent.IsFailedToStart = false;
+                   ((Agent)p.Agent).IsFailedToStart = false;
                 }
             }           
         }
@@ -3632,7 +3619,7 @@ namespace Ginger.Run
                 if (act != null)
                 {
                     SetCurrentActivityAgent();
-                        Agent a = CurrentBusinessFlow.CurrentActivity.CurrentAgent;
+                        Agent a = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
                         if (a != null)
                             a.HighLightElement(act);
                 }
@@ -3641,7 +3628,7 @@ namespace Ginger.Run
 
         private void ResetActivity(Activity a)
         {
-            a.Reset();
+            ((Activity)a).Reset();
         }
         
         internal void ClearAgents()
@@ -3650,7 +3637,7 @@ namespace Ginger.Run
             ApplicationAgents.Clear();
         }
 
-        internal void UpdateApplicationAgents()
+        public void UpdateApplicationAgents()
         {
             // Make sure Ginger Runner have all Application/Platforms mapped to agent - create the list based on selected BFs to run
             // Make it based on current if we run from automate tab
@@ -3686,7 +3673,7 @@ namespace Ginger.Run
             //Remove the non relevant ApplicationAgents
             for (int indx = 0; indx < ApplicationAgents.Count;)
             {
-                if (bfsTargetApplications.Where(x => x.Name == ApplicationAgents[indx].AppName).FirstOrDefault() == null || ApplicationAgents[indx].Agent == null)
+                if (bfsTargetApplications.Where(x => x.Name == ApplicationAgents[indx].AppName).FirstOrDefault() == null || ((ApplicationAgent)ApplicationAgents[indx]).Agent == null)
                     ApplicationAgents.RemoveAt(indx);
                 else
                     indx++;
@@ -3732,7 +3719,7 @@ namespace Ginger.Run
                     }
                     if (ap != null)
                     {
-                        List<Agent> platformAgents = (from p in SolutionAgents where p.Platform == ap.Platform && p.UsedForAutoMapping == false select p).ToList();
+                        List<Agent> platformAgents = (from p in SolutionAgents where p.Platform == ap.Platform && p.UsedForAutoMapping == false select (Agent)p).ToList();
 
                         //Get the last used agent to this Target App if exist
                         if (string.IsNullOrEmpty(ap.LastMappedAgentName) == false)
@@ -3770,7 +3757,7 @@ namespace Ginger.Run
             this.OnPropertyChanged(nameof(ApplicationAgents));//to notify who shows this list
         }
 
-        internal ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false,string GingerRunnerName = "")
+        public ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false,string GingerRunnerName = "")
         {
             var BFESs = new ObservableList<BusinessFlowExecutionSummary>();
 
@@ -3816,6 +3803,8 @@ namespace Ginger.Run
             }
         }
 
+        
+
         private bool CheckIfActivityTagsMatch()
         {
             //check if Activity or The parent Activities Group has at least 1 tag from filter tags
@@ -3827,7 +3816,7 @@ namespace Ginger.Run
             //check in Activity Group
             if (string.IsNullOrEmpty(CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID) == false)
             {
-                ActivitiesGroup group = CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                ActivitiesGroup group =(ActivitiesGroup) CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID).FirstOrDefault();
                 if(group != null)
                     foreach (Guid tagGuid in group.Tags)
                         if (this.FilterExecutionTags.Where(x => Guid.Equals(x, tagGuid) == true).FirstOrDefault() != Guid.Empty)
@@ -3839,8 +3828,8 @@ namespace Ginger.Run
 
         private void SetDriverPreviousRunStoppedFlag(bool flagValue)
         {
-            if (CurrentBusinessFlow.CurrentActivity.CurrentAgent != null && CurrentBusinessFlow.CurrentActivity.CurrentAgent.Driver != null)
-                CurrentBusinessFlow.CurrentActivity.CurrentAgent.Driver.PreviousRunStopped = flagValue;
+            if (CurrentBusinessFlow.CurrentActivity.CurrentAgent != null && ((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).Driver != null)
+               ((Agent) CurrentBusinessFlow.CurrentActivity.CurrentAgent).Driver.PreviousRunStopped = flagValue;
         }
 
         //Function to Do Flow Control on Business Flow in RunSet
@@ -3855,17 +3844,17 @@ namespace Ginger.Run
             {
                 if (FC.Active == false)
                 {
-                    FC.Status = FlowControl.eStatus.Skipped;
+                    FC.Status = eStatus.Skipped;
                     continue;
                 }
                 else
                 {
-                    FC.Status = FlowControl.eStatus.Pending;
+                    FC.Status = eStatus.Pending;
                 }
 
-                FC.CalculateCondition(CurrentBusinessFlow, ProjEnvironment, this.DSList);
+                FC.CalculateCondition(CurrentBusinessFlow,(ProjEnvironment) ProjEnvironment, this.DSList);
 
-                FC.CalcualtedValue(CurrentBusinessFlow, ProjEnvironment, this.DSList);
+                FC.CalcualtedValue(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, this.DSList);
 
                 string rc = VBS.ExecuteVBSEval(FC.ConditionCalculated.Trim());
 
@@ -3887,27 +3876,27 @@ namespace Ginger.Run
                     switch (FC.BusinessFlowControlAction)
                     {
 
-                        case FlowControl.eBusinessFlowControlAction.GoToBusinessFlow:
+                        case eBusinessFlowControlAction.GoToBusinessFlow:
                             if (GotoBusinessFlow(FC, bf, ref fcReturnIndex))
                             {
                                 IsStopLoop = true;
                             }
                             else
                             {
-                                FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                FC.Status = eStatus.Action_Execution_Failed;
                             }
                             break;
 
-                        case FlowControl.eBusinessFlowControlAction.RerunBusinessFlow:
+                        case eBusinessFlowControlAction.RerunBusinessFlow:
                             fcReturnIndex = BusinessFlows.IndexOf(bf);
                             IsStopLoop = true;
                             break;
 
-                        case FlowControl.eBusinessFlowControlAction.StopRun:
+                        case eBusinessFlowControlAction.StopRun:
                             StopRun();
                             IsStopLoop = true;
                             break;
-                        case FlowControl.eBusinessFlowControlAction.SetVariableValue:
+                        case eBusinessFlowControlAction.SetVariableValue:
                             try
                             {
                                 VE.Value = FC.Value;
@@ -3924,13 +3913,13 @@ namespace Ginger.Run
                                 }
                                 else
                                 {
-                                    FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                    FC.Status = eStatus.Action_Execution_Failed;
                                 }
                             }
                             catch (Exception ex)
                             {
                                 Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do Set Variable Value Flow Control", ex);
-                                FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                FC.Status = eStatus.Action_Execution_Failed;
                             }
                             break;
 
@@ -3939,14 +3928,14 @@ namespace Ginger.Run
                             break;
                     }
 
-                    if (FC.Status == FlowControl.eStatus.Pending)
+                    if (FC.Status == eStatus.Pending)
                     {
-                        FC.Status = FlowControl.eStatus.Action_Executed;
+                        FC.Status = eStatus.Action_Executed;
                     }
                 }
                 else
                 {
-                    FC.Status = FlowControl.eStatus.Action_Not_Executed;
+                    FC.Status = eStatus.Action_Not_Executed;
                 }
 
                 // Go out the foreach in case we have a goto so no need to process the rest of FCs
@@ -3986,18 +3975,18 @@ namespace Ginger.Run
             }
             else if (lstBusinessFlow.Count == 1)
             {
-                bf = lstBusinessFlow[0];
+                bf =(BusinessFlow) lstBusinessFlow[0];
             }
             else//we have more than 1
             {
-                BusinessFlow firstActive = lstBusinessFlow.Where(x => x.Active == true).FirstOrDefault();
+                BusinessFlow firstActive = (BusinessFlow)lstBusinessFlow.Where(x => x.Active == true).FirstOrDefault();
                 if (firstActive != null)
                 {
                     bf = firstActive;
                 }
                 else
                 {
-                    bf = lstBusinessFlow[0]; //no one is Active so returning the first one
+                    bf = (BusinessFlow)lstBusinessFlow[0]; //no one is Active so returning the first one
                 }
             }
 
@@ -4012,5 +4001,13 @@ namespace Ginger.Run
                 return false;
             }
         }
+
+
+        ObservableList<IAgent> IGingerRunner.SolutionAgents
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+
     }
 }

@@ -1,4 +1,13 @@
-﻿#region License
+﻿using System;
+using System.Collections.Generic;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
+using GingerCore;
+using GingerCore.DataSource;
+using GingerCore.Environments;
+using GingerCore.Variables;
+
+#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -18,13 +27,26 @@ limitations under the License.
 
 namespace Amdocs.Ginger.Common
 {
-    public interface IRepositoryItemFactory
+    public enum eExecutedFrom
     {
-        IBusinessFlow CreateBusinessFlow();
-        IValueExpression CreateValueExpression(IProjEnvironment mProjEnvironment, IBusinessFlow mBusinessFlow);
+        Automation,
+        Run
+    }
+    
 
-        IValueExpression CreateValueExpression(IProjEnvironment mProjEnvironment, IBusinessFlow mBusinessFlow, object DSList); // object =  ObservableList<IDataSourceBase>
+    public interface IRepositoryItemFactory
+    { 
+        //BusinessFlow CreateBusinessFlow();
+        //ObservableList<BusinessFlow> GetListofBusinessFlow();
+        IActivitiesGroup CreateActivitiesGroup();
+        IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow);
 
+        IValueExpression CreateValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null);
+
+       
+        ObservableList<DataSourceBase> GetDatasourceList();
         ObservableList<IDatabase> GetDatabaseList();
+        ObservableList<IAgent> GetAllIAgents();
+        ObservableList<ProjEnvironment> GetAllEnvironments();
     }
 }

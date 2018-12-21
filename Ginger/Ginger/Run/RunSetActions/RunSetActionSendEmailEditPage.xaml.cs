@@ -25,6 +25,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Amdocs.Ginger.CoreNET.Run.RunsetActions;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -37,7 +38,7 @@ namespace Ginger.Run.RunSetActions
 
         
         public RunSetActionSendEmailEditPage(RunSetActionSendEmail runSetActionSendEmail)
-        {
+        {/*
             InitializeComponent();
             
             this.runSetActionEmailReport = runSetActionSendEmail;
@@ -72,7 +73,7 @@ namespace Ginger.Run.RunSetActions
             App.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPUser);
             App.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPPass);
             App.ObjFieldBinding(cbEnableSSL, CheckBox.IsCheckedProperty, runSetActionSendEmail.Email, Email.Fields.EnableSSL);
-
+            */
             InitAttachmentsGrid();
         }
 

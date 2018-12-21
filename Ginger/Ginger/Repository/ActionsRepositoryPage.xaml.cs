@@ -31,6 +31,7 @@ using System.Windows;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Repository
 {
@@ -122,7 +123,7 @@ namespace Ginger.Repository
                 }
                 
                 int selectedActIndex = -1;
-                ObservableList<Act> actsList = App.BusinessFlow.CurrentActivity.Acts;
+                ObservableList<IAct> actsList = App.BusinessFlow.CurrentActivity.Acts;
                 if (actsList.CurrentItem != null)
                 {
                     selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);

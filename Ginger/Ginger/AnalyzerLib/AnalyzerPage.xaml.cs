@@ -305,7 +305,7 @@ namespace Ginger.AnalyzerLib
         {
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();            
             BusinessFlow BusinessFlow = App.BusinessFlow;
-            Activity activity = BusinessFlow.Activities[0];
+            Activity activity = (Activity)BusinessFlow.Activities[0];
             string variableSourceType = "";
             string variableSourceName = "";
             ObservableList<VariableBase> AvailableAllVariables = new ObservableList<VariableBase>();
@@ -335,7 +335,7 @@ namespace Ginger.AnalyzerLib
                 AvailableAllVariables = solution.Variables;
                 variableSourceType = "Solution";
                 variableSourceName = solution.Name;                
-                activity = BusinessFlow.Activities[0];
+                activity = (Activity)BusinessFlow.Activities[0];
             }
 
 

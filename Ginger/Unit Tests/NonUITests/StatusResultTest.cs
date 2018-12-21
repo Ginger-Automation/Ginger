@@ -35,6 +35,7 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
 using GingerTestHelper;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace UnitTests.NonUITests
 {
@@ -72,7 +73,7 @@ namespace UnitTests.NonUITests
            
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(a);
 
             mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
@@ -222,7 +223,7 @@ namespace UnitTests.NonUITests
         {
             Activity a1 = new Activity();
             a1.Active = true;
-            a1.ActionRunOption = Activity.eActionRunOption.ContinueActionsRunOnFailure;
+            a1.ActionRunOption = eActionRunOption.ContinueActionsRunOnFailure;
             mBF.Activities.Add(a1);
 
             ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://ginger-automation.github.io/test.html", Active = true };
@@ -443,7 +444,7 @@ namespace UnitTests.NonUITests
 
             ActDummy act3 = new ActDummy() { Description = "A3", Active = true, Status = eRunStatus.Stopped };
             a1.Acts.Add(act3);
-            //act3.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "1=1", FlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.StopRun, Active = true });
+            //act3.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "1=1", FlowControlAction =eFlowControlAction.StopRun, Active = true });
 
             //Act
             mGR.CalculateActivityFinalStatus(a1);

@@ -25,6 +25,7 @@ using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -34,11 +35,10 @@ using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
 namespace GingerCore.Actions
 {
     // Each Act is one Activity Step     
-    public abstract partial class Act : RepositoryItemBase
+    public abstract partial class Act : RepositoryItemBase, IAct
     {
         public enum eItemParts
         {
@@ -66,7 +66,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Desktop Screen")]
             DesktopScreen = 2
         }
-        
+
 
 
         private static string mScreenshotTempFolder;
@@ -80,17 +80,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public enum eStatusConverterOptions
-        {
-            [EnumValueDescription("None")]
-            None = 0,
-            [EnumValueDescription("Always Passed")]
-            AlwaysPass = 1,
-            [EnumValueDescription("Ignore Failed")]
-            IgnoreFail = 2,
-            [EnumValueDescription("Invert Status")]
-            InvertStatus = 3,
-        }
+
         public enum eOutputDSParamMapType
         {
             [EnumValueDescription("Param to Row")]
@@ -151,7 +141,7 @@ namespace GingerCore.Actions
         // -----------------------------------------------------------------------------------------------------------------------------------------------
 
         [IsSerializedForLocalRepository]
-        public ActionLogConfig ActionLogConfig;
+        public ActionLogConfig ActionLogConfig { get; set; }
 
         private bool mEnableActionLogConfig;
         [IsSerializedForLocalRepository]
@@ -280,7 +270,7 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public bool ConfigOutputDS { get { return mConfigOutputDS; } set { mConfigOutputDS = value; } }
 
-        
+
         private ePlatformType mPlatform;
         [IsSerializedForLocalRepository]
         public ePlatformType Platform { get { return mPlatform; } set { mPlatform = value; OnPropertyChanged(Fields.Platform); } }
@@ -304,19 +294,19 @@ namespace GingerCore.Actions
         public eStatusConverterOptions StatusConverter { get; set; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<FlowControl> FlowControls = new ObservableList<FlowControl>();
+        public ObservableList<IFlowControl> FlowControls { get; set; } = new ObservableList<IFlowControl>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> InputValues = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> InputValues { get; set; } = new ObservableList<ActInputValue>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActReturnValue> ReturnValues = new ObservableList<ActReturnValue>();
+        public ObservableList<ActReturnValue> ReturnValues { get; set; } = new ObservableList<ActReturnValue>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActOutDataSourceConfig> DSOutputConfigParams = new ObservableList<ActOutDataSourceConfig>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableDependency> VariablesDependencies = new ObservableList<VariableDependency>();
+        public ObservableList<VariableDependency> VariablesDependencies { get; set; } = new ObservableList<VariableDependency>();
 
         // -----------------------------------------------------------------------------------------------------------------------------------------------
         // All serialized Attributes - END
@@ -348,7 +338,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                if (StatusConverter == Act.eStatusConverterOptions.IgnoreFail)
+                if (StatusConverter == eStatusConverterOptions.IgnoreFail)
                     return true;
                 else
                     return false;
@@ -356,7 +346,7 @@ namespace GingerCore.Actions
             set
             {
                 if (value)
-                    StatusConverter = Act.eStatusConverterOptions.IgnoreFail;
+                    StatusConverter = eStatusConverterOptions.IgnoreFail;
             }
         }
 
@@ -483,7 +473,7 @@ namespace GingerCore.Actions
 
         //Keeping screen shot in memory will eat up the memory - so we save to files and keep file name
 
-        public List<String> ScreenShots = new List<String>();
+        public List<String> ScreenShots { get; set; } = new List<String>();
         public List<String> ScreenShotsNames = new List<String>();
 
 
@@ -540,7 +530,7 @@ namespace GingerCore.Actions
         }
 
 
-        public ObservableList<FlowControl> ActFlowControls
+        public ObservableList<IFlowControl> ActFlowControls
         {
             get
             {
@@ -1467,7 +1457,7 @@ namespace GingerCore.Actions
 
                 foreach (FlowControl FC in this.FlowControls)
                 {
-                    FC.Status = FlowControl.eStatus.Pending;
+                    FC.Status = eStatus.Pending;
                 }
 
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;

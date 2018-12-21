@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using System;
 
@@ -46,7 +48,7 @@ namespace GingerCore.Activities
         [IsSerializedForLocalRepository]
         public string ActivityExternalID { get; set; }
         [IsSerializedForLocalRepository]
-        public Activity.eActivityAutomationStatus? ActivityAutomationStatus { get; set; }
+        public eActivityAutomationStatus? ActivityAutomationStatus { get; set; }
         
         public bool ExistInRepository { get; set; }
 
@@ -59,12 +61,12 @@ namespace GingerCore.Activities
             }
             set
             {
-                if (mIdentifiedActivity != null) mIdentifiedActivity.PropertyChanged -= Activity_PropertyChanged;
+                if (mIdentifiedActivity != null)((Activity) mIdentifiedActivity).PropertyChanged -= Activity_PropertyChanged;
                 mIdentifiedActivity= value;
                 if (mIdentifiedActivity != null)
                 {
                     RefreshActivityIdentifiers();
-                    mIdentifiedActivity.PropertyChanged += Activity_PropertyChanged;
+                  ((Activity)  mIdentifiedActivity).PropertyChanged += Activity_PropertyChanged;
                 }
             }
         }

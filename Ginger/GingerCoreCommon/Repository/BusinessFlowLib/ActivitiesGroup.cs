@@ -21,15 +21,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
+using static Amdocs.Ginger.Common.InterfacesLib.IActivitiesGroup;
 
 namespace GingerCore.Activities
 {
     /// <summary>
     /// ActivitiesGroup used to store the ID's and execution order of few Activities
     /// </summary>
-    public class ActivitiesGroup : RepositoryItemBase
+    public class ActivitiesGroup : RepositoryItemBase, IActivitiesGroup
     {
         public enum eItemParts
         {
@@ -38,23 +40,8 @@ namespace GingerCore.Activities
             Activities
         }
 
-        public enum eActivitiesGroupRunStatus
-        {
-            Pending,
-            Running,
-            Passed,
-            Failed,
-            Stopped,
-            Blocked,
-            Skipped
-        }
 
-        public enum executionLoggerStatus
-        {
-            NotStartedYet,
-            StartedNotFinishedYet,
-            Finished
-        }
+    
 
         private executionLoggerStatus _executionLoggerStatus = executionLoggerStatus.NotStartedYet;
 
@@ -117,7 +104,7 @@ namespace GingerCore.Activities
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActivityIdentifiers> ActivitiesIdentifiers = new ObservableList<ActivityIdentifiers>();
+        public ObservableList<ActivityIdentifiers> ActivitiesIdentifiers { get; set; } = new ObservableList<ActivityIdentifiers>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<Guid> Tags = new ObservableList<Guid>();
@@ -189,9 +176,11 @@ namespace GingerCore.Activities
         { 
             get
             {
-                foreach (ActivityIdentifiers actIdent in ActivitiesIdentifiers) actIdent.RefreshActivityIdentifiers();
-                List<ActivityIdentifiers> automatedActsInGroup = ActivitiesIdentifiers.Where(x=>x.ActivityAutomationStatus ==
-                                                                               Activity.eActivityAutomationStatus.Automated).ToList();
+                foreach (ActivityIdentifiers actIdent in ActivitiesIdentifiers)
+                {
+                   ((ActivityIdentifiers)actIdent).RefreshActivityIdentifiers();
+                } List<ActivityIdentifiers> automatedActsInGroup = ActivitiesIdentifiers.Where(x=>x.ActivityAutomationStatus ==
+                                                                              eActivityAutomationStatus.Automated).ToList();
                 double automatedActsPrecanteg;
                 if (automatedActsInGroup == null || automatedActsInGroup.Count == 0)
                 {
@@ -337,7 +326,7 @@ namespace GingerCore.Activities
             }
         }
 
-        public Dictionary<Guid, DateTime> ExecutedActivities = new Dictionary<Guid, DateTime>();
+        public Dictionary<Guid, DateTime> ExecutedActivities { get; set; } = new Dictionary<Guid, DateTime>();
 
         public string TempReportFolder { get; set; }
 

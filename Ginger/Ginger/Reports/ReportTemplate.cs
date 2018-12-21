@@ -29,10 +29,12 @@ using GingerCore.Environments;
 using GingerCore.Repository;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
 
 namespace Ginger.Reports
 {
-    public class ReportTemplate : RepositoryItemBase
+    public class ReportTemplate : RepositoryItemBase, IReportTemplate
     {        
 
         public override string GetNameForFileName() { return Name; }
@@ -147,7 +149,7 @@ namespace Ginger.Reports
                 if (!GetReportOnlyForExecutedFlow ||
                          (GetReportOnlyForExecutedFlow && !(BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked)))
                 {
-                    ShowReport(GR, BF, Template, Env);
+                    ShowReport(GR,(BusinessFlow) BF, Template, Env);
                 }
             }
         }
@@ -158,6 +160,11 @@ namespace Ginger.Reports
             {
                 GenerateIndividualReport(mGR, Template, Env, GetReportOnlyForExecutedFlow);
             }
+        }
+
+        private static void GenerateIndividualReport(IGingerRunner mGR, string template, ProjEnvironment env, bool getReportOnlyForExecutedFlow)
+        {
+            throw new NotImplementedException();
         }
 
         private static void ShowReport(GingerRunner GR, BusinessFlow BF, string Template, ProjEnvironment Env)

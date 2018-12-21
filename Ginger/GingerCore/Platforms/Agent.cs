@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -47,7 +48,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using amdocs.ginger.GingerCoreNET;
+
 
 namespace GingerCore
 {
@@ -57,7 +58,7 @@ namespace GingerCore
     //
     //   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    public class Agent : RepositoryItemBase
+    public class Agent : RepositoryItemBase, IAgent
     {
         
         public enum eAgentType
@@ -1074,7 +1075,7 @@ namespace GingerCore
                 }
             }         
         }
-        public bool UsedForAutoMapping=false;
+        public bool UsedForAutoMapping { get; set; } = false;
 
 
         public void Test()
@@ -1128,5 +1129,12 @@ namespace GingerCore
             }
         }
 
+        ePlatformType IAgent.Platform
+        {
+            get
+            {
+                return Platform;
+            }            
+        }
     }
 }

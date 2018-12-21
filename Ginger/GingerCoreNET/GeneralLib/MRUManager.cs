@@ -48,7 +48,7 @@ namespace GingerCoreNET.GeneralLib
             return list;                
         }
 
-        internal void AddItem(string item)
+        public void AddItem(string item)
         {
             string[] list = getList();
 

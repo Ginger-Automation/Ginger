@@ -56,7 +56,7 @@ namespace Ginger.ALM
             if (!WorkSpace.Instance.BetaFeatures.Rally)
             {
                 RallyRadioButton.Visibility = Visibility.Hidden;
-                if (App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RALLY)
+                if ((ALMIntegration.eALMType)App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RALLY)
                     App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.QC;
             }
 
@@ -98,7 +98,7 @@ namespace Ginger.ALM
                 PasswordTextBox.IsEnabled = false;
                 LoginServerButton.Content = "Change Server Details";
                 ALMProjectDetailsPanel.Visibility = Visibility.Visible;
-                if (App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RQM)
+                if ((ALMIntegration.eALMType)App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RQM)
                     ALMDomainSelectionPanel.Visibility = Visibility.Collapsed;
                 else ALMDomainSelectionPanel.Visibility = Visibility.Visible;
             }
@@ -109,7 +109,7 @@ namespace Ginger.ALM
                 RQMRadioButton.IsEnabled = true;
                 RallyRadioButton.IsEnabled = true;
                 RQMLoadConfigPackageButton.IsEnabled = true;
-                if (App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RQM)
+                if ((ALMIntegration.eALMType)App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RQM)
                     ServerURLTextBox.IsEnabled = false;
                 else
                 {
@@ -142,21 +142,21 @@ namespace Ginger.ALM
 
         public void RefreshALMSolutionSettings()
         {
-            if (App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.QC && QCRadioButton.IsChecked == false)
+            if ((ALMIntegration.eALMType)App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.QC && QCRadioButton.IsChecked == false)
             {
                 QCRadioButton.IsChecked = true;
                 PasswordTextBox.Password = "";
                 UserNameTextBox.Text = "";
                 StyleRadioButtons();
             }
-            else if (App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RQM && RQMRadioButton.IsChecked == false)
+            else if ((ALMIntegration.eALMType)App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RQM && RQMRadioButton.IsChecked == false)
             {
                 RQMRadioButton.IsChecked = true;
                 PasswordTextBox.Password = "";
                 UserNameTextBox.Text = "";
                 StyleRadioButtons();
             }
-            else if (App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RALLY && RallyRadioButton.IsChecked == false)
+            else if ((ALMIntegration.eALMType)App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RALLY && RallyRadioButton.IsChecked == false)
             {
                 RallyRadioButton.IsChecked = true;
                 PasswordTextBox.Password = "";
@@ -187,7 +187,7 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
             bool almConn = false;
-            ALMIntegration.Instance.UpdateALMType(App.UserProfile.Solution.AlmType);
+            ALMIntegration.Instance.UpdateALMType((ALMIntegration.eALMType)App.UserProfile.Solution.AlmType);
 
             if (LoginServerButton.Content.ToString() == "Get Projects Details" || LoginServerButton.Content.ToString() == "Connect ALM Server")
             {
@@ -328,7 +328,7 @@ namespace Ginger.ALM
 
         private void StyleRadioButtons()
         {
-            switch (App.UserProfile.Solution.AlmType)
+            switch ((ALMIntegration.eALMType)App.UserProfile.Solution.AlmType)
             {
                 case ALMIntegration.eALMType.QC:
                     QCRadioButton.IsChecked = true;
@@ -425,7 +425,7 @@ namespace Ginger.ALM
                 switch (rBtn.Name)
                 {
                     case "QCRadioButton":
-                        if (App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.QC)
+                        if ((ALMIntegration.eALMType)App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.QC)
                         {
                             App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.QC;
                             ClearALMConfigs();
@@ -433,7 +433,7 @@ namespace Ginger.ALM
 
                         break;
                     case "RQMRadioButton":
-                        if (App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.RQM)
+                        if ((ALMIntegration.eALMType)App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.RQM)
                         {
                             App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.RQM;
                             ClearALMConfigs();
@@ -443,14 +443,14 @@ namespace Ginger.ALM
                         }
                         break;
                     case "RallyRadioButton":
-                        if (App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.RALLY)
+                        if ((ALMIntegration.eALMType)App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.RALLY)
                         {
-                            App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.RALLY;
+                           // App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.RALLY;
                             ClearALMConfigs();
                         }
                         break;
                 }
-                ALMIntegration.Instance.UpdateALMType(App.UserProfile.Solution.AlmType);
+                ALMIntegration.Instance.UpdateALMType((Ginger.ALM.ALMIntegration.eALMType)App.UserProfile.Solution.AlmType);
                 StyleRadioButtons();
                 SetControls();
             }
