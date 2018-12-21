@@ -59,7 +59,6 @@ namespace Ginger.Agents.AddAgentWizardLib
                     xPlatformTypeComboBox.SelectionChanged += xPlatformTypeComboBox_SelectionChanged;
 
                     //Removing ASCF from platform combobox
-                    Type Etype = mWizard.Agent.Platform.GetType();
                     List<GingerCore.General.ComboEnumItem> platformList = (GingerCore.General.GetEnumValuesForCombo(typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType))).Where(x => ((GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType)x.Value) != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF).ToList();
                   
                     xPlatformTypeComboBox.BindControl(platformList);
