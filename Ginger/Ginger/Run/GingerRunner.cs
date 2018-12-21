@@ -4008,8 +4008,14 @@ namespace Ginger.Run
 
         ObservableList<IAgent> IGingerRunner.SolutionAgents
         {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
+            get
+            {
+                return SolutionAgents;
+            }
+            set
+            {
+                SolutionAgents = value;
+            }
         }
 
     }
