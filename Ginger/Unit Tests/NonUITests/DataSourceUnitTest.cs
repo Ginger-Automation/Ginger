@@ -32,6 +32,15 @@ namespace UnitTests.NonUITests
         [TestInitialize]
         public void TestInitialize()
         {
+            //if (File.Exists("") == false)
+            //{
+            //    byte[] obj = Properties.Resources.GingerDataSource;
+            //    System.IO.FileStream fs = new System.IO.FileStream("", System.IO.FileMode.Create, System.IO.FileAccess.Write);
+            //    fs.Write(obj, 0, obj.Count());
+            //    fs.Close();
+            //    fs.Dispose();
+            //}
+
             accessDataSource.FilePath = @"C:/GingerSourceControl/Solutions/Ginger_Regression_Testing1/DataSources/GingerDataSource.mdb";
             accessDataSource.Init(accessDataSource.FilePath);
             
@@ -99,7 +108,7 @@ namespace UnitTests.NonUITests
 
         
        [TestMethod]
-        public void DataSourceAction()
+        public void DataSourceActionRowCount()
         {
 
             Activity a1 = new Activity();
@@ -121,6 +130,33 @@ namespace UnitTests.NonUITests
             //Assert
             Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
             Assert.AreEqual(a1.Status, eRunStatus.Passed);
+           
+        }
+
+        [TestMethod]
+        public void DataSourceActionGetValue()
+        {
+
+            Activity a1 = new Activity();
+            a1.Active = true;
+            mBF.Activities.Add(a1);
+
+            ActDSTableElement actDSTableElement = new ActDSTableElement();
+            actDSTableElement.DSName = "GingerDataSource";
+            actDSTableElement.DSTableName = "KEY-DATA";
+            actDSTableElement.ControlAction = ActDSTableElement.eControlAction.GetValue;
+            actDSTableElement.Active = true;
+
+            a1.Acts.Add(actDSTableElement);
+            sourceTables = accessDataSource.GetTablesList();
+            //mGR.DSList.Add(accessDataSource);
+
+            mGR.RunRunner();
+
+            //Assert
+            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
+            Assert.AreEqual(a1.Status, eRunStatus.Passed);
+
         }
 
         [TestMethod]
