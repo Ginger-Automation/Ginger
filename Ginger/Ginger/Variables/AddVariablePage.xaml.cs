@@ -77,7 +77,7 @@ namespace Ginger.Variables
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
 
-            viewCols.Add(new GridColView() { Field = VariableBase.Fields.VariableUIType , Header= GingerDicser.GetTermResValue(eTermResKey.Variable) + " Type", BindingMode=BindingMode.OneWay, ReadOnly=true});
+            viewCols.Add(new GridColView() { Field = nameof(VariableBase.VariableUIType) , Header= GingerDicser.GetTermResValue(eTermResKey.Variable) + " Type", BindingMode=BindingMode.OneWay, ReadOnly=true});
 
             VariablesGrid.SetAllColumnsDefaultView(view);
             VariablesGrid.InitViewItems();
