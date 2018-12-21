@@ -4440,11 +4440,6 @@ namespace GingerCore.Drivers
             }
             list.Add(new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = ((HTMLElementInfo)ElementInfo).RelXpath , Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
             list.Add(new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = ElementInfo.XPath, Help = "Recommended (sensitive to page design changes)", Active = true, IsAutoLearned = true });
-            string eClass = e.GetAttribute("class");
-            if (!string.IsNullOrEmpty(eClass) && eClass != "GingerHighlight")
-            {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByClassName, LocateValue = eClass, Help = "Not Recommended (usually not unique)", Active = true, IsAutoLearned = true });
-            }
 
             return list;
         }
