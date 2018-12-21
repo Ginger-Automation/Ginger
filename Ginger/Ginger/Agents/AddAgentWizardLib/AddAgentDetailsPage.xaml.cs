@@ -56,12 +56,11 @@ namespace Ginger.Agents.AddAgentWizardLib
                     xAgentDescriptionTextBox.BindControl(mWizard.Agent, nameof(Agent.Notes));
                     xAgentTagsViewer.Init(mWizard.Agent.Tags);
 
-                    xPlatformTypeComboBox.SelectionChanged += xPlatformTypeComboBox_SelectionChanged;
-
                     //Removing ASCF from platform combobox
                     List<GingerCore.General.ComboEnumItem> platformList = (GingerCore.General.GetEnumValuesForCombo(typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType))).Where(x => ((GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType)x.Value) != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF).ToList();
                   
                     xPlatformTypeComboBox.BindControl(platformList);
+                    xPlatformTypeComboBox.SelectionChanged += xPlatformTypeComboBox_SelectionChanged;
                     xPlatformTypeComboBox.SelectedIndex = 0;
 
                     xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverType));
@@ -78,8 +77,6 @@ namespace Ginger.Agents.AddAgentWizardLib
                         xDriverRadioButton.IsChecked = true;
                     }
                     
-
-                    xPlatformTypeComboBox.SelectedIndex = 0;
                     break;                
             }
 
@@ -91,7 +88,7 @@ namespace Ginger.Agents.AddAgentWizardLib
             xDriverTypeComboBox.SelectedItem = null;
             xDriverTypeComboBox.Items.Clear();
 
-            List<object> driverTypeValues = mWizard.Agent.GetDriverTypesByPlatfrom(xPlatformTypeComboBox.SelectedItem.ToString());
+            List<object> driverTypeValues = mWizard.Agent.GetDriverTypesByPlatfrom(xPlatformTypeComboBox.SelectedValue.ToString());
             App.FillComboFromEnumVal(xDriverTypeComboBox, mWizard.Agent.DriverType, driverTypeValues, false);
             if (xDriverTypeComboBox.Items.Count > 0)
                 xDriverTypeComboBox.SelectedItem = xDriverTypeComboBox.Items[0];
