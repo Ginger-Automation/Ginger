@@ -1796,7 +1796,6 @@
     <Compile Include="GeneralLib\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GeneralLib\MRUManager.cs" />
     <Compile Include="Imports\SeleniumToGinger.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
