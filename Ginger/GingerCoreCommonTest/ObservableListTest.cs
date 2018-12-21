@@ -21,11 +21,8 @@ using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace UnitTests.NonUITests
+namespace GingerCoreCommonTest
 {
     [TestClass]
     [Level1]
@@ -36,9 +33,6 @@ namespace UnitTests.NonUITests
         {
             //TODO::
         }
-
-
-
 
         [TestMethod]
         public void ObservableListCast()
