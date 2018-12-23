@@ -49,16 +49,18 @@ namespace Amdocs.Ginger.Common
                 }
                 if (jkp.Value.HasReference)
                 {
-                    JsonBody.Add(key, JsonSchemaFaker(jkp.Value.Reference, UseXMlNames));
+                    string property = JsonSchemaFaker(jkp.Value.Reference, UseXMlNames);
+                    JsonBody.Add(key, property);
                 }
                 else
                 {
-                    JsonBody.Add(key, GenerateJsonObjectFromJsonSchema4(jkp.Value, UseXMlNames));
+                    object o = GenerateJsonObjectFromJsonSchema4(jkp.Value, UseXMlNames);
+                    JsonBody.Add(key, o);
                 }
 
             }
 
-
+            //JsonSerializerSettings = new JsonSerializerSettings();
 
             return JsonConvert.SerializeObject(JsonBody);
         }
