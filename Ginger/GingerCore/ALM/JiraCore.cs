@@ -22,9 +22,7 @@ using Ginger;
 using System;
 using System.Collections.Generic;
 using GingerCore.Activities;
-using TDAPIOLELib;
 using ALM_Common.DataContracts;
-using GingerCore.ALM.QC;
 using System.ComponentModel;
 using System.IO;
 using System.Xml;
@@ -41,6 +39,7 @@ namespace GingerCore.ALM
         public static string ALMProjectGuid { get; set; }
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public override ObservableList<Activity> GingerActivitiesRepo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override ObservableList<ExternalItemFieldBase> almItemFields { get ; set ; }
 
         public override bool ConnectALMProject()
         {
@@ -85,7 +84,13 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)
         {
-            return ImportFromJira.GetALMItemFields(bw, online);
+            ObservableList<ExternalItemFieldBase> tempFieldsList = ImportFromJira.GetALMItemFields(bw, online);
+            almItemFields = new ObservableList<ExternalItemFieldBase>();
+            foreach (ExternalItemFieldBase item in tempFieldsList)
+            {
+                almItemFields.Add((ExternalItemFieldBase)item.CreateCopy());
+            }
+            return tempFieldsList;
         }
 
         public override bool IsServerConnected()

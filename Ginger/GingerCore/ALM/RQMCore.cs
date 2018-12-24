@@ -113,6 +113,8 @@ namespace GingerCore.ALM
             set { ImportFromRQM.GingerActivitiesRepo = value; }
         }
 
+        public override ObservableList<ExternalItemFieldBase> almItemFields { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public override void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject)
         {
             AlmConfig.ALMServerURL = GetServerValueFromDict(GetDynamicServerConfigAndSetPaths());

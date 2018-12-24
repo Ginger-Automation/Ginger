@@ -41,7 +41,7 @@ namespace GingerCore.ALM.JIRA
         bool connectedToServer;
         bool connectedToProject;
         IProjectDefinitions connectedProjectDefenition;
-        AlmDomainColl JiraProjectsDataList;
+        AlmDomainColl jiraDomainsProjectsDataList;
 
         private JiraConnect()
         {
@@ -55,17 +55,17 @@ namespace GingerCore.ALM.JIRA
         public bool SetJiraProjectFullDetails()
         {
             GetJiraDomainProjects();
-
-            //IProjectDefinitions selectedProj = JiraProjectsDataList.Where(x => x.ProjectName.Equals(ALMCore.AlmConfig.ALMProjectName) == true).FirstOrDefault();
-            //if (selectedProj != null)
-            //{
-            //    //Save selected project details
-            //    connectedProjectDefenition = selectedProj;
-            //    ALMCore.AlmConfig.ALMProjectName = selectedProj.ProjectName;
-            //    JiraCore.ALMProjectGuid = selectedProj.Guid;
-            //    JiraCore.ALMProjectGroupName = selectedProj.Prefix;
-            //    return true;
-            //}
+            List<ProjectArea> currentProjects = jiraDomainsProjectsDataList.Where(x => x.DomainName.Equals(ALMCore.AlmConfig.ALMDomain)).Select(prjs => prjs.Projects).FirstOrDefault();
+            IProjectDefinitions selectedProj = currentProjects.Where(prj => prj.ProjectName.Equals(ALMCore.AlmConfig.ALMProjectName)).FirstOrDefault();
+            if (selectedProj != null)
+            {
+                //Save selected project details
+                connectedProjectDefenition = selectedProj;
+                ALMCore.AlmConfig.ALMProjectName = selectedProj.ProjectName;
+                JiraCore.ALMProjectGuid = selectedProj.Guid;
+                JiraCore.ALMProjectGroupName = selectedProj.Prefix;
+                return true;
+            }
             return false;
         }
 
@@ -119,24 +119,33 @@ namespace GingerCore.ALM.JIRA
 
         internal List<string> GetJiraDomainProjects()
         {
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
-            ALM_Common.DataContracts.AlmResponseWithData<AlmDomainColl> jiraProjectsData = JiraRep.GetLoginProjects(loginData.User, loginData.Password,loginData.Server);
-            JiraProjectsDataList = jiraProjectsData.DataResult;
-
-            List<string> JiraProjects = new List<string>();
-            foreach (var proj in JiraProjectsDataList)
+            List<string> jiraProjects = new List<string>();
+            List<ProjectArea> currentDomainProject = new List<ProjectArea>();
+            if (jiraDomainsProjectsDataList == null)
             {
-                //JiraProjects.Add(proj.ProjectName);
+                GetJiraDomains();
             }
-
-            return JiraProjects;
+            if (jiraDomainsProjectsDataList.Count > 0)
+            {
+                currentDomainProject = jiraDomainsProjectsDataList.Where(dom => dom.DomainName.Equals(ALMCore.AlmConfig.ALMDomain)).Select(prj => prj.Projects).FirstOrDefault();
+                foreach (var proj in currentDomainProject)
+                {
+                    jiraProjects.Add(proj.ProjectName);
+                }
+            }
+            return jiraProjects;
         }
 
         internal List<string> GetJiraDomains()
         {
-            List<string> RQMDomains = new List<string>();
-            RQMDomains.Add("JIRA Domain");
-            return RQMDomains;
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
+            jiraDomainsProjectsDataList = JiraRep.GetLoginProjects(loginData.User, loginData.Password, loginData.Server).DataResult;
+            List<string> jiraDomains = new List<string>();
+            foreach (var domain in jiraDomainsProjectsDataList)
+            {
+                jiraDomains.Add(domain.DomainName);
+            }
+            return jiraDomains;
         }
 
         public void DisconnectJiraServer()

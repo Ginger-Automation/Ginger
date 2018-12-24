@@ -51,8 +51,35 @@ namespace GingerCore.ALM.JIRA
                 JiraRepository.JiraRepository jiraRep = new JiraRepository.JiraRepository();
                 LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
                 AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList;
-                testCaseFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMProjectName, ALM_Common.DataContracts.ResourceType.TEST_CASE);
+                AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testSetFieldsList;
+                testSetFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMDomain, ALM_Common.DataContracts.ResourceType.TEST_SET);
 
+                testCaseFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMDomain, ALM_Common.DataContracts.ResourceType.TEST_CASE);
+                //get Test Set fields
+                foreach (var field in testSetFieldsList.DataResult)
+                {
+                    if (string.IsNullOrEmpty(field.name)) continue;
+
+                    ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
+                    itemfield.ID = field.name;
+                    itemfield.Name = field.name;
+                    itemfield.Mandatory = field.required;
+                    itemfield.ItemType = ResourceType.TEST_SET.ToString();
+
+                    if (field.allowedValues.Count > 0)
+                    {
+                        itemfield.SelectedValue = (field.allowedValues[0].name != null) ? field.allowedValues[0].name : field.allowedValues[0].value;
+                        foreach (var item in field.allowedValues)
+                        {
+                            itemfield.PossibleValues.Add((item.name != null) ? item.name : item.value);
+                        }
+                    }
+                    else
+                    {
+                        itemfield.SelectedValue = "Unassigned";
+                    }
+                    fields.Add(itemfield);
+                }
                 //Get Test Case fields
                 foreach (var field in testCaseFieldsList.DataResult)
                 {
@@ -62,13 +89,15 @@ namespace GingerCore.ALM.JIRA
                     itemfield.ID = field.name;
                     itemfield.Name = field.name;
                     itemfield.Mandatory = field.required;
-                    if (itemfield.Mandatory)
-                        itemfield.ToUpdate = true;
                     itemfield.ItemType = ResourceType.TEST_CASE.ToString();
 
                     if (field.allowedValues.Count > 0)
                     {
-                        itemfield.SelectedValue = field.allowedValues[0].name;
+                        itemfield.SelectedValue = (field.allowedValues[0].name != null) ? field.allowedValues[0].name : field.allowedValues[0].value;
+                        foreach (var item in field.allowedValues)
+                        {
+                            itemfield.PossibleValues.Add((item.name != null)? item.name: item.value);
+                        }
                     }
                     else
                     {
