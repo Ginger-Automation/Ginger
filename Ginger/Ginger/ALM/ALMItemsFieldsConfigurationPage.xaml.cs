@@ -60,9 +60,10 @@ namespace Ginger.ALM
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.Name, Header = "Field Name", WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.Mandatory, WidthWeight = 15, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.Name, Header = "Field Name", WidthWeight = 20, ReadOnly = true, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.Mandatory, WidthWeight = 15, ReadOnly = true, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.SelectedValue, Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ExternalItemFieldBase.Fields.PossibleValues, ExternalItemFieldBase.Fields.SelectedValue, true), WidthWeight = 20 });
+            view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.ItemType , WidthWeight = 15, ReadOnly = true, AllowSorting = true });
 
             grdQCFields.SetAllColumnsDefaultView(view);
             grdQCFields.InitViewItems();
@@ -89,10 +90,11 @@ namespace Ginger.ALM
         private void Save(object sender, RoutedEventArgs e)
         {
             ObservableList<ExternalItemFieldBase> tempItemList = new ObservableList<ExternalItemFieldBase>();
-            foreach (ExternalItemFieldBase field in mItemsFields.Where(x => x.ToUpdate == true).ToList())
-                tempItemList.Add(field);
-            App.UserProfile.Solution.ExternalItemsFields = tempItemList;
+            //foreach (ExternalItemFieldBase field in mItemsFields.Where(x => x.ToUpdate == true).ToList())
+            //    tempItemList.Add(field);
+            App.UserProfile.Solution.ExternalItemsFields = ALMIntegration.Instance.getUpdatedFields(mItemsFields, false);
             App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
+            App.UserProfile.Solution.ExternalItemsFields = mItemsFields;
             genWin.Close();
         }
 

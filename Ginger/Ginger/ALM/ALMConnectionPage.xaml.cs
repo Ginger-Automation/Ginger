@@ -294,10 +294,6 @@ namespace Ginger.ALM
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 if (ALMIntegration.Instance.TestALMProjectConn(almConectStyle))
                 {
-                    if ((almConectStyle == ALMIntegration.eALMConnectType.Manual) || (almConectStyle == ALMIntegration.eALMConnectType.SettingsPage))
-                    {
-                        SaveALMConfigs();
-                    }
                     isProjectMappingCorrect = true;
                 }
                 Mouse.OverrideCursor = null;
@@ -312,7 +308,27 @@ namespace Ginger.ALM
 
         private void ConnectProjectButton_Click(object sender, RoutedEventArgs e)
         {
+            if(ConnectProjectButton.Content.ToString() == "Save Project Mapping")
+            {
+                SaveConnectionDetails();
+                return;
+            }
             ConnectProject();
+        }
+
+        private void SaveConnectionDetails()
+        {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            if (ALMIntegration.Instance.TestALMProjectConn(almConectStyle))
+            {
+                if ((almConectStyle == ALMIntegration.eALMConnectType.Manual) || (almConectStyle == ALMIntegration.eALMConnectType.SettingsPage))
+                {
+                    SaveALMConfigs();
+                }
+                isProjectMappingCorrect = true;
+            }
+            Mouse.OverrideCursor = null;
+            SetControls();
         }
 
         public void ShowAsWindow()

@@ -499,46 +499,81 @@ namespace Ginger.ALM
             {
                 //Get latestALMFields from ALMCore with Online flag
                 ObservableList<ExternalItemFieldBase> latestALMFields = AlmCore.GetALMItemFields(bw, online);
-
-                //Merging Latest with exiting
-                if (exitingFields == null)
-                    exitingFields = new ObservableList<ExternalItemFieldBase>();
-
+                
                 foreach (ExternalItemFieldBase latestField in latestALMFields)
                 {
-                    ExternalItemFieldBase existingField = exitingFields.Where(x => x.ID == latestField.ID).FirstOrDefault();
-                    if (existingField != null)
+                    ExternalItemFieldBase currentField = exitingFields.Where(x => x.ID == latestField.ID && x.ItemType == latestField.ItemType).FirstOrDefault();
+                    if (currentField != null)
                     {
-                        existingField.Name = latestField.Name;
-                        existingField.ItemType = latestField.ItemType;
-                        existingField.Mandatory = latestField.Mandatory;
-                        existingField.ExternalID = latestField.ExternalID;
-                       
-                        if (latestField.Mandatory == true)
-                            existingField.ToUpdate = true;
-
-                        existingField.PossibleValues = latestField.PossibleValues;
-                        if (string.IsNullOrEmpty(existingField.SelectedValue) == false)
-                        {                        
-                            if (!latestField.PossibleValues.Contains(existingField.SelectedValue))
-                                existingField.SelectedValue = latestField.SelectedValue;
+                        currentField.Name = latestField.Name;
+                        currentField.ItemType = latestField.ItemType;
+                        currentField.Mandatory = latestField.Mandatory;
+                        currentField.ExternalID = latestField.ExternalID;
+                        currentField.PossibleValues = latestField.PossibleValues;
+                        currentField.ToUpdate = false;
+                        if (string.IsNullOrEmpty(currentField.SelectedValue) == false)
+                        {
+                            if ((latestField.PossibleValues.Count == 0 && currentField.SelectedValue != latestField.SelectedValue) || (latestField.PossibleValues.Count > 0 && latestField.PossibleValues.Contains(currentField.SelectedValue) && currentField.SelectedValue != latestField.PossibleValues[0]))
+                            {
+                                currentField.ToUpdate = true;
+                            }
+                            else
+                            {
+                                currentField.SelectedValue = latestField.SelectedValue;
+                                currentField.ToUpdate = false;
+                            }
                         }
                         else
                         {
-                            existingField.SelectedValue = latestField.SelectedValue;
+                            currentField.SelectedValue = latestField.SelectedValue;
+                            currentField.ToUpdate = false;
                         }
+                        mergedFields.Add(currentField);
                     }
                     else
-                        exitingFields.Add(latestField);
+                    {
+                        mergedFields.Add(latestField);
+                    }
                 }
-
-                //Sorting the list
-                ObservableList<ExternalItemFieldBase> sortedFields = new ObservableList<ExternalItemFieldBase>(from i in exitingFields orderby i.ItemType select i);
+                
                 exitingFields.ClearAll();
-                exitingFields.Append(sortedFields);
+                exitingFields.Append(mergedFields);
             }
         }
-
+        internal ObservableList<ExternalItemFieldBase> getUpdatedFields(ObservableList<ExternalItemFieldBase> mItemsFields, bool online, BackgroundWorker bw = null)
+        {
+            ObservableList<ExternalItemFieldBase> updatedFields = new ObservableList<ExternalItemFieldBase>();
+            if (AlmCore.almItemFields != null)
+            {
+                foreach (ExternalItemFieldBase defaultField in AlmCore.almItemFields)
+                {
+                    ExternalItemFieldBase currentField = mItemsFields.Where(x => x.ID == defaultField.ID && x.ItemType == defaultField.ItemType).FirstOrDefault();
+                    if (currentField != null)
+                    {
+                        currentField.ToUpdate = false;
+                        if (string.IsNullOrEmpty(currentField.SelectedValue) == false)
+                        {
+                            if ((defaultField.PossibleValues.Count == 0 && currentField.SelectedValue != defaultField.SelectedValue) || (defaultField.PossibleValues.Count > 0 && defaultField.PossibleValues.Contains(currentField.SelectedValue) && currentField.SelectedValue != defaultField.PossibleValues[0]))
+                            {
+                                currentField.ToUpdate = true;
+                                updatedFields.Add(currentField);
+                            }
+                            else
+                            {
+                                currentField.SelectedValue = defaultField.SelectedValue;
+                                currentField.ToUpdate = false;
+                            }
+                        }
+                        else
+                        {
+                            currentField.SelectedValue = defaultField.SelectedValue;
+                            currentField.ToUpdate = false;
+                        }
+                    }
+                }
+            }
+            return updatedFields;
+        }
         public bool ShowImportReviewPage(string importDestinationPath, object selectedTestPlan = null)
         {
             return AlmRepo.ShowImportReviewPage(importDestinationPath, selectedTestPlan);
