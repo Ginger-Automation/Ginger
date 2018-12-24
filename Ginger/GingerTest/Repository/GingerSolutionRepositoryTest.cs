@@ -25,11 +25,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 
 namespace GingerCoreCommonTest.Repository
 {
@@ -49,7 +47,7 @@ namespace GingerCoreCommonTest.Repository
             mSolutionRepository = Ginger.App.CreateGingerSolutionRepository();
             Ginger.App.InitClassTypesDictionary();            
             string TempRepositoryFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\SRTestTemp");            
-            mSolutionRepository.Open(TempRepositoryFolder);            
+            mSolutionRepository.Open(TempRepositoryFolder);
         }
 
         private static void CreateTestSolution()

@@ -107,23 +107,23 @@ namespace Ginger.Run
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.ParentType, Header = "Level", WidthWeight = 10, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.ParentName, Header = "Parent Name", WidthWeight = 15, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Name, WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Description, WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Formula, WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Value, Header = "Initial Value", WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });           
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Image), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentType), Header = "Level", WidthWeight = 10, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentName), Header = "Parent Name", WidthWeight = 15, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Name), WidthWeight = 20, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Description), WidthWeight = 20, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Formula), WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Value), Header = "Initial Value", WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });           
             if (mWindowMode == eWindowMode.Configuration)
             {
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.MappedOutputValue, Header = "Mapped Runtime Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(VariableBase.Fields.MappedOutputType, VariableBase.Fields.MappedOutputValue,null, VariableBase.Fields.PossibleOutputVariables, VariableBase.Fields.SupportSetValue, "Output Variable", null), WidthWeight = 40 });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(nameof(VariableBase.MappedOutputType), nameof(VariableBase.MappedOutputValue), null, nameof(VariableBase.PossibleOutputVariables), nameof(VariableBase.SupportSetValue), "Output Variable", null), WidthWeight = 40 });
             }                
             else if (mWindowMode == eWindowMode.SummaryView)
             {
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.MappedOutputValue, Header = "Mapped Runtime Value", BindingMode = BindingMode.OneWay, ReadOnly = true, WidthWeight = 40});
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", BindingMode = BindingMode.OneWay, ReadOnly = true, WidthWeight = 40});
             }
                 
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.DiffrentFromOrigin, Header = "Different From Origin", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.DiffrentFromOrigin), Header = "Different From Origin", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
             grdVariables.SetAllColumnsDefaultView(view);
             grdVariables.InitViewItems();
 

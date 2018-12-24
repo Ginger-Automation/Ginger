@@ -723,6 +723,20 @@ namespace GingerCore.Drivers.WindowsLib
                         else
                             actWinC.Error = "Unable to set value to " + ValDrv;
                         break;
+                    case ActGenElement.eGenElementAction.SetAttributeValue:
+                        string attrName = "value";
+                        string attValue = ValDrv;
+                        if(ValDrv.IndexOf("=") > 0)
+                        {
+                            attrName = ValDrv.Split('=')[0];
+                            attValue = ValDrv.Split('=')[1];
+                        }
+                        result = mUIAutomationHelper.GetHTMLHelper().SetValue(element, attValue, attrName);
+                        if (result)
+                            actWinC.ExInfo = ValDrv + " set";
+                        else
+                            actWinC.Error = "Unable to set attribute " + ValDrv;
+                        break;
                     case ActGenElement.eGenElementAction.FireSpecialEvent:
 
                         value = mUIAutomationHelper.GetHTMLHelper().FireSpecialEvent(element, ValDrv);

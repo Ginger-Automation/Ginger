@@ -53,21 +53,21 @@
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Style="{StaticResource @LabelStyle}"  VerticalAlignment="Center" Margin="-2,10,0,10" Width="118">E-mail Method:</Label>
-                            <ComboBox x:Name="EmailMethodComboBox" Style="{StaticResource @InputComboBoxStyle}" Width="120" Height="25" SelectionChanged="EmailMethodComboBox_SelectionChanged"/>
+                            <ComboBox x:Name="xEmailMethodComboBox" Style="{StaticResource @InputComboBoxStyle}" Width="120" Height="25" SelectionChanged="xEmailMethodComboBox_SelectionChanged"/>
                         </StackPanel>
-                        <StackPanel x:Name="SMTPConfig">
-                            <Label Style="{StaticResource @LabelStyle}" x:Name="LabelMailHost">SMTP Mail Host:</Label>
-                            <TextBox x:Name="SMTPMailHostTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left"/>
-
-                            <Label Style="{StaticResource @LabelStyle}" x:Name="LabelPort">SMTP Port:</Label>
-                            <TextBox x:Name="SMTPPortTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left"/>
-
-                            <Label Style="{StaticResource @LabelStyle}" x:Name="LabelUser">SMTP User:</Label>
-                            <TextBox x:Name="SMTPUserTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left"/>
-
-                            <Label Style="{StaticResource @LabelStyle}" x:Name="LabelPass">SMTP Password:</Label>
-                            <TextBox x:Name="SMTPPassTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left"/>
-                            <CheckBox x:Name="cbEnableSSL" Style="{StaticResource @InputCheckBoxStyle}"  VerticalAlignment="Center" Content="Enable SSL" Margin="10"/>
+                        <StackPanel x:Name="xSMTPConfig">
+                            <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelMailHost">SMTP Mail Host:</Label>
+                            <Actions:UCValueExpression x:Name="xSMTPMailHostTextBox"  ToolTip="SMTP Host" Width="235" HorizontalAlignment="Left" ScrollViewer.VerticalScrollBarVisibility="Auto" HideVEBusinessFlowAndActivityVariables="True"  />
+                            <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelPort">SMTP Port:</Label>
+                            <TextBox x:Name="xSMTPPortTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left"/>
+                            <DockPanel>
+                                <CheckBox x:Name="xcbEnableSSL" Style="{StaticResource @InputCheckBoxStyle}"  VerticalAlignment="Center" Content="Enable SSL" Margin="10"/>
+                                <CheckBox x:Name="xcbConfigureCredential" Style="{StaticResource @InputCheckBoxStyle}"  VerticalAlignment="Center" Content="Configure Credential" Margin="10" Checked="xcbConfigureCredential_Checked" Unchecked="xcbConfigureCredential_Unchecked"/>
+                            </DockPanel>
+                            <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelUser" Visibility="Collapsed">SMTP User:</Label>
+                            <Actions:UCValueExpression x:Name="xSMTPUserTextBox"  ToolTip="SMTP User" Width="235" HorizontalAlignment="Left" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Auto" HideVEBusinessFlowAndActivityVariables="True"  />
+                            <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelPass" Visibility="Collapsed">SMTP Password:</Label>
+                            <TextBox x:Name="xSMTPPassTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left" Visibility="Collapsed" LostFocus="xSMTPPassTextBox_LostFocus"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>

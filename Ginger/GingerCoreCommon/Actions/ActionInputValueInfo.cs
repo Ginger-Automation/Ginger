@@ -1,4 +1,22 @@
-﻿using System;
+﻿#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -11,6 +29,12 @@ namespace Amdocs.Ginger.Common.Actions
     [JsonObject(MemberSerialization.OptIn)]
     public class ActionInputValueInfo
     {
+        public Type ParamType { get; set; }
+
+        //For List<T> keep the full type name
+        public string ParamTypeStr { get; set; }
+
+
         [JsonProperty]
         public string Param { get; set; }
 
@@ -26,7 +50,18 @@ namespace Amdocs.Ginger.Common.Actions
                 if (ParamType == typeof(Int32)) return "int";
                 if (ParamType == typeof(List<string>)) return "List<string>";
                 if (ParamType == typeof(IGingerAction)) return "IGingerAction";
-
+                if (ParamType == typeof(bool)) return "bool";
+                if (ParamType.IsEnum)
+                {
+                    
+                    string vals = "";
+                    foreach (object o in Enum.GetValues(ParamType))
+                    {
+                        if (vals.Length > 0) vals += ",";
+                        vals += o.ToString();
+                    }
+                    return "enum{" + vals + "}";
+                }
 
                 // Check if it is a List 
                 if (ParamType.IsGenericType && ParamType.GetGenericTypeDefinition() == typeof(List<>))
@@ -62,10 +97,17 @@ namespace Amdocs.Ginger.Common.Actions
                     case "IGingerAction":
                         ParamType = typeof(IGingerAction);
                         break;
+                    case "bool":
+                        ParamType = typeof(bool);
+                        break;
                     default:
                         if (value.StartsWith("List<"))
                         {
                             ParamType = typeof(DynamicListWrapper);                            
+                        }
+                        else if(value.StartsWith("enum"))
+                        {
+                            ParamType = typeof(EnumParamWrapper);
                         }
                         else
                         {
@@ -87,9 +129,6 @@ namespace Amdocs.Ginger.Common.Actions
             return "{Properties=" + s + "}" ;
         }
 
-        public Type ParamType { get; set; }
-
-        //For List<T> keep the full type name
-        public string ParamTypeStr { get; set; }
+        
     }
 }
