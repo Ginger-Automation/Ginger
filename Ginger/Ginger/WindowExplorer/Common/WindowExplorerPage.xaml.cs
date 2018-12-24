@@ -694,7 +694,7 @@ namespace Ginger.WindowExplorer
                     HTMLPageTreeItem HPTI = new HTMLPageTreeItem();
                     HTMLElementInfo EI = new HTMLElementInfo();
                     EI.ElementTitle = AW.Title;
-                    EI.XPath = "html";
+                    EI.XPath = "/html";
                     EI.WindowExplorer = mWindowExplorerDriver;
                     HPTI.ElementInfo = EI;                                                                
                     InitTree(HPTI);
