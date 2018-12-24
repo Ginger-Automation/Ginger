@@ -61,6 +61,7 @@ using System.Windows.Input;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
+using Ginger.Run.RunSetActions;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -529,8 +530,15 @@ namespace Ginger
             // TODO: remove after we don't need old serializer to load old repo items
             NewRepositorySerializer.NewRepositorySerializerEvent += RepositorySerializer.NewRepositorySerializer_NewRepositorySerializerEvent;
 
+
+            // Add all RI classes from GingerCoreNET
+            // NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
+
             // Add all RI classes from GingerCoreCommon
             NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
+
+            
+
 
             // Add all RI classes from GingerCore
             NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActButton).Assembly); // GingerCore.dll
@@ -539,7 +547,7 @@ namespace Ginger
             NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerPlugIns.ActionsLib.PlugInActionsBase).Assembly);
 
 
-            // add from Ginger - items like RunSetConfig
+            // add from Ginger
             NewRepositorySerializer.AddClassesFromAssembly(typeof(Ginger.App).Assembly);
 
             // Each class which moved from GingerCore to GingerCoreCommon needed to be added here, so it will auto translate
@@ -549,6 +557,16 @@ namespace Ginger
             list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
+
+            // TODO: remove after it moved to common
+            AddClass(list, typeof(RunSetConfig));
+            AddClass(list, typeof(RunSetActionSendEmail));
+            AddClass(list, typeof(BusinessFlowReport));
+            AddClass(list, typeof(HTMLReportConfiguration));
+            AddClass(list, typeof(BusinessFlowRun));
+            //list.Add("Ginger.Run.BusinessFlowRun", typeof(BusinessFlowRun));
+            
+
 
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
@@ -577,6 +595,12 @@ namespace Ginger
 
             NewRepositorySerializer.AddClasses(list);
 
+        }
+
+        private static void AddClass(Dictionary<string, Type> list, Type t)
+        {
+            list.Add((t).FullName, t);
+            list.Add((t).Name, t);
         }
 
         private static async void HandleAutoRunMode()

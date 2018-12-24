@@ -16,24 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Data;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-
-using System.Reflection;
-using System.IO;
-using System.Drawing;
-using GingerCore;
-
-using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
+using GingerCore;
 using GingerCore.Environments;
-
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+
+
 namespace Ginger.Reports.GingerExecutionReport
 {
     public class GingerExecutionReport
