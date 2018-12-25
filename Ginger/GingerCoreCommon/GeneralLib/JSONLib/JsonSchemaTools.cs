@@ -50,7 +50,8 @@ namespace Amdocs.Ginger.Common
                 if (jkp.Value.HasReference)
                 {
                     string property = JsonSchemaFaker(jkp.Value.Reference, UseXMlNames);
-                    JsonBody.Add(key, property);
+                    object o = JsonConvert.DeserializeObject(property);
+                    JsonBody.Add(key, o);
                 }
                 else
                 {
@@ -59,8 +60,6 @@ namespace Amdocs.Ginger.Common
                 }
 
             }
-
-            //JsonSerializerSettings = new JsonSerializerSettings();
 
             return JsonConvert.SerializeObject(JsonBody);
         }
