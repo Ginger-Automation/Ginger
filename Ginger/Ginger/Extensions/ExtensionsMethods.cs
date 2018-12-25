@@ -52,7 +52,7 @@ namespace Ginger
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Refresh progress bar failed", ex); // !!!!!!!!!!!!!!!!!!!!!!
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Refresh progress bar failed", ex); // !!!!!!!!!!!!!!!!!!!!!!
                 }
 
             }
@@ -107,7 +107,7 @@ namespace Ginger
                 {
                     GingerCore.General.ComboGroupedEnumItem item = new GingerCore.General.ComboGroupedEnumItem();
                     item.text = GingerCore.General.GetEnumValueDescription(v.GetType(), v);
-                    item.Category = GingerCore.General.GetEnumDescription(v.GetType(), v); ;
+                    item.Category = GingerCore.General.GetEnumDescription(v.GetType(), v); 
                     item.Value = v;
 
                     l.Add(item);
@@ -206,6 +206,11 @@ namespace Ginger
             GingerCore.General.ObjFieldBinding(TextBox, TextBox.TextProperty, obj, Field, bm);
         }
 
+        public static void BindControl(this TreeView TreeView, Object obj, string Field, BindingMode bm = BindingMode.TwoWay)
+        {
+            GingerCore.General.ObjFieldBinding(TreeView, TreeView.SelectedValuePathProperty, obj, Field, bm);
+        }
+
         public static void BindControl(this TextBox TextBox, ActInputValue AIV)
         {                
             TextBox.BindControl(AIV, ActInputValue.Fields.Value);
@@ -215,6 +220,11 @@ namespace Ginger
         public static void AddValidationRule(this TextBox textBox, ValidationRule validationRule)
         {
             AddValidation(textBox, TextBox.TextProperty, validationRule);
+        }
+
+        public static void AddValidationRule(this TreeView TreeView, ValidationRule validationRule)
+        {
+            AddValidation(TreeView, TreeView.SelectedValuePathProperty, validationRule);
         }
 
         public static void AddValidationRule(this TextBox textBox, eValidationRule validationRule)
@@ -341,15 +351,6 @@ namespace Ginger
         public static void RemoveValidations(this FrameworkElement frameworkElement, DependencyProperty SelectedProperty)
         {
             BindingExpression bd = frameworkElement.GetBindingExpression(SelectedProperty);
-
-            //if (frameworkElement is ucAgentControl)
-            //{
-            //    bd = frameworkElement.GetBindingExpression(ucAgentControl.SelectedAgentProperty);
-            //}
-            //else if(frameworkElement is ComboBox)
-            //{
-            //    bd = frameworkElement.GetBindingExpression(ComboBox.SelectedValueProperty);
-            //}
 
             if (bd != null)
             {

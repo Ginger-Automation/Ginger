@@ -1,5 +1,24 @@
-﻿using ALM_Common.DataContracts;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using ALM_Common.DataContracts;
 using ALMRestClient;
+using Amdocs.Ginger.Common;
 using GingerCore.ALM.QC;
 using QCRestClient;
 using System;
@@ -59,7 +78,7 @@ namespace GingerCore.ALM.QCRestAPI
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     return false;
                 }
             }
@@ -297,7 +316,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test cases with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test cases with REST API", ex);
                 return null;
             }
         }
@@ -310,7 +329,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test set details with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test set details with REST API", ex);
                 return null;
             }
         }
@@ -323,7 +342,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to convert resource type with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to convert resource type with REST API", ex);
                 return null;
             }
         }
@@ -336,7 +355,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get fields with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get fields with REST API", ex);
                 return null;
             }
         }
@@ -349,7 +368,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test case steps with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test case steps with REST API", ex);
                 return null;
             }
         }
@@ -362,20 +381,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test instances with REST API", ex);
-                return null;
-            }
-        }
-
-        public static QCTestInstance GetTestInstanceWithTestCaseId(string testCaseId)
-        {
-            try
-            {
-                return QcRestClient.GetTestInstanceWithTestCase(testCaseId);
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test instances with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test instances with REST API", ex);
                 return null;
             }
         }
@@ -388,7 +394,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test instances of test set with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test instances of test set with REST API", ex);
                 return null;
             }
         }
@@ -401,7 +407,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test cases steps with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test cases steps with REST API", ex);
                 return null;
             }
         }
@@ -414,7 +420,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get runs by test id with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get runs by test id with REST API", ex);
                 return null;
             }
         }
@@ -428,7 +434,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test cases parameters with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test cases parameters with REST API", ex);
                 return null;
             }
         }
@@ -441,7 +447,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test instance details with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test instance details with REST API", ex);
                 return null;
             }
         }
@@ -454,7 +460,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to create entity with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to create entity with REST API", ex);
                 return null;
             }
         }
@@ -477,7 +483,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to delete entity with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to delete entity with REST API", ex);
             }
         }
 
@@ -489,7 +495,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to update entity with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to update entity with REST API", ex);
                 return null;
             }
         }

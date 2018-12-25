@@ -54,7 +54,7 @@
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
                                     <Setter Property="FontFamily" Value="Open Sans" />
                                     <!--<Setter Property="Height" Value="25" />-->
                                     <Setter Property="FontSize" Value="12" />
@@ -73,7 +73,7 @@
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="true">
                                                         <Setter Property="Foreground" Value="White" />
-                                                        <Setter Property="Background" Value="{DynamicResource @Skin1_ColorB2}" />
+                                                        <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -110,7 +110,7 @@
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
                                     <Setter Property="FontFamily" Value="Open Sans" />
                                     
                                     <Setter Property="FontSize" Value="12" />
@@ -129,7 +129,7 @@
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="true">
                                                         <Setter Property="Foreground" Value="White" />
-                                                        <Setter Property="Background" Value="{DynamicResource @Skin1_ColorB2}" />
+                                                        <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -166,7 +166,7 @@
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
                                     <Setter Property="FontFamily" Value="Open Sans" />
                                     <!--<Setter Property="Height" Value="25" />-->
                                     <Setter Property="FontSize" Value="12" />
@@ -185,7 +185,7 @@
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="true">
                                                         <Setter Property="Foreground" Value="White" />
-                                                        <Setter Property="Background" Value="{DynamicResource @Skin1_ColorB2}" />
+                                                        <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -224,7 +224,7 @@
                                 <Style TargetType="Button">
                                     <Setter Property="Visibility" Value="Visible" />
                                     <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
                                     <Setter Property="FontFamily" Value="Open Sans" />
                                     <Setter Property="Height" Value="25" />
                                     <Setter Property="FontSize" Value="12" />
@@ -243,13 +243,13 @@
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="true">
                                                         <Setter Property="Foreground" Value="White" />
-                                                        <Setter Property="Background" Value="{DynamicResource @Skin1_ColorB2}" />
+                                                        <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
-                                    <Style.Triggers>
+                                    <Style.Triggers>                                       
                                         <DataTrigger Binding="{Binding Path=Agent}" Value="{x:Null}">
                                             <Setter Property="Image.Visibility" Value="Collapsed"/>
                                         </DataTrigger>
@@ -259,6 +259,25 @@
                                         <DataTrigger Binding="{Binding Path=Agent.IsWindowExplorerSupportReady}" Value="False">
                                             <Setter Property="Image.Visibility" Value="Collapsed"/>
                                         </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="NotStarted">
+                                            <Setter Property="Image.Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="FailedToStart">
+                                            <Setter Property="Image.Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Starting">
+                                            <Setter Property="Image.Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Ready">
+                                            <Setter Property="Image.Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Running">
+                                            <Setter Property="Image.Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Completed">
+                                            <Setter Property="Image.Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                      
                                     </Style.Triggers>
                                 </Style>
                             </Button.Style>

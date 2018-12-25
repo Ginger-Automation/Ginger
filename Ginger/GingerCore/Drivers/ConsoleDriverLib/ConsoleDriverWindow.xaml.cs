@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -221,11 +222,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             try
             {
                 mConsoleDriver.Disconnect();
+                mConsoleDriver.mConsoleDriverWindow = null;
                 mConsoleDriver.CloseDriver();
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message);
             }
         }
         private void ApplyStyleToText(string result,ref Paragraph p)
@@ -251,7 +253,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in ApplyStyleToResultAsync", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in ApplyStyleToResultAsync", e);
             }
         }
         private bool ApplyASCIICodeFormat(string TargetString, string format, ref Paragraph p)
@@ -275,7 +277,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         case 4://Underline
                             p.TextDecorations = System.Windows.TextDecorations.Underline;
                             break;
-                        case 7://Rverse foreground & background
+                        case 7://Reverse foreground & background
                             break;
                         case 9://Strike Through                               
                             p.TextDecorations = System.Windows.TextDecorations.Strikethrough;
@@ -289,34 +291,34 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         case 29://StrikeThrough off                                
                             p.TextDecorations = null;
                             break;
-                        case 30://Forground Color to Black                                
+                        case 30://Foreground Color to Black                                
                             txtElem.Foreground = System.Windows.Media.Brushes.Black;
                             break;
-                        case 31://Forground Color to Red                                
+                        case 31://Foreground Color to Red                                
                             txtElem.Foreground = System.Windows.Media.Brushes.Red;
                             break;
-                        case 32://Forground Color to Green                                
+                        case 32://Foreground Color to Green                                
                             txtElem.Foreground = System.Windows.Media.Brushes.LightGreen;
                             break;
-                        case 33://Forground Color to Yellow                                
+                        case 33://Foreground Color to Yellow                                
                             txtElem.Foreground = System.Windows.Media.Brushes.Yellow;
                             break;
-                        case 34://Forground Color to blue                                
+                        case 34://Foreground Color to blue                                
                             txtElem.Foreground = System.Windows.Media.Brushes.LightBlue;
                             break;
-                        case 35://Forground Color to Magenta                                
+                        case 35://Foreground Color to Magenta                                
                             txtElem.Foreground = System.Windows.Media.Brushes.Magenta;
                             break;
-                        case 36://Forground Color to Cyan                                
+                        case 36://Foreground Color to Cyan                                
                             txtElem.Foreground = System.Windows.Media.Brushes.Cyan;
                             break;
-                        case 37://Forground Color to White                                
+                        case 37://Foreground Color to White                                
                             txtElem.Foreground = System.Windows.Media.Brushes.White;
                             break;
-                        case 39://Forground Color to Default (White)                               
+                        case 39://Foreground Color to Default (White)                               
                             txtElem.Foreground = System.Windows.Media.Brushes.White;
                             break;
-                        case 40://Forground Color to Black                               
+                        case 40://Foreground Color to Black                               
                             txtElem.Background = System.Windows.Media.Brushes.Black;
                             break;
                         case 41://Background Color to Red                                

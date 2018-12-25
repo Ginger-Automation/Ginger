@@ -38,7 +38,7 @@ namespace Ginger.AnalyzerLib
             // Check Activity have Target App            
             if (string.IsNullOrEmpty(Activity.TargetApplication))
             {
-                AnalyzeActivity AA = CreateNewIssue(IssuesList, BusinessFlow, Activity);
+                AnalyzeActivity AA = CreateNewIssue(BusinessFlow, Activity);
                 AA.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " is missing target Application";
                 AA.Details = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " doesn't have Target Application(s) defined";
                 AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: "s") + " in solution tab and add target apps";
@@ -48,12 +48,14 @@ namespace Ginger.AnalyzerLib
                 AA.Impact = "Might be executed on wrong application or not executed at all and will fail at run time";
                 AA.Severity = eSeverity.High;
                 AA.Selected = true;
+
+                IssuesList.Add(AA);
             }
 
             // Check Activity have actions
             if (Activity.Acts.Count() == 0)
             {
-                AnalyzeActivity AA = CreateNewIssue(IssuesList, BusinessFlow, Activity);
+                AnalyzeActivity AA = CreateNewIssue(BusinessFlow, Activity);
                 AA.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " is missing Actions";
                 AA.Details = GingerDicser.GetTermResValue(eTermResKey.Activity) + " doesn't have Actions";
                 AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and add actions or remove this " + GingerDicser.GetTermResValue(eTermResKey.Activity);
@@ -61,18 +63,19 @@ namespace Ginger.AnalyzerLib
                 AA.IssueType = eType.Warning;
                 AA.Impact = "Will be marked as pass and can give wrong impression while nothing is executed";
                 AA.Severity = eSeverity.Medium;
+                IssuesList.Add(AA);
             }
 
             // Check Activity target app exist in the BF target app
             //Check only when there is  target app, since the user will get no target err before
             if (!string.IsNullOrEmpty(Activity.TargetApplication))
             {
-                string AppName = (from x in BusinessFlow.TargetApplications where x.AppName == Activity.TargetApplication select x.AppName).FirstOrDefault();
+                string AppName = (from x in BusinessFlow.TargetApplications where x.Name == Activity.TargetApplication select x.Name).FirstOrDefault();
                 if (string.IsNullOrEmpty(AppName))
                 {
-                    string BFApps = string.Join(";", BusinessFlow.TargetApplications.Select(p => p.AppName).ToList());
+                    string BFApps = string.Join(";", BusinessFlow.TargetApplications.Select(p => p.Name).ToList());
 
-                    AnalyzeActivity AA = CreateNewIssue(IssuesList, BusinessFlow, Activity);
+                    AnalyzeActivity AA = CreateNewIssue(BusinessFlow, Activity);
                     AA.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " target application not found in " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                     AA.Details = GingerDicser.GetTermResValue(eTermResKey.Activity) + " target application = '" + Activity.TargetApplication + "' while " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " target app(s) is: '" + BFApps + "'";
                     AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and add set correct target application";
@@ -80,6 +83,8 @@ namespace Ginger.AnalyzerLib
                     AA.IssueType = eType.Error;
                     AA.Impact = GingerDicser.GetTermResValue(eTermResKey.Activity) + " will not be executed and will fail";
                     AA.Severity = eSeverity.Critical;
+
+                    IssuesList.Add(AA);
                 }
             }
             return IssuesList;
@@ -91,12 +96,12 @@ namespace Ginger.AnalyzerLib
             AnalyzeActivity AA = (AnalyzeActivity)sender;
             if (string.IsNullOrEmpty(AA.mActivity.TargetApplication))
             {
-                AA.mActivity.TargetApplication = AA.mBusinessFlow.TargetApplications[0].AppName;
+                AA.mActivity.TargetApplication = AA.mBusinessFlow.TargetApplications[0].Name;
                 AA.Status = eStatus.Fixed;
             }
         }
 
-        static AnalyzeActivity CreateNewIssue(List<AnalyzerItemBase> IssuesList, BusinessFlow BusinessFlow, Activity Activity)
+        static AnalyzeActivity CreateNewIssue(BusinessFlow BusinessFlow, Activity Activity)
         {
             AnalyzeActivity AA = new AnalyzeActivity();
             AA.Status = AnalyzerItemBase.eStatus.NeedFix;
@@ -105,8 +110,14 @@ namespace Ginger.AnalyzerLib
             AA.ItemParent = BusinessFlow.Name;
             AA.mBusinessFlow = BusinessFlow;
             AA.ItemClass = "Activity";
-            IssuesList.Add(AA);
+           
             return AA;
+        }
+        public static List<string> GetUsedVariableFromActivity(Activity activity)
+        {
+            List<string> activityUsedVariables = new List<string>();
+            VariableBase.GetListOfUsedVariables(activity, ref activityUsedVariables);
+            return activityUsedVariables;
         }
     }
 }

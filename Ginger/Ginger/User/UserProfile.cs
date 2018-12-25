@@ -34,7 +34,8 @@ using System.Reflection;
 
 namespace Ginger
 {
-    public enum eGingerStatus {
+    public enum eGingerStatus
+    {
         Closed, Active, AutomaticallyClosed
     }
 
@@ -156,12 +157,12 @@ namespace Ginger
                             RecentSolutions.RemoveAt(j);
                             j--;
                         }
-                    }                        
-                }                    
+                    }
+                }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to do Recent Solutions list clean up", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do Recent Solutions list clean up", ex);
             }
         }
 
@@ -173,7 +174,7 @@ namespace Ginger
                 if (mRecentSolutionsAsObjects == null)
                 {
                     LoadRecentSolutionsAsObjects();
-                }                    
+                }
                 return mRecentSolutionsAsObjects;
             }
             set
@@ -201,7 +202,7 @@ namespace Ginger
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to to load the recent solution which in path '{0}'", s), ex);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to load the recent solution which in path '{0}'", s), ex);
                     }
 
                     counter++;
@@ -277,6 +278,10 @@ namespace Ginger
 
         [IsSerializedForLocalRepository]
         public string SolutionSourceControlProxyPort { get; set; }
+
+        
+        [IsSerializedForLocalRepository(80)]
+        public int SolutionSourceControlTimeout { get; set; }
 
         [IsSerializedForLocalRepository]
         public string EncryptedSourceControlPass { get; set; }
@@ -355,17 +360,17 @@ namespace Ginger
         [IsSerializedForLocalRepository]
         public string EncryptedALMPassword { get; set; }
 
-        Amdocs.Ginger.Core.eTerminologyDicsType mTerminologyDictionaryType;
+        GingerCore.eTerminologyType mTerminologyType;
         [IsSerializedForLocalRepository]
-        public Amdocs.Ginger.Core.eTerminologyDicsType TerminologyDictionaryType
+        public GingerCore.eTerminologyType TerminologyDictionaryType
         {
-            get { return mTerminologyDictionaryType; }
-            set { mTerminologyDictionaryType = value; OnPropertyChanged(nameof(TerminologyDictionaryType)); }
+            get { return mTerminologyType; }
+            set { mTerminologyType = value; OnPropertyChanged(nameof(TerminologyDictionaryType)); }
         }
 
-        eAppLogLevel mAppLogLevel;
+        eAppReporterLoggingLevel mAppLogLevel;
         [IsSerializedForLocalRepository]
-        public eAppLogLevel AppLogLevel
+        public eAppReporterLoggingLevel AppLogLevel
         {
             get { return mAppLogLevel; }
             set { mAppLogLevel = value; Reporter.CurrentAppLogLevel = mAppLogLevel; OnPropertyChanged(nameof(AppLogLevel)); }
@@ -374,7 +379,7 @@ namespace Ginger
         eUserType mUserType;
         [IsSerializedForLocalRepository]
         public eUserType UserType
-        { 
+        {
             get
             {
                 return mUserType;
@@ -402,8 +407,8 @@ namespace Ginger
             {
                 SaveRecentAppAgentsMapping();
             }
-            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
-            
+            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+
             RepositorySerializer.SaveToFile(this, UserProfileFilePath);
         }
 
@@ -416,7 +421,7 @@ namespace Ginger
                 if (string.IsNullOrEmpty(existingSolMapping) == false)
                 {
                     RecentAppAgentsMapping.Remove(existingSolMapping);
-                }                    
+                }
 
                 //create new save to this solution
                 existingSolMapping = mSolution.Name + "***";
@@ -480,10 +485,10 @@ namespace Ginger
         public static UserProfile LoadUserProfile()
         {
             if (General.isDesignMode()) return null;
-            
+
             string InstallationConfigurationPath = System.Reflection.Assembly.GetExecutingAssembly().Location.Replace("Ginger.exe", "Ginger.InstallationConfiguration.Json");
             DateTime InstallationDT = File.GetLastWriteTime(InstallationConfigurationPath);
-            
+
             string UserConfigJsonString = string.Empty;
             JObject UserConfigJsonObj = null;
             Dictionary<string, string> UserConfigdictObj = null;
@@ -499,10 +504,10 @@ namespace Ginger
                 try
                 {
                     DateTime UserProfileDT = File.GetLastWriteTime(UserProfileFilePath);
-                    Reporter.ToLog(eLogLevel.INFO, string.Format("Loading existing User Profile at '{0}'", UserProfileFilePath));
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("Loading existing User Profile at '{0}'", UserProfileFilePath));
                     string userProfileTxt = File.ReadAllText(UserProfileFilePath);
                     UserProfile up = (UserProfile)NewRepositorySerializer.DeserializeFromText(userProfileTxt);
-                    up.FilePath = UserProfileFilePath;                 
+                    up.FilePath = UserProfileFilePath;
                     if (DateTime.Compare(UserProfileDT, InstallationDT) < 0)
                     {
                         if (UserConfigdictObj != null)
@@ -514,11 +519,11 @@ namespace Ginger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to load the existing User Profile at '{0}'", UserProfileFilePath), ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to load the existing User Profile at '{0}'", UserProfileFilePath), ex);
                 }
             }
 
-            Reporter.ToLog(eLogLevel.INFO, "Creating new User Profile");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Creating new User Profile");
 
             UserProfile up2 = new UserProfile();
             up2.LoadDefaults();
@@ -526,7 +531,7 @@ namespace Ginger
             {
                 up2.AddUserConfigProperties(UserConfigdictObj);
             }
-            
+
             return up2;
         }
 
@@ -552,14 +557,14 @@ namespace Ginger
             switch (dictObj["TerminologyDictionaryType"])
             {
                 case "Default":
-                    TerminologyDictionaryType = Amdocs.Ginger.Core.eTerminologyDicsType.Default;
+                    TerminologyDictionaryType = GingerCore.eTerminologyType.Default;
                     break;
 
                 case "Testing":
-                    TerminologyDictionaryType = Amdocs.Ginger.Core.eTerminologyDicsType.Testing;
+                    TerminologyDictionaryType = GingerCore.eTerminologyType.Testing;
                     break;
                 case "Gherkin":
-                    TerminologyDictionaryType = Amdocs.Ginger.Core.eTerminologyDicsType.Gherkin;
+                    TerminologyDictionaryType = GingerCore.eTerminologyType.Gherkin;
                     break;
             }
         }
@@ -567,9 +572,9 @@ namespace Ginger
         public void LoadDefaults()
         {
             AutoLoadLastSolution = true; //#Task 160            
-            string defualtFolder= WorkSpace.Instance.DefualtUserLocalWorkingFolder;//calling it so it will be created
+            string defualtFolder = WorkSpace.Instance.DefualtUserLocalWorkingFolder;//calling it so it will be created
         }
-               
+
         internal string GetDefaultReport()
         {
             if (!string.IsNullOrEmpty(ReportTemplateName))
@@ -615,7 +620,7 @@ namespace Ginger
 
 
         bool mAskToSaveBusinessFlow = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool AskToSaveBusinessFlow
         {
             get

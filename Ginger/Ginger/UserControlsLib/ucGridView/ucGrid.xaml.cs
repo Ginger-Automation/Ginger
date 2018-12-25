@@ -47,6 +47,7 @@ using System.Windows.Media;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
+using Ginger.Help;
 
 namespace Ginger
 {
@@ -72,6 +73,17 @@ namespace Ginger
 
         public event MarkUnMarkAll MarkUnMarkAllActive;
         public delegate void MarkUnMarkAll(bool Status);
+
+        public delegate void SelectedItemChangedHandler(object selectedItem);
+        public event SelectedItemChangedHandler SelectedItemChanged;
+        public void OnSelectedItemChangedEvent(object selectedItem)
+        {
+            SelectedItemChangedHandler handler = SelectedItemChanged;
+            if (handler != null)
+            {
+                handler(selectedItem);
+            }
+        }
 
         private bool ActiveStatus = false;
         private bool UsingDataTableAsSource = false;
@@ -108,7 +120,7 @@ namespace Ginger
                             grdMain.CommitEdit();
                             grdMain.CancelEdit();
                             mCollectionView.Filter = FilterGridRows;
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         }
                     }
                     this.Dispatcher.Invoke(() =>
@@ -129,7 +141,7 @@ namespace Ginger
                 catch (InvalidOperationException ioe)
                 {
                     //Think this happen I tried to rename an activity I'd just added.
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to set ucGrid.DataSourceList", ioe);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to set ucGrid.DataSourceList", ioe);
                 }
                 if (mObjList != null)
                 {
@@ -200,6 +212,7 @@ namespace Ginger
         public static ObservableList<RepositoryItemBase> mCopiedorCutItems = new ObservableList<RepositoryItemBase>();
         public static IObservableList mCutSourceList = null;
 
+
         /// <summary>
         ///  Function to return grid object/columns values as one long string + toUpper
         ///  Used for Search in Grid 
@@ -210,8 +223,8 @@ namespace Ginger
         private string ObjToString(object obj)
         {
             //TODO: add new Interface ISearchFilter - which if the object implemented will use it instead of below and will enable faster accurate search
-            // meanwhile the below is better then what we had earlier since it didin't work correctly when searching records count more then what shown on the grid 
-            // the non visible Grid rows where not calucated in the search
+            // meanwhile the below is better then what we had earlier since it didn't work correctly when searching records count more then what shown on the grid 
+            // the non visible Grid rows where not calculated in the search
 
             StringBuilder sb = new StringBuilder();
 
@@ -232,7 +245,7 @@ namespace Ginger
                                 sb.Append(PI.GetValue(obj).ToString()).Append("~");
                             }
                         }
-                        catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                     }
                 }
             }
@@ -250,7 +263,7 @@ namespace Ginger
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
             }
             return sb.ToString().ToUpper();
@@ -259,8 +272,8 @@ namespace Ginger
         private string ObjToGuid(object obj)
         {
             //TODO: add new Interface ISearchFilter - which if the object implemented will use it instead of below and will enable faster accurate search
-            // meanwhile the below is better then what we had earlier since it didin't work correctly when searching records count more then what shown on the grid 
-            // the non visible Grid rows where not calucated in the search
+            // meanwhile the below is better then what we had earlier since it didn't work correctly when searching records count more then what shown on the grid 
+            // the non visible Grid rows where not calculated in the search
 
             StringBuilder sb = new StringBuilder();
 
@@ -286,6 +299,19 @@ namespace Ginger
             }
             return sb.ToString().ToUpper();
         }
+
+        public event PasteItemEventHandler PasteItemEvent;
+        public delegate void PasteItemEventHandler(PasteItemEventArgs EventArgs);
+
+        public void OnPasteItemEvent(PasteItemEventArgs.eEventType evType, RepositoryItemBase repositoryItemBaseObj)
+        {
+            PasteItemEventHandler handler = PasteItemEvent;
+            if (handler != null)
+            {
+                handler(new PasteItemEventArgs(evType, repositoryItemBaseObj));
+            }
+        }
+
 
         public ucGrid()
         {
@@ -371,6 +397,12 @@ namespace Ginger
             get { return grdMain; }
             set { grdMain = value; }
         }
+
+        public DataGridSelectionMode SelectionMode
+        {
+            get { return grdMain.SelectionMode; }
+            set { grdMain.SelectionMode = value; }
+        }
         public Visibility ShowHeader
         {
             get { return xSimpleHeader.Visibility; }
@@ -405,6 +437,8 @@ namespace Ginger
 
         public void SetGridEnhancedHeader(eImageType itemTypeIcon, string itemTypeName= "",  RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null)
         {
+            GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
+
             xSimpleHeaderTitle.Visibility = Visibility.Collapsed;
             xEnhancedHeader.Visibility = Visibility.Visible;
 
@@ -713,6 +747,8 @@ namespace Ginger
         {
             CutItems();
         }
+
+        
         private void btnPaste_Click(object sender, RoutedEventArgs e)
         {
             PasteItems();
@@ -812,6 +848,8 @@ namespace Ginger
             {
                 RowChangedEvent.Invoke(sender, new EventArgs());
             }
+
+            OnSelectedItemChangedEvent(grdMain.SelectedItem);
         }
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
@@ -892,7 +930,7 @@ namespace Ginger
                 foreach (System.Data.DataRowView item in mObjList)
                 {
                     index++;
-                    if (item.Row.ItemArray[0] == (((System.Data.DataRowView)e.Row.Item).Row.ItemArray[0]))
+                    if (item.Row.RowState != DataRowState.Deleted && item.Row.ItemArray[0] == (((System.Data.DataRowView)e.Row.Item).Row.ItemArray[0]))
                     {
                         e.Row.Header = index + 1;
                         break;
@@ -989,7 +1027,7 @@ namespace Ginger
             if (handler != null)
                 b.AddHandler(CheckBox.ClickEvent, handler);
 
-            pnl.Children.Add(b); //using dock panle for getting regulat check box design
+            pnl.Children.Add(b); //using dock panel for getting regular check box design
             toolbar.Items.Add(pnl);
             return b;
         }
@@ -1241,7 +1279,7 @@ public void RemoveCustomView(string viewName)
 
                             case GridColView.eGridColStyleType.ComboBox:
                                 gridCol = new DataGridComboBoxColumn();
-                                // We can get a list which was converetd from enum value and contains value and text CEI style
+                                // We can get a list which was converted from enum value and contains value and text CEI style
                                 if (colView.CellValuesList is List<GingerCore.General.ComboEnumItem>)
                                 {
                                     ((DataGridComboBoxColumn)gridCol).DisplayMemberPath = GingerCore.General.ComboEnumItem.Fields.text;
@@ -1481,7 +1519,7 @@ public void RemoveCustomView(string viewName)
         public void SetGridColumnsWidth()
         {
             if (mainDockPanel.ActualWidth == 0) return;
-            ////Spliting the avaiable free space between all visibale columns based on their WidthWeight
+            ////Splitting the available free space between all visible columns based on their WidthWeight
 
             SetGridRowHeaderWidth();
             if (Double.IsNaN(grdMain.RowHeaderWidth))
@@ -1625,7 +1663,7 @@ public void RemoveCustomView(string viewName)
         }
 
         /// <summary>
-        /// Clear all tool bar default tools except "Serach"
+        /// Clear all tool bar default tools except "Search"
         /// </summary>
         public void ClearTools()
         {
@@ -1730,7 +1768,7 @@ public void RemoveCustomView(string viewName)
         
         void IDragDrop.StartDrag(DragInfo Info)
         {
-            // Get the item under the mouse, or nothing, avoid selecing scroll bars. or empty areas etc..
+            // Get the item under the mouse, or nothing, avoid selecting scroll bars. or empty areas etc..
             var row = (DataGridRow)ItemsControl.ContainerFromElement(this.grdMain, (DependencyObject)Info.OriginalSource);
 
             if (row != null)
@@ -1747,7 +1785,7 @@ public void RemoveCustomView(string viewName)
                 Info.DragSource = this;
                 Info.Data = row.Item;
                 //TODO: Do not use REpo since it will move to UserControls2
-                // Each object dragged shoudl override ToString to return nice text for header                
+                // Each object dragged should override ToString to return nice text for header                
                 Info.Header = row.Item.ToString(); 
             }
         }
@@ -1798,7 +1836,7 @@ public void RemoveCustomView(string viewName)
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Operation Failed");
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -1814,7 +1852,7 @@ public void RemoveCustomView(string viewName)
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Operation Failed");
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -1857,6 +1895,8 @@ public void RemoveCustomView(string viewName)
                         RepositoryItemBase copiedItem = item.CreateCopy();
                         //set unique name
                         SetItemUniqueName(copiedItem, "_Copy");
+                        //Trigger event for changing sub classes fields
+                        OnPasteItemEvent(PasteItemEventArgs.eEventType.PasteCopiedItem, copiedItem);
                         //add                        
                         AddItemAfterCurrent(copiedItem);
                     }
@@ -2079,13 +2119,31 @@ public void RemoveCustomView(string viewName)
                 }
             }
 
-            //set border color based on vlidation
+            //set border color based on validation
             if (validationRes == true)
                 Grid.BorderBrush = System.Windows.Media.Brushes.Red;
             else
-                Grid.BorderBrush = FindResource("@Skin1_ColorA") as Brush;
+                Grid.BorderBrush = FindResource("$Color_DarkBlue") as Brush;
 
             return validationRes;
+        }
+    }
+
+    public class PasteItemEventArgs
+    {
+        public enum eEventType
+        {
+            PasteCopiedItem,
+            PasteCutedItem,
+        }
+
+        public eEventType EventType;
+        public RepositoryItemBase RepositoryItemBaseObject;
+
+        public PasteItemEventArgs(eEventType eventType, RepositoryItemBase repositoryItemBaseObjectObject)
+        {
+            this.EventType = eventType;
+            this.RepositoryItemBaseObject = repositoryItemBaseObjectObject;
         }
     }
 }

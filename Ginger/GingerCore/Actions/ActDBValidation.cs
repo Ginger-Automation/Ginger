@@ -16,23 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
+using GingerCore.Actions.Common;
 using GingerCore.Environments;
 using GingerCore.Helpers;
-using GingerCore.Platforms;
-using GingerCore.Properties;
-using GingerCore.Repository;
-using GingerCore.Variables;
-using Ginger;
-using GingerCore.Actions.Common;
 using GingerCore.NoSqlBase;
-using Amdocs.Ginger.Common;
+using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace GingerCore.Actions
 {
@@ -296,7 +291,7 @@ namespace GingerCore.Actions
             }
             VE.Value = DBName;
             string DBNameCalculated = VE.ValueCalculated;
-            DB = (from d in App.Dbs where d.Name == DBNameCalculated select d).FirstOrDefault();
+            DB = (Database)(from d in App.Dbs where d.Name == DBNameCalculated select d).FirstOrDefault();
             if (DB ==null)
             {
                 Error = "The mapped DB '" + DBNameCalculated + "' was not found in the '" + AppNameCalculated + "' Environment Application.";
@@ -418,7 +413,7 @@ namespace GingerCore.Actions
                 if (e.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
                 {
                     string message = Database.GetMissingDLLErrorDescription();
-                    Reporter.ToLog(eLogLevel.WARN, message, e);
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, message, e);
                     this.Error += Environment.NewLine + message;
                 }
             }

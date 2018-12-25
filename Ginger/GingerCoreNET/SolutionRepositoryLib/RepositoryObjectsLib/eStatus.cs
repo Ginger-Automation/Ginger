@@ -24,7 +24,7 @@ namespace Amdocs.Ginger.CoreNET.Execution
             Pending,
             Started,
             Running,
-            Cancelling,
+            Canceling,
             Stopped,
             Failed,
             Passed,

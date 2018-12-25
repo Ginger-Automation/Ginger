@@ -97,7 +97,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
         public void CloseConnection()
         {
-            //TODO: fixme sent to server nice message, do not just close...
+            NewPayLoad payload = new NewPayLoad("NodeClosing", SessionID);
+            payload.PaylodType = NewPayLoad.ePaylodType.SocketRequest;
+            NewPayLoad RC = SendSocketPayLoad(payload);
         }
 
         public NewPayLoad SendRequestPayLoad(NewPayLoad pl)

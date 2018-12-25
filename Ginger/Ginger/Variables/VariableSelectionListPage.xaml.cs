@@ -47,10 +47,11 @@ namespace Ginger.Variables
             grdOptionalValues.btnClearAll.AddHandler(Button.ClickEvent, new RoutedEventHandler(btnClearAll_Click));
             grdOptionalValues.grdMain.RowEditEnding += grdOptionalValues_RowEditEnding;
             grdOptionalValues.Grid.IsVisibleChanged += grdOptionalValues_IsVisibleChanged;
-        
-            comboSelectedValue.ItemsSource = mVar.OptionalValuesList.ToList<OptionalValue>();
-            comboSelectedValue.DisplayMemberPath = "Value";
-            App.ObjFieldBinding(comboSelectedValue, ComboBox.TextProperty, mVar, VariableSelectionList.Fields.SelectedValue);           
+
+            comboSelectedValue.ItemsSource = mVar.OptionalValuesList;
+            comboSelectedValue.DisplayMemberPath = nameof(OptionalValue.Value);
+            App.ObjFieldBinding(comboSelectedValue, ComboBox.TextProperty, mVar, nameof(VariableSelectionList.SelectedValue));
+            //comboSelectedValue.BindControl(mVar, nameof(VariableSelectionList.SelectedValue), mVar.OptionalValuesList.ToList<OptionalValue>());
         }
 
         private void SetOptionalValuesGridView()
@@ -106,16 +107,25 @@ namespace Ginger.Variables
 
         private void UpdateOptionalValues()
         {            
-            comboSelectedValue.ItemsSource = mVar.OptionalValuesList.ToList<OptionalValue>();
-            comboSelectedValue.DisplayMemberPath = "Value";                   
-            comboSelectedValue.Refresh();
+            mVar.OnPropertyChanged(nameof(VariableSelectionList.Formula));
+            VerifySelectedValue();
+        }
 
-            mVar.OptionalValuesList = mVar.OptionalValuesList; // to invoke the Set operation used to sync with other class fields
+        void VerifySelectedValue()
+        {
+            //make sure the selected value is valid
+            if (mVar.OptionalValuesList != null && mVar.OptionalValuesList.Count > 0)
+            {
+                if (mVar.SelectedValue == string.Empty || mVar.OptionalValuesList.Where(v => v.Value == mVar.SelectedValue).SingleOrDefault() == null)
+                {
+                    mVar.SelectedValue = mVar.OptionalValuesList[0].Value;
+                }
+            }
         }
 
         private void mVar_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == VariableSelectionList.Fields.OptionalValues)
+            if (e.PropertyName == nameof(VariableSelectionList.OptionalValues))
             {
                 SetOptionalValuesGridData();
                 UpdateOptionalValues();

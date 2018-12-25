@@ -95,7 +95,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(false)]
         [FieldParamsIsSelected(true)]
-        public string RunDescription { get { return mAction != null ? mAction.RunDescription : runDescription; } set { runDescription = value; } }
+        public string RunDescription { get; set; }
 
         [JsonProperty]
         [FieldParams]
@@ -331,7 +331,7 @@ namespace Ginger.Reports
         }
 
         [FieldParams]
-        [FieldParamsNameCaption("ScreenShot")]
+        [FieldParamsNameCaption("Screenshot")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]

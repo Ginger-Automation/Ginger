@@ -16,28 +16,28 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.UIElement;
+using Ginger.Actions;
+using Ginger.Imports.UFT;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Variables;
-using System.Data;
-using System.Text.RegularExpressions;
-using System.IO;
-using System.Windows.Media.Imaging;
-using System;
-using System.Diagnostics;
-using Ginger.Actions;
-using System.Windows.Data;
 using GingerCore.Platforms;
-using Ginger.Imports.UFT;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using amdocs.ginger.GingerCoreNET;
+using GingerCore.Variables;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Media.Imaging;
 
 namespace Ginger.Imports.QTP
 {
@@ -63,7 +63,7 @@ namespace Ginger.Imports.QTP
         public List<ObjectRepositoryItem> Objectlist_ORI = new List<ObjectRepositoryItem>();
         public List<BusFunction> BusList = new List<BusFunction>();
         public List<string> ListOfSelectedGuis = new List<string>();
-        public ObservableList<TargetApplication> TargetApplicationsList = new ObservableList<TargetApplication>();
+        public ObservableList<TargetBase> TargetApplicationsList = new ObservableList<TargetBase>();
 
         // Data Table
         public DataTable dt_BizFlow = new DataTable();
@@ -83,15 +83,11 @@ namespace Ginger.Imports.QTP
 
             eFilter mFilter = eFilter.AllLines;
             App.FillComboFromEnumVal(FilterComboBox, mFilter);
-
-            //TODO: Clear the hardcode values
-            UFTObjectRepositoryTextBox.Text = @"C:\RaviKethe\T-Mobile\TMO-POC-QTP\uVerse_OR.xml";  //""; 
-            ScriptFileTextBox.Text = @"C:\RaviKethe\T-Mobile\TMO-POC-QTP\Sc005_Original.txt";   //""; //
-
+            
             InitCommonFunctionMappingUCGrid();
 
             TargetApplication sTarget = new TargetApplication();
-            if (App.UserProfile.Solution != null )
+            if (App.UserProfile.Solution != null)
             {
                 sTarget.AppName = App.UserProfile.Solution.MainApplication.ToString();
                 sTarget.Selected = true;
@@ -275,17 +271,17 @@ namespace Ginger.Imports.QTP
 
         public void ConvertButton_Click(object sender, RoutedEventArgs e)
         {
-            //Extract Objects from XML repsiotry
+            //Extract Objects from XML repository
             ProcessUFTObjectRepository();
 
             mBusinessFlow.Activities = new ObservableList<Activity>();
 
             if (ListOfSelectedGuis.Count != 0)
             {
-                //Identify acions from Script
+                //Identify actions from Script
                 ProcessScript();
             }
-            else //if BUS function does not conatin any GUI functions, process BUS function to see if any Actions can be retireved
+            else //if BUS function does not contain any GUI functions, process BUS function to see if any Actions can be retrieved
             {
                 //Create an Activity with the BUS function Name
                 ConvertedCodeLine Bus = new ConvertedCodeLine();
@@ -297,7 +293,7 @@ namespace Ginger.Imports.QTP
                 //Fetch the Entire BUS script
                 string[] BusCodeLines = System.IO.File.ReadAllLines(ScriptFileTextBox.Text);
 
-                //Fetch the positon of Bus function the BUS script
+                //Fetch the position of Bus function the BUS script
                 Pos = FetchBusPosition(BusCodeLines);
                 if (Pos != 0)
                 {
@@ -342,7 +338,7 @@ namespace Ginger.Imports.QTP
             //Show script conversion status
             ShowStats();
 
-            //Create Variables for each of teh Parameter in the selected flow
+            //Create Variables for each of the Parameter in the selected flow
             CreateVariables();
         }
 
@@ -396,7 +392,7 @@ namespace Ginger.Imports.QTP
 
             ObservableList<Act> ActionsList = new ObservableList<Act>();
 
-            // We creat one dummy activity in case we convert code without function
+            // We create one dummy activity in case we convert code without function
             mBusinessFlow.Activities = new ObservableList<Activity>();
             Activity at = new Activity();
             at.ActivityName = "Activity1";
@@ -659,7 +655,7 @@ namespace Ginger.Imports.QTP
                     varName = varName.Replace("(", "").Replace(")", "");
                     value = "{Var Name=" + varName + "}";
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
 
@@ -683,7 +679,7 @@ namespace Ginger.Imports.QTP
                     type = "Edit Box";
                     SetValueinObject = GetStringBetween(CodeLine, ".WebEdit(\"", "\")");
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
                 else if (CodeLine.Contains("WebCheckBox"))
@@ -691,7 +687,7 @@ namespace Ginger.Imports.QTP
                     type = "Check Box";
                     SetValueinObject = GetStringBetween(CodeLine, ".WebCheckBox(\"", "\")");
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
 
@@ -744,7 +740,7 @@ namespace Ginger.Imports.QTP
                     type = "Button";
                     SetValueinObject = GetStringBetween(CodeLine, ".WebButton(\"", "\")");
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
 
                 }
@@ -753,7 +749,7 @@ namespace Ginger.Imports.QTP
                     type = "Link";
                     SetValueinObject = GetStringBetween(CodeLine, ".Link(\"", "\")");
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
                 else if (CodeLine.Contains("WebElement"))
@@ -761,7 +757,7 @@ namespace Ginger.Imports.QTP
                     type = "Web Element";
                     SetValueinObject = GetStringBetween(CodeLine, ".WebElement(\"", "\")");
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
                 else if (CodeLine.Contains("Image"))
@@ -769,7 +765,7 @@ namespace Ginger.Imports.QTP
                     type = "Image";
                     SetValueinObject = GetStringBetween(CodeLine, ".Image(\"", "\")");
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
 
@@ -794,7 +790,7 @@ namespace Ginger.Imports.QTP
                     type = "List";
                     SetValueinObject = GetStringBetween(CodeLine, ".WebList(\"", "\")");
                     
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
                 else if (CodeLine.Contains("WebRadiogroup"))
@@ -802,7 +798,7 @@ namespace Ginger.Imports.QTP
                     type = "Radio Group";
                     SetValueinObject = GetStringBetween(CodeLine, ".WebRadiogroup(\"", "\")");
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
 
@@ -861,7 +857,7 @@ namespace Ginger.Imports.QTP
                 CCL.Status = ConvertedCodeLine.eStatus.ConvertedToScript;
             }
 
-             // Extract the URL launced using SystemUtil.Run
+             // Extract the URL launched using SystemUtil.Run
             else if (CodeLine.Contains("SystemUtil.Run") && CodeLine.Contains("iexplore.exe"))
             {
                 // Extract the URL

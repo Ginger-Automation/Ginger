@@ -20,7 +20,7 @@ limitations under the License.
 namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 {
     // Processing status 
-    // in no communcation it is Ready
+    // in no communication it is Ready
     // When sending request it is:
     // 1. SendingRequest
     // 2. WaitingForResponse

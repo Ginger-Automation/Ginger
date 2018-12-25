@@ -27,7 +27,7 @@ using Amdocs.Ginger.Repository;
 using GingerWPF.DragDropLib;
 using System.Reflection;
 using System.Linq;
-using Amdocs.Ginger.Repository;
+
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -39,8 +39,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public event EventHandler ItemSelected;
         public event EventHandler ItemDoubleClick;
         public event EventHandler ItemDropped;
+        public event EventHandler ItemAdded;
         public delegate void ItemDroppedEventHandler(DragInfo DI);
-        public bool TreeItemDoubleClicked = false;        
+        public bool TreeItemDoubleClicked = false;
+        public bool TreeChildFolderOnly { get; set; }
 
         public Tuple<string, string> TreeNodesFilterByField { get; set; } 
 
@@ -177,7 +179,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 TreeViewItem TVDummy = new TreeViewItem() { Header = "DUMMY" };
                     TVI.Items.Add(TVDummy);
                 }
-                            
+
+
+            ItemAdded?.Invoke(item, null);
+
             return TVI;
         }
 
@@ -234,7 +239,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 if (Childs != null)
                 {
                     foreach (ITreeViewItem item in Childs)
-                    {
+                    {                        
+                        if (TreeChildFolderOnly == true && item.IsExpandable() == false)
+                        {
+                            continue;
+                        }
                         if (TreeNodesFilterByField != null)
                         {
                             if (IsTreeItemFitsFilter(item))
@@ -258,8 +267,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (treeItemToCheckObject is RepositoryFolderBase)
             {
                 return true;
-            }
-
+            }            
+                
             //get the object to filter by
             List<string> filterByfieldHierarchyList = TreeNodesFilterByField.Item1.ToString().Split('.').ToList();
             object filterByObject = treeItemToCheckObject;
@@ -482,7 +491,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 // Find the label in the header, this is label child of the Header Stack Panel
                 StackPanel SP = (StackPanel)tvi.Header;                     
 
-                //Ccombine text of all label childs of the header Stack panel
+                //Combine text of all label child's of the header Stack panel
                 string HeaderTXT = "";
                 foreach (var v in SP.Children)
                 {
@@ -869,5 +878,40 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             // TODO: if in same grid then do move, 
         }
+        public enum eUcTreeValidationRules
+        {
+            NoItemSelected,            
+        }
+
+        public List<eUcTreeValidationRules> ValidationRules = new List<eUcTreeValidationRules>();
+
+        public bool HasValidationError()
+        {
+            bool validationRes = false;
+            foreach (eUcTreeValidationRules rule in ValidationRules)
+            {
+                if(rule == eUcTreeValidationRules.NoItemSelected)
+                {                    
+                    if (Tree.SelectedItem == null)
+                    {
+                        validationRes = true;
+                    }                    
+                }
+            }
+           
+            //set border color based on validation
+            if (validationRes == true)
+            { Tree.BorderThickness = new Thickness(1);
+                Tree.BorderBrush = System.Windows.Media.Brushes.Red;
+            }                
+            else
+            {
+                Tree.BorderThickness = new Thickness(0);
+                Tree.BorderBrush = FindResource("$Color_DarkBlue") as Brush;
+            }                
+
+            return validationRes;
+        }
     }
+
 }

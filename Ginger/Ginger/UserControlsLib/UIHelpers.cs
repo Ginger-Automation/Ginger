@@ -100,7 +100,7 @@ namespace Ginger.Util
     /// point. This could be a dialog window or a panel control that
     /// hosts bound controls.</param>
     /// <param name="properties">The properties to be updated if
-    /// <paramref name="obj"/> or one of its childs provide it along
+    /// <paramref name="obj"/> or one of its child's provide it along
     /// with a binding expression.</param>
     public static void UpdateBindingSources(DependencyObject obj,
                               params DependencyProperty[] properties)

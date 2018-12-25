@@ -1,0 +1,52 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v2.1",
+    "signature": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v2.1": {
+      "PluginDriverExample4/1.0.0": {
+        "dependencies": {
+          "Ginger.Plugin.Core": "2.6.6"
+        },
+        "runtime": {
+          "PluginDriverExample4.dll": {}
+        }
+      },
+      "Ginger.Plugin.Core/2.6.6": {
+        "dependencies": {
+          "GingerCoreNET": "3.0.0.0"
+        },
+        "runtime": {
+          "GingerPluginCore.dll": {}
+        }
+      },
+      "GingerCoreNET.Reference/3.0.0.0": {
+        "runtime": {
+          "GingerCoreNET.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "3.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "PluginDriverExample4/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Ginger.Plugin.Core/2.6.6": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "GingerCoreNET.Reference/3.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

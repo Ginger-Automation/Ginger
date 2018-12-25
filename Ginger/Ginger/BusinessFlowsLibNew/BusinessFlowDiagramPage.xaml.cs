@@ -43,7 +43,7 @@ namespace Ginger.BusinessFlowLib
             InitializeComponent();
             int i = BF.Activities.Count;   //temp code remove later !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             
-            //TODO: if big flow takes time to load then show laoding message
+            //TODO: if big flow takes time to load then show loading message
 
             CreateBFFlowDiagram();            
         }

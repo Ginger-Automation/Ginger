@@ -300,7 +300,7 @@ namespace Ginger.Actions
                                         else
                                             wCond = ActDSConditon.eCondition.OR;
                                         string[] condVal = arrORCond[iOrCount].Trim().Split(new string[] { " " }, StringSplitOptions.None);
-                                        string wCol = condVal[0];
+                                        string wCol = condVal[0].Replace("[","").Replace("]","");
                                         if (condVal[1] == "=")
                                         {
                                             wOpr = ActDSConditon.eOperator.Equals;
@@ -362,7 +362,7 @@ namespace Ginger.Actions
                                         {
                                             wColVal=wColVal.Replace("<GINGER_COND_" + i + ">", matches[i].Groups[0].Value);
                                         }
-                                        mActDSTblElem.AddDSCondition(wCond, condVal[0], wOpr, wColVal.Replace("~QUOTE~","'"), mColNames);
+                                        mActDSTblElem.AddDSCondition(wCond, wCol, wOpr, wColVal.Replace("~QUOTE~","'"), mColNames);
                                         
                                     }
                                 }                                
@@ -402,7 +402,7 @@ namespace Ginger.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 return;
             }
         }
@@ -734,7 +734,7 @@ namespace Ginger.Actions
 
         private void UpdateValueExpression()
         {
-            if (txtValueExpression == null)
+            if (txtValueExpression == null || ControlActionComboBox.SelectedValue==null || ControlActionComboBox.SelectedValue== null)
                 return;
             try
             {
@@ -751,6 +751,8 @@ namespace Ginger.Actions
                     TBH.AddBoldText("DR");
                 else if (ControlActionComboBox.SelectedValue.ToString() == "RowCount")
                     TBH.AddBoldText("RC");
+                else if (ControlActionComboBox.SelectedValue.ToString() == "AvailableRowCount")
+                    TBH.AddBoldText("ARC");
                 else if (ControlActionComboBox.SelectedValue.ToString() == "DeleteAll")
                     TBH.AddBoldText("DA");
                 else if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
@@ -868,7 +870,7 @@ namespace Ginger.Actions
                                 {
                                     string wQuery = "";
                                     string wCond = mActDSTblElem.WhereConditions[i].wCondition.ToString();
-                                    string wColVal = mActDSTblElem.WhereConditions[i].wTableColumn.ToString();
+                                    string wColVal = "[" + mActDSTblElem.WhereConditions[i].wTableColumn.ToString().Trim() + "]";
                                     string wOpr = mActDSTblElem.WhereConditions[i].wOperator.ToString();
                                     string wRowVal = mActDSTblElem.WhereConditions[i].wValue.ToString();
                                     if (wRowVal.IndexOf("{DS Name") == -1)
@@ -879,17 +881,25 @@ namespace Ginger.Actions
 
                                     if (wOpr == "Equals")
                                     {
-                                        if(wColVal == "GINGER_ID")
+                                        if(wColVal == "[GINGER_ID]")
+                                        { 
                                             wQuery = wQuery + " " + wCond + " " + wColVal + " = " + wRowVal;
+                                        }
                                         else
+                                        { 
                                             wQuery = wQuery + " " + wCond + " " + wColVal + " = '" + wRowVal + "'";
+                                        }
                                     }                                    
                                     else if (wOpr == "NotEquals")
                                     {
-                                        if (wColVal == "GINGER_ID")
+                                        if (wColVal == "[GINGER_ID]")
+                                        { 
                                             wQuery = wQuery + " " + wCond + " " + wColVal + " <> " + wRowVal;
+                                        }
                                         else
+                                        { 
                                             wQuery = wQuery + " " + wCond + " " + wColVal + " <> '" + wRowVal + "'";
+                                        }
                                     }                                    
                                     else if (wOpr == "Contains")
                                         wQuery = wQuery + " " + wCond + " " + wColVal + " LIKE " + "'%" + wRowVal + "%'";
@@ -920,7 +930,7 @@ namespace Ginger.Actions
             catch (Exception ex)
             {                
                 mActDSTblElem.ValueExp = "";
-                Reporter.ToLog(eLogLevel.ERROR, "Failed", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed", ex);
             }
         }
 
@@ -1183,9 +1193,9 @@ namespace Ginger.Actions
             if (mDSTable == null|| ControlActionComboBox.SelectedValue == null)
                 return;
 
-            if (ControlActionComboBox.SelectedValue.ToString() == "DeleteAll" || ControlActionComboBox.SelectedValue.ToString() == "RowCount" || ControlActionComboBox.SelectedValue.ToString() == "MarkAllUnUsed" || ControlActionComboBox.SelectedValue.ToString() == "MarkAllUsed")
+            if (ControlActionComboBox.SelectedValue.ToString() == "DeleteAll" || ControlActionComboBox.SelectedValue.ToString() == "RowCount" || ControlActionComboBox.SelectedValue.ToString() == "AvailableRowCount" || ControlActionComboBox.SelectedValue.ToString() == "MarkAllUnUsed" || ControlActionComboBox.SelectedValue.ToString() == "MarkAllUsed")
             {   
-                IdentifierRow.Height = new GridLength(0);
+                IdentifierRow.Height = new GridLength(0);                
                 return;
             }
             if(ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
@@ -1246,8 +1256,8 @@ namespace Ginger.Actions
                     mDataSourceName = cmbDataSourceName.SelectedValue.ToString();
                     if (ds.FilePath.StartsWith("~"))
                     {
-                        ds.FileFullPath = ds.FilePath.Replace("~", "");
-                        ds.FileFullPath = App.UserProfile.Solution.Folder + ds.FileFullPath;
+                        ds.FileFullPath = ds.FilePath.Replace(@"~\","").Replace("~", "");
+                        ds.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, ds.FileFullPath);
                     }
                     ds.Init(ds.FileFullPath);
                     //ds.Init(ds.FilePath);
@@ -1305,15 +1315,15 @@ namespace Ginger.Actions
             SetTableActions();
 
             if (ControlActionComboBox.SelectedValue != null && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.ExportToExcel.ToString())
-            {
+            {                
                 ExcelGrid.Visibility = Visibility.Visible;
                 KeyGrid.Visibility = Visibility.Collapsed;
                 CustomizedGrid.Visibility = Visibility.Collapsed;
                 MarkRowPanel.Visibility = Visibility.Collapsed;
                 ExpTableCell.Text = "Excel Details";
                 return;
-            }
-            
+            }           
+
             ExpTableCell.Text = "Table Cell Identifier";
             ExcelGrid.Visibility = Visibility.Collapsed;
             if (mDSTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
@@ -1348,7 +1358,7 @@ namespace Ginger.Actions
                     GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUsed);
                     GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUnUsed);
 
-                    if (MarkRowPanel.Visibility == Visibility.Collapsed && ControlActionComboBox.SelectedValue != null && !ControlActionComboBox.SelectedValue.ToString().Contains("All"))
+                    if (MarkRowPanel.Visibility == Visibility.Collapsed && ControlActionComboBox.SelectedValue != null && !ControlActionComboBox.SelectedValue.ToString().Contains("All") && !ControlActionComboBox.SelectedValue.ToString().Contains("RowCount"))
                     {                       
                         MarkRowPanel.Visibility = Visibility.Visible;                        
                         IdentifierRow.Height = new GridLength(IdentifierRow.Height.Value + 25);
@@ -1382,7 +1392,8 @@ namespace Ginger.Actions
 
                 GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAsDone);
                 GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUnUsed);
-                GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUsed);               
+                GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUsed);
+                GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.AvailableRowCount);
             }
             else
             {
@@ -1392,12 +1403,14 @@ namespace Ginger.Actions
                     GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAsDone);
                     GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUsed);
                     GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUnUsed);
+                    GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.AvailableRowCount);
                 }
                 else
                 {
                     GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAsDone);
                     GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUsed);
                     GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUnUsed);
+                    GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.AvailableRowCount);
                 }
             }
         }
@@ -1435,7 +1448,7 @@ namespace Ginger.Actions
                     CustomizedGrid.Visibility = Visibility.Visible;
                     MarkRowPanel.Visibility = Visibility.Visible;
                 }
-            }
+            }           
         }
         private void HandleControlActionChange()
         {
@@ -1462,7 +1475,7 @@ namespace Ginger.Actions
                 ColIden.Height = new GridLength(0);
                 cmbColumnValue.Visibility = Visibility.Collapsed;
             }
-            else if (ControlActionComboBox.SelectedValue.ToString().Contains("All") || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.RowCount.ToString())
+            else if (ControlActionComboBox.SelectedValue.ToString().Contains("All") || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.RowCount.ToString()  || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.AvailableRowCount.ToString())
             {
                 MarkRowPanel.Visibility = Visibility.Collapsed;
             }

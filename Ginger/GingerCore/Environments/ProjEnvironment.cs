@@ -26,7 +26,7 @@ using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Environments
 {
-    public class ProjEnvironment : RepositoryItemBase
+    public class ProjEnvironment : RepositoryItemBase, IProjEnvironment
     {        
 
         public  static class Fields
@@ -68,7 +68,9 @@ namespace GingerCore.Environments
                     {
                         Guid guid = ((List<Guid>)obj).Where(x => tagGuid.Equals(x) == true).FirstOrDefault();
                         if (!guid.Equals(Guid.Empty))
+                        {
                             return true;
+                        }
                     }
                     break;
             }
@@ -94,9 +96,10 @@ namespace GingerCore.Environments
                 {
                     foreach (Database db in ea.Dbs)
                     {
-                        if(ea.Dbs!=null)
-
-                        db.CloseConnection();
+                        if (ea.Dbs != null)
+                        {
+                            db.CloseConnection();
+                        }
                     }
                 }
             }

@@ -20,8 +20,8 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Utils;
 using Ginger.ALM;
-using Ginger.GeneralLib;
 using Ginger.Reports;
 using GingerCore;
 using GingerCore.Variables;
@@ -31,8 +31,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ginger.SolutionGeneral
 {
@@ -52,7 +52,6 @@ namespace Ginger.SolutionGeneral
         public static Solution LoadSolution(string solutionFileName, bool startDirtyTracking= true)
         {
             string txt = File.ReadAllText(solutionFileName);
-            txt = txt.Replace("Ginger.Environments.Solution", "Ginger.SolutionGeneral.Solution");//changed the namespace so need to handle old xml's
             Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
             solution.FilePath = solutionFileName;
             solution.Folder = Path.GetDirectoryName(solutionFileName);
@@ -63,7 +62,7 @@ namespace Ginger.SolutionGeneral
             return solution;
         }
 
-        public enum eSolutionItemToSave { GeneralDetails, TargetApplications, GlobalVariabels, Tags, ALMSettings, SourceControlSettings, ReportsSettings}
+        public enum eSolutionItemToSave { GeneralDetails, TargetApplications, GlobalVariabels, Tags, ALMSettings, SourceControlSettings, LoggerConfiguration, ReportConfiguration}
         public void SaveSolution(bool showWarning = true, eSolutionItemToSave solutionItemToSave = eSolutionItemToSave.GeneralDetails)
         {
             bool doSave = false;
@@ -99,39 +98,36 @@ namespace Ginger.SolutionGeneral
                         bldExtraChangedItems.Append("Source Control Details, ");
                     }                        
                 }
-                if (solutionItemToSave != eSolutionItemToSave.ReportsSettings)
+                if (solutionItemToSave != eSolutionItemToSave.LoggerConfiguration)
                 {
-                    if (ExecutionLoggerConfigurationSetList != null && (ExecutionLoggerConfigurationSetList.Count != lastSavedSolution.ExecutionLoggerConfigurationSetList.Count || HTMLReportsConfigurationSetList.Count != lastSavedSolution.HTMLReportsConfigurationSetList.Count))
+                    if (ExecutionLoggerConfigurationSetList != null && lastSavedSolution.ExecutionLoggerConfigurationSetList.Count!=0)
                     {
-                        bldExtraChangedItems.Append("Reports Settings, ");
-                    }
-                    else
-                    {
-                        if (ExecutionLoggerConfigurationSetList != null)
+                        foreach (ExecutionLoggerConfiguration config in ExecutionLoggerConfigurationSetList)
                         {
-                            foreach (ExecutionLoggerConfiguration config in ExecutionLoggerConfigurationSetList)
+                            if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
-                                if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
-                                {
-                                    bldExtraChangedItems.Append("Reports Settings, ");
-                                    break;
-                                }
+                                bldExtraChangedItems.Append("Execution Logger configuration, ");
+                                break;
                             }
                         }
-                        if (!bldExtraChangedItems.ToString().Contains("Reports Settings"))
+                    }
+                }
+                if(solutionItemToSave != eSolutionItemToSave.ReportConfiguration )
+                {
+                    if (HTMLReportsConfigurationSetList!=null && lastSavedSolution.HTMLReportsConfigurationSetList.Count != 0)
+                    {
+                        foreach (HTMLReportsConfiguration config in HTMLReportsConfigurationSetList)
                         {
-                            foreach (HTMLReportsConfiguration config in HTMLReportsConfigurationSetList)
+                            if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
-                                if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
-                                {
 
-                                    bldExtraChangedItems.Append("Reports Settings, ");
-                                    break;
-                                }
+                                bldExtraChangedItems.Append("Report configuration");
+                                break;
                             }
                         }
                     }
-                }                
+                }     
+
                 if (solutionItemToSave != eSolutionItemToSave.GlobalVariabels)
                 {
                     if (Variables.Count != lastSavedSolution.Variables.Count)
@@ -306,7 +302,7 @@ namespace Ginger.SolutionGeneral
                 HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
                 HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
             }
-
+            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
             App.AutomateTabGingerRunner.ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
 
@@ -344,7 +340,7 @@ namespace Ginger.SolutionGeneral
                 if (mRecentUsedBusinessFlows == null)
                 {
                     mRecentUsedBusinessFlows = new MRUManager();
-                    mRecentUsedBusinessFlows.Init(Folder + "RecentlyUsed.dat");
+                    mRecentUsedBusinessFlows.Init(Path.Combine(Folder, "RecentlyUsed.dat"));
                 }
                 return mRecentUsedBusinessFlows;
             }
@@ -357,9 +353,11 @@ namespace Ginger.SolutionGeneral
         {
             get
             {
-                string folderPath = Folder + @"BusinessFlows\";
-                if (Directory.Exists(folderPath) == false)
+                string folderPath = Path.Combine(Folder , @"BusinessFlows\");
+                if(!Directory.Exists(folderPath))
+                {
                     Directory.CreateDirectory(folderPath);
+                }
                 return folderPath;
             }
         }
@@ -378,7 +376,7 @@ namespace Ginger.SolutionGeneral
                 counter++;
             app.AppName += counter.ToString();
         }
-        
+
         /// <summary>
         ///  Return enumerator of all valid files in solution
         /// </summary>
@@ -386,42 +384,36 @@ namespace Ginger.SolutionGeneral
         /// <returns></returns>
         public static IEnumerable<string> SolutionFiles(string solutionFolder)
         {
+            //List only need directories which have repo items
+            //Do not add documents, ExecutionResults, HTMLReports
+            ConcurrentBag<string> fileEntries = new ConcurrentBag<string>();
 
-                //List only need directories which have repo items
-                //Do not add documents, ExecutionResults, HTMLReports
-                ConcurrentBag<string> fileEntries = new ConcurrentBag<string>();
+            //add Solution.xml
+            fileEntries.Add(Path.Combine(solutionFolder, "Ginger.Solution.xml"));
 
-                string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments",  "HTMLReportConfigurations", "PluginPackages", "RunSetConfigs", "SharedRepository" };
-                
-                Parallel.ForEach(SolutionMainFolders, folder =>
-                {
+            string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments", "HTMLReportConfigurations", "PluginPackages", "RunSetConfigs", "SharedRepository" };
+            Parallel.ForEach(SolutionMainFolders, folder =>
+            {
                     // Get each main folder sub folder all levels
                     string MainFolderFullPath = Path.Combine(solutionFolder, folder);
 
-                    if (Directory.Exists(MainFolderFullPath))
-                    {
-                        // Add main folder files
-                        AddFolderFiles(fileEntries, MainFolderFullPath);
+                if (Directory.Exists(MainFolderFullPath))
+                {
+                    // Add folder and it sub folders files
+                    AddFolderFiles(fileEntries, MainFolderFullPath);
+                }
+            });
 
-                        //Now drill down to ALL sub folders
-                        string[] SubFolders = Directory.GetDirectories(MainFolderFullPath, "*", SearchOption.AllDirectories);
-
-                        Parallel.ForEach(SubFolders, sf =>
-                        {
-                            // Add all files of sub folder
-                            if (sf != "PrevVersions")  //TODO: use const
-                            {
-                                AddFolderFiles(fileEntries, sf);
-                            }
-                        });
-                    }
-                });
-               
-                return fileEntries.ToList();
+            return fileEntries.ToList();
         }
 
         static void AddFolderFiles(ConcurrentBag<string> CB, string folder)
         {
+            if (folder == "PrevVersions")//TODO: use const
+            {
+                return;
+            }
+
             IEnumerable<string> files = Directory.EnumerateFiles(folder, "*Ginger.*.xml", SearchOption.AllDirectories).AsParallel().AsOrdered();
             Parallel.ForEach(files, file =>
             {

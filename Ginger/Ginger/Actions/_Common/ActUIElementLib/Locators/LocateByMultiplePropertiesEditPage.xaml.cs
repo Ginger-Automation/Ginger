@@ -50,7 +50,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             List<string> lstLocateBy = mPlatform.GetPlatformUIElementPropertiesList(mAction.ElementType);
 
-            //TODO: get same list for platform from  cboLocateBy.Items - excpet ByMultiple whcih is not valid
+            //TODO: get same list for platform from  cboLocateBy.Items - except ByMultiple which is not valid
 
             view.GridColsView.Add(new GridColView() { Field = "Property", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = lstLocateBy });
 

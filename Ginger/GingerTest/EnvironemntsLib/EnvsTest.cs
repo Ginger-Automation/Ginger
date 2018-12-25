@@ -209,9 +209,11 @@ namespace GingerWPFUnitTest
             Directory.CreateDirectory(subFolder);
 
             //Act
+            Thread.Sleep(2000);
             bool existBeforeDelete = EnvsPOM.EnvironmentsTree.IsItemExist(folderName);
             Directory.Delete(subFolder);
-            bool existAfterDelete = EnvsPOM.EnvironmentsTree.IsItemExist(folderName);
+            Thread.Sleep(2000);
+            bool existAfterDelete = EnvsPOM.EnvironmentsTree.IsItemNotExist(folderName);
 
             // assert            
             Assert.IsTrue(existBeforeDelete);

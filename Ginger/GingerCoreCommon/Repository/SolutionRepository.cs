@@ -57,7 +57,7 @@ namespace Amdocs.Ginger.Repository
 
         private string mSolutionFolderPath;
         public string SolutionFolder { get { return mSolutionFolderPath; } }
-        private List<RepositoryFolderBase> mSolutionRootFolders = null;
+        private List<RepositoryFolderBase> mSolutionRootFolders = new List<RepositoryFolderBase>();
         public List<RepositoryFolderBase> SolutionRootFolders
         {
             get { return mSolutionRootFolders; }
@@ -189,18 +189,19 @@ namespace Amdocs.Ginger.Repository
             RepositoryFolderBase repoFolder = null;
             Parallel.ForEach(mSolutionRootFolders, folder =>
             {
+
                 if (repoFolder == null)
                 {
                     if (Path.GetFullPath(folderPath) == Path.GetFullPath(folder.FolderFullPath))
                     {
                         repoFolder = folder;                        
                     }
-                    else if (folderPath.Contains(folder.FolderFullPath))
+                    else if (Path.GetFullPath(folderPath).ToLower().Contains(Path.GetFullPath(folder.FolderFullPath).ToLower()))
                     {
                         Uri fullPath = new Uri(folderPath, UriKind.Absolute);
-                        Uri relRoot = new Uri(folder.FolderFullPath, UriKind.Absolute);
-                        string relPath = relRoot.MakeRelativeUri(fullPath).ToString().Replace("/", "\\");
-                        repoFolder = folder.GetSubFolderByName("~\\" + relPath, true);
+                        Uri relRoot = new Uri(SolutionFolder, UriKind.Absolute);
+                        string relPath = "~\\" + Uri.UnescapeDataString(relRoot.MakeRelativeUri(fullPath).ToString().Replace("/", "\\"));
+                        repoFolder = folder.GetSubFolderByName(relPath, true);
                     }
                 }
             });
@@ -397,23 +398,16 @@ namespace Amdocs.Ginger.Repository
         //  private functions
         // ------------------------------------------------------------------------------------------------
 
-        public void AddItemInfo<T>(string pattern, string rootFolder, bool containRepositoryItems, string displayName, bool addToRootFolders, string PropertyNameForFileName)
+        public void AddItemInfo<T>(string pattern, string rootFolder, bool containRepositoryItems, string displayName, string PropertyNameForFileName)
         {
             SolutionRepositoryItemInfo<T> SRII = new SolutionRepositoryItemInfo<T>();
             SRII.ItemFileSystemRootFolder = rootFolder;
             SRII.PropertyForFileName = PropertyNameForFileName;
             SRII.Pattern = pattern;
             SRII.ItemRootReposiotryfolder = new RepositoryFolder<T>(this, SRII, pattern, rootFolder, containRepositoryItems, displayName, true);
-            mSolutionRepositoryItemInfoDictionary.Add(typeof(T), SRII);
 
-            if (addToRootFolders)
-            {
-                if (mSolutionRootFolders == null)
-                {
-                    mSolutionRootFolders = new List<RepositoryFolderBase>();
-                }
-                mSolutionRootFolders.Add((RepositoryFolderBase)SRII.ItemRootRepositoryFolder);
-            }
+            mSolutionRepositoryItemInfoDictionary.Add(typeof(T), SRII);
+            mSolutionRootFolders.Add((RepositoryFolderBase)SRII.ItemRootRepositoryFolder);
         }
 
         private SolutionRepositoryItemInfoBase GetSolutionRepositoryItemInfo(Type type)
@@ -478,7 +472,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         //TODO: fix this method name or cretae or !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public string CreateRepositoryItemFileName(RepositoryItemBase RI, string containingFolder="")
+        public string CreateRepositoryItemFileName(RepositoryItemBase RI, string containingFolder = "")
         {
             var v = GetSolutionRepositoryItemInfo(RI.GetType());
 
@@ -490,16 +484,16 @@ namespace Amdocs.Ginger.Repository
             {
                 //probably new item so create new path for it
 
-                //FOLDER
-                string fileFolderPath = string.Empty;
+                //FOLDER             
+                string fileFolderPath = string.Empty; 
                 if (string.IsNullOrEmpty(containingFolder))
                     fileFolderPath = RI.ContainingFolder;
                 else
                     fileFolderPath = containingFolder;
                 if (!fileFolderPath.StartsWith(cSolutionRootFolderSign) || !fileFolderPath.StartsWith(mSolutionFolderPath))
                 {
-                    // Fix me for Linux !!!
-                    string A = mSolutionFolderPath; //.TrimEnd(Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar);
+                    // Fix me for Linux !!!	
+                    string A = mSolutionFolderPath; //.TrimEnd(Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar);	
                     string B = fileFolderPath.Replace(cSolutionRootFolderSign, Path.DirectorySeparatorChar.ToString()).TrimStart(Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
                     if (!A.EndsWith(Path.DirectorySeparatorChar.ToString()))
                     {
@@ -516,8 +510,7 @@ namespace Amdocs.Ginger.Repository
                     fileName = fileName.Replace(invalidChar.ToString(), "");
                 }
                 fileName = fileName.Replace(@".", "");
-
-                string fileExtention = v.Pattern;  //string.Format(".{0}.xml", RI.ObjFileExt);
+                
                 string fullName = v.Pattern.Replace("*", fileName);
 
 
@@ -608,20 +601,66 @@ namespace Amdocs.Ginger.Repository
         public void MoveItem(RepositoryItemBase repositoryItem, string targetFolder)
         {
             RepositoryFolderBase RF = GetItemRepositoryFolder(repositoryItem);
+            RepositoryFolderBase targetRF= GetRepositoryFolderByPath(targetFolder);
 
-
-            SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryItem.GetType());
-            RepositoryFolderBase rootRF = SRII.GetItemRepositoryFolder(repositoryItem);
-            RepositoryFolderBase targetRF = rootRF.GetSubFolderByName(targetFolder);
-
-
-
-            RF.MoveItem(repositoryItem, targetRF);
-
-
-
+            if (RF != null && targetRF != null)
+            {
+                RF.DeleteRepositoryItem(repositoryItem);
+                targetRF.AddRepositoryItem(repositoryItem);                              
+            }
+            else
+            {
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Move repository item because source or target folders failed to be identified for item '{0}' and target folder '{1}'.", repositoryItem.FilePath, targetFolder));
+            }
         }
 
+
+        /// <summary>
+        /// Move existing shared repository item to PrevVersion folder. And remove it from cache
+        /// </summary>
+        /// <param name="repositoryItem"></param>
+        public void MoveSharedRepositoryItemToPrevVersion(RepositoryItemBase repositoryItem)
+        {
+            if (repositoryItem.FileName != null && File.Exists(repositoryItem.FileName))
+            {
+                RepositoryFolderBase repostitoryFolder = GetItemRepositoryFolder(repositoryItem);
+                
+                string targetPath=Path.Combine(repostitoryFolder.FolderFullPath, "PrevVerions");
+                if (!Directory.Exists(targetPath))
+                {      
+                    //We do not want to file watcher track PrevVersions Folder. So creating it explicity using Create directory
+                    Directory.CreateDirectory(targetPath);
+                }
+                            
+                string dts = DateTime.Now.ToString("yyyyMMddHHmm");
+              
+                string targetFileName = Path.GetFileName(repositoryItem.FileName)+"." + dts + "." + repositoryItem.ObjFileExt;
+
+                targetFileName = Path.Combine(targetPath, targetFileName);
+
+                if (targetFileName.Length > 255)
+                {
+                    targetFileName = targetFileName.Substring(0, 250) + new Random().Next(1000).ToString();
+                }
+                
+                try
+                {
+                    if (File.Exists(targetFileName))
+                    {
+                        File.Delete(targetFileName);
+                    }
+                    //We want to delete the item and remove it from cache. So first we copy it to destination and then delete using Repository Folder.
+                    File.Copy(repositoryItem.FileName, targetFileName);                   
+                    repostitoryFolder.DeleteRepositoryItem(repositoryItem);
+
+                }
+                catch (IOException ex)
+                {                    
+                   AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Shared Repository moving item to PrevVersion", ex);
+                }
+                
+            }
+        }
 
     }
 }

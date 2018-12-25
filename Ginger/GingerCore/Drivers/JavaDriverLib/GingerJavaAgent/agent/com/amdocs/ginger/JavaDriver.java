@@ -38,7 +38,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,8 +48,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,6 +87,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.jsoup.nodes.Element;
@@ -1572,7 +1570,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 				}	
 			    GingerAgent.WriteLog("Coordinates = " + Value);
 				GingerAgent.WriteLog("Inside Mouse Press/Release");
-				PayLoad plrc =  MousePressReleaseComponent(c,Value,mCommandTimeout,1);
+				PayLoad plrc =  MousePressReleaseComponent(c,Value,mCommandTimeout,1,MouseEvent.MOUSE_CLICKED,InputEvent.BUTTON1_DOWN_MASK);
 				GingerAgent.WriteLog("After Mouse Press/Release");
 				return plrc;				
 			}
@@ -1581,8 +1579,8 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			
 				if(c instanceof JTree)  
 				{
-					Object treeNode=getTreeNodeFromPathAndSet((JTree) c, Value);
-					if(treeNode == null)				
+					TreePath treePath = SearchTreeNodes((JTree)c,Value);
+					if(treePath == null)				
 					{				
 						return PayLoad.Error("Path " + Value + " not found");
 					}
@@ -1591,17 +1589,10 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 						Thread.sleep(500);
 					} catch (InterruptedException e) {						
 						e.printStackTrace();
-					}					
-					TreePath p = null;
-					String[] nodes = Value.split("/");					
-					for (String node : nodes) {
-						int row = (p == null ? 0 : ((JTree)c).getRowForPath(p));
-						((JTree)c).expandRow(row);
-						p = ((JTree)c).getNextMatch(node.trim(), row, Position.Bias.Forward);
-					}				
-				     Rectangle rect = ((JTree)c).getPathBounds(p);
-				     ((JTree)c).scrollPathToVisible(p);				   				   
-				     //Value = rect.x + "," + rect.y;
+					}
+			
+				     Rectangle rect = ((JTree)c).getPathBounds(treePath);
+				     ((JTree)c).scrollPathToVisible(treePath);
 					 Value = (rect.x+rect.width/2) + "," + (rect.y+rect.height/2);
 				}
 				PayLoad plrc =  MousePressAndReleaseComponent(c,Value,mCommandTimeout,2);
@@ -1712,6 +1703,48 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			return PayLoad.Error("Element not found - " + locateBy + " " + locateValue);
 		}
 	}
+	
+	private TreePath SearchTreeNodes(JTree tree,String locateValue) 
+	{
+		String[] nodes = locateValue.split("/");
+			
+		TreePath matchingNodePath=null;
+		int row =0;
+		int i=0;
+		String node;
+		while(i<nodes.length)
+		{
+			node=nodes[i];
+			tree.expandRow(row);
+			matchingNodePath = tree.getNextMatch(node.trim(), row, Position.Bias.Forward);
+	
+			Object matchingNode= matchingNodePath.getLastPathComponent();
+			String nodeText="";
+		
+	
+			if(matchingNode.getClass().getName().contains("uif"))
+			{			
+				nodeText=mASCFHelper.GetNodeText(matchingNode);
+			}
+			else
+			{
+				nodeText=(String)((DefaultMutableTreeNode)matchingNode).getUserObject();
+			}
+		
+			if(node.equalsIgnoreCase(nodeText)) 
+			{			
+				row= tree.getRowForPath(matchingNodePath);
+				i++;
+			}
+			else
+			{
+				row= tree.getRowForPath(matchingNodePath)+1;
+			}
+		}	
+
+		return matchingNodePath;
+
+	}
 
 	
 	private Boolean IsImplicitSyncRequired(String controlAction, String Value, String ValueToSelect)
@@ -1743,7 +1776,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 	
 
 	//TODO: fix coordinate to be better with X,Y not string...
-	private PayLoad MousePressReleaseComponent(final Component c,final String Coordinate, final int Timeout,final int numOfClicks) {
+	private PayLoad MousePressReleaseComponent(final Component c,final String Coordinate, final int Timeout,final int numOfClicks,final int mouseEvent,final int inputEvent) {
 		 final String[] response = new String[3];
 
 		 response[0]="false";// Set it to true before any doclick method inside
@@ -1784,7 +1817,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 					
 					GingerAgent.WriteLog("Sending Mouse Press to C");
 					
-						MouseEvent me = new MouseEvent(c, MouseEvent.MOUSE_CLICKED, when, InputEvent.BUTTON1_DOWN_MASK , x, y, numOfClicks, false);
+						MouseEvent me = new MouseEvent(c, mouseEvent, when, inputEvent , x, y, numOfClicks, false);
 										
 					response[0] = "true";	
 					c.dispatchEvent(me);
@@ -2420,7 +2453,7 @@ private PayLoad GetComponentValue(Component c)
 				
 				val.add(dateValue);
 			}
-			else
+			else if(val.size() == 0)
 			{
 				val.add("");
 			}
@@ -2602,18 +2635,12 @@ private PayLoad GetComponentState(Component c)
 		 if (c instanceof JTree)
 		 {
 			GingerAgent.WriteLog("c instanceof JTree");
-			TreePath p = null;
-			String[] nodes = value.split("/");					
-			for (String node : nodes) {
-				int row = (p == null ? 0 : ((JTree)c).getRowForPath(p));
-				((JTree)c).expandRow(row);
-				p = ((JTree)c).getNextMatch(node.trim(), row, Position.Bias.Forward);
-			}
-			if (p != null)
+			TreePath nodePath = SearchTreeNodes(((JTree)c),value);
+			if (nodePath != null)
 			{
 				GingerAgent.WriteLog("TreePath != null");
-				 Rectangle rect = ((JTree)c).getPathBounds(p);
-			     ((JTree)c).scrollPathToVisible(p);				   				   
+				 Rectangle rect = ((JTree)c).getPathBounds(nodePath);
+			     ((JTree)c).scrollPathToVisible(nodePath);				   				   
 			     String value1 = rect.x + "," + rect.y;
 				
 				PayLoad plrc =  MousePressAndReleaseComponent(c,value1,mCommandTimeout,1);
@@ -3573,30 +3600,12 @@ private PayLoad SetComponentFocus(Component c)
 		
 	private Object getTreeNodeFromPathAndSet(JTree tr,String locate) {	
 		GingerAgent.WriteLog( "  getTreeNodeFromPathAndSet::locate  " +  locate);
-		String path = locate;
-		TreePath p = null;
-		String[] nodes = path.split("/");
-				
-		TreePath p1=null;
-		for (String node : nodes) {
-			int row = (p == null ? 0 : tr.getRowForPath(p));
-			tr.expandRow(row);
-			p1 = tr.getNextMatch(node.trim(), row, Position.Bias.Forward);
-			// TODO: Handle full Path for JTREE now we are supporting only Last node .
-			//Add for Handling Same Prefix on the node, need to create new way to handle Jtree  
-			if(p1==p)
-			{
-				p=tr.getNextMatch(node.trim(), row+1, Position.Bias.Forward);
-				tr.expandRow(row);
-			}
-			else
-				p=p1;
-		}
-		if (p==null)
+	    TreePath nodePath = SearchTreeNodes(tr,locate);
+		if (nodePath==null)
 			return null;
 		else
-			tr.setSelectionPath(p);
-		return (p.getLastPathComponent());
+			tr.setSelectionPath(nodePath);
+		return (nodePath.getLastPathComponent());
 
 	}
 	
@@ -4202,6 +4211,7 @@ private PayLoad SetComponentFocus(Component c)
 				|| controlAction.equals("GetSelectedRow")
 				|| controlAction.equalsIgnoreCase("AsyncClick")
 				|| controlAction.equalsIgnoreCase("DoubleClick")
+				|| controlAction.equalsIgnoreCase("ActivateCell")
 				|| controlAction.equalsIgnoreCase("SetFocus")
 				|| controlAction.equalsIgnoreCase("IsVisible")				
 				|| controlAction.equalsIgnoreCase("MousePressAndRelease")
@@ -4440,9 +4450,28 @@ private PayLoad SetComponentFocus(Component c)
 			Rectangle size = CurrentTable.getCellRect(rowNum, colNum, true);
 			size.x += size.width/2;
 			size.y += size.height/2;
-			MousePressAndReleaseComponent(CurrentTable, size.x + "," + size.y,mCommandTimeout,2);
+			MousePressAndReleaseComponent(CurrentTable, size.x + "," + size.y,mCommandTimeout,2);			
 			
 			return PayLoad.OK("Double Click Activity Passed");
+		}
+		else if (controlAction.equals("ActivateCell")) {
+				
+				GingerAgent.WriteLog("In ActivateCell");
+				
+				Component CellComponent = CurrentTable.prepareRenderer(CurrentTable.getCellRenderer(rowNum, colNum), rowNum,
+						colNum);
+				GingerAgent.WriteLog("CellComponent instanceof " + CellComponent.toString());
+				CurrentTable.grabFocus();
+				setFocus(CurrentTable,rowNum,colNum);
+						
+				Point pos = CurrentTable.getLocationOnScreen();	
+				//if false, return the true cell bounds - computed by subtracting the intercell spacing from the height and widths of the column and row models
+				Rectangle size = CurrentTable.getCellRect(rowNum, colNum, true);
+				size.x += size.width/2;
+				size.y += size.height/2;
+				MousePressReleaseComponent(CurrentTable, size.x + "," + size.y,mCommandTimeout,2,MouseEvent.MOUSE_CLICKED,InputEvent.BUTTON1_MASK);
+				
+				return PayLoad.OK("Activate Cell Activity Passed");
 		}
 		else if (controlAction.equals("Click")) {
 
@@ -4630,7 +4659,7 @@ private PayLoad SetComponentFocus(Component c)
 				pos.y += size.y;
 
 				return MousePressReleaseComponent(CurrentTable, size.x + ","
-						+ size.y, -1,1);
+						+ size.y, -1,1,MouseEvent.MOUSE_CLICKED,InputEvent.BUTTON1_DOWN_MASK);
 
 			} else {
 				return ClickComponent(CellComponent, Value, -1);

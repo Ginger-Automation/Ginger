@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.Repository;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Variables;
@@ -42,6 +44,7 @@ namespace UnitTests.NonUITests
         [TestInitialize]
         public void TestInitialize()
         {
+            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
             mEnv = new ProjEnvironment();
             EnvApplication app1 = new EnvApplication();
             app1.Name = "App1";

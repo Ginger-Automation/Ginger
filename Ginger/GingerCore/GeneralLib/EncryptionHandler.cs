@@ -22,6 +22,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using Amdocs.Ginger.Common;
 using GingerExternal;
 
 namespace GingerCore
@@ -97,7 +98,7 @@ namespace GingerCore
                 catch (Exception ex)
                 {
                     result = false;
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     return string.Empty;
                 }
             }
@@ -126,8 +127,17 @@ namespace GingerCore
                 try
                 {
                     // Convert strToEncrypt into a byte array.
-                    byte[] strToDecryptBytes = Convert.FromBase64String(strToDecrypt);
-
+                    byte[] strToDecryptBytes;
+                    try
+                    {
+                        strToDecryptBytes = Convert.FromBase64String(strToDecrypt);
+                    }
+                    catch(Exception ex)
+                    {
+                        //probabaly not encrypted value
+                        result = false;
+                        return strToDecrypt;
+                    }
                     // Set encryption mode to Cipher Block Chaining(CBC)
                     _rijndaelObject.Mode = CipherMode.CBC;
 
@@ -160,7 +170,7 @@ namespace GingerCore
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     result = false;
                     return string.Empty;
                 }

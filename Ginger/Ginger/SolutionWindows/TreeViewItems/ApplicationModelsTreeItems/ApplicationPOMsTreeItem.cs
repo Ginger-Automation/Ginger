@@ -95,7 +95,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // untrack sub folders
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
 
-            //Add direct childrens        
+            //Add direct children's        
             mChildPoms = mPOMModelFolder.GetFolderItems();
             mChildPoms.CollectionChanged -= TreeFolderItems_CollectionChanged;
             mChildPoms.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes

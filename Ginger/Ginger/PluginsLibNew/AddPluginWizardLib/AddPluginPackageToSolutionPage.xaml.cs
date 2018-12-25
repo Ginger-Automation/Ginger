@@ -36,6 +36,5 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
         }
-
     }
 }

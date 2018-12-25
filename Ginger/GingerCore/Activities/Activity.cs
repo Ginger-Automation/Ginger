@@ -16,25 +16,25 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
+using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using GingerCore.Actions;
 using System.Windows;
-using GingerCore.Variables;
-using GingerCore.Properties;
-using Amdocs.Ginger.Common.Enums;
 
-//TODO: chang add core
+
+//TODO: change add core
 namespace GingerCore
 {
     // Activity can have several steps - Acts
     // The activities can come from external like: QC TC Step, vStorm    
-    public class Activity : RepositoryItemBase
+    public class Activity : RepositoryItemBase, IActivity
     {
         public enum eActivityAutomationStatus
         {
@@ -135,10 +135,6 @@ namespace GingerCore
             //set fields default values
             mAutomationStatus = eActivityAutomationStatus.Development;
             mActionRunOption = eActionRunOption.StopActionsRunOnFailure;
-            Active = true;
-
-            //Variables.CollectionChanged+= Variables_CollectionChanged;
-            //Variables.PropertyChanged +=Variables_PropertyChanged;
         }
 
         public override string ToString()
@@ -547,7 +543,7 @@ namespace GingerCore
                 {
                     this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                 }
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
         }
@@ -753,8 +749,7 @@ namespace GingerCore
                                 if (val == null)
                                 {
                                     //add the val
-                                    repoVarList.OptionalValuesList.Add(usageValue);
-                                    repoVarList.SyncOptionalValuesListAndString();
+                                    repoVarList.OptionalValuesList.Add(usageValue);                                    
                                     repositoryItem.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset the status because new variable optional value was added
                                 }
                             }
@@ -768,7 +763,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -824,6 +819,11 @@ namespace GingerCore
         {
             base.UpdateItemFieldForReposiotryUse();
             ActivitiesGroupID = null;            
+        }
+
+        public ObservableList<VariableBase> GetVariables()
+        {
+            return Variables;
         }
 
         public override bool IsTempItem

@@ -31,6 +31,7 @@ using Ginger.Help;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using System.Drawing;
+using Amdocs.Ginger.Common;
 
 namespace Ginger
 {
@@ -60,7 +61,7 @@ namespace Ginger
         {
             string s = fileName;
             s= s.ToUpper().Replace(App.UserProfile.Solution.Folder.ToUpper(), @"~\");
-            return s;            
+            return s;          
         }
 
         public static string GetFullFilePath(string filename)
@@ -75,7 +76,7 @@ namespace Ginger
 
         public static string OpenSelectFolderDialog(string Title)
         {
-            // We use open file since it is a beter UI than folder selection, the user can type at the address and naviagte quicker - more user friendly
+            // We use open file since it is a better UI than folder selection, the user can type at the address and naviagte quicker - more user friendly
             var OFD = new System.Windows.Forms.OpenFileDialog();
             OFD.FileName = "Folder Selection";
             OFD.Title = Title;
@@ -340,7 +341,7 @@ namespace Ginger
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.WARN, "Error Occurred while doing DoEvents()", ex);
+                Reporter.ToLog(eAppReporterLogLevel.WARN, "Error Occurred while doing DoEvents()", ex);
             }
         }
 

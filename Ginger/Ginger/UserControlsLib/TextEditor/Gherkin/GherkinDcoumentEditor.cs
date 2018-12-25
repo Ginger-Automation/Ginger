@@ -33,6 +33,7 @@ using System.Windows.Media.Imaging;
 using GingerPlugIns.TextEditorLib;
 using Ginger.TagsLib;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {
@@ -84,7 +85,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         {
             List<ICompletionData> list = new List<ICompletionData>();
             
-                //TODO: fix me - only when in the begining of line - allow lower case too
+                //TODO: fix me - only when in the beginning of line - allow lower case too
             string CurrentLine = SelectedContentArgs.CaretLineText();
             while (CurrentLine.StartsWith(" ") || CurrentLine.StartsWith("\t"))
                 CurrentLine = CurrentLine.Substring(1);
@@ -275,7 +276,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         }
 
         // if we want to add tool bar item and handler this is the place
-        public override List<TextEditorToolBarItem> Tools
+        public override List<ITextEditorToolBarItem> Tools
         {
             get { return null; }
         }

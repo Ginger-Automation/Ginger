@@ -33,7 +33,7 @@ namespace GingerWPF.ApplicationModels.DBModels.DBModelWizard
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            
+
         }
     }
 }
