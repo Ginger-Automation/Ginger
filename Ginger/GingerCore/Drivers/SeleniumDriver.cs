@@ -4294,6 +4294,7 @@ namespace GingerCore.Drivers
 
             //Base properties 
             list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
+            list.Add(new ControlProperty() { Name = "Path", Value = ElementInfo.Path });
             list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
             list.Add(new ControlProperty() { Name = "RelXPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });            
             list.Add(new ControlProperty() { Name = "Height", Value = ElementInfo.Height.ToString() });
@@ -4301,7 +4302,6 @@ namespace GingerCore.Drivers
             list.Add(new ControlProperty() { Name = "X", Value = ElementInfo.X.ToString() });
             list.Add(new ControlProperty() { Name = "Y", Value = ElementInfo.Y.ToString() });
             list.Add(new ControlProperty() { Name = "Value", Value = ElementInfo.Value });
-
 
             IWebElement el = null;
             if (ElementInfo.ElementObject != null)
