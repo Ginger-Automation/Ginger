@@ -107,10 +107,10 @@ namespace GingerCore.Actions.WebAPI
                     {
                         ContentType = value;
                     }
-                    else if (param == "DATE")
+                    else if (param.ToUpper() == "DATE")
                     {
 
-                        Client.DefaultRequestHeaders.Date = System.DateTime.Parse(mAct.HttpHeaders[i].ValueForDriver);
+                        Client.DefaultRequestHeaders.Date = System.DateTime.Parse(value);
                     }
                     else if (!specialCharactersReg.IsMatch(value))
                     {
