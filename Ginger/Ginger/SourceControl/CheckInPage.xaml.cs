@@ -18,12 +18,15 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Reports;
-using Ginger.SolutionWindows;
+using Ginger.Run;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Activities;
 using GingerCore.Environments;
-using GingerCore.SourceControl;
+using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
@@ -34,11 +37,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using GingerCore.Variables;
-using Ginger.Run;
-using GingerCore.Activities;
 
 namespace Ginger.SourceControl
 {
@@ -126,9 +124,10 @@ namespace Ginger.SourceControl
                          {
                              if (SCFI.Path.ToUpper().Contains(".GINGER.") && SCFI.Path.ToUpper().Contains(".XML"))
                              {
-                             //try to unsearlize
-                             object item = RepositoryItem.LoadFromFile(SCFI.Path);
-                                 SCFI.Name = ((RepositoryItem)item).GetNameForFileName();
+                                 NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+                                 //unserialize the item
+                                 RepositoryItemBase item = newRepositorySerializer.DeserializeFromFile(SCFI.Path);
+                                 SCFI.Name = item.ItemName;
                              }
                              else
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
@@ -137,7 +136,7 @@ namespace Ginger.SourceControl
                          {
                              if (SCFI.Path.Contains('\\') && (SCFI.Path.LastIndexOf('\\') + 1 < SCFI.Path.Length - 1))
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
-                             Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                             Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                          }
                     
                          if (string.IsNullOrEmpty(SCFI.Path)) SCFI.FileType = "";
@@ -153,7 +152,7 @@ namespace Ginger.SourceControl
                          else if (SCFI.Path.ToUpper().Contains("VARIABLES")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Variable);
                          else if (SCFI.Path.ToUpper().Contains("REPORTTEMPLATE")) SCFI.FileType = "Report Template";
                          else if (SCFI.Path.Contains("ApplicationAPIModel")) SCFI.FileType = "Application API Model";
-                         else if (SCFI.Path.Contains("GlobalAppModelParameter")) SCFI.FileType = "Global Applocations Model Parameter";
+                         else if (SCFI.Path.Contains("GlobalAppModelParameter")) SCFI.FileType = "Global Applications Model Parameter";
                      });
                 });
 
@@ -461,7 +460,7 @@ namespace Ginger.SourceControl
 
         private void CloseWindow()
         {   
-            //TODO: remove sol refresh afetr all RIs moved to new repo and using new tree item if mCheckInWasDone true            
+            //TODO: remove sol refresh after all RIs moved to new repo and using new tree item if mCheckInWasDone true            
             genWin.Close();
         }
 
@@ -502,7 +501,7 @@ namespace Ginger.SourceControl
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
             }
         }
     }

@@ -106,7 +106,7 @@ namespace GingerCore.Drivers.PBDriver
             IHTMLDOMNode domNode = null;
             HTMLElementInfo HTMLEI;
             IHTMLElementCollection coll;
-            Reporter.ToLog(eLogLevel.INFO, "GetElementChildren::" + Ei.XPath);
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "GetElementChildren::" + Ei.XPath);
             if (Ei.ElementObject == null)
             {
                 if(currentFrameDocument !=null)
@@ -131,12 +131,12 @@ namespace GingerCore.Drivers.PBDriver
 
             foreach (IHTMLElement h1 in coll)
             {
-                Reporter.ToLog(eLogLevel.INFO, "HTMLElementInfo1::" + h1.className);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "HTMLElementInfo1::" + h1.className);
                 HTMLEI = GetHtmlElementInfo(h1);
                 HTMLEI.WindowExplorer = Ei.WindowExplorer;
                 HTMLEI.ElementObject = h1;
                 EIlist.Add(HTMLEI);
-                Reporter.ToLog(eLogLevel.INFO, "HTMLElementInfo2::" + HTMLEI.XPath);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "HTMLElementInfo2::" + HTMLEI.XPath);
             }
             if (node.tagName.ToLower().Equals("iframe"))
             {
@@ -150,7 +150,7 @@ namespace GingerCore.Drivers.PBDriver
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "frameDocument Exception1::" + e.Message);
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, "frameDocument Exception1::" + e.Message);
                 }
             }
             return EIlist;
@@ -167,7 +167,7 @@ namespace GingerCore.Drivers.PBDriver
             catch (ContextMarshalException e)
             {
                 act.ExInfo += "Invalid Current Window. Please do switch do the correct window using Switch window before running the action";
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
             return CurAE;
         }
@@ -292,7 +292,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
             return -1;
         }
@@ -539,6 +539,7 @@ namespace GingerCore.Drivers.PBDriver
             EI.Value = getElementValue(h1);
             EI.Name = getElementName(h1);
             EI.ElementType = getElementType(h1);
+            EI.ElementTypeEnum= GetElementTypeEnum(EI.ElementType);
             EI.Path = "";
             EI.ElementObject = h1;
             EI.XPath = getXPath(h1);
@@ -562,6 +563,7 @@ namespace GingerCore.Drivers.PBDriver
                 EI.Value = val;
                 EI.Name = val;
                 EI.ElementType = ElemTyp.Where(a => h1.nodeName.ToLower().Contains(a.Key)).Select(b => b.Value).ToString();
+                EI.ElementTypeEnum = GetElementTypeEnum(EI.ElementType);
                 EI.Path = "";
                 EI.XPath = "";
                 EI.RelXpath = "";
@@ -569,7 +571,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
             return EI;
         }
@@ -632,7 +634,7 @@ namespace GingerCore.Drivers.PBDriver
                         {
                             AddDocumentsAllElements(currentFrameDocument);
                         }
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
                 }
             }
@@ -757,7 +759,7 @@ namespace GingerCore.Drivers.PBDriver
             catch(Exception e)
             {
                 type = "";
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
             type = object.ReferenceEquals(type, null) ? string.Empty : type;
 
@@ -777,6 +779,102 @@ namespace GingerCore.Drivers.PBDriver
             return ElementValue;
         }
 
+        public static eElementType GetElementTypeEnum(string elemType)
+        {
+            eElementType elementType = eElementType.Unknown;                     
+
+            if (elemType.ToUpper() == "INPUT.TEXT" || elemType.ToUpper() == "TEXTAREA" || elemType.ToUpper() == "INPUT.UNDEFINED" 
+                || elemType.ToUpper() == "INPUT.PASSWORD" || elemType.ToUpper() == "INPUT.EMAIL")  // HTML text 
+            {
+                elementType = eElementType.TextBox;
+            }
+            else if (elemType.ToUpper() == "INPUT.BUTTON" || elemType.ToUpper() == "BUTTON" || elemType.ToUpper() == "INPUT.IMAGE" || 
+                elemType.ToUpper() == "LINK" || elemType.ToUpper() == "INPUT.SUBMIT")  // HTML Button
+            {
+                elementType = eElementType.Button;
+            }
+            else if (elemType.ToUpper() == "TD" || elemType.ToUpper() == "TH" || elemType.ToUpper() == "TR")
+            {
+                elementType = eElementType.TableItem;
+            }
+            else if (elemType.ToUpper() == "LINK" || elemType.ToUpper() == "A") // HTML Link
+            {
+                elementType = eElementType.HyperLink;
+            }
+            else if (elemType.ToUpper() == "LABEL" || elemType.ToUpper() == "TITLE")// HTML Label
+            {
+                elementType = eElementType.Label;
+            }
+            else if (elemType.ToUpper() == "SELECT" || elemType.ToUpper() == "SELECT-ONE") // HTML Select/ComboBox
+            {
+                elementType = eElementType.ComboBox;
+            }
+            else if (elemType.ToUpper() == "TABLE" || elemType.ToUpper() == "CAPTION")// HTML Table
+            {
+                elementType = eElementType.Table;
+            }
+            else if (elemType.ToUpper() == "JEDITOR.TABLE")
+            {
+                elementType = eElementType.EditorPane;
+            }
+            else if (elemType.ToUpper() == "DIV") // DIV Element
+            {
+                elementType = eElementType.Div;
+            }
+            else if (elemType.ToUpper() == "SPAN")// SPAN Element
+            {
+                elementType = eElementType.Span;
+            }
+            else if (elemType.ToUpper() == "IMG" || elemType.ToUpper() == "MAP")// IMG Element
+            {
+                elementType = eElementType.Image;
+            }
+            else if (elemType.ToUpper() == "INPUT.CHECKBOX") // Check Box Element
+            {
+                elementType = eElementType.CheckBox;
+            }
+            else if (elemType.ToUpper() == "OPTGROUP" || elemType.ToUpper() == "OPTION")// HTML Radio
+            {
+                return eElementType.ComboBoxOption;
+            }
+            else if (elemType.ToUpper() == "INPUT.RADIO")// HTML Radio
+            {
+                elementType = eElementType.RadioButton;
+            }
+            else if (elemType.ToUpper() == "IFRAME")// HTML IFRAME
+            {
+                elementType = eElementType.Iframe;
+            }
+            else if (elemType.ToUpper() == "CANVAS")
+            {
+                elementType = eElementType.Canvas;
+            }
+            else if (elemType.ToUpper() == "FORM")
+            {
+                elementType = eElementType.Form;
+            }
+            else if (elemType.ToUpper() == "UL" || elemType.ToUpper() == "OL" || elemType.ToUpper() == "DL")
+            {
+                elementType = eElementType.List;
+            }
+            else if (elemType.ToUpper() == "LI" || elemType.ToUpper() == "DT" || elemType.ToUpper() == "DD")
+            {
+                elementType = eElementType.ListItem;
+            }
+            else if (elemType.ToUpper() == "MENU")
+            {
+                elementType = eElementType.MenuBar;
+            }
+            else if (elemType.ToUpper() == "H1" || elemType.ToUpper() == "H2" || elemType.ToUpper() == "H3" || elemType.ToUpper() == "H4" || elemType.ToUpper() == "H5" || elemType.ToUpper() == "H6" || elemType.ToUpper() == "P")
+            {
+                elementType = eElementType.Text;
+            }
+            else
+                elementType = eElementType.Unknown;
+
+            return elementType;
+        }
+
         public string getElementType(IHTMLElement h1)
         {
             string elementType = string.Empty;
@@ -789,7 +887,7 @@ namespace GingerCore.Drivers.PBDriver
             catch (Exception e1)
             {
                 type = "";
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e1.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e1.Message}", e1);
             }
             type = object.ReferenceEquals(type, null) ? string.Empty : type;
 
@@ -902,7 +1000,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in GetValue::" + ex.Message, ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in GetValue::" + ex.Message, ex);
                 return null;
             }
         }
@@ -939,7 +1037,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in GetNodeAttributeValue::" + ex.Message, ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in GetNodeAttributeValue::" + ex.Message, ex);
                 return "";
             }
         }
@@ -966,7 +1064,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in GetStyle::" + ex.Message,ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in GetStyle::" + ex.Message,ex);
                 return "";
             }
         }
@@ -1011,7 +1109,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return "Error - " + ex;
             }
         }
@@ -1066,7 +1164,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
         }
@@ -1096,7 +1194,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
         }
@@ -1121,7 +1219,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return "false";
             }
         }
@@ -1140,10 +1238,26 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Exception in init::" + ex.Message);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Exception in init::" + ex.Message);
                 return "false";
             }
         }
+
+        string IXPath.GetElementID(ElementInfo EI)
+        {
+            return getElementId((IHTMLElement)EI.ElementObject);
+        }
+
+        string IXPath.GetElementTagName(ElementInfo EI)
+        {
+            return ((IHTMLElement)EI.ElementObject).tagName;
+        }
+
+        List<object> IXPath.GetAllElementsByLocator(eLocateBy LocatorType, string LocValue)
+        {
+            return null;
+        }
+
         public string getElementId(IHTMLElement h1)
         {
             string id = h1.id;
@@ -1201,7 +1315,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception while getting csstext in GetHTMLElementProperties::" + e.Message,e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception while getting csstext in GetHTMLElementProperties::" + e.Message,e);
             }
             return list;
         }
@@ -1218,7 +1332,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (ContextMarshalException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 act.ExInfo += "Invalid Current Window. Please do switch do the correct window using Switch window before running the action";
             }
 
@@ -1256,6 +1370,36 @@ namespace GingerCore.Drivers.PBDriver
             return HEle;
         }
 
+        private IHTMLElement FindElementsByLocator(eLocateBy locateBy, string LocValueCalculated)
+        {
+            IHTMLElement HEle = null;
+
+            switch (locateBy)
+            {
+                case eLocateBy.ByID:
+                    if (currentFrame == null)
+                        HEle = mHtmlDocument.getElementById(LocValueCalculated);
+                    else
+                        HEle = currentFrameDocument.getElementById(LocValueCalculated);
+
+                    break;
+                case eLocateBy.ByName:
+                    if (currentFrame == null)
+                        HEle = (mshtml.IHTMLElement)mHtmlDocument.getElementsByName(LocValueCalculated).item(0);
+                    else
+                        HEle = (mshtml.IHTMLElement)currentFrameDocument.getElementsByName(LocValueCalculated).item(0);
+
+                    break;
+                case eLocateBy.ByXPath:
+                case eLocateBy.ByRelXPath:
+                    HEle = GetElementByXPath(LocValueCalculated);
+                    break;
+                default:
+                    throw new Exception("Locator not implement - " + locateBy.ToString());
+            }
+
+            return HEle;
+        }
         public ObservableList<ElementInfo> GetElements(ElementLocator EL)
         {
             ObservableList<ElementInfo> list = new ObservableList<ElementInfo>();
@@ -1300,7 +1444,7 @@ namespace GingerCore.Drivers.PBDriver
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
                 if (!currentAttribute.Equals(value))
                 {
@@ -1339,7 +1483,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return currentAttribute;
             }
         }
@@ -1374,7 +1518,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
         }
@@ -1402,7 +1546,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
         }
@@ -1427,7 +1571,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
         }
@@ -1440,7 +1584,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
         }
@@ -1461,10 +1605,10 @@ namespace GingerCore.Drivers.PBDriver
             {
                 element.scrollIntoView();
                 x = getelementXCordinate(element) + x;
-                Reporter.ToLogAndConsole(eLogLevel.INFO, "elementX::" + x);
+                Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "elementX::" + x);
                 Reporter.ToConsole("elementX::" + x);
                 y = getelementYCordinate(element) + y;
-                Reporter.ToLogAndConsole(eLogLevel.INFO, "elementy::" + y);
+                Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "elementy::" + y);
                 Reporter.ToConsole("elementY::" + y);
                 winAPI.SendRightClick(AEBrowser, x +"," + y );                
                 return true;
@@ -1533,7 +1677,7 @@ namespace GingerCore.Drivers.PBDriver
             catch (Exception e)
             {
                 relxpath = xpath;
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
             if (relxpath == "")
                 relxpath = xpath;
@@ -1580,7 +1724,7 @@ namespace GingerCore.Drivers.PBDriver
 
         public IHTMLElement GetHTMLElementFromPoint(int x, int y)
         {
-            Reporter.ToLog(eLogLevel.INFO, "GetHTMLElementFromPoint::" + x + "::" + y);
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "GetHTMLElementFromPoint::" + x + "::" + y);
             Reporter.ToConsole("GetHTMLElementFromPoint::" + x + "::" + y);
             IHTMLElement Elem = mHtmlDocument.elementFromPoint(x, y);
             if (Elem.tagName.ToLower() == "iframe")
@@ -1595,7 +1739,7 @@ namespace GingerCore.Drivers.PBDriver
                 }                    
             }
             Reporter.ToConsole("GetHTMLElementFromPoint::" + Elem.className);
-            Reporter.ToLog(eLogLevel.INFO, "GetHTMLElementFromPoint::" + Elem.className);
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "GetHTMLElementFromPoint::" + Elem.className);
             return Elem;
         }
 
@@ -1998,7 +2142,7 @@ namespace GingerCore.Drivers.PBDriver
             return xpath;
         }
 
-        public IHTMLElement GetElementByXPath(string xpath)
+        public IHTMLElement GetElementByXPath(string xpath,bool multi=false)
         {
             if(currentFrameDocument != null)
                 sourceDoc = (mshtml.IHTMLDocument3)currentFrameDocument;
@@ -2012,7 +2156,7 @@ namespace GingerCore.Drivers.PBDriver
             IHTMLElement h1 = null;
             HtmlNode node = null;
             try
-            {
+            {                
                 node = HAPDocument.DocumentNode.SelectSingleNode(xpath);
             }
             catch
@@ -2020,7 +2164,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             if (node != null)
             {
-                Reporter.ToLog(eLogLevel.INFO, "nodenotnull::" + node.XPath);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "nodenotnull::" + node.XPath);
                 if (currentFrame != null)
                     h1 = GetHTMLElementFromXPath(node.XPath, currentFrameDocument);
                 else
@@ -2028,7 +2172,7 @@ namespace GingerCore.Drivers.PBDriver
                 if (h1 != null)
                     return h1;
             }            
-            Reporter.ToLog(eLogLevel.INFO, "xpath::" + xpath);
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "xpath::" + xpath);
 
             if (currentFrame != null)                           
                 h1 = GetHTMLElementFromXPath(xpath, currentFrameDocument);                                         
@@ -2188,7 +2332,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eLogLevel.INFO, "exception in GetHTMLElementFromXPath::" + e.Message);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "exception in GetHTMLElementFromXPath::" + e.Message);
                 return null;
             }
         }

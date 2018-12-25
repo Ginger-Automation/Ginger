@@ -56,7 +56,7 @@ namespace Ginger.Agents.AddAgentWizardLib
             finally
             {
                 xTestBtn.IsEnabled = true;
-            }           
-        }
+            }
+        }        
     }
 }

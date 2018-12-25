@@ -23,7 +23,9 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.Agents;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Drivers;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.BindingLib;
@@ -33,6 +35,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Ginger.ApplicationModelsLib.POMModels
@@ -70,6 +73,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
                 else
                 {
+                    if (mAgent != null)
+                    {
+                        mAgent.Close();
+                    }
                     return null;
                 }
             }
@@ -85,6 +92,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPOM = POM;
             ControlsBinding.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             ControlsBinding.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
+            ControlsBinding.ObjFieldBinding(xPageURLTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.PageURL));
 
             xTargetApplicationComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             FillTargetAppsComboBox();
@@ -112,9 +120,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         }
 
-
-
-
         private void FillTargetAppsComboBox()
         {
             //get key object 
@@ -131,9 +136,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                 }
             }
-            xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms;
+            xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms.Where(x=> ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
             xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
+
+            App.UserProfile.Solution.ApplicationPlatforms.CollectionChanged += ApplicationPlatforms_CollectionChanged;
+        }
+
+        private void ApplicationPlatforms_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
         }
 
         public static Bitmap BitmapFromSource(BitmapSource bitmapsource)
@@ -183,40 +195,83 @@ namespace Ginger.ApplicationModelsLib.POMModels
             System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
             op.Title = "Select a picture";
             op.Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg";
-            op.ShowDialog();
-            if (!string.IsNullOrEmpty(op.FileName))
+            if (op.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                var fileLength = new FileInfo(op.FileName).Length;
-                if (fileLength <= 30000)
+                if (!string.IsNullOrEmpty(op.FileName))
                 {
-                    if ((op.FileName != null) && (op.FileName != string.Empty))
+                    var fileLength = new FileInfo(op.FileName).Length;
+                    if (fileLength <= 500000)
                     {
-                        using (var ms = new MemoryStream())
+                        if ((op.FileName != null) && (op.FileName != string.Empty))
                         {
-                            BitmapImage bi = new BitmapImage(new Uri(op.FileName));
-                            Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
-
-                            BitmapImage bi_resized = new BitmapImage();
-                            bi_resized.BeginInit();
-                            bi_resized.UriSource = new Uri(op.FileName);
-                            bi_resized.DecodePixelHeight = sizes.Item2;
-                            bi_resized.DecodePixelWidth = sizes.Item1;
-                            bi_resized.EndInit();
-                            Bitmap ScreenShotBitmap = Ginger.General.BitmapImage2Bitmap(bi_resized);
-                            mPOM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShotBitmap);
-                            mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
-                            xScreenShotFrame.Content = mScreenShotViewPage;
+                            using (var ms = new MemoryStream())
+                            {
+                                BitmapImage bi = new BitmapImage(new Uri(op.FileName));
+                                Bitmap ScreenShotBitmap = Ginger.General.BitmapImage2Bitmap(bi);
+                                mPOM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShotBitmap);
+                                mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
+                                xScreenShotFrame.Content = mScreenShotViewPage;
+                            }
                         }
                     }
-                }
-                else
-                {
-                    Reporter.ToUser(eUserMsgKeys.ImageSize);
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKeys.ImageSize, "500");
+                    }
                 }
             }
             
         }
 
+        private void xPageURLBtn_Click(object sender, RoutedEventArgs e)
+        {
+            GoToPageURL();
+        }
 
+        public void GoToPageURL()
+        {
+            if (mWinExplorer == null)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                return;
+            }
+
+            ActGotoURL act = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = mPOM.PageURL, ValueForDriver = mPOM.PageURL, Active = true };
+            mAgent.Driver.RunAction(act);
+        }
+
+        private void AgentStartedHandler()
+        {
+            GoToPageURL();
+        }
+
+        private void xPomTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //set the selected tab text style
+            try
+            {
+                if (xPomTabs.SelectedItem != null)
+                {
+                    foreach (TabItem tab in xPomTabs.Items)
+                    {
+                        foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
+
+                            if (ctrl.GetType() == typeof(TextBlock))
+                            {
+                                if (xPomTabs.SelectedItem == tab)
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                else
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
+
+                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                            }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in POM Edit Page tabs style", ex);
+            }
+        }
     }
 }

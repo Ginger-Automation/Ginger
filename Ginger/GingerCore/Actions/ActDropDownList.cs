@@ -27,7 +27,7 @@ using System.Linq;
 
 namespace GingerCore.Actions
 {
-    //This class is for UI DropDownList elemnet
+    //This class is for UI DropDownList element
     public class ActDropDownList : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Drop Down Action"; } }
@@ -163,8 +163,9 @@ namespace GingerCore.Actions
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
             newAct.ElementLocateValue = String.Copy(this.LocateValue);
-            newAct.ElementType = eElementType.ComboBox;           
+            newAct.ElementType = eElementType.ComboBox;          
             newAct.Active = true;
+            newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, this.GetInputParamValue("Value"));
 
             return newAct;
         }

@@ -84,8 +84,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\ALM_Common.dll</HintPath>
     </Reference>
-    <Reference Include="appium-dotnet-driver, Version=3.0.0.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Appium.WebDriver.3.0.0.2\lib\net45\appium-dotnet-driver.dll</HintPath>
+    <Reference Include="appium-dotnet-driver, Version=4.0.0.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Appium.WebDriver.4.0.0.4-beta\lib\net45\appium-dotnet-driver.dll</HintPath>
     </Reference>
     <Reference Include="AutoMapper, Version=6.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.6.1.1\lib\net45\AutoMapper.dll</HintPath>
@@ -93,9 +93,8 @@
     <Reference Include="Cassandra, Version=3.99.0.0, Culture=neutral, PublicKeyToken=10b231fbfc8c4b4d, processorArchitecture=MSIL">
       <HintPath>..\packages\CassandraCSharpDriver.3.2.1\lib\net45\Cassandra.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=2.8.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
       <HintPath>..\packages\DocumentFormat.OpenXml.2.8.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
@@ -209,13 +208,11 @@
     <Reference Include="PdfSharp.Charting-WPF">
       <HintPath>..\packages\PDFsharp-MigraDoc-WPF.1.32.2608.0\lib\net20\PdfSharp.Charting-WPF.dll</HintPath>
     </Reference>
-    <Reference Include="PerfectoLab, Version=6.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PerfectoLab.6.5.0.0\lib\PerfectoLab.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="PerfectoLab, Version=18.4.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PerfectoLab.18.4.0.1\lib\PerfectoLab.dll</HintPath>
     </Reference>
-    <Reference Include="PerfectoLab.Extended, Version=6.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PerfectoLab.Extended.6.5.0.0\lib\PerfectoLab.Extended.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="PerfectoLab.Extended, Version=18.4.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PerfectoLab.Extended.18.4.0.1\lib\PerfectoLab.Extended.dll</HintPath>
     </Reference>
     <Reference Include="Protractor, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Protractor.0.11.0\lib\net40\Protractor.dll</HintPath>
@@ -240,6 +237,9 @@
     <Reference Include="RQM_Repository, Version=7.7.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\RQM_Repository.dll</HintPath>
+    </Reference>
+    <Reference Include="SeleniumExtras.PageObjects, Version=3.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetSeleniumExtras.PageObjects.3.11.0\lib\net45\SeleniumExtras.PageObjects.dll</HintPath>
     </Reference>
     <Reference Include="SharpAdbClient">
       <HintPath>..\packages\SharpAdbClient.2.0.274\lib\net45\SharpAdbClient.dll</HintPath>
@@ -298,11 +298,11 @@
     <Reference Include="UIAComWrapper, Version=1.1.0.14, Culture=neutral, PublicKeyToken=78cbcf77433a85e5, processorArchitecture=MSIL">
       <HintPath>..\packages\UIAComWrapper.1.1.0.14\lib\net40\UIAComWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="WebDriver, Version=3.12.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Selenium.WebDriver.3.12.1\lib\net45\WebDriver.dll</HintPath>
+    <Reference Include="WebDriver, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.WebDriver.3.141.0\lib\net45\WebDriver.dll</HintPath>
     </Reference>
-    <Reference Include="WebDriver.Support, Version=3.12.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Selenium.Support.3.12.1\lib\net45\WebDriver.Support.dll</HintPath>
+    <Reference Include="WebDriver.Support, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.Support.3.141.0\lib\net45\WebDriver.Support.dll</HintPath>
     </Reference>
     <Reference Include="WebDriverExtended, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WebDriverExtended.1.2.0.0\lib\net45\WebDriverExtended.dll</HintPath>
@@ -583,7 +583,6 @@
     <Compile Include="DataSource\DataSourceBase.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
     <Compile Include="DataSource\DataSourceTable.cs" />
-    <Compile Include="Dictionaries\GingerDicser.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriver.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml.cs">
       <DependentUpon>AndroidADBDriverWindow.xaml</DependentUpon>
@@ -665,7 +664,6 @@
     <Compile Include="GeneralLib\StringCompressor.cs" />
     <Compile Include="Extensions\Screenshot.cs" />
     <Compile Include="DataSource\AccessDataSource.cs" />
-    <Compile Include="GeneralLib\BackupRestoreAttributes.cs" />
     <Compile Include="GeneralLib\EncryptionHandler.cs" />
     <Compile Include="GeneralLib\ComboBoxWindow.xaml.cs">
       <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
@@ -676,6 +674,7 @@
     <Compile Include="NoSqlBase\MyClassBuilder.cs" />
     <Compile Include="NoSqlBase\NoSqlBase.cs" />
     <Compile Include="Platforms\PlatformsInfo\AndroidPlatformInfo.cs" />
+    <Compile Include="Platforms\PlatformsInfo\MobilePlatform.cs" />
     <Compile Include="Platforms\PlatformsInfo\WindowsPlatform.cs" />
     <Compile Include="Platforms\PlatformsInfo\PowerBuilderPlatform.cs" />
     <Compile Include="Platforms\PlatformsInfo\JavaPlatform.cs" />
@@ -696,8 +695,6 @@
     <Compile Include="UserControls\ucTextDicResource.xaml.cs">
       <DependentUpon>ucTextDicResource.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Variables\DecimalRandom.cs" />
-    <Compile Include="Variables\VariableDependency.cs" />
     <Compile Include="Activities\ErrorHandler.cs" />
     <Compile Include="Activities\Activity.cs" />
     <Compile Include="Animations\Animations.cs" />
@@ -733,10 +730,7 @@
     </Compile>
     <Compile Include="Drivers\WebServicesDriverLib\WebServiceXML.cs" />
     <Compile Include="Drivers\WindowsLib\WindowsDriver.cs" />
-    <Compile Include="Environments\EnvApplication.cs" />
-    <Compile Include="Environments\LoginUser.cs" />
     <Compile Include="Environments\ProjEnvironment.cs" />
-    <Compile Include="Environments\UnixServer.cs" />
     <Compile Include="FlowControlLib\FlowControl.cs" />
     <Compile Include="Environments\Database.cs" />
     <Compile Include="GeneralLib\General.cs" />
@@ -747,11 +741,7 @@
     <Compile Include="Helpers\TextBlockHelper.cs" />
     <Compile Include="Platforms\ApplicationAgent.cs" />
     <Compile Include="Platforms\ApplicationPlatform.cs" />
-    <Compile Include="Platforms\TargetApplication.cs" />
     <Compile Include="Reporter\GingerHelperMsgsPool.cs" />
-    <Compile Include="Variables\VariableDynamic.cs" />
-    <Compile Include="Variables\VariableSelectionList.cs" />
-    <Compile Include="Variables\VariablePasswordString.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1050000_to_V1060000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1040000_to_V1050000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1030000_to_V1040000.cs" />
@@ -794,13 +784,6 @@
     </Compile>
     <Compile Include="Repository\RepositoryItem.cs" />
     <Compile Include="ValueExpression.cs" />
-    <Compile Include="Variables\VariableBase.cs" />
-    <Compile Include="Variables\VariableRandomString.cs" />
-    <Compile Include="Variables\VariableSequence.cs" />
-    <Compile Include="Variables\VariableTimer.cs" />
-    <Compile Include="Variables\VariableString.cs" />
-    <Compile Include="Variables\VariableList.cs" />
-    <Compile Include="Variables\VariableRandomNumber.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1020000_to_V1030000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v2010000_to_V2020000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v2000000_to_V2010000.cs" />

@@ -29,13 +29,13 @@ using System.Data;
 namespace Ginger.Reports
 {
     //This is special class for report generation
-    // it is in seperate class from the following reason
+    // it is in separate class from the following reason
     // it is contract - user can change the report we need to keep the fields name
-    // it is faster to flaten the data instead of creating sub reports
+    // it is faster to flatten the data instead of creating sub reports
     // it is more simple to use for users
-    // it use get for each item - so on demand calcualtion from real object = faster
+    // it use get for each item - so on demand calculation from real object = faster
     // We create fields only for the fields we do want to expose, not exposing internal fields
-    // we save on memory as we provide ref object and retrun on demand
+    // we save on memory as we provide ref object and return on demand
     // Json will serialize only marked attr and not all
     enum ActStatus { Passed, Other }
     [JsonObject(MemberSerialization.OptIn)]
@@ -46,7 +46,7 @@ namespace Ginger.Reports
             public static string Seq = "Seq";
             public static string Name = "Name";
             public static string Description = "Description";
-            public static string ExecutionDescription = "ExecutionDescription";
+            public static string RunDescription = "RunDescription";
             public static string StartTimeStamp = "StartTimeStamp";
             public static string EndTimeStamp = "EndTimeStamp";
             public static string ExecutionDuration = "ExecutionDuration";
@@ -127,21 +127,22 @@ namespace Ginger.Reports
         [FieldParamsIsSelected(true)]
         public string Description { get { return mBusinessFlow.Description; } set { mBusinessFlow.Description = value; } }
 
+
         [JsonProperty]
         [FieldParams]
         [FieldParamsNameCaption("Business Flow Run Description")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public string RunDescription { get { return mBusinessFlow.RunDescription; } set { mBusinessFlow.RunDescription = value; } }
+        public string RunDescription { get; set; }
 
-        [JsonProperty]
-        [FieldParams]
-        [FieldParamsNameCaption("Business Flow Execution Description")]
-        [FieldParamsFieldType(FieldsType.Field)]
-        [FieldParamsIsNotMandatory(true)]
-        [FieldParamsIsSelected(true)]
-        public string ExecutionDescription { get { return mBusinessFlow.RunDescription; } set { mBusinessFlow.RunDescription = value; } }
+        //[JsonProperty]
+        //[FieldParams]
+        //[FieldParamsNameCaption("Business Flow Execution Description")]
+        //[FieldParamsFieldType(FieldsType.Field)]
+        //[FieldParamsIsNotMandatory(true)]
+        //[FieldParamsIsSelected(true)]
+        //public string ExecutionDescription { get { return mBusinessFlow.RunDescription; } set { mBusinessFlow.RunDescription = value; } } //Duplicated with RunDescription field
 
         [JsonProperty]
         [FieldParams]
@@ -151,7 +152,7 @@ namespace Ginger.Reports
         [FieldParamsIsSelected(true)]
         public string Environment { get { return mBusinessFlow.Environment; } set { mBusinessFlow.Environment = value; } }
 
-        // no set since this is caluclated from elapsedms
+        // no set since this is calculated from elapsedms
         public float? ElapsedSecs { get { return mBusinessFlow.ElapsedSecs; } }
 
         [JsonProperty]

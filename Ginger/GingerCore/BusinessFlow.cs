@@ -16,23 +16,23 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-using System;
-using System.Linq;
-using GingerCore.Variables;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
-using GingerCore.Platforms;
-using System.Collections.Generic;
 using GingerCore.Activities;
 using GingerCore.FlowControlLib;
+using GingerCore.Platforms;
+using GingerCore.Variables;
 using GingerCoreNET.GeneralLib;
-using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Common.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GingerCore
 {
-    public class BusinessFlow : RepositoryItemBase
+    public class BusinessFlow : RepositoryItemBase, IBusinessFlow
     {        
 
         public BusinessFlow()
@@ -45,7 +45,7 @@ namespace GingerCore
             Name = sName;
             Activities = new ObservableList<Activity>();
             Variables = new ObservableList<VariableBase>();
-            TargetApplications = new ObservableList<TargetApplication>();
+            TargetApplications = new ObservableList<TargetBase>();
 
             Activity a = new Activity() { Active = true };
             a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
@@ -139,7 +139,21 @@ namespace GingerCore
         /// Used by the user to describe the logic of the BF run with a specific set of variables values
         /// </summary>
         [IsSerializedForLocalRepository]
-        public string RunDescription { get { return mRunDescription; } set { if (mRunDescription != value) { mRunDescription = value; OnPropertyChanged(Fields.RunDescription); } } }
+        public string RunDescription
+        {
+            get
+            {
+                return mRunDescription;
+            }
+            set
+            {
+              if (mRunDescription != value)
+                {
+                    mRunDescription = value;
+                    OnPropertyChanged(Fields.RunDescription);
+                }
+            }
+        }
 
         double? mElapsed; 
         [IsSerializedForLocalRepository]     // TODO: Needed?
@@ -188,7 +202,7 @@ namespace GingerCore
         }
 
         private bool mActive = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool Active
         {
             get { return mActive; }
@@ -287,7 +301,7 @@ namespace GingerCore
         public ObservableList<Platform> Platforms;
 
         [IsSerializedForLocalRepository]
-        public ObservableList<TargetApplication> TargetApplications = new ObservableList<TargetApplication>();
+        public ObservableList<TargetBase> TargetApplications = new ObservableList<TargetBase>();       
 
         private Activity mCurrentActivity { get; set; }
 
@@ -306,8 +320,10 @@ namespace GingerCore
             }
         }
 
+
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
+
 
         static public ObservableList<VariableBase> SolutionVariables;
 
@@ -317,7 +333,7 @@ namespace GingerCore
             return v;
         }
 
-        public VariableBase GetHierarchyVariableByName(string varName, bool considreLinkedVar = true)
+        public VariableBase GetHierarchyVariableByName(string varName, bool considerLinkedVar = true)
         {
             VariableBase var = null;
             if (SolutionVariables != null)
@@ -330,7 +346,7 @@ namespace GingerCore
             }
 
             //check if linked variable was used and return it instead of original one if yes
-            if (considreLinkedVar && var != null && string.IsNullOrEmpty(var.LinkedVariableName) == false)
+            if (considerLinkedVar && var != null && string.IsNullOrEmpty(var.LinkedVariableName) == false)
             {
                 var = GetHierarchyVariableByName(var.LinkedVariableName, false);
             }
@@ -338,7 +354,7 @@ namespace GingerCore
             return var;
         }
 
-        public VariableBase GetHierarchyVariableByNameAndType(string varName, string varType, bool considreLinkedVar = true)
+        public VariableBase GetHierarchyVariableByNameAndType(string varName, string varType, bool considerLinkedVar = true)
         {
             VariableBase var = null;
             if (SolutionVariables != null)
@@ -351,7 +367,7 @@ namespace GingerCore
             }
 
             //check if linked variable was used and return it instead of original one if yes
-            if (considreLinkedVar && var != null && string.IsNullOrEmpty(var.LinkedVariableName) == false)
+            if (considerLinkedVar && var != null && string.IsNullOrEmpty(var.LinkedVariableName) == false)
             {
                 var = GetHierarchyVariableByNameAndType(var.LinkedVariableName, varType, false);
             }
@@ -604,7 +620,7 @@ namespace GingerCore
             if (activitiesGroup == null)
             {
                 activitiesGroup = new ActivitiesGroup();
-                activitiesGroup.Name = "NewGroup";
+                activitiesGroup.Name = "New " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
             }
             SetUniqueActivitiesGroupName(activitiesGroup);
             ActivitiesGroups.Add(activitiesGroup);
@@ -615,7 +631,7 @@ namespace GingerCore
             if (activitiesGroup == null)
             {
                 activitiesGroup = new ActivitiesGroup();
-                activitiesGroup.Name = "NewGroup";
+                activitiesGroup.Name = "New " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
             }
             SetUniqueActivitiesGroupName(activitiesGroup);
             if ((index != -1) && (ActivitiesGroups.Count > index))
@@ -804,7 +820,7 @@ namespace GingerCore
             {
                 if (TargetApplications != null && TargetApplications.Count() > 0)
                 {
-                    return TargetApplications[0].AppName;
+                    return TargetApplications[0].Name;
                 }
                 else
                 {
@@ -941,7 +957,7 @@ namespace GingerCore
 
         public void SetActivityTargetApplication(Activity activity)
         {
-            if (this.TargetApplications.Where(x => x.AppName == activity.TargetApplication).FirstOrDefault() == null)
+            if (this.TargetApplications.Where(x => x.Name == activity.TargetApplication).FirstOrDefault() == null)
                 activity.TargetApplication = this.MainApplication;
         }
 
@@ -1085,6 +1101,11 @@ namespace GingerCore
             return false;
         }
 
+        public ObservableList<VariableBase> GetVariables()
+        {
+            return Variables;
+        }
+
         [IsSerializedForLocalRepository]
         public ObservableList<FlowControl> BFFlowControls = new ObservableList<FlowControl>();
 
@@ -1117,6 +1138,6 @@ namespace GingerCore
             {
                 return nameof(this.Name);
             }
-        }
+        }       
     }
 }

@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.UserControls
     public partial class ImageMakerControl : UserControl
     {
         // Icon Property
-        // We list all avaible icons for Ginger, this icons can be resized and will automatically match
+        // We list all available icons for Ginger, this icons can be resized and will automatically match
         public static readonly DependencyProperty ImageTypeProperty = DependencyProperty.Register("ImageType", typeof(eImageType), typeof(ImageMakerControl),
                         new FrameworkPropertyMetadata(eImageType.Ginger, OnIconPropertyChanged));
                
@@ -163,8 +163,20 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Ginger:
                     SetAsStaticImage("Ginger.png");
                     break;
-                case eImageType.GingerIcon:
+                case eImageType.GingerIconWhite:
                     SetAsStaticImage("GingerIconWhite.png");
+                    break;
+                case eImageType.GingerIconGray:
+                    SetAsStaticImage("GingerIconInGrayNoBackground.png");
+                    break;
+                case eImageType.GingerLogo:
+                    SetAsStaticImage("GingerByAmdocsLogo.png");
+                    break;
+                case eImageType.GingerLogoGray:
+                    SetAsStaticImage("GingerByAmdocsLogoGray.png");
+                    break;
+                case eImageType.GingerSplash:
+                    SetAsStaticImage("GingerSplashImage.png");
                     break;
                 #endregion
 
@@ -214,9 +226,6 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.HtmlReport:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Html5);
                     break;
-                case eImageType.Variable:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Code);
-                    break;
                 case eImageType.SharedRepositoryItem:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Star, Brushes.Orange);
                     break;
@@ -236,10 +245,36 @@ namespace Amdocs.Ginger.UserControls
                 #endregion
 
 
+                #region Variable Item Images
+                //############################## Variables Images:
+                case eImageType.Variable:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Code);
+                    break;
+                case eImageType.VariableList:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.List);
+                    break;
+                case eImageType.Password:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Key);
+                    break;
+                case eImageType.Random:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Random);
+                    break;
+                case eImageType.Sequence:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AlignJustify);
+                    break;
+                case eImageType.Timer:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline);
+                    break;
+                #endregion
+
+
                 #region Execution Status Images
                 //############################## Execution Status Images:
                 case eImageType.Passed:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, (SolidColorBrush)FindResource("$PassedStatusColor"), 0, "Passed");
+                    break;
+                case eImageType.Unknown:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Question,null, 0, "Unknown");
                     break;
                 case eImageType.Failed:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle, (SolidColorBrush)FindResource("$FailedStatusColor"), 0, "Failed");
@@ -456,6 +491,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
                     break;
                 case eImageType.List:
+                case eImageType.DataTable:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Table);
                     break;
                 case eImageType.Parameter:
@@ -528,7 +564,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.EnvelopeOutline);
                     break;
                 case eImageType.SourceControl:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Cloud);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.CodeFork);
                     break;
                 case eImageType.SourceControlNew:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Plus, Brushes.Green, toolTip:"New");
@@ -546,14 +582,17 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.Purple, toolTip: "Locked by Other User");
                     break;
                 case eImageType.SourceControlLockedByMe:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.Yellow, toolTip: "Locked by You");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.SaddleBrown, toolTip: "Locked by You");
+                    break;
+                case eImageType.SourceControlError:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationCircle, Brushes.Red, toolTip: "Error in checking status");
                     break;
                 case eImageType.Check:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircleOutline);
                     break;
                 case eImageType.Bug:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bug);
-                    break;
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bug);                                   
+                    break;                
                 case eImageType.Power:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PowerOff);
                     break;
@@ -591,8 +630,40 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Beta:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Android, Brushes.Orange);
                     break;
+                case eImageType.Error:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle);
+                    break;
+                case eImageType.Coffee:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Coffee);
+                    break;
+                case eImageType.MapSigns:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MapSigns);
+                    break;
+                case eImageType.Image:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Image);
+                    break;
+                case eImageType.Elements:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Th);
+                    break;
+                case eImageType.LocationPointer:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.LocationArrow);
+                    break;
+                case eImageType.GitHub:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Github);
+                    break;
+                case eImageType.Ping:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
+                    break;
                 #endregion
 
+                #region Other Images
+                case eImageType.Database:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Database);
+                    break;
+                case eImageType.TextBox:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.TextWidth);
+                    break;
+                #endregion
 
                 default:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Question, Brushes.Red);
@@ -674,7 +745,7 @@ namespace Amdocs.Ginger.UserControls
             ImageMakerControl IM = new ImageMakerControl();
             IM.ImageType = imageType;
             IM.SetBorder = SetBorder;
-            if (foreground != null || spinDuration > 0 || toolTip != null)//defualt design change is required
+            if (foreground != null || spinDuration > 0 || toolTip != null)//default design change is required
             {
                 IM.SetAsFontAwesomeIcon(IM.xFAImage.Icon, foreground, spinDuration, toolTip);
             }

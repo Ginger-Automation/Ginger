@@ -212,10 +212,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     break;
             }
 
-            //Do Not Fail Action On Bad Respose
+            //Do Not Fail Action On Bad Response
             GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(DoNotFailActionOnBadRespose, CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.DoNotFailActionOnBadRespose));
 
-            //Request Body fiedls:
+            //Request Body fields:
             ControlsBinding.ObjFieldBinding(RequestBodyTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.RequestBody));
             RequestBodyTextBox.Height = 200;
 
@@ -631,9 +631,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (APIModelTabs.SelectedItem == tab)
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
@@ -642,7 +642,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
         }
 

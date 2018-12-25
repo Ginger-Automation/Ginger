@@ -1,4 +1,22 @@
-﻿using System;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +38,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace UnitTests.UITests.PBDriverTest
 {
-
+       
     [TestClass]
     public class PBDriverWidgetTest
     {
@@ -48,7 +66,7 @@ namespace UnitTests.UITests.PBDriverTest
             }
 
             mGR = new GingerRunner();
-            mGR.CurrentSolution = new Ginger.Environments.Solution();
+            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test PB Driver";
@@ -173,7 +191,8 @@ namespace UnitTests.UITests.PBDriverTest
             {
 
                 actBrowser.LocateBy = eLocateBy.ByXPath;
-                actBrowser.LocateValue = @"/[AutomationId:1000]/[LocalizedControlType:pane]/[LocalizedControlType:pane]/file:&#x2F&#x2FC:\Ginger workspace\Devs\GingerNextVer_Dev\UnitTests\bin\Debug\TestResources\PBTestApp\Browser.html";     //\Documents\PBTestApp\Browser.html";
+                actBrowser.LocateValue = @"/[AutomationId:1000]/[LocalizedControlType:pane]/[LocalizedControlType:pane]/[LocalizedControlType:pane]";
+                                                                                                                                                                                                                                                 
                 actBrowser.ControlAction = ActBrowserElement.eControlAction.InitializeBrowser;
                 actBrowser.Wait = 2;
                 actBrowser.Timeout = 10;
@@ -741,7 +760,8 @@ namespace UnitTests.UITests.PBDriverTest
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
-            string expected = @"file://C:\Ginger workspace\Devs\GingerNextVer_Dev\UnitTests\bin\Debug\TestResources\PBTestApp\Browser.html"; // Documents\PBTestApp\Browser.html";
+            string expected = @"file://" + TestResources.GetTestResourcesFolder("PBTestApp") + @"\Browser.html"; 
+
             Assert.AreEqual(actual, expected, "True");
             Assert.AreEqual(act.Error, null, "Act.Error");
         }

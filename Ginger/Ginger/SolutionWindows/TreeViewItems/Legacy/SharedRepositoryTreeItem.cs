@@ -33,7 +33,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         private SharedRepositorySummaryPage mSharedRepositoryPage;
 
-        string Path = App.UserProfile.Solution.Folder + @"\SharedRepository";
+        string Path = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"SharedRepository\");
 
         Object ITreeViewItem.NodeObject()
         {

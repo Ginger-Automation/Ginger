@@ -1,0 +1,28 @@
+<Page x:Class="Ginger.DataSource.DataSourceTablesListPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Data Source"
+      Height="60" Width="500" MinHeight="60"
+	Title="Data Tables List">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="130"/>
+            <ColumnDefinition Width="370"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>            
+        </Grid.RowDefinitions>
+
+        <Label Content="Data Source Name:" Grid.Row="0" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
+        <ComboBox Height="24" x:Name="cmbDataSourceName" Grid.Row="0" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="cmbDataSourceName_SelectionChanged"/>
+
+        <Label Content="Data Source Table:" Grid.Row="1" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
+        <ComboBox Height="24" x:Name="cmbDataSourceTableName" Grid.Row="1" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="cmbDataSourceTableName_SelectionChanged"/>
+
+    </Grid>
+</Page>

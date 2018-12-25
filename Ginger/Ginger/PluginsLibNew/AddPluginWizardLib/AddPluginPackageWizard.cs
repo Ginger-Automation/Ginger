@@ -45,7 +45,12 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
 
         public override void Finish()
         {
+            if (!string.IsNullOrEmpty(Folder))
+            {
+                PluginPackage.LocalFolder = Folder;
+            }
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(PluginPackage);
+            
         }
     }
 }

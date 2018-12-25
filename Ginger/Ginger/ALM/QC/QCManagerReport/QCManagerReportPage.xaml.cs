@@ -230,7 +230,7 @@ namespace Ginger.ALM.QC
                         {
                             testCaseDetails.ActivitiesGroupID = repoActivsGroup.Guid;
                             testCaseDetails.ActivitiesGroupName = repoActivsGroup.Name;
-                            //check for automation precentage
+                            //check for automation percentage
                             foreach (QCTSTestStep step in tc.Steps)
                             {
                                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
@@ -244,7 +244,7 @@ namespace Ginger.ALM.QC
                         {
                             testCaseDetails.ActivitiesGroupName = "NA";                            
                         }
-                        //set automation precentage
+                        //set automation percentage
                         double automatedActsPrecanteg=0;
                         if (tc.Steps.Count > 0)
                         {
@@ -316,7 +316,7 @@ namespace Ginger.ALM.QC
                 catch (Exception ex)
                 {
                     testCaseDetails.LastExecutionTime = (filteredRuns[0].ExecutionDate);
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
                 testCaseDetails.LastExecutionStatus = filteredRuns[0].Status;
             }

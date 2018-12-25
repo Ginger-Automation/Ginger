@@ -286,7 +286,7 @@ namespace GingerCore.Drivers.AndroidADB
             //            //all buttons as default
             //            break;
             //        case SeleniumAppiumDriver.ePlatformType.iOS:
-            //            //only middle btn althogh not supported yet (apple limitation)
+            //            //only middle btn although not supported yet (apple limitation)
             //            backBtn.Visibility = System.Windows.Visibility.Collapsed;
             //            menuBtn.Visibility = System.Windows.Visibility.Collapsed;
             //            break;
@@ -541,7 +541,7 @@ namespace GingerCore.Drivers.AndroidADB
                     sourceLbl.Visibility = System.Windows.Visibility.Visible;
                     pageSourceXMLViewer.Visibility = System.Windows.Visibility.Collapsed;
                     pageSourceTextViewer.Visibility = System.Windows.Visibility.Collapsed;
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
             }
             else
@@ -574,7 +574,7 @@ namespace GingerCore.Drivers.AndroidADB
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return;
             }
         }
@@ -787,7 +787,7 @@ namespace GingerCore.Drivers.AndroidADB
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to draw device element rectangle", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to draw device element rectangle", ex);
             }
         }
 

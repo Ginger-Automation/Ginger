@@ -156,7 +156,7 @@ namespace GingerCore.Drivers.ASCF
                     //TODO: catch excpetion of socket not all..         
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         Thread.Sleep(500);
                     }
                 }
@@ -326,7 +326,7 @@ namespace GingerCore.Drivers.ASCF
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close ASCF Driver - " + ex.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close ASCF Driver - " + ex.Message);
             }
         }
 
@@ -757,7 +757,7 @@ namespace GingerCore.Drivers.ASCF
             SetActionStatus(actScreenShot, RC);
             string[] a;
 
-            //This Addiotional check is to support old version of GTB which are using '@' delimiter. Can be removed later
+            //This Additional check is to support old version of GTB which are using '@' delimiter. Can be removed later
             if (RC.Contains("~|"))
             {
                 a = RC.Split('~');
@@ -1401,7 +1401,7 @@ namespace GingerCore.Drivers.ASCF
 
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
         {
             //DOTO add grid view contol lists
             return new List<ElementInfo>();

@@ -41,14 +41,14 @@ namespace Ginger.WindowExplorer
     public partial class ControlActionsPage : Page
     {
         public Act mAction; // If we come here from EditAction page to update the locator
-        public ObservableList<Act> mActions; // List of availble actions to choos from
+        public ObservableList<Act> mActions; // List of available actions to choose from
         public ObservableList<ElementLocator> mLocators;
         private IWindowExplorer mWindowExplorerDriver;
         ElementInfo mElementInfo = null;
         Page mDataPage = null;
         double mLastDataGridRowHeight = 50;
 
-        // when launching from Window explore we get also availble actions to choose so user can add
+        // when launching from Window explore we get also available actions to choose so user can add
         public ControlActionsPage(IWindowExplorer driver, ElementInfo ElementInfo, ObservableList<Act> Actions, Page DataPage)
         {
             InitializeComponent();
@@ -62,7 +62,7 @@ namespace Ginger.WindowExplorer
             InitActionsGrid();
             InitLocatorsGrid();
             InitDataPage();
-            AddToPageList();            
+             
             SelectLocatorButton.Visibility = System.Windows.Visibility.Collapsed;
         }
 
@@ -86,7 +86,7 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        // when launching from Action Edit Page we show only Locators to choose, and later on replcae LovBy/LocValue
+        // when launching from Action Edit Page we show only Locator's to choose, and later on replace LovBy/LocValue
         public ControlActionsPage(Act Act, ElementInfo EI)
         {
             InitializeComponent();
@@ -106,7 +106,6 @@ namespace Ginger.WindowExplorer
             AddActionButton.Visibility = System.Windows.Visibility.Collapsed;
 
             InitLocatorsGrid();
-            AddToPageList();
         }
 
         private void InitLocatorsGrid()
@@ -155,16 +154,6 @@ namespace Ginger.WindowExplorer
             AvailableControlActionsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
         }
 
-        private void AddToPageList()
-        {
-            ControlActionsPage tempPage = App.PageList.FirstOrDefault(Page => Page is ControlActionsPage) as ControlActionsPage;
-            if (tempPage == null) App.PageList.Add(this);
-            else
-            {
-                App.PageList.Remove(tempPage);
-                App.PageList.Add(this);
-            }
-        }
 
         private void AddActionButton_Click(object sender, RoutedEventArgs e)
         {

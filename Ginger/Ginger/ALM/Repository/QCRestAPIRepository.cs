@@ -1,4 +1,22 @@
-﻿using System;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using QCRestClient;
@@ -27,7 +45,7 @@ namespace Ginger.ALM.Repository
         {
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, "Connecting to QC server");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Connecting to QC server");
                 if(ALMIntegration.Instance.AlmCore.ConnectALMServer())
                     return true;
                 else
@@ -37,7 +55,7 @@ namespace Ginger.ALM.Repository
                     else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
                         Reporter.ToUser(eUserMsgKeys.ALMConnectFailureWithCurrSettings);
 
-                    Reporter.ToLog(eLogLevel.ERROR, "Error connecting to QC server");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error connecting to QC server");
                     return false;
                 }
             }
@@ -48,7 +66,7 @@ namespace Ginger.ALM.Repository
                 else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
                     Reporter.ToUser(eUserMsgKeys.ALMConnectFailureWithCurrSettings, e.Message);
 
-                Reporter.ToLog(eLogLevel.ERROR, "Error connecting to QC server", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error connecting to QC server", e);
                 return false;
             }
         }
@@ -98,7 +116,7 @@ namespace Ginger.ALM.Repository
         #region Import From QC
         public override void ImportALMTests(string importDestinationFolderPath)
         {
-            Reporter.ToLog(eLogLevel.INFO, "Start importing from QC");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Start importing from QC");
             //set path to import to               
             if (importDestinationFolderPath == "")
                 importDestinationFolderPath = App.UserProfile.Solution.BusinessFlowsMainFolder;
@@ -160,7 +178,7 @@ namespace Ginger.ALM.Repository
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
                                 if (string.IsNullOrEmpty(activ.TargetApplication) == false)
-                                    if (tsBusFlow.TargetApplications.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault() == null)
+                                    if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                                     {
                                         ApplicationPlatform appAgent = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                                         if (appAgent != null)
@@ -185,16 +203,16 @@ namespace Ginger.ALM.Repository
                     catch (Exception ex)
                     {
                         Reporter.ToUser(eUserMsgKeys.ErrorInTestsetImport, testSetItemtoImport.TestSetName, ex.Message);
-                        Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC", ex);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error importing from QC", ex);
                     }
                 }
 
                 Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
 
-                Reporter.ToLog(eLogLevel.INFO, "Imported from QC successfully");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Imported from QC successfully");
                 return true;
             }
-            Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC");
+            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error importing from QC");
             return false;
         }
 
@@ -237,7 +255,7 @@ namespace Ginger.ALM.Repository
 
             if (matchingTC == null && String.IsNullOrEmpty(uploadPath))
             {
-                //get the QC Test Plan path to upload the activties group to
+                //get the QC Test Plan path to upload the activities group to
                 uploadPath = SelectALMTestPlanPath();
                 if (String.IsNullOrEmpty(uploadPath))
                 {
@@ -331,7 +349,7 @@ namespace Ginger.ALM.Repository
                 if (userSelec == MessageBoxResult.No)
                     Reporter.ToUser(eUserMsgKeys.ExportQCNewTestSetSelectDiffFolder);
 
-                //get the QC Test Plan path to upload the activties group to
+                //get the QC Test Plan path to upload the activities group to
                 testLabUploadPath = SelectALMTestLabPath();
                 if (String.IsNullOrEmpty(testLabUploadPath))
                 {

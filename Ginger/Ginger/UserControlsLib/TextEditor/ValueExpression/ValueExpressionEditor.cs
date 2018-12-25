@@ -27,6 +27,7 @@ using System.Windows.Media.Imaging;
 using Ginger.Actions;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using GingerPlugIns.TextEditorLib;
+using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -77,7 +78,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                     closestpos = i1;
                     break;
                 }
-                if (c == "}" && i1 != SelectedContentArgs.TextEditor.CaretOffset)  // we stop if we found } - except for the first char - in case the usr click on the closing } of exp
+                if (c == "}" && i1 != SelectedContentArgs.TextEditor.CaretOffset)  // we stop if we found } - except for the first char - in case the user click on the closing } of exp
                 {                    
                     break;
                 }
@@ -189,7 +190,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         }
 
         // if we want to add tool bar item and handler this is the place
-        public override List<TextEditorToolBarItem> Tools
+        public override List<ITextEditorToolBarItem> Tools
         {
             get { return null; }
         }

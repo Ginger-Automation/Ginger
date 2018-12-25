@@ -22,10 +22,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Controls;
-using Ginger.Repository;
-using GingerCore.GeneralLib;
 using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger;
@@ -77,7 +74,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Run Sets folder");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error unknown item added to Run Sets folder");
                 throw new NotImplementedException();
             }
         }

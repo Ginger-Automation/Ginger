@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
@@ -42,7 +43,19 @@ namespace GingerWPF.TreeViewItemsLib
             return null;
         }
 
-        public ITreeView mTreeView;
+        protected ITreeView mTreeView;
+        public ITreeView TreeView
+        {
+            get
+            {
+                return mTreeView;
+            }
+            set
+            {
+                mTreeView = value;
+            }
+        }
+
         public ContextMenu mContextMenu;
         public static ITreeViewItem mNodeManipulationsSource = null;
         public bool IsGingerDefualtFolder = false;
@@ -346,7 +359,7 @@ namespace GingerWPF.TreeViewItemsLib
                         catch (Exception ex)
                         {                            
                             Reporter.ToUser(eUserMsgKeys.RenameItemError, ex.Message);
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                             return;
                         }
                     }

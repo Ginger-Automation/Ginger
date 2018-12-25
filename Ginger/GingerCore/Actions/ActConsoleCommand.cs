@@ -32,12 +32,12 @@ namespace GingerCore.Actions
 
         public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
         {
-            TBH.AddText("Use this action in case you need to run command/s on a Dos/Unix system." +Environment.NewLine 
+            TBH.AddText("Use this action in case you need to run command/s on a Dos/Unix system." + Environment.NewLine
                 + Environment.NewLine + "1. This action contains list of options which will allow you to run simple or " +
-                "complicated commands on the relevant system." + Environment.NewLine +"2. If you want to execute " +
+                "complicated commands on the relevant system." + Environment.NewLine + "2. If you want to execute " +
                 "a Job with Double Enter, use command -> {echo \\n |R <Job>}. ");
-        }        
-        
+        }
+
         public override string ActionEditPage { get { return "ActConsoleCommandEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return true; } }
@@ -50,14 +50,14 @@ namespace GingerCore.Actions
                 if (mPlatforms.Count == 0)
                 {
                     mPlatforms.Add(ePlatformType.DOS);
-                    mPlatforms.Add(ePlatformType.Unix);                    
+                    mPlatforms.Add(ePlatformType.Unix);
                 }
                 return mPlatforms;
             }
         }
 
         public enum eConsoleCommand
-        {            
+        {
             FreeCommand = 1,
             CopyFile = 2,
             IsFileExist = 6,
@@ -80,6 +80,10 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string ExpString { get; set; }
 
+        [IsSerializedForLocalRepository]
+        public string Delimiter { get; set; }
+
+
         public override String ActionType
         {
             get
@@ -98,10 +102,11 @@ namespace GingerCore.Actions
             public static string ExpString = "ExpString";
 
             public static string Command = "Command";
-            
+
         }
 
         //TODO: find icon for console
         public override System.Drawing.Image Image { get { return Resources.console16x16; } }
+
     }
 }

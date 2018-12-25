@@ -62,15 +62,22 @@ namespace Ginger.ALM
             mALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.DEFECT, null);
             mALMDefectProfileFields.Where(z => z.Mandatory != true).ToList().ForEach(x => x.SelectedValue = string.Empty);
 
-            // pouplated values list (the not saved), validate selected values/fields current existing in QC
+            // populated values list (the not saved), validate selected values/fields current existing in QC
             foreach (ALMDefectProfile aLMDefectProfile in mALMDefectProfiles)
             {
                 mALMDefectProfileFieldsExisted = new ObservableList<ExternalItemFieldBase>();
                 foreach (ExternalItemFieldBase aLMDefectProfileField in mALMDefectProfileFields)
                 {
                     ExternalItemFieldBase aLMDefectProfileFieldExisted = (ExternalItemFieldBase)aLMDefectProfileField.CreateCopy();
-                    aLMDefectProfileFieldExisted.ExternalID = string.Copy(aLMDefectProfileField.ExternalID);
-                    aLMDefectProfileFieldExisted.SelectedValue = aLMDefectProfile.ALMDefectProfileFields.Where(x => x.ID == aLMDefectProfileField.ID).Select(y => y.SelectedValue).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(aLMDefectProfileField.ExternalID))
+                    {
+                        aLMDefectProfileFieldExisted.ExternalID = string.Copy(aLMDefectProfileField.ExternalID);
+                    }
+                    ExternalItemFieldBase field = aLMDefectProfile.ALMDefectProfileFields.Where(x => x.ID == aLMDefectProfileField.ID).FirstOrDefault();
+                    if (field != null)
+                    {
+                        aLMDefectProfileFieldExisted.SelectedValue = field.SelectedValue;
+                    }
                     aLMDefectProfileFieldExisted.PossibleValues = aLMDefectProfileField.PossibleValues;
                     mALMDefectProfileFieldsExisted.Add(aLMDefectProfileFieldExisted);
                 }
@@ -188,7 +195,10 @@ namespace Ginger.ALM
             foreach (ExternalItemFieldBase aLMDefectProfileField in mALMDefectProfileFields)
             {
                 ExternalItemFieldBase aLMDefectProfileFieldExisted = (ExternalItemFieldBase)aLMDefectProfileField.CreateCopy();
-                aLMDefectProfileFieldExisted.ExternalID = string.Copy(aLMDefectProfileField.ExternalID);
+                if (!string.IsNullOrEmpty(aLMDefectProfileField.ExternalID))
+                {
+                    aLMDefectProfileFieldExisted.ExternalID = string.Copy(aLMDefectProfileField.ExternalID);
+                }
                 aLMDefectProfileFieldExisted.PossibleValues = aLMDefectProfileField.PossibleValues;
                 mALMDefectProfileFieldsExisted.Add(aLMDefectProfileFieldExisted);
             }
@@ -265,7 +275,7 @@ namespace Ginger.ALM
                     return;
                 }
 
-                // Date selection validation (QC reciving date in format yyyy-mm-dd)
+                // Date selection validation (QC receiving date in format yyyy-mm-dd)
                 DateTime dt;
                 ExternalItemFieldBase wrongDateValueField = _ALMDefectProfile.ALMDefectProfileFields.Where(x => (string.Equals(x.Type, "Date", StringComparison.OrdinalIgnoreCase)) &&
                                                                                                                       x.SelectedValue != null && x.SelectedValue != string.Empty &&
@@ -282,7 +292,7 @@ namespace Ginger.ALM
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, _ALMDefectProfile.GetNameForFileName(), "item");
                 if ((_ALMDefectProfile.ContainingFolder == null) || (_ALMDefectProfile.ContainingFolder == string.Empty))
                 {
-                    _ALMDefectProfile.ContainingFolder = App.UserProfile.Solution.Folder + _ALMDefectProfile.ObjFolderName;
+                    _ALMDefectProfile.ContainingFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, _ALMDefectProfile.ObjFolderName);
                     _ALMDefectProfile.FilePath = _ALMDefectProfile.ContainingFolder + @"\" + _ALMDefectProfile.FilePath;
                 }
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(_ALMDefectProfile);

@@ -174,7 +174,7 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.IsTrue(Directory.Exists(subFolder),"sub folder exist");
         }
 
-        [Ignore]  // FIXME failing beacuse the folder doesn't exapnd to show the added agent
+        [Ignore]  // FIXME failing because the folder doesn't expand to show the added agent
         [TestMethod]
         public void AddAgentsFolderUsingMenuAndAddAgent()
         {
@@ -241,7 +241,7 @@ namespace GingerWPFUnitTest.AgentsLib
         }
 
 
-        [Ignore] // FIXME missing functionailty
+        [Ignore] // FIXME missing functionality
         [TestMethod]
         public void CopyPasteAgentinAgentRoot()
         {
@@ -268,7 +268,7 @@ namespace GingerWPFUnitTest.AgentsLib
 
         }
 
-        [Ignore] // FIXME missing functionailty
+        [Ignore] // FIXME missing functionality
         [TestMethod]
         public void CutPasteAgentFromRootToSubFolder()
         {
@@ -296,10 +296,10 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.IsTrue(agentExist, "Agent exist");
             Assert.IsTrue(ACopyTag != null);
             Assert.AreEqual(@"~\Agents\" + folderName, ACopyTag.ContainingFolder);
-            Assert.AreEqual(MyAgent, ACopyTag, "Same agent object in memeory");
+            Assert.AreEqual(MyAgent, ACopyTag, "Same agent object in memory");
         }
 
-        [Ignore] // FIXME missing functionailty
+        [Ignore] // FIXME missing functionality
         [TestMethod]
         public void CutPasteAgentFromSubFolderToRoot()
         {
@@ -327,7 +327,33 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.IsTrue(agentExist, "Agent exist");
             Assert.IsTrue(ACopyTag != null);
             Assert.AreEqual(@"~\Agents\" + folderName, ACopyTag.ContainingFolder);
-            Assert.AreEqual(MyAgent, ACopyTag, "Same agent object in memeory");
+            Assert.AreEqual(MyAgent, ACopyTag, "Same agent object in memory");
+        }
+
+        [Ignore] // failing because the sub folder is not auto expand
+        [TestMethod]
+        public void DuplicateAgentinSubFolder()
+        {
+            //Arrange
+            string folderName = "sub folder dup";
+            string agentName = "agent 1";
+            string agentDupName = "agent 1 dup";
+
+            AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
+            AgentsPOM.AgentsTree.SelectRootItem();
+            AgentsPOM.AddSubFolder(folderName);
+            AgentsPOM.CreateAgent(folderName, agentName, ePlatformType.Web, Agent.eDriverType.SeleniumChrome);
+            mGingerAutomator.ReloadSolution();
+
+            //Act   
+            AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
+            AgentsPOM.AgentsTree.SelectItem(folderName);
+            AgentsPOM.AgentsTree.SelectItem(agentName);
+            AgentsPOM.AgentsTree.Duplicate(agentDupName);
+            bool b = AgentsPOM.AgentsTree.IsItemExist(agentDupName);
+
+            // Assert            
+            Assert.IsTrue(b, "Dup agent exist in tree");            
         }
 
     }

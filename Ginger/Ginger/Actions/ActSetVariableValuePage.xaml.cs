@@ -44,7 +44,7 @@ namespace Ginger.Actions
         {            
             mVars = App.BusinessFlow.GetAllHierarchyVariables();
          
-            foreach (VariableBase v in mVars.OrderBy(VariableBase.Fields.Name))
+            foreach (VariableBase v in mVars.OrderBy(nameof(VariableBase.Name)))
             {
                 if ((v.GetType() != typeof(VariablePasswordString))&& (v.GetType() != typeof(VariableDynamic)))
                 {
@@ -60,17 +60,17 @@ namespace Ginger.Actions
             //Clear fields
             VariableTypeTextBox.Text = string.Empty;
             if (OperationTypeComboBox.Items != null)
-               OperationTypeComboBox.Items.Clear(); 
+            {
+                OperationTypeComboBox.Items.Clear();
+            }
            
             if (var!=null)
             {
                 //## Set type
-                VariableTypeTextBox.Text = var.GetType().ToString().Replace("GingerCore.Variables.", string.Empty).Trim();
-                    
-                //## Set operation options           
+                VariableTypeTextBox.Text = var.GetType().Name;
 
+                //## Set operation options
                 OperationTypeComboBox.BindControl(mAct, nameof(ActSetVariableValue.SetVariableValueOption), var.GetSupportedOperations());
-
             }
         }
  

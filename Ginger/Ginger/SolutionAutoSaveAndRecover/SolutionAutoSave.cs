@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
@@ -82,11 +100,11 @@ namespace Ginger.Functionalties
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "AutoSave: Failed to clear the AutoSave folder before doing new save", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "AutoSave: Failed to clear the AutoSave folder before doing new save", ex);
                 }
 
                 //get all dirty items for AutoSave
-                //Busines Flows           
+                //BusinesFlows           
                 foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
                 {
                     if (bf.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
@@ -122,7 +140,7 @@ namespace Ginger.Functionalties
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "AutoSave: Failed to delete the all AutoSave folder on SolutionAutoSaveEnd", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "AutoSave: Failed to delete the all AutoSave folder on SolutionAutoSaveEnd", ex);
             }
         }
 
@@ -132,7 +150,7 @@ namespace Ginger.Functionalties
             {
             RepositoryItemBase itemCopy = itemToSave.CreateCopy(false);
             
-                //create smiliar folders structure
+                //create similar folders structure
                 string ItemOriginalpath = itemToSave.ContainingFolderFullPath;
                 string ItemContainingfolder = itemToSave.ContainingFolder;
                 string itemAutoSavePath = ItemOriginalpath.Replace(ItemOriginalpath, mAutoSaveFolderPath);
@@ -147,7 +165,7 @@ namespace Ginger.Functionalties
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("AutoSave: Failed to AutoSave the item:'{0}'", itemToSave.ItemName), ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("AutoSave: Failed to AutoSave the item:'{0}'", itemToSave.ItemName), ex);
             }
         }
 

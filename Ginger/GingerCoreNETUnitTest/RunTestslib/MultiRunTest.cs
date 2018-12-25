@@ -38,7 +38,7 @@
 //        [ClassInitialize]
 //        public static void ClassInitialize(TestContext TestContext)
 //        {
-//            // We start a Ginger grid - we need to be carefull with ports when running multiple Grids, Nodes
+//            // We start a Ginger grid - we need to be careful with ports when running multiple Grids, Nodes
 
 //            int GingerHubPort = SocketHelper.GetOpenPort();
 //            GG = new GingerGrid(GingerHubPort);

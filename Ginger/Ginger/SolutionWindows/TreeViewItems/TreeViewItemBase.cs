@@ -32,6 +32,7 @@ using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SourceControl;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -233,7 +234,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             else
             {
                 //implement for other item types
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Duplicae operation for this item type was not implemented yet.");
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Duplicate operation for this item type was not implemented yet.");
             }
         }
 
@@ -427,7 +428,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to refresh the item type cache for the folder: '" + path + "'", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to refresh the item type cache for the folder: '" + path + "'", ex);
             }
         }
 
@@ -445,7 +446,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                                                                 BindingFlags.Public |
                                                                 BindingFlags.Instance |
                                                                 BindingFlags.OptionalParamBinding, null, new object[] { Type.Missing }, CultureInfo.CurrentCulture);
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
             if (folderItem == null)
             {
@@ -460,7 +461,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             catch (Exception ex)
             {
                 //return null;
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
 
             
@@ -504,12 +505,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 this.GetType().GetProperty("Folder").SetValue(this, newFolderName);
                 this.GetType().GetProperty("Path").SetValue(this, newPath);
 
-                //refresh header and childerns (to get new File name)
+                //refresh header and children's (to get new File name)
                 RefreshTreeFolder(this.NodeObjectType(), Path.GetDirectoryName(this.NodePath()));
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
 

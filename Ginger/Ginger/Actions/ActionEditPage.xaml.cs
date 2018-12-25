@@ -103,7 +103,7 @@ namespace Ginger.Actions
 
             EditMode = editMode;
             mAction.PropertyChanged += ActionPropertyChanged;
-
+            
             GingerHelpProvider.SetHelpString(this, act.ActionDescription);
 
             if (mAction.ConfigOutputDS == true && mAction.DSOutputConfigParams.Count > 0)
@@ -176,7 +176,7 @@ namespace Ginger.Actions
             OutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
             OutputValuesGrid.AddSeparator();
 
-            //allowing return values automaticlly in Edit Action window
+            //allowing return values automatically in Edit Action window
             if (mAction.AddNewReturnParams == null && mAction.ReturnValues.Count() == 0)
                 mAction.AddNewReturnParams = true;
             App.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, Act.Fields.AddNewReturnParams);
@@ -223,17 +223,17 @@ namespace Ginger.Actions
 
             InitActionLog();
         }
-        
 
-        
         private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateOutputTabVisual();
+            mAction.OnPropertyChanged(nameof(Act.ReturnValuesInfo));
         }
 
         private void FlowControls_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateFlowControlTabVisual();
+            mAction.OnPropertyChanged(nameof(Act.FlowControlsInfo));
         }
 
         private void ClearUnusedParameter(object sender, RoutedEventArgs e)
@@ -277,7 +277,7 @@ namespace Ginger.Actions
         private void SwitchingInputValueBoxAndGrid(Act a)
         {
             if (IsPageClosing) return; // no need to update the UI since we are closing, when done in Undo changes/Cancel 
-            // we do restore and don't want to raise events which will cause excpetion  (a.Value = ""  - is the messer)
+            // we do restore and don't want to raise events which will cause exception  (a.Value = ""  - is the messer)
 
             if (mAction.ValueConfigsNeeded == false)
             {
@@ -460,6 +460,7 @@ namespace Ginger.Actions
 
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Expected, Header = "Expected Value", WidthWeight = 150 });
             viewCols.Add(new GridColView() { Field = ".....", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ValueExpressionButton"] });
+            viewCols.Add(new GridColView() { Field = "Clear Expected Value", Header = "X", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ClearExpectedValueBtnTemplate"] });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.ExpectedCalculated, Header = "Calculated Expected", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Status, WidthWeight = 70, BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new ActReturnValueStatusConverter(), TextBlock.ForegroundProperty)) });
             
@@ -653,7 +654,6 @@ namespace Ginger.Actions
         {
             this.Dispatcher.Invoke(() =>
             {
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 mAction.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                 if (mAction.GetType() == typeof(ActLowLevelClicks))
                     App.MainWindow.WindowState = WindowState.Minimized;
@@ -750,6 +750,9 @@ namespace Ginger.Actions
             // Need to find a solution if 2 windows show as Dialog...
             string title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
 
+            RoutedEventHandler closeHandler = CloseWinClicked;
+            string closeContent = "Undo & Close";
+
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button okBtn = new Button();
             okBtn.Content = "Ok";
@@ -814,13 +817,15 @@ namespace Ginger.Actions
 
                 case General.RepositoryItemPageViewMode.View:
                     title = "View " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    winButtons.Add(okBtn);                    
+                    winButtons.Add(okBtn);
+                    closeHandler = new RoutedEventHandler(okBtn_Click);
+                    closeContent = okBtn.Content.ToString();
                     break;
             }
 
             this.Height = 800;
             this.Width = 1000;
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, closeContent, closeHandler, startupLocationWithOffset: startupLocationWithOffset);
             SwitchingInputValueBoxAndGrid(mAction);
             return saveWasDone;
         }
@@ -843,25 +848,24 @@ namespace Ginger.Actions
         private void UndoChangesAndClose()
         {
             IsPageClosing = true;
-            _pageGenericWin.Close();
-
-            Mouse.OverrideCursor = Cursors.Wait;
-            mAction.RestoreFromBackup(true);
-            Mouse.OverrideCursor = null;
+            
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                mAction.RestoreFromBackup(true);
+                _pageGenericWin.Close();
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
         }
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
             {
                 UndoChangesAndClose();
-            }
-            else
-            {
-                if (EditMode == General.RepositoryItemPageViewMode.SharedReposiotry)
-                    CheckIfUserWantToSave();
-                else
-                    _pageGenericWin.Close();
             }
         }
 
@@ -983,9 +987,9 @@ namespace Ginger.Actions
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (ActionTab.SelectedItem == tab)
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
@@ -994,7 +998,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
             if (ActionTab.SelectedItem == ScreenShotTab)
@@ -1059,7 +1063,7 @@ namespace Ginger.Actions
                     ScreenShotsGrid.ColumnDefinitions.Add(cf);
                 }
 
-                // loop thru the screen shot and create new frame per each to show and place in the grid
+                // loop through the screen shot and create new frame per each to show and place in the grid
 
                 int r = 0;
                 int c = 0;
@@ -1094,7 +1098,7 @@ namespace Ginger.Actions
 
         private void HighLightElementButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: fixme - Currenlty working with first agent
+            //TODO: fixme - Currently working with first agent
             ApplicationAgent aa = App.AutomateTabGingerRunner.ApplicationAgents[0];
             if (aa != null)
             {
@@ -1293,7 +1297,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
         }
 
@@ -1495,8 +1499,8 @@ namespace Ginger.Actions
                     mDataSourceName = cmbDataSourceName.SelectedValue.ToString();
                     if (ds.FilePath.StartsWith("~"))
                     {
-                        ds.FileFullPath = ds.FilePath.Replace("~", "");
-                        ds.FileFullPath = App.UserProfile.Solution.Folder + ds.FileFullPath;
+                        ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
+                        ds.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, ds.FileFullPath);
                     }
                     ds.Init(ds.FileFullPath);
                     List<string> dsTableNames = new List<string>();
@@ -1645,6 +1649,12 @@ namespace Ginger.Actions
             }
         }
 
-
+        private void GridClearExpectedValueBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (OutputValuesGrid.Grid.SelectedItem != null)
+            {
+                ((ActReturnValue)OutputValuesGrid.Grid.SelectedItem).Expected = null;
+            }
+        }
     }
 }

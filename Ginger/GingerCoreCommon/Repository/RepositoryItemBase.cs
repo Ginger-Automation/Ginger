@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -63,7 +64,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                // We can override if we want differnet extension for example un sub class 
+                // We can override if we want different extension for example un sub class 
                 // like APIModel - SOAP/REST we want both file name to be with same extension - ApplicationAPIModel
                 return RepositorySerializer.FileExt(this.GetType());
             }
@@ -181,18 +182,30 @@ namespace Amdocs.Ginger.Repository
         {
             if (!isLocalBackup)
             {
-                mBackupDic = new Dictionary<string, object>();                
-            }             
+                mBackupDic = new Dictionary<string, object>();
+            }
             mLocalBackupDic = new Dictionary<string, object>();
-            
+
             var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
-            {               
-                if (!isLocalBackup)
-                {                    
-                    if (mi.Name == nameof(mBackupDic)) continue; // since we are running on repo item which contain the dic we need to ignore trying to save it...
+            {
+                if (IsDoNotBackupAttr(mi))
+                {
+                    continue;
                 }
-                if (mi.Name == nameof(mLocalBackupDic)) continue;
+                
+                if (!isLocalBackup)
+                {
+                    if (mi.Name == nameof(mBackupDic))
+                    {
+                        continue; // since we are running on repo item which contain the dic we need to ignore trying to save it...
+                    }
+
+                }
+                if (mi.Name == nameof(mLocalBackupDic))
+                {
+                    continue;
+                }
                 object v = null;  
                 if (mi.MemberType == MemberTypes.Property)
                 {
@@ -229,7 +242,22 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        
+        private bool IsDoNotBackupAttr(MemberInfo mi)
+        {
+            var IsSerializedAttr = mi.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
+            if (IsSerializedAttr == null)
+            {
+                return true;
+            }
+
+            var IsDoNotBackupAttr = mi.GetCustomAttribute(typeof(DoNotBackupAttribute));
+            if (IsDoNotBackupAttr != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
         private void BackupList(string Name, IObservableList v, bool isLocalBackup = false)
         {
             //TODO: if v is Lazy bak the text without drill down
@@ -312,9 +340,7 @@ namespace Amdocs.Ginger.Repository
             var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
-                // Console.WriteLine(this.ToString() +  " - mi:" + mi.Name + " - " + mi.ToString());                              
-                if (mi.Name == nameof(mBackupDic) || mi.Name == nameof(mLocalBackupDic) || mi.Name == nameof(FileName) || mi.Name == nameof(FilePath) || mi.Name == nameof(ObjFolderName) || mi.Name == nameof(ObjFileExt) || mi.Name == nameof(ContainingFolder) || mi.Name == nameof(ContainingFolderFullPath))
-                    continue;
+                if (IsDoNotBackupAttr(mi)) continue;
                 object v;
                 bool b;
                 if (isLocalBackup)
@@ -417,36 +443,37 @@ namespace Amdocs.Ginger.Repository
 
             object Backuplist;
             bool b;
-            if (isLocalBackup)
-            {
-                b = mLocalBackupDic.TryGetValue(Name + "~List", out Backuplist);
-            }
-            else
-            {
-                b = mBackupDic.TryGetValue(Name + "~List", out Backuplist);
-            }
-            if (!b)
-            {
-                // TODO: handle err 
-            }
+            b = isLocalBackup ? mLocalBackupDic.TryGetValue(Name + "~List", out Backuplist) : mBackupDic.TryGetValue(Name + "~List", out Backuplist);
 
-
-            foreach (object o in ((IList)Backuplist)) 
+            if (b)
             {
-                v.Add(o);
-
-                if (o is RepositoryItemBase)
+                if (Backuplist != null)
                 {
-                    ((RepositoryItemBase)o).RestoreBackup(isLocalBackup);   // Drill down the restore
+                    foreach (object o in ((IList)Backuplist))
+                    {
+                        v.Add(o);
+                        RepositoryItemBase repoItem = o as RepositoryItemBase;
+                        repoItem?.RestoreBackup(isLocalBackup);   // Drill down the restore
+
+                    }
+
+                    if (isLocalBackup)
+                    {
+                        mLocalBackupDic.Remove(Name + "~List");
+                    }
+                    else
+                    {
+                        mBackupDic.Remove(Name + "~List");
+                    }
+                }
+                else
+                {
+                    v = null;
                 }
             }
-            if (isLocalBackup)
-            {
-                mLocalBackupDic.Remove(Name + "~List");
-            }
             else
             {
-                mBackupDic.Remove(Name + "~List");
+                // TODO: handle err 
             }
         }
 
@@ -660,6 +687,7 @@ namespace Amdocs.Ginger.Repository
             return false;
         }
 
+        ///Do not use,This field will be removed. All the folder paths, Solution repository should know based on repo item type
         private string mContainingFolder = null;
         public string ContainingFolder
         {

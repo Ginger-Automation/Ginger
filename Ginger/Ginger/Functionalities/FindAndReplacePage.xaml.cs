@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Functionalities;
@@ -303,7 +321,7 @@ namespace Ginger.Functionalities
                     title = string.Format("Find & Replace in '{0}' {1}", App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     break;
                 case eContext.RunsetPage:
-                    title = string.Format("Find & Replace in '{0}' {1}", App.RunsetExecutor.RunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                    title = string.Format("Find in '{0}' {1}", App.RunsetExecutor.RunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
                     break;
                 default:
                     title = "Find & Replace";
@@ -607,7 +625,7 @@ namespace Ginger.Functionalities
                     //pull variables from all repository BF's
                     AddVariableFromBusinessFlowList(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
 
-                    //pull variabels from shared repository activities
+                    //pull variables from shared repository activities
                     ObservableList<Activity> RepoActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                     foreach (Activity activity in RepoActivities)
                     {

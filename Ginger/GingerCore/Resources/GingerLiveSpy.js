@@ -25,7 +25,7 @@ function define_GingerLibLiveSpy() {
     GingerLibLiveSpy = {};
 
     //----------------------------------------------------------------------------------------------------------------------
-    // To Highlight element we keep the current elelemnt and add/remove the GingerHighlight style to the element
+    // To Highlight element we keep the current element and add/remove the GingerHighlight style to the element
     //----------------------------------------------------------------------------------------------------------------------
     var CurrentX;
     var CurrentClickedX;
@@ -93,7 +93,7 @@ function define_GingerLibLiveSpy() {
             document.addEventListener("click", getMouseClickedPos);
 
         }
-        else if (document.attachEvent)// Add to support erlier Version on IE .
+        else if (document.attachEvent)// Add to support earlier Version on IE .
         {
             document.attachEvent("click", getMouseClickedPos);
         }

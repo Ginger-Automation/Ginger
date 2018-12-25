@@ -52,7 +52,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
             {
                 Description = "Validate " + this.ElementInfo.ElementType  +" is Enabled " + this.ElementInfo.ElementTitle,
                 GenElementAction = ActGenElement.eGenElementAction.Enabled,
-                //TODO: add REturn value Actula = Enabled=true
+                //TODO: add REturn value Actual = Enabled=true
             });
 
             AddGeneralHTMLActions(list);

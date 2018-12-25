@@ -16,47 +16,45 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
+using Ginger.Actions.ActionConversion;
 using Ginger.Activities;
+using Ginger.Agents;
+using Ginger.ALM;
+using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowFolder;
+using Ginger.BusinessFlowWindows;
+using Ginger.Extensions;
+using Ginger.Functionalities;
+using Ginger.GherkinLib;
+using Ginger.Reports;
 using Ginger.Repository;
-using Ginger.SolutionWindows.TreeViewItems;
-using GingerWPF.UserControlsLib.UCTreeView;
+using Ginger.Run;
+using Ginger.UserControlsLib.TextEditor;
 using Ginger.Variables;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Actions.PlugIns;
+using GingerCore.Environments;
 using GingerCore.Variables;
+using GingerCoreNET.RunLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
-using System.Windows.Media;
-using Amdocs.Ginger;
-using Ginger.Actions.ActionConversion;
-using Ginger.AnalyzerLib;
-using Ginger.Functionalities;
 using System.Windows.Input;
-using Ginger.GherkinLib;
-using System.Linq;
-using Ginger.UserControlsLib.TextEditor;
-using Ginger.Reports;
-using GingerCore.Actions;
-using Ginger.BusinessFlowWindows;
-using System.IO;
-using System.Diagnostics;
-using Ginger.ALM;
-using Amdocs.Ginger.Common;
-using Ginger.Run;
-using GingerCore.Environments;
-using Amdocs.Ginger.UserControls;
-using Amdocs.Ginger.Common.Enums;
-using GingerCoreNET.RunLib;
-using Ginger.Agents;
-using Ginger.Extensions;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace Ginger
 {
@@ -80,6 +78,7 @@ namespace Ginger
         VariablesPage mActivityVariablesPage;
         public ActionsPage mActionsPage;
         RepositoryPage mReposiotryPage;
+        Activity mCurrentActivity = null;
                 
         GridLength mlastRepositoryColWidth = new GridLength(300);
 
@@ -96,8 +95,8 @@ namespace Ginger
             xToBusinessFlowsListBtn.Visibility = Visibility.Visible;
             xToBusinessFlowsListBtn.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 32);
             xToBusinessFlowsListBtn.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 16);
-            xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ");
-            xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ");
+            xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
+            xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
             xToBusinessFlowsListBtn.Click += clickHandler;
         }
 
@@ -107,7 +106,7 @@ namespace Ginger
 
             if (App.BusinessFlow == null) //Not supposed to happen because now Automate is done from BF itself           
             {
-                App.LoadDefaultBusinessFlow();
+                App.SetDefaultBusinessFlow();
             }
 
             //Ribbon
@@ -121,9 +120,11 @@ namespace Ginger
             cboSpeed.Text = "0";
             App.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, App.AutomateTabGingerRunner, Ginger.Run.GingerRunner.Fields.RunInSimulationMode);
             AppAgentsMappingExpander2Frame.Content = new ApplicationAgentsMapPage(App.AutomateTabGingerRunner);
+
             BindEnvsCombo();
 
             SetExpanders();
+
             //Bind between Menu expanders and actual grid expanders
             App.ObjFieldBinding(BFVariablesExpander, Expander.IsExpandedProperty, BFVariablesExpander2, "IsExpanded");
             App.ObjFieldBinding(BFActivitiesGroupsExpander, Expander.IsExpandedProperty, BFActivitiesGroupsExpander2, "IsExpanded");
@@ -159,6 +160,7 @@ namespace Ginger
                     RunCurrentAutomatePageAction(false);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActivity:
+                    btnGridViewExecution_Click(null, null);
                     RunActivity();
                     break;
                 case AutomateEventArgs.eEventType.ContinueActionRun:
@@ -222,45 +224,155 @@ namespace Ginger
 
         private void SetExpanders()
         {
-            // We do UI changes using the dispatcher since it might trgigger from STA like IB
+            // We do UI changes using the dispatcher since it might trigger from STA like IB
             App.MainWindow.Dispatcher.Invoke(() =>
                     {
-                        //set daynamic expanders titles
+                        //set dynamic expanders titles
                         if (App.BusinessFlow != null)
-                        {
-                            App.BusinessFlow.PropertyChanged -= BusinessFlow_PropertyChanged;
-                            App.BusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
-
-                            CurrentBusExpanderLable.Content = "'" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
-
+                        {                            
                             mCurrentBusPage = new BusinessFlowPage(App.BusinessFlow, true);
                             CurrentBusFrame.Content = mCurrentBusPage;
 
-                            UpdateCurrentActiityExpander();
-                        }
-                        else
-                        {
-                            CurrentBusExpanderLable.Content = "No " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                            UpdateMainBFLabel();
+                            App.BusinessFlow.PropertyChanged -= BusinessFlow_PropertyChanged;
+                            App.BusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
+                            UpdateBusinessFlowVariabelsExpanders();
+                            App.BusinessFlow.Variables.CollectionChanged -= BusinessFlowVariables_CollectionChanged;
+                            App.BusinessFlow.Variables.CollectionChanged += BusinessFlowVariables_CollectionChanged;
+                            UpdateBusinessFlowActivitiesGroupsExpanders();
+                            App.BusinessFlow.ActivitiesGroups.CollectionChanged -= ActivitiesGroups_CollectionChanged;
+                            App.BusinessFlow.ActivitiesGroups.CollectionChanged += ActivitiesGroups_CollectionChanged;
+                            UpdateBusinessFlowActivitiesExpanders();
+                            App.BusinessFlow.Activities.CollectionChanged -= Activities_CollectionChanged;
+                            App.BusinessFlow.Activities.CollectionChanged += Activities_CollectionChanged;
+                            mCurrentActivity = App.BusinessFlow.CurrentActivity;            
+                            UpdateCurrentActivityVariabelsExpanders();
+                            UpdateCurrentActivityActionsExpanders();
                         }
 
                     });
         }
 
-        private void UpdateCurrentActiityExpander()
+        private void UpdateMainBFLabel()
+        {
+            App.MainWindow.Dispatcher.Invoke(() =>
+            {
+                xMainBusinessFlowlabel.Content = String.Format("'{0}' {1}", App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+            });
+        }
+        private void UpdateBusinessFlowVariabelsExpanders()
         {
             if (Dispatcher.CheckAccess())
             {
-                if (App.BusinessFlow.CurrentActivity != null)
+                string label;
+                if (App.BusinessFlow != null)
                 {
-                    ActivityVariablesExpanderLabel.Content = "'" + App.BusinessFlow.CurrentActivity.ActivityName + "' - " + GingerDicser.GetTermResValue(eTermResKey.Activity, suffixString: " ") + GingerDicser.GetTermResValue(eTermResKey.Variables);
-                    ActivityActionsExpanderLabel.Content = "'" + App.BusinessFlow.CurrentActivity.ActivityName + "' - " + GingerDicser.GetTermResValue(eTermResKey.Activity, suffixString: " ") + "Actions";
+                    label= string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), App.BusinessFlow.Variables.Count);
+                    BusinessFlowVariablesExpanderLabel.Content = label;
+                    BusinessFlowVariablesExpander2Label.Content = label;
                 }
                 else
                 {
-                    ActivityVariablesExpanderLabel.Content = GingerDicser.GetTermResValue(eTermResKey.Activity) + " - " + GingerDicser.GetTermResValue(eTermResKey.Activity, suffixString: " ") + GingerDicser.GetTermResValue(eTermResKey.Variables);
-                    ActivityActionsExpanderLabel.Content = GingerDicser.GetTermResValue(eTermResKey.Activity) + " - " + GingerDicser.GetTermResValue(eTermResKey.Activity, suffixString: " ") + "Actions";
+                    label= string.Format("{0}", GingerDicser.GetTermResValue(eTermResKey.Variables));
+                    BusinessFlowVariablesExpanderLabel.Content = label;
+                    BusinessFlowVariablesExpander2Label.Content = label;
                 }
             }
+        }
+
+        private void UpdateBusinessFlowActivitiesGroupsExpanders()
+        {
+            if (Dispatcher.CheckAccess())
+            {
+                string label;
+                if (App.BusinessFlow != null)
+                {
+                    label = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups), App.BusinessFlow.ActivitiesGroups.Count);
+                    BBFActivitiesGroupsExpanderLabel.Content = label;
+                    BBFActivitiesGroupsExpander2Label.Content = label;
+                }
+                else
+                {
+                    label = string.Format("{0}", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups));
+                    BBFActivitiesGroupsExpanderLabel.Content = label;
+                    BBFActivitiesGroupsExpander2Label.Content = label;
+                }
+            }
+        }
+
+        private void UpdateBusinessFlowActivitiesExpanders()
+        {
+            if (Dispatcher.CheckAccess())
+            {
+                string label;
+                if (App.BusinessFlow != null)
+                {
+                    label = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Activities), App.BusinessFlow.Activities.Count);
+                    BBFActivitiesExpanderLabel.Content = label;
+                    BBFActivitiesExpander2Label.Content = label;
+                }
+                else
+                {
+                    label = string.Format("{0}", GingerDicser.GetTermResValue(eTermResKey.Activities));
+                    BBFActivitiesExpanderLabel.Content = label;
+                    BBFActivitiesExpander2Label.Content = label;
+                }
+            }
+        }
+
+        private void UpdateCurrentActivityVariabelsExpanders()
+        {
+            if (Dispatcher.CheckAccess())
+            {
+                string label;
+                if (App.BusinessFlow.CurrentActivity != null)
+                {
+                    label = string.Format("'{0}'- {1} {2} ({3})", App.BusinessFlow.CurrentActivity.ActivityName, GingerDicser.GetTermResValue(eTermResKey.Activity), GingerDicser.GetTermResValue(eTermResKey.Variables), App.BusinessFlow.CurrentActivity.Variables.Count);
+                    ActivityVariablesExpanderLabel.Content = label;
+                    ActivityVariablesExpander2Label.Content = label;
+                }
+                else
+                {
+                    label = string.Format("{0}- {1}", GingerDicser.GetTermResValue(eTermResKey.Activity), GingerDicser.GetTermResValue(eTermResKey.Variables));
+                    ActivityVariablesExpanderLabel.Content = label;
+                    ActivityVariablesExpander2Label.Content = label;
+                }
+            }
+        }
+
+        private void UpdateCurrentActivityActionsExpanders()
+        {
+            if (Dispatcher.CheckAccess())
+            {
+                string label;
+                if (App.BusinessFlow.CurrentActivity != null)
+                {
+                    label = string.Format("'{0}'- {1} Actions ({2})", App.BusinessFlow.CurrentActivity.ActivityName, GingerDicser.GetTermResValue(eTermResKey.Activity), App.BusinessFlow.CurrentActivity.Acts.Count);
+                    ActivityActionsExpanderLabel.Content = label;
+                    ActivityActionsExpander2Label.Content = label;
+                }
+                else
+                {
+                    label = string.Format("{0}- Actions", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                    ActivityActionsExpanderLabel.Content = label;
+                    ActivityActionsExpander2Label.Content = label;
+                }
+            }
+        }
+
+        private void Activities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateBusinessFlowActivitiesExpanders();
+        }
+
+        private void ActivitiesGroups_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateBusinessFlowActivitiesGroupsExpanders();
+        }
+
+        private void BusinessFlowVariables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateBusinessFlowVariabelsExpanders();
         }
 
         private void SetGherkinOptions()
@@ -339,7 +451,7 @@ namespace Ginger
                         }
                     }
 
-                    //defualt selection
+                    //default selection
                     lstEnvs.SelectedIndex = 0;
                 }
             }
@@ -354,18 +466,22 @@ namespace Ginger
 
         public static void CreateDefaultEnvironment()
         {
-            ProjEnvironment newEnv = new ProjEnvironment() { Name = "Default" };
-            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv);
-
-            // Add all solution target app
-            foreach (ApplicationPlatform AP in App.UserProfile.Solution.ApplicationPlatforms)
+            ObservableList<ProjEnvironment> environments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+            if (environments.Count == 0)
             {
-                EnvApplication EA = new EnvApplication();
-                EA.Name = AP.AppName;
-                EA.CoreProductName = AP.Core;
-                EA.CoreVersion = AP.CoreVersion;
-                EA.Active = true;
-                newEnv.Applications.Add(EA);
+                ProjEnvironment newEnv = new ProjEnvironment() { Name = "Default" };
+
+                // Add all solution target app
+                foreach (ApplicationPlatform AP in App.UserProfile.Solution.ApplicationPlatforms)
+                {
+                    EnvApplication EA = new EnvApplication();
+                    EA.Name = AP.AppName;
+                    EA.CoreProductName = AP.Core;
+                    EA.CoreVersion = AP.CoreVersion;
+                    EA.Active = true;
+                    newEnv.Applications.Add(EA);
+                }
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv); 
             }
         }
 
@@ -595,7 +711,7 @@ namespace Ginger
                 }
             }
 
-            //arange expanders menu look 
+            //arrange expanders menu look 
             if (rowIndex == 8)
             {
                 PageMainGrid.RowDefinitions[3].Height = new GridLength(0);
@@ -618,13 +734,48 @@ namespace Ginger
             {
                 if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))
                 {
-                    UpdateCurrentActiityExpander();
+                    UpdateCurrentActivityVariabelsExpanders();
+                    UpdateCurrentActivityActionsExpanders();
+                    if (mCurrentActivity != null)
+                    {
+                        //removing previous Activity events registration
+                        mCurrentActivity.Variables.CollectionChanged -= CurrentActivityVariables_CollectionChanged;
+                        mCurrentActivity.Acts.CollectionChanged -= CurrentActivityActions_CollectionChanged;
+                        mCurrentActivity.PropertyChanged -= MCurrentActivity_PropertyChanged;
+                    }
+                    mCurrentActivity = App.BusinessFlow.CurrentActivity;
+                    if (mCurrentActivity != null)
+                    {
+                        //Add current Activity events registration
+                        mCurrentActivity.Variables.CollectionChanged += CurrentActivityVariables_CollectionChanged;
+                        mCurrentActivity.Acts.CollectionChanged += CurrentActivityActions_CollectionChanged;
+                        mCurrentActivity.PropertyChanged += MCurrentActivity_PropertyChanged;
+                    }                                  
                 }
                 else if(e.PropertyName == BusinessFlow.Fields.Name)
                 {
-                    CurrentBusExpanderLable.Content = "'" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                    UpdateMainBFLabel();
                 }
             });
+        }
+
+        private void MCurrentActivity_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Activity.ActivityName))
+            {
+                UpdateCurrentActivityVariabelsExpanders();
+                UpdateCurrentActivityActionsExpanders();                
+            }
+        }
+
+        private void CurrentActivityVariables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateCurrentActivityVariabelsExpanders();
+        }
+
+        private void CurrentActivityActions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateCurrentActivityActionsExpanders();
         }
 
         private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -638,7 +789,7 @@ namespace Ginger
 
         private void SaveBizFlowButton_Click(object sender, RoutedEventArgs e)
         {
-            //warn in case dynamic shared reposiotry Activities are included and going to be deleted
+            //warn in case dynamic shared repository Activities are included and going to be deleted
             if (App.BusinessFlow.Activities.Where(x => x.AddDynamicly == true).FirstOrDefault() != null)
             {
                 if (Reporter.ToUser(eUserMsgKeys.WarnOnDynamicActivities) == MessageBoxResult.No)
@@ -725,7 +876,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured on Reset Status Run from Automate Tab", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred on Reset Status Run from Automate Tab", ex);
                 throw ex;                
             }
         }
@@ -852,19 +1003,19 @@ namespace Ginger
         }
 
 
-        private void btnRunFlow_Click(object sender, RoutedEventArgs e)
+        private async void btnRunFlow_Click(object sender, RoutedEventArgs e)
         {
-            RunAutomateTabFlow(true);
+            await RunAutomateTabFlow(true);
         }
 
-        private void btnRunFlowNoAnaylze_Click(object sender, RoutedEventArgs e)
+        private async void btnRunFlowNoAnaylze_Click(object sender, RoutedEventArgs e)
         {
-            RunAutomateTabFlow();
+            await RunAutomateTabFlow();
         }
 
-        private void btnRunFlowAndGenerateReport_Click(object sender, RoutedEventArgs e)
+        private async void btnRunFlowAndGenerateReport_Click(object sender, RoutedEventArgs e)
         {
-            RunAutomateTabFlow(true, true);
+            await RunAutomateTabFlow(true, true);
         }
         
         private async Task RunAutomateTabFlow(bool Analyz = false, bool ReportNeeded = false)
@@ -877,11 +1028,8 @@ namespace Ginger
                 {
                     AnalyzerPage analyzerPage = new AnalyzerPage();
                     analyzerPage.Init(App.UserProfile.Solution, App.BusinessFlow);
-                    analyzerPage.AnalyzeWithoutUI();
-                    while (analyzerPage.IsAnalyzeDone == false)
-                    {
-                        System.Threading.Thread.Sleep(100);
-                    }
+                    await analyzerPage.AnalyzeWithoutUI();
+
                     Reporter.CloseGingerHelper();
                     if (analyzerPage.TotalHighAndCriticalIssues > 0)
                     {
@@ -943,7 +1091,7 @@ namespace Ginger
             //disable grids  
             EnableDisableAutomateTabGrids(false);
 
-            //execute preperations
+            //execute preparations
             SetAutomateTabRunnerForExecution();
             App.AutomateTabGingerRunner.ResetRunnerExecutionDetails(true);
             App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
@@ -989,7 +1137,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to disable Automate Tab grids for execution", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to disable Automate Tab grids for execution", ex);
             }
         }
 
@@ -1015,10 +1163,17 @@ namespace Ginger
                 App.BusinessFlow.CurrentActivity.Acts.CurrentItem = App.BusinessFlow.CurrentActivity.Acts[0];
             }
 
-            //No need of agent for actions like DB and read for excel. For other need agent   
-            if (!(typeof(ActWithoutDriver).IsAssignableFrom(App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem.GetType())) || App.BusinessFlow.CurrentActivity.Acts.CurrentItem.GetType() == typeof(ActAgentManipulation))
+            //No need of agent for actions like DB and read for excel. For other need agent  
+            Type actType = App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem.GetType();
+            
+            if (!(typeof(ActWithoutDriver).IsAssignableFrom(actType)) || actType == typeof(ActAgentManipulation))   // ActAgentManipulation not needed
             {
                 App.AutomateTabGingerRunner.SetCurrentActivityAgent();
+            }
+            
+            if ((typeof(ActPlugIn).IsAssignableFrom(actType)))
+            {
+                App.AutomateTabGingerRunner.SetCurrentActivityAgent(); 
             }
 
             App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
@@ -1222,7 +1377,7 @@ namespace Ginger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full business flow report", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to generate offline full business flow report", ex);
                     Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to generate the report for the '" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
                 }
             }

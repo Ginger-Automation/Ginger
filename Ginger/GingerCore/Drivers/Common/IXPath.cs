@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 namespace GingerCore.Drivers.Common
 {
-    //All drivers who want easy XPath creation and finding element should implemnt this and XpathHelper will do the magic
+    //All drivers who want easy XPath creation and finding element should implement this and XpathHelper will do the magic
     public class XpathPropertyCondition
     {
         public enum XpathConditionOperator
@@ -57,5 +57,11 @@ namespace GingerCore.Drivers.Common
         ElementInfo GetPreviousSibling(ElementInfo EI);
 
         ElementInfo GetNextSibling(ElementInfo EI);
+
+        string GetElementID(ElementInfo EI);
+
+        string GetElementTagName(ElementInfo EI);
+        List<object> GetAllElementsByLocator(eLocateBy LocatorType, string LocValue);
+
     }
 }

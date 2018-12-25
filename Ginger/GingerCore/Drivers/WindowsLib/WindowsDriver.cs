@@ -178,25 +178,25 @@ namespace GingerCore.Drivers.WindowsLib
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act, e);
                 return;
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act, e);
                 return;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act, e);
                 return;
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.WARN, "Exception at Run action", e);
+                Reporter.ToLog(eAppReporterLogLevel.WARN, "Exception at Run action", e);
                 act.Error = e.Message;
             }
         }
@@ -646,7 +646,7 @@ namespace GingerCore.Drivers.WindowsLib
             return GetControlFromMousePosition();
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
         {
             List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
             return list;
@@ -722,6 +722,20 @@ namespace GingerCore.Drivers.WindowsLib
                             actWinC.ExInfo = ValDrv + " set";
                         else
                             actWinC.Error = "Unable to set value to " + ValDrv;
+                        break;
+                    case ActGenElement.eGenElementAction.SetAttributeValue:
+                        string attrName = "value";
+                        string attValue = ValDrv;
+                        if(ValDrv.IndexOf("=") > 0)
+                        {
+                            attrName = ValDrv.Split('=')[0];
+                            attValue = ValDrv.Split('=')[1];
+                        }
+                        result = mUIAutomationHelper.GetHTMLHelper().SetValue(element, attValue, attrName);
+                        if (result)
+                            actWinC.ExInfo = ValDrv + " set";
+                        else
+                            actWinC.Error = "Unable to set attribute " + ValDrv;
                         break;
                     case ActGenElement.eGenElementAction.FireSpecialEvent:
 

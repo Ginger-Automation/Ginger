@@ -16,27 +16,27 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GingerCore.Activities;
-using System.Text.RegularExpressions;
-using System.Web;
-using GingerCore.Variables;
-using System.Xml;
-using RQM_Repository.Data_Contracts;
-using RQM_Repository;
-using System.IO;
-using ALM_Common.DataContracts;
 using ALM_Common.Abstractions;
-using System.Collections.Concurrent;
-using System.ComponentModel;
-using System.Reflection;
-using Newtonsoft.Json;
-using GingerCore.External;
+using ALM_Common.DataContracts;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using GingerCore.Activities;
+using GingerCore.External;
+using GingerCore.Variables;
+using Newtonsoft.Json;
+using RQM_Repository;
+using RQM_Repository.Data_Contracts;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Web;
+using System.Xml;
 
 namespace GingerCore.ALM.RQM
 {
@@ -56,7 +56,7 @@ namespace GingerCore.ALM.RQM
             {
                 if (testPlan == null) return null;
 
-                //Creat Business Flow
+                //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();
                 busFlow.Name = testPlan.Name;
                 busFlow.ExternalID = "RQMID=" + testPlan.RQMID;
@@ -67,7 +67,7 @@ namespace GingerCore.ALM.RQM
                 //Create Activities Group + Activities for each TC
                 foreach (RQMTestCase tc in testPlan.TestCases)
                 {
-                    //Add the TC steps as Activities if not already on the Activties group
+                    //Add the TC steps as Activities if not already on the Activities group
                     RQMTestScript selectedScript = tc.TestScripts.Where(y => y.Name == tc.SelectedTestScriptName).ToList().FirstOrDefault();
                     if (selectedScript == null)
                     {
@@ -244,8 +244,7 @@ namespace GingerCore.ALM.RQM
                                 {
                                     //no such variable value option so add it
                                     stepActivityVarOptionalVar = new OptionalValue(param.Value);
-                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                                    ((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
+                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);                                    
                                     if (isflowControlParam == true)
                                         stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
                                 }
@@ -261,7 +260,7 @@ namespace GingerCore.ALM.RQM
                                     if (stepActivityVar is VariableString)
                                         ((VariableString)stepActivityVar).InitialStringValue = param.Value;
                                 }
-                                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
                         }
                     }
@@ -270,7 +269,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return null;
             }
         }
@@ -312,7 +311,7 @@ namespace GingerCore.ALM.RQM
                     {
                         if (ExportToRQM.GetExportedIDString(tcToBeUpdatedID, "RQMID") == tc.RQMID)
                         {
-                            //Add the TC steps as Activities if not already on the Activties group
+                            //Add the TC steps as Activities if not already on the Activities group
                             RQMTestScript selectedScript = tc.TestScripts.Where(y => y.Name == tc.SelectedTestScriptName).ToList().FirstOrDefault();
                             if (selectedScript == null)
                             {
@@ -481,8 +480,7 @@ namespace GingerCore.ALM.RQM
                                         {
                                             //no such variable value option so add it
                                             stepActivityVarOptionalVar = new OptionalValue(param.Value);
-                                            ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                                            ((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
+                                            ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);                                            
                                             if (isflowControlParam == true)
                                                 stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
                                         }
@@ -498,7 +496,7 @@ namespace GingerCore.ALM.RQM
                                             if (stepActivityVar is VariableString)
                                                 ((VariableString)stepActivityVar).InitialStringValue = param.Value;
                                         }
-                                        catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                                     }
                                 }
                             }
@@ -509,7 +507,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return;
             }
         }
@@ -527,7 +525,7 @@ namespace GingerCore.ALM.RQM
                 foreach (RQMTestCase tc in testPlan.TestCases)
                 {
 
-                    //Add the TC steps as Activities if not already on the Activties group
+                    //Add the TC steps as Activities if not already on the Activities group
                     RQMTestScript selectedScript = tc.TestScripts.Where(y => y.Name == tc.SelectedTestScriptName).ToList().FirstOrDefault();
                     if (selectedScript == null)
                     {
@@ -696,8 +694,7 @@ namespace GingerCore.ALM.RQM
                                 {
                                     //no such variable value option so add it
                                     stepActivityVarOptionalVar = new OptionalValue(param.Value);
-                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                                    ((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
+                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);                                    
                                     if (isflowControlParam == true)
                                         stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
                                 }
@@ -713,7 +710,7 @@ namespace GingerCore.ALM.RQM
                                     if (stepActivityVar is VariableString)
                                         ((VariableString)stepActivityVar).InitialStringValue = param.Value;
                                 }
-                                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
                         }
                     }
@@ -722,7 +719,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return;
             }
         }
@@ -742,7 +739,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while pulling the parameters names from QC TC Step Description/Expected", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while pulling the parameters names from QC TC Step Description/Expected", ex);
             }
         }
 
@@ -763,7 +760,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while stripping the HTML from QC TC Step Description/Expected", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while stripping the HTML from QC TC Step Description/Expected", ex);
                 return HTMLText;
             }
         }
@@ -784,7 +781,7 @@ namespace GingerCore.ALM.RQM
                 string jsonItemsFieldsFile = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Fields", "ExternalItemsFields.json");
                 if (!File.Exists(jsonItemsFieldsFile))
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "ALM RQM, Restoring External Items Fields from ExternalItemsFields.json, file hasn't been found at: " + jsonItemsFieldsFile);
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, "ALM RQM, Restoring External Items Fields from ExternalItemsFields.json, file hasn't been found at: " + jsonItemsFieldsFile);
                     return ItemFieldsPossibleValues;
                 }
 
@@ -811,7 +808,7 @@ namespace GingerCore.ALM.RQM
                     ItemFieldsPossibleValues.Add(itemField);
                 }
             }
-            catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}"); }
+            catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
 
             return ItemFieldsPossibleValues;
         }
@@ -1217,7 +1214,7 @@ namespace GingerCore.ALM.RQM
                     }
                 }
             }
-            catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}"); }
+            catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
 
             SaveItemFields(fields);
             return fields;
@@ -1227,9 +1224,9 @@ namespace GingerCore.ALM.RQM
         {
             XmlNodeList xlist = null;
             XmlDocument doc = new XmlDocument();
-            if (System.IO.File.Exists(solutionFolder + @"Documents\ALM\RQM_Configs\FieldMapping.xml"))
+            if (System.IO.File.Exists(System.IO.Path.Combine(solutionFolder, @"Documents\ALM\RQM_Configs\FieldMapping.xml")))
             {
-                doc.Load(solutionFolder + @"Documents\ALM\RQM_Configs\FieldMapping.xml");
+                doc.Load(System.IO.Path.Combine(solutionFolder, @"Documents\ALM\RQM_Configs\FieldMapping.xml"));
 
                 if (fieldType == "TestPlan")
                 {

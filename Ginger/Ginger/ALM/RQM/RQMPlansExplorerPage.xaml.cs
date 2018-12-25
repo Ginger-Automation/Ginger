@@ -67,7 +67,7 @@ namespace Ginger.ALM.RQM
         {
             Mouse.OverrideCursor = Cursors.Wait;
             ObservableList<RQMTestPlan> mRQMTestPlansListSortedByDate = new ObservableList<RQMTestPlan>();
-            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, App.UserProfile.Solution.Folder + @"Documents\ALM\RQM_Configs").OrderByDescending(item => item.CreationDate))
+            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 mRQMTestPlansListSortedByDate.Add(testPlan);
             }
@@ -83,11 +83,6 @@ namespace Ginger.ALM.RQM
         private void RefreshGrid(object sender, RoutedEventArgs e)
         {
             SetGridData();
-        }
-
-        private void ExecutionResultsConfigWindow(object sender, System.Windows.RoutedEventArgs e)
-        {
-            Ginger.Reports.ExecutionLoggerConfiguration.ExecutionResultsConfigurationPage();
         }
 
         private void ImportTestPlan(object sender, RoutedEventArgs e)

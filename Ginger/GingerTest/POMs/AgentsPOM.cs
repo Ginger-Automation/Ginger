@@ -72,7 +72,7 @@ namespace GingerTest.POMs
             wizard.NextButton.Click();
             wizard.Finish();
 
-            // Verify agent apear on tree, might take some time
+            // Verify agent appear on tree, might take some time
             bool b = mTreeView.IsItemExist(name);
             if (!b) throw new Exception("Cannot find new agent in tree: " + name);
 
@@ -101,8 +101,10 @@ namespace GingerTest.POMs
         {
             mTreeView.SelectItem(name);
             Page p = mTreeView.GetSelectedItemEditPage();
-            Execute(() => { 
-                FindElementByName(p, "AgentNameTextBox").SetValue(TextBox.TextProperty, NewName);
+            Execute(() => 
+            {                
+                TextBox txt = (TextBox)FindElementByAutomationID<TextBox>(p, "AgentNameTextBox");
+                txt.Text = NewName;
             });
             Agent agent = (Agent)mTreeView.GetSelectedItemNodeObject();
             return agent;

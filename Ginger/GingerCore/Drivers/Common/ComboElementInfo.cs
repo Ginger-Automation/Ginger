@@ -23,7 +23,7 @@ using System.Collections.Generic;
 namespace GingerCore.Drivers.Common
 {
     /// <summary>
-    /// Base class for differnet Control type for each driver, enable to show unified list in Window Explorer Grid
+    /// Base class for different Control type for each driver, enable to show unified list in Window Explorer Grid
     /// </summary>
     public class ComboElementInfo : ElementInfo
     {
@@ -46,7 +46,7 @@ namespace GingerCore.Drivers.Common
         public virtual List<String> GetItemList()
         {
             // we return ElementType unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return mItemList;
         }
     }

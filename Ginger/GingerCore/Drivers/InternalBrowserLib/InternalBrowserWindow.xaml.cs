@@ -86,7 +86,7 @@ namespace GingerCore.Drivers
             if (mBusinessFlow!= null)
             {
                 lstActivities.ItemsSource = mBusinessFlow.Activities;
-                // Select the first Acitivity
+                // Select the first Activity
                 if (mBusinessFlow.Activities!= null &&  mBusinessFlow.Activities.Count > 0)
                 {
                     lstActivities.SelectedItem = lstActivities.Items[0];
@@ -132,7 +132,7 @@ namespace GingerCore.Drivers
             {
                 browser.GoBack();
             }
-            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
         }
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
@@ -141,7 +141,7 @@ namespace GingerCore.Drivers
             {
             browser.Refresh();
             }
-            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
         }
 
         private void btnGotoURL_Click(object sender, RoutedEventArgs e)
@@ -595,7 +595,7 @@ namespace GingerCore.Drivers
                 else if (e.getAttribute("Name").Trim()!="")
                     elName = e.getAttribute("Name");
             }catch(Exception ex)
-            { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+            { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             string elValue = (e.innerText == null) ? elName : e.innerText; 
             eTagName.Content = elType + "-" + elValue;
             doElemMenu(e);
@@ -967,7 +967,7 @@ namespace GingerCore.Drivers
             }
             catch (System.InvalidCastException eICE)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {eICE.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {eICE.Message}", eICE);
             }
             txtURL.Text = mDocument.url;
             HideJsScriptErrors(browser);
@@ -1017,7 +1017,7 @@ namespace GingerCore.Drivers
             }
             catch(System.InvalidCastException eICE)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {eICE.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {eICE.Message}", eICE);
             }
 
             if (btnMarker.IsChecked == true) SetDocMouseOver();

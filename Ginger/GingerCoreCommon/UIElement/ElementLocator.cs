@@ -54,10 +54,31 @@ namespace Amdocs.Ginger.Common.UIElement
         private int? mCount { get; set; }
         public int? Count { get { return mCount; } set { mCount = value; OnPropertyChanged(nameof(Count)); } }
 
-        public override string ItemName { get { return this.LocateBy.ToString() + "-" + this.LocateValue.ToString(); } set { } }
+
+        private string mItemName;
+
+        public override string ItemName
+        {
+            get
+            {
+                string currentExpectedName = LocateBy.ToString() + "-" + LocateValue;
+                if (mItemName == null)
+                {
+                    mItemName = currentExpectedName;
+
+                }
+                return mItemName;
+            }
+            set
+            {
+                mItemName = value;
+            }
+
+        }
 
         public enum eLocateStatus
         {
+            Unknown,
             Pending,
             Passed,
             Failed
@@ -92,7 +113,7 @@ namespace Amdocs.Ginger.Common.UIElement
                     case eLocateStatus.Pending:
                         return eImageType.Pending;
                     default:
-                        return eImageType.Pending;
+                        return eImageType.Unknown;
                 }
             }
         }

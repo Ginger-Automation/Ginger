@@ -45,7 +45,7 @@ namespace Ginger.WindowExplorer.Android
                     return new AndroidWidgetEditTextTreeItem() { AndroidElementInfo = AEI };
 
                 default:
-                    // retrun simple basic Android TVI
+                    // return simple basic Android TVI
                     return new AndroidElementTreeItemBase() { AndroidElementInfo = AEI };
             }
         }

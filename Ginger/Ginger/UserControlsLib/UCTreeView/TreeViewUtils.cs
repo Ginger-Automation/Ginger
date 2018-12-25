@@ -29,6 +29,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Ginger;
+using Amdocs.Ginger.Common;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -74,12 +75,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 }
                 catch(Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, e.StackTrace);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, e.StackTrace);
                 }
             }
 
             //Add source control icon
-            if (itemSourceControlStateIcon != eImageType.Null)
+            if (itemSourceControlStateIcon != eImageType.Null && itemObj != null)
             {
                 try
                 {
@@ -93,7 +94,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 catch(Exception ex)
                 {
                     // TODO: write to log
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
             }
 

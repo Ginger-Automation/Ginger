@@ -304,7 +304,7 @@ namespace Ginger.Run
             }
             else
             {
-                ExecutionLogger.GenerateBusinessFlowOfflineReport(currentConf.HTMLReportsFolder + bf.Name, bf, App.RunsetExecutor.RunSetConfig.Name);
+                ExecutionLogger.GenerateBusinessFlowOfflineReport(mRunner.ProjEnvironment, currentConf.HTMLReportsFolder + bf.Name, bf, App.RunsetExecutor.RunSetConfig.Name);
             }
         }
         private void Businessflow_ClickActive(object sender, RoutedEventArgs e)
@@ -438,7 +438,7 @@ namespace Ginger.Run
             }
             catch (InvalidOperationException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Update Stats", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to Update Stats", e);
             }
         }
         //ToDo : move to piechart section or create usercontrol

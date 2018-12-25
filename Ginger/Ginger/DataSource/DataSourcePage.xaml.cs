@@ -61,8 +61,7 @@ namespace Ginger.DataSource
                 App.ObjFieldBinding(DataSourceNameTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.Name);
                 App.ObjFieldBinding(txtDataSourcePath, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.FilePath, BindingMode.OneWay);
                 App.ObjFieldBinding(DataSourceTypeTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.DSType, BindingMode.OneWay);
-
-                InitDSConnection();
+                                
                 SetGridView();
                 SetGridData();                
             }
@@ -93,40 +92,13 @@ namespace Ginger.DataSource
             grdTableList.SetAllColumnsDefaultView(view);
             grdTableList.InitViewItems();
         }
-
-        private void InitDSConnection()
-        {
-            if (mDSDetails.DSType == DataSourceBase.eDSType.MSAccess)
-            {
-                DataSourceBase ADC;
-                ADC = new AccessDataSource();
-                if (mDSDetails.FilePath.StartsWith("~"))
-                {
-                    mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~", "");
-                    if(!mDSDetails.FilePath.StartsWith(@"~\"))
-                    {
-                        mDSDetails.FileFullPath = App.UserProfile.Solution.Folder + @"\" + mDSDetails.FileFullPath;
-                    }
-                    else
-                    {
-                        mDSDetails.FileFullPath = App.UserProfile.Solution.Folder + mDSDetails.FileFullPath;
-                    }
-                }
-                ADC.Init(mDSDetails.FileFullPath);
-                mDSDetails.DSC = ADC;
-            }
-
-        }
+        
         private void SetGridData()
         {
             mDSTableList = mDSDetails.DSC.GetTablesList();           
             grdTableList.DataSourceList = mDSTableList;           
         }
-
-        public ObservableList<DataSourceTable> GetTableList()
-        {
-            return mDSTableList;
-        }
+        
         private void DeleteSelectedTables(object sender, RoutedEventArgs e)
         {
             if (grdTableList.Grid.SelectedItems.Count == 0)

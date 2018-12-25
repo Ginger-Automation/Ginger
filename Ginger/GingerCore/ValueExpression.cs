@@ -27,13 +27,15 @@ using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
+
 namespace GingerCore
 {
-    public class ValueExpression
+    public class ValueExpression : IValueExpression
     {
         // regEx Cheat sheet
         //  ^  Depending on whether the MultiLine option is set, matches the position before the first character in a line, or the first character in the string. 
@@ -109,8 +111,8 @@ namespace GingerCore
 
         ObservableList<DataSourceBase> DSList;
 
-        BusinessFlow BF;
-        ProjEnvironment Env;
+        IBusinessFlow BF;
+        IProjEnvironment Env;
         bool bUpdate;
         string updateValue;
         bool bDone;
@@ -136,7 +138,7 @@ namespace GingerCore
             return Value;
         }
 
-        public ValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null)
+        public ValueExpression(IProjEnvironment Env, IBusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null)
         {
             this.Env = Env;
             this.BF = BF;
@@ -172,12 +174,12 @@ namespace GingerCore
             mValueCalculated = Value;
 
             //Do the operation based on order!!!
-            //First replace Vars - since they can apear in other func like VBS v1+v2 or VBS mid(v1,1,4);
+            //First replace Vars - since they can appear in other func like VBS v1+v2 or VBS mid(v1,1,4);
             ReplaceVars();
 
             ReplaceGlobalParameters();
 
-            //replace environment parameters which embeded into functions like VBS
+            //replace environment parameters which embedded into functions like VBS
             ReplaceEnvVars();
             ReplaceDataSources();
 
@@ -261,7 +263,7 @@ namespace GingerCore
                     bool bChange = false;
                     if (bUpdate == true)
                     {
-                        // Addign this to update value only for the main DS Expression .. not VE in Parameter
+                        // Adding this to update value only for the main DS Expression .. not VE in Parameter
                         Regex rxDS = new Regex("{DS Name=");
                         MatchCollection dsMatch = rxDS.Matches(mValueCalculated);
                         if (dsMatch.Count > 1)
@@ -305,8 +307,8 @@ namespace GingerCore
             {
                 if (DataSource.FileFullPath.StartsWith("~"))
                 {
-                    DataSource.FileFullPath = DataSource.FileFullPath.Replace("~", "");
-                    DataSource.FileFullPath = DataSource.ContainingFolderFullPath.Replace("DataSources", "") + DataSource.FileFullPath;
+                    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
+                    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
                 }
                 DataSource.Init(DataSource.FileFullPath);
             }
@@ -348,6 +350,11 @@ namespace GingerCore
                     else if (sAct == "RC") // Get Row Count
                     {
                         Query = "Select COUNT(*) FROM " + DSTable;
+                        p = "";
+                    }
+                    else if (sAct == "ARC") // Get Available Row Count
+                    {
+                        Query = "Select COUNT(*) FROM " + DSTable + " WHERE GINGER_USED <> 'True' or GINGER_USED is null";
                         p = "";
                     }
                     else if (sAct == "ETE") // Get Row Count
@@ -399,15 +406,16 @@ namespace GingerCore
                         Query = p.Substring(p.IndexOf("QUERY=") + 6, p.Length - 7);                        
                         if (Query.ToUpper().IndexOf("SELECT *") == -1)
                         {
-                            Query = Regex.Replace(Query, " FROM ", ",GINGER_ID FROM ", RegexOptions.IgnoreCase);
+                            Query = Regex.Replace(Query, " FROM ", ",[GINGER_ID] FROM ", RegexOptions.IgnoreCase);
                         }
                     }
                     else
                     {
                         Query = "Select ";
                         iColVal = p.Substring(p.IndexOf("ICOLVAL=") + 8, p.IndexOf("IROW=") - 9);
+                        iColVal = "[" + iColVal + "]";                        
                         p = p.Substring(p.TrimStart().IndexOf("IROW="));
-                        Query = Query + iColVal + ",GINGER_ID from " + DSTable;
+                        Query = Query + iColVal + ",[GINGER_ID] from " + DSTable;
 
                         if (p.IndexOf(" ") > 0)
                             IRow = p.Substring(p.IndexOf("IROW=") + 5, p.IndexOf(" ") - 5);
@@ -434,6 +442,7 @@ namespace GingerCore
                             {
                                 p = p.Substring(p.TrimStart().IndexOf("WCOLVAL="));
                                 string wColVal = p.Substring(p.IndexOf("WCOLVAL=") + 8, p.IndexOf("WOPR=") - 9);
+                                wColVal = "[" + wColVal + "]";
                                 Query = Query + " Where ";
                                 p = p.Substring(p.TrimStart().IndexOf("WOPR="));
                                 string wOpr = "";
@@ -449,17 +458,25 @@ namespace GingerCore
                                 }
                                 if (wOpr == "Equals")
                                 {
-                                    if (wColVal == "GINGER_ID")
+                                    if (wColVal == "[GINGER_ID]")
+                                    { 
                                         Query = Query + wColVal + " = " + wRowVal + "";
+                                    }
                                     else
+                                    { 
                                         Query = Query + wColVal + " = '" + wRowVal + "'";
+                                    }
                                 }
                                 else if (wOpr == "NotEquals")
                                 {
-                                    if (wColVal == "GINGER_ID")
+                                    if (wColVal == "[GINGER_ID]")
+                                    { 
                                         Query = Query + wColVal + " <> " + wRowVal + "";
+                                    }
                                     else
+                                    { 
                                         Query = Query + wColVal + " <> '" + wRowVal + "'";
+                                    }
                                 }
                                 else if (wOpr == "Contains")
                                     Query = Query + wColVal + " LIKE " + "'%" + wRowVal + "%'";
@@ -533,7 +550,7 @@ namespace GingerCore
                         foreach (DataColumn sCol in dt.Columns)
                         {
                             if (!new List<string> { "GINGER_ID", "GINGER_LAST_UPDATED_BY", "GINGER_LAST_UPDATE_DATETIME", "GINGER_KEY_NAME" }.Contains(sCol.ColumnName))
-                                updateQuery += sCol.ColumnName + "='" + updateValue.Replace("'", "''") + "' ,";
+                                updateQuery += "[" + sCol.ColumnName + "]='" + updateValue.Replace("'", "''") + "' ,";
                         }
                         updateQuery = updateQuery.Substring(0, updateQuery.Length - 1);
                         if (mColList.Contains("GINGER_LAST_UPDATED_BY"))
@@ -886,7 +903,7 @@ namespace GingerCore
             catch (Exception ex)
             {
 
-                Reporter.ToLog(eLogLevel.ERROR, "Replace General Function Error:", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Replace General Function Error:", ex);
             }
         }
 
@@ -1001,7 +1018,7 @@ namespace GingerCore
         /// <param name="BusinessFlow">Business Flow containing the Variables</param>
         /// <param name="Value">the Expression string</param>
         /// <returns></returns>
-        public static string Calculate(ProjEnvironment ProjEnvironment, BusinessFlow BusinessFlow, string Value,ObservableList <DataSourceBase> DSList,bool bUpdate = false, string UpdateValue = "")
+        public static string Calculate(IProjEnvironment ProjEnvironment, IBusinessFlow BusinessFlow, string Value,ObservableList <DataSourceBase> DSList,bool bUpdate = false, string UpdateValue = "")
         {
             //TODO: this is static func, we can later on do cache and other stuff for performence if needed
             ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList, bUpdate,UpdateValue);

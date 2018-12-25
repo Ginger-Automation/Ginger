@@ -53,7 +53,7 @@ namespace GingerCore.FlowControlLib
 
         public enum eFlowControlAction
         {
-            // Put here ONLY items which do flow control like skip actions or goto action etc... all the rest should be regualr actions
+            // Put here ONLY items which do flow control like skip actions or goto action etc... all the rest should be regular actions
             // Only actions which move the Instruction pointer of the flow, with one exception of messagebox
 
             [EnumValueDescription("GoTo Action")]

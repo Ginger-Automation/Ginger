@@ -81,6 +81,7 @@ namespace Ginger.BusinessFlowWindows
             }         
            
             ViewModel activity = new ViewModel(activityStatList);
+            ActivityChart.ChartTitle = GingerDicser.GetTermResValue(eTermResKey.Activities);
             ActivityChart.DataContext = activity;
 
             //Action

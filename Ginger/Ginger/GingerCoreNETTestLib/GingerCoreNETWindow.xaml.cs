@@ -132,7 +132,7 @@ namespace Ginger.GingerCoreNETTestLib
 
         private void ReporterError()
         {
-            Reporter.ToLog(eLogLevel.ERROR, "Test Reporter Error!");
+            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Test Reporter Error!");
         }
 
         private void RunAction()

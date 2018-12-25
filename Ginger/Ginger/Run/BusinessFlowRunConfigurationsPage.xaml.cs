@@ -107,23 +107,23 @@ namespace Ginger.Run
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.ParentType, Header = "Level", WidthWeight = 10, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.ParentName, Header = "Parent Name", WidthWeight = 15, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Name, WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Description, WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Formula, WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Value, Header = "Initial Value", WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });           
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Image), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentType), Header = "Level", WidthWeight = 10, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentName), Header = "Parent Name", WidthWeight = 15, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Name), WidthWeight = 20, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Description), WidthWeight = 20, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Formula), WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Value), Header = "Initial Value", WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });           
             if (mWindowMode == eWindowMode.Configuration)
             {
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.MappedOutputValue, Header = "Mapped Runtime Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(VariableBase.Fields.MappedOutputType, VariableBase.Fields.MappedOutputValue,null, VariableBase.Fields.PossibleOutputVariables, VariableBase.Fields.SupportSetValue, "Output Variable", null), WidthWeight = 40 });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(nameof(VariableBase.MappedOutputType), nameof(VariableBase.MappedOutputValue), null, nameof(VariableBase.PossibleOutputVariables), nameof(VariableBase.SupportSetValue), "Output Variable", null), WidthWeight = 40 });
             }                
             else if (mWindowMode == eWindowMode.SummaryView)
             {
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.MappedOutputValue, Header = "Mapped Runtime Value", BindingMode = BindingMode.OneWay, ReadOnly = true, WidthWeight = 40});
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", BindingMode = BindingMode.OneWay, ReadOnly = true, WidthWeight = 40});
             }
                 
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.DiffrentFromOrigin, Header = "Different From Origin", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.DiffrentFromOrigin), Header = "Different From Origin", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
             grdVariables.SetAllColumnsDefaultView(view);
             grdVariables.InitViewItems();
 
@@ -282,7 +282,7 @@ namespace Ginger.Run
             string originalValue= varToEdit.Value;            
             VariableEditPage w = new VariableEditPage(varToEdit, true);
             w.ShowAsWindow(eWindowShowStyle.Dialog);
-            if (varToEdit.Formula != originalFormula || varToEdit.Value != originalValue)//varibale was changed
+            if (varToEdit.Formula != originalFormula || varToEdit.Value != originalValue)//variable was changed
             {
                 varToEdit.VarValChanged = true;
                 varToEdit.DiffrentFromOrigin = true;
@@ -305,7 +305,7 @@ namespace Ginger.Run
                     winButtons.Add(okBtn);
                     winButtons.Add(undoBtn);
 
-                    GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Run Configurations", this, winButtons, false, string.Empty, CloseWinClicked);
+                    GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Run Configurations", this, winButtons, false, "Undo & Close", CloseWinClicked);
                     break;
 
                 case eWindowMode.SummaryView:
@@ -325,12 +325,10 @@ namespace Ginger.Run
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
             {
                 UndoChangesAndClose();
             }
-            else
-                _pageGenericWin.Close();
         }
 
         private void undoBtn_Click(object sender, RoutedEventArgs e)
@@ -397,9 +395,9 @@ namespace Ginger.Run
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (BusinessFlowTab.SelectedItem == tab)
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
@@ -408,7 +406,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
             
@@ -479,7 +477,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Business Flow Configuration Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Business Flow Configuration Page tabs style", ex);
             }
         }
     }

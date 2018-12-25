@@ -43,7 +43,7 @@ namespace Ginger.ALM.Repository
         {
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, "Connecting to QC server");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Connecting to QC server");
                 return ALMIntegration.Instance.AlmCore.ConnectALMServer();
             }
             catch (Exception e)
@@ -53,7 +53,7 @@ namespace Ginger.ALM.Repository
                 else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
                     Reporter.ToUser(eUserMsgKeys.ALMConnectFailureWithCurrSettings, e.Message);
 
-                Reporter.ToLog(eLogLevel.ERROR, "Error connecting to QC server", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error connecting to QC server", e);
                 return false;
             }
         }
@@ -105,7 +105,7 @@ namespace Ginger.ALM.Repository
         #region Import From QC
         public override void ImportALMTests(string importDestinationFolderPath)
         {
-            Reporter.ToLog(eLogLevel.INFO, "Start importing from QC");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Start importing from QC");
             //set path to import to               
             if (importDestinationFolderPath == "")
                 importDestinationFolderPath = App.UserProfile.Solution.BusinessFlowsMainFolder;
@@ -178,7 +178,7 @@ namespace Ginger.ALM.Repository
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
                                 if (string.IsNullOrEmpty(activ.TargetApplication) == false)
-                                    if (tsBusFlow.TargetApplications.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault() == null)
+                                    if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                                     {
                                         ApplicationPlatform appAgent = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                                         if (appAgent != null)
@@ -204,16 +204,16 @@ namespace Ginger.ALM.Repository
                     catch (Exception ex)
                     {
                         Reporter.ToUser(eUserMsgKeys.ErrorInTestsetImport, testSetItemtoImport.TestSetName, ex.Message);
-                        Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC", ex);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error importing from QC", ex);
                     }
                 }
                 
                 Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
 
-                Reporter.ToLog(eLogLevel.INFO, "Imported from QC successfully");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Imported from QC successfully");
                 return true;
             }
-            Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC");
+            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error importing from QC");
             return false;
         }
 
@@ -262,7 +262,7 @@ namespace Ginger.ALM.Repository
                 matchingTC = ((QCCore)ALMIntegration.Instance.AlmCore).GetQCTest(activtiesGroup.ExternalID);
                 if (matchingTC != null)
                 {
-                    //ask user if want to continute
+                    //ask user if want to continue
                     MessageBoxResult userSelec = Reporter.ToUser(eUserMsgKeys.ActivitiesGroupAlreadyMappedToTC, activtiesGroup.Name, matchingTC["TS_SUBJECT"].Path + "\\" + matchingTC.Name);
                     if (userSelec == MessageBoxResult.Cancel)
                         return false;
@@ -273,7 +273,7 @@ namespace Ginger.ALM.Repository
 
             if (matchingTC == null && String.IsNullOrEmpty(uploadPath))
             {
-                //get the QC Test Plan path to upload the activties group to
+                //get the QC Test Plan path to upload the activities group to
                 uploadPath = SelectALMTestPlanPath();
                 if (String.IsNullOrEmpty(uploadPath))
                 {
@@ -339,7 +339,7 @@ namespace Ginger.ALM.Repository
                 matchingTS = ((QCCore)ALMIntegration.Instance.AlmCore).GetQCTestSet(businessFlow.ExternalID);
                 if (matchingTS != null)
                 {
-                    //ask user if want to continute
+                    //ask user if want to continue
                     userSelec = Reporter.ToUser(eUserMsgKeys.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.TestSetFolder.Path + "\\" + matchingTS.Name);
                     if (userSelec == MessageBoxResult.Cancel)
                         return false;
@@ -365,7 +365,7 @@ namespace Ginger.ALM.Repository
                 if(userSelec == MessageBoxResult.No)
                     Reporter.ToUser(eUserMsgKeys.ExportQCNewTestSetSelectDiffFolder);
 
-                //get the QC Test Plan path to upload the activties group to
+                //get the QC Test Plan path to upload the activities group to
                 testLabUploadPath = SelectALMTestLabPath();
                 if (String.IsNullOrEmpty(testLabUploadPath))
                 {
@@ -377,7 +377,7 @@ namespace Ginger.ALM.Repository
             //upload the business flow
             Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportItemToALM, null, businessFlow.Name);
             string res = string.Empty;
-            //TODO : need to update to retireve only Test Set Item Fields -->DONE
+            //TODO : need to update to retrieve only Test Set Item Fields -->DONE
             ObservableList<ExternalItemFieldBase> testSetFields = App.UserProfile.Solution.ExternalItemsFields;
             ALMIntegration.Instance.RefreshALMItemFields(testSetFields, true, null);
 

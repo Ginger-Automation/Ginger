@@ -552,6 +552,9 @@ namespace Ginger.Actions
         {
             try
             {
+                if (txtDescription == null || cmbColSelectorValue.SelectedItem == null)
+                    return;
+
                 txtDescription.Text = string.Empty;
                 TextBlockHelper TBH = new TextBlockHelper(txtDescription);
 
@@ -595,7 +598,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed", ex);
             }
         }
 

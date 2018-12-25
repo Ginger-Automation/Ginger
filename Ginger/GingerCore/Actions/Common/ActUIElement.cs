@@ -73,8 +73,9 @@ namespace GingerCore.Actions.Common
                     mPlatforms.Add(ePlatformType.Java);
                     mPlatforms.Add(ePlatformType.PowerBuilder);
                     mPlatforms.Add(ePlatformType.Windows);
+                    mPlatforms.Add(ePlatformType.Mobile);
 
-                    //TODO: to see the Web impl uncommnet
+                    //TODO: to see the Web impl uncomment
                     // DO NOT remove comment before we have Selenium support this action and converter for old action
                     mPlatforms.Add(ePlatformType.Web);
                 }
@@ -147,6 +148,10 @@ namespace GingerCore.Actions.Common
             public static string HandleElementLocateBy = "HandleElementLocateBy";
             public static string HandleElementLocatorValue = "HandleElementLocatorValue";
             public static string ValidationElementValue = "ValidationElementValue";
+
+            //used for SelectandValidate
+            public static string SubElementLocateBy = "SubElementLocateBy";
+            public static string SubElementLocatorValue = "SubElementLocatorValue";
         }
 
         // Fields Helper for specific action, will create AIV with param name based on enum
@@ -172,6 +177,8 @@ namespace GingerCore.Actions.Common
         {
             [EnumValueDescription("HTML Table")]
             HTMLTable,
+            [EnumValueDescription("Pane")]
+            Pane,
         }
 
         public enum eElementProperty
@@ -264,6 +271,9 @@ namespace GingerCore.Actions.Common
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Open Drop Down")]
             OpenDropDown,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Select and Validate")]
+            SelectandValidate,
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Close Drop Down")]
             CloseDropDown,
@@ -624,8 +634,7 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("4. Very Long - more than 30 seconds (test for idle every 5 seconds , max 5 minutes wait)")]
             VeryLong,
         }
-
-        [IsSerializedForLocalRepository]
+        
         public string ElementLocateValue
         {
             get
@@ -635,6 +644,7 @@ namespace GingerCore.Actions.Common
             set
             {
                 GetOrCreateInputParam(Fields.ElementLocateValue).Value = value;
+                OnPropertyChanged(nameof(ElementLocateValue));
             }
         }
 

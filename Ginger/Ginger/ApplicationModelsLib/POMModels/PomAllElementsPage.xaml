@@ -9,44 +9,57 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PomAllElementsPage">
 
-    <Grid>
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition Height="700*"/>
         </Grid.RowDefinitions>
 
-
         <StackPanel x:Name="xSpyPanel" HorizontalAlignment="Left" Orientation="Horizontal" Grid.Row="0">
                 <ToggleButton x:Name="LiveSpyButton" Click="LiveSpyHandler"  ToolTip="Live Spy- Hover with the mouse over the Element you want to spy and Click/Hold Down 'Ctrl' Key" Width="24" Height="24" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}">
                     <Image Source="{StaticResource @Spy_24x24}"/>
                 </ToggleButton>
-                <Label x:Name="xStatusLable" Content="Spying off" ></Label>
+                <Label x:Name="xStatusLable" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Content="Spying is Off" ></Label>
                 <UserControls:ucButton x:Name="xCreateNewElement" ButtonType="RoundTextAndImageButton" ButtonText="Create New Element" ButtonImageType="New" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed"  Click="CreateNewElemetClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
             </StackPanel>
-        <UserControls:ucButton x:Name="xTestAllElements"  ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right"  ButtonText="Test All Elements" ButtonImageType="Play" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" />
+        <UserControls:ucButton x:Name="xTestAllElements"  ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right"  ButtonText="Test All Mapped Elements" ButtonImageType="Play" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" />
         <UserControls:ucButton x:Name="xStopTestAllElements"  ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right"  ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="StopTestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed"/>
 
-
-
-        <TabControl x:Name="POMModelTabs" Grid.Row="1"  HorizontalAlignment="Stretch"  >
-
+        <TabControl x:Name="xPOMModelTabs" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="POMModelTabsSelectionChanged"  >
+            <TabControl.Resources>
+                <Style TargetType="{x:Type TabItem}">
+                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                    <Setter Property="Height" Value="25"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="False" >
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True" >
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TabControl.Resources>
+            
             <TabItem Margin="0,0,0,0" x:Name="xMappedElementsTab" >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock x:Name="xMappedElementsTextBlock"  VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
+                        <UserControls:ImageMakerControl ImageType="Elements"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
+                        <TextBlock x:Name="xMappedElementsTextBlock" Text="Mapped Elements" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="xMappedElementsFrame" HorizontalAlignment="Stretch" />
             </TabItem>
+
             <TabItem  x:Name="xUnmappedElementsTab" >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
-                        <TextBlock x:Name="xUnMappedElementsTextBlock"  Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
+                        <UserControls:ImageMakerControl ImageType="Elements"  SetAsFontImageWithSize="18"  Width="18" Height="18" Foreground="Gray" />
+                        <TextBlock x:Name="xUnMappedElementsTextBlock" Text="Unmapped Elements" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="xUnMappedElementsFrame" HorizontalAlignment="Stretch"/>
             </TabItem>
-
         </TabControl>
     </Grid>
 </Page>
