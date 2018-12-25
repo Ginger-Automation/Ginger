@@ -43,6 +43,7 @@ namespace UnitTests.NonUITests
         [Level1]
         public static void ClassInitialize(TestContext TC)
         {
+            //??
             // RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
             Ginger.App.InitClassTypesDictionary();
         }
@@ -321,8 +322,8 @@ namespace UnitTests.NonUITests
             BF2.Description = "aaa";
             Assert.IsTrue(BF2.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified);
         }
-
-        [Ignore]   // Temp FIXME YW
+        
+        [Ignore]
         [TestMethod]
         public void RunSetConfigSaveLoad()
         {
@@ -338,9 +339,9 @@ namespace UnitTests.NonUITests
             BFR.BusinessFlowName = "BF1";
             ARC1.BusinessFlowsRunList.Add(BFR);
             RSC.GingerRunners.Add(ARC1);
-
+            
             RSC.RepositorySerializer.SaveToFile(RSC, TempFilepath);
-
+            
             //Assert
             NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
             RunSetConfig RSC2 = (RunSetConfig)newRepositorySerializer.DeserializeFromFile(typeof(RunSetConfig), TempFilepath);
@@ -537,9 +538,9 @@ namespace UnitTests.NonUITests
             act1.InputValues.Add(new ActInputValue() { Param = "Param2" });
 
             //add flow control
-            act1.FlowControls = new ObservableList<IFlowControl>();
+            act1.FlowControls = new ObservableList<FlowControl>();
             act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "A=B", FlowControlAction =eFlowControlAction.GoToActivity });
-           eFlowControlAction secondFlowControlAction =eFlowControlAction.RerunAction;
+            eFlowControlAction secondFlowControlAction =eFlowControlAction.RerunAction;
             GingerCore.FlowControlLib.FlowControl secondFlowControl = new GingerCore.FlowControlLib.FlowControl() { Condition = "C>123", FlowControlAction = secondFlowControlAction };
             act1.FlowControls.Add(secondFlowControl);
             act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "D=111", FlowControlAction =eFlowControlAction.StopRun });

@@ -1123,7 +1123,7 @@ namespace GingerCore
         //}
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IFlowControl> BFFlowControls { get; set; } = new ObservableList<IFlowControl>();
+        public ObservableList<FlowControl> BFFlowControls { get; set; } = new ObservableList<FlowControl>();
 
 
         public string Applications

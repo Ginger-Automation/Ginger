@@ -20,13 +20,16 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
 using Ginger.Reports;
 using Ginger.Repository;
 using Ginger.Run;
+using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows;
 using Ginger.SourceControl;
@@ -57,11 +60,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
-using System.Windows.Input;
-using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
-using Ginger.Run.RunSetActions;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -563,9 +561,12 @@ namespace Ginger
             AddClass(list, typeof(RunSetActionSendEmail));
             AddClass(list, typeof(BusinessFlowReport));
             AddClass(list, typeof(HTMLReportConfiguration));
-            AddClass(list, typeof(BusinessFlowRun));
-            //list.Add("Ginger.Run.BusinessFlowRun", typeof(BusinessFlowRun));
+            AddClass(list, typeof(HTMLReportConfigFieldToSelect));
             
+            AddClass(list, typeof(BusinessFlowRun));            
+            
+            //list.Add("Ginger.Run.BusinessFlowRun", typeof(BusinessFlowRun));
+
 
 
             // Put back for Lazy load of BF.Acitvities

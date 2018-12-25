@@ -26,7 +26,7 @@ using System;
 
 namespace GingerCore.FlowControlLib
 {
-    public class FlowControl : RepositoryItemBase, IFlowControl
+    public class FlowControl : RepositoryItemBase
     {        
         public new static partial class Fields
         {

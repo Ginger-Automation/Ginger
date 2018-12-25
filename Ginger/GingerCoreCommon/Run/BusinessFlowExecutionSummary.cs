@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using GingerCore.Variables;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore;
+using GingerCore.FlowControlLib;
 
 namespace Ginger.Run
 {
@@ -63,7 +64,7 @@ namespace Ginger.Run
         public ObservableList<VariableBase> ExecutionVariabeles = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IFlowControl> ExecutionBFFlowControls = new ObservableList<IFlowControl>();
+        public ObservableList<FlowControl> ExecutionBFFlowControls = new ObservableList<FlowControl>();
         
         public string PublishStatus 
         { 

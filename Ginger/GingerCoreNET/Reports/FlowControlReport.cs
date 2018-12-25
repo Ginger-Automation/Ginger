@@ -18,6 +18,7 @@ limitations under the License.
 
 
 using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCore.FlowControlLib;
 using Newtonsoft.Json;
 
 namespace Ginger.Reports
@@ -26,9 +27,9 @@ namespace Ginger.Reports
     [JsonObject(MemberSerialization.OptIn)]
     public class FlowControlReport
     {
-        private IFlowControl mFlowControl;
+        private FlowControl mFlowControl;
 
-        public FlowControlReport(IFlowControl ARV)
+        public FlowControlReport(FlowControl ARV)
         {
             mFlowControl = ARV;
         }

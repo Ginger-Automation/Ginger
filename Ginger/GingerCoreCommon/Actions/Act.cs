@@ -294,7 +294,7 @@ namespace GingerCore.Actions
         public eStatusConverterOptions StatusConverter { get; set; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IFlowControl> FlowControls { get; set; } = new ObservableList<IFlowControl>();
+        public ObservableList<FlowControl> FlowControls { get; set; } = new ObservableList<FlowControl>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> InputValues { get; set; } = new ObservableList<ActInputValue>();
@@ -530,7 +530,7 @@ namespace GingerCore.Actions
         }
 
 
-        public ObservableList<IFlowControl> ActFlowControls
+        public ObservableList<FlowControl> ActFlowControls
         {
             get
             {

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using System;
 using GingerCore.Variables;
 using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCore.FlowControlLib;
 
 namespace Ginger.Run
 {
@@ -53,7 +54,7 @@ namespace Ginger.Run
         public ObservableList<VariableBase> BusinessFlowCustomizedRunVariables = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IFlowControl> BFFlowControls = new ObservableList<IFlowControl>();
+        public ObservableList<FlowControl> BFFlowControls = new ObservableList<FlowControl>();
 
         public string ItemName
         {
