@@ -77,11 +77,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
             Swaggerdoc = SwaggerDocument.FromJsonAsync(orignaljson).Result;
             foreach (var paths in Swaggerdoc.Paths)
             {
-                if (paths.Key == "/accounts")
-                {
-
-                }
-
                 SwaggerPathItem SPi = paths.Value;
                 foreach (KeyValuePair<SwaggerOperationMethod, SwaggerOperation> so in SPi.AsEnumerable())
                 {
@@ -365,7 +360,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
         private ObservableList<AppModelParameter> GenerateJsonBody(ApplicationAPIModel aAM, JsonSchema4 operation)
         {
             string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation);
-            //SampleBody = "{\"securityInfo\":{\"securityPin\":{\"pin\":\"sample\"},\"securityAnswer\":{\"questionCode\":\"sample\",\"answer\":\"sample\"}},\"customerInfo\":{\"firstName\":\"sample\",\"lastName\":\"sample\",\"dateOfBirth\":\"sample\",\"preferredLanguage\":\"sample\"},\"communicationPreferences\":{\"marketingOptInIndicator\":false,\"emailAddress\":\"sample\"},\"billingAddress\":{\"addressLine1\":\"sample\",\"addressLine2\":\"sample\",\"city\":\"sample\",\"state\":\"sample\",\"zip\":\"sample\",\"zip4\":\"sample\",\"validationMessages\":[{\"code\":\"sample\",\"message\":\"sample\",\"severity\":\"sample\"}]},\"newAccountDetails\":{\"accountType\":{},\"accountSubType\":{}}}";
             object[] BodyandModelParameters = JSONTemplateParser.GenerateBodyANdModelParameters(SampleBody);
             aAM.RequestBody = (string)BodyandModelParameters[0];
           return (ObservableList<AppModelParameter>)BodyandModelParameters[1];
