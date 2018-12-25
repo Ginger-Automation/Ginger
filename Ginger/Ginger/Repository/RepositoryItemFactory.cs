@@ -46,7 +46,7 @@ namespace Ginger.Repository
 
         public IValueExpression CreateValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null)
         {
-            throw new System.NotImplementedException();
+            return new ValueExpression(Env, BF, (ObservableList<GingerCore.DataSource.DataSourceBase>)DSList, bUpdate, UpdateValue, bDone, solutionVariables);            
         }
         public IActivitiesGroup CreateActivitiesGroup()
         {
@@ -64,36 +64,32 @@ namespace Ginger.Repository
 
 
 
-        public Type GetRepositoryItemTypeFromInterface(Type interfaceType)
-        {
-            if (interfaceType.IsInterface)
-            {
-                if (interfaceType == typeof(IAct))
-                {
-                    return typeof(Act);
-                }
-                else if (interfaceType == typeof(Activity))
-                {
-                    return typeof(Activity);
-                }
-                else if (interfaceType == typeof(IActivitiesGroup))
-                {
-                    return typeof(ActivitiesGroup);
-                }
-                else if (interfaceType == typeof(IAgent))
-                {
-                    return typeof(Agent);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                return interfaceType;
-            }
-        }
+        //public Type GetRepositoryItemTypeFromInterface(Type interfaceType)
+        //{
+        //    if (interfaceType.IsInterface)
+        //    {
+        //        if (interfaceType == typeof(IAct))
+        //        {
+        //            return typeof(Act);
+        //        }                
+        //        else if (interfaceType == typeof(IActivitiesGroup))
+        //        {
+        //            return typeof(ActivitiesGroup);
+        //        }
+        //        else if (interfaceType == typeof(IAgent))
+        //        {
+        //            return typeof(Agent);
+        //        }
+        //        else
+        //        {
+        //            return null;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return interfaceType;
+        //    }
+        //}
 
         public ObservableList<IAgent> GetAllIAgents()
         {

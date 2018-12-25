@@ -35,6 +35,7 @@ using GingerTestHelper;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Ginger.Repository;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
@@ -49,6 +50,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
+            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
             // Create a simple BF with simple Actions
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
@@ -139,7 +141,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [TestMethod]
         public void FlowControlTestFor_IfFailed_StopRunner()
         {
-
+            
             //Arrange
             ResetBusinessFlow();
 
