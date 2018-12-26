@@ -80,7 +80,13 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
-            return ImportFromQC.GetALMItemFields();
+            ObservableList<ExternalItemFieldBase> tempFieldsList = ImportFromQC.GetALMItemFields();
+            almItemFields = new ObservableList<ExternalItemFieldBase>();
+            foreach (ExternalItemFieldBase item in tempFieldsList)
+            {
+                almItemFields.Add((ExternalItemFieldBase)item.CreateCopy());
+            }
+            return tempFieldsList;
         }
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST)

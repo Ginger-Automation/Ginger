@@ -110,7 +110,13 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
-            return ImportFromQCRest.GetALMItemFields(resourceType);
+            ObservableList<ExternalItemFieldBase> tempFieldsList = ImportFromQCRest.GetALMItemFields(resourceType);
+            almItemFields = new ObservableList<ExternalItemFieldBase>();
+            foreach (ExternalItemFieldBase item in tempFieldsList)
+            {
+                almItemFields.Add((ExternalItemFieldBase)item.CreateCopy());
+            }
+            return tempFieldsList;
         }
 
         public override bool IsServerConnected()
