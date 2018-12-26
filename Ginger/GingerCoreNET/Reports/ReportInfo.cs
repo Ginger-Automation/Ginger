@@ -202,7 +202,10 @@ namespace Ginger.Reports
                         return;
                 }
             }
-            catch { }
+            catch (Exception EC)
+            {
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to Deserialize reportjson filetype", EC);
+            }
         }
 
         public int TotalBusinessFlows
