@@ -18,13 +18,13 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
+using GingerCoreNET.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -904,7 +904,7 @@ namespace GingerCore
             catch (Exception ex)
             {
 
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Replace General Function Error:", ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Replace General Function Error:", ex);
             }
         }
 
