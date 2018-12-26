@@ -443,9 +443,10 @@ namespace Ginger.Reports
                     {
                         String[] elementsAfter = variable.Split(new string[] { "_:_" }, StringSplitOptions.None);
 
-                    
-      
-                    dt.Select("Name =" + elementsAfter[0]).FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
+
+
+
+                    dt.Select("Name  = '" + elementsAfter[0] + "'").FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
                 }
                 return dt;
             }
@@ -505,7 +506,7 @@ namespace Ginger.Reports
 
 
 
-                        dt.Select("Name =" + elementsAfter[0]).FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
+                        dt.Select("Name  = '" + elementsAfter[0] + "'").FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
                     }
                 }
                 return dt;
