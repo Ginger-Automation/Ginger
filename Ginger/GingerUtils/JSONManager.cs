@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 using System.Collections.Generic;
-using System.Text;
-using System.Web.Script.Serialization;
+
 
 namespace Ginger.Utils
 {
@@ -27,9 +27,9 @@ namespace Ginger.Utils
             }
             else
             {
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                //JavaScriptSerializer serializer = new JavaScriptSerializer();
                 Dictionary<string, object> dictionary =
-                    serializer.Deserialize<Dictionary<string, object>>(json);
+                    JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
                 return dictionary;
             }
         }
