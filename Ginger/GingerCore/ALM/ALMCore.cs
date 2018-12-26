@@ -80,5 +80,6 @@ namespace GingerCore.ALM
         {
             get; set;
         }
+        public abstract ObservableList<ExternalItemFieldBase> almItemFields { get; set; }
     }
 }

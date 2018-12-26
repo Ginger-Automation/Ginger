@@ -216,5 +216,6 @@ namespace GingerCore.ALM
         {
             ImportFromRQM.UpdateBusinessFlow(ref busFlow, testPlan);
         }
+        public override ObservableList<ExternalItemFieldBase> almItemFields { get; set; }
     }
 }

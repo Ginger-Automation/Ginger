@@ -145,5 +145,6 @@ namespace GingerCore.ALM
         {
             return ImportFromQC.GetTSQCTestsList(testSetID, TCsIDs);
         }
+        public override ObservableList<ExternalItemFieldBase> almItemFields { get; set; }
     }
 }
