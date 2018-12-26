@@ -86,7 +86,7 @@ namespace Ginger.ALM.Repository
 
         public override void ImportALMTests(string importDestinationFolderPath)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         public override void ImportALMTestsById(string importDestinationFolderPath)

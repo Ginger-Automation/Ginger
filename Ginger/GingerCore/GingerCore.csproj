@@ -547,6 +547,10 @@
     <Compile Include="ALM\ALMCore.cs" />
     <Compile Include="ALM\JiraCore.cs" />
     <Compile Include="ALM\JIRA\ImportFromJira.cs" />
+    <Compile Include="ALM\JIRA\JiraTestSet.cs" />
+    <Compile Include="ALM\JIRA\JiraTest.cs" />
+    <Compile Include="ALM\JIRA\JiraTestParameter.cs" />
+    <Compile Include="ALM\JIRA\JiraTestStep.cs" />
     <Compile Include="ALM\PublishToALMConfig.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
     <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />

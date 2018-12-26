@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using ALM_Common.Abstractions;
-using RQM_Repository.Data_Contracts;
+using JiraRepository.Data_Contracts;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -100,6 +100,19 @@ namespace GingerCore.ALM.JIRA
                 return connectedToServer;
             }
             return false;
+        }
+
+        public ObservableList<JiraTestSet> GetJiraTestSets()
+        {
+            AlmResponseWithData<JiraFieldColl> getTestsSet =  JiraRep.GetIssueFields(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET);
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
+            jiraDomainsProjectsDataList = JiraRep.GetLoginProjects(loginData.User, loginData.Password, loginData.Server).DataResult;
+            ObservableList<JiraTestSet> jiraDomains = new ObservableList<JiraTestSet>();
+            foreach (var domain in jiraDomainsProjectsDataList)
+            {
+                //jiraDomains.Add(domain.DomainName);
+            }
+            return jiraDomains;
         }
 
         public bool IsServerConnected()
