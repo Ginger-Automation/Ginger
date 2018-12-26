@@ -229,7 +229,8 @@ namespace Ginger
             AddVBSEval(tviVars, "Current Day (0# format)", "Right(\"0\" & Day(Now), 2)");
             AddVBSEval(tviVars, "Current Year (#### format)", "DatePart(\"yyyy\", Now)");
             AddVBSEval(tviVars, "Current Year (## format)", "Right(DatePart(\"yyyy\", Now),2)");
-            AddVBSEval(tviVars, "Current Date +7 days", "DateSerial(Year(Now), Month(Now),Day(DateAdd(\"d\",7,Now)))");
+            AddVBSEval(tviVars, "Current Date +7 days(month)", "DateSerial(Year(Now), Month(Now),Day(DateAdd(\"d\",7,Now)))");
+            AddVBSEval(tviVars, "Current Date + no of days", "FormatDateTime(DateAdd(\"d\",10,Now),2)");
             AddVBSEval(tviVars, "Current Day of month +7 days (0# format) ", "Right(\"0\" & Day(DateAdd(\"d\",7,Now)), 2)");
             AddVBSEval(tviVars, "Current Date -1 month", "DateSerial(Year(Now), Month(DateAdd(\"m\",-1,Now)),Day(Now))");
             AddVBSEval(tviVars, "Current Month -1 (0# format)", "Right(\"0\" & Month(DateAdd(\"m\",-1,Now)), 2)");
