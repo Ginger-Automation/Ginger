@@ -24,7 +24,6 @@ using GingerCore.Actions;
 using GingerCore.Drivers;
 using GingerCore.Drivers.Common;
 using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -36,16 +35,19 @@ namespace Ginger.WindowExplorer.HTMLCommon
     public partial class HTMLCanvasElementPage : Page
     {
         ElementInfo ElementInfo;
-        ObservableList<Act> actList;    
+        ObservableList<ActInputValue> actInputValuesList;    
         
-        public HTMLCanvasElementPage(ObservableList<Act> list, ElementInfo elementInfo)
+        public HTMLCanvasElementPage(ElementInfo elementInfo)
         {
             InitializeComponent();
             ElementInfo = elementInfo;
-            InjectScriptAndStartEvent();
-            actList = list;
+            InjectScriptAndStartEvent();            
         }
 
+        public ObservableList<ActInputValue> GetTableRelatedInputValues()
+        {
+            return actInputValuesList;
+        }
         private void InjectScriptAndStartEvent()
         {
             ((SeleniumDriver)ElementInfo.WindowExplorer).InjectGingerLiveSpyAndStartClickEvent(ElementInfo);
@@ -79,8 +81,8 @@ namespace Ginger.WindowExplorer.HTMLCommon
             {
                 XOffset.Text = x;
                 YOffset.Text = y;                              
-                Amdocs.Ginger.Common.GeneralLib.General.AddOrUpdateInputParamValue("XCoordinate", x, ElementInfo.actInputValue);
-                Amdocs.Ginger.Common.GeneralLib.General.AddOrUpdateInputParamValue("YCoordinate", y, ElementInfo.actInputValue);
+                Amdocs.Ginger.Common.GeneralLib.General.AddOrUpdateInputParamValue("XCoordinate", x, actInputValuesList);
+                Amdocs.Ginger.Common.GeneralLib.General.AddOrUpdateInputParamValue("YCoordinate", y, actInputValuesList);
             }
             //TODO list actions
         }

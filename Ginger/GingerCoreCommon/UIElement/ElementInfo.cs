@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.Enums;
-using System.Linq;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
@@ -76,9 +75,7 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set { mElementTitle = value; }
         }
-
-        public ObservableList<ActInputValue> actInputValue = new ObservableList<ActInputValue>();
-
+        
         public enum eElementStatus
         {
             Unknown,
@@ -313,6 +310,7 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             return mData;
         }
+
     }
 
     public enum eLocateBy

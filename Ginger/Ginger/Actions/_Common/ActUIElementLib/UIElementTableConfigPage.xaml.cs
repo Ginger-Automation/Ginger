@@ -29,6 +29,7 @@ using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCore.Drivers.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -51,8 +52,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ActEditPage
         }
 
-        List<GingerCore.General.ComboItem> operationTypeList;
-       
+        List<GingerCore.General.ComboItem> operationTypeList;        
+
         public UIElementTableConfigPage(ActUIElement Act, PlatformInfoBase Platform)
         {
             eBaseWindow = BaseWindow.ActEditPage;
@@ -63,11 +64,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
             InitializeComponent();
             ShowTableControlActionConfigPage(mPlatform);           
         }
-
+      
         public UIElementTableConfigPage(ElementInfo ElementInfo, ObservableList<Act> Actions, ActUIElement Act = null)
         {
             eBaseWindow = BaseWindow.WindowExplorer;
-            mAct = new ActUIElement();
+            mAct = new ActUIElement();            
             string targetApp = App.BusinessFlow.CurrentActivity.TargetApplication;
             mPlatform = PlatformInfoBase.GetPlatformImpl((from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetApp select x.Platform).FirstOrDefault());
 
@@ -93,6 +94,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ShowTableControlActionConfigPage(mPlatform);
             SetComponents();
             SetDescriptionDetails();
+        }
+
+        public ObservableList<ActInputValue> GetTableRelatedInputValues()
+        {
+            return mAct.InputValues;
         }
 
         public void TableActionFieldBinding()
@@ -512,10 +518,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 mOriginalActions.Add(a);
             }
         }
-
+       
         private void UpdateRelatedActions()
         {
            string previousSelectedControlAction = null;
+           
             if (mActions != null)
             {
                 if (mActions.CurrentItem != null)

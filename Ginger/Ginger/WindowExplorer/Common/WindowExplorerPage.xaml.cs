@@ -55,6 +55,7 @@ using GingerCore.Platforms.PlatformsInfo;
 using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer
 {
@@ -628,6 +629,7 @@ namespace Ginger.WindowExplorer
                     else
                     {
                         ObservableList<Act> list = new ObservableList<Act>();
+                        ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
                         if (mPlatform.PlatformType() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
                         {
                             list = mPlatform.GetPlatformElementActions(EI);
@@ -646,7 +648,8 @@ namespace Ginger.WindowExplorer
                         else                        
                         {
                             Page DataPage = mCurrentControlTreeViewItem.EditPage();
-                            CAP = new ControlActionsPage(mWindowExplorerDriver, EI, list, DataPage);
+                            actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
+                            CAP = new ControlActionsPage(mWindowExplorerDriver, EI, list, DataPage, actInputValuelist);
                         }
                     }
                     ControlActionsFrame.Content = CAP;

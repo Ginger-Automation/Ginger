@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer.Mainframe
 {
@@ -89,6 +90,11 @@ namespace Ginger.WindowExplorer.Mainframe
         public void SetTools(ITreeView TV)
         {
             return;
+        }
+
+        public ObservableList<ActInputValue> GetItemSpecificActionInputValues()
+        {
+            return null;
         }
     }
 }
