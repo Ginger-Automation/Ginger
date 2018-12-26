@@ -377,16 +377,11 @@ namespace Ginger.ALM.Repository
             ObservableList<ExternalItemFieldBase> testSetFields = App.UserProfile.Solution.ExternalItemsFields;
             ALMIntegration.Instance.RefreshALMItemFields(testSetFields, true, null);
 
-            for (int indx = 0; indx < testSetFields.Count; indx++)
+            for (int indx = testSetFields.Count - 1 ; indx >= 0; indx--)
             {
-                if (testSetFields[indx].Name == "Version")
-                {                    
-                }
-
                 if (testSetFields[indx].ItemType != eQCItemType.TestSet.ToString())
                 {
                     testSetFields.RemoveAt(indx);
-                    indx--;
                 }
             }
 
