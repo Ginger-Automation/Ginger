@@ -178,7 +178,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public void GetOnlinePlugins()
         {
             //Arrange       
-            PluginsManager pluginsManager = new PluginsManager();
+            PluginsManager pluginsManager = new PluginsManager(WorkSpace.Instance.SolutionRepository);
 
             // Act            
             ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
@@ -191,9 +191,9 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public void GetOnlinePluginReleases()
         {
             //Arrange       
-            PluginsManager pluginsManager = new PluginsManager();
+            PluginsManager pluginsManager = new PluginsManager(WorkSpace.Instance.SolutionRepository);
             ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
-            OnlinePluginPackage PACT = (from x in list where x.Name == "PACT" select x).SingleOrDefault();
+            OnlinePluginPackage PACT = (from x in list where x.Id == "PACT" select x).SingleOrDefault();
 
             // Act            
             ObservableList<OnlinePluginPackageRelease> releases = PACT.Releases;
@@ -203,16 +203,16 @@ namespace GingerCoreNETUnitTest.PluginsLib
         }
 
         [TestMethod]
-        public void InstallPACTRelease_1_6()
+        public void InstallSeleniumPlugin_1_0()
         {
             //Arrange       
-            PluginsManager pluginsManager = new PluginsManager();
+            PluginsManager pluginsManager = new PluginsManager(WorkSpace.Instance.SolutionRepository);
             ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
-            OnlinePluginPackage shellPlugin = (from x in list where x.Name == "Shell" select x).SingleOrDefault();
-            OnlinePluginPackageRelease release1_1 = (from x in shellPlugin.Releases where x.Version == "v1.1" select x).SingleOrDefault();
+            OnlinePluginPackage plugin = (from x in list where x.Id == "SeleniumDriver" select x).SingleOrDefault();
+            OnlinePluginPackageRelease release1_1 = (from x in plugin.Releases where x.Version == "1.0" select x).SingleOrDefault();
 
             // Act            
-            string folder = pluginsManager.InstallPluginPackage(shellPlugin, release1_1);
+            string folder = pluginsManager.InstallPluginPackage(plugin, release1_1);
 
             //Assert
             Assert.IsTrue(Directory.Exists(folder));

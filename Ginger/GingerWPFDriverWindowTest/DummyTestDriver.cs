@@ -25,7 +25,7 @@ using System.Net.Http;
 namespace GingerWPFDriverWindowTest
 {
 
-    public class DummyTestDriver : IGingerDriver
+    public class DummyTestDriver : IServiceSession
     {
         IDummyTestDriverDisplay mDisplay = null;
 
@@ -94,12 +94,12 @@ namespace GingerWPFDriverWindowTest
             throw new NotImplementedException();
         }
 
-        public void Start()
+        public void StartSession()
         {
             throw new NotImplementedException();
         }
 
-        public void Stop()
+        public void StopSession()
         {
             throw new NotImplementedException();
         }

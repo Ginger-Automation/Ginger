@@ -58,6 +58,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
 using System.Windows.Input;
+using Amdocs.Ginger.Common.Repository;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -454,7 +455,11 @@ namespace Ginger
             }
             Reporter.ToLog(eAppReporterLogLevel.FATAL, ">>>>>>>>>>>>>> Error occurred on stand alone thread(non UI) - " + e.ExceptionObject);
             //Reporter.ToUser(eUserMsgKeys.ThreadError, "Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
-            App.AppSolutionAutoSave.DoAutoSave();
+
+            if (App.RunningFromConfigFile == false)
+            {
+                App.AppSolutionAutoSave.DoAutoSave();
+            }
 
             /// if (e.IsTerminating)...
             /// 
@@ -664,8 +669,11 @@ namespace Ginger
                 OnPropertyChanged(nameof(LoadingSolution));
 
                 // Cleanup last loaded solution 
-                //WorkSpace.Instance.LocalGingerGrid.Reset();  //Temp
-                AppSolutionAutoSave.SolutionAutoSaveEnd();
+                WorkSpace.Instance.LocalGingerGrid.Reset();  //Clear the grid
+                if (!App.RunningFromConfigFile)
+                {
+                    AppSolutionAutoSave.SolutionAutoSaveEnd();
+                }
 
                 //Cleanup
                 SolutionCleanup();
@@ -948,8 +956,8 @@ namespace Ginger
             a.Acts = new ObservableList<Act>();
             if (biz.TargetApplications.Count > 0)
             {
-                a.TargetApplication = biz.TargetApplications[0].AppName;
-            }
+                a.TargetApplication = biz.TargetApplications[0].Name;
+            }                
             biz.Activities.Add(a);
 
             biz.Activities.CurrentItem = a;
@@ -992,7 +1000,7 @@ namespace Ginger
                     {
                         // take it from solution main platform
                         if (App.BusinessFlow.TargetApplications == null)
-                            App.BusinessFlow.TargetApplications = new ObservableList<TargetApplication>();
+                            App.BusinessFlow.TargetApplications = new ObservableList<TargetBase>();
 
                         App.BusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = App.UserProfile.Solution.MainApplication });
                     }
@@ -1090,6 +1098,8 @@ namespace Ginger
                 App.BusinessFlow.SaveBackup();
             }
         }
+
+        
 
     }
 }

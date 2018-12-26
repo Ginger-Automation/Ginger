@@ -16,48 +16,45 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
+using Ginger.Actions.ActionConversion;
 using Ginger.Activities;
+using Ginger.Agents;
+using Ginger.ALM;
+using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowFolder;
+using Ginger.BusinessFlowWindows;
+using Ginger.Extensions;
+using Ginger.Functionalities;
+using Ginger.GherkinLib;
+using Ginger.Reports;
 using Ginger.Repository;
-using Ginger.SolutionWindows.TreeViewItems;
-using GingerWPF.UserControlsLib.UCTreeView;
+using Ginger.Run;
+using Ginger.UserControlsLib.TextEditor;
 using Ginger.Variables;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Actions.PlugIns;
+using GingerCore.Environments;
 using GingerCore.Variables;
+using GingerCoreNET.RunLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
-using System.Windows.Media;
-using Amdocs.Ginger;
-using Ginger.Actions.ActionConversion;
-using Ginger.AnalyzerLib;
-using Ginger.Functionalities;
 using System.Windows.Input;
-using Ginger.GherkinLib;
-using System.Linq;
-using Ginger.UserControlsLib.TextEditor;
-using Ginger.Reports;
-using GingerCore.Actions;
-using Ginger.BusinessFlowWindows;
-using System.IO;
-using System.Diagnostics;
-using Ginger.ALM;
-using Amdocs.Ginger.Common;
-using Ginger.Run;
-using GingerCore.Environments;
-using Amdocs.Ginger.UserControls;
-using Amdocs.Ginger.Common.Enums;
-using GingerCoreNET.RunLib;
-using Ginger.Agents;
-using Ginger.Extensions;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System.Threading.Tasks;
-using System.Threading;
+using System.Windows.Media;
 
 namespace Ginger
 {
@@ -1166,10 +1163,17 @@ namespace Ginger
                 App.BusinessFlow.CurrentActivity.Acts.CurrentItem = App.BusinessFlow.CurrentActivity.Acts[0];
             }
 
-            //No need of agent for actions like DB and read for excel. For other need agent   
-            if (!(typeof(ActWithoutDriver).IsAssignableFrom(App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem.GetType())) || App.BusinessFlow.CurrentActivity.Acts.CurrentItem.GetType() == typeof(ActAgentManipulation))
+            //No need of agent for actions like DB and read for excel. For other need agent  
+            Type actType = App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem.GetType();
+            
+            if (!(typeof(ActWithoutDriver).IsAssignableFrom(actType)) || actType == typeof(ActAgentManipulation))   // ActAgentManipulation not needed
             {
                 App.AutomateTabGingerRunner.SetCurrentActivityAgent();
+            }
+            
+            if ((typeof(ActPlugIn).IsAssignableFrom(actType)))
+            {
+                App.AutomateTabGingerRunner.SetCurrentActivityAgent(); 
             }
 
             App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;

@@ -30,8 +30,8 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
         {
             get
             {
-                string v = tag_name;
-                if (tag_name.StartsWith("v"))
+                string v;
+                if (tag_name.ToLower().StartsWith("v"))
                 {
                     v = tag_name.Substring(1);
                 }
