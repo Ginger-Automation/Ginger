@@ -49,16 +49,17 @@ namespace Amdocs.Ginger.Common
                 }
                 if (jkp.Value.HasReference)
                 {
-                    JsonBody.Add(key, JsonSchemaFaker(jkp.Value.Reference, UseXMlNames));
+                    string property = JsonSchemaFaker(jkp.Value.Reference, UseXMlNames);
+                    object o = JsonConvert.DeserializeObject(property);
+                    JsonBody.Add(key, o);
                 }
                 else
                 {
-                    JsonBody.Add(key, GenerateJsonObjectFromJsonSchema4(jkp.Value, UseXMlNames));
+                    object o = GenerateJsonObjectFromJsonSchema4(jkp.Value, UseXMlNames);
+                    JsonBody.Add(key, o);
                 }
 
             }
-
-
 
             return JsonConvert.SerializeObject(JsonBody);
         }
