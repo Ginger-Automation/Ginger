@@ -39,8 +39,7 @@ namespace GingerCoreCommonTest.Repository
     // Test Multi thread getting the same data - repository folder
     // Test Big solution
 
-    [TestClass]
-    [Ignore]
+    [TestClass]    
     [Level1]
     public class SolutionRepositoryTest
     {
