@@ -107,8 +107,18 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Only for Chrome | Headless Chrome : A Browser without UI for faster Execution ")]
+        [UserConfiguredDescription("Only for Chrome & Firefox | Set \"true\" to run the browser in background (headless mode) for faster Execution")]
         public bool HeadlessBrowserMode { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Only for IE, Chrome & Firefox | Set \"true\" to Launch the Browser minimized")]
+        public bool BrowserMinimized { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Set \"true\" to hide the Driver Console (Command Prompt) Window")]
+        public bool HideConsoleWindow { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("")]
@@ -132,7 +142,7 @@ namespace GingerCore.Drivers
         public int HttpServerTimeOut { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("60")]        
+        [UserConfiguredDefault("60")]
         [UserConfiguredDescription("PageLoad Timeout for Web Action Completion")]
         public int PageLoadTimeOut { get; set; }
 
@@ -279,6 +289,8 @@ namespace GingerCore.Drivers
                 switch (mBrowserTpe)
                 {
                     //TODO: refactor closing the extra tabs
+
+                    #region Internet Explorer
                     case eBrowserType.IE:
                         InternetExplorerOptions ieoptions = new InternetExplorerOptions();
 
@@ -314,23 +326,32 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                            if (Convert.ToInt32(HttpServerTimeOut) >= 60)
                             {
                                 InternetExplorerDriverService service = InternetExplorerDriverService.CreateDefaultService();
+
+                                if (HideConsoleWindow == true)
+                                    service.HideCommandPromptWindow = true;
+
                                 Driver = new InternetExplorerDriver(service, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                             }
                             else
                             {
                                 Driver = new InternetExplorerDriver(ieoptions);
                             }
-                        }                        
+                        }
                         break;
+                    #endregion
 
+                    #region Mozilla Firefox
                     case eBrowserType.FireFox:
                         string geckoDriverExePath2 = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\geckodriver.exe";
                         System.Environment.SetEnvironmentVariable("webdriver.gecko.driver", geckoDriverExePath2, EnvironmentVariableTarget.Process);
 
                         FirefoxOptions FirefoxOption= new FirefoxOptions();
+                        if (HeadlessBrowserMode == true)
+                            FirefoxOption.AddArgument("--headless");
+
                         if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
                         {
                             FirefoxProfile ffProfile2 = new FirefoxProfile();
@@ -346,23 +367,23 @@ namespace GingerCore.Drivers
                                 case ProxyKind.Manual:
                                     FirefoxOption.Proxy.Kind = ProxyKind.Manual;
                                     FirefoxOption.Proxy.HttpProxy = mProxy.HttpProxy;
-                                  FirefoxOption.Proxy.SslProxy = mProxy.SslProxy;
+                                    FirefoxOption.Proxy.SslProxy = mProxy.SslProxy;
                                     //TODO: GETTING ERROR LAUNCHING BROWSER 
-                                  //  FirefoxOption.Proxy.SocksProxy = mProxy.SocksProxy;
+                                    //  FirefoxOption.Proxy.SocksProxy = mProxy.SocksProxy;
                                     break;
 
                                 case ProxyKind.ProxyAutoConfigure:
                                     FirefoxOption.Proxy.Kind = ProxyKind.ProxyAutoConfigure;
-                                    FirefoxOption.Proxy.ProxyAutoConfigUrl = mProxy.ProxyAutoConfigUrl;                            
+                                    FirefoxOption.Proxy.ProxyAutoConfigUrl = mProxy.ProxyAutoConfigUrl;
                                     break;
 
                                 case ProxyKind.Direct:
                                     FirefoxOption.Proxy.Kind = ProxyKind.Direct;
-                                                   break;
+                                    break;
 
                                 case ProxyKind.AutoDetect:
                                     FirefoxOption.Proxy.Kind = ProxyKind.AutoDetect;
-                      
+
                                     break;
 
                                 case ProxyKind.System:
@@ -372,29 +393,36 @@ namespace GingerCore.Drivers
 
                                 default:
                                     FirefoxOption.Proxy.Kind = ProxyKind.System;
-                           
+
                                     break;
-
                             }
-                     
-
                         }
-                       
-                        if (Convert.ToInt32(HttpServerTimeOut) > 60)
+
+                        if (Convert.ToInt32(HttpServerTimeOut) >= 60)
                         {
                             FirefoxDriverService service = FirefoxDriverService.CreateDefaultService();
+
+                            if (HideConsoleWindow == true)
+                                service.HideCommandPromptWindow = true;
+
                             Driver = new FirefoxDriver(service, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         }
                         else
                         {
                             Driver = new FirefoxDriver(FirefoxOption);
                         }
-                
+
                         break;
 
+                    #endregion
+
+                    #region Chrome
                     case eBrowserType.Chrome:
                         ChromeOptions options = new ChromeOptions();
-                        options.AddArgument("--start-maximized");
+
+                        if (BrowserMinimized == false)
+                            options.AddArgument("--start-maximized");
+
                         if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
                         else if (!string.IsNullOrEmpty(ExtensionPath))
@@ -410,7 +438,7 @@ namespace GingerCore.Drivers
                             }
                             options.AddUserProfilePreference("download.default_directory", DownloadFolderPath);
                         }
-                        
+
                         if (BrowserPrivateMode == true)
                         {
                             options.AddArgument("--incognito");
@@ -422,9 +450,13 @@ namespace GingerCore.Drivers
                         if (SeleniumUserArgs != null)
                             foreach (string arg in SeleniumUserArgs)
                                 options.AddArgument(arg);
-                        if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                        if (Convert.ToInt32(HttpServerTimeOut) >= 60)
                         {
                             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+
+                            if (HideConsoleWindow == true)
+                                service.HideCommandPromptWindow = true;
+
                             Driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         }
                         else
@@ -433,10 +465,17 @@ namespace GingerCore.Drivers
                         }
                         break;
 
+                    #endregion
+
+                    #region EDGE
                     case eBrowserType.Edge:
-                        if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                        if (Convert.ToInt32(HttpServerTimeOut) >= 60)
                         {
                             EdgeDriverService service = EdgeDriverService.CreateDefaultService();
+
+                            if (HideConsoleWindow == true)
+                                service.HideCommandPromptWindow = true;
+
                             Driver = new EdgeDriver(service);
                         }
                         else
@@ -444,14 +483,21 @@ namespace GingerCore.Drivers
                             Driver = new EdgeDriver();
                         }
                         break;
+                    #endregion
 
+                    #region PhantomJS - No More Supported
                     case eBrowserType.PhantomJS:
 
                         throw new NotSupportedException("Support for PhantomJS is ended");
                         break;
 
-                    //TODO: add Safari
+                    #endregion
 
+                    #region Safari - To be Added
+                    //TODO: add Safari
+                    #endregion
+
+                    #region Remote Browser/Web Driver
                     case eBrowserType.RemoteWebDriver:
                         if (RemoteBrowserName.Equals("internet explorer"))
                         {
@@ -506,7 +552,11 @@ namespace GingerCore.Drivers
 
                             break;
                         }
+                        #endregion
                 }
+
+                if (BrowserMinimized == true)
+                    Driver.Manage().Window.Minimize();
 
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
 
@@ -1615,11 +1665,11 @@ namespace GingerCore.Drivers
                     else
                     {
                         act.ExInfo = "Browser already running";
-                    }                    
+                    }
                     break;
 
                 case ActGenElement.eGenElementAction.MsgBox: //TODO: FIXME: This action should not be part of GenElement
-                    string msg = act.GetInputParamCalculatedValue("Value");                    
+                    string msg = act.GetInputParamCalculatedValue("Value");
                     Reporter.ToUser(eUserMsgKeys.ScriptPaused);
                     break;
 
@@ -2113,7 +2163,7 @@ namespace GingerCore.Drivers
                     }
                     break;
 
-                case ActGenElement.eGenElementAction.Back: 
+                case ActGenElement.eGenElementAction.Back:
                     Driver.Navigate().Back();
                     break;
 
@@ -2156,7 +2206,7 @@ namespace GingerCore.Drivers
                     }
                     break;
 
-                case ActGenElement.eGenElementAction.RunJavaScript: 
+                case ActGenElement.eGenElementAction.RunJavaScript:
                     string script = act.GetInputParamCalculatedValue("Value");
                     try
                     {
@@ -3019,7 +3069,7 @@ namespace GingerCore.Drivers
                 if (elem == null)
                 {
                     act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
-                }                
+                }
             }
 
             return elem;
@@ -3346,7 +3396,7 @@ namespace GingerCore.Drivers
             {
                 return null;
             }
-            
+
         }
 
         public override List<ActButton> GetAllButtons()
@@ -3543,7 +3593,7 @@ namespace GingerCore.Drivers
                     AppWindow AW = new AppWindow();
                     AW.Title = Driver.Title;
                     AW.WindowType = AppWindow.eWindowType.SeleniumWebPage;
-                    list.Add(AW);                    
+                    list.Add(AW);
                 }
                 return list;
             }
@@ -3629,7 +3679,7 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, learnFullElementInfoDetails);                            
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, learnFullElementInfoDetails);
                             Driver.SwitchTo().ParentFrame();
                         }
 
@@ -3644,7 +3694,7 @@ namespace GingerCore.Drivers
 
             return foundElementsList;
         }
-        
+
         public static eElementType GetElementTypeEnum(IWebElement EL = null, string JSType = null)
         {
             eElementType elementType = eElementType.Unknown;
@@ -3759,13 +3809,13 @@ namespace GingerCore.Drivers
                 elementType = eElementType.Unknown;
 
             return elementType;
-        }       
+        }
 
         private ElementInfo GetElementInfoWithIWebElement(IWebElement el, string path, bool setFullElementInfoDetails=false)
         {
             HTMLElementInfo EI = new HTMLElementInfo();
             EI.WindowExplorer = this;
-            EI.ElementTitle = GenerateElementTitle(el);            
+            EI.ElementTitle = GenerateElementTitle(el);
             EI.ID = GenerateElementID(el);
             EI.Value = GenerateElementValue(el);
             EI.Name = GenerateElementName(el);
@@ -3782,7 +3832,7 @@ namespace GingerCore.Drivers
                 EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
                 EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
             }
-            
+
             return EI;
         }
 
@@ -4141,7 +4191,7 @@ namespace GingerCore.Drivers
             return elementType.ToUpper();
         }
 
-       
+
 
         void IWindowExplorer.SwitchWindow(string Title)
         {
@@ -4227,11 +4277,11 @@ namespace GingerCore.Drivers
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
             }
 
-            
+
         }
 
 
-        
+
 
         void IWindowExplorer.UnHighLightElements()
         {
@@ -4286,18 +4336,18 @@ namespace GingerCore.Drivers
             }
 
             //Learn more properties
-            
+
             if (el != null)
             {
                 //Learn optional values
                 if (ElementInfo.ElementTypeEnum == eElementType.ComboBox || ElementInfo.ElementTypeEnum == eElementType.List)
-                {                   
+                {
                     foreach (IWebElement value in el.FindElements(By.XPath("*")))
                         ElementInfo.OptionalValues.Add(value.Text);
                     list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
                 }
 
-                IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;                
+                IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
                 Dictionary<string, object> attributes = javascriptDriver.ExecuteScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;", el) as Dictionary<string, object>;
                 if (!(attributes == null))
                     foreach (KeyValuePair<string, object> kvp in attributes)
@@ -4311,7 +4361,7 @@ namespace GingerCore.Drivers
                     }
             }
             return list;
-        }        
+        }
 
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
@@ -4691,7 +4741,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);                
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -5684,8 +5734,8 @@ namespace GingerCore.Drivers
                         if (String.IsNullOrEmpty(text))
                         {
                             text = e.GetAttribute("value");
-                        } 
-                        act.AddOrUpdateReturnParamActual("Actual", text);                        
+                        }
+                        act.AddOrUpdateReturnParamActual("Actual", text);
                         break;
 
                     case ActUIElement.eElementAction.GetAttrValue:
@@ -5967,7 +6017,7 @@ namespace GingerCore.Drivers
         private void DoDragAndDrop(ActUIElement act, IWebElement e)
         {
             var sourceElement = e;
-          
+
             string TargetElementLocatorValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.TargetLocateValue.ToString());
 
             if (act.TargetLocateBy != eLocateBy.ByXY)
@@ -6580,7 +6630,7 @@ namespace GingerCore.Drivers
             {
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
             }
-            
+
         }
     }
 }
