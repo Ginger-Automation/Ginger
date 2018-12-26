@@ -7,7 +7,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
 {
-    public class EmailAttachment : RepositoryItemBase, IRepositoryItem
+    public class EmailAttachment : RepositoryItemBase
     {
         public enum eAttachmentType
         {

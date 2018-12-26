@@ -29,7 +29,7 @@ using System.Reflection;
 
 namespace GingerCore
 {
-    public abstract class RepositoryItem : RepositoryItemBase,IRepositoryItem
+    public abstract class RepositoryItem : RepositoryItemBase
     {        
 
         //[IsSerializedForLocalRepository]

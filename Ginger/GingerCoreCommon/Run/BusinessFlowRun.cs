@@ -27,7 +27,7 @@ namespace Ginger.Run
 {
     // This class is for selected business flow to run for agent
     // Being saved as part of AgentRunConfig
-    public class BusinessFlowRun : IRepositoryItem
+    public class BusinessFlowRun : RepositoryItemBase
     {
         [IsSerializedForLocalRepository]
         public string BusinessFlowName { get; set; }
@@ -56,7 +56,7 @@ namespace Ginger.Run
         [IsSerializedForLocalRepository]
         public ObservableList<FlowControl> BFFlowControls = new ObservableList<FlowControl>();
 
-        public string ItemName
+        public override string ItemName
         {
             get
             {
@@ -67,6 +67,8 @@ namespace Ginger.Run
                 return;
             }
         }
+
+        
 
         public string GetNameForFileName()
         {

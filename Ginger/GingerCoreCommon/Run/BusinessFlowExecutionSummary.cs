@@ -27,7 +27,7 @@ namespace Ginger.Run
 {
     //This Class is for storing the Business Flow executed, it can have different Run Description, and a copy of the original BF
     // It is save as part of RunSetConfig
-    public class BusinessFlowExecutionSummary : IRepositoryItem
+    public class BusinessFlowExecutionSummary : RepositoryItemBase
     {       
         public new static class Fields
         {
@@ -124,7 +124,7 @@ namespace Ginger.Run
         
         public string GingerRunnerName { get; set; }
 
-        public  string ItemName
+        public override string ItemName
         {
             get
             {

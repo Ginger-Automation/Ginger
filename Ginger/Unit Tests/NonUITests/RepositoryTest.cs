@@ -322,8 +322,7 @@ namespace UnitTests.NonUITests
             BF2.Description = "aaa";
             Assert.IsTrue(BF2.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified);
         }
-        
-        [Ignore]
+                
         [TestMethod]
         public void RunSetConfigSaveLoad()
         {
