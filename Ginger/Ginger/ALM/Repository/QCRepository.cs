@@ -290,15 +290,11 @@ namespace Ginger.ALM.Repository
             ALMIntegration.Instance.RefreshALMItemFields(testCaseFields, true, null);
 
             //Going through the fields to leave only Test Case fields
-            for (int indx = 0; indx < testCaseFields.Count; indx++)
+            for (int indx = testCaseFields.Count - 1; indx >= 0; indx--)
             {
-                if(testCaseFields[indx].Name == "Version")
-                {
-                }
                 if (testCaseFields[indx].ItemType != eQCItemType.TestCase.ToString())
                 {
                     testCaseFields.RemoveAt(indx);
-                    indx--;
                 }
             }
             
