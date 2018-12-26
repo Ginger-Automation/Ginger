@@ -206,6 +206,11 @@ namespace Ginger
             GingerCore.General.ObjFieldBinding(TextBox, TextBox.TextProperty, obj, Field, bm);
         }
 
+        public static void BindControl(this TreeView TreeView, Object obj, string Field, BindingMode bm = BindingMode.TwoWay)
+        {
+            GingerCore.General.ObjFieldBinding(TreeView, TreeView.SelectedValuePathProperty, obj, Field, bm);
+        }
+
         public static void BindControl(this TextBox TextBox, ActInputValue AIV)
         {                
             TextBox.BindControl(AIV, ActInputValue.Fields.Value);
@@ -215,6 +220,11 @@ namespace Ginger
         public static void AddValidationRule(this TextBox textBox, ValidationRule validationRule)
         {
             AddValidation(textBox, TextBox.TextProperty, validationRule);
+        }
+
+        public static void AddValidationRule(this TreeView TreeView, ValidationRule validationRule)
+        {
+            AddValidation(TreeView, TreeView.SelectedValuePathProperty, validationRule);
         }
 
         public static void AddValidationRule(this TextBox textBox, eValidationRule validationRule)

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -32,19 +32,6 @@ namespace GingerCoreNET.SourceControl
 
     public abstract class SourceControlBase : INotifyPropertyChanged, ISourceControl
     {
-        public static class Fields
-        {
-            public static string SourceControlURL = "SourceControlURL";
-            public static string SourceControlUser = "SourceControlUser";
-            public static string SourceControlPass = "SourceControlPass";
-            public static string SourceControlLocalFolder = "SourceControlLocalFolder";
-            public static string SourceControlConfigureProxy = "SourceControlConfigureProxy";
-            public static string SourceControlProxyAddress = "SourceControlProxyAddress";
-            public static string SourceControlProxyPort = "SourceControlProxyPort";
-            public static string SolutionSourceControlAuthorName = "SolutionSourceControlAuthorName";
-            public static string SolutionSourceControlAuthorEmail = "SolutionSourceControlAuthorEmail";
-        }
-
         public enum eSourceControlType
         {
             [EnumValueDescription("")]
@@ -53,42 +40,41 @@ namespace GingerCoreNET.SourceControl
             GIT,
             [EnumValueDescription("SVN")]
             SVN
-
         }
 
         public static bool Active { get; internal set; }
 
         string mSourceControlURL;
-        public string SourceControlURL { get { return mSourceControlURL; } set { mSourceControlURL = value; OnPropertyChanged(Fields.SourceControlURL); } }
+        public string SourceControlURL { get { return mSourceControlURL; } set { mSourceControlURL = value; OnPropertyChanged(nameof(SourceControlURL)); } }
 
         string mSourceControlUser;
-        public string SourceControlUser { get { return mSourceControlUser; } set { mSourceControlUser = value; OnPropertyChanged(Fields.SourceControlUser); } }
+        public string SourceControlUser { get { return mSourceControlUser; } set { mSourceControlUser = value; OnPropertyChanged(nameof(SourceControlUser)); } }
 
         string mSourceControlPass;
-        public string SourceControlPass { get { return mSourceControlPass; } set { mSourceControlPass = value; OnPropertyChanged(Fields.SourceControlPass); } }
+        public string SourceControlPass { get { return mSourceControlPass; } set { mSourceControlPass = value; OnPropertyChanged(nameof(SourceControlPass)); } }
 
         string mSourceControlLocalFolder;
-        public string SourceControlLocalFolder { get { return mSourceControlLocalFolder; } set { mSourceControlLocalFolder = value; OnPropertyChanged(Fields.SourceControlLocalFolder); } }
+        public string SourceControlLocalFolder { get { return mSourceControlLocalFolder; } set { mSourceControlLocalFolder = value; OnPropertyChanged(nameof(SourceControlLocalFolder)); } }
 
         string mSourceControlProxyAddress;
-        public string SourceControlProxyAddress { get { return mSourceControlProxyAddress; } set { mSourceControlProxyAddress = value; OnPropertyChanged(Fields.SourceControlProxyAddress); } }
+        public string SourceControlProxyAddress { get { return mSourceControlProxyAddress; } set { mSourceControlProxyAddress = value; OnPropertyChanged(nameof(SourceControlProxyAddress)); } }
 
         string mSourceControlProxyPort;
-        public string SourceControlProxyPort { get { return mSourceControlProxyPort; } set { mSourceControlProxyPort = value; OnPropertyChanged(Fields.SourceControlProxyPort); } }
+        public string SourceControlProxyPort { get { return mSourceControlProxyPort; } set { mSourceControlProxyPort = value; OnPropertyChanged(nameof(SourceControlProxyPort)); } }
 
 
         int mSourceControlTimeout=80;
         public int SourceControlTimeout { get { return mSourceControlTimeout; } set { mSourceControlTimeout = value; OnPropertyChanged(nameof(SourceControlTimeout)); } }
 
         bool mSourceControlConfigureProxy;
-        public bool SourceControlConfigureProxy { get { return mSourceControlConfigureProxy; } set { mSourceControlConfigureProxy = value; OnPropertyChanged(Fields.SourceControlConfigureProxy); } }
+        public bool SourceControlConfigureProxy { get { return mSourceControlConfigureProxy; } set { mSourceControlConfigureProxy = value; OnPropertyChanged(nameof(SourceControlConfigureProxy)); } }
 
 
         string mSolutionSourceControlAuthorName;
-        public string SolutionSourceControlAuthorName { get { return mSolutionSourceControlAuthorName; } set { mSolutionSourceControlAuthorName = value; OnPropertyChanged(Fields.SourceControlConfigureProxy); } }
+        public string SolutionSourceControlAuthorName { get { return mSolutionSourceControlAuthorName; } set { mSolutionSourceControlAuthorName = value; OnPropertyChanged(nameof(SourceControlConfigureProxy)); } }
 
         string mSolutionSourceControlAuthorEmail;
-        public string SolutionSourceControlAuthorEmail { get { return mSolutionSourceControlAuthorEmail; } set { mSolutionSourceControlAuthorEmail = value; OnPropertyChanged(Fields.SourceControlConfigureProxy); } }
+        public string SolutionSourceControlAuthorEmail { get { return mSolutionSourceControlAuthorEmail; } set { mSolutionSourceControlAuthorEmail = value; OnPropertyChanged(nameof(SourceControlConfigureProxy)); } }
 
         public string SolutionFolder { get; set; }
 
