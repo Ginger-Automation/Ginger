@@ -38,7 +38,7 @@ namespace GingerCore.FlowControlLib
             public static string Value = "Value";
             public static string ValueCalculated = "ValueCalculated";
             public static string Status = "Status";
-            public static string ConditionVE = "ConditionVE";
+            
         }
 
 
@@ -61,9 +61,8 @@ namespace GingerCore.FlowControlLib
         {
             get
             {
-                // IValueExpression ve = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(this, Fields.Condition);
-                // return ve;
-                return null;  // FIXME YW NET
+                IValueExpression ve = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(this, nameof(Condition));
+                return ve;                
             }
         }
 

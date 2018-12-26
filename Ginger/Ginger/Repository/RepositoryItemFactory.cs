@@ -48,6 +48,13 @@ namespace Ginger.Repository
         {
             return new ValueExpression(Env, BF, (ObservableList<GingerCore.DataSource.DataSourceBase>)DSList, bUpdate, UpdateValue, bDone, solutionVariables);            
         }
+
+        public IValueExpression CreateValueExpression(object obj, string attr)
+        {
+            return new ValueExpression(obj, attr);
+        }
+
+
         public IActivitiesGroup CreateActivitiesGroup()
         {
             return new ActivitiesGroup();
