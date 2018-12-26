@@ -42,7 +42,7 @@ using GingerCore.Environments;
 
 namespace Ginger.Run
 {
-    public class RunsetExecutor : INotifyPropertyChanged, IRunsetExecutor
+    public class RunsetExecutor : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)

@@ -131,7 +131,7 @@ namespace GingerCore.Drivers.AndroidADB
             if (ConnectedToDevice)
             {
                 OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-                Dispatcher = DriverWindow.Dispatcher;
+                Dispatcher.Object = DriverWindow.Dispatcher;
                 System.Windows.Threading.Dispatcher.Run();
             }
             else
@@ -767,20 +767,7 @@ namespace GingerCore.Drivers.AndroidADB
             return "TBD";
         }
 
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
-
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
-
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
+        
 
         public override bool IsRunning()
         {

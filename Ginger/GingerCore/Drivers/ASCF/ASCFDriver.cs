@@ -844,46 +844,46 @@ namespace GingerCore.Drivers.ASCF
         }
 
         //TODO: is it used?
-        public override List<ActWindow> GetAllWindows()
-        {
-            String sWindows = Send("FormsList", NA, NA, NA, NA, false);
-            String[] aWindows = sWindows.Split('|');
+        //public override List<ActWindow> GetAllWindows()
+        //{
+        //    String sWindows = Send("FormsList", NA, NA, NA, NA, false);
+        //    String[] aWindows = sWindows.Split('|');
             
-            List<ActWindow> Actwindows = new List<ActWindow>();
-            foreach (string s in aWindows)
-            {
-                ActWindow al = new ActWindow();
-                al.AddOrUpdateInputParamValue("Value",s);
-                al.LocateBy = eLocateBy.ByName;
-                al.LocateValue = s;
-                Actwindows.Add(al);
-            }
-            return Actwindows;
-        }
+        //    List<ActWindow> Actwindows = new List<ActWindow>();
+        //    foreach (string s in aWindows)
+        //    {
+        //        ActWindow al = new ActWindow();
+        //        al.AddOrUpdateInputParamValue("Value",s);
+        //        al.LocateBy = eLocateBy.ByName;
+        //        al.LocateValue = s;
+        //        Actwindows.Add(al);
+        //    }
+        //    return Actwindows;
+        //}
 
-        public override List<ActLink> GetAllLinks()
-        {
-            String sLinks = Send("FormActions", NA, NA, NA, NA, false);            
-            String[] aLinks = sLinks.Split('|');
+        //public override List<ActLink> GetAllLinks()
+        //{
+        //    String sLinks = Send("FormActions", NA, NA, NA, NA, false);            
+        //    String[] aLinks = sLinks.Split('|');
             
-            List<ActLink> ActLinks = new List<ActLink>();
-            foreach (string s in aLinks)
-            {                
-                ActLink al = new ActLink();
-                al.Description = "Click Menu/Link - " + s;
-                al.LocateBy = eLocateBy.ByName;
-                al.LocateValue = s;
-                al.AddOrUpdateInputParamValue("Value","com.amdocs.crm.workspace.SalesMenuActionsGlobal");
-                ActLinks.Add(al);
-            }
+        //    List<ActLink> ActLinks = new List<ActLink>();
+        //    foreach (string s in aLinks)
+        //    {                
+        //        ActLink al = new ActLink();
+        //        al.Description = "Click Menu/Link - " + s;
+        //        al.LocateBy = eLocateBy.ByName;
+        //        al.LocateValue = s;
+        //        al.AddOrUpdateInputParamValue("Value","com.amdocs.crm.workspace.SalesMenuActionsGlobal");
+        //        ActLinks.Add(al);
+        //    }
 
-            return ActLinks;
-        }
+        //    return ActLinks;
+        //}
 
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
+        //public override List<ActButton> GetAllButtons()
+        //{
+        //    return null;
+        //}
 
         public override void HighlightActElement(Act act)
         {

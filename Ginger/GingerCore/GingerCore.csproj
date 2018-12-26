@@ -623,7 +623,6 @@
     <Compile Include="Drivers\MainFrame\MainFrameDriver.cs" />
     <Compile Include="Drivers\MainFrame\MainFrameUIHelper.cs" />
     <Compile Include="Drivers\MainFrame\Terminal.cs" />
-    <Compile Include="Drivers\DriverMessageEventArgs.cs" />
     <Compile Include="Drivers\PBDriver\HTMLHelper.cs" />
     <Compile Include="Drivers\Selenium\SeleniumBMP\Browser.cs" />
     <Compile Include="Drivers\Selenium\SeleniumBMP\Cache.cs" />
@@ -739,8 +738,6 @@
     <Compile Include="GeneralLib\InputBoxWindow.xaml.cs">
       <DependentUpon>InputBoxWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Platforms\Agent.cs" />
-    <Compile Include="Platforms\DriverConfigParam.cs" />
     <Compile Include="Platforms\Platform.cs" />
     <Compile Include="Reporter\Reporter.cs" />
     <Compile Include="Reporter\BotDialog.xaml.cs">
@@ -752,7 +749,6 @@
     <Compile Include="Reporter\UserMessagesPool.cs" />
     <Compile Include="Repository\RepositorySerializer.cs" />
     <Compile Include="Drivers\ASCF\ASCFDriver.cs" />
-    <Compile Include="Drivers\DriverBase.cs" />
     <Compile Include="Drivers\InternalBrowserLib\InternalBrowserWindow.xaml.cs">
       <DependentUpon>InternalBrowserWindow.xaml</DependentUpon>
     </Compile>

@@ -177,7 +177,7 @@ namespace GingerCore.Drivers.Appium
                    ConnectedToDevice = ConnectToAppium();
                 if (ConnectedToDevice) {               
                 OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-                Dispatcher = DriverWindow.Dispatcher;
+                Dispatcher.Object = DriverWindow.Dispatcher;
                 System.Windows.Threading.Dispatcher.Run();
             
             }
@@ -1163,20 +1163,7 @@ namespace GingerCore.Drivers.Appium
             return "TBD";
         }
 
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
-
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
-
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
+        
 
         public override bool IsRunning()
         {

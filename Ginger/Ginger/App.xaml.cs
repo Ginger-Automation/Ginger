@@ -562,8 +562,9 @@ namespace Ginger
             AddClass(list, typeof(BusinessFlowReport));
             AddClass(list, typeof(HTMLReportConfiguration));
             AddClass(list, typeof(HTMLReportConfigFieldToSelect));
-            
-            
+            AddClass(list, typeof(Agent));
+            AddClass(list, typeof(DriverConfigParam)); 
+
 
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field

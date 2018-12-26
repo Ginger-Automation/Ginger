@@ -584,21 +584,7 @@ namespace GingerCore.Drivers.WindowsLib
         {
             return "TBD";
         }
-
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
-
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
-
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
+        
 
         public override void HighlightActElement(Act act)
         {

@@ -936,17 +936,10 @@ namespace GingerCore.Drivers.PBDriver
         public override Act GetCurrentElement()
         { return null; }
 
-        public override List<ActWindow> GetAllWindows()
-        { return null; }
-
+        
         public override string GetURL()
         { return null; }
 
-        public override List<ActLink> GetAllLinks()
-        { return null; }
-
-        public override List<ActButton> GetAllButtons()
-        { return null; }
         
         private void SwitchWindow(ActUIASwitchWindow act)
         {
