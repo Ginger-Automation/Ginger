@@ -59,7 +59,7 @@ namespace Ginger.Run.RunSetActions
                 Type t = Assembly.GetExecutingAssembly().GetType(classname);
                 if (t == null)
                 {
-                    throw new Exception("Action edit page not found - " + classname);
+                    throw new Exception("Runset edit page not found - " + classname);
                 }
                 Page p = (Page)Activator.CreateInstance(t, mRunSetAction);
 

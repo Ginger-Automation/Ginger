@@ -39,6 +39,8 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
 using GingerCore.Environments;
+using Ginger.Reports.GingerExecutionReport;
+using System.Windows.Threading;
 
 namespace Ginger.Run
 {
@@ -146,7 +148,7 @@ namespace Ginger.Run
             }
 
             //Load the biz flows     
-            ////runner.BusinessFlows.Clear();
+            runner.BusinessFlows.Clear();
             foreach (BusinessFlowRun bf in runner.BusinessFlowsRunList)
             {
                 ObservableList<BusinessFlow> businessFlows = new ObservableList<BusinessFlow>();
@@ -193,7 +195,7 @@ namespace Ginger.Run
                     }
                     BFCopy.RunDescription = bf.BusinessFlowRunDescription;
                     BFCopy.BFFlowControls = bf.BFFlowControls;
-                    ////runner.BusinessFlows.Add(BFCopy);
+                    runner.BusinessFlows.Add(BFCopy);
                 }
             }
         }     
@@ -215,11 +217,11 @@ namespace Ginger.Run
                 if (gr.UseSpecificEnvironment)
                 {
                     if (gr.ProjEnvironment != null) { }
-                        ////gr.ProjEnvironment.CloseEnvironment();
+                        gr.ProjEnvironment.CloseEnvironment();
                 }
             }
             if (Helper.RuntimeObjectFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment != null) { }
-                ////RepositoryItemHelper.RepositoryItemFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment.CloseEnvironment();
+                //RepositoryItemHelper.RepositoryItemFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment.CloseEnvironment();
         }
 
 
@@ -240,7 +242,7 @@ namespace Ginger.Run
             {
                 DateTime currentExecutionDateTime = DateTime.Now;
 
-                //IExecutionLogger.RunSetStart(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder, _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, currentExecutionDateTime);
+                ExecutionLogger.RunSetStart(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder, _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, currentExecutionDateTime);
 
                 int ginger_index = 0;
                 while (Runners.Count > ginger_index)
@@ -248,8 +250,8 @@ namespace Ginger.Run
                     Runners[ginger_index].ExecutionLogger.GingerData.Seq = ginger_index + 1;
                     Runners[ginger_index].ExecutionLogger.GingerData.GingerName = Runners[ginger_index].Name;
                     Runners[ginger_index].ExecutionLogger.GingerData.Ginger_GUID = Runners[ginger_index].Guid;
-                    ////Runners[ginger_index].ExecutionLogger.GingerData.GingerAggentMapping = Runners[ginger_index].ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
-                    ////Runners[ginger_index].ExecutionLogger.GingerData.GingerEnv = Runners[ginger_index].ProjEnvironment.Name.ToString();
+                    Runners[ginger_index].ExecutionLogger.GingerData.GingerAggentMapping = Runners[ginger_index].ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
+                    Runners[ginger_index].ExecutionLogger.GingerData.GingerEnv = Runners[ginger_index].ProjEnvironment.Name.ToString();
                     Runners[ginger_index].ExecutionLogger.CurrentExecutionDateTime = currentExecutionDateTime;
                     Runners[ginger_index].ExecutionLogger.Configuration = _selectedExecutionLoggerConfiguration;
                     ginger_index++;
@@ -293,10 +295,10 @@ namespace Ginger.Run
             if (doContinueRun == false)
             {
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                //App.MainWindow.Dispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
-                //{
-                //    WorkSpace.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution});
-                //});
+                Dispatcher.CurrentDispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
+                {
+                    WorkSpace.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
+                });
             }
 
             //Start Run 
@@ -373,15 +375,15 @@ namespace Ginger.Run
 
             //Do post execution items
             Reporter.ToLog(eLogLevel.INFO, string.Format("######## {0} Runners Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            //IExecutionLogger.RunSetEnd();
+            ExecutionLogger.RunSetEnd();
             if (mStopRun == false)
             {
                 // Process all post execution RunSet Operations
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                //App.MainWindow.Dispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
-                //{
-                //    WorkSpace.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
-                //});
+                Dispatcher.CurrentDispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
+                {
+                    WorkSpace.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
+                });
             }
             Reporter.ToLog(eLogLevel.INFO, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             CreateGingerExecutionReportAutomaticly();
@@ -404,10 +406,10 @@ namespace Ginger.Run
                     }
                     else
                     {
-                        ////runSetReportName = IExecutionLogger.defaultRunTabLogName;
+                        runSetReportName = ExecutionLogger.defaultRunTabLogName;
                     }
-                    ////string exec_folder = IExecutionLogger.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + runSetReportName + "_" + Runners[0].ExecutionLogger.CurrentExecutionDateTime.ToString("MMddyyyy_HHmmss"));
-                    ////string reportsResultFolder = GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), false,null, null, false,currentConf.HTMLReportConfigurationMaximalFolderSize);
+                    string exec_folder = ExecutionLogger.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + runSetReportName + "_" + Runners[0].ExecutionLogger.CurrentExecutionDateTime.ToString("MMddyyyy_HHmmss"));
+                    //string reportsResultFolder = GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), false,null, null, false,currentConf.HTMLReportConfigurationMaximalFolderSize);
                 }
             }
         }
@@ -514,10 +516,7 @@ namespace Ginger.Run
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 try
                 {
-                    //App.MainWindow.Hide();
-                    //App.AppSplashWindow.Close();
-                    //AutoRunWindow RP = new AutoRunWindow();
-                    //RP.Show();
+                    RepositoryItemHelper.RepositoryItemFactory.RunRunSetFromCommandLine();
                 }
                 catch (Exception ex)
                 {
@@ -606,7 +605,7 @@ namespace Ginger.Run
                     switch (param)
                     {
                         case "SourceControlType":
-                            //Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlType: '" + value + "'");
+                            Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlType: '" + value + "'");
                             //if (value.Equals("GIT"))
                             //    App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
                             //else if (value.Equals("SVN"))
@@ -677,7 +676,7 @@ namespace Ginger.Run
                             {
                                 Reporter.ToLogAndConsole(eLogLevel.INFO, "Downloading Solution from source control");
                                 //if (value.IndexOf(".git") != -1)
-                                //    App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
+                                //    WorkSpace.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
                                 //else
                                 //    App.DownloadSolution(value);
                             }
@@ -752,35 +751,16 @@ namespace Ginger.Run
 
         public async Task<int> RunRunsetAnalyzerBeforeRun(bool runInSilentMode=false)
         {
+            int x= 0;
             if (mRunSetConfig.RunWithAnalyzer)
             {
                 //check if not including any High or Critical issues before execution
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
-                try
-                {
-                    //AnalyzerPage analyzerPage = new AnalyzerPage();
-
-                    //analyzerPage.Init(WorkSpace.Instance.Solution, mRunSetConfig);
-                    //await analyzerPage.AnalyzeWithoutUI();
-
-
-                    //if (analyzerPage.TotalHighAndCriticalIssues > 0)
-                    //{
-                    //    if (!runInSilentMode)
-                    //    {
-                    //        Reporter.ToUser(eUserMsgKeys.AnalyzerFoundIssues);
-                    //        analyzerPage.ShowAsWindow();
-                    //    }
-                    //    return 1;//issues found
-                    //}
-                }
-                finally
-                {
-                    Reporter.CloseGingerHelper();
-                }
+              
+                     x = await RepositoryItemHelper.RepositoryItemFactory.AnalyzeRunset(mRunSetConfig, runInSilentMode);
+                
             }
-
-            return 0;
+            return x;
         }
     }
 }

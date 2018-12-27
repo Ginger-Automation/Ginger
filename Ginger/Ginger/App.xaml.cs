@@ -566,6 +566,7 @@ namespace Ginger
             AddClass(list, typeof(Agent));
             AddClass(list, typeof(DriverConfigParam));
             AddClass(list, typeof(GingerRunner));
+            AddClass(list, typeof(ApplicationAgent));
 
             AddClass(list, typeof(RunSetActionHTMLReportSendEmail));
             AddClass(list, typeof(EmailHtmlReportAttachment));

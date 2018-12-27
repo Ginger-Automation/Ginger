@@ -4,6 +4,8 @@ using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Variables;
+using Ginger.Run;
+using System.Threading.Tasks;
 
 #region License
 /*
@@ -50,5 +52,11 @@ namespace Amdocs.Ginger.Common
 
         void StartAgentDriver(IAgent agent);
         Type GetDriverType(IAgent agent);
+
+        Type GetPage(string a);
+
+        Task<int> AnalyzeRunset(Object a, bool b);
+
+        void RunRunSetFromCommandLine();
     }
 }

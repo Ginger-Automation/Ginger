@@ -44,6 +44,9 @@ using static GingerCore.Agent;
 using GingerCore.Drivers.Common;
 using System.Threading;
 using System.Threading.Tasks;
+using Ginger.AnalyzerLib;
+using System.Reflection;
+using System.Windows.Threading;
 
 namespace Ginger.Repository
 {
@@ -330,6 +333,49 @@ namespace Ginger.Repository
         public ObservableList<VariableBase> GetVariaables()
         {
             return App.UserProfile.Solution.Variables;
+        }
+
+        public Type GetPage(string a)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<int> AnalyzeRunset(object a, bool runInSilentMode)
+        {
+            try
+            {
+                AnalyzerPage analyzerPage = new AnalyzerPage();
+                Dispatcher.CurrentDispatcher.Invoke(() => 
+                {
+                    RunSetConfig runSetConfig = (RunSetConfig)a;
+                    analyzerPage.Init(App.UserProfile.mSolution, runSetConfig);
+                });
+                await analyzerPage.AnalyzeWithoutUI();
+
+
+                if (analyzerPage.TotalHighAndCriticalIssues > 0)
+                {
+                    if (!runInSilentMode)
+                    {
+                        Reporter.ToUser(eUserMsgKeys.AnalyzerFoundIssues);
+                        analyzerPage.ShowAsWindow();
+                    }
+                    return 1;
+                }
+            }
+            finally
+            {
+                Reporter.CloseGingerHelper();
+            }
+            return 0;
+        }
+
+        public void RunRunSetFromCommandLine()
+        {
+            App.MainWindow.Hide();
+            App.AppSplashWindow.Close();
+            AutoRunWindow RP = new AutoRunWindow();
+            RP.Show();
         }
     }
 }
