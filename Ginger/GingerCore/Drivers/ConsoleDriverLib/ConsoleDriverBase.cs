@@ -76,7 +76,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
             if (IsDriverConnected)
             {
-                Dispatcher = mConsoleDriverWindow.Dispatcher;
+                Dispatcher.Object = mConsoleDriverWindow.Dispatcher;
                 Dispatcher.Invoke(new Action(() => OnDriverMessage(eDriverMessageType.DriverStatusChanged)));
                 Dispatcher.Run();
             }
@@ -238,20 +238,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             return "TBD";
         }
 
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
-
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
-
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
+        
 
         public override void HighlightActElement(Act act)
         {

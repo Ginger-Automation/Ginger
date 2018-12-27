@@ -487,7 +487,7 @@ namespace Ginger.Reports
                     
                     foreach(String path in act.ScreenShots)
                     {
-                        System.Drawing.Bitmap bmp = GingerCore.General.FileToBitmapImage(path);
+                        System.Drawing.Bitmap bmp = Ginger.Utils.BitmapManager.FileToBitmapImage(path);
                         addBitmap(bmp);
                     }
                          

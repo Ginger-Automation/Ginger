@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Amdocs.Ginger.Repository;
 
-namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
+namespace Ginger.Run.RunSetActions
 {
     public class EmailHtmlReportAttachment : EmailAttachment
     {

@@ -17,26 +17,17 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using GingerCore.Activities;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
+using GingerCore.ALM.Rally;
+using GingerCore.ALM.RQM;
 using System;
 using System.Collections.Generic;
-using GingerCore.ALM.RQM;
 using System.ComponentModel;
-using GingerCore.ALM.Rally;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.ALM
 {
-    public enum FilterByStatus
-    {
-        [Description("All")]
-        All,
-        [Description("Only Passed")]
-        OnlyPassed,
-        [Description("Only Failed")]
-        OnlyFailed
-    }
+    
     public abstract class ALMCore
     {       
         public static ALMConfig AlmConfig = new ALMConfig();

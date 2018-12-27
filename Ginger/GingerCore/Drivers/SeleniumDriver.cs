@@ -694,10 +694,7 @@ namespace GingerCore.Drivers
             //TODO: add XPath
         }
 
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
+        
 
         private Act getActLink(IWebElement currentElement)
         {
@@ -2883,13 +2880,13 @@ namespace GingerCore.Drivers
 
         #endregion
 
-        public override List<ActLink> GetAllLinks()
-        {
-            //TODO: dummy - write real code
-            List<ActLink> ActLinks = new List<ActLink>();
+        //public override List<ActLink> GetAllLinks()
+        //{
+        //    //TODO: dummy - write real code
+        //    List<ActLink> ActLinks = new List<ActLink>();
 
-            return ActLinks;
-        }
+        //    return ActLinks;
+        //}
 
         private void HoverOverLink(ActLink Link)
         {
@@ -3345,24 +3342,24 @@ namespace GingerCore.Drivers
             
         }
 
-        public override List<ActButton> GetAllButtons()
-        {
-            List<ActButton> Buttons = new List<ActButton>();
-            System.Collections.ObjectModel.ReadOnlyCollection<IWebElement> elements;
-            //add all other buttons
-            elements = Driver.FindElements(By.TagName("button"));
-            foreach (IWebElement e in elements)
-            {
-                // TODO: locators...
-                string id = e.GetAttribute("id");
-                ActButton a = new ActButton();
-                a.LocateBy = eLocateBy.ByID;
-                a.LocateValue = id;
+        //public override List<ActButton> GetAllButtons()
+        //{
+        //    List<ActButton> Buttons = new List<ActButton>();
+        //    System.Collections.ObjectModel.ReadOnlyCollection<IWebElement> elements;
+        //    //add all other buttons
+        //    elements = Driver.FindElements(By.TagName("button"));
+        //    foreach (IWebElement e in elements)
+        //    {
+        //        // TODO: locators...
+        //        string id = e.GetAttribute("id");
+        //        ActButton a = new ActButton();
+        //        a.LocateBy = eLocateBy.ByID;
+        //        a.LocateValue = id;
 
-                Buttons.Add(a);
-            }
-            return Buttons;
-        }
+        //        Buttons.Add(a);
+        //    }
+        //    return Buttons;
+        //}
 
         public override void HighlightActElement(Act act)
         {

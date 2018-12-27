@@ -173,7 +173,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             mDriverWindow = new WebServicesDriverWindow(BusinessFlow);
             mDriverWindow.Show();
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-            Dispatcher = mDriverWindow.Dispatcher;
+            Dispatcher.Object = mDriverWindow.Dispatcher;
 
             System.Windows.Threading.Dispatcher.Run();
         }
@@ -704,21 +704,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             return "TBD";
         }
 
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
-
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
-
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
-
+        
         public override void HighlightActElement(Act act)
         {
         }

@@ -155,7 +155,8 @@ namespace Ginger.Run
             {
                 pageGrid.IsEnabled = false;
             }
-            mRunner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick += dispatcherTimerElapsedTick;
+            // FIXME !!!!!!!!!!!!!!!!!!!!!!!
+            // mRunner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick += dispatcherTimerElapsedTick;
             UpdateExecutionStats();
 
             mRunner.GingerRunnerEvent += MRunner_GingerRunnerEvent;

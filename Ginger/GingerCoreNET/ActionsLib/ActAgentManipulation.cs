@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -19,7 +19,6 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using GingerCore.Helpers;
-using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Actions
@@ -155,6 +154,6 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }
+        public override System.Drawing.Image Image { get { return null; } }
     }
 }

@@ -413,7 +413,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\ActAgentManipulation.cs" />
     <Compile Include="Actions\ActionConversion\ActionConversionHandler.cs" />
     <Compile Include="Actions\RobotFramework\ActRobot.cs" />
     <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
@@ -470,14 +469,12 @@
     <Compile Include="Actions\ActCompareImgs.cs" />
     <Compile Include="Actions\ActSendKeys.cs" />
     <Compile Include="Actions\ActSetConfig.cs" />
-    <Compile Include="Actions\ActSetVariableValue.cs" />
     <Compile Include="Actions\ActSmartSync.cs" />
     <Compile Include="Actions\ActLink.cs" />
     <Compile Include="Actions\ActMenuItem.cs" />
     <Compile Include="Actions\ActMultiselectList.cs" />
     <Compile Include="Actions\ActPassword.cs" />
     <Compile Include="Actions\ActRadiobutton.cs" />
-    <Compile Include="Actions\ActScreenShot.cs" />
     <Compile Include="Actions\ActSubmit.cs" />
     <Compile Include="Actions\ActSwitchWindow.cs" />
     <Compile Include="Actions\ActTextBox.cs" />
@@ -537,7 +534,6 @@
     <Compile Include="Actions\XML\XMLProcessor.cs" />
     <Compile Include="ALM\ALMConfig.cs" />
     <Compile Include="ALM\ALMCore.cs" />
-    <Compile Include="ALM\PublishToALMConfig.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
     <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />
     <Compile Include="ALM\QCRestAPI\ImportFromQCRest.cs" />
@@ -623,7 +619,6 @@
     <Compile Include="Drivers\MainFrame\MainFrameDriver.cs" />
     <Compile Include="Drivers\MainFrame\MainFrameUIHelper.cs" />
     <Compile Include="Drivers\MainFrame\Terminal.cs" />
-    <Compile Include="Drivers\DriverMessageEventArgs.cs" />
     <Compile Include="Drivers\PBDriver\HTMLHelper.cs" />
     <Compile Include="Drivers\Selenium\SeleniumBMP\Browser.cs" />
     <Compile Include="Drivers\Selenium\SeleniumBMP\Cache.cs" />
@@ -688,7 +683,6 @@
     <Compile Include="UserControls\ucTextDicResource.xaml.cs">
       <DependentUpon>ucTextDicResource.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Activities\ErrorHandler.cs" />
     <Compile Include="Animations\Animations.cs" />
     <Compile Include="DragDrop\VisualDrag.xaml.cs">
       <DependentUpon>VisualDrag.xaml</DependentUpon>
@@ -727,7 +721,6 @@
     <Compile Include="GeneralLib\GenericWindow.xaml.cs">
       <DependentUpon>GenericWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Platforms\ApplicationAgent.cs" />
     <Compile Include="Platforms\ApplicationPlatform.cs" />
     <Compile Include="Reporter\GingerHelperMsgsPool.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1050000_to_V1060000.cs" />
@@ -739,9 +732,6 @@
     <Compile Include="GeneralLib\InputBoxWindow.xaml.cs">
       <DependentUpon>InputBoxWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Platforms\Agent.cs" />
-    <Compile Include="Platforms\DriverConfigParam.cs" />
-    <Compile Include="Platforms\Platform.cs" />
     <Compile Include="Reporter\Reporter.cs" />
     <Compile Include="Reporter\BotDialog.xaml.cs">
       <DependentUpon>BotDialog.xaml</DependentUpon>
@@ -752,7 +742,6 @@
     <Compile Include="Reporter\UserMessagesPool.cs" />
     <Compile Include="Repository\RepositorySerializer.cs" />
     <Compile Include="Drivers\ASCF\ASCFDriver.cs" />
-    <Compile Include="Drivers\DriverBase.cs" />
     <Compile Include="Drivers\InternalBrowserLib\InternalBrowserWindow.xaml.cs">
       <DependentUpon>InternalBrowserWindow.xaml</DependentUpon>
     </Compile>
@@ -906,7 +895,6 @@
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />
     <Folder Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\com\amdocs\ginger\ASCFPack\" />
-    <Folder Include="FlowControlLib\" />
     <Folder Include="Plugins\Jenkins\" />
     <Folder Include="Themes\Theme1\Images\Logo\" />
   </ItemGroup>

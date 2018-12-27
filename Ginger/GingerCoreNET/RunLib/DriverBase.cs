@@ -17,13 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Windows.Threading;
+using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.Actions;
-using GingerCore.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Threading;
 
 namespace GingerCore.Drivers
 {
@@ -49,7 +47,7 @@ namespace GingerCore.Drivers
 
         //If this is WPF Window like IB, or Device/Mobile, Unix need to run on it's own STA
         public Thread STAThread { get; set; }
-        public Dispatcher Dispatcher { get; set; }
+        public DriverDispatcher Dispatcher { get; set; }
 
         public bool mStopProcess { get; set; }
 
@@ -94,11 +92,7 @@ namespace GingerCore.Drivers
 
         //TODO: to be removed - not used!?
         public abstract Act GetCurrentElement();
-        public abstract string GetURL();
-        public abstract List<ActButton> GetAllButtons();
-        public abstract List<ActWindow> GetAllWindows();
-        public abstract List<ActLink> GetAllLinks();
-
+        public abstract string GetURL();       
 
         public abstract void HighlightActElement(Act act);
         public BusinessFlow BusinessFlow { get; set; }

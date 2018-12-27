@@ -623,12 +623,7 @@ namespace GingerCore
             }
             
         }
-        public static Bitmap FileToBitmapImage(String path)
-        {
-            if (string.IsNullOrEmpty(path)) return null;
-            Bitmap bmp = (Bitmap)Bitmap.FromFile(path);
-            return (bmp);
-        }
+        
 
         public static string GetGingerEXEPath()
         {
