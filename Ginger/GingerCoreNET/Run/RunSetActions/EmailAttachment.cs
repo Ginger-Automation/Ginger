@@ -5,7 +5,7 @@ using System.Text;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
 
-namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
+namespace Ginger.Run.RunSetActions
 {
     public class EmailAttachment : RepositoryItemBase
     {

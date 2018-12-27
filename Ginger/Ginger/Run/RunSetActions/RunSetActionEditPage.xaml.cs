@@ -69,7 +69,7 @@ namespace Ginger.Run.RunSetActions
         private void RunActionBtn_Click(object sender, RoutedEventArgs e)
         {
             mRunSetAction.SolutionFolder = App.UserProfile.Solution.Folder;
-            //mRunSetAction.ExecuteWithRunPageBFES();
+            mRunSetAction.ExecuteWithRunPageBFES();
         }
     }
 }
