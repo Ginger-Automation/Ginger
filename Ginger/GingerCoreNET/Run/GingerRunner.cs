@@ -1637,21 +1637,13 @@ namespace Ginger.Run
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Canceling;
                     act.Error += "Timeout Occurred, Elapsed > " + act.Timeout;
                     if (GiveUserFeedback) OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.DoEventsRequired, null);
+                }                
+
+                if (currentAgent != null && currentAgent.Driver != null)
+                {
+                    currentAgent.Driver.ActionCompleted(act);
                 }
-                //TODO: remove specific action type make it flag on action 
-                //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                //if (currentAgent != null && currentAgent.Driver != null && currentAgent.DriverType == Agent.eDriverType.UnixShell)
-                //    ((GingerCore.Drivers.ConsoleDriverLib.ConsoleDriverBase)currentAgent.Driver).taskFinished = true;
-                //else if (currentAgent != null && (currentAgent.DriverType == Agent.eDriverType.PowerBuilder || currentAgent.DriverType == Agent.eDriverType.WindowsAutomation))
-                //{
-                //    if(currentAgent.DriverType == Agent.eDriverType.WindowsAutomation)                    
-                //        ((GingerCore.Drivers.WindowsLib.WindowsDriver)currentAgent.Driver).mUIAutomationHelper.taskFinished = true;
-                //    else
-                //        ((GingerCore.Drivers.PBDriver.PBDriver)currentAgent.Driver).mUIAutomationHelper.taskFinished = true;
-                //    if (!String.IsNullOrEmpty(act.Error) && act.Error.StartsWith("Time out !"))
-                //        Thread.Sleep(1000);
-                //}
-                    
+
             }
             catch (Exception e)
             {

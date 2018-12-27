@@ -254,5 +254,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             mWait = null;
             mExpString = string.Empty;
         }
+
+        public override void ActionCompleted(Act act)
+        {
+            taskFinished = true;
+        }
+
     }
 }

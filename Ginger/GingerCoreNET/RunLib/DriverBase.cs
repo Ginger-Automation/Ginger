@@ -159,5 +159,10 @@ namespace GingerCore.Drivers
 
         public delegate void DriverMessageEventHandler(object sender, DriverMessageEventArgs e);
         public event DriverMessageEventHandler driverMessageEventHandler;
+
+        public virtual void ActionCompleted(Act act)
+        {
+            // Do nothing, can be implemented in sub class like: ConsoleDriverBase, WindowsDriver, PBDriver
+        }
     }
 }

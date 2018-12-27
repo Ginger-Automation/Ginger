@@ -30,6 +30,7 @@ using GingerCore.Drivers.WindowsLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Threading;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -1071,6 +1072,15 @@ namespace GingerCore.Drivers.PBDriver
         public bool TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
         {
             throw new NotImplementedException();
+        }
+
+        public override void ActionCompleted(Act act)
+        {
+            mUIAutomationHelper.taskFinished = true;
+            if (!String.IsNullOrEmpty(act.Error) && act.Error.StartsWith("Time out !"))
+            {
+                Thread.Sleep(1000);
+            }
         }
     }
 }
