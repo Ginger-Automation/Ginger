@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -20,13 +20,6 @@ namespace GingerCoreNET.SourceControl
 {
     public class SolutionInfo
     {
-        public static partial class Fields
-        {
-            public static string LocalFolder = "LocalFolder";
-            public static string SourceControlLocation = "SourceControlLocation";
-            public static string ExistInLocaly = "ExistInLocaly";
-        }
-
         public string LocalFolder { get; set; }
         public string SourceControlLocation { get; set; }
         public bool ExistInLocaly { get; set; }

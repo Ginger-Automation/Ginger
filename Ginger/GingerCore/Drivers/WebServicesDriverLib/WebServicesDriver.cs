@@ -83,7 +83,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public bool RunSoapUIProcessAsAdmin { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("true")]
+        [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Related only to SoapUI | SoapUI Process Redirect Standard Error")]
         public bool SoapUIProcessRedirectStandardError { get; set; }
 
