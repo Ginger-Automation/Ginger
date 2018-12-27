@@ -1,0 +1,135 @@
+﻿{
+  "templates": [
+    {
+      "projects": [ "Default" ],
+      "fields": [
+        {
+          "name": "issuetype",
+          "key": "issuetype",
+          "type": "object",
+          "data": "{ \"name\": \"Test Execution\" }"
+        },
+        {
+          "name": "description",
+          "key": "description",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "project",
+          "key": "project",
+          "type": "object",
+          "data": "{ \"key\": \"{{value}}\" }"
+        },
+        {
+          "name": "Affects Version/s",
+          "key": "versions",
+          "type": "array",
+          "data": "{\"name\": \"{{value}}\"}"
+        },
+        {
+          "name": "fixVersions",
+          "key": "fixVersions",
+          "type": "array",
+          "data": "{\"name\": \"{{value}}\"}"
+        },
+        {
+          "name": "Test Environments",
+          "key": "customfield_15624",
+          "type": "strings_array",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Tests Cases",
+          "key": "customfield_15614",
+          "type": "strings_array",
+          "data": "{{value}}"
+        },
+        {
+          "name": "timetracking",
+          "key": "timetracking",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "summary",
+          "key": "summary",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "reporter",
+          "key": "reporter",
+          "type": "object",
+          "data": "{\"name\": \"{{value}}\"}"
+        },
+        {
+          "name": "priority",
+          "key": "priority",
+          "type": "object",
+          "data": "{ \"name\": \"{{value}}\"}"
+        },
+        {
+          "name": "BP End date",
+          "key": "customfield_15804",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "labels",
+          "key": "labels",
+          "type": "array",
+          "data": "{\"name\": \"{{value}}\"}"
+        },
+        {
+          "name": "Xray End Date",
+          "key": "customfield_15617",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Revision",
+          "key": "customfield_15618",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Testing Level",
+          "key": "customfield_11523",
+          "type": "object",
+          "data": "{\"value\": \"{{value}}\"}"
+        },
+        {
+          "name": "environment",
+          "key": "environment",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Test Plan",
+          "key": "customfield_15626",
+          "type": "strings_array",
+          "data": "{{value}}"
+        },
+        {
+          "name": "BP Start date",
+          "key": "customfield_15803",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Begin Date",
+          "key": "customfield_15616",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Assignee",
+          "key": "assignee",
+          "type": "object",
+          "data": "{ \"name\": \"{{value}}\"}"
+        }
+      ]
+    }
+  ]
+}

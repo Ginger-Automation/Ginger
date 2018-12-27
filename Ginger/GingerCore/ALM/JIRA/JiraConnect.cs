@@ -43,8 +43,9 @@ namespace GingerCore.ALM.JIRA
         IProjectDefinitions connectedProjectDefenition;
         AlmDomainColl jiraDomainsProjectsDataList;
 
-        private JiraConnect()
+        public JiraConnect(JiraRepository.JiraRepository jiraRep)
         {
+            this.jiraRepositoryObj = jiraRep;
         }
 
         public void CreateJiraRepository()
@@ -69,29 +70,7 @@ namespace GingerCore.ALM.JIRA
             return false;
         }
 
-        #region singlton
-        private static readonly JiraConnect _instance = new JiraConnect();
-        public static JiraConnect Instance
-        {
-            get
-            {
-                return _instance;
-            }
-        }
-        #endregion singlton
-
-        private JiraRepository.JiraRepository mJiraRep;
-        public JiraRepository.JiraRepository JiraRep
-        {
-            get
-            {
-                if (mJiraRep == null)
-                    return new JiraRepository.JiraRepository();
-                return mJiraRep;
-            }
-            set { mJiraRep = value; }
-        }
-
+        private JiraRepository.JiraRepository jiraRepositoryObj;
         public bool ConnectJiraServer()
         {
             if (JiraConnectionTest())
@@ -125,7 +104,7 @@ namespace GingerCore.ALM.JIRA
             bool isUserAuthen;
 
             LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
-            isUserAuthen = JiraRep.IsUserAuthenticated(loginData);
+            isUserAuthen = jiraRepositoryObj.IsUserAuthenticated(loginData);
 
             return isUserAuthen;
         }
@@ -152,7 +131,7 @@ namespace GingerCore.ALM.JIRA
         internal List<string> GetJiraDomains()
         {
             LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
-            jiraDomainsProjectsDataList = JiraRep.GetLoginProjects(loginData.User, loginData.Password, loginData.Server).DataResult;
+            jiraDomainsProjectsDataList = jiraRepositoryObj.GetLoginProjects(loginData.User, loginData.Password, loginData.Server).DataResult;
             List<string> jiraDomains = new List<string>();
             foreach (var domain in jiraDomainsProjectsDataList)
             {

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ALM_Common.DataContracts;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
@@ -46,7 +49,30 @@ namespace Ginger.ALM.Repository
 
         public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false)
         {
-            throw new NotImplementedException();
+            bool result = false;
+            string responseStr=string.Empty;
+            if (activtiesGroup != null)
+            {
+            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(App.UserProfile.Solution.ExternalItemsFields);
+                var testCaseFields = allFields.Where(a => a.ItemType == ResourceType.TEST_CASE.ToString());
+                var designStepsFields = allFields.Where(a => a.ItemType == ResourceType.DESIGN_STEP.ToString());
+                bool exportRes = ((JiraCore)this.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, uploadPath, testCaseFields, designStepsFields, ref responseStr);
+
+                Reporter.CloseGingerHelper();
+                if (exportRes)
+                {
+                    if (performSaveAfterExport)
+                    {
+                        Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, activtiesGroup.Name, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(activtiesGroup);
+                        Reporter.CloseGingerHelper();
+                    }
+                    return true;
+                }
+                else
+                    Reporter.ToUser(eUserMsgKeys.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activtiesGroup.Name, responseStr);
+            }
+            return result;
         }
 
         public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
