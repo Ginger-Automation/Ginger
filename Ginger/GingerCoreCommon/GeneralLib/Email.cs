@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Mail;
 using System.Text;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 
 namespace GingerCore.GeneralLib
@@ -133,118 +134,14 @@ namespace GingerCore.GeneralLib
         public AlternateView alternateView { get; set; }
         private bool Send_Outlook(bool actualSend = true)
         {
-            //try
-            //{
-            //    OutLook.Application objOutLook = null;
-            //    if (string.IsNullOrEmpty(MailTo))
-            //    {
-            //        Event = "Failed: Please provide TO email address.";
-            //        return false;
-            //    }
-            //    if (string.IsNullOrEmpty(Subject))
-            //    {
-            //        Event = "Failed: Please provide email subject.";
-            //        return false;
-            //    }
-            //    // Check whether there is an Outlook process running.
-            //    if (System.Diagnostics.Process.GetProcessesByName("OUTLOOK").Count() > 0)
-            //    {
-            //        // If so, use the GetActiveObject method to obtain the process and cast it to an ApplicatioInstall-Package Microsoft.Office.Interop.Exceln object.
-
-            //        objOutLook = Marshal.GetActiveObject("Outlook.Application") as OutLook.Application;
-            //    }
-            //    else
-            //    {
-            //        // If not, create a new instance of Outlook and log on to the default profile.
-            //        objOutLook = new OutLook.Application();
-            //        OutLook.NameSpace nameSpace = objOutLook.GetNamespace("MAPI");
-            //        nameSpace.Logon("", "", System.Reflection.Missing.Value, System.Reflection.Missing.Value);
-            //        nameSpace = null;
-            //    }
-
-            //    mOutlookMail = objOutLook.CreateItem(OutLook.OlItemType.olMailItem) as OutLook.MailItem;
-
-            //    mOutlookMail.HTMLBody = this.Body;
-            //    mOutlookMail.Subject = this.Subject;
-
-            //    OutLook.AddressEntry currentUser = objOutLook.Session.CurrentUser.AddressEntry;
-
-            //    if (currentUser.Type == "EX")
-            //    {
-            //        OutLook.ExchangeUser manager = currentUser.GetExchangeUser();
-
-            //        // Add recipient using display name, alias, or smtp address
-            //        string emails = MailTo;
-            //        Array arrEmails = emails.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            //        foreach (string email in arrEmails)
-            //        {
-            //            mOutlookMail.Recipients.Add(email);
-            //        }
-
-            //        //Add CC
-            //        if (!String.IsNullOrEmpty(MailCC))
-            //        {
-            //            Array arrCCEmails = MailCC.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            //            foreach (string MailCC1 in arrCCEmails)
-            //            {
-            //                mOutlookMail.Recipients.Add(MailCC1);
-            //            }
-            //        }
-
-            //        mOutlookMail.Recipients.ResolveAll();
-
-            //        mOutlookMail.CC = this.MailCC;
-            //        mOutlookMail.To = this.MailTo;
-
-            //        //Add Attachment
-            //        foreach (string AttachmentFileName in Attachments)
-            //        {
-            //            if (String.IsNullOrEmpty(AttachmentFileName) == false)
-            //                mOutlookMail.Attachments.Add(AttachmentFileName, Type.Missing, Type.Missing, Type.Missing);
-            //        }
-
-            //        //attachment which is embeded into the email body(images).                       
-            //        foreach (KeyValuePair<string, string> AttachmentFileName in EmbededAttachment)
-            //        {
-            //            if (String.IsNullOrEmpty(AttachmentFileName.Key) == false)
-            //            {
-            //                OutLook.Attachment attachment = mOutlookMail.Attachments.Add(AttachmentFileName.Key, OutLook.OlAttachmentType.olEmbeddeditem, null, "");
-            //                attachment.PropertyAccessor.SetProperty("http://schemas.microsoft.com/mapi/proptag/0x3712001E", AttachmentFileName.Value);
-            //            }
-            //        }
-            //        if (actualSend)
-            //        {
-            //            //Send Mail
-            //            mOutlookMail.Send();
-            //        }
-            //    }
-               return true;
-            //}
-            //catch (Exception ex)
-            //{
-            //    if (ex.Message.Contains("Mailbox Unavailabel"))
-            //    {
-            //        Event = "Failed: Please provide correct sender email address";
-            //    }
-            //    else if (ex.StackTrace.Contains("System.Runtime.InteropServices.Marshal.GetActiveObject"))
-            //    {
-            //        Event = "Please make sure ginger/outlook opened in same security context (Run as administrator or normal user)";
-            //    }
-            //    else if (ex.StackTrace.Contains("System.Security.Authentication.AuthenticationException") || ex.StackTrace.Contains("System.Net.Sockets.SocketException"))
-            //    {
-            //        Event = "Please check SSL configuration";
-            //    }
-            //    else
-            //    {
-            //        Event = "Failed: " + ex.Message;
-            //    }
-            //    return false;
-            //}
+            bool a= RepositoryItemHelper.RepositoryItemFactory.Send_Outlook(actualSend,MailTo,Event,Subject,Body,MailCC,Attachments,EmbededAttachment);
+            return a;
         }
 
         public void DisplayAsOutlookMail()
         {
             Send_Outlook(false);
+            RepositoryItemHelper.RepositoryItemFactory.DisplayAsOutlookMail();
            // mOutlookMail.Display();
         }
 

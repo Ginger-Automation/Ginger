@@ -6,6 +6,7 @@ using GingerCore.Environments;
 using GingerCore.Variables;
 using Ginger.Run;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 #region License
 /*
@@ -58,5 +59,13 @@ namespace Amdocs.Ginger.Common
         Task<int> AnalyzeRunset(Object a, bool b);
 
         void RunRunSetFromCommandLine();
+
+        bool Send_Outlook(bool actualSend = true, string MailTo=null, string Event=null, string Subject=null, string Body=null, string MailCC=null, List<string> Attachments=null, List<KeyValuePair<string, string>> EmbededAttachment=null);
+
+        void DisplayAsOutlookMail();
+
+        void CreateChart(List<KeyValuePair<int, int>> y, string chartName, string Title, string tempfolder);
+
+        void CreateCustomerLogo(Object a, string t);
     }
 }

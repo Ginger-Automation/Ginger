@@ -40,7 +40,7 @@ using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
 using GingerCore.Environments;
 using Ginger.Reports.GingerExecutionReport;
-using System.Windows.Threading;
+
 
 namespace Ginger.Run
 {
@@ -295,10 +295,10 @@ namespace Ginger.Run
             if (doContinueRun == false)
             {
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                Dispatcher.CurrentDispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
-                {
+                //Dispatcher.CurrentDispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
+                //{
                     WorkSpace.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
-                });
+                //});
             }
 
             //Start Run 
@@ -380,10 +380,10 @@ namespace Ginger.Run
             {
                 // Process all post execution RunSet Operations
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                Dispatcher.CurrentDispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
-                {
+                //Dispatcher.CurrentDispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
+                //{
                     WorkSpace.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
-                });
+                //});
             }
             Reporter.ToLog(eLogLevel.INFO, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             CreateGingerExecutionReportAutomaticly();
