@@ -35,20 +35,25 @@ namespace Amdocs.Ginger
         {
             if (string.IsNullOrEmpty(runSetName))
             {
-                if (!InputBoxWindow.GetInputWithValidation(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)), string.Format("{0} Name:", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ref runSetName, System.IO.Path.GetInvalidPathChars()))
-                {
-                    return null;
-                }
 
-                while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>().Where(r => r.ItemName.ToLower() == runSetName.ToLower()).FirstOrDefault() != null)
+                do
                 {
-                    Reporter.ToUser(eUserMsgKeys.DuplicateRunsetName, runSetName);
+                    if (!string.IsNullOrEmpty(runSetName.Trim()))
+                        Reporter.ToUser(eUserMsgKeys.DuplicateRunsetName, runSetName);
 
-                    if (!InputBoxWindow.GetInputWithValidation(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)), string.Format("{0} Name:", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ref runSetName, System.IO.Path.GetInvalidPathChars()))
+                    bool returnWindow = InputBoxWindow.OpenDialog(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)),
+                                                                        string.Format("{0} Name:", GingerDicser.GetTermResValue(eTermResKey.RunSet)),
+                                                                                ref runSetName);
+
+                    if (returnWindow)
                     {
-                        return null;
+                        if (string.IsNullOrEmpty(runSetName.Trim()))
+                            Reporter.ToUser(eUserMsgKeys.ValueIssue, "Value cannot be empty");
                     }
+                    else
+                        return null;
                 }
+                while (string.IsNullOrEmpty(runSetName.Trim()) || WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>().Where(r => r.ItemName.ToLower() == runSetName.ToLower()).FirstOrDefault() != null);
             }
 
             RunSetConfig runSetConfig = new RunSetConfig();
