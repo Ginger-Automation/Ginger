@@ -42,6 +42,7 @@ namespace Amdocs.Ginger.GingerConsole
         MenuItem BusinessFlowsCountMenuItem;
         MenuItem BusinessFlowsListMenuItem;
         MenuItem EnvironmentsListMenuItem;
+        MenuItem RunBusinessFlowMenuItem;
 
         public MenuItem GetMenu()
         {
@@ -50,6 +51,7 @@ namespace Amdocs.Ginger.GingerConsole
             BusinessFlowsCountMenuItem = new MenuItem(ConsoleKey.B, "Business Flows Count", BusinessFlowsCount, false);
             BusinessFlowsListMenuItem = new MenuItem(ConsoleKey.L, "Business Flows List", BusinessFlowsList, false);
             EnvironmentsListMenuItem = new MenuItem(ConsoleKey.E, "Environments List", EnvironmentsList, false);
+            RunBusinessFlowMenuItem = new MenuItem(ConsoleKey.R, "Run Business Flow", RunBusinessFlow, false);
 
             MenuItem SolutionMenu = new MenuItem(ConsoleKey.S, "Solution");
             SolutionMenu.SubItems.Add(OpenSolutionMenuItem);
@@ -57,8 +59,30 @@ namespace Amdocs.Ginger.GingerConsole
             SolutionMenu.SubItems.Add(BusinessFlowsCountMenuItem);
             SolutionMenu.SubItems.Add(BusinessFlowsListMenuItem);
             SolutionMenu.SubItems.Add(EnvironmentsListMenuItem);
+            SolutionMenu.SubItems.Add(RunBusinessFlowMenuItem);
 
             return SolutionMenu;
+        }
+
+        private void RunBusinessFlow()
+        {
+            Console.WriteLine("Business Flow Name?");
+            string BizFlowName = Console.ReadLine();
+            BusinessFlow businessFlow = (from x in SR.GetAllRepositoryItems<BusinessFlow>() where x.Name == BizFlowName select x).SingleOrDefault();
+            if (businessFlow == null)
+            {
+                Console.WriteLine("Business Flow not found");
+                return;
+            }
+            GingerRunner gingerRunner = new GingerRunner();            
+            gingerRunner.RunBusinessFlow(businessFlow, true);
+
+            Console.WriteLine("Execution completed");
+            Console.WriteLine("BF Status: " + businessFlow.Status);
+            foreach (Activity activity in businessFlow.Activities)
+            {
+                Console.WriteLine("Activity: " + activity.ActivityName + " Status: " + activity.Status);                
+            }
         }
 
         public static void InitClassTypesDictionary()
@@ -174,6 +198,7 @@ namespace Amdocs.Ginger.GingerConsole
                 BusinessFlowsCountMenuItem.Active = true;
                 BusinessFlowsListMenuItem.Active = true;
                 EnvironmentsListMenuItem.Active = true;
+                RunBusinessFlowMenuItem.Active = true;
             }
             else
             {
