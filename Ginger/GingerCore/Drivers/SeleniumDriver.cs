@@ -113,12 +113,12 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Only for IE, Chrome & Firefox | Set \"true\" to Launch the Browser minimized")]
+        [UserConfiguredDescription("Set \"true\" to Launch the Browser minimized")]
         public bool BrowserMinimized { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Set \"true\" to hide the Driver Console (Command Prompt) Window")]
+        [UserConfiguredDefault("true")]
+        [UserConfiguredDescription("Hide the Driver Console (Command Prompt) Window")]
         public bool HideConsoleWindow { get; set; }
 
         [UserConfigured]
@@ -324,25 +324,30 @@ namespace GingerCore.Drivers
                         {
                             string IEdriver64bitpath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Locati‌​on) + @"\Drivers\IE64BitDriver");
 
+                            InternetExplorerDriverService IEService = InternetExplorerDriverService.CreateDefaultService(IEdriver64bitpath);
+                            IEService.HideCommandPromptWindow = (HideConsoleWindow == true);
+
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
-                                Driver = new InternetExplorerDriver(IEdriver64bitpath, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                            else
-                                Driver = new InternetExplorerDriver(IEdriver64bitpath, ieoptions);
-                        }
-                        else
-                        {
-                            if (Convert.ToInt32(HttpServerTimeOut) >= 60)
                             {
-                                InternetExplorerDriverService service = InternetExplorerDriverService.CreateDefaultService();
-
-                                if (HideConsoleWindow == true)
-                                    service.HideCommandPromptWindow = true;
-
-                                Driver = new InternetExplorerDriver(service, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                                Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                             }
                             else
                             {
-                                Driver = new InternetExplorerDriver(ieoptions);
+                                Driver = new InternetExplorerDriver(IEService, ieoptions);
+                            }
+                        }
+                        else
+                        {
+                            InternetExplorerDriverService IEService = InternetExplorerDriverService.CreateDefaultService();
+                            IEService.HideCommandPromptWindow = (HideConsoleWindow == true);
+
+                            if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                            {
+                                Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
+                            else
+                            {
+                                Driver = new InternetExplorerDriver(IEService, ieoptions);
                             }
                         }
                         break;
@@ -403,18 +408,16 @@ namespace GingerCore.Drivers
                             }
                         }
 
-                        if (Convert.ToInt32(HttpServerTimeOut) >= 60)
+                        FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService();
+                        FFService.HideCommandPromptWindow = (HideConsoleWindow == true);
+
+                        if (Convert.ToInt32(HttpServerTimeOut) > 60)
                         {
-                            FirefoxDriverService service = FirefoxDriverService.CreateDefaultService();
-
-                            if (HideConsoleWindow == true)
-                                service.HideCommandPromptWindow = true;
-
-                            Driver = new FirefoxDriver(service, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            Driver = new FirefoxDriver(FFService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         }
                         else
                         {
-                            Driver = new FirefoxDriver(FirefoxOption);
+                            Driver = new FirefoxDriver(FFService, FirefoxOption);
                         }
 
                         break;
@@ -455,18 +458,17 @@ namespace GingerCore.Drivers
                         if (SeleniumUserArgs != null)
                             foreach (string arg in SeleniumUserArgs)
                                 options.AddArgument(arg);
-                        if (Convert.ToInt32(HttpServerTimeOut) >= 60)
+
+                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
+                        ChService.HideCommandPromptWindow = (HideConsoleWindow == true);
+
+                        if (Convert.ToInt32(HttpServerTimeOut) > 60)
                         {
-                            ChromeDriverService service = ChromeDriverService.CreateDefaultService();
-
-                            if (HideConsoleWindow == true)
-                                service.HideCommandPromptWindow = true;
-
-                            Driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         }
                         else
                         {
-                            Driver = new ChromeDriver(options);
+                            Driver = new ChromeDriver(ChService, options);
                         }
                         break;
 
@@ -474,19 +476,17 @@ namespace GingerCore.Drivers
 
                     #region EDGE
                     case eBrowserType.Edge:
-                        if (Convert.ToInt32(HttpServerTimeOut) >= 60)
-                        {
-                            EdgeDriverService service = EdgeDriverService.CreateDefaultService();
 
-                            if (HideConsoleWindow == true)
-                                service.HideCommandPromptWindow = true;
+                        EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();
+                        EDService.HideCommandPromptWindow = HideConsoleWindow;
 
-                            Driver = new EdgeDriver(service);
-                        }
-                        else
+                        Driver = new EdgeDriver(EDService);
+
+                        if (Convert.ToInt32(HttpServerTimeOut) > 60)
                         {
-                            Driver = new EdgeDriver();
+                            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut));
                         }
+
                         break;
                     #endregion
 
@@ -560,7 +560,7 @@ namespace GingerCore.Drivers
                         #endregion
                 }
 
-                if (BrowserMinimized == true)
+                if (BrowserMinimized == true && mBrowserTpe != eBrowserType.Edge)
                     Driver.Manage().Window.Minimize();
 
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
