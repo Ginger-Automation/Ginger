@@ -210,6 +210,10 @@ namespace Amdocs.Ginger.GingerConsole
                 foreach (Activity activity in BF.Activities)
                 {                    
                     Console.WriteLine("Activity: " + activity.ActivityName);
+                    foreach (Act action in activity.Acts)
+                    {
+                        Console.WriteLine("Action: " + action.Description);
+                    }
                 }
             }
         }
