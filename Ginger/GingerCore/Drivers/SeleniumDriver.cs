@@ -3256,6 +3256,11 @@ namespace GingerCore.Drivers
                         elem = Driver.FindElement(By.XPath("//*[@value=\"" + locator.LocateValue + "\"]"));
                 }
 
+                if(locator.LocateBy == eLocateBy.ByAutomationID)
+                {
+                    elem = Driver.FindElement(By.XPath("//*[@data-automation-id=\"" + locator.LocateValue + "\"]"));
+                }
+
                 if (locator.LocateBy == eLocateBy.ByCSS)
                 {
                     elem = Driver.FindElement(By.CssSelector(locator.LocateValue));
