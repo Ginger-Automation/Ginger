@@ -26,6 +26,7 @@ using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
 using GingerCore.Environments;
+using GingerCoreNET.ReporterLib;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -434,9 +435,8 @@ namespace GingerCore
                         case "eType":
                             //TODO: Handle enums later...
                             throw new Exception("Driver Config - Enum not supported yet");
-                        default:
-                            // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //AppReporter.ToUser(eUserMsgKeys.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
+                        default:                            
+                            AppReporter.ToUser(eUserMsgKeys.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
                             break;
                     }
                 }
@@ -850,21 +850,18 @@ namespace GingerCore
                 WaitForAgentToBeReady();
 
                 if (Status == Agent.eStatus.Running)
-                {
-                    //FIXME
-                    //Reporter.ToUser(eUserMsgKeys.SuccessfullyConnectedToAgent);
+                {                    
+                    AppReporter.ToUser(eUserMsgKeys.SuccessfullyConnectedToAgent);
                 }
                 else
-                {
-                    //FIXME
-                    // Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, "Invalid Agent Configuration");
+                {                    
+                    AppReporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, "Invalid Agent Configuration");
                 }
             }
 
             catch (Exception AgentStartException)
-            {
-                //FIXME
-                // Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, "Agent Launch failed due to " + AgentStartException.Message);
+            {                
+                AppReporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, "Agent Launch failed due to " + AgentStartException.Message);
             }
             finally
             {

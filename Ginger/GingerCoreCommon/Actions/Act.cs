@@ -1635,5 +1635,9 @@ namespace GingerCore.Actions
             }
         }
 
+        public virtual void CalculateModelParameterExpectedValue(ActReturnValue aRC)
+        {
+            // do nothing, will be override in action which needs it like ActWebAPIModel
+        }
     }
 }

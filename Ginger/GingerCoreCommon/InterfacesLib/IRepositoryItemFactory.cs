@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.Common
     
 
     public interface IRepositoryItemFactory
-    { 
+    {        
         //BusinessFlow CreateBusinessFlow();
         //ObservableList<BusinessFlow> GetListofBusinessFlow();
         IActivitiesGroup CreateActivitiesGroup();
@@ -71,5 +71,6 @@ namespace Amdocs.Ginger.Common
         Dictionary<string, string> TakeDesktopScreenShot(bool v);
         
         void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
+        void MessageBoxShow(string message);
     }
 }

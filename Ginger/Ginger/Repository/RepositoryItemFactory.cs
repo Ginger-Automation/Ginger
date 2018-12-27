@@ -61,7 +61,7 @@ namespace Ginger.Repository
     public class RepositoryItemFactory : IRepositoryItemFactory
     {
         Outlook.MailItem mOutlookMail;
-
+        
         public RepositoryItemFactory()
         {
         }
@@ -607,6 +607,11 @@ namespace Ginger.Repository
         public void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
         {
             ALM.ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, ALM.ALMIntegration.eALMConnectType.Silence);
+        }
+
+        public void MessageBoxShow(string message)
+        {
+            System.Windows.Forms.MessageBox.Show(message);
         }
     }
     

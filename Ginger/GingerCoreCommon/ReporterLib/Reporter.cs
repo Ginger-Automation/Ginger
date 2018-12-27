@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Amdocs.Ginger.Common;
 
 namespace GingerCoreNET.ReporterLib
 {
@@ -40,6 +41,7 @@ namespace GingerCoreNET.ReporterLib
         INFO,WARN,ERROR,QUESTION
     }
 
+    
     public class UserMessage
     {
         public UserMessage(eMessageType MessageType, string Caption, string Message, MessageBoxButton ButtonsType, MessageBoxResult DefualtResualt)
@@ -91,7 +93,7 @@ namespace GingerCoreNET.ReporterLib
         
         public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
         {
-            MessageBox.Show(messageToLog);
+            RepositoryItemHelper.RepositoryItemFactory.MessageBoxShow(messageToLog);
         }
 
         public static void ToLogAndConsole(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
@@ -124,7 +126,7 @@ namespace GingerCoreNET.ReporterLib
                     {
                         mess += o.ToString() + " ";
                     }
-                    MessageBox.Show(messageKey.ToString() + " - " + mess);
+                    RepositoryItemHelper.RepositoryItemFactory.MessageBoxShow(messageKey.ToString() + " - " + mess);
 
                     ToLog(eLogLevel.WARN, "The user message with key: '" + messageKey + "' was not found! and won't show to the user!");
                     return MessageBoxResult.None;
@@ -183,7 +185,7 @@ namespace GingerCoreNET.ReporterLib
             catch (Exception ex)
             {
                 ToLog(eLogLevel.ERROR, "Failed to show the user message with the key: " + messageKey, ex);
-                MessageBox.Show("Failed to show the user message with the key: " + messageKey);
+                RepositoryItemHelper.RepositoryItemFactory.MessageBoxShow("Failed to show the user message with the key: " + messageKey);
                 return MessageBoxResult.None;
             }
         }

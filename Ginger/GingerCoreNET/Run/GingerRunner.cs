@@ -2454,51 +2454,51 @@ namespace Ginger.Run
             }
             
             //Go over all return value calculate each for final action result status
-            foreach (ActReturnValue ARC in act.ReturnValues)
+            foreach (ActReturnValue actReturnValue in act.ReturnValues)
             {
                 //if expected is empty then no check and mark it NA
-                if (String.IsNullOrEmpty(ARC.Expected))
+                if (String.IsNullOrEmpty(actReturnValue.Expected))
                 {
-                    ARC.Status = ActReturnValue.eStatus.NA;
+                    actReturnValue.Status = ActReturnValue.eStatus.NA;
                 }
-                else if (!ARC.Active)
+                else if (!actReturnValue.Active)
                 {
-                    ARC.Status = ActReturnValue.eStatus.Skipped;
+                    actReturnValue.Status = ActReturnValue.eStatus.Skipped;
                 }
                 else
                 {
                     //get Expected Calculated
                     ValueExpression ve = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
-                    ve.Value = ARC.Expected;
+                    ve.Value = actReturnValue.Expected;
                     //replace {Actual} place holder with real Actual value
                     if (ve.Value.Contains("{Actual}"))
                     {
                         //Replace to 
-                        if ((ARC.Actual != null) && Ginger.Utils.StringManager.IsNumeric(ARC.Actual))
+                        if ((actReturnValue.Actual != null) && Ginger.Utils.StringManager.IsNumeric(actReturnValue.Actual))
                         {
-                            ve.Value = ve.Value.Replace("{Actual}", ARC.Actual);
+                            ve.Value = ve.Value.Replace("{Actual}", actReturnValue.Actual);
                         }
                         else
                         {
-                            ve.Value = ve.Value.Replace("{Actual}", "\"" + ARC.Actual + "\"");
+                            ve.Value = ve.Value.Replace("{Actual}", "\"" + actReturnValue.Actual + "\"");
                         }
                     }
                     //calculate the expected value
-                    ARC.ExpectedCalculated = ve.ValueCalculated;
+                    actReturnValue.ExpectedCalculated = ve.ValueCalculated;
 
                     //calculate Model Parameter expected value
-                    CalculateModelParameterExpectedValue(act, ARC);
+                    CalculateModelParameterExpectedValue(act, actReturnValue);
 
                     //compare Actual vs Expected (calculated)
-                    CalculateARCStatus(ARC);
+                    CalculateARCStatus(actReturnValue);
 
-                    if (ARC.Status == ActReturnValue.eStatus.Failed)
+                    if (actReturnValue.Status == ActReturnValue.eStatus.Failed)
                     {
-                        string formatedExpectedCalculated = ARC.ExpectedCalculated;
-                        if (ARC.ExpectedCalculated.Length >= 9 && (ARC.ExpectedCalculated.Substring(ARC.ExpectedCalculated.Length - 9, 9)).Contains("is False"))
-                            formatedExpectedCalculated = ARC.ExpectedCalculated.ToString().Substring(0, ARC.ExpectedCalculated.Length - 9);
+                        string formatedExpectedCalculated = actReturnValue.ExpectedCalculated;
+                        if (actReturnValue.ExpectedCalculated.Length >= 9 && (actReturnValue.ExpectedCalculated.Substring(actReturnValue.ExpectedCalculated.Length - 9, 9)).Contains("is False"))
+                            formatedExpectedCalculated = actReturnValue.ExpectedCalculated.ToString().Substring(0, actReturnValue.ExpectedCalculated.Length - 9);
 
-                        act.Error += "Output Value validation failed for the Parameter '" + ARC.Param + "' , Expected value is " + formatedExpectedCalculated + " while Actual value is '" + ARC.Actual +"'"+ System.Environment.NewLine;
+                        act.Error += "Output Value validation failed for the Parameter '" + actReturnValue.Param + "' , Expected value is " + formatedExpectedCalculated + " while Actual value is '" + actReturnValue.Actual +"'"+ System.Environment.NewLine;
                     }
                 }
             }            
@@ -2545,24 +2545,14 @@ namespace Ginger.Run
                 }
             }
         }
-        
+
+
+        //used for Model param - GingerCore.Actions.WebServices.WebAPI.ActWebAPIModel
         private void CalculateModelParameterExpectedValue(Act act, ActReturnValue ARC)
         {
-            // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            throw new NotImplementedException();
+            act.CalculateModelParameterExpectedValue(ARC);
 
-            ////TODO: make all of this to be generic and not per action type
-            //if (act is GingerCore.Actions.WebServices.WebAPI.ActWebAPIModel == false) return;
-
-            //if (ARC.ExpectedCalculated.Contains("AppModelParam"))
-            //{
-            //    GingerCore.Actions.WebServices.WebAPI.ActWebAPIModel modelAct = (GingerCore.Actions.WebServices.WebAPI.ActWebAPIModel)act;
-            //    List<AppModelParameter> usedParams = modelAct.ActAppModelParameters.Where(x => ARC.ExpectedCalculated.Contains(x.PlaceHolder)).ToList();
-            //    foreach (AppModelParameter param in usedParams)
-            //    {
-            //        ARC.ExpectedCalculated = ARC.ExpectedCalculated.Replace(("{AppModelParam Name = " + param.PlaceHolder + "}"), param.ExecutionValue);
-            //    }
-            //}
+            
         }
 
         public static void CalculateARCStatus(ActReturnValue ARC)

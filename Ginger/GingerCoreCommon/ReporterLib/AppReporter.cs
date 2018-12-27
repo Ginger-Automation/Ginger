@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using Amdocs.Ginger.Common.ReporterLib;
+using GingerCoreNET.ReporterLib;
 
 namespace Amdocs.Ginger.Common
 {
@@ -53,6 +54,16 @@ namespace Amdocs.Ginger.Common
         {
             //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // OnReportEvent(reportType: eAppReportType.ToUser, reportMessageType: reportMessageType);
+        }
+
+        public static void ToUser(eUserMsgKeys failedToConnectAgent, string name, string v)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public static void ToUser(eUserMsgKeys setDriverConfigTypeNotHandled, string v)
+        {
+            //throw new NotImplementedException();
         }
     }
 }

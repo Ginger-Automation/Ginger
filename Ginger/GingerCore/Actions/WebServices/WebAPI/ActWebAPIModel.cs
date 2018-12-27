@@ -98,5 +98,17 @@ namespace GingerCore.Actions.WebServices.WebAPI
         }
 
         public ObservableList<AppModelParameter> ActAppModelParameters;
+
+        public override void CalculateModelParameterExpectedValue(ActReturnValue actReturnValue)
+        {            
+            if (actReturnValue.ExpectedCalculated.Contains("AppModelParam"))
+            {                
+                List<AppModelParameter> usedParams = ActAppModelParameters.Where(x => actReturnValue.ExpectedCalculated.Contains(x.PlaceHolder)).ToList();
+                foreach (AppModelParameter param in usedParams)
+                {
+                    actReturnValue.ExpectedCalculated = actReturnValue.ExpectedCalculated.Replace(("{AppModelParam Name = " + param.PlaceHolder + "}"), param.ExecutionValue);
+                }
+            }
+        }
     }
 }
