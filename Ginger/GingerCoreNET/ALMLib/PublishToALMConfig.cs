@@ -54,8 +54,7 @@ namespace GingerCore.ALM
         public string VariableForTCRunNameCalculated { get; set; }   
                        
         public bool ToAttachActivitiesGroupReport { get; set; }
-     
-        // FIXME was not used
+             
         public FilterByStatus FilterStatus { get; set; }
                        
         public void CalculateTCRunName(ValueExpression ve)
