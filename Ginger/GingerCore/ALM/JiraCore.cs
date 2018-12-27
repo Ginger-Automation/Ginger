@@ -30,25 +30,34 @@ using System.IO.Compression;
 using Newtonsoft.Json;
 using GingerCore.External;
 using Amdocs.Ginger.Repository;
+using GingerCore.ALM.JIRA.Bll;
 
 namespace GingerCore.ALM
 {
     public class JiraCore : ALMCore
     {
+        private JiraExportManager exportMananger;
+        private JiraConnect jiraConnectObj;
+        private JiraRepository.JiraRepository jiraRepObj;
         public static string ALMProjectGroupName { get; set; }
         public static string ALMProjectGuid { get; set; }
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public override ObservableList<Activity> GingerActivitiesRepo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public override ObservableList<ExternalItemFieldBase> almItemFields { get ; set ; }
-
+        public JiraCore()
+        {
+            jiraRepObj = new JiraRepository.JiraRepository();
+            exportMananger = new JiraExportManager(jiraRepObj);
+            jiraConnectObj = new JiraConnect(jiraRepObj);
+        }
         public override bool ConnectALMProject()
         {
-            return JiraConnect.Instance.SetJiraProjectFullDetails();
+            return jiraConnectObj.SetJiraProjectFullDetails();
         }
 
         public override bool ConnectALMServer()
         {
-            return JiraConnect.Instance.ConnectJiraServer();
+            return jiraConnectObj.ConnectJiraServer();
         }
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST = false)
@@ -58,12 +67,12 @@ namespace GingerCore.ALM
 
         public override bool DisconnectALMProjectStayLoggedIn()
         {
-            return JiraConnect.Instance.DisconnectALMProjectStayLoggedIn();
+            return jiraConnectObj.DisconnectALMProjectStayLoggedIn();
         }
 
         public override void DisconnectALMServer()
         {
-            JiraConnect.Instance.DisconnectJiraServer();
+            jiraConnectObj.DisconnectJiraServer();
         }
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
@@ -74,12 +83,12 @@ namespace GingerCore.ALM
         public override List<string> GetALMDomainProjects(string ALMDomainName)
         {
             AlmConfig.ALMDomain = ALMDomainName;
-            return JiraConnect.Instance.GetJiraDomainProjects();
+            return jiraConnectObj.GetJiraDomainProjects();
         }
 
         public override List<string> GetALMDomains()
         {
-            return JiraConnect.Instance.GetJiraDomains();
+            return jiraConnectObj.GetJiraDomains();
         }
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)
@@ -96,6 +105,11 @@ namespace GingerCore.ALM
         public override bool IsServerConnected()
         {
             throw new NotImplementedException();
+        }
+
+        public bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup,string uploadPath, IEnumerable<ExternalItemFieldBase> testCaseFields, IEnumerable<ExternalItemFieldBase> designStepsFields, ref string res)
+        {
+            return true;
         }
     }
 }

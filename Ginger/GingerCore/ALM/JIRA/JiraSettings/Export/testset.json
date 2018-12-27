@@ -1,0 +1,82 @@
+﻿{
+  "templates": [
+    {
+      "projects": [ "Default" ],
+      "fields": [
+        {
+          "name": "issuetype",
+          "key": "issuetype",
+          "type": "object",
+          "data": "{\"name\": \"Test Set\" }"
+        },
+        {
+          "name": "description",
+          "key": "description",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "project",
+          "key": "project",
+          "type": "object",
+          "data": "{ \"key\": \"{{value}}\" }"
+        },
+        {
+          "name": "Component/s",
+          "key": "components",
+          "type": "array",
+          "data": "{\"name\": \"{{value}}\",\"id\": \"{{id}}\"}"
+        },
+        {
+          "name": "fixVersions",
+          "key": "fixVersions",
+          "type": "array",
+          "data": "{\"name\": \"{{value}}\",\"id\": \"{{id}}\"}"
+        },
+        {
+          "name": "Tests association with a Test Set",
+          "key": "customfield_15611",
+          "type": "strings_array",
+          "data": "{{value}}"
+        },
+        {
+          "name": "summary",
+          "key": "summary",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "reporter",
+          "key": "reporter",
+          "type": "object",
+          "data": "{\"name\": \"{{value}}\"}"
+        },
+        {
+          "name": "priority",
+          "key": "priority",
+          "type": "object",
+          "data": "{\"name\": \"{{value}}\"}"
+        },
+        {
+          "name": "labels",
+          "key": "labels",
+          "type": "strings_array",
+          "data": "{{value}}"
+        },
+        {
+          "name": "environment",
+          "key": "environment",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Assignee",
+          "key": "assignee",
+          "type": "object",
+          "data": "{\"name\": \"{{value}}\"}"
+        }
+      ]
+    }
+  ]
+}
+
