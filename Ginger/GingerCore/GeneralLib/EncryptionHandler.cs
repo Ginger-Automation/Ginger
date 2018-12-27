@@ -106,7 +106,7 @@ namespace GingerCore
             }
         }
 
-        public static string DecryptString(string strToDecrypt, ref bool result)
+        public static string DecryptString(string strToDecrypt, ref bool result, bool WriteErrorsToLog = true)
         {
             try
             {
@@ -162,8 +162,11 @@ namespace GingerCore
                 }
             }
             catch (Exception ex)
-            {                    
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Decrypt the value: '{0}'", strToDecrypt), ex);
+            {             
+                if(WriteErrorsToLog)
+                {
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Decrypt the value: '{0}'", strToDecrypt), ex);
+                }                
                 result = false;
                 return string.Empty;
             }
@@ -172,7 +175,7 @@ namespace GingerCore
         public static bool IsStringEncrypted(string strToCheck)
         {
             bool checkValueDecrypt= false;
-            DecryptString(strToCheck, ref checkValueDecrypt);
+            DecryptString(strToCheck, ref checkValueDecrypt, false);
             return checkValueDecrypt;
         }
 
