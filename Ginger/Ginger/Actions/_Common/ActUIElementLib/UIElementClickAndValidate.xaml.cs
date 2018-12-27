@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.Common;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -67,11 +68,60 @@ namespace Ginger.Actions._Common.ActUIElementLib
             //TODO: Binding of all UI elements
             ClickType.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ClickType), mPlatform.GetPlatformUIClickTypeList(), false, null);
             ValidationType.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationType), mPlatform.GetPlatformUIValidationTypesList(), false, null);
-            ValidationElement.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElement), mPlatform.GetPlatformUIElementsType(), false, null);
+            ValidationElementTypeComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElement), mPlatform.GetPlatformUIElementsType(), false, null);
             LocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocateBy), mPlatform.GetPlatformUIElementLocatorsList(), false, null);
             LocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
-            GingerCore.General.ActInputValueBinding(LoopThroughClicks, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.LoopThroughClicks, "False"));            
-        }    
+            GingerCore.General.ActInputValueBinding(LoopThroughClicks, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.LoopThroughClicks, "False"));
+
+            LocateByComboBox.ComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
+        }
+
+
+
+
+        private void ElementLocateByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //mAction.LocateValue = string.Empty;
+            //mAction.LocateValueCalculated = string.Empty;
+            //mAction.ElementLocateValue = string.Empty;
+
+            SetLocateValueFrame();
+        }
+
+        private void SetLocateValueFrame()
+        {
+            LocateValueEditFrame.Content = null;
+            if (LocateByComboBox.ComboBox.SelectedItem == null)
+            {
+                return;
+            }
+            eLocateBy SelectedLocType = (eLocateBy)((GingerCore.General.ComboEnumItem)LocateByComboBox.ComboBox.SelectedItem).Value;
+            Page p = GetLocateValueEditPage(SelectedLocType);
+            LocateValueEditFrame.Content = p;
+            UpdateActionInfo(mAction.ElementAction);
+            if (SelectedLocType != eLocateBy.POMElement)
+            {
+                ElementTypeComboBox.IsEnabled = true;
+            }
+        }
+
+        private Page GetLocateValueEditPage(eLocateBy SelectedLocType)
+        {
+            switch (SelectedLocType)
+            {
+                case eLocateBy.POMElement:
+                    ValidationElementTypeComboBox.IsEnabled = false;
+                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAction);
+                    locateByPOMElementPage.ElementChangedPageEvent -= POMElementChanged;
+                    locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
+                    return locateByPOMElementPage;
+                case eLocateBy.ByXY:
+                    return new LocateByXYEditPage(mAction);
+                default:
+                    return new LocateValueEditPage(mAction);
+            }
+        }
+
 
         public Page GetPlatformEditPage()
         {

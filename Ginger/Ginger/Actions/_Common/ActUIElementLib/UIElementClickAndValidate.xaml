@@ -23,7 +23,7 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Style="{StaticResource @InputFieldLabelStyle}" Width="250">Validation Element Type:</Label>
-                        <UserControlsLib:UCComboBox x:Name="ValidationElement" Width="250"></UserControlsLib:UCComboBox>
+                        <UserControlsLib:UCComboBox x:Name="ValidationElementTypeComboBox" Width="250"></UserControlsLib:UCComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Style="{StaticResource @InputFieldLabelStyle}" Width="250">Validation Element Locate By:</Label>
@@ -31,7 +31,8 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Style="{StaticResource @InputFieldLabelStyle}" Width="250">Validation Element Locate Value:</Label>
-                        <Actions:UCValueExpression x:Name="LocatorValue" ToolTip="Element location expression" Width="450"/>
+                        <Frame x:Name="LocateValueEditFrame" NavigationUIVisibility="Hidden" BorderBrush="Transparent" Grid.Column="1"/>
+                        <!--<Actions:UCValueExpression x:Name="LocatorValue" ToolTip="Element location expression" Width="450"/>-->
                     </StackPanel>
                 </StackPanel>
                 <CheckBox x:Name="LoopThroughClicks" Content="Loop through click types on validation failure" Margin="0,10,0,0"  HorizontalAlignment="Left" ToolTip="If the assigned validation fails cycle through all click types" Style="{StaticResource @CheckBoxGridCellElemntStyle}"/>
