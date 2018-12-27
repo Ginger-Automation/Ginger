@@ -16,15 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore;
-using GingerCore.ALM;
-using GingerCore.Environments;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GingerCore.ALM
 {
@@ -63,6 +55,7 @@ namespace GingerCore.ALM
                        
         public bool ToAttachActivitiesGroupReport { get; set; }
      
+        // FIXME was not used
         public FilterByStatus FilterStatus { get; set; }
                        
         public void CalculateTCRunName(ValueExpression ve)

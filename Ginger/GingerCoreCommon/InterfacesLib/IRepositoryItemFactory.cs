@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Environments;
@@ -48,5 +46,8 @@ namespace Amdocs.Ginger.Common
         ObservableList<IDatabase> GetDatabaseList();
         ObservableList<IAgent> GetAllIAgents();
         ObservableList<ProjEnvironment> GetAllEnvironments();
+
+        void StartAgentDriver(IAgent agent);
+        Type GetDriverType(IAgent agent);
     }
 }

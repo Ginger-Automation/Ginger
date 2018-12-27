@@ -167,7 +167,7 @@ namespace GingerCore
 
         private void Calculate()
         {
-            if (Value == null)
+            if (string.IsNullOrEmpty(Value))
             {
                 mValueCalculated = "";
                 return;

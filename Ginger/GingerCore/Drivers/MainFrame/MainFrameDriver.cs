@@ -159,7 +159,7 @@ namespace GingerCore.Drivers.MainFrame
                 mDriverWindow.Show();
                 mDriverWindow.Refresh();
                 OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-                Dispatcher = mDriverWindow.Dispatcher;
+                Dispatcher.Object = mDriverWindow.Dispatcher;
                 System.Windows.Threading.Dispatcher.Run();
             }
             else
@@ -494,20 +494,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new NotImplementedException();
         }
 
-        public override List<Actions.ActButton> GetAllButtons()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override List<Actions.ActWindow> GetAllWindows()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override List<Actions.ActLink> GetAllLinks()
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public override void HighlightActElement(Actions.Act act)
         {

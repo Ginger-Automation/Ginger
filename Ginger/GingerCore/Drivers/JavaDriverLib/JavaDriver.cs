@@ -1697,22 +1697,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
 
 
-        //TODO: Not used. But need to override
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
-
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
-
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
-
+        
         public override void HighlightActElement(Act act)
         {
         }

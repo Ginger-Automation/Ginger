@@ -563,6 +563,10 @@ namespace Ginger
             AddClass(list, typeof(BusinessFlowReport));
             AddClass(list, typeof(HTMLReportConfiguration));
             AddClass(list, typeof(HTMLReportConfigFieldToSelect));
+            AddClass(list, typeof(Agent));
+            AddClass(list, typeof(DriverConfigParam));
+            AddClass(list, typeof(GingerRunner));
+
             AddClass(list, typeof(RunSetActionHTMLReportSendEmail));
             AddClass(list, typeof(EmailHtmlReportAttachment));
             AddClass(list, typeof(RunSetActionAutomatedALMDefects));

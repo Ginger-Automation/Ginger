@@ -43,6 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Repository\ExecLib\" />
     <Folder Include="Repository\ReportsLib\" />
   </ItemGroup>
 
