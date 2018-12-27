@@ -54,15 +54,14 @@ namespace Ginger.Run.RunSetActions
         }
 
         public Page GetEditPage(string R)
-        {
-                // RunSetActionBase a = (RunSetActionBase) R;
-                string classname = "Amdocs.Ginger.CoreNET.Run.RunsetActions." + R.ToString();
+        { 
+                string classname = "Ginger.Run.RunSetActions." + R.ToString();
                 Type t = Assembly.GetExecutingAssembly().GetType(classname);
                 if (t == null)
                 {
-                    throw new Exception("Action edit page not found - " + classname);
+                    throw new Exception("Runset edit page not found - " + classname);
                 }
-                Page p = (Page)Activator.CreateInstance(t, R);
+                Page p = (Page)Activator.CreateInstance(t, mRunSetAction);
 
             return p;
         }
@@ -70,7 +69,7 @@ namespace Ginger.Run.RunSetActions
         private void RunActionBtn_Click(object sender, RoutedEventArgs e)
         {
             mRunSetAction.SolutionFolder = App.UserProfile.Solution.Folder;
-            //mRunSetAction.ExecuteWithRunPageBFES();
+            mRunSetAction.ExecuteWithRunPageBFES();
         }
     }
 }

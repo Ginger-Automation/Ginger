@@ -555,6 +555,7 @@ namespace Ginger
             list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
+            
 
             // TODO: remove after it moved to common
             AddClass(list, typeof(RunSetConfig));
@@ -566,7 +567,15 @@ namespace Ginger
             AddClass(list, typeof(DriverConfigParam));
             AddClass(list, typeof(GingerRunner));
             AddClass(list, typeof(ApplicationAgent));
-            
+
+            AddClass(list, typeof(RunSetActionHTMLReportSendEmail));
+            AddClass(list, typeof(EmailHtmlReportAttachment));
+            AddClass(list, typeof(RunSetActionAutomatedALMDefects));
+            AddClass(list, typeof(RunSetActionGenerateTestNGReport));
+            AddClass(list, typeof(RunSetActionHTMLReport));
+            AddClass(list, typeof(RunSetActionSaveResults));
+            AddClass(list, typeof(RunSetActionSendFreeEmail));
+            AddClass(list, typeof(RunSetActionSendSMS));
 
 
             // Put back for Lazy load of BF.Acitvities

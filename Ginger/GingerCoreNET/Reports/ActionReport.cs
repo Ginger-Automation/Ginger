@@ -27,6 +27,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.Environments;
 using GingerCore.DataSource;
+using GingerCore.Actions;
 
 namespace Ginger.Reports
 {
@@ -179,9 +180,8 @@ namespace Ginger.Reports
         [FieldParamsIsSelected(true)]
         public string ExInfo { get { return mAction != null ? mAction.ExInfo : exInfo; } set { exInfo = value; } }
         [JsonProperty]
-        public List<string> InputValues;
-        //TODO before checkin
-        /* {
+        public List<string> InputValues
+         {
              get
              {
                  if (inputValues == null)
@@ -196,7 +196,7 @@ namespace Ginger.Reports
                  return inputValues;
              }
              set { inputValues = value; }
-         }*/
+         }
         private List<string> inputValues;
 
         [FieldParams]
@@ -365,7 +365,7 @@ namespace Ginger.Reports
         public bool IsStopped { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped; } }
         public bool IsSkipped { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped; } }
         public bool IsBlocked { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked; } }
-
+   
         public ActionReport(IAct Act, ProjEnvironment environment=null)
         {
             this.mAction = Act;
@@ -422,7 +422,7 @@ namespace Ginger.Reports
 
         private string GetValueForDriverWithoutDescrypting(string value)
         {
-            IValueExpression VE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(mExecutionEnviroment, WorkSpace.Businessflow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, WorkSpace.Instance.SolutionRepository.Solution.Variables);
+            IValueExpression VE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(mExecutionEnviroment, WorkSpace.Businessflow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, RepositoryItemHelper.RepositoryItemFactory.GetVariaables());
             VE.DecryptFlag = false;
             VE.Value = value;
 

@@ -44,12 +44,24 @@ using static GingerCore.Agent;
 using GingerCore.Drivers.Common;
 using System.Threading;
 using System.Threading.Tasks;
+using Ginger.AnalyzerLib;
+using System.Reflection;
+using System.Windows.Threading;
+using Outlook = Microsoft.Office.Interop.Outlook;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Drawing;
+using System.IO;
+using System.Web.UI.DataVisualization.Charting;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using Ginger.Reports;
 
 namespace Ginger.Repository
 {
     public class RepositoryItemFactory : IRepositoryItemFactory
     {
-        
+        Outlook.MailItem mOutlookMail;
         public IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow)
         {
             return new ValueExpression(mProjEnvironment, mBusinessFlow);
@@ -326,5 +338,262 @@ namespace Ginger.Repository
                     
             }
         }
+
+        public ObservableList<VariableBase> GetVariaables()
+        {
+            return App.UserProfile.Solution.Variables;
+        }
+
+        public Type GetPage(string a)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<int> AnalyzeRunset(object a, bool runInSilentMode)
+        {
+            try
+            {
+                AnalyzerPage analyzerPage = new AnalyzerPage();
+                Dispatcher.CurrentDispatcher.Invoke(() => 
+                {
+                    RunSetConfig runSetConfig = (RunSetConfig)a;
+                    analyzerPage.Init(App.UserProfile.mSolution, runSetConfig);
+                });
+                await analyzerPage.AnalyzeWithoutUI();
+
+
+                if (analyzerPage.TotalHighAndCriticalIssues > 0)
+                {
+                    if (!runInSilentMode)
+                    {
+                        Reporter.ToUser(eUserMsgKeys.AnalyzerFoundIssues);
+                        analyzerPage.ShowAsWindow();
+                    }
+                    return 1;
+                }
+            }
+            finally
+            {
+                Reporter.CloseGingerHelper();
+            }
+            return 0;
+        }
+
+        public void RunRunSetFromCommandLine()
+        {
+            App.MainWindow.Hide();
+            App.AppSplashWindow.Close();
+            AutoRunWindow RP = new AutoRunWindow();
+            RP.Show();
+        }
+
+        bool IRepositoryItemFactory.Send_Outlook(bool actualSend, string MailTo, string Event, string Subject, string Body, string MailCC, List<string> Attachments, List<KeyValuePair<string, string>> EmbededAttachment)
+        {
+            try
+            {
+                Outlook.Application objOutLook = null;
+                if (string.IsNullOrEmpty(MailTo))
+                {
+                    Event = "Failed: Please provide TO email address.";
+                    return false;
+                }
+                if (string.IsNullOrEmpty(Subject))
+                {
+                    Event = "Failed: Please provide email subject.";
+                    return false;
+                }
+                // Check whether there is an Outlook process running.
+                if (System.Diagnostics.Process.GetProcessesByName("OUTLOOK").Count() > 0)
+                {
+                    // If so, use the GetActiveObject method to obtain the process and cast it to an ApplicatioInstall-Package Microsoft.Office.Interop.Exceln object.
+
+                    objOutLook = Marshal.GetActiveObject("Outlook.Application") as Outlook.Application;
+                }
+                else
+                {
+                    // If not, create a new instance of Outlook and log on to the default profile.
+                    objOutLook = new Outlook.Application();
+                    Outlook.NameSpace nameSpace = objOutLook.GetNamespace("MAPI");
+                    nameSpace.Logon("", "", System.Reflection.Missing.Value, System.Reflection.Missing.Value);
+                    nameSpace = null;
+                }
+
+                mOutlookMail = objOutLook.CreateItem(Outlook.OlItemType.olMailItem) as Outlook.MailItem;
+
+                mOutlookMail.HTMLBody = Body;
+                mOutlookMail.Subject = Subject;
+
+                Outlook.AddressEntry currentUser = objOutLook.Session.CurrentUser.AddressEntry;
+
+                if (currentUser.Type == "EX")
+                {
+                    Outlook.ExchangeUser manager = currentUser.GetExchangeUser();
+
+                    // Add recipient using display name, alias, or smtp address
+                    string emails = MailTo;
+                    Array arrEmails = emails.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string email in arrEmails)
+                    {
+                        mOutlookMail.Recipients.Add(email);
+                    }
+
+                    //Add CC
+                    if (!String.IsNullOrEmpty(MailCC))
+                    {
+                        Array arrCCEmails = MailCC.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (string MailCC1 in arrCCEmails)
+                        {
+                            mOutlookMail.Recipients.Add(MailCC1);
+                        }
+                    }
+
+                    mOutlookMail.Recipients.ResolveAll();
+
+                    mOutlookMail.CC = MailCC;
+                    mOutlookMail.To = MailTo;
+
+                    //Add Attachment
+                    foreach (string AttachmentFileName in Attachments)
+                    {
+                        if (String.IsNullOrEmpty(AttachmentFileName) == false)
+                            mOutlookMail.Attachments.Add(AttachmentFileName, Type.Missing, Type.Missing, Type.Missing);
+                    }
+
+                    //attachment which is embeded into the email body(images).                       
+                    foreach (KeyValuePair<string, string> AttachmentFileName in EmbededAttachment)
+                    {
+                        if (String.IsNullOrEmpty(AttachmentFileName.Key) == false)
+                        {
+                            if (System.IO.Directory.Exists(AttachmentFileName.Key))
+                            {
+                                Outlook.Attachment attachment = mOutlookMail.Attachments.Add(AttachmentFileName.Key, Outlook.OlAttachmentType.olEmbeddeditem, null, "");
+                                attachment.PropertyAccessor.SetProperty("http://schemas.microsoft.com/mapi/proptag/0x3712001E", AttachmentFileName.Value);
+                            }
+                        }
+                    }
+                    if (actualSend)
+                    {
+                        //Send Mail
+                        mOutlookMail.Send();
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Mailbox Unavailabel"))
+                {
+                    Event = "Failed: Please provide correct sender email address";
+                }
+                else if (ex.StackTrace.Contains("System.Runtime.InteropServices.Marshal.GetActiveObject"))
+                {
+                    Event = "Please make sure ginger/outlook opened in same security context (Run as administrator or normal user)";
+                }
+                else if (ex.StackTrace.Contains("System.Security.Authentication.AuthenticationException") || ex.StackTrace.Contains("System.Net.Sockets.SocketException"))
+                {
+                    Event = "Please check SSL configuration";
+                }
+                else
+                {
+                    Event = "Failed: " + ex.Message;
+                }
+                return false;
+            }
+        }
+
+        public void DisplayAsOutlookMail()
+        {
+            mOutlookMail.Display();
+        }
+
+        public void CreateChart(List<KeyValuePair<int, int>> y, string chartName, string Title, string tempFolder)
+        {
+            Chart Chart1 = new Chart();
+            List<string> x = new List<string>() { "Passed", "Failed", "Stopped", "Other" };
+            List<int> yList = (from ylist in y select ylist.Key).ToList();
+            int xAxis = 0;
+            string total = "";
+            Chart1.BackColor = System.Drawing.Color.AliceBlue;
+            Chart1.BackColor = System.Drawing.Color.White;
+            Chart1.Series.Add(new Series());
+            ChartArea a1 = new ChartArea();
+            a1.Name = "Area";
+            Chart1.ChartAreas.Add(a1);
+            a1.InnerPlotPosition = new ElementPosition(12, 10, 78, 78);
+            Chart1.Series[0].ChartArea = "Area";
+            Chart1.Series[0].Points.DataBindXY(x, yList);
+            Chart1.Series["Series1"].Label = "#VALX (#VALY)";
+            Chart1.Series[0].ChartType = SeriesChartType.Doughnut;
+            Chart1.Series[0]["DoughnutRadius"] = "20";
+            Chart1.Series[0]["DoughnutInnerRadius"] = "99";
+            Chart1.Series[0]["PieLabelStyle"] = "Outside";
+            Chart1.Series[0].BorderWidth = 1;
+            Chart1.Series[0].BorderDashStyle = ChartDashStyle.Dot;
+            Chart1.Series[0].BorderColor = System.Drawing.Color.FromArgb(200, 26, 59, 105);
+            foreach (KeyValuePair<int, int> l in y)
+            {
+                if (l.Key == 0)
+                {
+                    Chart1.Series[0].Points[l.Value].BorderColor = System.Drawing.Color.White;
+                    Chart1.Series["Series1"].Points[l.Value].AxisLabel = "";
+                    Chart1.Series["Series1"].Points[l.Value].Label = "";
+                }
+            }
+            Chart1.Series[0].Points[0].Color = Chart1.Series[0].Points[0].LabelForeColor = GingerCore.General.makeColor("#008000");
+            Chart1.Series[0].Points[1].Color = Chart1.Series[0].Points[1].LabelForeColor = GingerCore.General.makeColor("#FF0000");
+            Chart1.Series[0].Points[2].Color = Chart1.Series[0].Points[2].LabelForeColor = GingerCore.General.makeColor("#ff57ab");
+            Chart1.Series[0].Points[3].Color = Chart1.Series[0].Points[3].LabelForeColor = GingerCore.General.makeColor("#1B3651");
+            Chart1.Series[0].Font = new Font("sans-serif", 9, System.Drawing.FontStyle.Bold);
+            Chart1.Height = 180;
+            Chart1.Width = 310;
+            System.Drawing.SolidBrush myBrush = new System.Drawing.SolidBrush(GingerCore.General.makeColor("#e3dfdb"));
+            System.Drawing.SolidBrush myBrush1 = new System.Drawing.SolidBrush(GingerCore.General.makeColor("#1B3651"));
+            Chart1.Titles.Add("NewTitle");
+            Chart1.Titles["Title1"].Text = Title;
+            Chart1.Titles["Title1"].Font = new Font("sans-serif", 11, System.Drawing.FontStyle.Bold);
+            Chart1.Titles["Title1"].ForeColor = GingerCore.General.makeColor("#1B3651");
+            MemoryStream m = new MemoryStream();
+            Chart1.SaveImage(m, ChartImageFormat.Png);
+            Bitmap bitMapImage = new System.Drawing.Bitmap(m);
+            Graphics graphicImage = Graphics.FromImage(bitMapImage);
+            graphicImage.SmoothingMode = SmoothingMode.AntiAlias;
+            graphicImage.FillEllipse(myBrush, 132, 75, 50, 50);
+            total = yList.Sum().ToString();
+            if (total.Length == 1)
+            {
+                xAxis = 151;
+            }
+            else if (total.Length == 2)
+            {
+                xAxis = 145;
+            }
+            else if (total.Length == 3)
+            {
+                xAxis = 142;
+            }
+            else if (total.Length == 4)
+            {
+                xAxis = 140;
+            }
+            graphicImage.DrawString(yList.Sum().ToString(), new Font("sans-serif", 9, System.Drawing.FontStyle.Bold), myBrush1, new System.Drawing.Point(xAxis, 91));
+            m = new MemoryStream();
+            bitMapImage.Save(tempFolder + "\\" + chartName, ImageFormat.Jpeg);
+            graphicImage.Dispose();
+            bitMapImage.Dispose();
+        }
+
+        public void CreateCustomerLogo(object a, string tempFolder)
+        {
+            HTMLReportConfiguration currentTemplate = (HTMLReportConfiguration)a;
+            System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
+            CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
+            if (currentTemplate == null)
+            {
+                //ObservableList<HTMLReportConfiguration> HTMLReportConfigurationsq = (ObservableList<HTMLReportConfiguration>)HTMLReportConfigurations;
+                //currentTemplate = (HTMLReportConfiguration)HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+            }
+            Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
+        }
     }
+    
 }

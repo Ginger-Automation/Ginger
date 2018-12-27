@@ -336,7 +336,12 @@ namespace Ginger.Reports
                                 actrR.LogFolder = folder;
                                 actionReports.Add(actrR);
                             }
-                            catch { }
+                            catch (Exception ECx)
+                            {
+                                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Error Deserializing ActivityReport", ECx);
+
+
+                            }
                         }
                     }
                 }
