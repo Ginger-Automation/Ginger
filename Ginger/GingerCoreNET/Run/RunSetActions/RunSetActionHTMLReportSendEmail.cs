@@ -90,7 +90,7 @@ namespace Ginger.Run.RunSetActions
             {
                 if (mValueExpression == null)
                 {
-                    mValueExpression = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, WorkSpace.Instance.SolutionRepository.Solution.Variables);
+                    mValueExpression = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, RepositoryItemHelper.RepositoryItemFactory.GetVariaables());
                 }
                 return mValueExpression;
             }

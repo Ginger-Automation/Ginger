@@ -106,5 +106,10 @@ namespace Ginger.Repository
         {
             return new ObservableList<ProjEnvironment>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ListItems.ConvertAll(x => (ProjEnvironment)x));
         }
+
+        public ObservableList<VariableBase> GetVariaables()
+        {
+            return App.UserProfile.Solution.Variables;
+        }
     }
 }

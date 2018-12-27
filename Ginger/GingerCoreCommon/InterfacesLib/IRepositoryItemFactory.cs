@@ -46,6 +46,7 @@ namespace Amdocs.Ginger.Common
         IValueExpression CreateValueExpression(Object obj, string attr);
 
         ObservableList<IDatabase> GetDatabaseList();
+        ObservableList<VariableBase> GetVariaables();
         ObservableList<IAgent> GetAllIAgents();
         ObservableList<ProjEnvironment> GetAllEnvironments();
     }
