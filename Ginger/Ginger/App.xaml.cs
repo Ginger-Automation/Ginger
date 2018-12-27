@@ -563,7 +563,8 @@ namespace Ginger
             AddClass(list, typeof(HTMLReportConfiguration));
             AddClass(list, typeof(HTMLReportConfigFieldToSelect));
             AddClass(list, typeof(Agent));
-            AddClass(list, typeof(DriverConfigParam)); 
+            AddClass(list, typeof(DriverConfigParam));
+            AddClass(list, typeof(GingerRunner));
 
 
             // Put back for Lazy load of BF.Acitvities
