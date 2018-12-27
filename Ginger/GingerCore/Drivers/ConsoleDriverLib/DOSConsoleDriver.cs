@@ -38,10 +38,10 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         System.IO.StreamReader reader;
         System.IO.StreamWriter writer;
         System.IO.StreamReader errorReader;
-        
+        Process process;
         string mOutputs = string.Empty;
         int mlastOutputsLength = 0;
-
+  
         public DOSConsoleDriver(BusinessFlow BusinessFlow)
         {
             this.BusinessFlow = BusinessFlow;
@@ -69,25 +69,42 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 ErrorDialog = false
             };
 
-            var process = Process.Start(processStartInfo);
+            process = Process.Start(processStartInfo);
             if (process == null)
             {
                 return false;
             }
-
-            reader = process.StandardOutput;
             writer = process.StandardInput;
-            errorReader = process.StandardError;
+           
+            process.OutputDataReceived += Process_OutputDataReceivedAsync;
+            process.BeginOutputReadLine();
 
-            Task mOutputReaderTask = ReadConsoleOutputAsync();
-            Task mErrorReaderTask = ReadConsoleErrorAsync();
+            process.ErrorDataReceived += Process_ErrorDataReceivedAsync;
+            process.BeginErrorReadLine();
+            
             WriteOutputsToConsole();
             return true;
         }
 
+        private void Process_ErrorDataReceivedAsync(object sender, DataReceivedEventArgs e)
+        {
+              mOutputs += e.Data + System.Environment.NewLine;
+        }
+
+        private  void Process_OutputDataReceivedAsync(object sender, DataReceivedEventArgs e)
+        {
+
+            mOutputs += e.Data + System.Environment.NewLine;
+        }
+
         public override void Disconnect()
         {
+            writer.Close();
+            process.CancelErrorRead();
+            process.CancelOutputRead();
             // TODO: kill processStartInfo.
+            processStartInfo.Environment.Clear();
+            process.Close();
         }
 
         public override string ConsoleWindowTitle()
@@ -107,23 +124,33 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
         }
 
-        private async Task ReadConsoleOutputAsync()
-        {
-            while (true)
-            {
-                string s = await reader.ReadLineAsync();
-                mOutputs += s + System.Environment.NewLine;
-            }            
-        }
+       
+        //private async Task ReadConsoleOutputAsync(CancellationToken token)
+        //{
+        //    while (true)
+        //    {
+        //        if (token.IsCancellationRequested)
+        //        {
+        //            break;
+        //        }
+        //        string outputString = await reader.ReadLineAsync();
+        //        mOutputs += outputString + System.Environment.NewLine;
+             
+        //    }            
+        //}
 
-        private async Task ReadConsoleErrorAsync()
-        {
-            while (true)
-            {
-                string s = await errorReader.ReadLineAsync();
-                mOutputs += s + System.Environment.NewLine;
-            }
-        }
+        //private async Task ReadConsoleErrorAsync(CancellationToken token)
+        //{
+        //    while (true)
+        //    {
+        //        if (token.IsCancellationRequested)
+        //        {
+        //            break;
+        //        }
+        //        string outputString = await errorReader.ReadLineAsync();
+        //        mOutputs += outputString + System.Environment.NewLine;
+        //    }
+        //}
 
         public override void SendCommand(string command)
         {

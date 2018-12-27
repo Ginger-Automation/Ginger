@@ -754,8 +754,9 @@ namespace Ginger
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-
+            //Process.GetCurrentProcess().Kill();
             Application.Current.Shutdown();
+            //Process.GetCurrentProcess().Kill();
         }
 
         private void xSolutionEditBtn_Click(object sender, RoutedEventArgs e)
