@@ -74,6 +74,7 @@ namespace UnitTests.UITests
             mGR.BusinessFlows.Add(mBF);
         }
 
+        [Ignore]
         [TestMethod]
         public void DragAndDropSelenium()
         {
@@ -108,6 +109,7 @@ namespace UnitTests.UITests
 
         }
 
+        [Ignore]
         [TestMethod]
         public void DragAndDropJS()
         {
@@ -140,6 +142,7 @@ namespace UnitTests.UITests
 
         }
 
+        [Ignore]
         [TestMethod]
         public  void DoDragAndDropByOffSet()
         {
@@ -172,6 +175,7 @@ namespace UnitTests.UITests
             Assert.AreEqual(act3.Status, eRunStatus.Passed);
         }
 
+        [Ignore]
         [TestMethod]
         public void DrawObject()
         {
