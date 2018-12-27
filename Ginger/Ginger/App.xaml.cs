@@ -565,6 +565,8 @@ namespace Ginger
             AddClass(list, typeof(Agent));
             AddClass(list, typeof(DriverConfigParam));
             AddClass(list, typeof(GingerRunner));
+            AddClass(list, typeof(ApplicationAgent));
+            
 
 
             // Put back for Lazy load of BF.Acitvities
