@@ -57,7 +57,7 @@ namespace GingerTest.POMs
 
             ucGridPOM gridPOM = new ucGridPOM(ucGrid);
 
-            gridPOM.ClickOnCheckBox(nameof(UIElementFilter.ElementType), eElementType.Button.ToString());
+            gridPOM.ClickOnCheckBox(nameof(UIElementFilter.Selected),nameof(UIElementFilter.ElementType), eElementType.Button.ToString());
             
 
 

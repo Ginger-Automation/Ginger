@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace GingerTest.POMs.Common
 {
@@ -49,12 +50,47 @@ namespace GingerTest.POMs.Common
             throw new Exception("Grid item not found for: " + property + "=" + value);
         }
 
-        public void ClickOnCheckBox(string property, string value)
+        public void ClickOnCheckBox(string checkboxHeaderValue, string fieldToSearchOnHeader, string fieldValueToSearch)
         {
             int i = 0;
+
+
+            foreach (var item in mGrid.DataSourceList)
+            {
+                DataGridCellsPresenter presenter = null;
+                DataGridRow row = mGrid.Grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+                Execute(() =>
+                {
+                    presenter = General.GetVisualChild<DataGridCellsPresenter>(row);
+                });
+
+                foreach (DataGridCell cell in presenter.ItemContainerGenerator.Items)
+                {
+                    Object o1 = null;
+                    Execute(() =>
+                    {
+                        o1 = General.GetVisualChild<CheckBox>(cell);
+                    });
+                    
+                    object o = cell.GetType().GetProperty(fieldToSearchOnHeader);
+
+                }
+            }
+
+
+
             foreach (DataGridRow row in mGrid.GetDataGridRows(mGrid.Grid))
             {
-                CheckBox cb = (CheckBox)mGrid.GetDataTemplateCellControl<CheckBox>(row, 0);
+                try
+                {
+
+                    CheckBox cb = (CheckBox)mGrid.GetDataTemplateCellControl<CheckBox>(row, 0);
+                }
+                catch
+                {
+
+                }
+
 
 
                 DataGridCell cell = null;
@@ -70,10 +106,10 @@ namespace GingerTest.POMs.Common
 
             foreach (var item in mGrid.DataSourceList)
             {
-                if (item.GetType().GetProperty(property).GetValue(item).ToString() == value)
-                {
-                    mGrid.GetDataGridRows(mGrid.Grid);
-                }
+                //if (item.GetType().GetProperty(property).GetValue(item).ToString() == value)
+                //{
+                //    mGrid.GetDataGridRows(mGrid.Grid);
+                //}
             }
         }
     }
