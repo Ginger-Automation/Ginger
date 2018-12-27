@@ -4367,10 +4367,8 @@
     <Resource Include="SourceControlItemNew.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Actions\Files\" />
     <Folder Include="Dictionaries\Languages\" />
     <Folder Include="Help\Library\" />
-    <Folder Include="LicenseControl\" />
     <Folder Include="Reports\HTMLReports\" />
     <Folder Include="Settings\TreeViewItems\" />
     <Folder Include="TelemertryLib\" />
