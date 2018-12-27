@@ -51,6 +51,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using static GingerCoreNET.ALMLib.ALMIntegration;
 
 
 //   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -488,7 +489,7 @@ namespace Ginger.Run
                         string result = string.Empty;
                         ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
                         bfs.Add(executedBusFlow);
-                        //FIXME ALM.ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, ALM.ALMIntegration.eALMConnectType.Silence);
+                        RepositoryItemHelper.RepositoryItemFactory.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);                        
                     }
                     //Call For Business Flow Control
                     flowControlIndx = DoBusinessFlowControl(executedBusFlow);

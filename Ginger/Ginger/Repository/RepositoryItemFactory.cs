@@ -19,19 +19,18 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Ginger.AnalyzerLib;
+using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
-using GingerCore.Actions;
 using GingerCore.Activities;
+using GingerCore.ALM;
 using GingerCore.DataSource;
-using GingerCore.Environments;
-using GingerCore.Variables;
-using System;
-using System.Collections.Generic;
 using GingerCore.Drivers;
 using GingerCore.Drivers.AndroidADB;
 using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.ASCF;
+using GingerCore.Drivers.Common;
 using GingerCore.Drivers.ConsoleDriverLib;
 using GingerCore.Drivers.InternalBrowserLib;
 using GingerCore.Drivers.JavaDriverLib;
@@ -40,28 +39,33 @@ using GingerCore.Drivers.Mobile.Perfecto;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Drivers.WindowsLib;
-using static GingerCore.Agent;
-using GingerCore.Drivers.Common;
-using System.Threading;
-using System.Threading.Tasks;
-using Ginger.AnalyzerLib;
-using System.Reflection;
-using System.Windows.Threading;
-using Outlook = Microsoft.Office.Interop.Outlook;
-using System.Linq;
-using System.Runtime.InteropServices;
+using GingerCore.Environments;
+using GingerCore.Variables;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Web.UI.DataVisualization.Charting;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using Ginger.Reports;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.UI.DataVisualization.Charting;
+using System.Windows.Threading;
+using static GingerCore.Agent;
+using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace Ginger.Repository
 {
     public class RepositoryItemFactory : IRepositoryItemFactory
     {
         Outlook.MailItem mOutlookMail;
+
+        public RepositoryItemFactory()
+        {
+        }
+
         public IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow)
         {
             return new ValueExpression(mProjEnvironment, mBusinessFlow);
@@ -598,6 +602,11 @@ namespace Ginger.Repository
         public Dictionary<string, string> TakeDesktopScreenShot(bool captureAllScreens = false)
         {            
             return GingerCore.General.TakeDesktopScreenShot(true);
+        }
+
+        public void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
+        {
+            ALM.ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, ALM.ALMIntegration.eALMConnectType.Silence);
         }
     }
     

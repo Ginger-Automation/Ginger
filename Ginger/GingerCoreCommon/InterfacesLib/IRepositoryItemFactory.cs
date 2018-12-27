@@ -7,6 +7,7 @@ using GingerCore.Variables;
 using Ginger.Run;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using GingerCore.ALM;
 
 #region License
 /*
@@ -68,5 +69,7 @@ namespace Amdocs.Ginger.Common
 
         void CreateCustomerLogo(Object a, string t);
         Dictionary<string, string> TakeDesktopScreenShot(bool v);
+        
+        void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
     }
 }

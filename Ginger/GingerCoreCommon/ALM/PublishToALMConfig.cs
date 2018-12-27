@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System.ComponentModel;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.ALM
 {
@@ -57,7 +58,7 @@ namespace GingerCore.ALM
              
         public FilterByStatus FilterStatus { get; set; }
                        
-        public void CalculateTCRunName(ValueExpression ve)
+        public void CalculateTCRunName(IValueExpression ve)
         {          
             if (IsVariableInTCRunUsed && (VariableForTCRunName != null) && (VariableForTCRunName != string.Empty))
             {
