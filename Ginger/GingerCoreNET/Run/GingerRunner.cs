@@ -1468,7 +1468,7 @@ namespace Ginger.Run
             try
             {
                 Dictionary<string, String> screenShotsPaths = new Dictionary<string, String>();
-                //FIXME !!!!!!!!!!!! screenShotsPaths = GingerCore.General.TakeDesktopScreenShot(true);
+                screenShotsPaths = RepositoryItemHelper.RepositoryItemFactory.TakeDesktopScreenShot(true);
                 if (screenShotsPaths == null)
                 {
                     if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)//log the error only if user asked for desktop screen shot to avoid confusion 
@@ -2555,6 +2555,9 @@ namespace Ginger.Run
         
         private void CalculateModelParameterExpectedValue(Act act, ActReturnValue ARC)
         {
+            // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            throw new NotImplementedException();
+
             ////TODO: make all of this to be generic and not per action type
             //if (act is GingerCore.Actions.WebServices.WebAPI.ActWebAPIModel == false) return;
 

@@ -594,6 +594,11 @@ namespace Ginger.Repository
             }
             Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
         }
+
+        public Dictionary<string, string> TakeDesktopScreenShot(bool captureAllScreens = false)
+        {            
+            return GingerCore.General.TakeDesktopScreenShot(true);
+        }
     }
     
 }

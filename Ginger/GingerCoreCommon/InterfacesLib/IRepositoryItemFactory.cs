@@ -67,5 +67,6 @@ namespace Amdocs.Ginger.Common
         void CreateChart(List<KeyValuePair<int, int>> y, string chartName, string Title, string tempfolder);
 
         void CreateCustomerLogo(Object a, string t);
+        Dictionary<string, string> TakeDesktopScreenShot(bool v);
     }
 }
