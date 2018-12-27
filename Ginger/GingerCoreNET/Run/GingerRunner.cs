@@ -38,6 +38,7 @@ using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.Drivers.CommunicationProtocol;
+using GingerCoreNET.ReporterLib;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
@@ -487,7 +488,7 @@ namespace Ginger.Run
                         string result = string.Empty;
                         ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
                         bfs.Add(executedBusFlow);
-                        ALM.ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, ALM.ALMIntegration.eALMConnectType.Silence);
+                        //FIXME ALM.ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, ALM.ALMIntegration.eALMConnectType.Silence);
                     }
                     //Call For Business Flow Control
                     flowControlIndx = DoBusinessFlowControl(executedBusFlow);
@@ -647,7 +648,7 @@ namespace Ginger.Run
             catch (Exception e)
             {
                 Agent.IsFailedToStart = true;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
             }
         }
         
@@ -819,7 +820,7 @@ namespace Ginger.Run
                 //Not suppose to happen but just in case        
                 if (act == null)
                 {
-                    Reporter.ToUser(eUserMsgKeys.AskToSelectAction);
+                    AppReporter.ToUser(eUserMsgKeys.AskToSelectAction);
                     return;
                 }
 
@@ -1175,7 +1176,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception occurred in UpdateDSReturnValues : ", ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception occurred in UpdateDSReturnValues : ", ex);
             }
         }
         public void ProcessReturnValueForDriver(Act act)
@@ -1248,7 +1249,7 @@ namespace Ginger.Run
                 {
                     act.Wait = 0;
                     act.ExInfo = "Invalid value for Wait time : " + valueExpression.ValueCalculated;
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "", ex);
+                    AppReporter.ToLog(eAppReporterLogLevel.INFO, "", ex);
                 }
             }
             else
@@ -1379,8 +1380,9 @@ namespace Ginger.Run
             ProcessReturnValueForDriver(act);
             
             //TODO: remove from here
-            if (act.GetType() == typeof(ActGenerateFileFromTemplate))
-                ((ActGenerateFileFromTemplate)act).VE = VE;
+            //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //if (act.GetType() == typeof(ActGenerateFileFromTemplate))
+                //((ActGenerateFileFromTemplate)act).VE = VE;
         }
 
         internal void PrepDynamicVariables()
@@ -1421,13 +1423,13 @@ namespace Ginger.Run
                             if (a == null)
                             {
                                 msg = "Missing Agent for taking screen shot for the action: '" + act.Description + "'";
-                                Reporter.ToLog(eAppReporterLogLevel.WARN, msg);
+                                AppReporter.ToLog(eAppReporterLogLevel.WARN, msg);
                                 act.ExInfo += Environment.NewLine + msg;
                             }
                             else if (a.Status != Agent.eStatus.Running)
                             {
                                 msg = "Screenshot not captured because agent is not running for the action:'" + act.Description + "'";
-                                Reporter.ToLog(eAppReporterLogLevel.WARN, msg);
+                                AppReporter.ToLog(eAppReporterLogLevel.WARN, msg);
                                 act.ExInfo += Environment.NewLine + msg;
                             }
                             else
@@ -1448,7 +1450,7 @@ namespace Ginger.Run
                     catch (Exception ex)
                     {
                         msg = "Failed to take driver screen shot for the action: '" + act.Description + "'";
-                        Reporter.ToLog(eAppReporterLogLevel.WARN, msg, ex);
+                        AppReporter.ToLog(eAppReporterLogLevel.WARN, msg, ex);
                         act.ExInfo += Environment.NewLine + msg;
                     }
                 }
@@ -1466,7 +1468,7 @@ namespace Ginger.Run
             try
             {
                 Dictionary<string, String> screenShotsPaths = new Dictionary<string, String>();
-                screenShotsPaths = GingerCore.General.TakeDesktopScreenShot(true);
+                //FIXME !!!!!!!!!!!! screenShotsPaths = GingerCore.General.TakeDesktopScreenShot(true);
                 if (screenShotsPaths == null)
                 {
                     if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)//log the error only if user asked for desktop screen shot to avoid confusion 
@@ -1491,7 +1493,7 @@ namespace Ginger.Run
                 {
                     msg = "Failed to take desktop screen shot for the action: '" + act.Description + "', it might be because the screen is locked.";
                     act.ExInfo += Environment.NewLine + msg;
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, msg, ex);
+                    AppReporter.ToLog(eAppReporterLogLevel.WARN, msg, ex);
                 }                                      
             }
         }
@@ -1636,17 +1638,18 @@ namespace Ginger.Run
                     if (GiveUserFeedback) OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.DoEventsRequired, null);
                 }
                 //TODO: remove specific action type make it flag on action 
-                if (currentAgent != null && currentAgent.Driver != null && currentAgent.DriverType == Agent.eDriverType.UnixShell)
-                    ((GingerCore.Drivers.ConsoleDriverLib.ConsoleDriverBase)currentAgent.Driver).taskFinished = true;
-                else if (currentAgent != null && (currentAgent.DriverType == Agent.eDriverType.PowerBuilder || currentAgent.DriverType == Agent.eDriverType.WindowsAutomation))
-                {
-                    if(currentAgent.DriverType == Agent.eDriverType.WindowsAutomation)                    
-                        ((GingerCore.Drivers.WindowsLib.WindowsDriver)currentAgent.Driver).mUIAutomationHelper.taskFinished = true;
-                    else
-                        ((GingerCore.Drivers.PBDriver.PBDriver)currentAgent.Driver).mUIAutomationHelper.taskFinished = true;
-                    if (!String.IsNullOrEmpty(act.Error) && act.Error.StartsWith("Time out !"))
-                        Thread.Sleep(1000);
-                }
+                //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                //if (currentAgent != null && currentAgent.Driver != null && currentAgent.DriverType == Agent.eDriverType.UnixShell)
+                //    ((GingerCore.Drivers.ConsoleDriverLib.ConsoleDriverBase)currentAgent.Driver).taskFinished = true;
+                //else if (currentAgent != null && (currentAgent.DriverType == Agent.eDriverType.PowerBuilder || currentAgent.DriverType == Agent.eDriverType.WindowsAutomation))
+                //{
+                //    if(currentAgent.DriverType == Agent.eDriverType.WindowsAutomation)                    
+                //        ((GingerCore.Drivers.WindowsLib.WindowsDriver)currentAgent.Driver).mUIAutomationHelper.taskFinished = true;
+                //    else
+                //        ((GingerCore.Drivers.PBDriver.PBDriver)currentAgent.Driver).mUIAutomationHelper.taskFinished = true;
+                //    if (!String.IsNullOrEmpty(act.Error) && act.Error.StartsWith("Time out !"))
+                //        Thread.Sleep(1000);
+                //}
                     
             }
             catch (Exception e)
@@ -1809,7 +1812,7 @@ namespace Ginger.Run
                     {
                         string msg = string.Format("Cannot Store to " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ", '{0}' - " + " not found", item.StoreToValue.ToString());
                         act.ExInfo += msg;
-                        Reporter.ToLog(eAppReporterLogLevel.WARN, msg);
+                        AppReporter.ToLog(eAppReporterLogLevel.WARN, msg);
                     }
 
                 }
@@ -1827,7 +1830,7 @@ namespace Ginger.Run
                     }
                     else
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to StoreTo the Model Parameter '{0}' for the Action: '{1}'", item.StoreToValue, act.Description));
+                        AppReporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to StoreTo the Model Parameter '{0}' for the Action: '{1}'", item.StoreToValue, act.Description));
                     }
                 }
             }
@@ -2224,7 +2227,7 @@ namespace Ginger.Run
                                 }
                                 catch (Exception ex)
                                 {
-                                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do Set Variable Value Flow Control", ex);
+                                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do Set Variable Value Flow Control", ex);
                                     FC.Status = eStatus.Action_Execution_Failed;
                                 }
                                 break;
@@ -2238,7 +2241,7 @@ namespace Ginger.Run
                                 }
                                 catch (Exception ex)
                                 {
-                                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do RunSharedRepositoryActivity Flow Control", ex);
+                                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do RunSharedRepositoryActivity Flow Control", ex);
                                     FC.Status = eStatus.Action_Execution_Failed;
                                 }
                                 break;
@@ -2282,7 +2285,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception occurred in DoFlowControl", ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception occurred in DoFlowControl", ex);
             }
         }
         
@@ -2552,18 +2555,18 @@ namespace Ginger.Run
         
         private void CalculateModelParameterExpectedValue(Act act, ActReturnValue ARC)
         {
-            //TODO: make all of this to be generic and not per action type
-            if (act is GingerCore.Actions.WebServices.WebAPI.ActWebAPIModel == false) return;
+            ////TODO: make all of this to be generic and not per action type
+            //if (act is GingerCore.Actions.WebServices.WebAPI.ActWebAPIModel == false) return;
 
-            if (ARC.ExpectedCalculated.Contains("AppModelParam"))
-            {
-                GingerCore.Actions.WebServices.WebAPI.ActWebAPIModel modelAct = (GingerCore.Actions.WebServices.WebAPI.ActWebAPIModel)act;
-                List<AppModelParameter> usedParams = modelAct.ActAppModelParameters.Where(x => ARC.ExpectedCalculated.Contains(x.PlaceHolder)).ToList();
-                foreach (AppModelParameter param in usedParams)
-                {
-                    ARC.ExpectedCalculated = ARC.ExpectedCalculated.Replace(("{AppModelParam Name = " + param.PlaceHolder + "}"), param.ExecutionValue);
-                }
-            }
+            //if (ARC.ExpectedCalculated.Contains("AppModelParam"))
+            //{
+            //    GingerCore.Actions.WebServices.WebAPI.ActWebAPIModel modelAct = (GingerCore.Actions.WebServices.WebAPI.ActWebAPIModel)act;
+            //    List<AppModelParameter> usedParams = modelAct.ActAppModelParameters.Where(x => ARC.ExpectedCalculated.Contains(x.PlaceHolder)).ToList();
+            //    foreach (AppModelParameter param in usedParams)
+            //    {
+            //        ARC.ExpectedCalculated = ARC.ExpectedCalculated.Replace(("{AppModelParam Name = " + param.PlaceHolder + "}"), param.ExecutionValue);
+            //    }
+            //}
         }
 
         public static void CalculateARCStatus(ActReturnValue ARC)
@@ -2860,7 +2863,7 @@ namespace Ginger.Run
 
 
                 //TODO: Throw exception don't cover in log, so user will see it in report
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Run Activity got error ", ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Run Activity got error ", ex);
                 throw ex;
             }
             finally
@@ -3238,7 +3241,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Unexpected error occurred during the execution of the '{0}' Business Flow", CurrentBusinessFlow), ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Unexpected error occurred during the execution of the '{0}' Business Flow", CurrentBusinessFlow), ex);
             }
             finally
             {
@@ -3609,9 +3612,9 @@ namespace Ginger.Run
                     catch (Exception ex)
                     {
                         if (p.Agent.Name != null)
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Close the '{0}' Agent", p.Agent.Name), ex);
+                            AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Close the '{0}' Agent", p.Agent.Name), ex);
                         else
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to Close the Agent", ex);
+                            AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to Close the Agent", ex);
                     }
                     ((Agent)p.Agent).IsFailedToStart = false;
                 }
@@ -3630,7 +3633,7 @@ namespace Ginger.Run
             }           
         }
 
-        internal void HighlightActElement(Act act)
+        public void HighlightActElement(Act act)
         {
             if (HighLightElement)
             {
@@ -3649,7 +3652,7 @@ namespace Ginger.Run
             ((Activity)a).Reset();
         }
         
-        internal void ClearAgents()
+        public void ClearAgents()
         {
             CloseAgents();
             ApplicationAgents.Clear();
@@ -3936,7 +3939,7 @@ namespace Ginger.Run
                             }
                             catch (Exception ex)
                             {
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do Set Variable Value Flow Control", ex);
+                                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do Set Variable Value Flow Control", ex);
                                 FC.Status = eStatus.Action_Execution_Failed;
                             }
                             break;
@@ -4015,7 +4018,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Business Flow Name not found - " + Name);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Business Flow Name not found - " + Name);
                 return false;
             }
         }

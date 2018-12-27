@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -135,7 +135,7 @@ namespace GingerCore.Actions
             ObservableList<Bitmap> Bitmp = new ObservableList<Bitmap>();
             foreach (String path in ScreenShots)
             {
-                Bitmap bmp = GingerCore.General.FileToBitmapImage(path);
+                Bitmap bmp = Ginger.Utils.BitmapManager.FileToBitmapImage(path);
                 Bitmp.Add(bmp);
             }
 

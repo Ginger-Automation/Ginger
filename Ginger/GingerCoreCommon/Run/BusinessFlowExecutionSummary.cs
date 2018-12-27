@@ -29,21 +29,7 @@ namespace Ginger.Run
     // It is save as part of RunSetConfig
     public class BusinessFlowExecutionSummary : RepositoryItemBase
     {       
-        public new static class Fields
-        {
-            public static string BusinessFlowName = "BusinessFlowName";
-            public static string BusinessFlowRunDescription = "BusinessFlowRunDescription";
-            public static string Activities = "Activities";
-            public static string Actions = "Actions";
-            public static string Validations = "Validations";
-            public static string Status = "Status";
-            public static string PublishStatus = "PublishStatus";
-            public static string Selected = "Selected";
-            public static string CurrentActivity = "CurrentActivity";
-            public static string CurrentAction = "CurrentAction";
-            public static string GingerRunnerName = "GingerRunnerName";
-        }
-
+       
         public BusinessFlowExecutionSummary()
         {
         }

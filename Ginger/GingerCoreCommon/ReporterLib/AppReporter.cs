@@ -49,6 +49,10 @@ namespace Amdocs.Ginger.Common
             OnReportEvent(reportType: eAppReportType.ToUser, reportMessage: message, reportMessageType: reportMessageType);
         }
 
-      
+        public static void ToUser(object askToSelectAction)
+        {
+            //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // OnReportEvent(reportType: eAppReportType.ToUser, reportMessageType: reportMessageType);
+        }
     }
 }

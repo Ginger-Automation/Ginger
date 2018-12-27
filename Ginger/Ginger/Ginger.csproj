@@ -783,7 +783,6 @@
       <DependentUpon>DebugConsoleWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="GeneralLib\Dummy.cs" />
-    <Compile Include="GeneralLib\ExecutionWatch.cs" />
     <Compile Include="GeneralLib\ListItemIndexConverter.cs" />
     <Compile Include="GeneralLib\TestWindow.xaml.cs">
       <DependentUpon>TestWindow.xaml</DependentUpon>
@@ -1843,7 +1842,6 @@
     <Compile Include="Repository\RepositoryPage.xaml.cs">
       <DependentUpon>RepositoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\GingerRunner.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\AgentsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\AgentTreeItem.cs" />
     <Compile Include="ALM\QC\TreeViewItems\QCTestSetTreeItem.cs" />

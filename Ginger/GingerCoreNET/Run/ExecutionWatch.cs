@@ -18,36 +18,36 @@ limitations under the License.
 
 using System;
 using System.Diagnostics;
-using System.Windows.Threading;
+// using System.Windows.Threading;
 
 namespace GingerWPF.GeneralLib
 {
     public class ExecutionWatch
     {
         public Stopwatch runWatch;
-        public DispatcherTimer dispatcherTimerElapsed;
+        // public DispatcherTimer dispatcherTimerElapsed;
 
         public ExecutionWatch()
         {
             runWatch = new Stopwatch();
-            dispatcherTimerElapsed = new System.Windows.Threading.DispatcherTimer();
-            dispatcherTimerElapsed.Interval = new TimeSpan(0, 0, 1);
+            //dispatcherTimerElapsed = new System.Windows.Threading.DispatcherTimer();
+            //dispatcherTimerElapsed.Interval = new TimeSpan(0, 0, 1);
         }
         public void StartRunWatch()
         {
             runWatch.Reset();
             runWatch.Start();                                  
-            dispatcherTimerElapsed.Start();
+            // dispatcherTimerElapsed.Start();
         }
         public void ContinueWatch()
         {
             runWatch.Start();
-            dispatcherTimerElapsed.Start();
+            // dispatcherTimerElapsed.Start();
         }
         public void StopRunWatch()
         {
             runWatch.Stop();
-            dispatcherTimerElapsed.Stop();
+            // dispatcherTimerElapsed.Stop();
         }
     }
 }
