@@ -39,7 +39,9 @@ namespace Amdocs.Ginger
                 do
                 {
                     if (!string.IsNullOrEmpty(runSetName.Trim()))
+                    {
                         Reporter.ToUser(eUserMsgKeys.DuplicateRunsetName, runSetName);
+                    }
 
                     bool returnWindow = InputBoxWindow.OpenDialog(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)),
                                                                         string.Format("{0} Name:", GingerDicser.GetTermResValue(eTermResKey.RunSet)),
@@ -48,10 +50,14 @@ namespace Amdocs.Ginger
                     if (returnWindow)
                     {
                         if (string.IsNullOrEmpty(runSetName.Trim()))
+                        {
                             Reporter.ToUser(eUserMsgKeys.ValueIssue, "Value cannot be empty");
+                        }
                     }
                     else
+                    {
                         return null;
+                    }
                 }
                 while (string.IsNullOrEmpty(runSetName.Trim()) || WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>().Where(r => r.ItemName.ToLower() == runSetName.ToLower()).FirstOrDefault() != null);
             }
