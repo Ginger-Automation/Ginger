@@ -159,7 +159,8 @@ namespace GingerCore.Drivers.MainFrame
                 mDriverWindow.Show();
                 mDriverWindow.Refresh();
                 OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-                Dispatcher.Object = mDriverWindow.Dispatcher;
+                if(Dispatcher!=null)
+                   Dispatcher.Object = mDriverWindow.Dispatcher;
                 System.Windows.Threading.Dispatcher.Run();
             }
             else

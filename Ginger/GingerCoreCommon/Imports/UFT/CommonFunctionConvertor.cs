@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Repository;
+
 
 namespace Ginger.Imports.UFT
 {
