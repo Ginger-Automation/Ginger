@@ -68,4 +68,10 @@
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="GingerExternal">
+      <HintPath>DLLS\GingerExternal.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

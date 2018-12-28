@@ -651,7 +651,6 @@
     <Compile Include="GeneralLib\StringCompressor.cs" />
     <Compile Include="Extensions\Screenshot.cs" />
     <Compile Include="DataSource\AccessDataSource.cs" />
-    <Compile Include="GeneralLib\EncryptionHandler.cs" />
     <Compile Include="GeneralLib\ComboBoxWindow.xaml.cs">
       <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
     </Compile>
@@ -807,7 +806,6 @@
     <Content Include="DLLs\ALM_Common.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="DLLs\GingerExternal.dll" />
     <Content Include="DLLs\Interop.TDAPIOLELib.dll" />
     <Content Include="DLLs\LibGit2Sharp.dll" />
     <Content Include="DLLs\ObjectsUtils.dll">

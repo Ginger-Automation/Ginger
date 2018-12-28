@@ -100,7 +100,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {                
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Encrypt the value: '{0}'",strToEncrypt), ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Encrypt the value: '{0}'",strToEncrypt), ex);
                 result = false;
                 return string.Empty;
             }
@@ -165,7 +165,7 @@ namespace GingerCore
             {             
                 if(WriteErrorsToLog)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Decrypt the value: '{0}'", strToDecrypt), ex);
+                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Decrypt the value: '{0}'", strToDecrypt), ex);
                 }                
                 result = false;
                 return string.Empty;
