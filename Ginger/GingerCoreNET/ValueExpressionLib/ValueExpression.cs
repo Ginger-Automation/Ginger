@@ -216,17 +216,17 @@ namespace GingerCore
 
             if (Param != null)
             {
-                if (DecryptFlag == true)
-                {
-                    bool res = false;
-                    String strValuetoPass;
-                    strValuetoPass = EncryptionHandler.DecryptString(Param.CurrentValue, ref res);
-                    if (res == true)
-                        mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
-                    else
-                        mValueCalculated = mValueCalculated.Replace(p, Param.CurrentValue);
-                }
-                else
+                //if (DecryptFlag == true)
+                //{
+                //    bool res = false;
+                //    String strValuetoPass;
+                //    strValuetoPass = EncryptionHandler.DecryptString(Param.CurrentValue, ref res);
+                //    if (res == true)
+                //        mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
+                //    else
+                //        mValueCalculated = mValueCalculated.Replace(p, Param.CurrentValue);
+                //}
+                //else
                     mValueCalculated = mValueCalculated.Replace(p, Param.CurrentValue);
             }
             else
@@ -688,7 +688,7 @@ namespace GingerCore
                 vb = (from v1 in mSolutionVariables where v1.Name == VarName select v1).FirstOrDefault();
             if (vb != null)
             {
-                if (DecryptFlag == true)
+                if (DecryptFlag == true && vb is VariablePasswordString)
                 {
                     bool res = false;
                     String strValuetoPass;
@@ -825,7 +825,7 @@ namespace GingerCore
                 {
                     ParamValue = GP.Value + "";  // Autohandle in case param is null convert to empty string
 
-                    if (DecryptFlag == true)
+                    if (DecryptFlag == true && GP.Encrypt == true)
                     {
                         bool res = false;
                         String strValuetoPass;

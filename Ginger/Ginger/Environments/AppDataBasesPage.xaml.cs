@@ -56,15 +56,17 @@ namespace Ginger.Environments
             {
                 Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
                 String intialValue = selectedEnvDB.Pass;
-                if (intialValue != null)
+                if (!string.IsNullOrEmpty(intialValue))
                 {
                     bool res = false;
-                    String deCryptValue = EncryptionHandler.DecryptString(intialValue, ref res);
-                    selectedEnvDB.Pass = null;
-                    if (res == false)
+                    if (!EncryptionHandler.IsStringEncrypted(intialValue))
                     {
-                        selectedEnvDB.Pass = EncryptionHandler.EncryptString(intialValue, ref res); ;
-                    }
+                        selectedEnvDB.Pass = EncryptionHandler.EncryptString(intialValue, ref res);
+                        if (res == false)
+                        {
+                            selectedEnvDB.Pass = null;
+                        }
+                    }                   
                 }
             }
         }
