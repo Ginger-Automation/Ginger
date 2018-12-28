@@ -25,7 +25,7 @@ namespace GingerCore.Activities
 {
     public class ActivityIdentifiers : RepositoryItemBase
     {
-        public new static class Fields
+        public  static class Fields
         {
             public static string ActivityName = "ActivityName";
             public static string ActivityDescription = "ActivityDescription";

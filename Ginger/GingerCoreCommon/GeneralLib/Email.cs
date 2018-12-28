@@ -11,7 +11,7 @@ namespace GingerCore.GeneralLib
     {
         //OutLook.MailItem mOutlookMail;
 
-        public new static class Fields
+        public  static class Fields
         {
             public static string SMTPMailHost = "SMTPMailHost";
             public static string SMTPPort = "SMTPPort";

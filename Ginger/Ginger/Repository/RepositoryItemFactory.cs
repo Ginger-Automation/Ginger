@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.AnalyzerLib;
+using Ginger.GeneralLib;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
@@ -612,6 +613,11 @@ namespace Ginger.Repository
         public void MessageBoxShow(string message)
         {
             System.Windows.Forms.MessageBox.Show(message);
+        }
+
+        public ITextBoxFormatter CreateTextBoxFormatter(object Textblock)
+        {
+            return new TextBoxFormatter(Textblock);
         }
     }
     

@@ -88,7 +88,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Param To Col")]
             ParamToCol,
         }
-        public new static partial class Fields
+        public  static partial class Fields
         {
             public static string Active = "Active";
             public static string ActionDescription = "ActionDescription";
@@ -1254,7 +1254,7 @@ namespace GingerCore.Actions
 
 
 
-        public new void InvokPropertyChanngedForAllFields()
+        public  void InvokPropertyChanngedForAllFields()
         {
             foreach (var field in typeof(Fields).GetFields())
                 OnPropertyChanged(field.Name);

@@ -86,7 +86,7 @@ namespace GingerCore
             Gherkin     // From Gherking Feature file
         }
 
-        public new static partial class Fields
+        public  static partial class Fields
         {
             public static string Active = "Active";
             public static string Mandatory = "Mandatory";
@@ -848,7 +848,7 @@ namespace GingerCore
             CleanDynamicAddedItems();
         }
 
-        public new void InvokPropertyChanngedForAllFields()
+        public  void InvokPropertyChanngedForAllFields()
         {
             foreach (var field in typeof(Fields).GetFields())
                 OnPropertyChanged(field.Name);

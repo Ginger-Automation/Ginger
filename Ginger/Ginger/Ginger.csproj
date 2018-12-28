@@ -517,6 +517,7 @@
     <Compile Include="GeneralLib\LogDetailsPage.xaml.cs">
       <DependentUpon>LogDetailsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GeneralLib\TextBoxFormatter.cs" />
     <Compile Include="PluginsLibNew\LocalPluginsPage.xaml.cs">
       <DependentUpon>LocalPluginsPage.xaml</DependentUpon>
     </Compile>

@@ -4287,7 +4287,10 @@ namespace GingerCore.Drivers
                 }
             }
             catch (Exception ex)
-            { }
+            {
+
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "failed to unhighlight object", ex);
+                    }
         }
 
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)

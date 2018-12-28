@@ -92,7 +92,7 @@ namespace Ginger.Run
             FromSpecificActivityOnwards,
         }
 
-        public new static class Fields
+        public  static class Fields
         {
             public static string RunOption = "RunOption";
             public static string Name = "Name";

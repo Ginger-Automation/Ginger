@@ -17,73 +17,56 @@ limitations under the License.
 #endregion
 
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+
 namespace GingerCore.Helpers
 {
     public class TextBlockHelper
     {
-        // private System.Windows.Controls.TextBlock mTextBlock;
 
+        private ITextBoxFormatter TBF;
         public TextBlockHelper(object ActionRecUseCaseTextBlock) // System.Windows.Controls.TextBlock
         {
-            // TODO: Complete member initialization
-            // this.mTextBlock = ActionRecUseCaseTextBlock;
+            TBF = RepositoryItemHelper.RepositoryItemFactory.CreateTextBoxFormatter(ActionRecUseCaseTextBlock);
         }
 
         public void AddText(string txt)
         {
-            // mTextBlock.Inlines.Add(txt);            
+            TBF.AddText(txt);
         }
 
         public void AddLineBreak()
         {
-            //mTextBlock.Inlines.Add(new LineBreak());
+            TBF.AddLineBreak();
         }
 
         public void AddHeader1(string txt)
         {
-            //mTextBlock.Inlines.Add(new Bold(new System.Windows.Documents.Run(txt))); 
+            TBF.AddLineBreak();
         }
 
         public void AddBoldText(string txt)
         {
-            //Run run = new Run(txt);
-            //run.FontWeight = FontWeights.Bold;
-            //mTextBlock.Inlines.Add(run);
+            TBF.AddBoldText(txt);
         }
 
         public void AddUnderLineText(string txt)
         {
-            //Run run = new Run(txt);
-            //run.TextDecorations = TextDecorations.Underline;
-            //mTextBlock.Inlines.Add(run);
+            TBF.AddUnderLineText(txt);
         }
 
         public void AddFormattedText(string txt, object txtColor, bool isBold = false, bool isUnderline = false) // System.Drawing.Brush
         {
-            //Run formattedTxt = new System.Windows.Documents.Run(txt);
-            //if (isBold)
-            //    formattedTxt.FontWeight = FontWeights.Bold;
-            //if (isUnderline)
-            //    formattedTxt.TextDecorations = TextDecorations.Underline;
-            //if (txtColor != null)
-            //    formattedTxt.Foreground = txtColor;
-            //mTextBlock.Inlines.Add(formattedTxt);
+            TBF.AddFormattedText(txt, txtColor, isBold, isUnderline);
         }
         public string GetText()
         {
-            //string text = "";
-            //foreach (Run run in mTextBlock.Inlines)
-            //    text = text + run.Text;
-            //return text;
-            return null;
+            return TBF.GetText();
         }
         public void AddImage(string image, int width, int height)
         {
-            //Image img = new Image();
-            //img.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + image));
-            //img.Width = width;
-            //img.Height = height;
-            //mTextBlock.Inlines.Add(img);
+            TBF.AddImage(image, width, height);
         }
     }
 }

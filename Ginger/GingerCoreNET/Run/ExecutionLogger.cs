@@ -245,7 +245,7 @@ namespace Ginger.Run
                 }
             }
             catch(Exception ex)
-            {                
+            {    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "failed to CheckOrCreateDirectory",ex); 
                 return false;
             }
             
@@ -1088,7 +1088,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-             //TODO   Reporter.ToLog(eAppReporterLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
                 return false;
             }
         }
