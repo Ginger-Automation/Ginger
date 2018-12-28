@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -20,11 +20,11 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.Repository;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Repository;
+
 
 namespace Ginger.Imports.UFT
 {
-    public class CommonFunctionMapping : RepositoryItem
+    public class CommonFunctionMapping : RepositoryItemBase
     {
         public new static class Fields
         {

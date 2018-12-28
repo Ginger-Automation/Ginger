@@ -28,7 +28,7 @@ using GingerCore.Repository;
 
 namespace Ginger.Imports.UFT
 {
-    public class CommonFunctionConvertor : RepositoryItem
+    public class CommonFunctionConvertor : RepositoryItemBase
     {
         [IsSerializedForLocalRepository]
         public string Name { get; set; }

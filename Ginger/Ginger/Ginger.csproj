@@ -89,6 +89,7 @@
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
@@ -1665,8 +1666,6 @@
     <Compile Include="Imports\QTP\QTPImportPage.xaml.cs">
       <DependentUpon>QTPImportPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Imports\UFT\CommonFunctionConvertor.cs" />
-    <Compile Include="Imports\UFT\CommonFunctionMapping.cs" />
     <Compile Include="RingBuffer.cs" />
     <Compile Include="Run\ApplicationAgentSelectionPage.xaml.cs">
       <DependentUpon>ApplicationAgentSelectionPage.xaml</DependentUpon>
@@ -1880,7 +1879,6 @@
     <Compile Include="StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Support\SupportFile.cs" />
     <Compile Include="Support\WebSupportPage.xaml.cs">
       <DependentUpon>WebSupportPage.xaml</DependentUpon>
     </Compile>

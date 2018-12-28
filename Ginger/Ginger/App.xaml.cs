@@ -577,7 +577,8 @@ namespace Ginger
             AddClass(list, typeof(RunSetActionSendFreeEmail));
             AddClass(list, typeof(RunSetActionSendSMS));
             AddClass(list, typeof(ActSetVariableValue));
-            
+            AddClass(list, typeof(ActAgentManipulation));
+
 
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field

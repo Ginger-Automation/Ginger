@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -21,7 +21,7 @@ using GingerCore;
 
 namespace Ginger.Support
 {
-    public class SupportFile : RepositoryItem
+    public class SupportFile : RepositoryItemBase
     {
         public enum eFileType
         {
