@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -19,7 +19,6 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using GingerCore.Helpers;
-using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 // This class is for dummy act - good for agile, and to be replace later on when real
@@ -61,7 +60,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get {return Resources.Act;}  }
+        public override System.Drawing.Image Image { get {return null;}  }
 
         public override void Execute()
         {

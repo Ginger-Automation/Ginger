@@ -451,7 +451,6 @@
     <Compile Include="Actions\ActConsoleCommand.cs" />
     <Compile Include="Actions\ActDBValidation.cs" />
     <Compile Include="Actions\ActDropDownList.cs" />
-    <Compile Include="Actions\ActDummy.cs" />
     <Compile Include="Actions\ActExcel.cs" />
     <Compile Include="Actions\ActFunction.cs" />
     <Compile Include="Actions\ActASCFControl.cs" />
