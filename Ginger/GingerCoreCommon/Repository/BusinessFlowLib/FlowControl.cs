@@ -88,7 +88,7 @@ namespace GingerCore.FlowControlLib
 
     public class FlowControl : RepositoryItemBase
     {        
-        public new static partial class Fields
+        public  static partial class Fields
         {
             public static string Active = "Active";
             public static string Condition = "Condition";

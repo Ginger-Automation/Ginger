@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -32,7 +32,7 @@ namespace GingerCore.Actions
             Parameter_Path
         }
 
-        public new static partial class Fields
+        public  static partial class Fields
         {
             public static string DSName = "DSName";
             public static string DSTable = "DSTable";

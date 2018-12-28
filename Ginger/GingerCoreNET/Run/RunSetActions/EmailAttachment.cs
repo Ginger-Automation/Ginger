@@ -17,7 +17,7 @@ namespace Ginger.Run.RunSetActions
             File
         }
 
-        public new static class Fields
+        public  static class Fields
         {
             public static string AttachmentType = "AttachmentType";
             public static string Name = "Name";

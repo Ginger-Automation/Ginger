@@ -26,7 +26,7 @@ namespace GingerCore.Platforms
     {
         private Agent mAgent;
 
-        public new static partial class Fields
+        public  static partial class Fields
         {
             public static string Selected = "Selected";
             public static string AppName = "AppName";

@@ -62,9 +62,9 @@ namespace Amdocs.Ginger
         private static string GetUserTimeZone()
         {
             DateTime currentDate = DateTime.Now;
-            TimeZone localZone = TimeZone.CurrentTimeZone;
+            TimeZoneInfo localZone = TimeZoneInfo.Local;
 
-            DateTime currentUTC = localZone.ToUniversalTime(currentDate);
+            DateTime currentUTC = currentDate.ToUniversalTime();
             TimeSpan currentOffset = localZone.GetUtcOffset(currentDate);
 
             // const string dataFmt = "{0,-30}{1}";

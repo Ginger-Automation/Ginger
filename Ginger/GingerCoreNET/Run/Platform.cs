@@ -25,7 +25,7 @@ namespace GingerCore.Platforms
 {
     public class Platform : RepositoryItemBase
     {
-        public new static partial class Fields
+        public  static partial class Fields
         {            
             public static string Active = "Active";
             public static string PlatformType = "PlatformType";
