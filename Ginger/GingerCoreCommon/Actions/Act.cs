@@ -20,6 +20,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
@@ -803,14 +804,43 @@ namespace GingerCore.Actions
             }
         }
 
-        public static string SaveScreenshotToTempFile(Bitmap screenshot)
-        {
-            string filename = System.IO.Path.GetRandomFileName();
-            string filePath = string.Empty;
-            filePath = System.IO.Path.Combine(Actions.Act.ScreenshotTempFolder, filename);
-            // check if folder exist else create
 
-            Ginger.Utils.BitmapManager.SaveBitmapToPng(screenshot, filePath);
+        public void AddScreenShot(byte[] bytes, string Name)
+        {
+            try
+            {                
+                string filePath = GetScreenShotRandomFileName();
+                using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
+                {                                        
+                    fs.Write(bytes, 0, bytes.Length);
+                }
+                ScreenShots.Add(filePath);                
+                ScreenShotsNames.Add(Name);
+            }         
+            catch(Exception ex)
+            {
+                Error += "Unable to add Screen shot " + ex.Message;
+            }
+        }
+
+
+
+        // TODO: move to Utils
+        public static string SaveScreenshotToTempFile(Bitmap screenshot)
+        {            
+            string filePath = GetScreenShotRandomFileName();                        
+            screenshot.Save(filePath);            
+            return filePath;
+        }
+
+        static string GetScreenShotRandomFileName()
+        {
+            string filename = Path.GetRandomFileName();            
+            string filePath = Path.Combine(ScreenshotTempFolder, filename);
+            if (!Directory.Exists(ScreenshotTempFolder))
+            {
+                Directory.CreateDirectory(ScreenshotTempFolder);
+            }
             return filePath;
         }
 

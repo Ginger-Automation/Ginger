@@ -1024,16 +1024,9 @@ namespace GingerCore.Drivers
         }
 
         private void AddCurrentScreenShot(ActScreenShot act)
-        {
-            Bitmap bmp = GetScreenShot();
-            if (bmp != null)
-            {
-                act.AddScreenShot(bmp, Driver.Title);
-            }
-            else
-            {
-                act.Error += "Error: Cannot take screen shot.";
-            }
+        {                        
+            Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
+            act.AddScreenShot(ss.AsByteArray, Driver.Title);            
         }
 
 
@@ -6175,17 +6168,17 @@ namespace GingerCore.Drivers
             try
             {
                 Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-                using (var ms = new System.IO.MemoryStream(ss.AsByteArray))
+                using (var ms = new MemoryStream(ss.AsByteArray))
                 {
                     using (MemoryStream outStream = new MemoryStream())
                     {
                         BitmapEncoder enc = new BmpBitmapEncoder();
                         enc.Frames.Add(BitmapFrame.Create(ms));
                         enc.Save(outStream);
-                        System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
+                        Bitmap bitmap = new Bitmap(outStream);                
                         return new Bitmap(bitmap);
-                    }
-                }
+                    }                    
+                }                
             }
             catch (Exception ex)
             {
