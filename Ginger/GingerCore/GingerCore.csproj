@@ -686,7 +686,6 @@
     <Compile Include="DragDrop\VisualDrag.xaml.cs">
       <DependentUpon>VisualDrag.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\AgentAttribute.cs" />
     <Compile Include="Drivers\CommunicationProtocol\GingerSocketServer.cs" />
     <Compile Include="Drivers\Appium\AppiumDriverWindow.xaml.cs">
       <DependentUpon>AppiumDriverWindow.xaml</DependentUpon>
