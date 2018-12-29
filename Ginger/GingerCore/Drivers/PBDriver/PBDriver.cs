@@ -106,7 +106,7 @@ namespace GingerCore.Drivers.PBDriver
             
             try
             {
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Start Executing action of type" + actClass + " Description is" + act.Description);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Start Executing action of type '" + actClass + "' Description is" + act.Description);
                  
                 switch (actClass)
                 {
