@@ -23,7 +23,6 @@ using GingerCore.Actions;
 using GingerCore.Actions.Android;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
-using GingerCore.Drivers.Common;
 using GingerCore.Drivers.CommunicationProtocol;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using SharpAdbClient;
@@ -131,7 +130,7 @@ namespace GingerCore.Drivers.AndroidADB
             if (ConnectedToDevice)
             {
                 OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-                Dispatcher.Object = DriverWindow.Dispatcher;
+                Dispatcher = new DriverWindowDispatcher(DriverWindow.Dispatcher);
                 System.Windows.Threading.Dispatcher.Run();
             }
             else

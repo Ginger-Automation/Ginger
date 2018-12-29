@@ -605,6 +605,7 @@
     <Compile Include="Drivers\CommunicationProtocol\MessageEventArgs.cs" />
     <Compile Include="Drivers\CommunicationProtocol\ObjectReflectionHelper.cs" />
     <Compile Include="Drivers\CommunicationProtocol\Payload.cs" />
+    <Compile Include="Drivers\DriverWindowDispatcher.cs" />
     <Compile Include="Drivers\InternalBrowserLib\DeviceEmulation.cs" />
     <Compile Include="Drivers\InternalBrowserLib\WebBrowserPage.xaml.cs">
       <DependentUpon>WebBrowserPage.xaml</DependentUpon>

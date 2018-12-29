@@ -173,7 +173,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             mDriverWindow = new WebServicesDriverWindow(BusinessFlow);
             mDriverWindow.Show();
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-            Dispatcher.Object = mDriverWindow.Dispatcher;
+            Dispatcher = new DriverWindowDispatcher(mDriverWindow.Dispatcher);
 
             System.Windows.Threading.Dispatcher.Run();
         }

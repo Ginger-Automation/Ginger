@@ -16,17 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using GingerCore.Actions;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
-using System.IO;
-using System.Drawing;
-using System.Reflection;
-using System.Windows.Threading;
 using Amdocs.Ginger.Common;
+using GingerCore.Actions;
+using System;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -76,9 +74,9 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
             if (IsDriverConnected)
             {
-                Dispatcher.Object = mConsoleDriverWindow.Dispatcher;
+                Dispatcher = new DriverWindowDispatcher(mConsoleDriverWindow.Dispatcher);
                 Dispatcher.Invoke(new Action(() => OnDriverMessage(eDriverMessageType.DriverStatusChanged)));
-                Dispatcher.Run();
+                System.Windows.Threading.Dispatcher.Run();                
             }
             else
             {

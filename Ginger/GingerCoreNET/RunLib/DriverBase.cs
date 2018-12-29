@@ -47,7 +47,7 @@ namespace GingerCore.Drivers
 
         //If this is WPF Window like IB, or Device/Mobile, Unix need to run on it's own STA
         public Thread STAThread { get; set; }
-        public DriverDispatcher Dispatcher { get; set; }
+        public IDispatcher Dispatcher { get; set; }
 
         public bool mStopProcess { get; set; }
 

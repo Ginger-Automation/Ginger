@@ -26,7 +26,6 @@ using OpenQA.Selenium.Appium.Android;
 using OpenQA.Selenium.Appium.Interfaces;
 using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Appium.MultiTouch;
-using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -174,15 +173,18 @@ namespace GingerCore.Drivers.Appium
             DriverWindow.DesignWindowInitialLook();
             DriverWindow.Show();
       
-                   ConnectedToDevice = ConnectToAppium();
-                if (ConnectedToDevice) {               
+            ConnectedToDevice = ConnectToAppium();
+            if (ConnectedToDevice)
+            {               
                 OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-                Dispatcher.Object = DriverWindow.Dispatcher;
+                Dispatcher = new DriverWindowDispatcher(DriverWindow.Dispatcher);
                 System.Windows.Threading.Dispatcher.Run();
             
             }
-            else {
-                if (DriverWindow != null) {
+            else
+            {
+                if (DriverWindow != null)
+                {
                     DriverWindow.Close();
                     DriverWindow = null;
                 }

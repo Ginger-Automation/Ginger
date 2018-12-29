@@ -24,10 +24,8 @@ using mshtml;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Reflection;
 using System.Threading;
-using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
 
@@ -65,7 +63,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             mFrmBrowser.IBDriver = this;
             IsBrowserLoaded = true;
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-            Dispatcher.Object = mFrmBrowser.Dispatcher;
+            Dispatcher = new DriverWindowDispatcher(mFrmBrowser.Dispatcher);
 
             System.Windows.Threading.Dispatcher.Run();
         }
