@@ -1230,6 +1230,17 @@ namespace Ginger.Run
         {
             AutoLogProxy.UserOperationStart("CreateShortcutButton_Click");
 
+            char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
+
+            if (mRunSetConfig.Name.IndexOfAny(invalidChars) >= 0 )
+            {
+                foreach (char value in invalidChars)
+                {
+                    if(mRunSetConfig.Name.Contains(value))
+                        mRunSetConfig.Name = mRunSetConfig.Name.Replace(value, '_');
+                }
+            }
+
             CreateRunSetShortCut(mRunSetConfig.Name, xRunsetEnvironmentCombo.Text);
 
             AutoLogProxy.UserOperationEnd();
