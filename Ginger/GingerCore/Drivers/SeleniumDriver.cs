@@ -4290,7 +4290,7 @@ namespace GingerCore.Drivers
             list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
             list.Add(new ControlProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
             list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
-            list.Add(new ControlProperty() { Name = "RelXPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });            
+            list.Add(new ControlProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });            
             list.Add(new ControlProperty() { Name = "Height", Value = ElementInfo.Height.ToString() });
             list.Add(new ControlProperty() { Name = "Width", Value = ElementInfo.Width.ToString() });
             list.Add(new ControlProperty() { Name = "X", Value = ElementInfo.X.ToString() });
@@ -6337,16 +6337,20 @@ namespace GingerCore.Drivers
 
         ElementInfo IXPath.GetElementParent(ElementInfo ElementInfo)
         {
-            HtmlNode parentElementHtmlNode;
-            IWebElement parentElementIWebElement;
-            object childElement = ElementInfo.ElementObject;
-
-            parentElementHtmlNode = ((HtmlNode)childElement).ParentNode;
-            parentElementIWebElement = ((IWebElement)childElement).FindElement(By.XPath(".."));
-
-
-            ElementInfo parentEI = allReadElem.Find(el => (el.ElementObject != null && el.ElementObject.Equals(parentElementIWebElement)) || (el is HTMLElementInfo && ((HTMLElementInfo)el).HTMLElementObject != null && ((HTMLElementInfo)el).HTMLElementObject.Equals(parentElementHtmlNode)));
-
+            ElementInfo parentEI = null;
+            IWebElement parentElementIWebElement = null;
+            HtmlNode parentElementHtmlNode = null;
+            if (ElementInfo.ElementObject != null)
+            {
+                parentElementIWebElement = ((IWebElement)ElementInfo.ElementObject).FindElement(By.XPath(".."));
+                parentEI = allReadElem.Find(el => el.ElementObject != null && el.ElementObject.Equals(parentElementIWebElement));
+            }
+            else if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
+            {
+                parentElementHtmlNode = ((HTMLElementInfo)ElementInfo).HTMLElementObject.ParentNode;
+                parentEI = allReadElem.Find(el =>  el is HTMLElementInfo && ((HTMLElementInfo)el).HTMLElementObject != null && ((HTMLElementInfo)el).HTMLElementObject.Equals(parentElementHtmlNode));
+            }
+            
             if (parentEI !=null)
             {
                 return parentEI;
