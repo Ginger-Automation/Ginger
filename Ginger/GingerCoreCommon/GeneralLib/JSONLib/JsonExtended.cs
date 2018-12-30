@@ -99,20 +99,21 @@ namespace Amdocs.Ginger.Common.GeneralLib
         private JsonExtended(JsonExtended Parent, JToken Node)
         {
             ParentNode = Parent;
-
+            
             JT = Node;
-           
-            BuildThisNode(JT.Children());
+
+            JEnumerable<JToken> childList = JT.Children();
+
+            BuildThisNode(childList);
 
         }
         public JsonExtended(string json)
         {
-            JToken XD = JToken.Parse(json);
+            JT = JToken.Parse(json);
             ParentNode = null;
             //   XPath = Node.Name;
-            JT = XD;
-          
-            BuildThisNode(JT.Children());
+            JEnumerable<JToken> childList = JT.Children();
+            BuildThisNode(childList);
         }
 
  
@@ -157,12 +158,13 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
 
 
-            foreach (JsonExtended XDN in this.GetChildNodes())
-            {
-                int currentSize =XDL.Count;
-                XDN.GetAllNodes(XDL);
+            List < JsonExtended > ChildNodeList = this.GetChildNodes();
 
-             if(XDL.Where(x=>x.GetToken().Parent==XDN.GetToken()).Count()==0)
+            foreach (JsonExtended XDN in ChildNodeList)
+            {
+                XDN.GetAllNodes(XDL);
+                int contOfChiledWithSameTokenAsParent = XDL.Where(x => x.GetToken().Parent == XDN.GetToken()).Count();
+                if (contOfChiledWithSameTokenAsParent == 0)
                     XDL.Add(XDN);
                 
             }
@@ -186,7 +188,9 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
              }*/
 
-            foreach (var nodes in this.GetAllNodes())
+            List<JsonExtended> allNodesList = this.GetAllNodes();
+
+            foreach (var nodes in allNodesList)
             {
                 if (nodes.GetToken().GetType() == Jpropertytype)
                 {
@@ -194,7 +198,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
                     mEndingnodes.Add(nodes);
                 }
             }
-            return this.GetAllNodes().Where(x => x.GetToken().Children().Count() == 0);
+            return allNodesList.Where(x => x.GetToken().Children().Count() == 0);
         }
 
 
@@ -215,9 +219,8 @@ namespace Amdocs.Ginger.Common.GeneralLib
         {
             foreach (JToken XN in JTl)
             {
-            
-                    ChildNodes.Add(new JsonExtended(this, XN));
-                
+              JsonExtended childJsonExtended = new JsonExtended(this, XN);
+              ChildNodes.Add(childJsonExtended);
             }
         }
 
