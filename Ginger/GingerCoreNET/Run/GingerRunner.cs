@@ -821,7 +821,7 @@ namespace Ginger.Run
                 //Not suppose to happen but just in case        
                 if (act == null)
                 {
-                    AppReporter.ToUser(eUserMsgKeys.AskToSelectAction);
+                    Reporter.ToUser(eUserMsgKeys.AskToSelectAction);
                     return;
                 }
 

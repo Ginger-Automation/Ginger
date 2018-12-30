@@ -436,7 +436,7 @@ namespace GingerCore
                             //TODO: Handle enums later...
                             throw new Exception("Driver Config - Enum not supported yet");
                         default:                            
-                            AppReporter.ToUser(eUserMsgKeys.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
+                            Reporter.ToUser(eUserMsgKeys.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
                             break;
                     }
                 }
@@ -851,17 +851,17 @@ namespace GingerCore
 
                 if (Status == Agent.eStatus.Running)
                 {                    
-                    AppReporter.ToUser(eUserMsgKeys.SuccessfullyConnectedToAgent);
+                    Reporter.ToUser(eUserMsgKeys.SuccessfullyConnectedToAgent);
                 }
                 else
-                {                    
-                    AppReporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, "Invalid Agent Configuration");
+                {
+                    Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, "Invalid Agent Configuration");
                 }
             }
 
             catch (Exception AgentStartException)
             {                
-                AppReporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, "Agent Launch failed due to " + AgentStartException.Message);
+                Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, "Agent Launch failed due to " + AgentStartException.Message);
             }
             finally
             {

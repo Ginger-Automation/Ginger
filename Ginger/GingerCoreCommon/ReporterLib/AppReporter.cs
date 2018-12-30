@@ -50,20 +50,6 @@ namespace Amdocs.Ginger.Common
             OnReportEvent(reportType: eAppReportType.ToUser, reportMessage: message, reportMessageType: reportMessageType);
         }
 
-        public static void ToUser(object askToSelectAction)
-        {
-            //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // OnReportEvent(reportType: eAppReportType.ToUser, reportMessageType: reportMessageType);
-        }
-
-        public static void ToUser(eUserMsgKeys failedToConnectAgent, string name, string v)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public static void ToUser(eUserMsgKeys setDriverConfigTypeNotHandled, string v)
-        {
-            //throw new NotImplementedException();
-        }
+                
     }
 }
