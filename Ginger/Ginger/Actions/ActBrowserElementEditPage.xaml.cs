@@ -144,7 +144,7 @@ namespace Ginger.Actions
                 case eLocateBy.POMElement:
                     xLocateValueVE.Visibility = System.Windows.Visibility.Collapsed;
                     xLocateValueEditFrame.Visibility = System.Windows.Visibility.Visible;
-                    Page p = new LocateByPOMElementPage(mAct);
+                    Page p = new LocateByPOMElementPage(mAct,LocateByPOMElementPage.eLocateByPOMElementPageContext.UIElementPage);
                     xLocateValueEditFrame.Content = p;
                     break;
                 default:

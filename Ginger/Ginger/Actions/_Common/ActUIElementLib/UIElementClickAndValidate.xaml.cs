@@ -67,13 +67,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             //TODO: Binding of all UI elements
             ClickType.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ClickType), mPlatform.GetPlatformUIClickTypeList(), false, null);
-            ValidationType.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationType), mPlatform.GetPlatformUIValidationTypesList(), false, null);
-            ValidationElementTypeComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElement), mPlatform.GetPlatformUIElementsType(), false, null);
-            LocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocateBy), mPlatform.GetPlatformUIElementLocatorsList(), false, null);
-            LocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
+            xValidationType.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationType), mPlatform.GetPlatformUIValidationTypesList(), false, null);
+            xValidationElementTypeComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementType), mPlatform.GetPlatformUIElementsType(), false, null);
+            xValidationElementLocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocateBy), mPlatform.GetPlatformUIElementLocatorsList(), false, null);
+            SetLocateValueFrame();
+            //LocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
             GingerCore.General.ActInputValueBinding(LoopThroughClicks, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.LoopThroughClicks, "False"));
 
-            LocateByComboBox.ComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
+            xValidationElementLocateByComboBox.ComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
         }
 
 
@@ -91,36 +92,103 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private void SetLocateValueFrame()
         {
             LocateValueEditFrame.Content = null;
-            if (LocateByComboBox.ComboBox.SelectedItem == null)
+            if (xValidationElementLocateByComboBox.ComboBox.SelectedItem == null)
             {
                 return;
             }
-            eLocateBy SelectedLocType = (eLocateBy)((GingerCore.General.ComboEnumItem)LocateByComboBox.ComboBox.SelectedItem).Value;
+            eLocateBy SelectedLocType = (eLocateBy)((GingerCore.General.ComboItem)xValidationElementLocateByComboBox.ComboBox.SelectedItem).Value;
             Page p = GetLocateValueEditPage(SelectedLocType);
             LocateValueEditFrame.Content = p;
-            UpdateActionInfo(mAction.ElementAction);
+            //UpdateActionInfo(mAction.ElementAction);
             if (SelectedLocType != eLocateBy.POMElement)
             {
-                ElementTypeComboBox.IsEnabled = true;
+                xValidationElementTypeComboBox.ComboBox.IsEnabled = true;
             }
         }
+
+        //private void UpdateActionInfo(ActUIElement.eElementAction SelectedAction)
+        //{
+        //    // TODO - Add case for KeyboardChange event for LocateValue
+        //    // TODO - Add KeyboardChangeEventHandler for LocateValueEditPage
+
+        //    ActionInfoLabel.Text = string.Empty;
+        //    TextBlockHelper text = new TextBlockHelper(ActionInfoLabel);
+
+        //    ActionInfoLabel.Visibility = Visibility.Visible;
+        //    if (mAction.ElementType.ToString() != null && mAction.ElementType.ToString() != "" && mAction.ElementType != eElementType.Unknown)
+        //    {
+        //        text.AddBoldText(string.Format("Configured '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
+        //        if (mAction.ElementLocateBy.ToString() != null && mAction.ElementLocateBy.ToString() != "" && mAction.ElementLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
+        //        {
+        //            text.AddBoldText(string.Format(" to be located by '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.ElementLocateBy)));
+        //        }
+
+        //        if (SelectedAction.ToString() != null && SelectedAction.ToString() != ActUIElement.eElementAction.Unknown.ToString())
+        //        {
+        //            text.AddBoldText(string.Format(" to perform '{0}' operation.", GetEnumValueDescription(typeof(ActUIElement.eElementAction), SelectedAction)));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (mAction.ElementLocateBy.ToString() != null && mAction.ElementLocateBy.ToString() != "" && mAction.ElementLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
+        //        {
+        //            text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.ElementLocateBy)));
+        //        }
+        //        if (mAction.TargetLocateBy.ToString() != null && mAction.TargetLocateBy.ToString() != "" && mAction.TargetLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
+        //        {
+        //            text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.TargetLocateBy)));
+        //        }
+        //        if (mAction.TargetElementType.ToString() != null && mAction.TargetElementType.ToString() != "" && mAction.TargetElementType.ToString() != ActUIElement.eElementAction.Unknown.ToString())
+        //        {
+        //            if (!string.IsNullOrEmpty(text.GetText()))
+        //            {
+        //                text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.TargetElementType)));
+        //            }
+        //            else
+        //            {
+        //                text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
+        //            }
+        //        }
+        //        if (mAction.ElementType.ToString() != null && mAction.ElementType.ToString() != "" && mAction.ElementType.ToString() != ActUIElement.eElementAction.Unknown.ToString())
+        //        {
+        //            text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
+        //        }
+        //        if (SelectedAction.ToString() != null && SelectedAction.ToString() != "" && SelectedAction != ActUIElement.eElementAction.Unknown)
+        //        {
+        //            text.AddBoldText(string.Format(" '{0}' operation", GetEnumValueDescription(typeof(ActUIElement.eElementAction), SelectedAction)));
+        //        }
+        //    }
+        //}
 
         private Page GetLocateValueEditPage(eLocateBy SelectedLocType)
         {
             switch (SelectedLocType)
             {
                 case eLocateBy.POMElement:
-                    ValidationElementTypeComboBox.IsEnabled = false;
-                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAction);
-                    locateByPOMElementPage.ElementChangedPageEvent -= POMElementChanged;
-                    locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
+                    xValidationElementTypeComboBox.IsEnabled = false;
+                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAct,LocateByPOMElementPage.eLocateByPOMElementPageContext.ClickAndValidatePage);
+                    //locateByPOMElementPage.ElementChangedPageEvent -= POMElementChanged;
+                    //locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
                     return locateByPOMElementPage;
                 case eLocateBy.ByXY:
-                    return new LocateByXYEditPage(mAction);
+                    return new LocateByXYEditPage(mAct);
                 default:
-                    return new LocateValueEditPage(mAction);
+                    return new LocateValueEditPage(mAct);
             }
         }
+
+        //string mExistingPOMAndElementGuidString = null;
+
+        //private void POMElementChanged()
+        //{
+           
+        //    if (mExistingPOMAndElementGuidString != mAct.ElementLocateValue)
+        //    {
+        //        mAction.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, string.Empty);
+        //    }
+        //    ShowControlSpecificPage();
+        //}
+
 
 
         public Page GetPlatformEditPage()

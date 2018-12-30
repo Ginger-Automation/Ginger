@@ -136,7 +136,7 @@ namespace GingerCore.Actions.Common
             //used for MouseClickAndValidate
             public static string ClickType = "ClickType";
             public static string ValidationType = "ValidationType";
-            public static string ValidationElement = "ValidationElement";
+            public static string ValidationElementType = "ValidationElement";
             public static string ValidationElementLocateBy = "ValidationElementLocateBy";
             public static string ValidationElementLocatorValue = "ValidationElementLocatorValue";
             public static string LoopThroughClicks = "LoopThroughClicks";
@@ -524,7 +524,11 @@ namespace GingerCore.Actions.Common
         }
 
         [IsSerializedForLocalRepository]
-        public eElementAction ElementAction { get; set; }
+        public eElementAction ElementAction
+        {
+            get;
+            set;
+        }
 
         [IsSerializedForLocalRepository]
         public eLocateBy ElementLocateBy { get; set; }

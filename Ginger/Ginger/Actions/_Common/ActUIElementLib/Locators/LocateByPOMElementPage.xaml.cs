@@ -53,6 +53,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         public event ElementChangedEventHandler ElementChangedPageEvent;
 
+        public enum eLocateByPOMElementPageContext
+        {
+            UIElementPage,
+            ClickAndValidatePage
+        }
+
+        private eLocateByPOMElementPageContext mContext;
+
         public void ElementChangedEvent()
         {
             if (ElementChangedPageEvent != null)
@@ -61,23 +69,42 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
-        public LocateByPOMElementPage(Act Action)
+        public LocateByPOMElementPage(Act Action, eLocateByPOMElementPageContext context)
         {
             InitializeComponent();
+            mContext = context;
             DataContext = this;
             mAction = Action;
             SetControlsGridView();
 
-            if (mAction is ActUIElement)
+            if (mContext == eLocateByPOMElementPageContext.UIElementPage)
             {
-                mLocateBy = ((ActUIElement)mAction).ElementLocateBy;
-                mLocateValue = ((ActUIElement)mAction).ElementLocateValue;
+                if (mAction is ActUIElement)
+                {
+                    mLocateBy = ((ActUIElement)mAction).ElementLocateBy;
+                    mLocateValue = ((ActUIElement)mAction).ElementLocateValue;
+                }
+                else
+                {
+                    mLocateBy = mAction.LocateBy;
+                    mLocateValue = mAction.LocateValue;
+                }
             }
             else
             {
-                mLocateBy = mAction.LocateBy;
-                mLocateValue = mAction.LocateValue;
+                if (mAction is ActUIElement)
+                {
+                    mLocateBy = (eLocateBy)Enum.Parse(typeof(eLocateBy), mAction.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocateBy).Value);
+                    mLocateValue = mAction.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocatorValue).Value;
+                }
+                else
+                {
+                    mLocateBy = mAction.LocateBy;
+                    mLocateValue = mAction.LocateValue;
+                }
+
             }
+
 
             if (mLocateBy == eLocateBy.POMElement)
             {
@@ -108,10 +135,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
                                 xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
 
                                 xPOMElementsGrid.Grid.SelectedItem = selectedPOMElement;
-                                if (mAction is ActUIElement)
+                                if (mContext == eLocateByPOMElementPageContext.UIElementPage)
                                 {
-                                    ((ActUIElement)mAction).ElementType = selectedPOMElement.ElementTypeEnum;
+                                    if (mAction is ActUIElement)
+                                    {
+                                        ((ActUIElement)mAction).ElementType = selectedPOMElement.ElementTypeEnum;
+                                    }
                                 }
+
                                 xPOMElementTextBox.Text = selectedPOMElement.ElementName;
                                 HighlightButton.IsEnabled = true;
                             }
@@ -156,14 +187,18 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 SetPOMPathToShow();
                 xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
                 xPOMElementTextBox.Text = string.Empty;
-                if (mAction is ActUIElement)
+
+                if (mContext == eLocateByPOMElementPageContext.UIElementPage)
                 {
-                    ((ActUIElement)mAction).ElementType = eElementType.Unknown;
-                    ((ActUIElement)mAction).ElementLocateValue = string.Empty;
-                }
-                else
-                {
-                    mAction.LocateValue = string.Empty;
+                    if (mAction is ActUIElement)
+                    {
+                        ((ActUIElement)mAction).ElementType = eElementType.Unknown;
+                        ((ActUIElement)mAction).ElementLocateValue = string.Empty;
+                    }
+                    else
+                    {
+                        mAction.LocateValue = string.Empty;
+                    }
                 }
                 SelectElement();
             }
@@ -204,21 +239,30 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem != null)
             {
                 xPOMElementTextBox.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
-
-                if (mAction is ActUIElement)
+                //TODO throw event to its page
+                if (mContext == eLocateByPOMElementPageContext.UIElementPage)
                 {
-                    ((ActUIElement)mAction).ElementType = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum;
-                }
-                mLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+                    if (mAction is ActUIElement)
+                    {
+                        ((ActUIElement)mAction).ElementType = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum;
+                    }
+                    mLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
 
-                if (mAction is ActUIElement)
-                {
-                    ((ActUIElement)mAction).ElementLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+                    if (mAction is ActUIElement)
+                    {
+                        ((ActUIElement)mAction).ElementLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+                    }
+                    else
+                    {
+                        mAction.LocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+                    }
                 }
                 else
                 {
-                    mAction.LocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+                    mAction.AddOrUpdateInputParamValue(ActUIElement.Fields.ValidationElementType, ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum.ToString());
+                    mAction.AddOrUpdateInputParamValue(ActUIElement.Fields.ValidationElementLocatorValue, mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString());
                 }
+
             }
 
 
