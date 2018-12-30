@@ -6340,16 +6340,21 @@ namespace GingerCore.Drivers
             ElementInfo parentEI = null;
             IWebElement parentElementIWebElement = null;
             HtmlNode parentElementHtmlNode = null;
-            if (ElementInfo.ElementObject != null)
+            if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
             {
+                parentElementHtmlNode = ((HTMLElementInfo)ElementInfo).HTMLElementObject.ParentNode;
+                parentEI = allReadElem.Find(el => el is HTMLElementInfo && ((HTMLElementInfo)el).HTMLElementObject != null && ((HTMLElementInfo)el).HTMLElementObject.Equals(parentElementHtmlNode));
+            }
+            else 
+            {
+
+                if (ElementInfo.ElementObject == null)
+                    ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+
                 parentElementIWebElement = ((IWebElement)ElementInfo.ElementObject).FindElement(By.XPath(".."));
                 parentEI = allReadElem.Find(el => el.ElementObject != null && el.ElementObject.Equals(parentElementIWebElement));
             }
-            else if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
-            {
-                parentElementHtmlNode = ((HTMLElementInfo)ElementInfo).HTMLElementObject.ParentNode;
-                parentEI = allReadElem.Find(el =>  el is HTMLElementInfo && ((HTMLElementInfo)el).HTMLElementObject != null && ((HTMLElementInfo)el).HTMLElementObject.Equals(parentElementHtmlNode));
-            }
+
             
             if (parentEI !=null)
             {
