@@ -55,8 +55,7 @@ namespace Ginger.ALM.Repository
             {
             ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(App.UserProfile.Solution.ExternalItemsFields);
                 var testCaseFields = allFields.Where(a => a.ItemType == ResourceType.TEST_CASE.ToString());
-                var designStepsFields = allFields.Where(a => a.ItemType == ResourceType.DESIGN_STEP.ToString());
-                bool exportRes = ((JiraCore)this.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, uploadPath, testCaseFields, designStepsFields, ref responseStr);
+                bool exportRes = ((JiraCore)this.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, uploadPath, testCaseFields, ref responseStr);
 
                 Reporter.CloseGingerHelper();
                 if (exportRes)
@@ -77,12 +76,12 @@ namespace Ginger.ALM.Repository
 
         public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override eUserMsgKeys GetDownloadPossibleValuesMessage()
