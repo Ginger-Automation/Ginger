@@ -39,27 +39,28 @@ namespace GingerCore
 
         public static string EncryptString(string strToEncrypt, ref bool result)
         {
-            //Convert strings defining encryption key characteristics into byte arrays
-            byte[] _initVectorBytes = Encoding.UTF8.GetBytes(INIT_VECTOR);
-            byte[] _saltValueBytes = Encoding.UTF8.GetBytes(SALT_VALUE);
-
-            // Create a password, from which the key will be derived
-            PasswordDeriveBytes _password =
-                new PasswordDeriveBytes(PASS_PHRASE, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
-
-            // Use the password to generate pseudo-random bytes for the encryption key
-            byte[] _keyBytes = _password.GetBytes(KEY_SIZE / 8);
-
-            // Create uninitialized Rijndael Object
-            RijndaelManaged _rijndaelObject = new RijndaelManaged();
-
-            //check strToEncrypt is not empty
-            if ((strToEncrypt == null) || (strToEncrypt == string.Empty))
-                return strToEncrypt;
-            else
+            try
             {
-                try
+                //Convert strings defining encryption key characteristics into byte arrays
+                byte[] _initVectorBytes = Encoding.UTF8.GetBytes(INIT_VECTOR);
+                byte[] _saltValueBytes = Encoding.UTF8.GetBytes(SALT_VALUE);
+
+                // Create a password, from which the key will be derived
+                PasswordDeriveBytes _password =
+                    new PasswordDeriveBytes(PASS_PHRASE, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
+
+                // Use the password to generate pseudo-random bytes for the encryption key
+                byte[] _keyBytes = _password.GetBytes(KEY_SIZE / 8);
+
+                // Create uninitialized Rijndael Object
+                RijndaelManaged _rijndaelObject = new RijndaelManaged();
+
+                //check strToEncrypt is not empty
+                if ((strToEncrypt == null) || (strToEncrypt == string.Empty))
+                    return strToEncrypt;
+                else
                 {
+
                     // Convert strToEncrypt into a byte array.
                     byte[] strToEncryptBytes = Encoding.UTF8.GetBytes(strToEncrypt);
 
@@ -94,50 +95,42 @@ namespace GingerCore
                     // Return encrypted string
                     result = true;
                     return encryptedStr;
-                }
-                catch (Exception ex)
-                {
-                    result = false;
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                    return string.Empty;
+
                 }
             }
-        }        
+            catch (Exception ex)
+            {                
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Encrypt the value: '{0}'",strToEncrypt), ex);
+                result = false;
+                return string.Empty;
+            }
+        }
 
-        public static string DecryptString(string strToDecrypt, ref bool result)
+        public static string DecryptString(string strToDecrypt, ref bool result, bool WriteErrorsToLog = true)
         {
-            //Convert strings defining encryption key characteristics into byte arrays
-            byte[] _initVectorBytes = Encoding.UTF8.GetBytes(INIT_VECTOR);
-            byte[] _saltValueBytes = Encoding.UTF8.GetBytes(SALT_VALUE);
-
-            // Create a password, from which the key will be derived
-            PasswordDeriveBytes _password = new PasswordDeriveBytes(PASS_PHRASE, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
-
-            // Use the password to generate pseudo-random bytes for the encryption key
-            byte[] _keyBytes = _password.GetBytes(KEY_SIZE / 8);
-
-            // Create uninitialized Rijndael Object
-            RijndaelManaged _rijndaelObject = new RijndaelManaged();
-
-            //check strToEncrypt is not empty
-            if ((strToDecrypt == null) || (strToDecrypt == string.Empty))
-                return strToDecrypt;
-            else
+            try
             {
-                try
+                //Convert strings defining encryption key characteristics into byte arrays
+                byte[] _initVectorBytes = Encoding.UTF8.GetBytes(INIT_VECTOR);
+                byte[] _saltValueBytes = Encoding.UTF8.GetBytes(SALT_VALUE);
+
+                // Create a password, from which the key will be derived
+                PasswordDeriveBytes _password = new PasswordDeriveBytes(PASS_PHRASE, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
+
+                // Use the password to generate pseudo-random bytes for the encryption key
+                byte[] _keyBytes = _password.GetBytes(KEY_SIZE / 8);
+
+                // Create uninitialized Rijndael Object
+                RijndaelManaged _rijndaelObject = new RijndaelManaged();
+
+                //check strToEncrypt is not empty
+                if ((strToDecrypt == null) || (strToDecrypt == string.Empty))
+                    return strToDecrypt;
+                else
                 {
                     // Convert strToEncrypt into a byte array.
-                    byte[] strToDecryptBytes;
-                    try
-                    {
-                        strToDecryptBytes = Convert.FromBase64String(strToDecrypt);
-                    }
-                    catch(Exception ex)
-                    {
-                        //probabaly not encrypted value
-                        result = false;
-                        return strToDecrypt;
-                    }
+                    byte[] strToDecryptBytes = Convert.FromBase64String(strToDecrypt);
+
                     // Set encryption mode to Cipher Block Chaining(CBC)
                     _rijndaelObject.Mode = CipherMode.CBC;
 
@@ -153,7 +146,6 @@ namespace GingerCore
                     // allocate the buffer long enough to hold ciphertext;
                     byte[] plainTextBytes = new byte[strToDecryptBytes.Length];
 
-
                     // Start decrypting
                     int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
 
@@ -168,13 +160,23 @@ namespace GingerCore
                     result = true;
                     return decryptedStr;
                 }
-                catch (Exception ex)
+            }
+            catch (Exception ex)
+            {             
+                if(WriteErrorsToLog)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                    result = false;
-                    return string.Empty;
-                }
-            }            
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Decrypt the value: '{0}'", strToDecrypt), ex);
+                }                
+                result = false;
+                return string.Empty;
+            }
+        }
+
+        public static bool IsStringEncrypted(string strToCheck)
+        {
+            bool checkValueDecrypt= false;
+            DecryptString(strToCheck, ref checkValueDecrypt, false);
+            return checkValueDecrypt;
         }
 
         public static RijndaelManaged GetRijndaelManaged(String secretKey)
