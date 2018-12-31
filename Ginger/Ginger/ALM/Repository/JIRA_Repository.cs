@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using ALM_Common.DataContracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
@@ -76,7 +77,21 @@ namespace Ginger.ALM.Repository
 
         public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
-            return;
+            bool askToSaveBF = false;
+            foreach (ActivitiesGroup group in grdActivitiesGroups)
+            {
+                if (ExportActivitiesGroupToALM(group))
+                    askToSaveBF = true;
+            }
+
+            if (askToSaveBF)
+                if (Reporter.ToUser(eUserMsgKeys.AskIfToSaveBFAfterExport, businessFlow.Name) == MessageBoxResult.Yes)
+                {
+                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, businessFlow.Name,
+                      GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
+                    Reporter.CloseGingerHelper();
+                }
         }
 
         public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
