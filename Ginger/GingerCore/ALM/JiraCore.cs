@@ -107,9 +107,14 @@ namespace GingerCore.ALM
             throw new NotImplementedException();
         }
 
-        public bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup,string uploadPath, IEnumerable<ExternalItemFieldBase> testCaseFields, ref string res)
+        public bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, IEnumerable<ExternalItemFieldBase> testCaseFields, ref string errorResult)
         {
-            return exportMananger.ExportActivitesToJira(activtiesGroup, uploadPath, testCaseFields);
+            return exportMananger.ExportActivitesToJira(activtiesGroup, testCaseFields,ref errorResult);
+        }
+
+        public bool ExportBfToAlm(BusinessFlow businessFlow,IEnumerable<ExternalItemFieldBase>testCaseFields, IEnumerable<ExternalItemFieldBase> testSetFields, ref string responseStr)
+        {
+            return exportMananger.ExportBfToAlm(businessFlow, testCaseFields, testSetFields, ref responseStr);
         }
     }
 }
