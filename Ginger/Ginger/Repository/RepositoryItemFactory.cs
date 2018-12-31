@@ -476,7 +476,7 @@ namespace Ginger.Repository
                     {
                         if (String.IsNullOrEmpty(AttachmentFileName.Key) == false)
                         {
-                            if (System.IO.Directory.Exists(AttachmentFileName.Key))
+                            if (System.IO.File.Exists(AttachmentFileName.Key))
                             {
                                 Outlook.Attachment attachment = mOutlookMail.Attachments.Add(AttachmentFileName.Key, Outlook.OlAttachmentType.olEmbeddeditem, null, "");
                                 attachment.PropertyAccessor.SetProperty("http://schemas.microsoft.com/mapi/proptag/0x3712001E", AttachmentFileName.Value);
