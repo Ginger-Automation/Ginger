@@ -481,7 +481,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 case eLocateBy.POMElement:                 
                     ElementTypeComboBox.IsEnabled = false;
-                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAction,LocateByPOMElementPage.eLocateByPOMElementPageContext.UIElementPage);
+
+                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAction, nameof(ActUIElement.ElementType), mAction, nameof(ActUIElement.ElementLocateValue));
                     locateByPOMElementPage.ElementChangedPageEvent -= POMElementChanged;
                     locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
                     return locateByPOMElementPage;

@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -82,10 +83,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void ElementLocateByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //mAction.LocateValue = string.Empty;
-            //mAction.LocateValueCalculated = string.Empty;
-            //mAction.ElementLocateValue = string.Empty;
-
             SetLocateValueFrame();
         }
 
@@ -106,59 +103,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
-        //private void UpdateActionInfo(ActUIElement.eElementAction SelectedAction)
-        //{
-        //    // TODO - Add case for KeyboardChange event for LocateValue
-        //    // TODO - Add KeyboardChangeEventHandler for LocateValueEditPage
-
-        //    ActionInfoLabel.Text = string.Empty;
-        //    TextBlockHelper text = new TextBlockHelper(ActionInfoLabel);
-
-        //    ActionInfoLabel.Visibility = Visibility.Visible;
-        //    if (mAction.ElementType.ToString() != null && mAction.ElementType.ToString() != "" && mAction.ElementType != eElementType.Unknown)
-        //    {
-        //        text.AddBoldText(string.Format("Configured '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
-        //        if (mAction.ElementLocateBy.ToString() != null && mAction.ElementLocateBy.ToString() != "" && mAction.ElementLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
-        //        {
-        //            text.AddBoldText(string.Format(" to be located by '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.ElementLocateBy)));
-        //        }
-
-        //        if (SelectedAction.ToString() != null && SelectedAction.ToString() != ActUIElement.eElementAction.Unknown.ToString())
-        //        {
-        //            text.AddBoldText(string.Format(" to perform '{0}' operation.", GetEnumValueDescription(typeof(ActUIElement.eElementAction), SelectedAction)));
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (mAction.ElementLocateBy.ToString() != null && mAction.ElementLocateBy.ToString() != "" && mAction.ElementLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
-        //        {
-        //            text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.ElementLocateBy)));
-        //        }
-        //        if (mAction.TargetLocateBy.ToString() != null && mAction.TargetLocateBy.ToString() != "" && mAction.TargetLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
-        //        {
-        //            text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.TargetLocateBy)));
-        //        }
-        //        if (mAction.TargetElementType.ToString() != null && mAction.TargetElementType.ToString() != "" && mAction.TargetElementType.ToString() != ActUIElement.eElementAction.Unknown.ToString())
-        //        {
-        //            if (!string.IsNullOrEmpty(text.GetText()))
-        //            {
-        //                text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.TargetElementType)));
-        //            }
-        //            else
-        //            {
-        //                text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
-        //            }
-        //        }
-        //        if (mAction.ElementType.ToString() != null && mAction.ElementType.ToString() != "" && mAction.ElementType.ToString() != ActUIElement.eElementAction.Unknown.ToString())
-        //        {
-        //            text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
-        //        }
-        //        if (SelectedAction.ToString() != null && SelectedAction.ToString() != "" && SelectedAction != ActUIElement.eElementAction.Unknown)
-        //        {
-        //            text.AddBoldText(string.Format(" '{0}' operation", GetEnumValueDescription(typeof(ActUIElement.eElementAction), SelectedAction)));
-        //        }
-        //    }
-        //}
 
         private Page GetLocateValueEditPage(eLocateBy SelectedLocType)
         {
@@ -166,9 +110,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 case eLocateBy.POMElement:
                     xValidationElementTypeComboBox.IsEnabled = false;
-                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAct,LocateByPOMElementPage.eLocateByPOMElementPageContext.ClickAndValidatePage);
-                    //locateByPOMElementPage.ElementChangedPageEvent -= POMElementChanged;
-                    //locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
+                    ActInputValue objValidationElementType = mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementType, string.Empty);
+                    ActInputValue objValidationElementLocatorValue = mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocatorValue, "");
+                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(objValidationElementType, nameof(ActInputValue.Value), objValidationElementLocatorValue, nameof(ActInputValue.Value));
                     return locateByPOMElementPage;
                 case eLocateBy.ByXY:
                     return new LocateByXYEditPage(mAct);
@@ -176,19 +120,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     return new LocateValueEditPage(mAct);
             }
         }
-
-        //string mExistingPOMAndElementGuidString = null;
-
-        //private void POMElementChanged()
-        //{
-           
-        //    if (mExistingPOMAndElementGuidString != mAct.ElementLocateValue)
-        //    {
-        //        mAction.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, string.Empty);
-        //    }
-        //    ShowControlSpecificPage();
-        //}
-
 
 
         public Page GetPlatformEditPage()
