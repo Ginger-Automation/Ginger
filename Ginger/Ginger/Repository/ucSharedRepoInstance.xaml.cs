@@ -24,6 +24,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Variables;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -78,11 +79,11 @@ namespace Ginger
                 LinkStatusImage.Source = General.GetResourceImage("@Star_24x24.png");
                 if (mLinkIsByParentID || mLinkIsByExternalID)
                 {
-                    LinkStatusImage.ToolTip = "The item is linked to the Shared Repository item: '" + mLinkedRepoItem.ContainingFolder + mLinkedRepoItem.ItemName + "'." + Environment.NewLine + "Click to un-link it.";
+                    LinkStatusImage.ToolTip = "The item is linked to the Shared Repository item: '" + Path.Combine(mLinkedRepoItem.ContainingFolder,mLinkedRepoItem.ItemName) + "'." + Environment.NewLine + "Click to un-link it.";
                 }
                 else
                 {
-                    LinkStatusImage.ToolTip = "The item is linked to the Shared Repository item: '" + mLinkedRepoItem.ContainingFolder + mLinkedRepoItem.ItemName + "'.";
+                    LinkStatusImage.ToolTip = "The item is linked to the Shared Repository item: '" + Path.Combine(mLinkedRepoItem.ContainingFolder, mLinkedRepoItem.ItemName) + "'.";
                 }
                 UpdateRepoBtn.ToolTip = "Overwrite Shared Repository linked item";
             }

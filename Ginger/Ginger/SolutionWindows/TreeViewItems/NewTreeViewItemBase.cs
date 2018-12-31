@@ -487,9 +487,12 @@ namespace GingerWPF.TreeViewItemsLib
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
             ObservableList<RepositoryFolder<T>> subFolders = RF.GetSubFolders();
-            foreach (RepositoryFolder<T> envFolder in subFolders)
-            {                
-                Childrens.Add(GetTreeItem(envFolder));
+            foreach (RepositoryFolder<T> subFolder in subFolders)
+            {          
+                if(!Amdocs.Ginger.Common.GeneralLib.General.IsFolderToAvoid(subFolder.FolderName))
+                {
+                    Childrens.Add(GetTreeItem(subFolder));
+                }                    
             }
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // track sub folders
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders

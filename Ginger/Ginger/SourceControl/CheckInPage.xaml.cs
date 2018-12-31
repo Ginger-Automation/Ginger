@@ -106,10 +106,11 @@ namespace Ginger.SourceControl
                     
                 //set paths to ignore:
                 List<string> pathsToIgnore = new List<string>();
-                    pathsToIgnore.Add("PrevVersions");
+                    pathsToIgnore.Add(Amdocs.Ginger.Common.GeneralLib.General.FolderToAvoid.PrevVersions.ToString());
+                    pathsToIgnore.Add(Amdocs.Ginger.Common.GeneralLib.General.FolderToAvoid.PrevVerions.ToString());
                     pathsToIgnore.Add("RecentlyUsed.dat");
-                    pathsToIgnore.Add("AutoSave");
-                    pathsToIgnore.Add("Recover");
+                    pathsToIgnore.Add(Amdocs.Ginger.Common.GeneralLib.General.FolderToAvoid.AutoSave.ToString());
+                    pathsToIgnore.Add(Amdocs.Ginger.Common.GeneralLib.General.FolderToAvoid.Recover.ToString());
                     if (App.UserProfile.Solution != null && App.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null && App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
                         pathsToIgnore.Add(Ginger.Run.ExecutionLogger.GetLoggerDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder));
                 HTMLReportsConfiguration reportConfig = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();

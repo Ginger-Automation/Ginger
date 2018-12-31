@@ -334,6 +334,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             { 
                 return;
             }
+            //TODO: use Path.Combine instead of string concat
             dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".mdb";
             dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\"+ dsDetailsCopy.Name + ".mdb";
 

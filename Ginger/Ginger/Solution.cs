@@ -409,7 +409,7 @@ namespace Ginger.SolutionGeneral
 
         static void AddFolderFiles(ConcurrentBag<string> CB, string folder)
         {
-            if (folder == "PrevVersions")//TODO: use const
+            if (Amdocs.Ginger.Common.GeneralLib.General.IsFolderToAvoid(folder))
             {
                 return;
             }

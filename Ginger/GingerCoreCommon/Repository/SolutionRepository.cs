@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.IO;
 using System;
 using System.Collections.Concurrent;
@@ -371,7 +372,7 @@ namespace Amdocs.Ginger.Repository
                             Parallel.ForEach(SubFolders, sf =>
                             {
                                 // Add all files of sub folder
-                                if (sf != "PrevVersions")  //TODO: use const
+                                if (!General.IsFolderToAvoid(sf))
                                 {
                                     AddFolderFiles(fileEntries, sf, folder.ItemFilePattern);
                                 }
@@ -625,11 +626,13 @@ namespace Amdocs.Ginger.Repository
             {
                 RepositoryFolderBase repostitoryFolder = GetItemRepositoryFolder(repositoryItem);
                 
-                string targetPath=Path.Combine(repostitoryFolder.FolderFullPath, "PrevVerions");
+                string targetPath=Path.Combine(repostitoryFolder.FolderFullPath, General.FolderToAvoid.PrevVersions.ToString());
                 if (!Directory.Exists(targetPath))
-                {      
+                {
+                    repostitoryFolder.PauseFileWatcher();
                     //We do not want to file watcher track PrevVersions Folder. So creating it explicity using Create directory
                     Directory.CreateDirectory(targetPath);
+                    repostitoryFolder.ResumeFileWatcher();
                 }
                             
                 string dts = DateTime.Now.ToString("yyyyMMddHHmm");
