@@ -49,25 +49,17 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             InitializeComponent();
             mAction = act;
-
             if (act.Platform == ePlatformType.NA)
             {
                 act.Platform = GetActionPlatform();
             }
             mPlatform = PlatformInfoBase.GetPlatformImpl(act.Platform);
-
             List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
-
-
             ElementLocateByComboBox.BindControl(mAction, nameof(ActUIElement.ElementLocateBy), LocateByList);
             ElementTypeComboBox.BindControl(mAction, nameof(ActUIElement.ElementType), mPlatform.GetPlatformUIElementsType());
-
-
-
             SetLocateValueFrame();
             ShowPlatformSpecificPage();
             ShowControlSpecificPage();
-
             ElementLocateByComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
         }
 
@@ -93,7 +85,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mAction.LocateValue = string.Empty;
             mAction.LocateValueCalculated = string.Empty;
             mAction.ElementLocateValue = string.Empty;
-
             SetLocateValueFrame();
         }
 
@@ -132,7 +123,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ElementTypeImage.Source = GetImageSource(mAction.Image);
             mElementActionsList = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
             ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
-
             UpdateActionInfo(mAction.ElementAction);
             UIElementActionEditPageFrame.Visibility = Visibility.Collapsed;
             if (mAction.ElementType != eElementType.Unknown && mAction.ElementAction != ActUIElement.eElementAction.Unknown)

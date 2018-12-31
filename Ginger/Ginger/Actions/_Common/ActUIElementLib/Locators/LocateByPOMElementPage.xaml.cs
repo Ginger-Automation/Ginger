@@ -45,7 +45,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
         SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
         ApplicationPOMModel mSelectedPOM = null;
         RepositoryFolder<ApplicationPOMModel> mPOMModelFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();       
-        //eLocateBy mLocateBy;
         string mLocateValue;
 
         Object mObjectElementType;
@@ -153,12 +152,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 SetPOMPathToShow();
                 xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
                 xPOMElementTextBox.Text = string.Empty;
-
-
                 mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, string.Empty);
-
                 SetElementTypeProperty(eElementType.Unknown);
-
                 SelectElement();
             }
         }
@@ -215,13 +210,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem != null)
             {
                 xPOMElementTextBox.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
-                //TODO throw event to its page
-
                 string POMAndElementGuids = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
-
                 mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, POMAndElementGuids);
                 SetElementTypeProperty(((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum);
-
             }
 
 
