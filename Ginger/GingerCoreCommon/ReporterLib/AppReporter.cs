@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using Amdocs.Ginger.Common.ReporterLib;
+using GingerCoreNET.ReporterLib;
 
 namespace Amdocs.Ginger.Common
 {
@@ -49,6 +50,6 @@ namespace Amdocs.Ginger.Common
             OnReportEvent(reportType: eAppReportType.ToUser, reportMessage: message, reportMessageType: reportMessageType);
         }
 
-      
+                
     }
 }

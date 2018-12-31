@@ -16,11 +16,21 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Utility;
+using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore;
-
+using GingerCore.Environments;
+using GingerCore.FlowControlLib;
 using GingerCore.Variables;
+using GingerCoreNET.ReporterLib;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -29,18 +39,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-
-using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.CoreNET.Utility;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Ginger.Run;
-using GingerCoreNET.ReporterLib;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
-using GingerCore.Environments;
 
 namespace Ginger.Run
 {
@@ -247,7 +245,7 @@ namespace Ginger.Run
                 }
             }
             catch(Exception ex)
-            {                
+            {    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "failed to CheckOrCreateDirectory",ex); 
                 return false;
             }
             
@@ -496,7 +494,7 @@ namespace Ginger.Run
                 {
                     if (mVE == null)
                     {
-                        mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, RepositoryItemHelper.RepositoryItemFactory.GetDatasourceList(), false, "", false, WorkSpace.Instance.Solution.Variables);
+                        mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
                     }
                     mVE.Value = BusinessFlow.RunDescription;
                     BFR.RunDescription = mVE.ValueCalculated;
@@ -585,7 +583,7 @@ namespace Ginger.Run
                 {
                     if (mVE == null)
                     {
-                        mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, RepositoryItemHelper.RepositoryItemFactory.GetDatasourceList(), false, "", false, WorkSpace.Instance.Solution.Variables);
+                        mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
                     }
                     mVE.Value = Activity.RunDescription;
                     AR.RunDescription = mVE.ValueCalculated;
@@ -695,7 +693,7 @@ namespace Ginger.Run
                             {
                                 if (mVE == null)
                                 {
-                                    mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, RepositoryItemHelper.RepositoryItemFactory.GetDatasourceList(), false, "", false, WorkSpace.Instance.Solution.Variables);
+                                    mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
                                 }
                                 mVE.Value = act.RunDescription;
                                 AR.RunDescription = mVE.ValueCalculated;
@@ -1090,7 +1088,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-             //TODO   Reporter.ToLog(eAppReporterLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
                 return false;
             }
         }

@@ -21,28 +21,15 @@ using Amdocs.Ginger.Common;
 using GingerCore.Variables;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore;
+using GingerCore.FlowControlLib;
 
 namespace Ginger.Run
 {
     //This Class is for storing the Business Flow executed, it can have different Run Description, and a copy of the original BF
     // It is save as part of RunSetConfig
-    public class BusinessFlowExecutionSummary : IRepositoryItem
+    public class BusinessFlowExecutionSummary : RepositoryItemBase
     {       
-        public new static class Fields
-        {
-            public static string BusinessFlowName = "BusinessFlowName";
-            public static string BusinessFlowRunDescription = "BusinessFlowRunDescription";
-            public static string Activities = "Activities";
-            public static string Actions = "Actions";
-            public static string Validations = "Validations";
-            public static string Status = "Status";
-            public static string PublishStatus = "PublishStatus";
-            public static string Selected = "Selected";
-            public static string CurrentActivity = "CurrentActivity";
-            public static string CurrentAction = "CurrentAction";
-            public static string GingerRunnerName = "GingerRunnerName";
-        }
-
+       
         public BusinessFlowExecutionSummary()
         {
         }
@@ -63,7 +50,7 @@ namespace Ginger.Run
         public ObservableList<VariableBase> ExecutionVariabeles = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IFlowControl> ExecutionBFFlowControls = new ObservableList<IFlowControl>();
+        public ObservableList<FlowControl> ExecutionBFFlowControls = new ObservableList<FlowControl>();
         
         public string PublishStatus 
         { 
@@ -123,7 +110,7 @@ namespace Ginger.Run
         
         public string GingerRunnerName { get; set; }
 
-        public  string ItemName
+        public override string ItemName
         {
             get
             {

@@ -394,7 +394,7 @@ namespace Ginger.Imports.QTP
         private void SaveCommonFunctionMapping(object sender, RoutedEventArgs e)
         {
             //temp TODO: fix me to select file
-            mCommonFunctionConvertor.SaveToFile(@"c:\temp\CommonFunctionConvertor.xml");
+            //mCommonFunctionConvertor.SaveToFile(@"c:\temp\CommonFunctionConvertor.xml");
         }
 
         private void AddAction(object sender, RoutedEventArgs e)

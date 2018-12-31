@@ -16,26 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Repository;
+using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Platforms;
 using GingerCore.Variables;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger;
 using GingerTestHelper;
-using Amdocs.Ginger.Common.InterfacesLib;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
 {
@@ -53,6 +48,7 @@ namespace UnitTests.NonUITests
         public static void ClassInit(TestContext context)
         {
             AutoLogProxy.Init("Unit Tests");
+            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
         }
 
         [TestInitialize]
@@ -187,7 +183,7 @@ namespace UnitTests.NonUITests
             mGR.RunRunner();
 
 
-            Assert.AreEqual(a1.Status, eRunStatus.Passed, "a1.Status=eRunStatus.Passed");
+            Assert.AreEqual(eRunStatus.Passed, a1.Status, "a1.Status=eRunStatus.Passed");
         }
 
         [TestMethod]

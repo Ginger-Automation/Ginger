@@ -16,25 +16,19 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Execution;
+using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Drivers.InternalBrowserLib;
+using GingerCore.FlowControlLib;
 using GingerCore.Platforms;
-using GingerCore.Variables;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Amdocs.Ginger.CoreNET.Execution;
-using GingerTestHelper;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger;
-using Amdocs.Ginger.Common.InterfacesLib;
+using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
@@ -49,6 +43,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
+            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
             // Create a simple BF with simple Actions
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
@@ -139,7 +134,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [TestMethod]
         public void FlowControlTestFor_IfFailed_StopRunner()
         {
-
+            
             //Arrange
             ResetBusinessFlow();
 

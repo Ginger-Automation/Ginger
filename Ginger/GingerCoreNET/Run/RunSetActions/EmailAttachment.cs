@@ -5,9 +5,9 @@ using System.Text;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
 
-namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
+namespace Ginger.Run.RunSetActions
 {
-    public class EmailAttachment : RepositoryItemBase, IRepositoryItem
+    public class EmailAttachment : RepositoryItemBase
     {
         public enum eAttachmentType
         {
@@ -17,7 +17,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
             File
         }
 
-        public new static class Fields
+        public  static class Fields
         {
             public static string AttachmentType = "AttachmentType";
             public static string Name = "Name";

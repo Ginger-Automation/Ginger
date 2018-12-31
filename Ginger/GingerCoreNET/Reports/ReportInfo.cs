@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -56,7 +56,7 @@ namespace Ginger.Reports
         
         private ObservableList<BusinessFlowExecutionSummary> mBFESs;
         private ProjEnvironment mProjEnvironment;
-        private IRunsetExecutor mGingersMultiRun;        
+        private RunsetExecutor mGingersMultiRun;        
 
         public string DateCreatedShort { get; set; }
         public string DateCreated { get; set; }
@@ -72,7 +72,7 @@ namespace Ginger.Reports
         /// <summary>
         /// Should be deleted after switch will be fully done to serialized objects 
         /// </summary> 
-        public ReportInfo(ProjEnvironment Env, IRunsetExecutor GMR, bool ReportOnlyExecuted = false)   // to remove after discussion !!!
+        public ReportInfo(ProjEnvironment Env, RunsetExecutor GMR, bool ReportOnlyExecuted = false)   // to remove after discussion !!!
         {
             mProjEnvironment = Env;
             mBFESs = GMR.GetAllBusinessFlowsExecutionSummary(ReportOnlyExecuted);
@@ -202,7 +202,10 @@ namespace Ginger.Reports
                         return;
                 }
             }
-            catch { }
+            catch (Exception EC)
+            {
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to Deserialize reportjson filetype", EC);
+            }
         }
 
         public int TotalBusinessFlows

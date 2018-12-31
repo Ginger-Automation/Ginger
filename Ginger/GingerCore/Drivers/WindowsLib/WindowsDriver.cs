@@ -29,6 +29,7 @@ using mshtml;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Automation;
 
 namespace GingerCore.Drivers.WindowsLib
@@ -584,21 +585,7 @@ namespace GingerCore.Drivers.WindowsLib
         {
             return "TBD";
         }
-
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
-
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
-
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
+        
 
         public override void HighlightActElement(Act act)
         {
@@ -960,6 +947,15 @@ namespace GingerCore.Drivers.WindowsLib
         public bool TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
         {
             throw new NotImplementedException();
+        }
+
+        public override void ActionCompleted(Act act)
+        {
+            mUIAutomationHelper.taskFinished = true;
+            if (!String.IsNullOrEmpty(act.Error) && act.Error.StartsWith("Time out !"))
+            {
+                Thread.Sleep(1000);
+            }
         }
     }
 }

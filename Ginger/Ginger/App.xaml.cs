@@ -20,13 +20,16 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
 using Ginger.Reports;
 using Ginger.Repository;
 using Ginger.Run;
+using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows;
 using Ginger.SourceControl;
@@ -57,10 +60,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
-using System.Windows.Input;
-using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -529,8 +528,15 @@ namespace Ginger
             // TODO: remove after we don't need old serializer to load old repo items
             NewRepositorySerializer.NewRepositorySerializerEvent += RepositorySerializer.NewRepositorySerializer_NewRepositorySerializerEvent;
 
+
+            // Add all RI classes from GingerCoreNET
+            // NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
+
             // Add all RI classes from GingerCoreCommon
             NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
+
+            
+
 
             // Add all RI classes from GingerCore
             NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActButton).Assembly); // GingerCore.dll
@@ -539,7 +545,7 @@ namespace Ginger
             NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerPlugIns.ActionsLib.PlugInActionsBase).Assembly);
 
 
-            // add from Ginger - items like RunSetConfig
+            // add from Ginger
             NewRepositorySerializer.AddClassesFromAssembly(typeof(Ginger.App).Assembly);
 
             // Each class which moved from GingerCore to GingerCoreCommon needed to be added here, so it will auto translate
@@ -549,6 +555,30 @@ namespace Ginger
             list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
+            
+
+            // TODO: remove after it moved to common
+            AddClass(list, typeof(RunSetConfig));
+            AddClass(list, typeof(RunSetActionSendEmail));
+            AddClass(list, typeof(BusinessFlowReport));
+            AddClass(list, typeof(HTMLReportConfiguration));
+            AddClass(list, typeof(HTMLReportConfigFieldToSelect));
+            AddClass(list, typeof(Agent));
+            AddClass(list, typeof(DriverConfigParam));
+            AddClass(list, typeof(GingerRunner));
+            AddClass(list, typeof(ApplicationAgent));
+
+            AddClass(list, typeof(RunSetActionHTMLReportSendEmail));
+            AddClass(list, typeof(EmailHtmlReportAttachment));
+            AddClass(list, typeof(RunSetActionAutomatedALMDefects));
+            AddClass(list, typeof(RunSetActionGenerateTestNGReport));
+            AddClass(list, typeof(RunSetActionHTMLReport));
+            AddClass(list, typeof(RunSetActionSaveResults));
+            AddClass(list, typeof(RunSetActionSendFreeEmail));
+            AddClass(list, typeof(RunSetActionSendSMS));
+            AddClass(list, typeof(ActSetVariableValue));
+            AddClass(list, typeof(ActAgentManipulation));
+
 
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
@@ -577,6 +607,12 @@ namespace Ginger
 
             NewRepositorySerializer.AddClasses(list);
 
+        }
+
+        private static void AddClass(Dictionary<string, Type> list, Type t)
+        {
+            list.Add((t).FullName, t);
+            list.Add((t).Name, t);
         }
 
         private static async void HandleAutoRunMode()

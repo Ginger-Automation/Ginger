@@ -189,8 +189,8 @@
       <HintPath>..\packages\MySql.Data.8.0.11\lib\net452\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Npgsql, Version=3.2.2.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
       <HintPath>..\packages\Npgsql.3.2.2\lib\net45\Npgsql.dll</HintPath>
@@ -413,7 +413,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\ActAgentManipulation.cs" />
     <Compile Include="Actions\ActionConversion\ActionConversionHandler.cs" />
     <Compile Include="Actions\RobotFramework\ActRobot.cs" />
     <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
@@ -452,7 +451,6 @@
     <Compile Include="Actions\ActConsoleCommand.cs" />
     <Compile Include="Actions\ActDBValidation.cs" />
     <Compile Include="Actions\ActDropDownList.cs" />
-    <Compile Include="Actions\ActDummy.cs" />
     <Compile Include="Actions\ActExcel.cs" />
     <Compile Include="Actions\ActFunction.cs" />
     <Compile Include="Actions\ActASCFControl.cs" />
@@ -470,14 +468,12 @@
     <Compile Include="Actions\ActCompareImgs.cs" />
     <Compile Include="Actions\ActSendKeys.cs" />
     <Compile Include="Actions\ActSetConfig.cs" />
-    <Compile Include="Actions\ActSetVariableValue.cs" />
     <Compile Include="Actions\ActSmartSync.cs" />
     <Compile Include="Actions\ActLink.cs" />
     <Compile Include="Actions\ActMenuItem.cs" />
     <Compile Include="Actions\ActMultiselectList.cs" />
     <Compile Include="Actions\ActPassword.cs" />
     <Compile Include="Actions\ActRadiobutton.cs" />
-    <Compile Include="Actions\ActScreenShot.cs" />
     <Compile Include="Actions\ActSubmit.cs" />
     <Compile Include="Actions\ActSwitchWindow.cs" />
     <Compile Include="Actions\ActTextBox.cs" />
@@ -537,7 +533,6 @@
     <Compile Include="Actions\XML\XMLProcessor.cs" />
     <Compile Include="ALM\ALMConfig.cs" />
     <Compile Include="ALM\ALMCore.cs" />
-    <Compile Include="ALM\PublishToALMConfig.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
     <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />
     <Compile Include="ALM\QCRestAPI\ImportFromQCRest.cs" />
@@ -610,6 +605,7 @@
     <Compile Include="Drivers\CommunicationProtocol\MessageEventArgs.cs" />
     <Compile Include="Drivers\CommunicationProtocol\ObjectReflectionHelper.cs" />
     <Compile Include="Drivers\CommunicationProtocol\Payload.cs" />
+    <Compile Include="Drivers\DriverWindowDispatcher.cs" />
     <Compile Include="Drivers\InternalBrowserLib\DeviceEmulation.cs" />
     <Compile Include="Drivers\InternalBrowserLib\WebBrowserPage.xaml.cs">
       <DependentUpon>WebBrowserPage.xaml</DependentUpon>
@@ -623,7 +619,6 @@
     <Compile Include="Drivers\MainFrame\MainFrameDriver.cs" />
     <Compile Include="Drivers\MainFrame\MainFrameUIHelper.cs" />
     <Compile Include="Drivers\MainFrame\Terminal.cs" />
-    <Compile Include="Drivers\DriverMessageEventArgs.cs" />
     <Compile Include="Drivers\PBDriver\HTMLHelper.cs" />
     <Compile Include="Drivers\Selenium\SeleniumBMP\Browser.cs" />
     <Compile Include="Drivers\Selenium\SeleniumBMP\Cache.cs" />
@@ -657,7 +652,6 @@
     <Compile Include="GeneralLib\StringCompressor.cs" />
     <Compile Include="Extensions\Screenshot.cs" />
     <Compile Include="DataSource\AccessDataSource.cs" />
-    <Compile Include="GeneralLib\EncryptionHandler.cs" />
     <Compile Include="GeneralLib\ComboBoxWindow.xaml.cs">
       <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
     </Compile>
@@ -688,12 +682,10 @@
     <Compile Include="UserControls\ucTextDicResource.xaml.cs">
       <DependentUpon>ucTextDicResource.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Activities\ErrorHandler.cs" />
     <Compile Include="Animations\Animations.cs" />
     <Compile Include="DragDrop\VisualDrag.xaml.cs">
       <DependentUpon>VisualDrag.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\AgentAttribute.cs" />
     <Compile Include="Drivers\CommunicationProtocol\GingerSocketServer.cs" />
     <Compile Include="Drivers\Appium\AppiumDriverWindow.xaml.cs">
       <DependentUpon>AppiumDriverWindow.xaml</DependentUpon>
@@ -727,8 +719,6 @@
     <Compile Include="GeneralLib\GenericWindow.xaml.cs">
       <DependentUpon>GenericWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GeneralLib\VBS.cs" />
-    <Compile Include="Platforms\ApplicationAgent.cs" />
     <Compile Include="Platforms\ApplicationPlatform.cs" />
     <Compile Include="Reporter\GingerHelperMsgsPool.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1050000_to_V1060000.cs" />
@@ -740,9 +730,6 @@
     <Compile Include="GeneralLib\InputBoxWindow.xaml.cs">
       <DependentUpon>InputBoxWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Platforms\Agent.cs" />
-    <Compile Include="Platforms\DriverConfigParam.cs" />
-    <Compile Include="Platforms\Platform.cs" />
     <Compile Include="Reporter\Reporter.cs" />
     <Compile Include="Reporter\BotDialog.xaml.cs">
       <DependentUpon>BotDialog.xaml</DependentUpon>
@@ -753,7 +740,6 @@
     <Compile Include="Reporter\UserMessagesPool.cs" />
     <Compile Include="Repository\RepositorySerializer.cs" />
     <Compile Include="Drivers\ASCF\ASCFDriver.cs" />
-    <Compile Include="Drivers\DriverBase.cs" />
     <Compile Include="Drivers\InternalBrowserLib\InternalBrowserWindow.xaml.cs">
       <DependentUpon>InternalBrowserWindow.xaml</DependentUpon>
     </Compile>
@@ -770,7 +756,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Repository\RepositoryItem.cs" />
-    <Compile Include="ValueExpression.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1020000_to_V1030000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v2010000_to_V2020000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v2000000_to_V2010000.cs" />
@@ -821,7 +806,6 @@
     <Content Include="DLLs\ALM_Common.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="DLLs\GingerExternal.dll" />
     <Content Include="DLLs\Interop.TDAPIOLELib.dll" />
     <Content Include="DLLs\LibGit2Sharp.dll" />
     <Content Include="DLLs\ObjectsUtils.dll">
@@ -908,7 +892,6 @@
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />
     <Folder Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\com\amdocs\ginger\ASCFPack\" />
-    <Folder Include="FlowControlLib\" />
     <Folder Include="Plugins\Jenkins\" />
     <Folder Include="Themes\Theme1\Images\Logo\" />
   </ItemGroup>
@@ -1100,10 +1083,10 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-    <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.1\build\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.1\build\NETStandard.Library.targets'))" />
     <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.165\build\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.1.0.165\build\LibGit2Sharp.NativeBinaries.props'))" />
+    <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
   </Target>
-  <Import Project="..\packages\NETStandard.Library.2.0.1\build\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.1\build\NETStandard.Library.targets')" />
+  <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

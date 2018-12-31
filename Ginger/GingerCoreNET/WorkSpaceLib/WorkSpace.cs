@@ -93,9 +93,10 @@ namespace amdocs.ginger.GingerCoreNET
 
         public void OpenSolution(string SolutionFolder)
         {
+            mPluginsManager = null;
             //TODO: remove later since below init only RS2
             SolutionRepository.Open(SolutionFolder);
-
+            
             // AutoLogProxy.Init("Ginger Test");  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             // ValueExpression.Solutionfolder = SolutionFolder;

@@ -243,9 +243,8 @@ namespace Ginger.Activities
             foreach (RepositoryItemBase group in listOfGroups)
             {
                 foreach (ActivityIdentifiers AI in ((ActivitiesGroup)group).ActivitiesIdentifiers)
-                {
-                    // FIXME YW NET  
-                    //itemsToUpload.Add((ActivityIdentifiers)AI.IdentifiedActivity);                 
+                {                    
+                    itemsToUpload.Add(AI.IdentifiedActivity);                 
                 }
             }
             itemsToUpload.AddRange(listOfGroups);

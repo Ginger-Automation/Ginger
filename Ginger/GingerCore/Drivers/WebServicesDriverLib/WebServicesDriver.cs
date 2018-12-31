@@ -83,7 +83,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public bool RunSoapUIProcessAsAdmin { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("true")]
+        [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Related only to SoapUI | SoapUI Process Redirect Standard Error")]
         public bool SoapUIProcessRedirectStandardError { get; set; }
 
@@ -173,7 +173,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             mDriverWindow = new WebServicesDriverWindow(BusinessFlow);
             mDriverWindow.Show();
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-            Dispatcher = mDriverWindow.Dispatcher;
+            Dispatcher = new DriverWindowDispatcher(mDriverWindow.Dispatcher);
 
             System.Windows.Threading.Dispatcher.Run();
         }
@@ -704,21 +704,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             return "TBD";
         }
 
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
-
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
-
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
-
+        
         public override void HighlightActElement(Act act)
         {
         }

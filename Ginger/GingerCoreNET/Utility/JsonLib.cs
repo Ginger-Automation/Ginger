@@ -12,6 +12,7 @@ namespace Amdocs.Ginger.CoreNET.Utility
 
         public static object LoadObjFromJSonFile(string FileName, Type t,JsonSerializer serializer=null )
         {
+            object obj = null;
             JsonSerializer mJsonSerializer;
             if (serializer == null)
             {
@@ -25,8 +26,10 @@ namespace Amdocs.Ginger.CoreNET.Utility
             using (StreamReader SR = new StreamReader(FileName))
             using (JsonReader reader = new JsonTextReader(SR))
             {
-                return mJsonSerializer.Deserialize(reader, t);
+                obj= mJsonSerializer.Deserialize(reader, t);
             }
+
+            return obj;
         }
 
         public static object LoadObjFromJSonString(string str, Type type, JsonSerializer serializer = null)

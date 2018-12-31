@@ -16,23 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using System.Linq;
+using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
-
+using GingerCore.Actions.Common;
 using GingerCore.Platforms;
 using GingerCore.Variables;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
-using Ginger.Actions;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger;
 using GingerTestHelper;
-using Amdocs.Ginger.Common.InterfacesLib;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Ginger.Repository;
 
 namespace UnitTests.UITests
 {
@@ -48,6 +46,8 @@ namespace UnitTests.UITests
         public static void ClassInit(TestContext context)
         {
             AutoLogProxy.Init("Unit Tests");
+            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test Chrome";
@@ -74,6 +74,7 @@ namespace UnitTests.UITests
             mGR.BusinessFlows.Add(mBF);
         }
 
+        
         [TestMethod]
         public void DragAndDropSelenium()
         {
@@ -108,6 +109,7 @@ namespace UnitTests.UITests
 
         }
 
+        
         [TestMethod]
         public void DragAndDropJS()
         {
@@ -140,6 +142,7 @@ namespace UnitTests.UITests
 
         }
 
+        
         [TestMethod]
         public  void DoDragAndDropByOffSet()
         {
@@ -172,6 +175,7 @@ namespace UnitTests.UITests
             Assert.AreEqual(act3.Status, eRunStatus.Passed);
         }
 
+        
         [TestMethod]
         public void DrawObject()
         {

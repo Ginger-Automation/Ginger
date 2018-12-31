@@ -120,24 +120,7 @@ namespace Ginger.Run.RunSetActions
                 else
                     return;
 
-                Dictionary<Guid, string> defectsOpeningResults;
-                if ((defectsForOpening != null) && (defectsForOpening.Count > 0))
-                {
-                   ////defectsOpeningResults = ALMIntegration.Instance.CreateNewALMDefects(defectsForOpening);
-                }
-                else
-                    return;
-
-                ////if ((defectsOpeningResults != null) && (defectsOpeningResults.Count > 0))
-                ////{
-                ////    foreach (KeyValuePair<Guid, string> defectOpeningResult in defectsOpeningResults)
-                ////    {
-                ////        if ((defectOpeningResult.Value != null) && (defectOpeningResult.Value != "0"))
-                ////        {
-                ////            WorkSpace.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; });
-                ////        }
-                ////    }
-                ////}
+                RepositoryItemHelper.RepositoryItemFactory.CreateNewALMDefects(defectsForOpening);
             }
         }
 

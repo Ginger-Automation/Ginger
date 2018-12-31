@@ -24,10 +24,8 @@ using mshtml;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Reflection;
 using System.Threading;
-using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
 
@@ -65,7 +63,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             mFrmBrowser.IBDriver = this;
             IsBrowserLoaded = true;
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-            Dispatcher = mFrmBrowser.Dispatcher;
+            Dispatcher = new DriverWindowDispatcher(mFrmBrowser.Dispatcher);
 
             System.Windows.Threading.Dispatcher.Run();
         }
@@ -1186,38 +1184,9 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return "TBD";
         }
 
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
+        
 
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
-
-        public override List<ActButton> GetAllButtons()
-        {
-            // HtmlElementCollection all = webBrowser.Document.GetElementsByTagName("button");
-            // throw if none or more than one element found
-            //HtmlElement btn = all.Cast<HtmlElement>().Single(
-             //   el => el.InnerHtml == "ACCEPT the terms of use");
-
-            //List<ActButton> buttons = new List<ActButton>();
-            //HtmlElementCollection ec = mBrowserControl.Document.GetElementsByTagName("input");
-            //foreach (HtmlElement e in ec)
-            //{
-            //    if (e.GetAttribute("type") == "button")
-            //    {
-            //        ActButton b = new ActButton();
-            //        SetActLocator(b, e);
-            //        b.Description = "Click Button - " + e.GetAttribute("value");
-            //        buttons.Add(b);
-            //    }
-            //}
-            //return buttons;
-            return null;
-        }
+      
 
         public override void HighlightActElement(Act act)
         {

@@ -64,10 +64,10 @@ namespace Ginger.Reports
         }
 
         // use empty constructor when we load from file - Json
-       /* public ActivityReport()
+       public ActivityReport()
         {
             mActivity = new Activity();
-        }*/
+        }
 
         public ActivityReport(Activity Activity)
         {
@@ -288,7 +288,7 @@ namespace Ginger.Reports
                         {
                           
 
-                            dt.Select("Name =" + elementsAfter[0]).FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
+                            dt.Select("Name = '" + elementsAfter[0]+"'").FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
                           
                         }
                     }                
@@ -336,7 +336,12 @@ namespace Ginger.Reports
                                 actrR.LogFolder = folder;
                                 actionReports.Add(actrR);
                             }
-                            catch { }
+                            catch (Exception ECx)
+                            {
+                                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Error Deserializing ActivityReport", ECx);
+
+
+                            }
                         }
                     }
                 }

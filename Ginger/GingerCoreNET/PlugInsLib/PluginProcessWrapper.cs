@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Amdocs.Ginger.Common;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -37,7 +38,8 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
             }
             catch (Exception ex)
             {
-                // do nothing
+                AppReporter.ToLog(eAppReporterLogLevel.INFO, "Failed to close window", ex);
+               
             }
         }
     }

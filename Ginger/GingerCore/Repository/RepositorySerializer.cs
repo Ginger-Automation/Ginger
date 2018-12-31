@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.Reports;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.DataSource;
@@ -427,6 +428,7 @@ namespace GingerCore.Repository
         static Assembly GingerAssembly = System.Reflection.Assembly.Load("Ginger");
         static Assembly GingerCoreAssembly = System.Reflection.Assembly.GetExecutingAssembly();
         static Assembly GingerCoreCommon = typeof(RepositoryItemBase).Assembly;
+        static Assembly GingerCoreNET = typeof(HTMLReportConfiguration).Assembly;
 
 
         private static object xmlReadObject(Object Parent, XmlReader xdr, RepositoryItemBase targetObj = null)
@@ -484,6 +486,12 @@ namespace GingerCore.Repository
                     
                     
                     obj = GingerCoreCommon.CreateInstance(ClassName);
+                }
+
+
+                if (obj == null) //GingerCoreNET assembly
+                {                    
+                    obj = GingerCoreNET.CreateInstance(ClassName);
                 }
 
                 if (obj == null)

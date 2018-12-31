@@ -4,6 +4,7 @@ using System.Text;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
+using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 
 namespace Amdocs.Ginger.Common.InterfacesLib
@@ -39,7 +40,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         string ExInfo { get; set; }
         ObservableList<ActInputValue> InputValues { get; set; }
         ObservableList<ActReturnValue> ReturnValues { get;  }
-        ObservableList<IFlowControl> FlowControls { get; set; }
+        ObservableList<FlowControl> FlowControls { get; set; }
         List<String> ScreenShots  { get; set; }
         bool Active { get; set; }
         bool FailIgnored { get; set; }

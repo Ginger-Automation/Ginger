@@ -77,12 +77,15 @@ namespace Ginger.Run.RunSetActions
 
         private void xSMTPPassTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            bool res, checkValueDecrypt;
-            res = false;
-            checkValueDecrypt = true;
-            EncryptionHandler.DecryptString(xSMTPPassTextBox.Text, ref checkValueDecrypt);
-
-            if (!checkValueDecrypt) xSMTPPassTextBox.Text = EncryptionHandler.EncryptString(xSMTPPassTextBox.Text, ref res);
+            bool res = false;
+            if (!EncryptionHandler.IsStringEncrypted(xSMTPPassTextBox.Text))
+            {
+                xSMTPPassTextBox.Text = EncryptionHandler.EncryptString(xSMTPPassTextBox.Text, ref res);
+                if (res == false)
+                {
+                    xSMTPPassTextBox.Text = string.Empty;
+                }
+            }
         }
 
         private void xcbConfigureCredential_Unchecked(object sender, RoutedEventArgs e)

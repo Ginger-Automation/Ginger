@@ -262,7 +262,7 @@ namespace GingerCore.Actions
                     }
                     catch(Exception e)
                     {
-
+                        Reporter.ToLog(Amdocs.Ginger.Common.eAppReporterLogLevel.INFO, "", e);
                     }
                 }
                 else

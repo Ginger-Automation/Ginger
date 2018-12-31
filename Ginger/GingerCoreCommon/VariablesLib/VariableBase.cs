@@ -383,7 +383,7 @@ namespace GingerCore.Variables
                         }
                         catch (Exception ex)
                         {
-                            // TODO: FIXME!!! no empty exception
+                            AppReporter.ToLog(eAppReporterLogLevel.INFO, "Failed to get list of used variables", ex);
                         } 
                     }
                 }

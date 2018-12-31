@@ -86,7 +86,7 @@ namespace GingerCore
             Gherkin     // From Gherking Feature file
         }
 
-        public new static partial class Fields
+        public  static partial class Fields
         {
             public static string Active = "Active";
             public static string Mandatory = "Mandatory";
@@ -107,6 +107,7 @@ namespace GingerCore
             public static string Source = "Source";
         }
 
+        public object Platforms { get; set; } // keep it for backword compatibility when loading old XML, or handle in RI serializer
 
         public List<string> VariablesBeforeExec { get; set; }
 
@@ -847,7 +848,7 @@ namespace GingerCore
             CleanDynamicAddedItems();
         }
 
-        public new void InvokPropertyChanngedForAllFields()
+        public  void InvokPropertyChanngedForAllFields()
         {
             foreach (var field in typeof(Fields).GetFields())
                 OnPropertyChanged(field.Name);
@@ -1122,7 +1123,7 @@ namespace GingerCore
         //}
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IFlowControl> BFFlowControls { get; set; } = new ObservableList<IFlowControl>();
+        public ObservableList<FlowControl> BFFlowControls { get; set; } = new ObservableList<FlowControl>();
 
 
         public string Applications

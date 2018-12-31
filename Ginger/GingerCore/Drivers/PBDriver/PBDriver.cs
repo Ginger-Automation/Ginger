@@ -30,6 +30,7 @@ using GingerCore.Drivers.WindowsLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Threading;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -105,7 +106,7 @@ namespace GingerCore.Drivers.PBDriver
             
             try
             {
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Start Executing action of type" + actClass + " Description is" + act.Description);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Start Executing action of type '" + actClass + "' Description is" + act.Description);
                  
                 switch (actClass)
                 {
@@ -936,17 +937,10 @@ namespace GingerCore.Drivers.PBDriver
         public override Act GetCurrentElement()
         { return null; }
 
-        public override List<ActWindow> GetAllWindows()
-        { return null; }
-
+        
         public override string GetURL()
         { return null; }
 
-        public override List<ActLink> GetAllLinks()
-        { return null; }
-
-        public override List<ActButton> GetAllButtons()
-        { return null; }
         
         private void SwitchWindow(ActUIASwitchWindow act)
         {
@@ -1078,6 +1072,15 @@ namespace GingerCore.Drivers.PBDriver
         public bool TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
         {
             throw new NotImplementedException();
+        }
+
+        public override void ActionCompleted(Act act)
+        {
+            mUIAutomationHelper.taskFinished = true;
+            if (!String.IsNullOrEmpty(act.Error) && act.Error.StartsWith("Time out !"))
+            {
+                Thread.Sleep(1000);
+            }
         }
     }
 }

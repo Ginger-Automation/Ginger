@@ -73,7 +73,7 @@ namespace GingerCore
 
     
         
-        public new static class Fields
+        public  static class Fields
         {            
             public static string ActivityName = "ActivityName";
             public static string Description = "Description";
@@ -553,7 +553,7 @@ namespace GingerCore
             }
         }
 
-        public new void InvokPropertyChanngedForAllFields()
+        public  void InvokPropertyChanngedForAllFields()
         {
             foreach (var field in typeof(Fields).GetFields())
                 OnPropertyChanged(field.Name);

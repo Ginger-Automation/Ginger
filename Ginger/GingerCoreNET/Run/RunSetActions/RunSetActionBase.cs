@@ -48,7 +48,7 @@ namespace Ginger.Run.RunSetActions
             OneOrMoreBusinessFlowsFailed,
         }
 
-        public new static class Fields
+        public  static class Fields
         {
             public static string Name = "Name";
             public static string Type = "Type";

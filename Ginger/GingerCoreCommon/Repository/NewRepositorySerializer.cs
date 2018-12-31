@@ -434,6 +434,7 @@ namespace Amdocs.Ginger.Repository
         }
         
 
+        //TODO: Not using t why is it needed?
         public RepositoryItemBase DeserializeFromFile(Type t, string FileName)
         {
             AppReporter.ToConsole("DeserializeFromFile the file: " + FileName);
@@ -657,6 +658,7 @@ namespace Amdocs.Ginger.Repository
 
         private static object xmlReadObject(Object Parent, XmlReader xdr, RepositoryItemBase targetObj = null)
         {
+            //TODO: check order of creation and removed unused
             string className = xdr.Name;            
 
             try
@@ -690,7 +692,7 @@ namespace Amdocs.Ginger.Repository
 
                     if (mi==null)
                     {                        
-                        throw new MissingFieldException("Error: Cannot find attribute. Class: " + className + ", Attribute: " + xdr.Name);
+                        throw new MissingFieldException("Error: Cannot find attribute. Class: '" + className + "' , Attribute: '" + xdr.Name + "'");
                     }
 
                     

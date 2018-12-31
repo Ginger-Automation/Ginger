@@ -139,11 +139,11 @@ namespace Ginger.Actions
             ObservableList<Act> Acts = new ObservableList<Act>();
             AppDomain.CurrentDomain.Load("GingerCore");
 
+       Assembly GC=AppDomain.CurrentDomain.GetAssemblies().
+          SingleOrDefault(assembly => assembly.GetName().Name == "GingerCore");
+
             var ActTypes =
-                from type in typeof(Act).Assembly.GetTypes()
-                where type.IsSubclassOf(typeof(Act))
-                && type != typeof(ActWithoutDriver)
-                select type;
+                from type in GC.GetTypes() where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) select type;
             
             foreach (Type t in ActTypes)
             {

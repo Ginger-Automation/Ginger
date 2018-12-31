@@ -20,6 +20,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
@@ -88,7 +89,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Param To Col")]
             ParamToCol,
         }
-        public new static partial class Fields
+        public  static partial class Fields
         {
             public static string Active = "Active";
             public static string ActionDescription = "ActionDescription";
@@ -294,7 +295,7 @@ namespace GingerCore.Actions
         public eStatusConverterOptions StatusConverter { get; set; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IFlowControl> FlowControls { get; set; } = new ObservableList<IFlowControl>();
+        public ObservableList<FlowControl> FlowControls { get; set; } = new ObservableList<FlowControl>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> InputValues { get; set; } = new ObservableList<ActInputValue>();
@@ -530,7 +531,7 @@ namespace GingerCore.Actions
         }
 
 
-        public ObservableList<IFlowControl> ActFlowControls
+        public ObservableList<FlowControl> ActFlowControls
         {
             get
             {
@@ -803,14 +804,43 @@ namespace GingerCore.Actions
             }
         }
 
-        public static string SaveScreenshotToTempFile(Bitmap screenshot)
-        {
-            string filename = System.IO.Path.GetRandomFileName();
-            string filePath = string.Empty;
-            filePath = System.IO.Path.Combine(Actions.Act.ScreenshotTempFolder, filename);
-            // check if folder exist else create
 
-            Ginger.Utils.BitmapManager.SaveBitmapToPng(screenshot, filePath);
+        public void AddScreenShot(byte[] bytes, string Name)
+        {
+            try
+            {                
+                string filePath = GetScreenShotRandomFileName();
+                using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
+                {                                        
+                    fs.Write(bytes, 0, bytes.Length);
+                }
+                ScreenShots.Add(filePath);                
+                ScreenShotsNames.Add(Name);
+            }         
+            catch(Exception ex)
+            {
+                Error += "Unable to add Screen shot " + ex.Message;
+            }
+        }
+
+
+
+        // TODO: move to Utils
+        public static string SaveScreenshotToTempFile(Bitmap screenshot)
+        {            
+            string filePath = GetScreenShotRandomFileName();                        
+            screenshot.Save(filePath);            
+            return filePath;
+        }
+
+        static string GetScreenShotRandomFileName()
+        {
+            string filename = Path.GetRandomFileName();            
+            string filePath = Path.Combine(ScreenshotTempFolder, filename);
+            if (!Directory.Exists(ScreenshotTempFolder))
+            {
+                Directory.CreateDirectory(ScreenshotTempFolder);
+            }
             return filePath;
         }
 
@@ -1254,7 +1284,7 @@ namespace GingerCore.Actions
 
 
 
-        public new void InvokPropertyChanngedForAllFields()
+        public  void InvokPropertyChanngedForAllFields()
         {
             foreach (var field in typeof(Fields).GetFields())
                 OnPropertyChanged(field.Name);
@@ -1635,5 +1665,9 @@ namespace GingerCore.Actions
             }
         }
 
+        public virtual void CalculateModelParameterExpectedValue(ActReturnValue aRC)
+        {
+            // do nothing, will be override in action which needs it like ActWebAPIModel
+        }
     }
 }

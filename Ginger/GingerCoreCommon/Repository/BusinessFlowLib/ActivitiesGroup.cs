@@ -51,7 +51,7 @@ namespace GingerCore.Activities
             set { _executionLoggerStatus = value; }
         }
 
-        public new static class Fields
+        public  static class Fields
         {
             public static string Name = "Name";
             public static string Description = "Description";

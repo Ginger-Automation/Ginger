@@ -36,7 +36,6 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
-using GingerCore.GeneralLib;
 using GingerCoreNET.RunLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using IWshRuntimeLibrary;
@@ -739,8 +738,11 @@ namespace Ginger.Run
 
                 mCurrentSelectedRunner.Runner.BusinessFlows.CollectionChanged -= BusinessFlows_CollectionChanged;
                 mCurrentSelectedRunner.Runner.BusinessFlows.CollectionChanged += BusinessFlows_CollectionChanged;
-                mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick -= dispatcherTimerElapsedTick;
-                mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick += dispatcherTimerElapsedTick;               
+
+                //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                //mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick -= dispatcherTimerElapsedTick;
+                //mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick += dispatcherTimerElapsedTick;               
+
                 GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mCurrentSelectedRunner.Runner, nameof(GingerRunner.Status), BindingMode.OneWay);                
             }
             finally
@@ -1231,6 +1233,17 @@ namespace Ginger.Run
         private void createShortcutRunset_Click(object sender, RoutedEventArgs e)
         {
             AutoLogProxy.UserOperationStart("CreateShortcutButton_Click");
+
+            char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
+
+            if (mRunSetConfig.Name.IndexOfAny(invalidChars) >= 0 )
+            {
+                foreach (char value in invalidChars)
+                {
+                    if(mRunSetConfig.Name.Contains(value))
+                        mRunSetConfig.Name = mRunSetConfig.Name.Replace(value, '_');
+                }
+            }
 
             CreateRunSetShortCut(mRunSetConfig.Name, xRunsetEnvironmentCombo.Text);
 
