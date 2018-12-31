@@ -73,6 +73,11 @@ namespace Amdocs.Ginger.Common
         void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
         void MessageBoxShow(string message);
 
+        string GenerateTemplate(string templatename, object o);
         ITextBoxFormatter CreateTextBoxFormatter(object Textblock);
+
+        bool ProcessCommandLineArgs(string[] file);
+
+        void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening);
     }
 }

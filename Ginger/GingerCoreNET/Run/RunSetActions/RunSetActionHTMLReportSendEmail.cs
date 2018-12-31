@@ -250,7 +250,7 @@ namespace Ginger.Run.RunSetActions
                         {
                             if ((rReport.IsAlternameFolderUsed) && (extraInformationCalculated != null) && (extraInformationCalculated != string.Empty))
                             {
-                                // check if user have write permission on attachment folder. If not - do not put attachment, and add warning to email body
+                                //check if user have write permission on attachment folder. If not - do not put attachment, and add warning to email body
                                 //if (!HTMLReportAttachmentConfigurationPage.HasWritePermission(extraInformationCalculated))
                                 //{
                                 //    emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->",
@@ -439,7 +439,7 @@ namespace Ginger.Run.RunSetActions
 
                         if (selectedField.FieldKey == RunSetReport.Fields.ExecutionDuration)
                         {
-                           //fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(GingerCore.General.TimeConvert(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString())) + "</td>");
+                           fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(General.TimeConvert(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString())) + "</td>");
                         }
                         else if ((selectedField.FieldKey == ActionReport.Fields.StartTimeStamp) || (selectedField.FieldKey == ActionReport.Fields.EndTimeStamp))
                         {
@@ -638,7 +638,7 @@ namespace Ginger.Run.RunSetActions
                                         {
                                             fieldsNamesHTMLTableCells.Append("<td bgcolor='#1B3651' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
                                         }
-                                       // fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) != null ? GingerCore.General.TimeConvert(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString()) : string.Empty) + "</td>");
+                                        fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) != null ? General.TimeConvert(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString()) : string.Empty) + "</td>");
                                     }
                                     else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.RunStatus)
                                     {
