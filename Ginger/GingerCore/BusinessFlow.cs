@@ -549,9 +549,13 @@ namespace GingerCore
                     {
                         ActivitiesGroup activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == activityGroupName).FirstOrDefault();
                         selectedActivityIndex = Activities.IndexOf(CurrentActivity);
-                        while (!string.IsNullOrEmpty(Activities[selectedActivityIndex].ActivitiesGroupID) && Activities[selectedActivityIndex].ActivitiesGroupID.Equals(activitiesGroup.Name) == true )
+                        while (!string.IsNullOrEmpty(Activities[selectedActivityIndex].ActivitiesGroupID) && Activities[selectedActivityIndex].ActivitiesGroupID.Equals(activitiesGroup.Name) == true)
                         {
                             selectedActivityIndex++;
+                            if (selectedActivityIndex >= Activities.Count)
+                            {
+                                break;
+                            }
                         }
                     }
                 }
