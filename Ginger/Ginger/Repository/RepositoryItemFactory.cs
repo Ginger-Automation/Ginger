@@ -24,6 +24,7 @@ using Ginger.AnalyzerLib;
 using Ginger.GeneralLib;
 using Ginger.Reports;
 using Ginger.Run;
+using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
@@ -55,6 +56,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.UI.DataVisualization.Charting;
@@ -795,6 +797,27 @@ namespace Ginger.Repository
                         WorkSpace.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; });
                     }
                 }
+            }
+        }
+
+        public void HTMLReportAttachment(string extraInformationCalculated, string emailReadyHtml, string reportsResultFolder, string runSetFolder, object Report, object conf)
+        {
+            EmailHtmlReportAttachment rReport = (EmailHtmlReportAttachment)Report;
+            HTMLReportsConfiguration currentConf = (HTMLReportsConfiguration)conf;
+            if (!HTMLReportAttachmentConfigurationPage.HasWritePermission(extraInformationCalculated))
+            {
+                emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->",
+                "<b>Full report attachment failed, </b>" +
+                "Error: User '" + WindowsIdentity.GetCurrent().Name.ToString() + "' have no write permission on provided alternative folder - " + extraInformationCalculated + ". Attachment in it not saved.");
+            }
+            else
+            {
+                emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
+                ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+                reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
+                                                                                                                        false,
+                                                                                                                        HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault(),
+                                                                                                                        extraInformationCalculated + "\\" + System.IO.Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
             }
         }
     }

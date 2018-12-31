@@ -250,22 +250,7 @@ namespace Ginger.Run.RunSetActions
                         {
                             if ((rReport.IsAlternameFolderUsed) && (extraInformationCalculated != null) && (extraInformationCalculated != string.Empty))
                             {
-                                //check if user have write permission on attachment folder. If not - do not put attachment, and add warning to email body
-                                //if (!HTMLReportAttachmentConfigurationPage.HasWritePermission(extraInformationCalculated))
-                                //{
-                                //    emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->",
-                                //    "<b>Full report attachment failed, </b>" +
-                                //    "Error: User '" + WindowsIdentity.GetCurrent().Name.ToString() + "' have no write permission on provided alternative folder - " + extraInformationCalculated + ". Attachment in it not saved.");
-                                //}
-                                //else
-                                //{
-                                //    emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
-                                //    ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-                                //    reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
-                                //                                                                                                            false,
-                                //                                                                                                            HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault(),
-                                //                                                                                                            extraInformationCalculated + "\\" + System.IO.Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
-                                //}
+                                RepositoryItemHelper.RepositoryItemFactory.HTMLReportAttachment(extraInformationCalculated, reportsResultFolder, reportsResultFolder, runSetFolder, rReport, currentConf);
                             }
                             else
                             {

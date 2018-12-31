@@ -79,5 +79,7 @@ namespace Amdocs.Ginger.Common
         bool ProcessCommandLineArgs(string[] file);
 
         void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening);
+
+        void HTMLReportAttachment(string report, string reportsResultFolder, string reportresultfolder, string runsetfolder, object Attachment, object conf);
     }
 }
