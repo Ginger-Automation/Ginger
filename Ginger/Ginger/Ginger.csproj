@@ -3018,7 +3018,7 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconInGrayNoBackground.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerSplashImage.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerSplashImageNew.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
