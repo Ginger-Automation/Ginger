@@ -77,6 +77,10 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
             Swaggerdoc = SwaggerDocument.FromJsonAsync(orignaljson).Result;
             foreach (var paths in Swaggerdoc.Paths)
             {
+                if (paths.Key == "/accounts")
+                {
+                }
+
                 SwaggerPathItem SPi = paths.Value;
                 foreach (KeyValuePair<SwaggerOperationMethod, SwaggerOperation> so in SPi.AsEnumerable())
                 {
@@ -362,7 +366,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
             string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation);
             object[] BodyandModelParameters = JSONTemplateParser.GenerateBodyANdModelParameters(SampleBody);
             aAM.RequestBody = (string)BodyandModelParameters[0];
-          return (ObservableList<AppModelParameter>)BodyandModelParameters[1];
+            return (ObservableList<AppModelParameter>)BodyandModelParameters[1];
         }
 
         private void GenerateFormParameters(ApplicationAPIModel aAM, SwaggerOperation operation, bool isMultiPartFormdata = false)

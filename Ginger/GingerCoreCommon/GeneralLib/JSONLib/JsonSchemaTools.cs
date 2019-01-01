@@ -37,11 +37,25 @@ namespace Amdocs.Ginger.Common
             {
                 return JsonSchemaFaker(schema.Reference, UseXMlNames);
             }
-
             Dictionary<string, object> JsonBody = new Dictionary<string, object>();
+
+            //if (schema.ActualProperties.Count == 0)
+            //{
+            //    object o = GenerateJsonObjectFromJsonSchema4Type(schema.Type, UseXMlNames);
+            //    JsonBody.Add(key, o);
+            //}
+
+
 
             foreach (KeyValuePair<string, JsonProperty> jkp in schema.ActualProperties)
             {
+                //code
+                if (jkp.Key == "validationMessages")
+                {
+                }
+                if (jkp.Key == "accountType")
+                {
+                }
                 string key = jkp.Key;
                 if (UseXMlNames && jkp.Value.Xml != null)
                 {
@@ -49,9 +63,30 @@ namespace Amdocs.Ginger.Common
                 }
                 if (jkp.Value.HasReference)
                 {
-                    string property = JsonSchemaFaker(jkp.Value.Reference, UseXMlNames);
-                    object o = JsonConvert.DeserializeObject(property);
-                    JsonBody.Add(key, o);
+                    if (jkp.Value.Reference.HasReference == false && jkp.Value.Reference.Properties.Count == 0)
+                    {
+                        object o1 = GenerateJsonObjectFromJsonSchema4(jkp.Value, UseXMlNames);
+                        JsonBody.Add(key, o1);
+
+                    }
+                    else
+                    {
+                        string property = JsonSchemaFaker(jkp.Value.Reference, UseXMlNames);
+                        object o = JsonConvert.DeserializeObject(property);
+                        JsonBody.Add(key, o);
+                    }
+                    //string property = JsonSchemaFaker(jkp.Value.Reference, UseXMlNames);
+                    //if (property == "{}")
+                    //{
+                    //    object o1 = GenerateJsonObjectFromJsonSchema4(jkp.Value, UseXMlNames);
+                    //    JsonBody.Add(key, o1);
+                    //}
+                    //else
+                    //{
+                    //    object o = JsonConvert.DeserializeObject(property);
+                    //    JsonBody.Add(key, o);
+                    //}
+
                 }
                 else
                 {
@@ -115,7 +150,7 @@ namespace Amdocs.Ginger.Common
                             {
 
                                 string key = item.Key;
-                                if (key.ToUpper() == "orderTerm".ToUpper())
+                                if (key.ToUpper() == "code".ToUpper())
                                 {
 
                                 }
@@ -124,8 +159,9 @@ namespace Amdocs.Ginger.Common
                                     key = item.Value.Xml.Name;
                                 }
 
+                                object o = GenerateJsonObjectFromJsonSchema4(item.Value, UseXMlNames);
 
-                                jb.Add(key, JsonConvert.SerializeObject(GenerateJsonObjectFromJsonSchema4(item.Value, UseXMlNames)));
+                                jb.Add(key, (JToken)o);
                             }
                         }
 
@@ -161,7 +197,7 @@ namespace Amdocs.Ginger.Common
                     break;
 
                 default:
-                    output = new JValue(""); ;
+                    output = new JValue("sample"); ;
                     break;
 
             }
