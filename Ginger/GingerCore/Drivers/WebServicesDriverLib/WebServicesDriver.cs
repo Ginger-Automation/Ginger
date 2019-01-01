@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.WebAPI;
@@ -83,7 +84,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public bool RunSoapUIProcessAsAdmin { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("true")]
+        [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Related only to SoapUI | SoapUI Process Redirect Standard Error")]
         public bool SoapUIProcessRedirectStandardError { get; set; }
 
@@ -468,14 +469,27 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     act.AddOrUpdateReturnParamActual(kpr.Value[0] + "-Response", responseQouteFixed);
                     if (((ActSoapUI)act).AddXMLResponse_Value)
                     {
-                        XmlDocument xmlDoc = new XmlDocument();
-                        xmlDoc.LoadXml(kpr.Value[2]);
-
-                        List<GingerCore.General.XmlNodeItem> outputTagsList = new List<GingerCore.General.XmlNodeItem>();
-                        outputTagsList = General.GetXMLNodesItems(xmlDoc);
-                        foreach (GingerCore.General.XmlNodeItem outputItem in outputTagsList)
+                        string fileContent = kpr.Value[2];
+                        ObservableList<ActReturnValue> ReturnValues = null;
+                        if (APIConfigurationsDocumentParserBase.IsValidJson(fileContent))
                         {
-                            act.AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value, outputItem.path);
+                            ReturnValues = JSONTemplateParser.ParseJSONResponseSampleIntoReturnValues(fileContent);
+                            foreach (ActReturnValue ReturnValue in ReturnValues)
+                            {
+                                act.ReturnValues.Add(ReturnValue);
+                            }
+                        }
+                        else if (APIConfigurationsDocumentParserBase.IsValidXML(fileContent))
+                        {
+                            XmlDocument xmlDoc1 = new XmlDocument();
+                            xmlDoc1.LoadXml(kpr.Value[2]);
+
+                            List<GingerCore.General.XmlNodeItem> outputTagsList1 = new List<GingerCore.General.XmlNodeItem>();
+                            outputTagsList1 = General.GetXMLNodesItems(xmlDoc1);
+                            foreach (GingerCore.General.XmlNodeItem outputItem in outputTagsList1)
+                            {
+                                act.AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value, outputItem.path);
+                            }
                         }
                     }
                 }

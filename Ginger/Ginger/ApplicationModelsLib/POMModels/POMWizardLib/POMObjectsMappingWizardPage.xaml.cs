@@ -86,7 +86,28 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.LeavingForNextPage:
                 case EventType.Finish:
                     mPomAllElementsPage.FinishEditInAllGrids();
+                    if (mPomAllElementsPage != null)
+                    {
+                        mPomAllElementsPage.StopSpy();
+                    }
+                    ResetDriverStopProcess();
                     break;
+                case EventType.Cancel:
+                    if (mPomAllElementsPage != null)
+                    {
+                        mPomAllElementsPage.StopSpy();
+                    }
+                    ResetDriverStopProcess();
+
+                    break;
+            }
+        }
+
+        private void ResetDriverStopProcess()
+        {
+            if (mWizard.Agent != null && (DriverBase)mWizard.Agent.Driver != null)
+            {
+                ((DriverBase)mWizard.Agent.Driver).mStopProcess = false;
             }
         }
 

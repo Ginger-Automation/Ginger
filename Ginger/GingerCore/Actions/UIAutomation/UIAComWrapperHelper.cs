@@ -5938,7 +5938,7 @@ namespace GingerCore.Drivers
             root.ElementObject = AutomationElement.RootElement;
             return root;
         }
-
+        
         XPathHelper IXPath.GetXPathHelper(ElementInfo info)
         {
             return mXPathHelper;
@@ -6025,6 +6025,21 @@ namespace GingerCore.Drivers
             }
             UIAElementInfo RC =(UIAElementInfo) GetElementInfoFor(AE);
             return RC;
+        }
+
+        string IXPath.GetElementID(ElementInfo EI)
+        {
+            return "";
+        }
+
+        string IXPath.GetElementTagName(ElementInfo EI)
+        {
+            return "";
+        }
+
+        List<object> IXPath.GetAllElementsByLocator(eLocateBy LocatorType, string LocValue)
+        {
+            return null;
         }
 
         private void GetChildrenUsingRawWalker(
