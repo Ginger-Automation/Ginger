@@ -132,7 +132,7 @@ namespace Ginger.Repository
                         mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                         
                         int selectedActIndex = -1;
-                        ObservableList<IActivitiesGroup> actsList = App.BusinessFlow.ActivitiesGroups;
+                        ObservableList<ActivitiesGroup> actsList = App.BusinessFlow.ActivitiesGroups;
                         if (actsList.CurrentItem != null)
                         {
                             selectedActIndex = actsList.IndexOf((ActivitiesGroup)actsList.CurrentItem);

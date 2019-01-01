@@ -101,7 +101,7 @@ namespace Ginger.ALM.Repository
                 {
                     //Refresh Ginger repository and allow GingerRQM to use it
 
-                    ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivitiesGroup>();
+                    ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
                     ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
                     try
@@ -184,7 +184,7 @@ namespace Ginger.ALM.Repository
             }
         }
 
-        public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> grdActivitiesGroups)
+        public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
             if (businessFlow == null) return;
 

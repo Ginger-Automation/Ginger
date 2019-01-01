@@ -234,7 +234,7 @@ namespace Ginger.Activities
         {
             if (grdGroups.Grid.SelectedItems != null)
             {
-                ObservableList<IActivitiesGroup> selectedAGs = new ObservableList<IActivitiesGroup>();
+                ObservableList<ActivitiesGroup> selectedAGs = new ObservableList<ActivitiesGroup>();
                 foreach (ActivitiesGroup ag in grdGroups.Grid.SelectedItems) selectedAGs.Add(ag);
                 ALMIntegration.Instance.ExportBfActivitiesGroupsToALM(App.BusinessFlow, selectedAGs);
             }

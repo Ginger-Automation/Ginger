@@ -5,6 +5,7 @@ using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
+using GingerCore.Activities;
 
 namespace Amdocs.Ginger.Common.InterfacesLib
 {
@@ -16,11 +17,11 @@ namespace Amdocs.Ginger.Common.InterfacesLib
        ExecutionLoggerConfiguration Configuration { get; set; }
         
         void GingerStart();
-        void ActivityGroupStart(IActivitiesGroup currentActivityGroup, BusinessFlow currentBusinessFlow);
+        void ActivityGroupStart(ActivitiesGroup currentActivityGroup, BusinessFlow currentBusinessFlow);
         void ActivityStart(BusinessFlow currentBusinessFlow,Activity activity);
         void ActivityEnd(BusinessFlow BusinessFlow, Activity Activity, bool offlineMode = false);
         void ActionEnd(Activity Activity, IAct act, bool offlineMode = false);
-        void ActivityGroupEnd(IActivitiesGroup currentActivityGroup, BusinessFlow currentBusinessFlow, bool offlineMode);
+        void ActivityGroupEnd(ActivitiesGroup currentActivityGroup, BusinessFlow currentBusinessFlow, bool offlineMode);
         void BusinessFlowEnd(BusinessFlow currentBusinessFlow, bool offlineMode = false);
         void ActionStart(BusinessFlow currentBusinessFlow,Activity currentActivity, IAct act);
         void GingerEnd(IGingerRunner GR = null, string filename = null, int runnerCount = 0);

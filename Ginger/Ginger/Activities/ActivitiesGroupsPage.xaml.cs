@@ -168,7 +168,7 @@ namespace Ginger.Activities
                 mBusinessFlow.AttachActivitiesGroupsAndActivities();
 
                 int selectedActIndex = -1;
-                ObservableList<IActivitiesGroup> actsList = mBusinessFlow.ActivitiesGroups;
+                ObservableList<ActivitiesGroup> actsList = mBusinessFlow.ActivitiesGroups;
                 if (actsList.CurrentItem != null)
                 {
                     selectedActIndex = actsList.IndexOf((ActivitiesGroup)actsList.CurrentItem);
@@ -268,7 +268,7 @@ namespace Ginger.Activities
         {
             if (grdActivitiesGroups.Grid.SelectedItems != null)
             {
-                ObservableList<IActivitiesGroup> selectedAGs = new ObservableList<IActivitiesGroup>();
+                ObservableList<ActivitiesGroup> selectedAGs = new ObservableList<ActivitiesGroup>();
                 foreach (ActivitiesGroup ag in grdActivitiesGroups.Grid.SelectedItems) selectedAGs.Add(ag);
                 ALMIntegration.Instance.ExportBfActivitiesGroupsToALM(mBusinessFlow, selectedAGs);
             }

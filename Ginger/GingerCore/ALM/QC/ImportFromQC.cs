@@ -38,7 +38,7 @@ namespace GingerCore.ALM.QC
     {
         static TDConnection mTDConn = QCConnect.TDConn;
 
-        public static ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
+        public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
         
         public static QCTestSet ImportTestSetData(QCTestSet TS)
@@ -300,7 +300,7 @@ namespace GingerCore.ALM.QC
                 {
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
-                    IActivitiesGroup repoActivsGroup = null;
+                    ActivitiesGroup repoActivsGroup = null;
                     if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
                     if (repoActivsGroup == null)

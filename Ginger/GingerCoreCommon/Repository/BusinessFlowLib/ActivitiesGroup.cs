@@ -24,14 +24,14 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
-using static Amdocs.Ginger.Common.InterfacesLib.IActivitiesGroup;
+
 
 namespace GingerCore.Activities
 {
     /// <summary>
     /// ActivitiesGroup used to store the ID's and execution order of few Activities
     /// </summary>
-    public class ActivitiesGroup : RepositoryItemBase, IActivitiesGroup
+    public class ActivitiesGroup : RepositoryItemBase
     {
         public enum eItemParts
         {

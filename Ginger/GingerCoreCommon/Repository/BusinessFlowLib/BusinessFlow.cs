@@ -615,7 +615,7 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IActivitiesGroup> ActivitiesGroups { get; set; } = new ObservableList<IActivitiesGroup>();
+        public ObservableList<ActivitiesGroup> ActivitiesGroups { get; set; } = new ObservableList<ActivitiesGroup>();
 
         public void AddActivitiesGroup(ActivitiesGroup activitiesGroup = null)
         {
@@ -650,7 +650,7 @@ namespace GingerCore
         {
             if (this.ActivitiesGroups.Where(ag => ag.Name == activitiesGroup.Name).FirstOrDefault() == null) return; //no name like it in the group
 
-            List<IActivitiesGroup> sameNameObjList =
+            List<ActivitiesGroup> sameNameObjList =
                 this.ActivitiesGroups.Where(obj => obj.Name == activitiesGroup.Name).ToList();
             if (sameNameObjList.Count == 1 && sameNameObjList[0] == activitiesGroup) return; //Same internal object
 
@@ -757,7 +757,7 @@ namespace GingerCore
                 case (eUpdateActivitiesGroupDetailsType.FreeUnAttachedActivities):
                     foreach (Activity act in this.Activities)
                     {
-                        IActivitiesGroup group = this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault();
+                        ActivitiesGroup group = this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault();
                         if (group != null)
                             if ((group.ActivitiesIdentifiers.Where(actidnt => actidnt.ActivityName == act.ActivityName && actidnt.ActivityGuid == act.Guid).FirstOrDefault()) == null)
                                 act.ActivitiesGroupID = string.Empty;

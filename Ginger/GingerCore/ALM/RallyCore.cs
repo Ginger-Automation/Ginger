@@ -185,7 +185,7 @@ namespace GingerCore.ALM
         {
             return true;//ExportToRally.Instance.ExportExecutionDetailsToRally(bizFlow, ref result);
         }
-        public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> grdActivitiesGroups, ref string result)
+        public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups, ref string result)
         {
             return true;//ExportToRally.Instance.ExportBfActivitiesGroupsToALM(businessFlow, grdActivitiesGroups, ref result);
         }
@@ -205,7 +205,7 @@ namespace GingerCore.ALM
             return null;
         }
 
-        public override ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo
+        public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
         {
             get { return ImportFromRally.GingerActivitiesGroupsRepo; }
             set { ImportFromRally.GingerActivitiesGroupsRepo = value; }

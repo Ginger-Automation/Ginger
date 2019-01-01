@@ -27,6 +27,7 @@ using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore;
+using GingerCore.Activities;
 using GingerCore.Environments;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
@@ -281,7 +282,7 @@ namespace Ginger.Run
 
         }
 
-        public void ActivityGroupStart(IActivitiesGroup currentActivityGroup, BusinessFlow businessFlow)
+        public void ActivityGroupStart(ActivitiesGroup currentActivityGroup, BusinessFlow businessFlow)
         {
             currentActivityGroup.StartTimeStamp = DateTime.Now.ToUniversalTime();
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
@@ -290,7 +291,7 @@ namespace Ginger.Run
             }
         }
 
-        public void ActivityGroupEnd(IActivitiesGroup currentActivityGroup, BusinessFlow businessFlow, bool offlineMode = false)
+        public void ActivityGroupEnd(ActivitiesGroup currentActivityGroup, BusinessFlow businessFlow, bool offlineMode = false)
         {
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
@@ -743,7 +744,7 @@ namespace Ginger.Run
                             return;
 
                         //
-                        IActivitiesGroup currrentGroup = this.CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == Activity.ActivitiesGroupID).FirstOrDefault();
+                        ActivitiesGroup currrentGroup = this.CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == Activity.ActivitiesGroupID).FirstOrDefault();
                         string currrentGroupName = string.Empty;
                         if (currrentGroup != null)
                             currrentGroupName = currrentGroup.Name;
@@ -1113,7 +1114,7 @@ namespace Ginger.Run
                 {
 
 
-                    IActivitiesGroup currentActivityGroup = businessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
+                    ActivitiesGroup currentActivityGroup = businessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
                     if (currentActivityGroup != null)
                     {
                         currentActivityGroup.ExecutionLogFolder = logFolderPath;

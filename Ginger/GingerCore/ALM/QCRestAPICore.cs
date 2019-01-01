@@ -97,7 +97,7 @@ namespace GingerCore.ALM
             return ExportToQCRestAPI.ExportExceutionDetailsToALM(bizFlow, ref result, runFields, exectutedFromAutomateTab, publishToALMConfig);
         }
 
-        public override ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo
+        public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
         {
             get { return ImportFromQCRest.GingerActivitiesGroupsRepo; }
             set { ImportFromQCRest.GingerActivitiesGroupsRepo = value; }
