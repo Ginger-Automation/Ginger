@@ -4297,7 +4297,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Help\Developer Guide to Create Ginger Help Items.docx" />
-    <None Include="NextGenWPF_TemporaryKey.pfx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
