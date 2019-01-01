@@ -33,7 +33,7 @@ namespace GingerCore.ALM.QCRestAPI
 {
     public static class ImportFromQCRest
     {
-        public static ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
+        public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
 
         #region Public Functions
@@ -201,7 +201,7 @@ namespace GingerCore.ALM.QCRestAPI
                 {
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
-                    IActivitiesGroup repoActivsGroup = null;
+                    ActivitiesGroup repoActivsGroup = null;
                     if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
                     if (repoActivsGroup == null)
@@ -683,7 +683,7 @@ namespace GingerCore.ALM.QCRestAPI
         private static ActivitiesGroup CheckIfTCAlreadyExistInRepo(BusinessFlow busFlow, QCTestInstance testInstance, QCTestCaseStepsColl tSTestCaseSteps)
         {
             ActivitiesGroup tcActivsGroup;
-            IActivitiesGroup repoActivsGroup = null;
+            ActivitiesGroup repoActivsGroup = null;
             QCTestCaseStepsColl relevantTestCaseSteps = QCRestAPIConnect.GetTestCaseSteps(testInstance.TestId);
             QCTestCaseStep relevantStep = null;
             foreach (QCTestCaseStep testcaseStep in relevantTestCaseSteps)

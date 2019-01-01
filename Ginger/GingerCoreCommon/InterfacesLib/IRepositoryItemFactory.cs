@@ -8,6 +8,7 @@ using Ginger.Run;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using GingerCore.ALM;
+using GingerCore.Activities;
 
 #region License
 /*
@@ -40,7 +41,7 @@ namespace Amdocs.Ginger.Common
     {        
         //BusinessFlow CreateBusinessFlow();
         //ObservableList<BusinessFlow> GetListofBusinessFlow();
-        IActivitiesGroup CreateActivitiesGroup();
+        ActivitiesGroup CreateActivitiesGroup();
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow);
 
         IValueExpression CreateValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null);

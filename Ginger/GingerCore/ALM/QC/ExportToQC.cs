@@ -55,7 +55,7 @@ namespace GingerCore.ALM.QC
                     List<TSTest> qcTSTests = ImportFromQC.GetTSTestsList(testSet); //list of TSTest's on main TestSet in TestLab 
 
                     //get all BF Activities groups
-                    ObservableList<IActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
+                    ObservableList<ActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
                     if (activGroups.Count > 0)
                     {
                         foreach (ActivitiesGroup activGroup in activGroups)
@@ -397,7 +397,7 @@ namespace GingerCore.ALM.QC
         public static bool ExportBusinessFlowToQC(BusinessFlow businessFlow, TestSet mappedTestSet, string uploadPath, ObservableList<ExternalItemFieldBase> testSetFields, ref string result)
         {
             TestSet testSet;
-            ObservableList<IActivitiesGroup> existingActivitiesGroups = new ObservableList<IActivitiesGroup>();
+            ObservableList<ActivitiesGroup> existingActivitiesGroups = new ObservableList<ActivitiesGroup>();
             try
             {
                 if (mappedTestSet == null)
@@ -421,7 +421,7 @@ namespace GingerCore.ALM.QC
                     List tsTestsList = testsF.NewList("");
                     foreach (TSTest tsTest in tsTestsList)
                     {
-                        IActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == tsTest.TestId.ToString() && x.ExternalID2 == tsTest.ID.ToString())).FirstOrDefault();
+                        ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == tsTest.TestId.ToString() && x.ExternalID2 == tsTest.ID.ToString())).FirstOrDefault();
                         if (ag == null)
                             testsF.RemoveItem(tsTest.ID);
                         else

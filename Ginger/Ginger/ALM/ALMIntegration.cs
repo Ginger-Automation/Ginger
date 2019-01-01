@@ -317,7 +317,7 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             Reporter.ToLog(eLogLevel.INFO, ("Update selected Activities Groups of business flow: " + businessFlow.Name + " from ALM"));
 
-            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivitiesGroup>();
+            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
             ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
             if (AutoALMProjectConnect(eALMConnectType.Auto))
@@ -333,7 +333,7 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             Reporter.ToLog(eLogLevel.INFO, ("Update business flow: " + businessFlow.Name + " from ALM"));
 
-            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivitiesGroup>();
+            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
             ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
             if (AutoALMProjectConnect(eALMConnectType.Auto))
@@ -344,7 +344,7 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = null;
         }
 
-        public void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> grdActivitiesGroups)
+        public void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             Reporter.ToLog(eLogLevel.INFO, ("Exporting Activity Groups of business flow: " + businessFlow.Name + " to ALM"));

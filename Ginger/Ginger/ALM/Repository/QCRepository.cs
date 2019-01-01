@@ -145,7 +145,7 @@ namespace Ginger.ALM.Repository
                 if (testSetsItemsToImport.Count == 0) return false; //noting to import
 
                 //Refresh Ginger repository and allow GingerQC to use it
-                ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivitiesGroup>();               
+                ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();               
                 ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
                 foreach (QCTestSetTreeItem testSetItemtoImport in testSetsItemsToImport)
@@ -233,7 +233,7 @@ namespace Ginger.ALM.Repository
 
 
         #region Export To QC
-        public override void ExportBfActivitiesGroupsToALM(GingerCore.BusinessFlow businessFlow, ObservableList<IActivitiesGroup> grdActivitiesGroups)
+        public override void ExportBfActivitiesGroupsToALM(GingerCore.BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
             bool askToSaveBF = false;
             foreach (ActivitiesGroup group in grdActivitiesGroups)

@@ -50,7 +50,7 @@ namespace Ginger.ALM.Repository
         public abstract string SelectALMTestPlanPath();
         public abstract string SelectALMTestLabPath();
         public abstract bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null);
-        public abstract void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> grdActivitiesGroups);
+        public abstract void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups);
         public abstract bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false);
         public abstract void ImportALMTests(string importDestinationFolderPath);
         public abstract void ImportALMTestsById(string importDestinationFolderPath);

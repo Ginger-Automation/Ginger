@@ -45,7 +45,7 @@ namespace GingerCore.ALM.RQM
 
     public static class ImportFromRQM
     {
-        public static ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
+        public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
 
         public static int totalValues = 0;
@@ -80,7 +80,7 @@ namespace GingerCore.ALM.RQM
 
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
-                    IActivitiesGroup repoActivsGroup = null;
+                    ActivitiesGroup repoActivsGroup = null;
                     if (repoActivsGroup == null)
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
                     if (repoActivsGroup != null)
@@ -324,7 +324,7 @@ namespace GingerCore.ALM.RQM
 
                             //check if the TC is already exist in repository
                             ActivitiesGroup tcActivsGroup;
-                            IActivitiesGroup repoActivsGroup = null;
+                            ActivitiesGroup repoActivsGroup = null;
                             if (repoActivsGroup == null)
                                 repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
                             if (repoActivsGroup != null)
@@ -538,7 +538,7 @@ namespace GingerCore.ALM.RQM
 
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
-                    IActivitiesGroup repoActivsGroup = null;
+                    ActivitiesGroup repoActivsGroup = null;
                     if (repoActivsGroup == null)
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
                     if (repoActivsGroup != null)

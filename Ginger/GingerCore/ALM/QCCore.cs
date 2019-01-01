@@ -67,7 +67,7 @@ namespace GingerCore.ALM
             return QCConnect.DisconnectQCProjectStayLoggedIn();
         }
 
-        public override ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo
+        public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
         {
             get { return ImportFromQC.GingerActivitiesGroupsRepo; }
             set { ImportFromQC.GingerActivitiesGroupsRepo = value; }

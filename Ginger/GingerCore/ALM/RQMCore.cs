@@ -82,7 +82,7 @@ namespace GingerCore.ALM
         {
             return ExportToRQM.Instance.ExportExecutionDetailsToRQM(bizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig );
         }
-        public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> grdActivitiesGroups, ref string result)
+        public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups, ref string result)
         {
             return ExportToRQM.Instance.ExportBfActivitiesGroupsToALM(businessFlow, grdActivitiesGroups, ref result);
         }
@@ -102,7 +102,7 @@ namespace GingerCore.ALM
             return null;
         }
 
-        public override ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo
+        public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
         {
             get { return ImportFromRQM.GingerActivitiesGroupsRepo; }
             set { ImportFromRQM.GingerActivitiesGroupsRepo = value; }

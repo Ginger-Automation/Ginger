@@ -95,7 +95,7 @@ namespace Ginger.Repository
         }
 
 
-        public IActivitiesGroup CreateActivitiesGroup()
+        public ActivitiesGroup CreateActivitiesGroup()
         {
             return new ActivitiesGroup();
         }

@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using GingerCore.Activities;
 using GingerCore.ALM.Rally;
 using GingerCore.ALM.RQM;
 using System;
@@ -63,7 +64,7 @@ namespace GingerCore.ALM
             return ImportFromRally.ConvertRallyTestPlanToBF(testPlan);
         }
 
-        public abstract ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo
+        public abstract ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
         {
             get; set;
         }

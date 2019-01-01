@@ -426,7 +426,7 @@ namespace GingerCore.ALM.RQM
             }
         }
 
-        public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> grdActivitiesGroups, ref string result)
+        public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups, ref string result)
         {
             LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
             //ActivityPlan is TestPlan in RQM and BusinessFlow in Ginger

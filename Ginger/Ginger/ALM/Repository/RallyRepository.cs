@@ -92,7 +92,7 @@ namespace Ginger.ALM.Repository
                 foreach (RallyTestPlan testPlan in testPlanList)
                 {
                     //Refresh Ginger repository and allow GingerRally to use it
-                    ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivitiesGroup>();                    
+                    ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();                    
                     ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
                     try
@@ -163,7 +163,7 @@ namespace Ginger.ALM.Repository
             // TODO ... 
         }
 
-        public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> grdActivitiesGroups)
+        public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
             if (businessFlow == null) return;
 

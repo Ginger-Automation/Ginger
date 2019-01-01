@@ -22,6 +22,7 @@ using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore;
+using GingerCore.Activities;
 using Newtonsoft.Json;
 namespace Ginger.Reports
 {
@@ -63,7 +64,7 @@ namespace Ginger.Reports
             set { _showAllIterationsElements = value; }
         }
 
-        private IActivitiesGroup mActivitiesGroup;
+        private ActivitiesGroup mActivitiesGroup;
 
         /// <summary>
         /// This tag currently used due to common use of this class by new and old report!!! Should be removed in future!
@@ -81,7 +82,7 @@ namespace Ginger.Reports
             mActivitiesGroup = RepositoryItemHelper.RepositoryItemFactory.CreateActivitiesGroup();
         }
 
-        public ActivityGroupReport(IActivitiesGroup AG, BusinessFlow BF)
+        public ActivityGroupReport(ActivitiesGroup AG, BusinessFlow BF)
         {
             mActivitiesGroup = AG;
             if ((AG != null) && (AG.ExecutedActivities != null))
