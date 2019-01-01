@@ -72,7 +72,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             xValidationElementTypeComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementType), mPlatform.GetPlatformUIElementsType(), false, null);
             xValidationElementLocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocateBy), mPlatform.GetPlatformUIElementLocatorsList(), false, null);
             SetLocateValueFrame();
-            //LocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
             GingerCore.General.ActInputValueBinding(LoopThroughClicks, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.LoopThroughClicks, "False"));
 
             xValidationElementLocateByComboBox.ComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
@@ -96,7 +95,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             eLocateBy SelectedLocType = (eLocateBy)((GingerCore.General.ComboItem)xValidationElementLocateByComboBox.ComboBox.SelectedItem).Value;
             Page p = GetLocateValueEditPage(SelectedLocType);
             LocateValueEditFrame.Content = p;
-            //UpdateActionInfo(mAction.ElementAction);
             if (SelectedLocType != eLocateBy.POMElement)
             {
                 xValidationElementTypeComboBox.ComboBox.IsEnabled = true;
