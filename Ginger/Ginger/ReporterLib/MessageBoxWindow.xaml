@@ -1,25 +1,38 @@
-﻿<Window x:Class="Ginger.ReporterLib.MessageBoxWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" x:Class="Ginger.ReporterLib.MessageBoxWindow"
         mc:Ignorable="d"
         Title="Ginger Message" Height="200" Width="400" WindowStyle="ThreeDBorderWindow" ShowInTaskbar="False"  
         WindowStartupLocation="CenterScreen" Topmost="True" Background="LightSlateGray">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="75*"/>
+            <ColumnDefinition Width="30"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="12"/>
+            <RowDefinition Height="30"/>
             <RowDefinition/>
-            <RowDefinition Height="44"/>
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
 
-        <Label x:Name="xMessageTextLabel" Grid.Row="1" FontSize="16" FontWeight="Bold">Message Text</Label>
-        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center">
-            <Button x:Name="xOKButton" Click="xOKButton_Click">OK</Button>
-            <Button x:Name="xYesButton" Click="XYesButton_Click">Yes</Button>
-            <Button x:Name="xNoButton" Click="XNoButton_Click">No</Button>
-            <Button x:Name="xCancelButton" Click="XCancelButton_Click">Cancel</Button>
-        </StackPanel>
+        <UserControls:ImageMakerControl x:Name="xImage" Grid.Row="1" ImageType="Play" Width="32" Height="32"/>
+
+        <TextBlock x:Name="xMessageTextLabelBlock" FontSize="16" FontWeight="Bold" Grid.Row="1" 
+                   Text="Message Text" Grid.Column="1" 
+                   VerticalAlignment="Center" HorizontalAlignment="Center" Height="20"  Width="102"/>
+
+        <ContentControl Grid.Row="2" Grid.ColumnSpan="2">
+            <StackPanel Orientation="Horizontal"  HorizontalAlignment="Right">
+                <Button x:Name="xOKButton" Click="xOKButton_Click" Content="OK"/>
+                <Button x:Name="xYesButton" Click="XYesButton_Click" Content="Yes"/>
+                <Button x:Name="xNoButton" Click="XNoButton_Click" Content="No"/>
+                <Button x:Name="xCancelButton" Click="XCancelButton_Click" Content="Cancel"/>
+            </StackPanel>
+        </ContentControl>
 
     </Grid>
 </Window>

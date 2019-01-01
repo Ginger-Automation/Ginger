@@ -6,9 +6,13 @@
         mc:Ignorable="d"
         Title="ReporterTestWindow" Height="450" Width="800">
     <Grid>
-        <Button x:Name="xSimpleInfoMessageButton" Content="Simple Info Message" Click="XSimpleInfoMessageButton_Click" HorizontalAlignment="Left" Height="38" Margin="36,30,0,0" VerticalAlignment="Top" Width="117"/>
-        <Button x:Name="xYesNoButton" Content="Yes/No" Click="XYesNoButton_Click" HorizontalAlignment="Left" Height="44" Margin="36,99,0,0" VerticalAlignment="Top" Width="135"/>
-        <Button x:Name="xTestMessagePoolButton" Content="Test Message Pool (enum)" HorizontalAlignment="Left" Height="53" Margin="44,340,0,0" VerticalAlignment="Top" Width="202"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="53*"/>
+            <RowDefinition Height="366*"/>
+        </Grid.RowDefinitions>
+        <Button x:Name="xSimpleInfoMessageButton" Content="Simple Info Message" Click="XSimpleInfoMessageButton_Click" HorizontalAlignment="Left" Height="38" Margin="10,10,0,0" VerticalAlignment="Top" Width="117"/>
+        <Button x:Name="xYesNoButton" Content="Yes/No" Click="XYesNoButton_Click" HorizontalAlignment="Left" Height="44" Margin="147,7,0,0" VerticalAlignment="Top" Width="135"/>
+        <Button x:Name="xTestMessagePoolButton" Content="Test Message Pool (enum)" HorizontalAlignment="Left" Height="53" Margin="296,7,0,0" VerticalAlignment="Top" Width="202" Grid.RowSpan="2"/>
 
     </Grid>
 </Window>
