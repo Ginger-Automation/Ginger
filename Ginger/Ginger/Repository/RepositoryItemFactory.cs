@@ -19,10 +19,12 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Ginger.ALM;
 using Ginger.AnalyzerLib;
 using Ginger.GeneralLib;
 using Ginger.Reports;
 using Ginger.Run;
+using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
@@ -42,6 +44,9 @@ using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Drivers.WindowsLib;
 using GingerCore.Environments;
 using GingerCore.Variables;
+
+using GingerCoreNET.ReporterLib;
+using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -49,7 +54,9 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.UI.DataVisualization.Charting;
@@ -237,7 +244,7 @@ namespace Ginger.Repository
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, zAgent.Name, e.Message);
+                    GingerCoreNET.ReporterLib.Reporter.ToUser(GingerCoreNET.ReporterLib.eUserMsgKeys.FailedToConnectAgent, zAgent.Name, e.Message);
                 }
 
                 if (zAgent.AgentType == eAgentType.Service)
@@ -371,7 +378,7 @@ namespace Ginger.Repository
                 {
                     if (!runInSilentMode)
                     {
-                        Reporter.ToUser(eUserMsgKeys.AnalyzerFoundIssues);
+                        GingerCoreNET.ReporterLib.Reporter.ToUser(GingerCoreNET.ReporterLib.eUserMsgKeys.AnalyzerFoundIssues);
                         analyzerPage.ShowAsWindow();
                     }
                     return 1;
@@ -379,7 +386,7 @@ namespace Ginger.Repository
             }
             finally
             {
-                Reporter.CloseGingerHelper();
+                GingerCoreNET.ReporterLib.Reporter.CloseGingerHelper();
             }
             return 0;
         }
@@ -469,7 +476,7 @@ namespace Ginger.Repository
                     {
                         if (String.IsNullOrEmpty(AttachmentFileName.Key) == false)
                         {
-                            if (System.IO.Directory.Exists(AttachmentFileName.Key))
+                            if (System.IO.File.Exists(AttachmentFileName.Key))
                             {
                                 Outlook.Attachment attachment = mOutlookMail.Attachments.Add(AttachmentFileName.Key, Outlook.OlAttachmentType.olEmbeddeditem, null, "");
                                 attachment.PropertyAccessor.SetProperty("http://schemas.microsoft.com/mapi/proptag/0x3712001E", AttachmentFileName.Value);
@@ -618,6 +625,200 @@ namespace Ginger.Repository
         public ITextBoxFormatter CreateTextBoxFormatter(object Textblock)
         {
             return new TextBoxFormatter(Textblock);
+        }
+
+        public string GenerateTemplate(string templatename, object o)
+        {
+            ReportInfo reportInfo = (ReportInfo)o;
+            return ReportTemplate.GenerateReport(templatename, reportInfo);
+        }
+
+        public bool ProcessCommandLineArgs(string[] lines)
+        {
+            string scURL = null;
+            string scUser = null;
+            string scPswd = null;
+
+            foreach (string arg in lines)
+            {
+                int i = arg.IndexOf('=');
+                string param = arg.Substring(0, i).Trim();
+                string value = arg.Substring(i + 1).Trim();
+
+                switch (param)
+                {
+                    case "SourceControlType":
+                        GingerCoreNET.ReporterLib.Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlType: '" + value + "'");
+                        if (value.Equals("GIT"))
+                            App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
+                        else if (value.Equals("SVN"))
+                            App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
+                        else
+                            App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
+                        break;
+
+                    case "SourceControlUrl":
+                        GingerCoreNET.ReporterLib.Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlUrl: '" + value + "'");
+                        if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+                        {
+                            if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
+                                value = value + "svn/";
+                            if (!value.ToUpper().EndsWith("/"))
+                                value = value + "/";
+                        }
+                        App.UserProfile.SourceControlURL = value;
+                        scURL = value;
+                        break;
+
+                    case "SourceControlUser":
+                        GingerCoreNET.ReporterLib.Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlUser: '" + value + "'");
+                        if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
+                            value = "Test";
+                        App.UserProfile.SourceControlUser = value;
+                        scUser = value;
+                        break;
+
+                    case "SourceControlPassword":
+                        GingerCoreNET.ReporterLib.Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlPassword: '" + value + "'");
+                        App.UserProfile.SourceControlPass = value;
+                        scPswd = value;
+                        break;
+
+                    case "PasswordEncrypted":
+                        GingerCoreNET.ReporterLib.Reporter.ToLogAndConsole(eLogLevel.INFO, "PasswordEncrypted: '" + value + "'");
+                        string pswd = App.UserProfile.SourceControlPass;
+                        if (value == "Y")
+                            pswd = EncryptionHandler.DecryptwithKey(App.UserProfile.SourceControlPass, App.ENCRYPTION_KEY);
+                        if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
+                            pswd = "Test";
+                        App.UserProfile.SourceControlPass = pswd;
+                        break;
+
+                    case "SourceControlProxyServer":
+                        GingerCoreNET.ReporterLib.Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlProxyServer: '" + value + "'");
+                        if (value == "")
+                            App.UserProfile.SolutionSourceControlConfigureProxy = false;
+                        else
+                            App.UserProfile.SolutionSourceControlConfigureProxy = true;
+                        if (value != "" && !value.ToUpper().StartsWith("HTTP://"))
+                            value = "http://" + value;
+                        App.UserProfile.SolutionSourceControlProxyAddress = value;
+                        break;
+
+                    case "SourceControlProxyPort":
+                        if (value == "")
+                            App.UserProfile.SolutionSourceControlConfigureProxy = false;
+                        else
+                            App.UserProfile.SolutionSourceControlConfigureProxy = true;
+                        GingerCoreNET.ReporterLib.Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
+                        App.UserProfile.SolutionSourceControlProxyPort = value;
+                        break;
+
+                    case "Solution":
+                        if (scURL != null && scUser != "" && scPswd != null)
+                        {
+                            GingerCoreNET.ReporterLib.Reporter.ToLogAndConsole(eLogLevel.INFO, "Downloading Solution from source control");
+                            if (value.IndexOf(".git") != -1)
+                                App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
+                            else
+                                App.DownloadSolution(value);
+                        }
+                        GingerCoreNET.ReporterLib.Reporter.ToLog(eLogLevel.INFO, "Loading the Solution: '" + value + "'");
+                        try
+                        {
+                            if (App.SetSolution(value) == false)
+                            {
+                                GingerCoreNET.ReporterLib.Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
+                                return false;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            GingerCoreNET.ReporterLib.Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
+                            GingerCoreNET.ReporterLib.Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            return false;
+                        }
+                        break;
+
+                    case "Env":
+                        GingerCoreNET.ReporterLib.Reporter.ToLog(eLogLevel.INFO, "Selected Environment: '" + value + "'");
+                        ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
+                        if (env != null)
+                        {
+                           App.RunsetExecutor.RunsetExecutionEnvironment = env;
+                        }
+                        else
+                        {
+                            GingerCoreNET.ReporterLib.Reporter.ToLog(eLogLevel.ERROR, "Failed to find matching Environment in the Solution");
+                            return false;
+                        }
+                        break;
+
+                    case "RunSet":
+                        GingerCoreNET.ReporterLib.Reporter.ToLog(eLogLevel.INFO, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), value));
+                        ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                        RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
+                        if (runSetConfig != null)
+                        {
+                            WorkSpace.RunsetExecutor.RunSetConfig = runSetConfig;
+                        }
+                        else
+                        {
+                            GingerCoreNET.ReporterLib.Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to find matching {0} in the Solution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                            return false;
+                        }
+                        break;
+
+                    default:
+                        GingerCoreNET.ReporterLib.Reporter.ToLog(eLogLevel.ERROR, "Un Known argument: '" + param + "'");
+                        return false;
+                }
+               
+            }
+            return true;
+        }
+
+        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening)
+        {
+            Dictionary<Guid, string> defectsOpeningResults;
+            if ((defectsForOpening != null) && (defectsForOpening.Count > 0))
+            {
+                defectsOpeningResults = ALMIntegration.Instance.CreateNewALMDefects(defectsForOpening);
+            }
+            else
+                return;
+
+            if ((defectsOpeningResults != null) && (defectsOpeningResults.Count > 0))
+            {
+                foreach (KeyValuePair<Guid, string> defectOpeningResult in defectsOpeningResults)
+                {
+                    if ((defectOpeningResult.Value != null) && (defectOpeningResult.Value != "0"))
+                    {
+                        WorkSpace.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; });
+                    }
+                }
+            }
+        }
+
+        public void HTMLReportAttachment(string extraInformationCalculated, string emailReadyHtml, string reportsResultFolder, string runSetFolder, object Report, object conf)
+        {
+            EmailHtmlReportAttachment rReport = (EmailHtmlReportAttachment)Report;
+            HTMLReportsConfiguration currentConf = (HTMLReportsConfiguration)conf;
+            if (!HTMLReportAttachmentConfigurationPage.HasWritePermission(extraInformationCalculated))
+            {
+                emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->",
+                "<b>Full report attachment failed, </b>" +
+                "Error: User '" + WindowsIdentity.GetCurrent().Name.ToString() + "' have no write permission on provided alternative folder - " + extraInformationCalculated + ". Attachment in it not saved.");
+            }
+            else
+            {
+                emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
+                ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+                reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
+                                                                                                                        false,
+                                                                                                                        HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault(),
+                                                                                                                        extraInformationCalculated + "\\" + System.IO.Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
+            }
         }
     }
     

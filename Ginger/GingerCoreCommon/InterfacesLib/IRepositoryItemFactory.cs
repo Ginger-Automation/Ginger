@@ -74,6 +74,13 @@ namespace Amdocs.Ginger.Common
 
         
 
+        string GenerateTemplate(string templatename, object o);
         ITextBoxFormatter CreateTextBoxFormatter(object Textblock);
+
+        bool ProcessCommandLineArgs(string[] file);
+
+        void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening);
+
+        void HTMLReportAttachment(string report, string reportsResultFolder, string reportresultfolder, string runsetfolder, object Attachment, object conf);
     }
 }
