@@ -40,7 +40,7 @@
           "data": "{{value}}"
         },
         {
-          "name": "Tests Cases",
+          "name": "Test Cases",
           "key": "customfield_15614",
           "type": "strings_array",
           "data": "{{value}}"

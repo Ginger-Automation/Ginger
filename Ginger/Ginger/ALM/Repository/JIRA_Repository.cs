@@ -67,6 +67,7 @@ namespace Ginger.ALM.Repository
                         WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(activtiesGroup);
                         Reporter.CloseGingerHelper();
                     }
+                    Reporter.ToUser(eUserMsgKeys.ExportItemToALMSucceed);
                     return true;
                 }
                 else
@@ -108,13 +109,12 @@ namespace Ginger.ALM.Repository
                 }
                 else
                 {
-
                     ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(App.UserProfile.Solution.ExternalItemsFields);
                     ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
                     var testCaseFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_CASE.ToString())&&(a.ToUpdate || a.Mandatory));
                     var testSetFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_SET.ToString()) && (a.ToUpdate || a.Mandatory));
-
-                    var exportRes = ((JiraCore)this.AlmCore).ExportBfToAlm(businessFlow, testCaseFields, testSetFields, ref responseStr);
+                    var testExecutionFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_CASE_EXECUTION_RECORDS.ToString()) && (a.ToUpdate || a.Mandatory));
+                    var exportRes = ((JiraCore)this.AlmCore).ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
                     if (exportRes)
                     {
                         if (performSaveAfterExport)

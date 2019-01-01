@@ -547,6 +547,7 @@
     <Compile Include="ALM\ALMCore.cs" />
     <Compile Include="ALM\JiraCore.cs" />
     <Compile Include="ALM\JIRA\Bll\JiraExportManager.cs" />
+    <Compile Include="ALM\JIRA\Data Contracts\TestRunData.cs" />
     <Compile Include="ALM\JIRA\ImportFromJira.cs" />
     <Compile Include="ALM\PublishToALMConfig.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />

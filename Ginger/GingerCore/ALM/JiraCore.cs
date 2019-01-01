@@ -112,9 +112,9 @@ namespace GingerCore.ALM
             return exportMananger.ExportActivitesToJira(activtiesGroup, testCaseFields,ref errorResult);
         }
 
-        public bool ExportBfToAlm(BusinessFlow businessFlow,IEnumerable<ExternalItemFieldBase>testCaseFields, IEnumerable<ExternalItemFieldBase> testSetFields, ref string responseStr)
+        public bool ExportBfToAlm(BusinessFlow businessFlow,IEnumerable<ExternalItemFieldBase>testCaseFields, IEnumerable<ExternalItemFieldBase> testSetFields, IEnumerable<ExternalItemFieldBase> testExecutionFields, ref string responseStr)
         {
-            return exportMananger.ExportBfToAlm(businessFlow, testCaseFields, testSetFields, ref responseStr);
+            return exportMananger.ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
         }
     }
 }
