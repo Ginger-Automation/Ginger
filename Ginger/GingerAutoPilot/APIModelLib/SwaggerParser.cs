@@ -77,10 +77,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
             Swaggerdoc = SwaggerDocument.FromJsonAsync(orignaljson).Result;
             foreach (var paths in Swaggerdoc.Paths)
             {
-                if (paths.Key == "/accounts")
-                {
-                }
-
                 SwaggerPathItem SPi = paths.Value;
                 foreach (KeyValuePair<SwaggerOperationMethod, SwaggerOperation> so in SPi.AsEnumerable())
                 {
