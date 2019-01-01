@@ -38,24 +38,9 @@ namespace Amdocs.Ginger.Common
                 return JsonSchemaFaker(schema.Reference, UseXMlNames);
             }
             Dictionary<string, object> JsonBody = new Dictionary<string, object>();
-
-            //if (schema.ActualProperties.Count == 0)
-            //{
-            //    object o = GenerateJsonObjectFromJsonSchema4Type(schema.Type, UseXMlNames);
-            //    JsonBody.Add(key, o);
-            //}
-
-
-
             foreach (KeyValuePair<string, JsonProperty> jkp in schema.ActualProperties)
             {
                 //code
-                if (jkp.Key == "validationMessages")
-                {
-                }
-                if (jkp.Key == "accountType")
-                {
-                }
                 string key = jkp.Key;
                 if (UseXMlNames && jkp.Value.Xml != null)
                 {
@@ -67,7 +52,6 @@ namespace Amdocs.Ginger.Common
                     {
                         object o1 = GenerateJsonObjectFromJsonSchema4(jkp.Value, UseXMlNames);
                         JsonBody.Add(key, o1);
-
                     }
                     else
                     {
@@ -75,18 +59,6 @@ namespace Amdocs.Ginger.Common
                         object o = JsonConvert.DeserializeObject(property);
                         JsonBody.Add(key, o);
                     }
-                    //string property = JsonSchemaFaker(jkp.Value.Reference, UseXMlNames);
-                    //if (property == "{}")
-                    //{
-                    //    object o1 = GenerateJsonObjectFromJsonSchema4(jkp.Value, UseXMlNames);
-                    //    JsonBody.Add(key, o1);
-                    //}
-                    //else
-                    //{
-                    //    object o = JsonConvert.DeserializeObject(property);
-                    //    JsonBody.Add(key, o);
-                    //}
-
                 }
                 else
                 {
@@ -150,10 +122,6 @@ namespace Amdocs.Ginger.Common
                             {
 
                                 string key = item.Key;
-                                if (key.ToUpper() == "code".ToUpper())
-                                {
-
-                                }
                                 if (UseXMlNames && item.Value.Xml != null)
                                 {
                                     key = item.Value.Xml.Name;
@@ -197,7 +165,7 @@ namespace Amdocs.Ginger.Common
                     break;
 
                 default:
-                    output = new JValue("sample"); ;
+                    output = new JValue(""); ;
                     break;
 
             }
