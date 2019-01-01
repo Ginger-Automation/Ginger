@@ -18,11 +18,11 @@ limitations under the License.
 
 namespace Amdocs.Ginger.Common
 {
-    public class MessageBoxButton
+    public enum MessageBoxButton
     {
-        public static MessageBoxButton YesNo { get; internal set; }
-        public static MessageBoxButton OK { get; internal set; }
-        public static MessageBoxButton YesNoCancel { get; internal set; }
-        public static MessageBoxButton OKCancel { get; internal set; }
+        YesNo,
+        OK,
+        YesNoCancel,
+        OKCancel
     }
 }

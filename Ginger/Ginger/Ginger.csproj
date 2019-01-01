@@ -525,6 +525,12 @@
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ReporterLib\GingerWorkSpaceReporter.cs" />
+    <Compile Include="ReporterLib\MessageBoxWindow.xaml.cs">
+      <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ReporterLib\ReporterTestWindow.xaml.cs">
+      <DependentUpon>ReporterTestWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportTemplate.cs" />
     <Compile Include="Repository\RepositoryItemFactory.cs" />
     <Compile Include="Run\RuntimeObjectFactory.cs" />
@@ -2797,6 +2803,14 @@
     <Page Include="PluginsLibNew\PluginsIndexPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ReporterLib\MessageBoxWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ReporterLib\ReporterTestWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SolutionWindows\TargetApplicationsPage.xaml">
       <SubType>Designer</SubType>

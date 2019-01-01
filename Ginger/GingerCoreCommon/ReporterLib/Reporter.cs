@@ -60,13 +60,12 @@ namespace Amdocs.Ginger.Common
             {
                 //get the message from pool
 
-
-                // FIXME improve if as alreayd found !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                // FIXME improve if as already found !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 if ((UserMessagesPool != null) && UserMessagesPool.Keys.Contains(messageKey))
                 {
                     messageToShow = UserMessagesPool[messageKey];
                 }
-                if (messageToShow == null)
+                if (messageToShow == null) // Message not found in message pool
                 {
                     // We do want to pop the error message so below is just in case...
                     string mess = "";
@@ -75,9 +74,6 @@ namespace Amdocs.Ginger.Common
                         mess += o.ToString() + " ";
                     }
 
-
-                    //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    // RepositoryItemHelper.RepositoryItemFactory.MessageBoxShow(messageKey.ToString() + " - " + mess);
                     workSpaceReporter.ShowMessageToUser(messageKey.ToString() + " - " + mess);
 
                     ToLog(eLogLevel.WARN, "The user message with key: '" + messageKey + "' was not found! and won't show to the user!");
@@ -113,10 +109,7 @@ namespace Amdocs.Ginger.Common
                 {
                     messageText = messageToShow.Message;
                 }
-
-                //show the messege and return user selection
-                //adding owner window to the message so it will appear on top of any other window including splash screen
-
+                                
                 if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
                 {
                     ToLog(eLogLevel.INFO, "Showing User Message (Pop-Up): '" + messageText + "'");
@@ -126,15 +119,9 @@ namespace Amdocs.Ginger.Common
                     ToConsole("Showing User Message (Pop-Up): '" + messageText + "'");
                 }
 
-                MessageBoxResult userSelection = MessageBoxResult.None; //????
+                //show the messege and return user selection
+                MessageBoxResult userSelection = workSpaceReporter.MessageBoxShow(messageText, messageToShow.Caption, messageToShow.ButtonsType, messageImage, messageToShow.DefualtResualt);                
 
-                workSpaceReporter.ShowMessageToUser(messageToShow);
-
-                //TODO: find a better option than loop... FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                //while (userSelection == null)
-                //{
-                //    Thread.Sleep(100);
-                //}
 
                 if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
                 {

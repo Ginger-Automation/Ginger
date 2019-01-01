@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
+using GingerCoreNET.ReporterLib;
 using System;
 using System.Windows;
 
@@ -14,16 +15,28 @@ namespace Ginger.ReporterLib
             Console.WriteLine(message + System.Environment.NewLine);
         }
 
-        public void ShowMessageToUser(string message)
+        public Amdocs.Ginger.Common.MessageBoxResult MessageBoxShow(string messageText, string caption, 
+                        Amdocs.Ginger.Common.MessageBoxButton buttonsType, GingerCoreNET.ReporterLib.MessageBoxImage messageImage, 
+                        Amdocs.Ginger.Common.MessageBoxResult defualtResault)
         {
-            MessageBox.Show(message);
+            Amdocs.Ginger.Common.MessageBoxResult result = defualtResault;  // if user just close the window we return the default defined result
+            App.MainWindow.Dispatcher.Invoke(() =>
+            {                
+                    MessageBoxWindow messageBoxWindow = new MessageBoxWindow(messageText, caption, buttonsType, messageImage, defualtResault);                    
+                    messageBoxWindow.ShowDialog();
+                    result = messageBoxWindow.messageBoxResult; 
+            });
+
+            return result;
         }
 
-        public void ShowMessageToUser(UserMessage userMessage)
-        {    
-            // Open nice page with message
-            MessageBox.Show(userMessage.Message);
+        public void ShowMessageToUser(string messageText)
+        {            
+            // TODO: FIXME image !!!!!!!!!!!!!!!!!!!
+            MessageBoxWindow messageBoxWindow = new MessageBoxWindow(messageText, "Ginger",  Amdocs.Ginger.Common.MessageBoxButton.OK,  null ,  Amdocs.Ginger.Common.MessageBoxResult.OK);
+            messageBoxWindow.ShowDialog();            
         }
+
 
         public void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
         {
