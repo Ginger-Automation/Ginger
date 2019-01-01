@@ -289,7 +289,7 @@ namespace GingerCore.Drivers
             }
             catch (ElementNotAvailableException ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 //TODO: Need to handle the exception
             }
             //Check that the item in focus is in our window we are recording as focus can go to any desktop window and we get a call            
@@ -322,7 +322,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -409,7 +409,7 @@ namespace GingerCore.Drivers
                     // 2. Expand "Managed Debugging Assistants"
                     // 3. Uncheck the NonComVisibleBaseClass Thrown option.        
                     // 4. Click [Ok]
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in GetListOfWindows", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception in GetListOfWindows", ex);
                 }
             }
             return appWindows;
@@ -509,7 +509,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "GetListofDriverAppWindows: InnerException:" + ex.InnerException + " Error details:", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "GetListofDriverAppWindows: InnerException:" + ex.InnerException + " Error details:", ex);
                 throw ex;
             }
 
@@ -748,7 +748,7 @@ namespace GingerCore.Drivers
             {
                 if (!IsWindowValid(CurrentWindow))
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "FindElementByLocator Exception while reading the current window name, loading the window again.");
+                    Reporter.ToLog(eLogLevel.INFO, "FindElementByLocator Exception while reading the current window name, loading the window again.");
                     AutomationElement currentWin = GetCurrentActiveWindow();
                     if (currentWin != null && IsWindowValid(currentWin))
                     {
@@ -764,7 +764,7 @@ namespace GingerCore.Drivers
                 count++;
                 if (count >= 3)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "FindElementByLocator Trying again count-" + count);
+                    Reporter.ToLog(eLogLevel.INFO, "FindElementByLocator Trying again count-" + count);
                     isLoaded = true;
                 }
                 Thread.Sleep(100);
@@ -814,7 +814,7 @@ namespace GingerCore.Drivers
                             catch (Exception e)
                             {
                                 element = OLD_GetElementByXpath_OLD(locateValue);
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                             }
                             break;
                         case eLocateBy.ByAutomationID:
@@ -852,12 +852,12 @@ namespace GingerCore.Drivers
                 {
                     ecount++;
                     Thread.Sleep(100);
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "FindElementByLocator In Exception-" + count);
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                    Reporter.ToLog(eLogLevel.INFO, "FindElementByLocator In Exception-" + count);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                     if (ecount<5)
                         continue;
                 }
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "** Total time" + (DateTime.Now - startingTime).TotalSeconds + "  Load Wait Time  :  " + loadwaitSeconds);
+                Reporter.ToLog(eLogLevel.INFO, "** Total time" + (DateTime.Now - startingTime).TotalSeconds + "  Load Wait Time  :  " + loadwaitSeconds);
                 if (element == null && (DateTime.Now - startingTime).TotalSeconds <= loadwaitSeconds && !taskFinished)
                 {
                     continue;
@@ -867,16 +867,16 @@ namespace GingerCore.Drivers
                 count++;
                 if ((element!=null && IsWindowValid(element)) || count >= 3)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "FindElementByLocator Trying again count-" + count);
+                    Reporter.ToLog(eLogLevel.INFO, "FindElementByLocator Trying again count-" + count);
                     isLoaded = true;
                 }
 
             }
 
             if(element == null)
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "FindElementByLocator Element is NULL.");
+                Reporter.ToLog(eLogLevel.INFO, "FindElementByLocator Element is NULL.");
             else
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "FindElementByLocator Element found Successfully.");
+                Reporter.ToLog(eLogLevel.INFO, "FindElementByLocator Element found Successfully.");
 
             if (!IsWindowValid(element))
                 return null;
@@ -910,7 +910,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "GetCurrentActiveWindow: Exception - ", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "GetCurrentActiveWindow: Exception - ", ex);
             }
             return currentWin;
         }
@@ -972,7 +972,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
             return result;
         }
@@ -1495,7 +1495,7 @@ namespace GingerCore.Drivers
             {
                 act.Error += "ERROR::";
                 act.ExInfo += ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Method IsWindowExist : Error in getting the window.", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Method IsWindowExist : Error in getting the window.", ex);
             }               
             
             return isExist;
@@ -1519,7 +1519,7 @@ namespace GingerCore.Drivers
             {
                 act.Error += "ERROR::";
                 act.ExInfo += ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Method CloseWindow : Error in getting the window.", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Method CloseWindow : Error in getting the window.", ex);
             }
 
             return isClosed;
@@ -1562,7 +1562,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Method GetWindowElementByLocator : Error in getting the window.", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Method GetWindowElementByLocator : Error in getting the window.", ex);
             }
             return AEWindow;
         }
@@ -1648,7 +1648,7 @@ namespace GingerCore.Drivers
             catch (Exception ex)
             {
                 // object is not able to perform the requested action                
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Method SetWindowVisualState : Error.", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Method SetWindowVisualState : Error.", ex);
                 return ex.Message;
             }
         }
@@ -1689,7 +1689,7 @@ namespace GingerCore.Drivers
             catch (Exception ex)
             {
                 // object is not able to perform the requested action                
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Method SetWindowVisualState : Error.", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Method SetWindowVisualState : Error.", ex);
                 return ex.Message;
             }
         }
@@ -2074,15 +2074,15 @@ namespace GingerCore.Drivers
                     {
                         ClickOnXYPoint(lineUp, "5,5");
                         iCount++;
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "lineDown:iCount:" + iCount,null,true,true);
+                        Reporter.ToLog(eLogLevel.INFO, "lineDown:iCount:" + iCount,null,true,true);
                     }                    
                     for (int i = 0; i < iClick; i++)
                     {
                         ClickOnXYPoint(lineDown, "5,5");
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "lineDown:" + iClick + ":" + i, null, true, true);
+                        Reporter.ToLog(eLogLevel.INFO, "lineDown:" + iClick + ":" + i, null, true, true);
                     }
                     ClickOnXYPoint(subElement, "10," + (10 + iPaneY));
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "iPaneY:" + iPaneY, null, true, true);                   
+                    Reporter.ToLog(eLogLevel.INFO, "iPaneY:" + iPaneY, null, true, true);                   
 
                     string newValue = GetControlValue(AE);
                     bool ishandled = false;
@@ -2091,7 +2091,7 @@ namespace GingerCore.Drivers
                         int? loadTime = mLoadTimeOut.Value;
                         mLoadTimeOut = -1;
                         ishandled = LocateAndHandleActionElement(handleElementLocateby, handleElementLocateValue, subElementType, handleActionType);
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "ishandled:" + ishandled, null, true, true);
+                        Reporter.ToLog(eLogLevel.INFO, "ishandled:" + ishandled, null, true, true);
                         if (ishandled)
                         {
                             iClick++;                            
@@ -2101,7 +2101,7 @@ namespace GingerCore.Drivers
                             iClick = 1;
                         }                            
                         mLoadTimeOut = loadTime;                        
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "DefineHandleAction:" + iClick, null, true, true);
+                        Reporter.ToLog(eLogLevel.INFO, "DefineHandleAction:" + iClick, null, true, true);
                     }
                     else
                     { 
@@ -2119,10 +2119,10 @@ namespace GingerCore.Drivers
                             return "Error Occured while selecting :" + Value;
                         }
                     }
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "oldValue:" + oldValue + " newValue:" + newValue + " endPane:" + endPane, null, true, true);
+                    Reporter.ToLog(eLogLevel.INFO, "oldValue:" + oldValue + " newValue:" + newValue + " endPane:" + endPane, null, true, true);
                     if (oldValue != newValue && endPane==false)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "in not end pane:", null, true, true);
+                        Reporter.ToLog(eLogLevel.INFO, "in not end pane:", null, true, true);
                         if (iLoop == 0 && iClick == 2)
                         { 
                             iLoop = 0;
@@ -2136,7 +2136,7 @@ namespace GingerCore.Drivers
                     else
                     {
                         iClick = 0;
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "in end pane:", null, true, true);
+                        Reporter.ToLog(eLogLevel.INFO, "in end pane:", null, true, true);
                         endPane = true;
                         if (iPaneY < subElement.Current.BoundingRectangle.Height)
                         { 
@@ -2147,7 +2147,7 @@ namespace GingerCore.Drivers
                             break;
                         }
                     }
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "iLoop now:" + iLoop, null, true, true);                    
+                    Reporter.ToLog(eLogLevel.INFO, "iLoop now:" + iLoop, null, true, true);                    
                 }                          
             }
             return "Could not find the Value in the list-" + Value;
@@ -2253,10 +2253,10 @@ namespace GingerCore.Drivers
         {
             object obj = FindElementByLocator(LocateBy, LocateValue);
             AutomationElement AE = (AutomationElement)obj;
-            Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "Check if AE NUll:");
+            Reporter.ToLogAndConsole(eLogLevel.INFO, "Check if AE NUll:");
             if (AE == null)
                 return false;
-            Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "After AE not NUll:");
+            Reporter.ToLogAndConsole(eLogLevel.INFO, "After AE not NUll:");
             switch (actionType)
             {
                 case ActUIElement.eElementAction.Click:                    
@@ -2292,7 +2292,7 @@ namespace GingerCore.Drivers
                 case ActUIElement.eElementAction.AcceptDialog:
                     if (AE != null)
                     {
-                        Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "In Accept Dialog:");
+                        Reporter.ToLogAndConsole(eLogLevel.INFO, "In Accept Dialog:");
                         UIAElementInfo EI = new UIAElementInfo();
 
                         EI.ElementObject = AE;
@@ -2302,12 +2302,12 @@ namespace GingerCore.Drivers
                             if (((AutomationElement)elemInfo.ElementObject).Current.Name.ToString().ToLower() == "ok" )
                             {
                                 result = ClickElement(elemInfo.ElementObject);
-                                Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "after click ok:" + result);
+                                Reporter.ToLogAndConsole(eLogLevel.INFO, "after click ok:" + result);
                                 if (result.ToLower().Contains("clicked successfully"))
                                 {
                                     return true;
                                 }
-                                Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "for break:");
+                                Reporter.ToLogAndConsole(eLogLevel.INFO, "for break:");
                                 break;
                             }
                         }
@@ -2428,22 +2428,22 @@ namespace GingerCore.Drivers
             }
             catch (COMException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Inside Click using Click using Invoke pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using Click using Invoke pattern Error details:", e);
                 return e.Message;
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Inside Click using Invoke pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using Invoke pattern Error details:", e);
                 return e.Message;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Inside Click using Invoke pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using Invoke pattern Error details:", e);
                 return e.Message;
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Inside Click using Invoke pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using Invoke pattern Error details:", e);
                 return e.Message;
             }
 
@@ -2467,22 +2467,22 @@ namespace GingerCore.Drivers
             }
             catch (COMException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Inside Click using  Legacy pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using  Legacy pattern Error details:", e);
                 return e.Message;
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Inside Click using  Legacy pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using  Legacy pattern Error details:", e);
                 return e.Message;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Inside Click using Legacy pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using Legacy pattern Error details:", e);
                 return e.Message;
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Inside Click using Legacy pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using Legacy pattern Error details:", e);
                 return e.Message;
             }
             return "Clicked Successfully using Legacy Pattern";
@@ -2559,7 +2559,7 @@ namespace GingerCore.Drivers
             }
             else
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Element you are trying to click is not Enabled.");
+                Reporter.ToLog(eLogLevel.ERROR, "Element you are trying to click is not Enabled.");
                 return "Element you are trying to click is not Enabled.";
             }
         }
@@ -2669,7 +2669,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Exception while finding sub menu... ",e);                
+                Reporter.ToLog(eLogLevel.INFO, "Exception while finding sub menu... ",e);                
 
                 CollapseControlElement(rootElement);
                 string status = ClickMenuElementByXY(rootElement, locateValues);
@@ -2699,29 +2699,29 @@ namespace GingerCore.Drivers
             for (; i < locateValues.Count() && (Convert.ToBoolean(str)); i++)
             {
                 str = "False";
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "***** Started Menu click by location for  :  " + locateValues[i]);                           
+                Reporter.ToLog(eLogLevel.INFO, "***** Started Menu click by location for  :  " + locateValues[i]);                           
                 while (menuElement != null && !taskFinished && ((menuElement.Current.ProcessId==rootElement.Current.ProcessId)||(menuElement.Current.ProcessId==0)))
                 {
                     if (menuElement.Current.LocalizedControlType.Equals("menu item"))
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "***** Menu Element from XY  :   " + x + "," + y + "  :  " + menuElement.Current.Name);
+                        Reporter.ToLog(eLogLevel.INFO, "***** Menu Element from XY  :   " + x + "," + y + "  :  " + menuElement.Current.Name);
                         if (menuElement.Current.Name.Equals(locateValues[i]))
                         {
                             if (menuElement.Current.IsEnabled)
                             {
                                 str = "True";
                                 winAPI.SendClick(menuElement);
-                                Reporter.ToLog(eAppReporterLogLevel.INFO, "***** Got Menu element  :  " + menuElement.Current.Name + "  Now changing the X");
+                                Reporter.ToLog(eLogLevel.INFO, "***** Got Menu element  :  " + menuElement.Current.Name + "  Now changing the X");
                                 if (menuElement != null && i == (locateValues.Count() - 1))
                                 {
-                                    Reporter.ToLog(eAppReporterLogLevel.INFO, "***** Clicked Element Successfully : " + menuElement.Current.Name);
+                                    Reporter.ToLog(eLogLevel.INFO, "***** Clicked Element Successfully : " + menuElement.Current.Name);
                                     return true + "Clicked element Successfully";
                                 }
                                 while (((menuElement.Current.ProcessId == rootElement.Current.ProcessId) || (menuElement.Current.ProcessId == 0)) && menuElement.Current.Name.Equals(locateValues[i]) && !taskFinished)
                                 {
                                     
                                     x = x + 10;
-                                    Reporter.ToLog(eAppReporterLogLevel.INFO, "*****  changing the X to " +x);
+                                    Reporter.ToLog(eLogLevel.INFO, "*****  changing the X to " +x);
                                     point = new System.Windows.Point(x, y);
                                     menuElement = AutomationElement.FromPoint(point);
                                 }
@@ -2731,7 +2731,7 @@ namespace GingerCore.Drivers
                             }
                             else
                             {
-                                Reporter.ToLog(eAppReporterLogLevel.INFO, "***** Menu Element :  "+locateValues[i]+" is not enabled");
+                                Reporter.ToLog(eLogLevel.INFO, "***** Menu Element :  "+locateValues[i]+" is not enabled");
                                 return false + " " + locateValues[i - 1] + " Element is not enabled";
                             }
                         }
@@ -2752,15 +2752,15 @@ namespace GingerCore.Drivers
                         }
                     }                                        
                 }
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "***** Exit from While loop, Element :  "+locateValues[i] + " Not Found!");
+                Reporter.ToLog(eLogLevel.INFO, "***** Exit from While loop, Element :  "+locateValues[i] + " Not Found!");
             }
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "***** Exit from locate value loop  ");
+            Reporter.ToLog(eLogLevel.INFO, "***** Exit from locate value loop  ");
             return false+" "+locateValues[i-1]+" Element not found";
         }
         
         public AutomationElement GetNextMenuElement(AutomationElement menuElement, string NextItem)
         {
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "Start GetNextMenuElement  :  " + menuElement.Current.Name);
+            Reporter.ToLog(eLogLevel.INFO, "Start GetNextMenuElement  :  " + menuElement.Current.Name);
             List<System.Windows.Automation.Condition> conditions = new List<System.Windows.Automation.Condition>();
             conditions.Add(new PropertyCondition(AutomationElementIdentifiers.LocalizedControlTypeProperty, menuElement.Current.LocalizedControlType));
             conditions.Add(new PropertyCondition(AutomationElementIdentifiers.NameProperty, NextItem));            
@@ -2964,7 +2964,7 @@ namespace GingerCore.Drivers
                             {
                                 winAPI.SetElementText(element, value);
                                 element.TryGetCurrentPattern(ValuePattern.Pattern, out vp);
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                             }
                         }
                         else
@@ -2983,7 +2983,7 @@ namespace GingerCore.Drivers
                         break;
                     case "combo box":
                         //Catching the exception here will pass the action without error. For expection action should be failed and it is handled inside driver.
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "In Combo Box ::");
+                        Reporter.ToLog(eLogLevel.INFO, "In Combo Box ::");
                         if (mPlatform == ePlatform.PowerBuilder)
                         {
                             string isReadOnly = element.GetCurrentPropertyValue(ValuePattern.IsReadOnlyProperty).ToString();
@@ -3069,7 +3069,7 @@ namespace GingerCore.Drivers
                                 catch (Exception e)
                                 {
                                     winAPI.SetElementText(element, value);
-                                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                                 }
                             }
                         }
@@ -3082,7 +3082,7 @@ namespace GingerCore.Drivers
                             }                            
                             else
                             {
-                                Reporter.ToLog(eAppReporterLogLevel.INFO, "In Combo Box Exception vp is null::");
+                                Reporter.ToLog(eLogLevel.INFO, "In Combo Box Exception vp is null::");
                                 throw new Exception("Element doesn't support ValuePattern.Pattern, make sure locator is finding the correct element");
                             }
 
@@ -3127,11 +3127,11 @@ namespace GingerCore.Drivers
                     case "list":
                     //Combo Box and List Box Handler
                     case "list item":
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "In List Item ::");
+                        Reporter.ToLog(eLogLevel.INFO, "In List Item ::");
                         AutomationElement parentElement = TreeWalker.ContentViewWalker.GetParent(element);
                         
                         bool isMultiSelect = (bool)parentElement.GetCurrentPropertyValue(SelectionPatternIdentifiers.CanSelectMultipleProperty);
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "In List Item isMultiSelect::" + isMultiSelect);
+                        Reporter.ToLog(eLogLevel.INFO, "In List Item isMultiSelect::" + isMultiSelect);
                         if (isMultiSelect)
                         {
                             String IsItemSelected = (element.GetCurrentPropertyValue(SelectionItemPatternIdentifiers.IsSelectedProperty)).ToString();
@@ -3148,11 +3148,11 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            Reporter.ToLog(eAppReporterLogLevel.INFO, "Multi Select ::" + isMultiSelect.ToString());
+                            Reporter.ToLog(eLogLevel.INFO, "Multi Select ::" + isMultiSelect.ToString());
                             element.TryGetCurrentPattern(ScrollItemPattern.Pattern, out vp);
                             if (vp != null)
                             {
-                                Reporter.ToLog(eAppReporterLogLevel.INFO, "In Scrolltoview ::");
+                                Reporter.ToLog(eLogLevel.INFO, "In Scrolltoview ::");
                                 ((ScrollItemPattern)vp).ScrollIntoView();
                             }
                                 
@@ -3160,19 +3160,19 @@ namespace GingerCore.Drivers
                             element.TryGetCurrentPattern(SelectionItemPattern.Pattern, out vp);
                             if (vp != null)
                             {
-                                Reporter.ToLog(eAppReporterLogLevel.INFO, "In Select Pattern::");
+                                Reporter.ToLog(eLogLevel.INFO, "In Select Pattern::");
                                 ((SelectionItemPattern)vp).Select();
-                                Reporter.ToLog(eAppReporterLogLevel.INFO, "Is Selected ::" + ((SelectionItemPattern)vp).Current.IsSelected);
+                                Reporter.ToLog(eLogLevel.INFO, "Is Selected ::" + ((SelectionItemPattern)vp).Current.IsSelected);
                             }
                             else
                             {
-                                Reporter.ToLog(eAppReporterLogLevel.INFO, "In Send keys ::");
+                                Reporter.ToLog(eLogLevel.INFO, "In Send keys ::");
                                 AutomationElement ParentElement = TreeWalker.ContentViewWalker.GetParent(element);
                                 winAPI.SendKeysByLibrary(ParentElement,element.Current.Name);
                                 string selItem = GetSelectedItem(ParentElement);
                                 if (selItem != element.Current.Name)
                                 {
-                                    Reporter.ToLog(eAppReporterLogLevel.INFO, "In Send keys ENTER. Current Selected Item is" + selItem);
+                                    Reporter.ToLog(eLogLevel.INFO, "In Send keys ENTER. Current Selected Item is" + selItem);
                                     winAPI.SendKeysByLibrary(ParentElement, "{ENTER}");
                                 }
                                     
@@ -3311,7 +3311,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Unable to set value" + e.Message , e);
+                Reporter.ToLog(eLogLevel.ERROR, "Unable to set value" + e.Message , e);
                 throw new Exception("Unable to set value. Value - " + value);
             }
         }
@@ -3336,7 +3336,7 @@ namespace GingerCore.Drivers
                 {
                     Thread.Sleep(1000);
                     IsTreeViewExpanded = (node.GetCurrentPropertyValue(ExpandCollapsePatternIdentifiers.ExpandCollapseStateProperty).ToString());
-                    Reporter.ToLog(eAppReporterLogLevel.INFO , "ExpandTreeNode::" + node.Current.Name + " IsTreeViewExpanded::" + IsTreeViewExpanded);
+                    Reporter.ToLog(eLogLevel.INFO , "ExpandTreeNode::" + node.Current.Name + " IsTreeViewExpanded::" + IsTreeViewExpanded);
                     if (General.CompareStringsIgnoreCase(IsTreeViewExpanded, "Collapsed"))
                     {
                         node.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out ecp);
@@ -3346,13 +3346,13 @@ namespace GingerCore.Drivers
                 }
                 node = TreeWalker.RawViewWalker.GetNextSibling(node);
             }
-            Reporter.ToLog(eAppReporterLogLevel.INFO, nodeName + " not found in ExpandTreeNode");
+            Reporter.ToLog(eLogLevel.INFO, nodeName + " not found in ExpandTreeNode");
             return null;
         }
 
         private  bool AddChildToSelection(AutomationElement node, string childToSelect)
         {
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "AddChildToSelection::" + childToSelect);
+            Reporter.ToLog(eLogLevel.INFO, "AddChildToSelection::" + childToSelect);
             object sip = null;
             AutomationElement orgElement;
             bool nodeFound = false;
@@ -3374,17 +3374,17 @@ namespace GingerCore.Drivers
             }
             while (node != null && !taskFinished && !String.IsNullOrEmpty(childToSelect))
             {   
-                Reporter.ToLog(eAppReporterLogLevel.INFO, childToSelect + " sMultiSelect::" + sMultiSelect);
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Node Found::" + node.Current.Name);                                
+                Reporter.ToLog(eLogLevel.INFO, childToSelect + " sMultiSelect::" + sMultiSelect);
+                Reporter.ToLog(eLogLevel.INFO, "Node Found::" + node.Current.Name);                                
                 bool isMultiSelect = (bool)node.GetCurrentPropertyValue(SelectionPatternIdentifiers.CanSelectMultipleProperty);
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "isMultiSelect ::" + isMultiSelect);                
+                Reporter.ToLog(eLogLevel.INFO, "isMultiSelect ::" + isMultiSelect);                
                 if (node.Current.IsOffscreen)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "Node IsOffscreen::");
+                    Reporter.ToLog(eLogLevel.INFO, "Node IsOffscreen::");
                     node.TryGetCurrentPattern(ScrollItemPattern.Pattern, out sip);
                     if (sip != null)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "ScrollItemPattern value :");
+                        Reporter.ToLog(eLogLevel.INFO, "ScrollItemPattern value :");
                         ((ScrollItemPattern)sip).ScrollIntoView();
                     }
                 }
@@ -3393,10 +3393,10 @@ namespace GingerCore.Drivers
                     nodeFound = true;
                     node.TryGetCurrentPattern(SelectionItemPattern.Pattern, out sip);
                     string isChildSelected = (node.GetCurrentPropertyValue(SelectionItemPatternIdentifiers.IsSelectedProperty)).ToString();
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "isChildSelected value :" + isChildSelected);                 
+                    Reporter.ToLog(eLogLevel.INFO, "isChildSelected value :" + isChildSelected);                 
                     if (isChildSelected == "False")
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "Inside Add to selection All");
+                        Reporter.ToLog(eLogLevel.INFO, "Inside Add to selection All");
                         
                         if (sip != null && isMultiSelect)                         
                             ((SelectionItemPattern)sip).AddToSelection();                                                                              
@@ -3415,31 +3415,31 @@ namespace GingerCore.Drivers
                 }
                 else if (node.Current.Name.Contains(childToSelect))
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "Inside Contains :" + node.Current.Name);
+                    Reporter.ToLog(eLogLevel.INFO, "Inside Contains :" + node.Current.Name);
                     if (bExact == false)
                         nodeFound = true;
                     else if (node.Current.Name != childToSelect && bExact == true)
                     {
                         AutomationElement nodeText = node.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.LocalizedControlTypeProperty, "text"));
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "nodeText value :" + nodeText.Current.Name);
+                        Reporter.ToLog(eLogLevel.INFO, "nodeText value :" + nodeText.Current.Name);
                         if (nodeText != null && nodeText.Current.Name == childToSelect)
                         {
                             nodeFound = true;
                         }                        
                     }
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "nodeFound :" + nodeFound);
+                    Reporter.ToLog(eLogLevel.INFO, "nodeFound :" + nodeFound);
                     if (nodeFound == true)
                     {
                         Thread.Sleep(1000);
                         node.TryGetCurrentPattern(SelectionItemPattern.Pattern, out sip);
                         string isChildSelected = (node.GetCurrentPropertyValue(SelectionItemPatternIdentifiers.IsSelectedProperty)).ToString();
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "isChildSelected value :" + isChildSelected);
+                        Reporter.ToLog(eLogLevel.INFO, "isChildSelected value :" + isChildSelected);
                         if (isChildSelected == "True")
                             return true;
                         
                         if(sMultiSelect == "Single")
                         {
-                            Reporter.ToLog(eAppReporterLogLevel.INFO, "Inside Add to selection Single");
+                            Reporter.ToLog(eLogLevel.INFO, "Inside Add to selection Single");
                             if (sip != null)
                                 ((SelectionItemPattern)sip).Select();
                             else
@@ -3454,7 +3454,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            Reporter.ToLog(eAppReporterLogLevel.INFO, "Inside Add to Selection Multi");
+                            Reporter.ToLog(eLogLevel.INFO, "Inside Add to Selection Multi");
                             if (sip != null && isMultiSelect)
                                 ((SelectionItemPattern)sip).AddToSelection();
                             else
@@ -3474,10 +3474,10 @@ namespace GingerCore.Drivers
                 orgElement = node;
                 node = TreeWalker.RawViewWalker.GetNextSibling(node);
             }
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "Inside Add to selection End");
+            Reporter.ToLog(eLogLevel.INFO, "Inside Add to selection End");
             if (nodeFound == false)
             {
-                Reporter.ToLog(eAppReporterLogLevel.INFO, childToSelect + " not found in AddChildToSelection");
+                Reporter.ToLog(eLogLevel.INFO, childToSelect + " not found in AddChildToSelection");
                 return false;
             }
             else
@@ -3667,18 +3667,18 @@ namespace GingerCore.Drivers
             }
             catch (COMException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "COM Exception when GetControlPropertyValue Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "COM Exception when GetControlPropertyValue Error details:", e);
                 throw e;
 
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Element not available Exception when GetControlPropertyValue Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when GetControlPropertyValue Error details:", e);
                 throw e;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Argument Exception when GetControlPropertyValue Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Argument Exception when GetControlPropertyValue Error details:", e);
                 throw e;
             } 
            
@@ -3706,7 +3706,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "GetControlText ::Unable to get the value" + ex.Message, ex);
+                Reporter.ToLog(eLogLevel.ERROR, "GetControlText ::Unable to get the value" + ex.Message, ex);
             }
 
             return val;
@@ -3726,7 +3726,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "GetClipboardText ::Unable to get clipboard text" + ex.Message, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "GetClipboardText ::Unable to get clipboard text" + ex.Message, ex);
                     bDone = true;
                 }
             });
@@ -3751,7 +3751,7 @@ namespace GingerCore.Drivers
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "GetClipboardText ::Unable to clear clipboard text" + ex.Message, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "GetClipboardText ::Unable to clear clipboard text" + ex.Message, ex);
                     bDone = true;
                 }
             });
@@ -3807,7 +3807,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "GetControlValueFromXYCoordinates: Unable to get the value" + ex.Message, ex);
+                Reporter.ToLog(eLogLevel.ERROR, "GetControlValueFromXYCoordinates: Unable to get the value" + ex.Message, ex);
             }
 
             return val;
@@ -4144,7 +4144,7 @@ namespace GingerCore.Drivers
         public override void CollapseControlElement(object obj)
         {
             AutomationElement element = (AutomationElement)obj;
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "Collapsing element  :  "+element.Current.Name);
+            Reporter.ToLog(eLogLevel.INFO, "Collapsing element  :  "+element.Current.Name);
             object vp;
             string status = "";
             element.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out vp);            
@@ -4157,7 +4157,7 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "element  :  "+element.Current.Name+" is already collapsed");
+                    Reporter.ToLog(eLogLevel.INFO, "element  :  "+element.Current.Name+" is already collapsed");
 
                 }
             }
@@ -4326,7 +4326,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "SwitchWindow: Exception Try Count: " + count + ", " + act.GetType() + " Description:" + act.Description + " Error details:", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "SwitchWindow: Exception Try Count: " + count + ", " + act.GetType() + " Description:" + act.Description + " Error details:", ex);
                     isLoaded = false;
                     if (count == 6)
                     {                        
@@ -4425,7 +4425,7 @@ namespace GingerCore.Drivers
                 }                
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "SwitchToWindow: Exception Try Count: " + count + ", Title:" + Title + " Description:" + ex.InnerException + " Error details:", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "SwitchToWindow: Exception Try Count: " + count + ", Title:" + Title + " Description:" + ex.InnerException + " Error details:", ex);
                     isLoaded = false;
                     if (count == 6)
                     {                       
@@ -4458,7 +4458,7 @@ namespace GingerCore.Drivers
             catch (Exception ex)
             {
                 act.Error = "Failed to create UIAutomation application window screenshot. Error= " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, act.Error, ex);
+                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
             }
         }
 
@@ -4552,13 +4552,13 @@ namespace GingerCore.Drivers
                     string name = element.Current.Name;
                     if (element.Current.ProcessId == 0)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception when checking IsWindowValid with process Id as zero");
+                        Reporter.ToLog(eLogLevel.ERROR, "Exception when checking IsWindowValid with process Id as zero");
                         return false;
                     }
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception when checking IsWindowValid", e);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception when checking IsWindowValid", e);
                     return false;
                 }
             }            
@@ -4584,23 +4584,23 @@ namespace GingerCore.Drivers
             }
             catch (COMException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "COM Exception when GetWindowInfo Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "COM Exception when GetWindowInfo Error details:", e);
                 throw e;
 
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Element not available Exception when GetWindowInfo Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when GetWindowInfo Error details:", e);
                 throw e;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Argument Exception when GetWindowInfo Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Argument Exception when GetWindowInfo Error details:", e);
                 throw e;
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "General Exception when GetWindowInfo Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "General Exception when GetWindowInfo Error details:", e);
                 throw e;
             }
             return locVal;
@@ -5042,7 +5042,7 @@ namespace GingerCore.Drivers
             catch (System.Runtime.InteropServices.COMException e)
             {
                 parentDictionary.Remove(AE);
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 throw new System.Runtime.InteropServices.COMException();
             }
         }
@@ -5581,7 +5581,7 @@ namespace GingerCore.Drivers
                     tempElement = TreeWalker.ContentViewWalker.GetNextSibling(tempElement);
                 }catch(Exception e)                
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "Exception in GetDictionaryForGrid", e);
+                    Reporter.ToLog(eLogLevel.INFO, "Exception in GetDictionaryForGrid", e);
                     tempElement = null;
                 }
 
@@ -5826,7 +5826,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "COM Exception when HandlePBControlAction Error details:", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "COM Exception when HandlePBControlAction Error details:", ex);
             }            
             return isPresent;
         }
@@ -5966,7 +5966,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in GetElementParent", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in GetElementParent", e);
                 return null;
             }
         }
@@ -6136,7 +6136,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in GetPreviousSibling", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in GetPreviousSibling", e);
                 return null;
             }
         }
@@ -6152,7 +6152,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in GetNextSibling", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in GetNextSibling", e);
                 return null;
             }
 }
@@ -6263,7 +6263,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR,"",ex);
+                Reporter.ToLog(eLogLevel.ERROR,"",ex);
                 return new List<ElementInfo>();
             }
 
@@ -6290,7 +6290,7 @@ namespace GingerCore.Drivers
                 }
                 catch(Exception e)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "Exception in GetElementProperties while GetCurrentPropertyValue::", e);
+                    Reporter.ToLog(eLogLevel.INFO, "Exception in GetElementProperties while GetCurrentPropertyValue::", e);
                     propValue = null;
                 }
                 if (propValue != null)

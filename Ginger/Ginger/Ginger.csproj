@@ -524,6 +524,7 @@
     <Compile Include="PluginsLibNew\PluginsIndexPage.xaml.cs">
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ReporterLib\GingerWorkSpaceReporter.cs" />
     <Compile Include="Reports\ReportTemplate.cs" />
     <Compile Include="Repository\RepositoryItemFactory.cs" />
     <Compile Include="Run\RuntimeObjectFactory.cs" />

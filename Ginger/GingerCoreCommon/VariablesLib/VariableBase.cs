@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
+using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Variables
 {
@@ -243,7 +244,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex, true);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex, true);
                 }
 
                 if (value is IObservableList)
@@ -316,7 +317,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex, true);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex, true);
                     value = null;
                 } 
                 
@@ -383,7 +384,7 @@ namespace GingerCore.Variables
                         }
                         catch (Exception ex)
                         {
-                            AppReporter.ToLog(eAppReporterLogLevel.INFO, "Failed to get list of used variables", ex);
+                            Reporter.ToLog(eLogLevel.INFO, "Failed to get list of used variables", ex);
                         } 
                     }
                 }

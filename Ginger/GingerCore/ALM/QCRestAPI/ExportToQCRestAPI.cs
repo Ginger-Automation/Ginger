@@ -71,7 +71,7 @@ namespace GingerCore.ALM.QCRestAPI
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export the Activities Group to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Activities Group to QC/ALM", ex);
                 return false;
             }
         }
@@ -100,7 +100,7 @@ namespace GingerCore.ALM.QCRestAPI
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export the Business Flow to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Business Flow to QC/ALM", ex);
                 return false;
             }
         }
@@ -328,7 +328,7 @@ namespace GingerCore.ALM.QCRestAPI
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
                 return false;
             }
 
@@ -406,11 +406,11 @@ namespace GingerCore.ALM.QCRestAPI
                 if (ex.Message.Contains("The Test Set already exists"))
                 {
                     string result = "Cannot export Business Flow - The Test Set already exists in the selected folder. ";
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, result, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, result, ex);
                     return null;
                 }
 
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
@@ -473,7 +473,7 @@ namespace GingerCore.ALM.QCRestAPI
                         QCItem itemTestCaseParam = ConvertObjectValuesToQCItem(newParam, ResourceType.TEST_CASE_PARAMETERS);
                         QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_CASE_PARAMETERS, itemTestCaseParam);
                     }
-                    catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                    catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 }
             }
             description = description.Replace("<<&Parameters&>>", paramsSigns);
@@ -626,7 +626,7 @@ namespace GingerCore.ALM.QCRestAPI
                             QCItem itemTestCaseParam = ConvertObjectValuesToQCItem(newParam, ResourceType.TEST_CASE_PARAMETERS);
                             QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_CASE_PARAMETERS, itemTestCaseParam);
                         }
-                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                        catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                     }
                 }
 
@@ -710,7 +710,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
@@ -749,7 +749,7 @@ namespace GingerCore.ALM.QCRestAPI
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
                 }
             }

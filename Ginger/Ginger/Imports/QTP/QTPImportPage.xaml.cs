@@ -252,7 +252,7 @@ namespace Ginger.Imports.QTP
         {
             if (BusinessFlowNameTextBox.Text.Trim().Length == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, (GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) +" name cannot be empty", "QTP to Ginger Converter", MessageBoxButton.OK));
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, (GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) +" name cannot be empty", "QTP to Ginger Converter", Amdocs.Ginger.Common.MessageBoxButton.OK));
                 return; 
             }
             mBusinessFlow.Name = BusinessFlowNameTextBox.Text;

@@ -71,7 +71,8 @@ namespace Amdocs.Ginger.Common
         Dictionary<string, string> TakeDesktopScreenShot(bool v);
         
         void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
-        void MessageBoxShow(string message);
+
+        
 
         ITextBoxFormatter CreateTextBoxFormatter(object Textblock);
     }

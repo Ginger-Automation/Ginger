@@ -904,7 +904,7 @@ namespace GingerCore
             catch (Exception ex)
             {
 
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Replace General Function Error:", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Replace General Function Error:", ex);
             }
         }
 

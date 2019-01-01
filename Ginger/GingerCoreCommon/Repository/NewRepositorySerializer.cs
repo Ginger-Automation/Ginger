@@ -27,6 +27,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Amdocs.Ginger.Common;
+using GingerCoreNET.ReporterLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -437,7 +438,7 @@ namespace Amdocs.Ginger.Repository
         //TODO: Not using t why is it needed?
         public RepositoryItemBase DeserializeFromFile(Type t, string FileName)
         {
-            AppReporter.ToConsole("DeserializeFromFile the file: " + FileName);
+            Reporter.ToConsole("DeserializeFromFile the file: " + FileName);
             
             if (FileName.Length > 0 && File.Exists(FileName))
             {
@@ -1003,7 +1004,7 @@ namespace Amdocs.Ginger.Repository
                             }
                             else
                             {
-                                AppReporter.ToLog(eAppReporterLogLevel.WARN, "Property not Found: " + xdr.Name, logOnlyOnDebugMode:true);
+                                Reporter.ToLog(eLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode:true);
                             }
                             xdr.MoveToNextAttribute();
                             continue;
@@ -1030,7 +1031,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "NewRepositorySerilizer- Error when setting Property: " + xdr.Name, ex);
+                Reporter.ToLog(eLogLevel.ERROR, "NewRepositorySerilizer- Error when setting Property: " + xdr.Name, ex);
                 throw ex;
             }
         }

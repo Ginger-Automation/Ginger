@@ -69,7 +69,7 @@ namespace Ginger
             {
                 //General
                 this.WindowState = System.Windows.WindowState.Maximized;
-                Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will appear running from Main Window STA
+                //Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will appear running from Main Window STA
 
                 //App
                 App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
@@ -86,8 +86,8 @@ namespace Ginger
                 App.UserProfile.RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
 
                 //Reporter                
-                Reporter.HandlerGingerHelperEvent += Reporter_HandlerGingerHelperEvent;
-                Reporter.ErrorReportedEvent += Reporter_ErrorReportedEvent;
+                // Reporter.HandlerGingerHelperEvent += Reporter_HandlerGingerHelperEvent;
+                // Reporter.ErrorReportedEvent += Reporter_ErrorReportedEvent;
 
                 //Main Menu                            
                 xGingerIconImg.ToolTip = App.AppFullProductName + Environment.NewLine + "Version " + App.AppVersion;
@@ -122,7 +122,7 @@ namespace Ginger
             {
                 App.AppSplashWindow.Close();
                 Reporter.ToUser(eUserMsgKeys.ApplicationInitError, ex.Message);
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Init Main Window", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Init Main Window", ex);
             }
         }
 
@@ -341,7 +341,7 @@ namespace Ginger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to delete Auto Save folder", ex);
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to delete Auto Save folder", ex);
                 }
             }
             if (Directory.Exists(App.AppSolutionRecover.RecoverFolderPath))
@@ -352,10 +352,10 @@ namespace Ginger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to delete Recover folder", ex);
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to delete Recover folder", ex);
                 }
             }
-            if (mAskUserIfToClose == false || Reporter.ToUser(eUserMsgKeys.AskIfSureWantToClose) == MessageBoxResult.Yes)
+            if (mAskUserIfToClose == false || Reporter.ToUser(eUserMsgKeys.AskIfSureWantToClose) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 AppCleanUp();
             }
@@ -385,7 +385,7 @@ namespace Ginger
                 }
                 catch
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
                 }
             }
             CW.Close();
@@ -569,7 +569,7 @@ namespace Ginger
 
         private void btnSourceControlCheckIn_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.LoseChangesWarn) == MessageBoxResult.No) return;
+            if (Reporter.ToUser(eUserMsgKeys.LoseChangesWarn) == Amdocs.Ginger.Common.MessageBoxResult.No) return;
 
             AutoLogProxy.UserOperationStart("btnSourceControlCheckIn_Click");
 
@@ -580,7 +580,7 @@ namespace Ginger
 
         private void btnSourceControlGetLatest_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.LoseChangesWarn) == MessageBoxResult.No) return;
+            if (Reporter.ToUser(eUserMsgKeys.LoseChangesWarn) == Amdocs.Ginger.Common.MessageBoxResult.No) return;
 
             AutoLogProxy.UserOperationStart("btnSourceControlGetLatest_Click");
 

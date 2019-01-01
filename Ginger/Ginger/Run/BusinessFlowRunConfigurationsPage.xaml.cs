@@ -175,7 +175,7 @@ namespace Ginger.Run
         {
             if (grdVariables.CurrentItem != null)
             {
-                if (Reporter.ToUser(eUserMsgKeys.AskIfShareVaribalesInRunner) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.AskIfShareVaribalesInRunner) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     int countMatchingBfs = 0;
                     
@@ -325,7 +325,7 @@ namespace Ginger.Run
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 UndoChangesAndClose();
             }
@@ -406,7 +406,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
             
@@ -477,7 +477,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Business Flow Configuration Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Business Flow Configuration Page tabs style", ex);
             }
         }
     }

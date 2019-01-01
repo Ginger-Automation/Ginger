@@ -342,7 +342,7 @@ namespace GingerCore.Actions
                         {
                             this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                             this.Error = e.Message;
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                            Reporter.ToLog(eLogLevel.ERROR, e.Message);
                         }
                         
                         break;
@@ -399,7 +399,7 @@ namespace GingerCore.Actions
                         {
                             this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                             this.Error = e.Message;
-	                        Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+	                        Reporter.ToLog(eLogLevel.ERROR, e.Message);
                         }
                         
                         break;
@@ -412,7 +412,7 @@ namespace GingerCore.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
             }
         }
 
@@ -451,7 +451,7 @@ namespace GingerCore.Actions
             }
             //catch (Exception e)
             //{
-            //    Reporter.ToLog(eLogLevel.ERROR, e.Message);
+            //    Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
            // }
 
         }

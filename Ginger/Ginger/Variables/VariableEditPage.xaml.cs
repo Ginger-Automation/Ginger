@@ -131,7 +131,7 @@ namespace Ginger.Variables
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to load the variable type configurations page", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the variable type configurations page", ex);
             }
         }
 
@@ -240,7 +240,7 @@ namespace Ginger.Variables
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 UndoChangesAndClose();
             }

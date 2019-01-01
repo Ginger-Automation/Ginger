@@ -497,18 +497,18 @@ namespace Ginger.GherkinLib
             if (fileSize != txt.Length && fileSize != 0)
             {
                 fileSize = txt.Length; //TODO Reporter.ToUser(eUserMsgKeys.AskIfSureWantToClose);
-                MessageBoxResult result = Reporter.ToUser(eUserMsgKeys.GherkinAskToSaveFeatureFile);
-                if (result == MessageBoxResult.Yes)
+                Amdocs.Ginger.Common.MessageBoxResult result = Reporter.ToUser(eUserMsgKeys.GherkinAskToSaveFeatureFile);
+                if (result == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     Save();
                     return true;
                 }
-                else if (result == MessageBoxResult.No)
+                else if (result == Amdocs.Ginger.Common.MessageBoxResult.No)
                 {
                     //Do nothing? this will still create optmized activities and even update BF without saving the feature file... not advised
                     return true;
                 }
-                else if (result == MessageBoxResult.Cancel)
+                else if (result == Amdocs.Ginger.Common.MessageBoxResult.Cancel)
                 {
                     //stop optimize so user can fix unwanted changes.
                     return false;

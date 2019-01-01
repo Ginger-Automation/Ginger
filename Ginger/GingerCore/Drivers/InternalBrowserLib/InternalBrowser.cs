@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
+using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using mshtml;
 using System;
@@ -82,7 +83,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close IB Driver - " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close IB Driver - " + ex.Message);
             }
             IsBrowserLoaded = false;
         }        
@@ -828,7 +829,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
                 try {
                 actButton.AddOrUpdateReturnParamActual("Actual",e1.style.font);
                 }
-                catch (Exception ex){ Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                catch (Exception ex){ Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 return;
             }
             else if (actButton.ButtonAction == ActButton.eButtonAction.IsDisplayed)
@@ -836,7 +837,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
                 try {
                 actButton.AddOrUpdateReturnParamActual("Actual", e1.style.display);
                 }
-                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 return;
             }
             else

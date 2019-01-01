@@ -78,6 +78,8 @@ namespace GingerCore.Drivers
             STAThread.SetApartmentState(ApartmentState.STA);
             STAThread.IsBackground = true;
             STAThread.Start();
+
+            
         }
 
         public ObservableList<DriverConfigParam> AdvanceDriverConfigurations  { get; set; }

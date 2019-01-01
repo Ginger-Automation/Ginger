@@ -104,7 +104,7 @@ namespace GingerCore.GeneralLib
 
             //catch (Exception e)
             //{
-            //    // AppReporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+            //    // Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
             //    // this.Error = "Failed to execute the script. Details: " + e.Message;
             //}
             //if (!string.IsNullOrEmpty(ErrorBuffer))

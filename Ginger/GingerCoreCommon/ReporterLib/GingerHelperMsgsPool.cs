@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -19,7 +19,7 @@ limitations under the License.
 using GingerCore;
 using System.Collections.Generic;
 
-namespace GingerCoreNET.ReporterLib
+namespace Amdocs.Ginger.Common
 {
     public enum eGingerHelperMsgKey
     {
@@ -48,7 +48,10 @@ namespace GingerCoreNET.ReporterLib
         ShowBetaFeatures,
         AnalyzerFixingIssues,AnalyzerSavingFixedIssues,AnalyzerIsAnalyzing,
         GingerHelpLibrary,
-        LoadingSolution
+        LoadingSolution,
+        ExportItem,
+        StartAgentFailed,
+        BusinessFlowConversion
     }
 
     public static class GingerHelperMsgsPool

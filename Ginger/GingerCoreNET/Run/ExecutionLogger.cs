@@ -200,7 +200,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while creating temporary folder", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while creating temporary folder", ex);
             }
 
         }
@@ -224,7 +224,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
 
             return logsFolder;
@@ -245,7 +245,7 @@ namespace Ginger.Run
                 }
             }
             catch(Exception ex)
-            {    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "failed to CheckOrCreateDirectory",ex); 
+            {    Reporter.ToLog(eLogLevel.ERROR, "failed to CheckOrCreateDirectory",ex); 
                 return false;
             }
             
@@ -720,7 +720,7 @@ namespace Ginger.Run
                                 }
                                 catch (Exception ex)
                                 {
-                                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to move screen shot of the action:'" + act.Description + "' to the Execution Logger folder", ex);
+                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to move screen shot of the action:'" + act.Description + "' to the Execution Logger folder", ex);
                                     screenShotCountPerAction--;
                                 }
                             }
@@ -730,7 +730,7 @@ namespace Ginger.Run
                         }
                         else
                         {
-                            AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to create ExecutionLogger JSON file for the Action :" + act.Description + " because directory not exists :" + executionLogFolder + act.ExecutionLogFolder);
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to create ExecutionLogger JSON file for the Action :" + act.Description + " because directory not exists :" + executionLogFolder + act.ExecutionLogFolder);
                         }
                     }
 
@@ -800,7 +800,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception occurred in ExecutionLogger Action end", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred in ExecutionLogger Action end", ex);
             }                   
         }
 
@@ -998,7 +998,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -1088,7 +1088,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
                 return false;
             }
         }
@@ -1161,7 +1161,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
                 return false;
             }
         }

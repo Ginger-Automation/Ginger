@@ -366,7 +366,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 if (!WarnErrorOccured && ((double)TotalFails / TotalElements) > 0.2)
                 {
                     WarnErrorOccured = true;
-                    if (Reporter.ToUser(eUserMsgKeys.POMNotOnThePageWarn, TotalFails, TotalElements) == MessageBoxResult.No)
+                    if (Reporter.ToUser(eUserMsgKeys.POMNotOnThePageWarn, TotalFails, TotalElements) == Amdocs.Ginger.Common.MessageBoxResult.No)
                     {
                         return;
                     }
@@ -422,7 +422,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in POM All Elements Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in POM All Elements Page tabs style", ex);
             }
         }
 

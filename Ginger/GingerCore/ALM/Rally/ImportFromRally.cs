@@ -223,7 +223,7 @@ namespace GingerCore.ALM.Rally
                                     if (stepActivityVar is VariableString)
                                         ((VariableString)stepActivityVar).InitialStringValue = param.Value;
                                 }
-                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
                         }
                     }
@@ -234,7 +234,7 @@ namespace GingerCore.ALM.Rally
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to import Rally test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to import Rally test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return null;
             }
         }
@@ -254,7 +254,7 @@ namespace GingerCore.ALM.Rally
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while pulling the parameters names from Rally TC Step Description/Expected", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while pulling the parameters names from Rally TC Step Description/Expected", ex);
             }
         }
 
@@ -275,7 +275,7 @@ namespace GingerCore.ALM.Rally
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while stripping the HTML from Rally TC Step Description/Expected", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while stripping the HTML from Rally TC Step Description/Expected", ex);
                 return HTMLText;
             }
         }

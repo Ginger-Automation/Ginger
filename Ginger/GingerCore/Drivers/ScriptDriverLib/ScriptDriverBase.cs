@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
+using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.ScriptDriverLib
 {
@@ -44,7 +45,7 @@ namespace GingerCore.Drivers.ScriptDriverLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message);
             }
         }
 
@@ -52,8 +53,8 @@ namespace GingerCore.Drivers.ScriptDriverLib
        
         protected void Process_Exited(object sender, EventArgs e)
         {            
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "Data=" + DataBuffer);
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "Error=" + ErrorBuffer);
+            Reporter.ToLog(eLogLevel.INFO, "Data=" + DataBuffer);
+            Reporter.ToLog(eLogLevel.INFO, "Error=" + ErrorBuffer);
         }
 
         protected void AddError(string outLine)

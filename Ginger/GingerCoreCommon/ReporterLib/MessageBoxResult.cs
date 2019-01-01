@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-namespace GingerCoreNET.ReporterLib
+namespace Amdocs.Ginger.Common
 {
     public class MessageBoxResult
     {
@@ -24,5 +24,6 @@ namespace GingerCoreNET.ReporterLib
         public static MessageBoxResult Yes { get; internal set; }
         public static MessageBoxResult No { get; internal set; }
         public static MessageBoxResult Cancel { get; internal set; }
+        public static MessageBoxResult OK { get; set; }
     }
 }

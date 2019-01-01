@@ -97,11 +97,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
             catch (InvalidOperationException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message, ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message, ex);
             }
             IsDriverConnected = false;
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
@@ -227,7 +227,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             catch(Exception ex)
             {
                 act.Error = "Failed to create console window screenshot. Error= " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, act.Error, ex);
+                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
             }
         }
 

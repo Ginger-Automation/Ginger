@@ -24,6 +24,7 @@ using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
+using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -686,12 +687,12 @@ namespace GingerCore.Repository
                                 }
                                 else
                                 {
-                                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
+                                    Reporter.ToLog(eLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
                                 }
                             }
                             else
                             {
-                                Reporter.ToLog(eAppReporterLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
+                                Reporter.ToLog(eLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
                             }
 
                             xdr.MoveToNextAttribute();
@@ -709,7 +710,7 @@ namespace GingerCore.Repository
             }
             catch (Exception ex)
             {                
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
             }
         }
 
@@ -906,13 +907,13 @@ namespace GingerCore.Repository
                 }
                 else
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath), writeOnlyInDebugMode: true);
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath), writeOnlyInDebugMode: true);
                     return null;//failed to get the version
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath), writeOnlyInDebugMode: true);
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath), writeOnlyInDebugMode: true);
                 Console.WriteLine(ex.StackTrace);
                 return null;//failed to get the version
             }
@@ -987,7 +988,7 @@ namespace GingerCore.Repository
             switch (EventArgs.EventType)
             {
                 case NewRepositorySerilizerEventArgs.eEventType.LoadWithOldSerilizerRequired:
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("New Serialzier is calling Old Serialzier for loading the file: '{0}'", EventArgs.FilePath), null, writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("New Serialzier is calling Old Serialzier for loading the file: '{0}'", EventArgs.FilePath), null, writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
                     return DeserializeFromText(EventArgs.XML, EventArgs.TargetObj);
             }
 

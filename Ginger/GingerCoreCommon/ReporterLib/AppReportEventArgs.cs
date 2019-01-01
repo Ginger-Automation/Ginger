@@ -42,8 +42,8 @@ namespace Amdocs.Ginger.Common.ReporterLib
             }
         }
 
-        eAppReporterLogLevel mReportLogLevel;
-        public eAppReporterLogLevel ReportLogLevel//TODO: group to 1 class
+        eLogLevel mReportLogLevel;
+        public eLogLevel ReportLogLevel//TODO: group to 1 class
         {
             get
             {
@@ -69,8 +69,8 @@ namespace Amdocs.Ginger.Common.ReporterLib
             }
         }
 
-        eAppReporterMessageType mReportMessageType;
-        public eAppReporterMessageType ReportMessageType
+        eMessageType mReportMessageType;
+        public eMessageType ReportMessageType
         {
             get
             {
@@ -79,7 +79,7 @@ namespace Amdocs.Ginger.Common.ReporterLib
         }
 
 
-        public AppReportEventArgs(eAppReportType reportType, string reportMessage, eAppReporterLogLevel reportLogLevel = eAppReporterLogLevel.INFO, Exception reportExceptionToRecord = null, bool logOnlyOnDebugMode = false, eAppReporterMessageType reportMessageType = eAppReporterMessageType.INFO)
+        public AppReportEventArgs(eAppReportType reportType, string reportMessage, eLogLevel reportLogLevel = eLogLevel.INFO, Exception reportExceptionToRecord = null, bool logOnlyOnDebugMode = false, eMessageType reportMessageType = eMessageType.INFO)
         {
             mReportType = reportType;
 

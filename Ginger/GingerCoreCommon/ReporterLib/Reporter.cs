@@ -22,78 +22,21 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Amdocs.Ginger.Common;
+using GingerCoreNET.ReporterLib;
 
-namespace GingerCoreNET.ReporterLib
+namespace Amdocs.Ginger.Common
 {
-    public enum eAppLogLevel
+    public class Reporter 
     {
-        Normal, Debug
-    }
+        public static IWorkSpaceReporter workSpaceReporter { get; set; }
 
-    public enum eLogLevel
-    {
-        DEBUG,INFO,WARN,ERROR,FATAL
-    }
-
-    public enum eMessageType
-    {
-        INFO,WARN,ERROR,QUESTION
-    }
-
-    
-    public class UserMessage
-    {
-        public UserMessage(eMessageType MessageType, string Caption, string Message, MessageBoxButton ButtonsType, MessageBoxResult DefualtResualt)
-        {
-            this.MessageType = MessageType;
-            this.Caption = Caption;
-            this.Message = Message;            
-            this.ButtonsType = ButtonsType;
-            this.DefualtResualt = DefualtResualt;
-        }
-
-        public eMessageType MessageType { get; set; }
-        public string Caption {get;set;}
-        public string Message {get;set;}        
-        public MessageBoxButton ButtonsType { get; set; }
-        public MessageBoxResult DefualtResualt { get; set; }
-    }
-
-    public enum eGingerHelperMsgType
-    {
-        INFO, PROCESS
-    }
-
-    public class GingerHelperMsg
-    {
-        public GingerHelperMsg(eGingerHelperMsgType MessageType, string MsgHeader, string MsgContent, bool ShowBtn = false, string BtnContent = "")
-        {
-            this.MessageType = MessageType;
-            this.MsgHeader = MsgHeader;
-            this.MsgContent = MsgContent;
-            this.ShowBtn = ShowBtn;
-            this.BtnContent = BtnContent;
-        }
-
-        
-
-        public eGingerHelperMsgType MessageType { get; set; }
-        public string MsgHeader { get; set; }
-        public string MsgContent { get; set; }
-        public bool ShowBtn { get; set; }
-        public string BtnContent { get; set; }
-    }
-
-    public class Reporter
-    {
-        public static eAppLogLevel CurrentAppLogLevel;
+        public static eAppReporterLoggingLevel CurrentAppLogLevel;
 
         #region ReportToLog
         
         public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
-        {
-            RepositoryItemHelper.RepositoryItemFactory.MessageBoxShow(messageToLog);
+        {            
+            workSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog, writeAlsoToConsoleIfNeeded, writeOnlyInDebugMode);
         }
 
         public static void ToLogAndConsole(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
@@ -116,8 +59,13 @@ namespace GingerCoreNET.ReporterLib
             try
             {
                 //get the message from pool
+
+
+                // FIXME improve if as alreayd found !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 if ((UserMessagesPool != null) && UserMessagesPool.Keys.Contains(messageKey))
+                {
                     messageToShow = UserMessagesPool[messageKey];
+                }
                 if (messageToShow == null)
                 {
                     // We do want to pop the error message so below is just in case...
@@ -126,7 +74,11 @@ namespace GingerCoreNET.ReporterLib
                     {
                         mess += o.ToString() + " ";
                     }
-                    RepositoryItemHelper.RepositoryItemFactory.MessageBoxShow(messageKey.ToString() + " - " + mess);
+
+
+                    //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    // RepositoryItemHelper.RepositoryItemFactory.MessageBoxShow(messageKey.ToString() + " - " + mess);
+                    workSpaceReporter.ShowMessageToUser(messageKey.ToString() + " - " + mess);
 
                     ToLog(eLogLevel.WARN, "The user message with key: '" + messageKey + "' was not found! and won't show to the user!");
                     return MessageBoxResult.None;
@@ -154,30 +106,44 @@ namespace GingerCoreNET.ReporterLib
 
                 //enter message args if exist
                 if (messageArgs.Length > 0)
+                {
                     messageText = string.Format(messageToShow.Message, messageArgs);
+                }
                 else
+                {
                     messageText = messageToShow.Message;
+                }
 
                 //show the messege and return user selection
                 //adding owner window to the message so it will appear on top of any other window including splash screen
 
-                if (CurrentAppLogLevel == eAppLogLevel.Debug)
-                    ToLog(eLogLevel.INFO, "Showing User Message (Pop-Up): '" + messageText + "'");
-                else if (AddAllReportingToConsole)
-                    ToConsole("Showing User Message (Pop-Up): '" + messageText + "'");
-
-                MessageBoxResult userSelection = MessageBoxResult.None; //????
-                
-                //TODO: find a better option than loop...
-                while (userSelection == null)
+                if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
                 {
-                    Thread.Sleep(100);
+                    ToLog(eLogLevel.INFO, "Showing User Message (Pop-Up): '" + messageText + "'");
+                }
+                else if (AddAllReportingToConsole)
+                {
+                    ToConsole("Showing User Message (Pop-Up): '" + messageText + "'");
                 }
 
-                if (CurrentAppLogLevel == eAppLogLevel.Debug)
+                MessageBoxResult userSelection = MessageBoxResult.None; //????
+
+                workSpaceReporter.ShowMessageToUser(messageToShow);
+
+                //TODO: find a better option than loop... FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                //while (userSelection == null)
+                //{
+                //    Thread.Sleep(100);
+                //}
+
+                if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
+                {
                     ToLog(eLogLevel.INFO, "User Selection for Pop-Up Message: '" + userSelection.ToString() + "'");
+                }
                 else if (AddAllReportingToConsole)
+                {
                     ToConsole("User Selection for Pop-Up Message: '" + userSelection.ToString() + "'");
+                }
 
                 return userSelection;
 
@@ -185,7 +151,8 @@ namespace GingerCoreNET.ReporterLib
             catch (Exception ex)
             {
                 ToLog(eLogLevel.ERROR, "Failed to show the user message with the key: " + messageKey, ex);
-                RepositoryItemHelper.RepositoryItemFactory.MessageBoxShow("Failed to show the user message with the key: " + messageKey);
+                
+                workSpaceReporter.ShowMessageToUser("Failed to show the user message with the key: " + messageKey);
                 return MessageBoxResult.None;
             }
         }
@@ -221,7 +188,8 @@ namespace GingerCoreNET.ReporterLib
                     msg += System.Environment.NewLine + "Exception Details:" + System.Environment.NewLine + excFullInfo;
                 }
 
-                Console.WriteLine(msg + System.Environment.NewLine);
+                // Console.WriteLine(msg + System.Environment.NewLine);
+                workSpaceReporter.ConsoleWriteLine(msg);
             }
             catch (Exception ex)
             {
@@ -238,6 +206,8 @@ namespace GingerCoreNET.ReporterLib
             return sb;
         }
 
+
+        //???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public static void ToTrace(string action, string info)
         {
             StringBuilder sb = dt();
@@ -246,6 +216,8 @@ namespace GingerCoreNET.ReporterLib
             Trace.WriteLine(sb.ToString());
         }
 
+
+        //???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public static Stopwatch ToTraceStart(string action, string info)
         {
             Trace.WriteLine("{");
@@ -261,6 +233,7 @@ namespace GingerCoreNET.ReporterLib
             return st;
         }
 
+        //???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public static void ToTraceEnd(string action, string info, Stopwatch st)
         {            
             st.Stop();
@@ -276,5 +249,17 @@ namespace GingerCoreNET.ReporterLib
             Trace.Unindent();
             Trace.WriteLine("}");
         }
+
+
+        private static bool RunningFromConfigFile = false;
+        public static void SetRunConfigMode(bool RunConfigMode)
+        {
+            RunningFromConfigFile = RunConfigMode;
+        }
+
+
     }
+
+
+    
 }

@@ -82,8 +82,8 @@ namespace Ginger.WindowExplorer.Common
             int FoundItemsCount = mWindowExlorerPage.WindowControlsGridView.DataSourceList.Count;
             if (isSearched)
             {
-                MessageBoxResult resultCloseWindow = Reporter.ToUser(eUserMsgKeys.CloseFilterPage, FoundItemsCount);
-                if (resultCloseWindow == MessageBoxResult.Yes)
+                Amdocs.Ginger.Common.MessageBoxResult resultCloseWindow = Reporter.ToUser(eUserMsgKeys.CloseFilterPage, FoundItemsCount);
+                if (resultCloseWindow == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                     _GenWin.Close();
             }
         }

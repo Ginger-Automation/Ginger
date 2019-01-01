@@ -31,6 +31,7 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Threading;
+using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -106,7 +107,7 @@ namespace GingerCore.Drivers.PBDriver
             
             try
             {
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Start Executing action of type '" + actClass + "' Description is" + act.Description);
+                Reporter.ToLog(eLogLevel.INFO, "Start Executing action of type '" + actClass + "' Description is" + act.Description);
                  
                 switch (actClass)
                 {
@@ -239,25 +240,25 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception at Run action:" + act.GetType()+ " Description:"+act.Description+" Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType()+ " Description:"+act.Description+" Error details:", e);
                 CheckAndRetryRunAction(act,e);
                 return;
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act,e);
                 return;
             }
             catch (ArgumentException e)
             {                
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act, e);
                 return;
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.WARN, "Exception at Run action",e);
+                Reporter.ToLog(eLogLevel.WARN, "Exception at Run action",e);
                 act.Error = e.Message;
             }
         }
@@ -598,22 +599,22 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "COM Exception when HandlePBControlAction Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "COM Exception when HandlePBControlAction Error details:", e);
                 throw e;
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Element not available Exception when HandlePBControlAction Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when HandlePBControlAction Error details:", e);
                 throw e;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Argument Exception when HandlePBControlAction Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Argument Exception when HandlePBControlAction Error details:", e);
                 throw e;
             }
             catch (Exception e)
             {
-               Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in HandlePBControlAction", e);
+               Reporter.ToLog(eLogLevel.ERROR, "Exception in HandlePBControlAction", e);
                 throw e;
             }
         }
@@ -848,23 +849,23 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "COM Exception when HandleMenuControlAction Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "COM Exception when HandleMenuControlAction Error details:", e);
                 throw e;
 
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Element not available Exception when HandleMenuControlAction Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when HandleMenuControlAction Error details:", e);
                 throw e;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Argument Exception when HandleMenuControlAction Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Argument Exception when HandleMenuControlAction Error details:", e);
                 throw e;
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in HandleMenuControlAction", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in HandleMenuControlAction", e);
                 throw e;
             }
         }      
@@ -910,22 +911,22 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "COM Exception when HandleWindowControlAction Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "COM Exception when HandleWindowControlAction Error details:", e);
                 throw e;
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Element not available Exception when HandleWindowControlAction Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when HandleWindowControlAction Error details:", e);
                 throw e;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Argument Exception when HandleWindowControlAction Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Argument Exception when HandleWindowControlAction Error details:", e);
                 throw e;
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in HandleWindowControlAction", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in HandleWindowControlAction", e);
                 throw e;
             }
         }

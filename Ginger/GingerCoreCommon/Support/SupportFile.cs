@@ -37,14 +37,7 @@ namespace Ginger.Support
             Developer = 2,
             Tester = 3
         }
-
-        public new static partial class Fields
-        {
-            public static string Title = "Title";
-            public static string Description = "Description";
-            public static string Notes = "Notes";
-            public static string FileLocation = "FileLocation";
-        }
+      
 
         [IsSerializedForLocalRepository]
         public string Title { get; set; }

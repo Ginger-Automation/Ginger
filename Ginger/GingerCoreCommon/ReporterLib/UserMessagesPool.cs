@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,11 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using GingerCore;
+using GingerCoreNET.ReporterLib;
 using System;
 using System.Collections.Generic;
 
-namespace GingerCoreNET.ReporterLib
+namespace Amdocs.Ginger.Common
 {
     public enum eUserMsgKeys
     {
@@ -107,7 +109,38 @@ namespace GingerCoreNET.ReporterLib
         AskIfSureWantToDeLink,AnalyzerFoundIssues,AnalyzerSaveRunSet,
         AskIfSureWantToUndoChange,
         CurrentActionNotSaved,
-        LoseChangesWarn
+        LoseChangesWarn,
+              
+        // Merged from GingerCore        
+        CopiedVariableSuccessfully, AskIfShareVaribalesInRunner, ShareVariableNotSelected,
+        WarnOnDynamicActivities,        
+        QcConnectFailureRestAPI,
+        ExportedExecDetailsToALMIsInProcess,
+        RenameItemError,        
+        BusinessFlowUpdate,        
+        MissingExcelDetails, InvalidExcelDetails, InvalidDataSourceDetails, ExportFailed, ExportDetails, ParamExportMessage, MappedtoDataSourceError, CreateTableError, InvalidColumnName,   DeleteDSFileError, InvalidDSPath,  
+        FailedToLoadPlugIn,
+        RunsetBuinessFlowWasChanged, RunSetReloadhWarn, RefreshWholeSolution,
+        GetModelItemUsagesFailed, 
+        RecoverItemsMissingSelectionToRecover,
+        SourceControlItemAlreadyLocked, SoruceControlItemAlreadyUnlocked,
+        SourceControlConflictResolveFailed,                
+        AskIfToCloseAgent,
+        AskIfToDownloadPossibleValues, AskIfToDownloadPossibleValuesShortProcesss, SelectAndSaveCategoriesValues,
+        FolderNotExistOrNotAvailible, FolderNameTextBoxIsEmpty, UserHaveNoWritePermission,                                 
+        MissingTargetPlatformForConversion, NoConvertibleActionsFound, NoConvertibleActionSelected, SuccessfulConversionDone, NoActivitySelectedForConversion, ActivitiesConversionFailed,        
+        FileExtensionNotSupported, NotifyFileSelectedFromTheSolution, FileImportedSuccessfully, CompilationErrorOccured, CompilationSucceed, Failedtosaveitems, SaveItemParentWarning, SaveAllItemsParentWarning,
+        APIParametersListUpdated, APIMappedToActionIsMissing, NoAPIExistToMappedTo, CreateRunset, DeleteRunners, DeleteRunner, DeleteBusinessflow, DeleteBusinessflows, MissingErrorHandler, CantDeleteRunner, AllItemsSaved, APIModelAlreadyContainsReturnValues,
+        InitializeBrowser, AskBeforeDefectProfileDeleting, MissedMandatotryFields, NoDefaultDefectProfileSelected, ALMDefectsWereOpened, AskALMDefectsOpening, WrongValueSelectedFromTheList, WrongNonNumberValueInserted, WrongDateValueInserted, NoDefectProfileCreated, IssuesInSelectedDefectProfile,
+        VisualTestingFailedToDeleteOldBaselineImage, ApplitoolsLastExecutionResultsNotExists, ApplitoolsMissingChromeOrFirefoxBrowser, ParameterOptionalValues,
+        FindAndRepalceFieldIsEmpty, FindAndReplaceListIsEmpty, FindAndReplaceNoItemsToRepalce, OracleDllIsMissing, ReportsTemplatesSaveWarn,
+        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, WizardCantMoveWhileInProcess, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported,
+        POMSearchByGUIDFailed, POMElementSearchByGUIDFailed, NoRelevantAgentInRunningStatus, SolutionSaveWarning,
+        InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
+        ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, ValueIssue, MissingTargetApplication,
+        ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty,
+        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
+        AskIfToUndoChanges
     }
 
     public static class UserMessagesPool

@@ -598,7 +598,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed", ex);
             }
         }
 

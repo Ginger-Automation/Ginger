@@ -23,6 +23,7 @@ using GingerCore.Environments;
 using GingerCore.Helpers;
 using GingerCore.NoSqlBase;
 using GingerCore.Properties;
+using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -413,7 +414,7 @@ namespace GingerCore.Actions
                 if (e.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
                 {
                     string message = Database.GetMissingDLLErrorDescription();
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, message, e);
+                    Reporter.ToLog(eLogLevel.WARN, message, e);
                     this.Error += Environment.NewLine + message;
                 }
             }

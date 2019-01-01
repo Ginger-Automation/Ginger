@@ -615,7 +615,7 @@ namespace Ginger.Run
                             break;
 
                         case "SourceControlUrl":
-                            //Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlUrl: '" + value + "'");
+                            //Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "Selected SourceControlUrl: '" + value + "'");
                             //if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                             //{
                             //    if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
@@ -628,7 +628,7 @@ namespace Ginger.Run
                             break;
 
                         case "SourceControlUser":
-                            //Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlUser: '" + value + "'");
+                            //Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "Selected SourceControlUser: '" + value + "'");
                             //if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
                             //    value = "Test";
                             //App.UserProfile.SourceControlUser = value;
@@ -636,13 +636,13 @@ namespace Ginger.Run
                             break;
 
                         case "SourceControlPassword":
-                            //Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlPassword: '" + value + "'");
+                            //Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "Selected SourceControlPassword: '" + value + "'");
                             //App.UserProfile.SourceControlPass = value;
                             //scPswd = value;
                             break;
 
                         case "PasswordEncrypted":
-                            //Reporter.ToLogAndConsole(eLogLevel.INFO, "PasswordEncrypted: '" + value + "'");
+                            //Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "PasswordEncrypted: '" + value + "'");
                             //string pswd = App.UserProfile.SourceControlPass;
                             //if (value == "Y")
                             //    pswd = EncryptionHandler.DecryptwithKey(App.UserProfile.SourceControlPass, App.ENCRYPTION_KEY);
@@ -652,7 +652,7 @@ namespace Ginger.Run
                             break;
 
                         case "SourceControlProxyServer":
-                            //Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlProxyServer: '" + value + "'");
+                            //Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "Selected SourceControlProxyServer: '" + value + "'");
                             //if (value == "")
                             //    WorkSpace.Instance.SolutionSourceControlConfigureProxy = false;
                             //else
@@ -667,7 +667,7 @@ namespace Ginger.Run
                             //    WorkSpace.Instance.SolutionSourceControlConfigureProxy = false;
                             //else
                             //    WorkSpace.Instance.SolutionSourceControlConfigureProxy = true;
-                            //Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
+                            //Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
                             //WorkSpace.Instance.SolutionSourceControlProxyPort = value;
                             break;
 
@@ -685,7 +685,7 @@ namespace Ginger.Run
                             {
                                 //if (App.SetSolution(value) == false)
                                 //{
-                                //    Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
+                                //    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to load the Solution");
                                 //    return false;
                                 //}
                             }

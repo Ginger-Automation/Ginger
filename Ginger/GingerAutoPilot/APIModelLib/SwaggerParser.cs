@@ -34,8 +34,7 @@ using Newtonsoft.Json;
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 {
     public class SwaggerParser : APIConfigurationsDocumentParserBase
-    {
-        string ResolvedJson = "";
+    {        
         SwaggerDocument Swaggerdoc = null;
 
         public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> SwaggerModels, bool avoidDuplicatesNodes = false)

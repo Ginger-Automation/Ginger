@@ -191,7 +191,7 @@ namespace Ginger.SolutionGeneral
                 {
                     extraChangedItems= extraChangedItems.TrimEnd();
                     extraChangedItems= extraChangedItems.TrimEnd(new char[] { ',' });                    
-                    if (Reporter.ToUser(eUserMsgKeys.SolutionSaveWarning, extraChangedItems) == System.Windows.MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKeys.SolutionSaveWarning, extraChangedItems) == MessageBoxResult.Yes)
                     {
                         doSave = true;
                     }
