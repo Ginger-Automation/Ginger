@@ -123,10 +123,10 @@ namespace Amdocs.Ginger.Common.APIModelLib
 
             }
        string body= jt.ToString();
-            //foreach (var item in consts)
-            //{
-            //    body = body.Replace("\"" + item + "\"", item);
-            //}
+            foreach (var item in consts)
+            {
+                body = body.Replace("\"" + item + "\"", item);
+            }
             BodyParamArray[0] = body;
             BodyParamArray[1] = AppModelParameters;
             return BodyParamArray;
