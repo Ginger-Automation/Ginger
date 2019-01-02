@@ -21,9 +21,10 @@
 
         <UserControls:ImageMakerControl x:Name="xImage" Grid.Row="1" ImageType="Play" Width="32" Height="32"/>
 
-        <TextBlock x:Name="xMessageTextLabelBlock" FontSize="16" FontWeight="Bold" Grid.Row="1" 
-                   Text="Message Text" Grid.Column="1" 
-                   VerticalAlignment="Center" HorizontalAlignment="Center" Height="20"  Width="102"/>
+        <TextBlock x:Name="xMessageTextLabelBlock" FontSize="14" FontWeight="Bold" Grid.Row="1" 
+                   Text="Message Text Can be also long text - no issue and is really fun" Grid.Column="1" 
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
         <ContentControl Grid.Row="2" Grid.ColumnSpan="2">
             <StackPanel Orientation="Horizontal"  HorizontalAlignment="Right">

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -18,12 +18,12 @@ limitations under the License.
 
 namespace GingerCoreNET.ReporterLib
 {
-    public class MessageBoxImage
+    public enum MessageBoxImage
     {
-        public static MessageBoxImage None { get; internal set; }
-        public static MessageBoxImage Error { get; internal set; }
-        public static MessageBoxImage Information { get; internal set; }
-        public static MessageBoxImage Question { get; internal set; }
-        public static MessageBoxImage Warning { get; internal set; }
+        None,
+        Error,
+        Information,
+        Question,
+        Warning
     }
 }

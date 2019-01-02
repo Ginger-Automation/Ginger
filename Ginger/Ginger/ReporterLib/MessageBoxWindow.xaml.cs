@@ -16,7 +16,7 @@ namespace Ginger.ReporterLib
         {
             InitializeComponent();
 
-            xMessageTextLabel.Content = txt;
+            xMessageTextLabelBlock.Text = txt;
             this.Title = caption;
             messageBoxResult = defualtResualt;
 
@@ -42,6 +42,25 @@ namespace Ginger.ReporterLib
                     xYesButton.Visibility = Visibility.Visible; ;
                     xNoButton.Visibility = Visibility.Visible;
                     xCancelButton.Visibility = Visibility.Visible;
+                    break;
+            }
+
+            switch (messageImage)
+            {
+                case GingerCoreNET.ReporterLib.MessageBoxImage.Error:
+                    xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Error;
+                    break;
+                case GingerCoreNET.ReporterLib.MessageBoxImage.Information:
+                    xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Info;
+                    break;
+                case GingerCoreNET.ReporterLib.MessageBoxImage.None:
+                    xImage.Visibility = Visibility.Collapsed;
+                    break;
+                case GingerCoreNET.ReporterLib.MessageBoxImage.Question:
+                    xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Question;
+                    break;
+                case GingerCoreNET.ReporterLib.MessageBoxImage.Warning:
+                    xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Power; //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     break;
             }
 

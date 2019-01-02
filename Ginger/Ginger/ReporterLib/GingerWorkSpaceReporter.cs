@@ -30,10 +30,11 @@ namespace Ginger.ReporterLib
             return result;
         }
 
+
+        // TODO: one for info one for errror !!!!!!!!!!!!!!!!!!!!!!
         public void ShowMessageToUser(string messageText)
-        {            
-            // TODO: FIXME image !!!!!!!!!!!!!!!!!!!
-            MessageBoxWindow messageBoxWindow = new MessageBoxWindow(messageText, "Ginger",  Amdocs.Ginger.Common.MessageBoxButton.OK,  null ,  Amdocs.Ginger.Common.MessageBoxResult.OK);
+        {                        
+            MessageBoxWindow messageBoxWindow = new MessageBoxWindow(messageText, "Ginger",  Amdocs.Ginger.Common.MessageBoxButton.OK, GingerCoreNET.ReporterLib.MessageBoxImage.Information ,  Amdocs.Ginger.Common.MessageBoxResult.OK);
             messageBoxWindow.ShowDialog();            
         }
 

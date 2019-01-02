@@ -12,7 +12,7 @@
         </Grid.RowDefinitions>
         <Button x:Name="xSimpleInfoMessageButton" Content="Simple Info Message" Click="XSimpleInfoMessageButton_Click" HorizontalAlignment="Left" Height="38" Margin="10,10,0,0" VerticalAlignment="Top" Width="117"/>
         <Button x:Name="xYesNoButton" Content="Yes/No" Click="XYesNoButton_Click" HorizontalAlignment="Left" Height="44" Margin="147,7,0,0" VerticalAlignment="Top" Width="135"/>
-        <Button x:Name="xTestMessagePoolButton" Content="Test Message Pool (enum)" HorizontalAlignment="Left" Height="53" Margin="296,7,0,0" VerticalAlignment="Top" Width="202" Grid.RowSpan="2"/>
+        <ListBox x:Name="xListBox" MouseDoubleClick="XListBox_MouseDoubleClick" HorizontalAlignment="Left" Height="309" Margin="24,28,0,0" Grid.Row="1" VerticalAlignment="Top" Width="198"/>
 
     </Grid>
 </Window>
