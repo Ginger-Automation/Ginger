@@ -35,9 +35,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         public string CMDFileName {get; set;}
 
         ProcessStartInfo processStartInfo;
-        System.IO.StreamReader reader;
         System.IO.StreamWriter writer;
-        System.IO.StreamReader errorReader;
         Process process;
         string mOutputs = string.Empty;
         int mlastOutputsLength = 0;
@@ -100,11 +98,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         public override void Disconnect()
         {
             writer.Close();
+            writer.Dispose();
             process.CancelErrorRead();
             process.CancelOutputRead();
-            // TODO: kill processStartInfo.
             processStartInfo.Environment.Clear();
             process.Close();
+            process.Dispose();
         }
 
         public override string ConsoleWindowTitle()
@@ -114,7 +113,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         public override bool IsBusy()
         {
-            if (reader.EndOfStream)
+            if (process == null)
             {
                 return false;
             }
@@ -123,34 +122,6 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 return true;
             }
         }
-
-       
-        //private async Task ReadConsoleOutputAsync(CancellationToken token)
-        //{
-        //    while (true)
-        //    {
-        //        if (token.IsCancellationRequested)
-        //        {
-        //            break;
-        //        }
-        //        string outputString = await reader.ReadLineAsync();
-        //        mOutputs += outputString + System.Environment.NewLine;
-             
-        //    }            
-        //}
-
-        //private async Task ReadConsoleErrorAsync(CancellationToken token)
-        //{
-        //    while (true)
-        //    {
-        //        if (token.IsCancellationRequested)
-        //        {
-        //            break;
-        //        }
-        //        string outputString = await errorReader.ReadLineAsync();
-        //        mOutputs += outputString + System.Environment.NewLine;
-        //    }
-        //}
 
         public override void SendCommand(string command)
         {

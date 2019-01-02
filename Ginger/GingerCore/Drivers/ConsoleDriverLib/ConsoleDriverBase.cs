@@ -27,6 +27,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Threading;
 using Amdocs.Ginger.Common;
+using System.Threading;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -93,7 +94,9 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 if (mConsoleDriverWindow != null)
                 {
-                    mConsoleDriverWindow.Close();                                        
+                    mConsoleDriverWindow.Close();
+                    Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
+                    Thread.Sleep(100);
                     mConsoleDriverWindow = null;
                 }
             }
