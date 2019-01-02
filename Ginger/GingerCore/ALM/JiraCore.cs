@@ -77,7 +77,8 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
-            throw new NotImplementedException();
+            return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig);
+
         }
 
         public override List<string> GetALMDomainProjects(string ALMDomainName)

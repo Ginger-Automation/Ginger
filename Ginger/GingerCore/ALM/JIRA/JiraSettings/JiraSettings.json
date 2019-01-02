@@ -18,8 +18,12 @@
       "Value": "/rest/api/2/issue/createmeta?projectKeys={project_prefix}&issuetypeNames={issue_types}&expand=projects.issuetypes.fields"
     },
     {
-      "key": "Status",
+      "key": "SetStatus",
       "Value": "/rest/raven/1.0/api/testrun/{run_id}/status?status={run_status}"
+    },
+    {
+      "key": "GetRunStatus",
+      "Value": "/rest/raven/1.0/api/testrun/{run_id}"
     }
   ],
   "Resources": [

@@ -49,6 +49,52 @@ namespace GingerCore.ALM.JIRA.Bll
             return result;
         }
 
+        public bool ExecuteDataToJira(BusinessFlow bizFlow, PublishToALMConfig publishToALMConfig)
+        {
+            bool result = false;
+            if (bizFlow.ExternalID != "0" && (!String.IsNullOrEmpty(bizFlow.ExternalID)))
+            {
+                foreach(var actGroup in bizFlow.ActivitiesGroups)
+                {
+                    RunStatus jiraStatus = ConvertGingerStatusToJira(actGroup.RunStatus);
+                    var testExecutionData = CreateTestRunData(actGroup);
+                    if (!string.IsNullOrEmpty(testExecutionData.TestCaseRunId))
+                    {
+                       var executionResponse= jiraRepObj.SetRunStatus(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, testExecutionData.TestCaseRunId, jiraStatus);
+                        if (executionResponse.AuthenticationResponseObj.ErrorCode == 0)
+                            result = true;
+                        else
+                            result = false;
+                    }
+                }
+            }
+            return result;
+        }
+
+        private RunStatus ConvertGingerStatusToJira(ActivitiesGroup.eActivitiesGroupRunStatus runStatus)
+        {
+            RunStatus responseStatus = RunStatus.EXECUTING;
+            switch(runStatus)
+            {
+                case ActivitiesGroup.eActivitiesGroupRunStatus.Blocked:
+                    responseStatus = RunStatus.BLOCKED;
+                    break;
+                case ActivitiesGroup.eActivitiesGroupRunStatus.Failed:
+                    responseStatus = RunStatus.FAIL;
+                    break;
+                case ActivitiesGroup.eActivitiesGroupRunStatus.Passed:
+                    responseStatus = RunStatus.PASS;
+                    break;
+                case ActivitiesGroup.eActivitiesGroupRunStatus.Skipped:
+                    responseStatus = RunStatus.ABORTED;
+                    break;
+                case ActivitiesGroup.eActivitiesGroupRunStatus.Pending:
+                    responseStatus = RunStatus.TODO;
+                    break;
+            }
+            return responseStatus;
+        }
+
         private bool CreateTestExecution(BusinessFlow businessFlow, List<IJiraExportData> tcArray, IEnumerable<ExternalItemFieldBase> testExecutionFields)
         {
             bool result = true;
