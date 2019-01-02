@@ -34,7 +34,7 @@ namespace GingerAutoPilotTest
             TestResources.Assembly = Assembly.GetExecutingAssembly();
 
             // Init Reporter
-            Reporter.workSpaceReporter = new UnitTestWorkspaceReporter();
+            Reporter.WorkSpaceReporter = new UnitTestWorkspaceReporter();
         }
     }
 }

@@ -36,7 +36,7 @@ namespace GingerAutoPilotTest
 
 
             // Init Reporter
-            Reporter.workSpaceReporter = new UnitTestWorkspaceReporter();
+            Reporter.WorkSpaceReporter = new UnitTestWorkspaceReporter();
         }
     }
 }

@@ -438,7 +438,7 @@ namespace Amdocs.Ginger.Repository
         //TODO: Not using t why is it needed?
         public RepositoryItemBase DeserializeFromFile(Type t, string FileName)
         {
-            Reporter.ToConsole("DeserializeFromFile the file: " + FileName);
+            Reporter.ToConsole(eLogLevel.DEBUG, "DeserializeFromFile the file: " + FileName);
             
             if (FileName.Length > 0 && File.Exists(FileName))
             {

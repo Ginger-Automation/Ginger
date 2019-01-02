@@ -27,22 +27,34 @@ using GingerCoreNET.ReporterLib;
 namespace Amdocs.Ginger.Common
 {
     public class Reporter 
-    {
-        public static IWorkSpaceReporter workSpaceReporter { get; set; }
+    {        
+        public static WorkSpaceReporterBase WorkSpaceReporter { get; set; }
+
+        public static ReporterData ReporterData = new ReporterData();
 
         public static eAppReporterLoggingLevel CurrentAppLogLevel;
 
-        #region ReportToLog
         
+
+        #region ReportToLog
+
         public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
-        {            
-            workSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog, writeAlsoToConsoleIfNeeded, writeOnlyInDebugMode);
+        {
+            if (writeOnlyInDebugMode && CurrentAppLogLevel != eAppReporterLoggingLevel.Debug)
+            {
+                return;
+            }
+            if (logLevel == eLogLevel.ERROR)
+            {
+                ReporterData.ErrorCounter++;
+            }
+            WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog, writeAlsoToConsoleIfNeeded);
         }
 
         public static void ToLogAndConsole(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
             ToLog(logLevel, messageToLog, exceptionToLog, false);
-            ToConsole(messageToLog);
+            ToConsole(logLevel, messageToLog);            
         }
         #endregion Report to Log
 
@@ -74,7 +86,8 @@ namespace Amdocs.Ginger.Common
                         mess += o.ToString() + " ";
                     }
 
-                    workSpaceReporter.ShowMessageToUser(messageKey.ToString() + " - " + mess);
+                    string txt = messageKey.ToString() + " - " + mess + "{Error message key not found!}" ;
+                    WorkSpaceReporter.MessageBoxShow(txt, "Ginger",  MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
 
                     ToLog(eLogLevel.WARN, "The user message with key: '" + messageKey + "' was not found! and won't show to the user!");
                     return MessageBoxResult.None;
@@ -116,11 +129,11 @@ namespace Amdocs.Ginger.Common
                 }
                 else if (AddAllReportingToConsole)
                 {
-                    ToConsole("Showing User Message (Pop-Up): '" + messageText + "'");
+                    ToConsole(eLogLevel.DEBUG, "Showing User Message (Pop-Up): '" + messageText + "'");
                 }
 
                 //show the messege and return user selection
-                MessageBoxResult userSelection = workSpaceReporter.MessageBoxShow(messageText, messageToShow.Caption, messageToShow.ButtonsType, messageImage, messageToShow.DefualtResualt);                
+                MessageBoxResult userSelection = WorkSpaceReporter.MessageBoxShow(messageText, messageToShow.Caption, messageToShow.ButtonsType, messageImage, messageToShow.DefualtResualt);                
 
 
                 if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
@@ -129,7 +142,7 @@ namespace Amdocs.Ginger.Common
                 }
                 else if (AddAllReportingToConsole)
                 {
-                    ToConsole("User Selection for Pop-Up Message: '" + userSelection.ToString() + "'");
+                    ToConsole(eLogLevel.DEBUG, "User Selection for Pop-Up Message: '" + userSelection.ToString() + "'");
                 }
 
                 return userSelection;
@@ -138,8 +151,10 @@ namespace Amdocs.Ginger.Common
             catch (Exception ex)
             {
                 ToLog(eLogLevel.ERROR, "Failed to show the user message with the key: " + messageKey, ex);
+
+                string txt = "Failed to show the user message with the key: " + messageKey;
+                WorkSpaceReporter.MessageBoxShow(txt, "Ginger", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
                 
-                workSpaceReporter.ShowMessageToUser("Failed to show the user message with the key: " + messageKey);
                 return MessageBoxResult.None;
             }
         }
@@ -153,6 +168,7 @@ namespace Amdocs.Ginger.Common
         
         public static void ToGingerHelper(eGingerHelperMsgKey messageKey, object btnHandler = null, params object[] messageArgs)
          {
+            WorkSpaceReporter.ToStatus("koko"); 
          }
         
         public static void CloseGingerHelper()
@@ -162,21 +178,21 @@ namespace Amdocs.Ginger.Common
 
         #region Report to Console
         public static bool AddAllReportingToConsole = false;
-        public static void ToConsole(string messageToConsole, Exception exceptionToConsole = null)
+        public static void ToConsole(eLogLevel logLevel, string messageToConsole, Exception exceptionToConsole = null)
         {
             try
             {
-                string msg = messageToConsole;
+                string msg = messageToConsole;                
                 if (exceptionToConsole != null)
                 {
                     string excFullInfo = "Error:" + exceptionToConsole.Message + Environment.NewLine;
                     excFullInfo += "Source:" + exceptionToConsole.Source + Environment.NewLine;
                     excFullInfo += "Stack Trace: " + exceptionToConsole.StackTrace;
-                    msg += System.Environment.NewLine + "Exception Details:" + System.Environment.NewLine + excFullInfo;
+                    msg += Environment.NewLine + "Exception Details:" + Environment.NewLine + excFullInfo;
                 }
 
                 // Console.WriteLine(msg + System.Environment.NewLine);
-                workSpaceReporter.ConsoleWriteLine(msg);
+                WorkSpaceReporter.ConsoleWriteLine(logLevel, msg);
             }
             catch (Exception ex)
             {
@@ -239,6 +255,9 @@ namespace Amdocs.Ginger.Common
 
 
         private static bool RunningFromConfigFile = false;
+
+        
+
         public static void SetRunConfigMode(bool RunConfigMode)
         {
             RunningFromConfigFile = RunConfigMode;

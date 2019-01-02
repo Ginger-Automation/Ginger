@@ -17,36 +17,37 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.IO;
+using Amdocs.Ginger.UserControls;
 using Ginger.ALM;
 using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowWindows;
-using Ginger.SolutionGeneral;
+using Ginger.ConfigurationsLib;
 using Ginger.Functionalities;
 using Ginger.GeneralLib;
+using Ginger.MenusLib;
+using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows;
 using Ginger.SourceControl;
+using Ginger.User;
 using GingerCore;
 using GingerCore.Repository.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
 using System;
 using System.Collections.Concurrent;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
-using Amdocs.Ginger.IO;
-using Ginger.ConfigurationsLib;
-using Ginger.MenusLib;
-using Amdocs.Ginger;
-using Ginger.User;
-using Amdocs.Ginger.UserControls;
-using System.Drawing;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common;
 
 namespace Ginger
 {
@@ -54,6 +55,8 @@ namespace Ginger
     {
         public enum eSolutionTabType { None, BusinessFlows, Run, Configurations, Resources };
         public eSolutionTabType SelectedSolutionTab;
+
+        
 
         private bool mAskUserIfToClose = true;
         private long _currentClickedTabIndex = -1;
@@ -68,8 +71,7 @@ namespace Ginger
             try
             {
                 //General
-                this.WindowState = System.Windows.WindowState.Maximized;
-                //Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will appear running from Main Window STA
+                this.WindowState = System.Windows.WindowState.Maximized;                
 
                 //App
                 App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
@@ -117,18 +119,44 @@ namespace Ginger
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.GingerHelpLibrary);
                     App.UserProfile.NewHelpLibraryMessgeShown = true;
                 }
+
+
+                Reporter.ReporterData.PropertyChanged += ReporterDataChanged;                
+
             }
             catch (Exception ex)
             {
                 App.AppSplashWindow.Close();
                 Reporter.ToUser(eUserMsgKeys.ApplicationInitError, ex.Message);
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Init Main Window", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Init Main Window", ex);                
             }
         }
 
+        private void ReporterDataChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ReporterData.ErrorCounter))
+                {
+                this.Dispatcher.Invoke(() => {
+                    if (Reporter.ReporterData.ErrorCounter == 0)
+                    {
+                        xLogErrorsPnl.Visibility = Visibility.Collapsed;
+
+                    }
+                    else
+                    {
+                        xLogErrorsPnl.Visibility = Visibility.Visible;
+                        xLogErrorsLbl.Content = "[" + Reporter.ReporterData.ErrorCounter + "]";
+
+                    }
+                });
+            }
+        }
+
+       
+
 
         // temp public fix me !!!!!!!!!!!!!!!!!!
-        public int mErrorsNum = 0;
+
         //private void Reporter_ErrorReportedEvent()
         //{
         //    try
@@ -141,21 +169,21 @@ namespace Ginger
         //    }
         //}
 
-        public void UpdateErrorNotification()
-        {
-            Task.Factory.StartNew(() =>
-            {
-                this.Dispatcher.Invoke(() =>
-                {
-                    if (xLogErrorsPnl != null)
-                    {
-                        xLogErrorsPnl.Visibility = Visibility.Visible;
-                        xLogErrorsLbl.Content = "[" + ++mErrorsNum + "]";
-                        xLogErrorsPnl.ToolTip = mErrorsNum + " Errors were logged to Ginger log, click to view log file";
-                    }
-                });
-            });
-        }
+        //public void UpdateErrorNotification()
+        //{
+        //    Task.Factory.StartNew(() =>
+        //    {
+        //        this.Dispatcher.Invoke(() =>
+        //        {
+        //            if (xLogErrorsPnl != null)
+        //            {
+        //                xLogErrorsPnl.Visibility = Visibility.Visible;
+        //                xLogErrorsLbl.Content = "[" + ++mErrorsNum + "]";
+        //                xLogErrorsPnl.ToolTip = mErrorsNum + " Errors were logged to Ginger log, click to view log file";
+        //            }
+        //        });
+        //    });
+        //}
 
         private void BetaFeatures_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -250,8 +278,19 @@ namespace Ginger
             SetRecentSolutionsAsMenuItems();
         }
 
+
+        // New method to set staus bar 
+        internal void ShowStatus(string statusText)
+        {
+            xProcessMsgPnl.Visibility = Visibility.Visible;
+            xProcessMsgTxtBlock.Text = statusText;
+            xProcessMsgTxtBlock.ToolTip = statusText;
+        }
+
+
+        // ??? !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         private DateTime mProcessMsgShowTime;
-        private async void Reporter_HandlerGingerHelperEvent(GingerHelperEventArgs e)
+        public async void Reporter_HandlerGingerHelperEvent(GingerHelperEventArgs e)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -277,7 +316,7 @@ namespace Ginger
                     {
                         while ((DateTime.Now - mProcessMsgShowTime).TotalSeconds < 1)
                         {
-                            Task.Delay(100);
+                            Task.Delay(100);  
                         }
                         xProcessMsgPnl.Visibility = Visibility.Collapsed;
                     }
@@ -718,13 +757,12 @@ namespace Ginger
         }
 
         private void xLogErrors_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            //ShowGingerLog();
+        {            
             LogDetailsPage logDetailsPage = new LogDetailsPage();
             logDetailsPage.ShowAsWindow();
 
-            xLogErrorsPnl.Visibility = Visibility.Collapsed;
-            mErrorsNum = 0;
+            xLogErrorsPnl.Visibility = Visibility.Collapsed;            
+            Reporter.ReporterData.ResetErrorCounter();
         }
 
         private void xFindAndReplaceSolutionButton_Click(object sender, RoutedEventArgs e)

@@ -378,7 +378,7 @@ namespace Ginger
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StandAloneThreadExceptionHandler);
 
-            Reporter.workSpaceReporter = new GingerWorkSpaceReporter();
+            Reporter.WorkSpaceReporter = new GingerWorkSpaceReporter();
 
 
             if (Environment.GetCommandLineArgs().Count() > 1)

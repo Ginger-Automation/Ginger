@@ -1,21 +1,19 @@
 ﻿using Amdocs.Ginger.Common;
+using GingerCore;
 using GingerCoreNET.ReporterLib;
 using System;
 using System.Windows;
 
 namespace Ginger.ReporterLib
 {
-    public class GingerWorkSpaceReporter : IWorkSpaceReporter
+    public class GingerWorkSpaceReporter : WorkSpaceReporterBase
     {
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public void ConsoleWriteLine(string message)
-        {
-            Console.WriteLine(message + System.Environment.NewLine);
-        }
+        
 
-        public Amdocs.Ginger.Common.MessageBoxResult MessageBoxShow(string messageText, string caption, 
+        public override Amdocs.Ginger.Common.MessageBoxResult MessageBoxShow(string messageText, string caption, 
                         Amdocs.Ginger.Common.MessageBoxButton buttonsType, GingerCoreNET.ReporterLib.MessageBoxImage messageImage, 
                         Amdocs.Ginger.Common.MessageBoxResult defualtResault)
         {
@@ -30,24 +28,25 @@ namespace Ginger.ReporterLib
             return result;
         }
 
+        public override void ToStatus(string statusText)
+        {
+            // GingerHelperEventArgs e = new GingerHelperEventArgs(GingerHelperEventArgs.eGingerHelperEventActions.Show, eGingerHelperMsgType.INFO, null, statusText);
 
-        // TODO: one for info one for errror !!!!!!!!!!!!!!!!!!!!!!
-        public void ShowMessageToUser(string messageText)
-        {                        
-            MessageBoxWindow messageBoxWindow = new MessageBoxWindow(messageText, "Ginger",  Amdocs.Ginger.Common.MessageBoxButton.OK, GingerCoreNET.ReporterLib.MessageBoxImage.Information ,  Amdocs.Ginger.Common.MessageBoxResult.OK);
-            messageBoxWindow.ShowDialog();            
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // App.MainWindow.Reporter_HandlerGingerHelperEvent(e);
+            App.MainWindow.ShowStatus(statusText);
         }
 
 
-        public void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
+        // Remove and use the above with default values !!!!!!!!!!!!!!!!!!!!!!!!
+
+        
+
+        public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
         {
             try
             {
-                // FIXME !!!!!!!!!!!!!!!!!!!!!!!
 
-                //if (writeOnlyInDebugMode)
-                //    if (CurrentAppLogLevel != eAppReporterLoggingLevel.Debug)
-                //        return;
                 switch (logLevel)
                 {
                     case eLogLevel.DEBUG:
@@ -55,11 +54,6 @@ namespace Ginger.ReporterLib
                         break;
                     case eLogLevel.ERROR:
                         log.Error(messageToLog, exceptionToLog);
-
-                        // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        // OnErrorReportedEvent();
-                        App.MainWindow.mErrorsNum++;
-                        App.MainWindow.UpdateErrorNotification();
                         break;
                     case eLogLevel.FATAL:
                         log.Fatal(messageToLog, exceptionToLog);

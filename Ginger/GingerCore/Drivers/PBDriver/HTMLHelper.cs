@@ -1607,10 +1607,10 @@ namespace GingerCore.Drivers.PBDriver
                 element.scrollIntoView();
                 x = getelementXCordinate(element) + x;
                 Reporter.ToLogAndConsole(eLogLevel.INFO, "elementX::" + x);
-                Reporter.ToConsole("elementX::" + x);
+                Reporter.ToConsole(eLogLevel.DEBUG, "elementX::" + x);
                 y = getelementYCordinate(element) + y;
                 Reporter.ToLogAndConsole(eLogLevel.INFO, "elementy::" + y);
-                Reporter.ToConsole("elementY::" + y);
+                Reporter.ToConsole(eLogLevel.DEBUG, "elementY::" + y);
                 winAPI.SendRightClick(AEBrowser, x +"," + y );                
                 return true;
             }
@@ -1725,8 +1725,8 @@ namespace GingerCore.Drivers.PBDriver
 
         public IHTMLElement GetHTMLElementFromPoint(int x, int y)
         {
-            Reporter.ToLog(eLogLevel.INFO, "GetHTMLElementFromPoint::" + x + "::" + y);
-            Reporter.ToConsole("GetHTMLElementFromPoint::" + x + "::" + y);
+            Reporter.ToLogAndConsole(eLogLevel.INFO, "GetHTMLElementFromPoint::" + x + "::" + y);
+            
             IHTMLElement Elem = mHtmlDocument.elementFromPoint(x, y);
             if (Elem.tagName.ToLower() == "iframe")
             {
@@ -1738,36 +1738,35 @@ namespace GingerCore.Drivers.PBDriver
 
                     Elem = currentFrameDocument.elementFromPoint(x, y);
                 }                    
-            }
-            Reporter.ToConsole("GetHTMLElementFromPoint::" + Elem.className);
-            Reporter.ToLog(eLogLevel.INFO, "GetHTMLElementFromPoint::" + Elem.className);
+            }            
+            Reporter.ToLogAndConsole(eLogLevel.DEBUG, "GetHTMLElementFromPoint::" + Elem.className);
             return Elem;
         }
 
         public int getelementXCordinate(IHTMLElement h1,bool frame =false)
         {
             if (object.ReferenceEquals(h1.offsetParent, null)) return 0;
-            Reporter.ToConsole("getelementXCordinate-Parent is not null");
+            Reporter.ToConsole(eLogLevel.DEBUG, "getelementXCordinate-Parent is not null");
             if (h1.offsetLeft >= 0 && h1.offsetParent.offsetLeft >= 0)
             {
-                Reporter.ToConsole("getelementXCordinate-"+ h1.offsetLeft);
+                Reporter.ToConsole(eLogLevel.DEBUG, "getelementXCordinate-" + h1.offsetLeft);
                 IHTMLElement h1Par = h1.offsetParent;
                 int xPos = h1.offsetLeft;
-                Reporter.ToConsole("getelementXCordinate-parLeft" + xPos);
+                Reporter.ToConsole(eLogLevel.DEBUG, "getelementXCordinate-parLeft" + xPos);
                 while (h1Par != null)
                 {
                     xPos += h1Par.offsetLeft;
-                    Reporter.ToConsole("getelementXCordinate-parLeft" + xPos);
+                    Reporter.ToConsole(eLogLevel.DEBUG, "getelementXCordinate-parLeft" + xPos);
                     h1Par = h1Par.offsetParent;
                 }
-                Reporter.ToConsole("getelementXCordinate-parLeft out " + xPos);
+                Reporter.ToConsole(eLogLevel.DEBUG, "getelementXCordinate-parLeft out " + xPos);
                 int scrollLeft;
                 if (currentFrameDocument != null && frame == false)
                 {
                     xPos += getelementXCordinate(currentFrame, true);                   
                 }  
                 scrollLeft = getscrollLeft(h1);
-                Reporter.ToConsole("getelementXCordinate-scrollLeft out2 " + scrollLeft);
+                Reporter.ToConsole(eLogLevel.DEBUG, "getelementXCordinate-scrollLeft out2 " + scrollLeft);
                 return xPos- scrollLeft;
             }
             return -1;
@@ -1779,7 +1778,7 @@ namespace GingerCore.Drivers.PBDriver
             while (h1Par != null)
             {
                 scrollLeft += ((IHTMLElement2)h1Par).scrollLeft;
-                Reporter.ToConsole("getelementXCordinate-scrollLeft" + scrollLeft);
+                Reporter.ToConsole(eLogLevel.DEBUG, "getelementXCordinate-scrollLeft" + scrollLeft);
                 h1Par = h1Par.parentElement;
             }
             return scrollLeft;
@@ -1792,7 +1791,7 @@ namespace GingerCore.Drivers.PBDriver
             while (h1Par != null)
             {
                 scrollTop += ((IHTMLElement2)h1Par).scrollTop;
-                Reporter.ToConsole("getelementYCordinate-getscrollTop" + scrollTop);
+                Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-getscrollTop" + scrollTop);
                 h1Par = h1Par.parentElement;
             }
             return scrollTop;
@@ -1801,27 +1800,27 @@ namespace GingerCore.Drivers.PBDriver
         public int getelementYCordinate(IHTMLElement h1,bool frame=false)
         {
             if (object.ReferenceEquals(h1.offsetParent, null)) return 0;
-            Reporter.ToConsole("getelementYCordinate-Parent is not null");
+            Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-Parent is not null");
             if (h1.offsetTop >= 0 && h1.offsetParent.offsetTop >= 0)
             {
-                Reporter.ToConsole("getelementYCordinate-" + h1.offsetTop);
+                Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-" + h1.offsetTop);
                 IHTMLElement h1Par = h1.offsetParent;
                 int yPos = h1.offsetTop;
-                Reporter.ToConsole("getelementYCordinate-parTop" + yPos);
+                Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-parTop" + yPos);
                 while (h1Par != null)
                 {
                     yPos += h1Par.offsetTop;
-                    Reporter.ToConsole("getelementYCordinate-parTop" + yPos);
+                    Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-parTop" + yPos);
                     h1Par = h1Par.offsetParent;                    
                 }
-                Reporter.ToConsole("getelementYCordinate-parTop out" + yPos);
+                Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-parTop out" + yPos);
                 int scrollTop;
                 if (currentFrameDocument != null && frame == false)
                 {
                     yPos += getelementYCordinate(currentFrame, true);                   
                 }               
                 scrollTop = getscrollTop(h1);
-                Reporter.ToConsole("getelementYCordinate-scrollTop out2 " + scrollTop);
+                Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-scrollTop out2 " + scrollTop);
                 return yPos - scrollTop;
             }
             return -1;
