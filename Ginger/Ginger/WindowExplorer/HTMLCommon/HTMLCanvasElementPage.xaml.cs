@@ -34,8 +34,8 @@ namespace Ginger.WindowExplorer.HTMLCommon
     /// </summary>
     public partial class HTMLCanvasElementPage : Page
     {
-        ElementInfo ElementInfo;
-        ObservableList<ActInputValue> actInputValuesList;    
+        ElementInfo ElementInfo;  
+        Act mAct;
         
         public HTMLCanvasElementPage(ElementInfo elementInfo)
         {
@@ -46,7 +46,14 @@ namespace Ginger.WindowExplorer.HTMLCommon
 
         public ObservableList<ActInputValue> GetTableRelatedInputValues()
         {
-            return actInputValuesList;
+            if(mAct!=null)
+            {
+                return mAct.InputValues;
+            }  
+            else
+            {
+                return null;
+            }
         }
         private void InjectScriptAndStartEvent()
         {
@@ -80,11 +87,10 @@ namespace Ginger.WindowExplorer.HTMLCommon
             else
             {
                 XOffset.Text = x;
-                YOffset.Text = y;                              
-                Amdocs.Ginger.Common.GeneralLib.General.AddOrUpdateInputParamValue("XCoordinate", x, actInputValuesList);
-                Amdocs.Ginger.Common.GeneralLib.General.AddOrUpdateInputParamValue("YCoordinate", y, actInputValuesList);
-            }
-            //TODO list actions
+                YOffset.Text = y;                
+                mAct.AddOrUpdateInputParamValue("XCoordinate", x);
+                mAct.AddOrUpdateInputParamValue("YCoordinate", y);
+            }            
         }
     }
 }

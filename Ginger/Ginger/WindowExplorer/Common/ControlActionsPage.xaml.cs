@@ -166,7 +166,7 @@ namespace Ginger.WindowExplorer
             }
 
             Act act = (Act)((Act)(mActions.CurrentItem)).CreateCopy();
-            SetAction(act);
+            SetActionDetails(act);
             App.BusinessFlow.AddAct(act);
 
             int selectedActIndex = -1;
@@ -183,47 +183,39 @@ namespace Ginger.WindowExplorer
             AEP.ShowAsWindow();
         }
 
-        private Act SetAction(Act act)
-        {
-            Act mAct = act;
+        private Act SetActionDetails(Act act)
+        {           
             act.Active = true;
             act.AddNewReturnParams = true;
+            act.Value = ValueTextBox.Text;
+
             ElementLocator EL = (ElementLocator)mLocators.CurrentItem;
+
             if ((mActions.CurrentItem).GetType() == typeof(ActUIElement))
             {
-                ActUIElement aaa = (ActUIElement)mActions.CurrentItem;
+                //Set UIElement action locator
                 ActUIElement actUI = (ActUIElement)act;
                 actUI.ElementLocateBy = EL.LocateBy;
-                actUI.ElementLocateValue = EL.LocateValue;
-                actUI.Value = ValueTextBox.Text;
-                if(actUI.ElementType == eElementType.EditorPane)
-                {
-                    actUI.GetOrCreateInputParam(ActUIElement.Fields.ControlActionValue, ValueTextBox.Text);
-                    actUI.GetOrCreateInputParam(ActUIElement.Fields.ElementType, aaa.GetInputParamValue(ActUIElement.Fields.ElementType));
-                    actUI.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, aaa.GetInputParamValue(ActUIElement.Fields.ControlAction));
-                    actUI.GetOrCreateInputParam(ActUIElement.Fields.ElementAction, aaa.GetInputParamValue(ActUIElement.Fields.ElementAction));
-                    actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, aaa.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
-                    actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle));
-                    actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnValue));
-                    actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, aaa.GetInputParamValue(ActUIElement.Fields.WhereOperator));
-                    actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, aaa.GetInputParamValue(ActUIElement.Fields.WhereProperty));
-                }
-                if (actUI.ElementType == eElementType.Canvas)
+                actUI.ElementLocateValue = EL.LocateValue;         
+                
+                //Set action unique input values
+                if (mActInputValues!=null)
                 {
                     foreach (ActInputValue iv in mActInputValues)
                     {
-                        actUI.InputValues.Add(iv);
+                        actUI.AddOrUpdateInputParamValue(iv.Param,iv.Value);
                     }
                 }
+
                 act = actUI;
             }
             else
             {
+                //Set action locator
                 act.LocateBy = EL.LocateBy;
-                act.LocateValue = EL.LocateValue;
-                act.Value = ValueTextBox.Text;
-            }
-            return mAct;
+                act.LocateValue = EL.LocateValue;                
+            }            
+            return act;
         }
 
         private void TestButton_Click(object sender, RoutedEventArgs e)
@@ -241,7 +233,7 @@ namespace Ginger.WindowExplorer
                 act = (Act)((Act)(mActions.CurrentItem)).CreateCopy();
             }
 
-            SetAction(act);
+            SetActionDetails(act);
             App.AutomateTabGingerRunner.PrepActionVE(act);
             ApplicationAgent ag = App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
             if (ag != null)

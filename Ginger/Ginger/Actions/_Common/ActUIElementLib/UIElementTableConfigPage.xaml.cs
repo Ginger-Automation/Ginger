@@ -57,7 +57,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
         public UIElementTableConfigPage(ActUIElement Act, PlatformInfoBase Platform)
         {
             eBaseWindow = BaseWindow.ActEditPage;
-            mAct = Act;                   
+            mAct = Act;
+            mAct.Description = "UI Element Table";
             mPlatform = Platform;
           
 
@@ -68,7 +69,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
         public UIElementTableConfigPage(ElementInfo ElementInfo, ObservableList<Act> Actions, ActUIElement Act = null)
         {
             eBaseWindow = BaseWindow.WindowExplorer;
-            mAct = new ActUIElement();            
+            mAct = new ActUIElement();
+            mAct.Description = "UI Element Table";
             string targetApp = App.BusinessFlow.CurrentActivity.TargetApplication;
             mPlatform = PlatformInfoBase.GetPlatformImpl((from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetApp select x.Platform).FirstOrDefault());
 
@@ -104,7 +106,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         public void TableActionFieldBinding()
         {
             RowSelectorPanelInit();
-            WhereColumn.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector,mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector)), typeof(ActUIElement.eTableElementRunColSelectorValue), isVENeeded: false, UCselectionChange: WhereColumn_SelectionChanged);
+            WhereColumn.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector,mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector)), typeof(ActUIElement.eTableElementRunColSelectorValue), isVENeeded: false, UCselectionChange: WhereColumn_SelectionChanged);    
             WhereColumnTitle.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle)), isVENeeded: true, UCselectionChange: WhereColumnTitle_SelectionChanged);
             WhereProperty.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, mAct.GetInputParamValue(ActUIElement.Fields.WhereProperty)), typeof(ActUIElement.eTableElementRunColPropertyValue), isVENeeded: false, UCselectionChange: WhereProperty_SelectionChanged);
             WhereOperator.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, mAct.GetInputParamValue(ActUIElement.Fields.WhereOperator)), typeof(ActUIElement.eTableElementRunColOperator), isVENeeded: false, UCselectionChange: WhereOperator_SelectionChanged);
@@ -257,7 +259,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 WhereColumnValue.Visibility = Visibility.Visible;
                 ColumnLabelPanel.Visibility = Visibility.Visible;
                 cmbColSelectorValuePanel.Visibility = Visibility.Visible;
-                cmbColumnValuePanel.Visibility = Visibility.Visible;
+                cmbColumnValuePanel.Visibility = Visibility.Visible;                
                 cmbColSelectorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue), typeof(ActUIElement.eTableElementRunColSelectorValue), isVENeeded: false, UCselectionChange: ColSelectorValue_SelectionChanged);
                 cmbColumnValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle), isVENeeded: true, UCselectionChange: ColumnValue_SelectionChanged);
                 TableActionFieldBinding();
@@ -588,7 +590,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 descriptionString.Add("WinClick Cell: ");
                 descriptionString.Add("Get Selected Cell from Column: ");
                 
-                ActUIElement actObj = (ActUIElement)mAct.CreateCopy();
+                ActUIElement actObj = (ActUIElement)mAct.CreateCopy();                
                 actObj.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eElementAction.SetValue.ToString());
                 actObj.Description = "Set Value of Cell: " + description;
                 actObj.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
@@ -599,7 +601,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 mActions.Add(actObj);
 
 
-                ActUIElement actObj1 = (ActUIElement)mAct.CreateCopy(); ;
+                ActUIElement actObj1 = (ActUIElement)mAct.CreateCopy();                
                 actObj1.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eElementAction.GetValue.ToString());
                 actObj1.Description = "Get Value of Cell: " + description;
                 actObj1.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
@@ -610,7 +612,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 mActions.Add(actObj1);
 
 
-                ActUIElement actObj2 = (ActUIElement)mAct.CreateCopy(); ;
+                ActUIElement actObj2 = (ActUIElement)mAct.CreateCopy();                
                 actObj2.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eElementAction.Click.ToString());
                 actObj2.Description = "Click Cell: " + description;
                 actObj2.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
