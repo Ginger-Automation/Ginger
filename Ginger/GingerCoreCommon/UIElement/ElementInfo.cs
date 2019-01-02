@@ -60,6 +60,9 @@ namespace Amdocs.Ginger.Common.UIElement
         public bool IsAutoLearned { get; set; }
 
         public object ElementObject { get; set; }
+
+
+
         public Boolean IsExpandable { get; set; }
 
         public IWindowExplorer WindowExplorer { get; set; }        
@@ -329,7 +332,7 @@ namespace Amdocs.Ginger.Common.UIElement
         ByCSS,
         [EnumValueDescription("By XPath")]
         ByXPath,
-        [EnumValueDescription("By RelXPath")]
+        [EnumValueDescription("By Relative XPath")]
         ByRelXPath,
         [EnumValueDescription("By X,Y")]
         ByXY,

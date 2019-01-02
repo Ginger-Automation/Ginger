@@ -98,26 +98,30 @@ namespace GingerCore.Actions.WebAPI
             {
                 for (int i = 0; i < mAct.HttpHeaders.Count(); i++)
                 {
+                   
+                    var specialCharactersReg = new Regex("^[a-zA-Z0-9 ]*$");
+                    string param = mAct.HttpHeaders[i].Param;
+                    string value = mAct.HttpHeaders[i].ValueForDriver;
 
-                    if (mAct.HttpHeaders[i].Param == "Content-Type")
+                    if (param == "Content-Type")
                     {
-                        string key = mAct.HttpHeaders[i].ItemName.ToString();
-                        string value = mAct.HttpHeaders[i].ValueForDriver;
                         ContentType = value;
                     }
-                    else if (mAct.HttpHeaders[i].Param.ToUpper() == "DATE")
+                    else if (param.ToUpper() == "DATE")
                     {
 
-                        Client.DefaultRequestHeaders.Date =System.DateTime.Parse(mAct.HttpHeaders[i].ValueForDriver);
+                        Client.DefaultRequestHeaders.Date = System.DateTime.Parse(value);
                     }
-
+                    else if (!specialCharactersReg.IsMatch(value))
+                    {
+                        Client.DefaultRequestHeaders.TryAddWithoutValidation(param, value);
+                    }
                     else
                     {
-                        string key = mAct.HttpHeaders[i].ItemName.ToString();
-                        string value = mAct.HttpHeaders[i].ValueForDriver;
-                        Client.DefaultRequestHeaders.Add(key, value);
+                        Client.DefaultRequestHeaders.Add(param, value);
                     }
-                }
+
+                }    
             }
         }
 

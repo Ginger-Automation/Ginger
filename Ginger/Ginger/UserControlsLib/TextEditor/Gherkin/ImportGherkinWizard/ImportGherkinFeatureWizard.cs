@@ -34,13 +34,14 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         // shared data across pages goes here        
                 
         public string mFolder;
-        public bool Imported;
-        public string mFeatureFile;
+        public bool Imported;        
         public BusinessFlow BizFlow;
         public GenericWindow genWin;
         public eImportGherkinFileContext mContext;
         public string FetaureFileName;
-        ImportGherkinTargetFolder importGherkinTargetFolder;        
+        ImportGherkinTargetFolder importGherkinTargetFolder;
+        public string mFeatureFile { get; set; }
+
         public ITreeViewItem bizFlowTargetFolder { get; set; }
         public ITreeViewItem featureTargetFolder { get; set; }
         
