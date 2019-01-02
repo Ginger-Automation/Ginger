@@ -3326,11 +3326,11 @@ private PayLoad GetComponentState(Component c)
 		
 		if(componentClassName != null)
 		{
-			Date date=null;
+			Date dateValue=null;
 			Object o=null;
 			try 
 			{
-				date= Utils.parseDateValue(value);
+				dateValue= Utils.parseDateValue(value);
 				
 			} 
 			catch (Exception e) 
@@ -3341,7 +3341,7 @@ private PayLoad GetComponentState(Component c)
 			
 			if (componentClassName.contains("uif"))			
 			{				
-				Boolean result= mASCFHelper.SetComponentDate(c, date);
+				Boolean result= mASCFHelper.SetComponentDate(c, dateValue);
 				
 				if(result == false)
 				{
@@ -3356,7 +3356,7 @@ private PayLoad GetComponentState(Component c)
 			}
 			else if (componentClassName.contains("JDateField"))
 			{
-				Boolean result= mSwingHelper.SetComponentDate(c, date);
+				Boolean result= mSwingHelper.SetComponentDate(c, dateValue);
 				
 				if(result == false)
 				{
@@ -3373,13 +3373,12 @@ private PayLoad GetComponentState(Component c)
 			
 			
 			SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a"); 
-			String actualDateValue= formatter.format(date);  
-			//TODO: Below is ugly. Change it do compare 2 dates instead of string manipulations
-			String CurrentSelectedDate=actualDateValue.toString().substring(0, 11) + actualDateValue.toString().substring(20);
-			String ExpectedDate=value.toString().substring(0, 11) + actualDateValue.toString().substring(20);
+			String actualDateValue= formatter.format(dateValue);  
 			
-			if(!CurrentSelectedDate.equalsIgnoreCase(ExpectedDate))
-				return PayLoad.Error("Current Selected Value::" + CurrentSelectedDate + " - Expected Value::" + ExpectedDate);
+			String expectedDateValue= formatter.format(o);
+						
+			if(actualDateValue.compareTo(expectedDateValue)!=0)
+				return PayLoad.Error("Current Selected Value::" + actualDateValue + " - Expected Value::" + expectedDateValue);
 			
 			return PayLoad.OK("Date value set to..." + value);
 			
