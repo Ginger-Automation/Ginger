@@ -3,31 +3,28 @@
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
 
+trigger:
+- master
+
 pool:
-  vmImage: 'VS2017-Win2016'
+  vmImage: 'ubuntu-16.04'
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  buildConfiguration: 'Debug'
 
 steps:
-- task: NuGetToolInstaller@0
-
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    TestAdapterPath:  'Ginger\packages\MSTest.TestAdapter.1.3.2\build\_common'
-    testResultsFiles: '**/*.trx'
+- script: dotnet restore
+- script: |
+    dotnet build GingerCoreNETUnitTest --configuration $(buildConfiguration)
+    dotnet test *GingerCoreNETUnitTest.csproj --configuration $(buildConfiguration) --logger trx
+    dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
     
+    inputs:
+      failOnStandardError: 'true'
+
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
+    failOnStandardError: 'true'
