@@ -87,10 +87,6 @@ namespace Ginger
                 App.UserProfile.SaveUserProfile();
                 App.UserProfile.RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
 
-                //Reporter                
-                // Reporter.HandlerGingerHelperEvent += Reporter_HandlerGingerHelperEvent;
-                // Reporter.ErrorReportedEvent += Reporter_ErrorReportedEvent;
-
                 //Main Menu                            
                 xGingerIconImg.ToolTip = App.AppFullProductName + Environment.NewLine + "Version " + App.AppVersion;
                 SetSolutionDependedUIElements();
@@ -146,45 +142,13 @@ namespace Ginger
                     {
                         xLogErrorsPnl.Visibility = Visibility.Visible;
                         xLogErrorsLbl.Content = "[" + Reporter.ReporterData.ErrorCounter + "]";
-
+                        xLogErrorsPnl.ToolTip = Reporter.ReporterData.ErrorCounter + " Errors were logged to Ginger log, click to view log file";
                     }
                 });
             }
         }
 
        
-
-
-        // temp public fix me !!!!!!!!!!!!!!!!!!
-
-        //private void Reporter_ErrorReportedEvent()
-        //{
-        //    try
-        //    {
-        //        UpdateErrorNotification();
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        //something went wrong
-        //    }
-        //}
-
-        //public void UpdateErrorNotification()
-        //{
-        //    Task.Factory.StartNew(() =>
-        //    {
-        //        this.Dispatcher.Invoke(() =>
-        //        {
-        //            if (xLogErrorsPnl != null)
-        //            {
-        //                xLogErrorsPnl.Visibility = Visibility.Visible;
-        //                xLogErrorsLbl.Content = "[" + ++mErrorsNum + "]";
-        //                xLogErrorsPnl.ToolTip = mErrorsNum + " Errors were logged to Ginger log, click to view log file";
-        //            }
-        //        });
-        //    });
-        //}
-
         private void BetaFeatures_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(WorkSpace.Instance.BetaFeatures.IsUsingBetaFeatures))
