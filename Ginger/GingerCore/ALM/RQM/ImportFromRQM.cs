@@ -45,7 +45,7 @@ namespace GingerCore.ALM.RQM
 
     public static class ImportFromRQM
     {
-        public static ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
+        public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
 
         public static int totalValues = 0;
@@ -80,7 +80,7 @@ namespace GingerCore.ALM.RQM
 
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
-                    IActivitiesGroup repoActivsGroup = null;
+                    ActivitiesGroup repoActivsGroup = null;
                     if (repoActivsGroup == null)
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
                     if (repoActivsGroup != null)
@@ -261,7 +261,7 @@ namespace GingerCore.ALM.RQM
                                     if (stepActivityVar is VariableString)
                                         ((VariableString)stepActivityVar).InitialStringValue = param.Value;
                                 }
-                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
                         }
                     }
@@ -270,7 +270,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return null;
             }
         }
@@ -324,7 +324,7 @@ namespace GingerCore.ALM.RQM
 
                             //check if the TC is already exist in repository
                             ActivitiesGroup tcActivsGroup;
-                            IActivitiesGroup repoActivsGroup = null;
+                            ActivitiesGroup repoActivsGroup = null;
                             if (repoActivsGroup == null)
                                 repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
                             if (repoActivsGroup != null)
@@ -497,7 +497,7 @@ namespace GingerCore.ALM.RQM
                                             if (stepActivityVar is VariableString)
                                                 ((VariableString)stepActivityVar).InitialStringValue = param.Value;
                                         }
-                                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                                        catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                                     }
                                 }
                             }
@@ -508,7 +508,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return;
             }
         }
@@ -538,7 +538,7 @@ namespace GingerCore.ALM.RQM
 
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
-                    IActivitiesGroup repoActivsGroup = null;
+                    ActivitiesGroup repoActivsGroup = null;
                     if (repoActivsGroup == null)
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
                     if (repoActivsGroup != null)
@@ -711,7 +711,7 @@ namespace GingerCore.ALM.RQM
                                     if (stepActivityVar is VariableString)
                                         ((VariableString)stepActivityVar).InitialStringValue = param.Value;
                                 }
-                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
                         }
                     }
@@ -720,7 +720,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return;
             }
         }
@@ -740,7 +740,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while pulling the parameters names from QC TC Step Description/Expected", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while pulling the parameters names from QC TC Step Description/Expected", ex);
             }
         }
 
@@ -761,7 +761,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while stripping the HTML from QC TC Step Description/Expected", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while stripping the HTML from QC TC Step Description/Expected", ex);
                 return HTMLText;
             }
         }
@@ -782,7 +782,7 @@ namespace GingerCore.ALM.RQM
                 string jsonItemsFieldsFile = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Fields", "ExternalItemsFields.json");
                 if (!File.Exists(jsonItemsFieldsFile))
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "ALM RQM, Restoring External Items Fields from ExternalItemsFields.json, file hasn't been found at: " + jsonItemsFieldsFile);
+                    Reporter.ToLog(eLogLevel.INFO, "ALM RQM, Restoring External Items Fields from ExternalItemsFields.json, file hasn't been found at: " + jsonItemsFieldsFile);
                     return ItemFieldsPossibleValues;
                 }
 
@@ -809,7 +809,7 @@ namespace GingerCore.ALM.RQM
                     ItemFieldsPossibleValues.Add(itemField);
                 }
             }
-            catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
+            catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
 
             return ItemFieldsPossibleValues;
         }
@@ -1215,7 +1215,7 @@ namespace GingerCore.ALM.RQM
                     }
                 }
             }
-            catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
+            catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
 
             SaveItemFields(fields);
             return fields;

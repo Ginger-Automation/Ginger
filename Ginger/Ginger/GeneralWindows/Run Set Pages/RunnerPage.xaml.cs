@@ -226,7 +226,7 @@ namespace Ginger.Run
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
            
-                if (Reporter.ToUser(eUserMsgKeys.DeleteBusinessflow) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.DeleteBusinessflow) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     BusinessFlow bff = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
                     Runner.BusinessFlows.Remove(bff);
@@ -441,7 +441,7 @@ namespace Ginger.Run
             }
             catch (InvalidOperationException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to Update Stats", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Update Stats", e);
             }
         }
         //ToDo : move to piechart section or create usercontrol

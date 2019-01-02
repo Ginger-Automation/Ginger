@@ -8,6 +8,7 @@ using Ginger.Run;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using GingerCore.ALM;
+using GingerCore.Activities;
 
 #region License
 /*
@@ -40,7 +41,7 @@ namespace Amdocs.Ginger.Common
     {        
         //BusinessFlow CreateBusinessFlow();
         //ObservableList<BusinessFlow> GetListofBusinessFlow();
-        IActivitiesGroup CreateActivitiesGroup();
+
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow);
 
         IValueExpression CreateValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null);
@@ -50,7 +51,7 @@ namespace Amdocs.Ginger.Common
         ObservableList<IDatabase> GetDatabaseList();
         ObservableList<VariableBase> GetVariaables();
         ObservableList<IAgent> GetAllIAgents();
-        ObservableList<ProjEnvironment> GetAllEnvironments();
+     
 
         void StartAgentDriver(IAgent agent);
         Type GetDriverType(IAgent agent);
@@ -71,7 +72,8 @@ namespace Amdocs.Ginger.Common
         Dictionary<string, string> TakeDesktopScreenShot(bool v);
         
         void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
-        void MessageBoxShow(string message);
+
+        
 
         string GenerateTemplate(string templatename, object o);
         ITextBoxFormatter CreateTextBoxFormatter(object Textblock);

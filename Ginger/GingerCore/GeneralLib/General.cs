@@ -40,6 +40,7 @@ using System.Xml;
 using GingerCore.DataSource;
 using System.Reflection;
 using amdocs.ginger.GingerCoreNET;
+using GingerCoreNET.ReporterLib;
 
 namespace GingerCore
 {
@@ -594,7 +595,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
                 return false;
             }
 
@@ -619,7 +620,7 @@ namespace GingerCore
             }
             catch(IOException ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
             }
             
         }
@@ -1016,7 +1017,7 @@ namespace GingerCore
                     if (!RegistryFunctions.CheckRegistryValueExist(eRegistryRoot.HKEY_CURRENT_USER, registryKeyPath,
                                     requiredValueName, requiredValue, Microsoft.Win32.RegistryValueKind.DWord, true, true))
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_BROWSER_EMULATION' value to both Local Machine and User level");
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_BROWSER_EMULATION' value to both Local Machine and User level");
                     }
                 }
                 //End
@@ -1037,14 +1038,14 @@ namespace GingerCore
                     if (!RegistryFunctions.CheckRegistryValueExist(eRegistryRoot.HKEY_CURRENT_USER, registryKeyPath,
                                 requiredValueName, requiredValue, Microsoft.Win32.RegistryValueKind.DWord, true, true))
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_SCRIPTURL_MITIGATION' value to both Local Machine and User level");
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_SCRIPTURL_MITIGATION' value to both Local Machine and User level");
                     }
                 }
                 //End
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to complete the registry values check", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to complete the registry values check", ex);
                 Reporter.ToUser(eUserMsgKeys.RegistryValuesCheckFailed);
             }
         }

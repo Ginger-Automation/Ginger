@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,13 +16,16 @@ limitations under the License.
 */
 #endregion
 
-namespace GingerCoreNET.ReporterLib
+namespace Amdocs.Ginger.Common
 {
-    public class MessageBoxResult
+
+    // Available buttons to answer a popup window, this enum is for the user selected button response
+    public enum MessageBoxResult
     {
-        public static MessageBoxResult None { get; internal set; }
-        public static MessageBoxResult Yes { get; internal set; }
-        public static MessageBoxResult No { get; internal set; }
-        public static MessageBoxResult Cancel { get; internal set; }
+        None,
+        Yes,
+        No,
+        Cancel,
+        OK
     }
 }

@@ -182,7 +182,7 @@ namespace Ginger.Actions.ActionConversion
                 foreach (var item in lstMissingPlatform)
                 {
                     // ask the user if he wants to continue with the conversion, if there are missing target platforms
-                    if (Reporter.ToUser(eUserMsgKeys.MissingTargetPlatformForConversion, item.Value, item.Key) == MessageBoxResult.No)
+                    if (Reporter.ToUser(eUserMsgKeys.MissingTargetPlatformForConversion, item.Value, item.Key) == Amdocs.Ginger.Common.MessageBoxResult.No)
                         return false;
                 }
             }
@@ -301,7 +301,7 @@ namespace Ginger.Actions.ActionConversion
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - " , ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - " , ex);
                     Reporter.ToUser(eUserMsgKeys.ActivitiesConversionFailed);
                 }
                 finally
@@ -313,7 +313,7 @@ namespace Ginger.Actions.ActionConversion
             Reporter.CloseGingerHelper();
 
             // ask the user if he wants to convert more actions once the conversion is done successfully                       
-            if (Reporter.ToUser(eUserMsgKeys.SuccessfulConversionDone) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.SuccessfulConversionDone) == Amdocs.Ginger.Common.MessageBoxResult.No)
             {
                 _pageGenericWin.Close();
             }

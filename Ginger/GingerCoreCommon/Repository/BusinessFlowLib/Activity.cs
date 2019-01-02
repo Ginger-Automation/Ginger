@@ -548,7 +548,7 @@ namespace GingerCore
                 {
                     this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                 }
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
         }
@@ -592,7 +592,7 @@ namespace GingerCore
         //        missingVars = missingVars.TrimEnd(new char[] { ',' });
 
         //        if (!silentMode)
-        //            if (AppReporter.ToUser(eUserMsgKeys.WarnRegradingMissingVariablesUse, ActivityName, missingVars) == MessageBoxResult.Yes)
+        //            if (AppReporter.ToUser(eUserMsgKeys.WarnRegradingMissingVariablesUse, ActivityName, missingVars) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
         //                autoAddMissingVars = true;
         //            else
         //                autoAddMissingVars = false;
@@ -768,7 +768,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 

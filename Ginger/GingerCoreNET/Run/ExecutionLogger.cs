@@ -27,6 +27,7 @@ using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore;
+using GingerCore.Activities;
 using GingerCore.Environments;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
@@ -200,7 +201,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while creating temporary folder", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while creating temporary folder", ex);
             }
 
         }
@@ -224,7 +225,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
 
             return logsFolder;
@@ -245,7 +246,7 @@ namespace Ginger.Run
                 }
             }
             catch(Exception ex)
-            {    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "failed to CheckOrCreateDirectory",ex); 
+            {    Reporter.ToLog(eLogLevel.ERROR, "failed to CheckOrCreateDirectory",ex); 
                 return false;
             }
             
@@ -281,7 +282,7 @@ namespace Ginger.Run
 
         }
 
-        public void ActivityGroupStart(IActivitiesGroup currentActivityGroup, BusinessFlow businessFlow)
+        public void ActivityGroupStart(ActivitiesGroup currentActivityGroup, BusinessFlow businessFlow)
         {
             currentActivityGroup.StartTimeStamp = DateTime.Now.ToUniversalTime();
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
@@ -290,7 +291,7 @@ namespace Ginger.Run
             }
         }
 
-        public void ActivityGroupEnd(IActivitiesGroup currentActivityGroup, BusinessFlow businessFlow, bool offlineMode = false)
+        public void ActivityGroupEnd(ActivitiesGroup currentActivityGroup, BusinessFlow businessFlow, bool offlineMode = false)
         {
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
@@ -720,7 +721,7 @@ namespace Ginger.Run
                                 }
                                 catch (Exception ex)
                                 {
-                                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to move screen shot of the action:'" + act.Description + "' to the Execution Logger folder", ex);
+                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to move screen shot of the action:'" + act.Description + "' to the Execution Logger folder", ex);
                                     screenShotCountPerAction--;
                                 }
                             }
@@ -730,7 +731,7 @@ namespace Ginger.Run
                         }
                         else
                         {
-                            AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to create ExecutionLogger JSON file for the Action :" + act.Description + " because directory not exists :" + executionLogFolder + act.ExecutionLogFolder);
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to create ExecutionLogger JSON file for the Action :" + act.Description + " because directory not exists :" + executionLogFolder + act.ExecutionLogFolder);
                         }
                     }
 
@@ -743,7 +744,7 @@ namespace Ginger.Run
                             return;
 
                         //
-                        IActivitiesGroup currrentGroup = this.CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == Activity.ActivitiesGroupID).FirstOrDefault();
+                        ActivitiesGroup currrentGroup = this.CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == Activity.ActivitiesGroupID).FirstOrDefault();
                         string currrentGroupName = string.Empty;
                         if (currrentGroup != null)
                             currrentGroupName = currrentGroup.Name;
@@ -800,7 +801,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception occurred in ExecutionLogger Action end", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred in ExecutionLogger Action end", ex);
             }                   
         }
 
@@ -998,7 +999,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -1088,7 +1089,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
                 return false;
             }
         }
@@ -1113,7 +1114,7 @@ namespace Ginger.Run
                 {
 
 
-                    IActivitiesGroup currentActivityGroup = businessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
+                    ActivitiesGroup currentActivityGroup = businessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
                     if (currentActivityGroup != null)
                     {
                         currentActivityGroup.ExecutionLogFolder = logFolderPath;
@@ -1161,7 +1162,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
                 return false;
             }
         }

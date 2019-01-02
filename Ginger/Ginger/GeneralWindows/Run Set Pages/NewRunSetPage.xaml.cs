@@ -553,7 +553,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to load the recent " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " used", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the recent " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " used", ex);
                 return null;
             }
         }
@@ -963,7 +963,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while checking Run Set Business Flow files change", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking Run Set Business Flow files change", ex);
             }
         }
 
@@ -1385,7 +1385,7 @@ namespace Ginger.Run
             if (CheckCurrentRunnerIsNotRuning()) return;
             if (mRunSetConfig.GingerRunners.Count > 0)
             {
-                if (Reporter.ToUser(eUserMsgKeys.DeleteRunners) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.DeleteRunners) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     mRunSetConfig.GingerRunners.Clear();
                     mFlowDiagram.ClearAllFlowElement();
@@ -1686,7 +1686,7 @@ namespace Ginger.Run
 
             if (mCurrentSelectedRunner.Runner.BusinessFlows.Count > 0)
             {
-                if (Reporter.ToUser(eUserMsgKeys.DeleteBusinessflows) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.DeleteBusinessflows) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     mCurrentSelectedRunner.Runner.BusinessFlows.Clear();
                     mCurrentSelectedRunner.BusinessflowRunnerItems.Clear();
@@ -1751,7 +1751,7 @@ namespace Ginger.Run
 
             if (mCurrentBusinessFlowRunnerItem != null)
             {
-                if (Reporter.ToUser(eUserMsgKeys.DeleteBusinessflow) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.DeleteBusinessflow) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     BusinessFlow bff = (BusinessFlow)(mCurrentBusinessFlowRunnerItem).ItemObject;
                     mCurrentSelectedRunner.Runner.BusinessFlows.Remove(bff);
@@ -1773,7 +1773,7 @@ namespace Ginger.Run
             }
             if (runner != null)
             {
-                if (Reporter.ToUser(eUserMsgKeys.DeleteRunner) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.DeleteRunner) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     int index = mRunSetConfig.GingerRunners.IndexOf(runner);
                     List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
@@ -1892,7 +1892,7 @@ namespace Ginger.Run
                 }
                 else if (mRunSetBusinessFlowWasChanged)
                 {
-                    if (Reporter.ToUser(eUserMsgKeys.RunsetBuinessFlowWasChanged) == MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKeys.RunsetBuinessFlowWasChanged) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                         RefreshCurrentRunSet();
                     mRunSetBusinessFlowWasChanged = false;
                 }
@@ -1907,7 +1907,7 @@ namespace Ginger.Run
         private void xRunSetReload_Click(object sender, RoutedEventArgs e)
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
-            if (Reporter.ToUser(eUserMsgKeys.RunSetReloadhWarn) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.RunSetReloadhWarn) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 RefreshCurrentRunSet();
         }
 

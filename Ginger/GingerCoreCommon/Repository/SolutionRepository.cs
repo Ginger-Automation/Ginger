@@ -617,7 +617,7 @@ namespace Amdocs.Ginger.Repository
             }
             else
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Move repository item because source or target folders failed to be identified for item '{0}' and target folder '{1}'.", repositoryItem.FilePath, targetFolder));
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Move repository item because source or target folders failed to be identified for item '{0}' and target folder '{1}'.", repositoryItem.FilePath, targetFolder));
             }
         }
 
@@ -663,7 +663,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 catch (IOException ex)
                 {                    
-                   AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Shared Repository moving item to PrevVersion", ex);
+                   Reporter.ToLog(eLogLevel.ERROR, "Shared Repository moving item to PrevVersion", ex);
                 }
                 
             }

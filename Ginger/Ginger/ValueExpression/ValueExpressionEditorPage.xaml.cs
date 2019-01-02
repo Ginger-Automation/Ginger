@@ -270,7 +270,7 @@ namespace Ginger
             catch (Exception ex)
             {
 
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Add Security Configuration Failed: ", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Add Security Configuration Failed: ", ex);
             }
         }
 

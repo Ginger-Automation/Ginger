@@ -132,7 +132,7 @@ namespace Ginger.Repository
                         mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                         
                         int selectedActIndex = -1;
-                        ObservableList<IActivitiesGroup> actsList = App.BusinessFlow.ActivitiesGroups;
+                        ObservableList<ActivitiesGroup> actsList = App.BusinessFlow.ActivitiesGroups;
                         if (actsList.CurrentItem != null)
                         {
                             selectedActIndex = actsList.IndexOf((ActivitiesGroup)actsList.CurrentItem);
@@ -200,7 +200,7 @@ namespace Ginger.Repository
                     if (dragedItemInGrid != null)
                         xActivitiesGroupsRepositoryGrid.Grid.SelectedItem = dragedItemInGrid;
                 }
-                catch(Exception ex){ Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                catch(Exception ex){ Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }
         }
 

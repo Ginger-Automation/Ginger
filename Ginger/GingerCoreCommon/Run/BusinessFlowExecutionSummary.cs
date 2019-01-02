@@ -81,7 +81,7 @@ namespace Ginger.Run
             }
         }
 
-        public  string GetNameForFileName()
+        public override  string GetNameForFileName()
         {
             return BusinessFlowName;
         }

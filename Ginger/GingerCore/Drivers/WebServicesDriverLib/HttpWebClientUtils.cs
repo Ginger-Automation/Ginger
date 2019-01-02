@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.WebServices;
+using GingerCoreNET.ReporterLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -284,7 +285,7 @@ namespace GingerCore.Actions.WebAPI
                 mAct.ExInfo = "URL is missing";
                 return false;
             }
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "EndPointURL: " + url, null, true, true);
+            Reporter.ToLog(eLogLevel.INFO, "EndPointURL: " + url, null, true, true);
             return true;
         }
 
@@ -354,10 +355,10 @@ namespace GingerCore.Actions.WebAPI
         {
             try
             {
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Client Sending Async Request", null, true, true);
+                Reporter.ToLog(eLogLevel.INFO, "Client Sending Async Request", null, true, true);
 
                 Response = Client.SendAsync(RequestMessage).Result;
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Response status: " + Response.StatusCode, null, true, true);
+                Reporter.ToLog(eLogLevel.INFO, "Response status: " + Response.StatusCode, null, true, true);
 
                 if (ApplicationAPIUtils.eContentType.PDF.ToString() != mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType))
                 {
@@ -369,23 +370,23 @@ namespace GingerCore.Actions.WebAPI
                 }
           
                
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "ResponseMessage: " + ResponseMessage, null, true, true);
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Returning true on the end of the try in SendRequest method", null, true, true);
+                Reporter.ToLog(eLogLevel.INFO, "ResponseMessage: " + ResponseMessage, null, true, true);
+                Reporter.ToLog(eLogLevel.INFO, "Returning true on the end of the try in SendRequest method", null, true, true);
                 return true;
             }
             catch (Exception WE)
             {
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Send Request went to exception: " + WE.Message + Environment.NewLine + WE.InnerException, null, true, true);
+                Reporter.ToLog(eLogLevel.INFO, "Send Request went to exception: " + WE.Message + Environment.NewLine + WE.InnerException, null, true, true);
                 if (WE.InnerException.ToString().Contains("The character set provided in ContentType is invalid. Cannot read content as string using an invalid character set."))
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Caught Content Type Exception:" + WE.Message);
+                    Reporter.ToLog(eLogLevel.WARN, "Caught Content Type Exception:" + WE.Message);
                     ResponseMessage = ReadByteArrayAndConvertToString();
                     return false;
                 }
                 mAct.Error = "Request execution failed, reason: " + WE.Message;
                 mAct.ExInfo += Environment.NewLine + WE.Message;
             }
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "Returning true on the end of the SendRequest method", null, true, true);
+            Reporter.ToLog(eLogLevel.INFO, "Returning true on the end of the SendRequest method", null, true, true);
             return true;
         }
         private string ReadByteArrayAndConvertToString()
@@ -477,7 +478,7 @@ namespace GingerCore.Actions.WebAPI
             if (Response != null)
             {
                 mAct.AddOrUpdateReturnParamActual("Header: Status Code ", Response.StatusCode.ToString());
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Retrieve Response Status Code passed successfully", null, true, true);
+                Reporter.ToLog(eLogLevel.INFO, "Retrieve Response Status Code passed successfully", null, true, true);
                 foreach (var Header in Response.Headers)
                 {
                     string headerValues = string.Empty;
@@ -486,7 +487,7 @@ namespace GingerCore.Actions.WebAPI
                     headerValues = headerValues.Remove(headerValues.Length - 1);
                     mAct.AddOrUpdateReturnParamActual("Header: " + Header.Key.ToString(), headerValues);
                 }
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "responseHeadersCollection passed successfully", null, true, true);
+                Reporter.ToLog(eLogLevel.INFO, "responseHeadersCollection passed successfully", null, true, true);
             }
             else
             {
@@ -496,7 +497,7 @@ namespace GingerCore.Actions.WebAPI
             bool XMLResponseCanBeParsed = false;
             XMLResponseCanBeParsed = XMLStringCanBeParsed(ResponseMessage);
             
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "XMLResponseCanBeParsed Indicator: " + XMLResponseCanBeParsed, null, true, true);
+            Reporter.ToLog(eLogLevel.INFO, "XMLResponseCanBeParsed Indicator: " + XMLResponseCanBeParsed, null, true, true);
 
             string prettyResponse = XMLDocExtended.PrettyXml(ResponseMessage);
 
@@ -668,7 +669,7 @@ namespace GingerCore.Actions.WebAPI
         {
             //Handle response cookies
             HandleResponseCookies();
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "Handle response cookies Passed successfully", null, true, true);
+            Reporter.ToLog(eLogLevel.INFO, "Handle response cookies Passed successfully", null, true, true);
         }
 
         private void HandleResponseCookies()
@@ -945,7 +946,7 @@ namespace GingerCore.Actions.WebAPI
 
             BodyString = SetDynamicValues(RequestBodyWithDynamicParameters);
 
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "RequestBody: " + BodyString, null, true, true);
+            Reporter.ToLog(eLogLevel.INFO, "RequestBody: " + BodyString, null, true, true);
 
             RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentType);
 

@@ -147,7 +147,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 catch (Exception ex)
                 {               
                     Reporter.ToUser(eUserMsgKeys.ParsingError, "Failed to Parse the Swagger File" + AddAPIModelWizard.URL);
-                    GingerCoreNET.ReporterLib.Reporter.ToLog(GingerCoreNET.ReporterLib.eLogLevel.ERROR, "Error Details: " + ex.Message + " Failed to Parse the Swagger file " + AddAPIModelWizard.URL);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error Details: " + ex.Message + " Failed to Parse the Swagger file " + AddAPIModelWizard.URL);
                     parseSuccess = false;
                 }
             AddAPIModelWizard.ProcessEnded();
@@ -176,7 +176,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 catch (Exception ex)
                 {                   
                     Reporter.ToUser(eUserMsgKeys.ParsingError, "Failed to Parse the XML" + XTF.FilePath);
-                    GingerCoreNET.ReporterLib.Reporter.ToLog(GingerCoreNET.ReporterLib.eLogLevel.ERROR, "Error Details: " + ex.Message + "Failed to Parse the XML" + XTF.FilePath);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error Details: " + ex.Message + "Failed to Parse the XML" + XTF.FilePath);
                     parseSuccess = false;
                 }
             }
@@ -206,7 +206,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 catch (Exception ex)
                 {                    
                     Reporter.ToUser(eUserMsgKeys.ParsingError, "Failed to Parse the JSon" + XTF.FilePath);
-                    GingerCoreNET.ReporterLib.Reporter.ToLog(GingerCoreNET.ReporterLib.eLogLevel.ERROR,"Error Details: " + ex.Message + " Failed to Parse the JSon " + XTF.FilePath);
+                    Reporter.ToLog(eLogLevel.ERROR,"Error Details: " + ex.Message + " Failed to Parse the JSon " + XTF.FilePath);
                     parseSuccess = false;
                 }
             }

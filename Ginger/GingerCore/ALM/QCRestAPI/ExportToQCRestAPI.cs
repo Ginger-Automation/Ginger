@@ -71,7 +71,7 @@ namespace GingerCore.ALM.QCRestAPI
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export the Activities Group to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Activities Group to QC/ALM", ex);
                 return false;
             }
         }
@@ -79,7 +79,7 @@ namespace GingerCore.ALM.QCRestAPI
         public static bool ExportBusinessFlowToQC(BusinessFlow businessFlow, QCTestSet mappedTestSet, string uploadPath, ObservableList<ExternalItemFieldBase> testSetFields, ObservableList<ExternalItemFieldBase> testInstanceFields, ref string result)
         {
             QCTestSet testSet = null;
-            ObservableList<IActivitiesGroup> existingActivitiesGroups = new ObservableList<IActivitiesGroup>();
+            ObservableList<ActivitiesGroup> existingActivitiesGroups = new ObservableList<ActivitiesGroup>();
 
             try
             {
@@ -100,7 +100,7 @@ namespace GingerCore.ALM.QCRestAPI
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export the Business Flow to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Business Flow to QC/ALM", ex);
                 return false;
             }
         }
@@ -124,7 +124,7 @@ namespace GingerCore.ALM.QCRestAPI
                     QCTestInstanceColl qcTSTests = QCRestAPIConnect.GetTestInstancesOfTestSet(testSet.Id); //list of TSTest's on main TestSet in TestLab 
 
                     //get all BF Activities groups
-                    ObservableList<IActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
+                    ObservableList<ActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
                     if (activGroups.Count > 0)
                     {
                         foreach (ActivitiesGroup activGroup in activGroups)
@@ -328,7 +328,7 @@ namespace GingerCore.ALM.QCRestAPI
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
                 return false;
             }
 
@@ -406,11 +406,11 @@ namespace GingerCore.ALM.QCRestAPI
                 if (ex.Message.Contains("The Test Set already exists"))
                 {
                     string result = "Cannot export Business Flow - The Test Set already exists in the selected folder. ";
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, result, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, result, ex);
                     return null;
                 }
 
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
@@ -473,7 +473,7 @@ namespace GingerCore.ALM.QCRestAPI
                         QCItem itemTestCaseParam = ConvertObjectValuesToQCItem(newParam, ResourceType.TEST_CASE_PARAMETERS);
                         QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_CASE_PARAMETERS, itemTestCaseParam);
                     }
-                    catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                    catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 }
             }
             description = description.Replace("<<&Parameters&>>", paramsSigns);
@@ -500,7 +500,7 @@ namespace GingerCore.ALM.QCRestAPI
                 return false;
         }
 
-        private static void CreateNewTestInstances(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> existingActivitiesGroups, QCTestSet testSet, ObservableList<ExternalItemFieldBase> testInstancesFields)
+        private static void CreateNewTestInstances(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> existingActivitiesGroups, QCTestSet testSet, ObservableList<ExternalItemFieldBase> testInstancesFields)
         {
             int counter = 1;
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
@@ -626,7 +626,7 @@ namespace GingerCore.ALM.QCRestAPI
                             QCItem itemTestCaseParam = ConvertObjectValuesToQCItem(newParam, ResourceType.TEST_CASE_PARAMETERS);
                             QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_CASE_PARAMETERS, itemTestCaseParam);
                         }
-                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                        catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                     }
                 }
 
@@ -710,18 +710,18 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
 
-        private static void UpdateTestInstances(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> existingActivitiesGroups, QCTestSet testSet, ObservableList<ExternalItemFieldBase> testInstancesFields)
+        private static void UpdateTestInstances(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> existingActivitiesGroups, QCTestSet testSet, ObservableList<ExternalItemFieldBase> testInstancesFields)
         {
             QCTestInstanceColl testInstances = ImportFromQCRest.ImportTestSetInstanceData(testSet);
 
             foreach (QCTestInstance testInstance in testInstances)
             {
-                IActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == testInstance.TestId.ToString() && x.ExternalID2 == testInstance.Id.ToString())).FirstOrDefault();
+                ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == testInstance.TestId.ToString() && x.ExternalID2 == testInstance.Id.ToString())).FirstOrDefault();
                 if (ag == null)
                     QCRestAPIConnect.DeleteEntity(ResourceType.TEST_CYCLE, testInstance.Id);
                 else
@@ -749,7 +749,7 @@ namespace GingerCore.ALM.QCRestAPI
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
                 }
             }

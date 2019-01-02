@@ -303,7 +303,7 @@ namespace Ginger
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.WARN, "Error Occurred while doing DoEvents()", ex);
+                Reporter.ToLog(eLogLevel.WARN, "Error Occurred while doing DoEvents()", ex);
             }
         }
 

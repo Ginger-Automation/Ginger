@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.MainFrame;
+using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Open3270;
 using Open3270.TN3270;
@@ -156,12 +157,12 @@ namespace GingerCore.Drivers.MainFrame
                 mDriverWindow = new MainFrameDriverWindow(this);
                 mDriverWindow.Show();
                 mDriverWindow.Refresh();
-                OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-                if (Dispatcher != null)
-                {
-                    Dispatcher = new DriverWindowDispatcher(mDriverWindow.Dispatcher);
-                }
+
+                Dispatcher = new DriverWindowDispatcher(mDriverWindow.Dispatcher);
+                Dispatcher.Invoke(new Action(() => OnDriverMessage(eDriverMessageType.DriverStatusChanged)));
                 System.Windows.Threading.Dispatcher.Run();
+
+                
             }
             else
             {

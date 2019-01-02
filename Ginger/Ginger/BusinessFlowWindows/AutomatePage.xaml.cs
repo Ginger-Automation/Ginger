@@ -795,7 +795,7 @@ namespace Ginger
             //warn in case dynamic shared repository Activities are included and going to be deleted
             if (App.BusinessFlow.Activities.Where(x => x.AddDynamicly == true).FirstOrDefault() != null)
             {
-                if (Reporter.ToUser(eUserMsgKeys.WarnOnDynamicActivities) == MessageBoxResult.No)
+                if (Reporter.ToUser(eUserMsgKeys.WarnOnDynamicActivities) == Amdocs.Ginger.Common.MessageBoxResult.No)
                 {
                     return;
                 }
@@ -809,7 +809,7 @@ namespace Ginger
 
         private void UndoBizFlowChangesButton_Click(object sender, RoutedEventArgs e)
         {
-            if (App.BusinessFlow != null && Reporter.ToUser(eUserMsgKeys.AskIfSureWantToUndoChange) == MessageBoxResult.Yes)
+            if (App.BusinessFlow != null && Reporter.ToUser(eUserMsgKeys.AskIfSureWantToUndoChange) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.UndoChanges, null, App.BusinessFlow.Name);
                 App.BusinessFlow.RestoreFromBackup();
@@ -879,7 +879,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred on Reset Status Run from Automate Tab", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred on Reset Status Run from Automate Tab", ex);
                 throw ex;                
             }
         }
@@ -1140,7 +1140,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to disable Automate Tab grids for execution", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to disable Automate Tab grids for execution", ex);
             }
         }
 
@@ -1380,7 +1380,7 @@ namespace Ginger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to generate offline full business flow report", ex);
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full business flow report", ex);
                     Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to generate the report for the '" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
                 }
             }
@@ -1394,7 +1394,7 @@ namespace Ginger
         {
             if (ALMIntegration.Instance.ExportBusinessFlowToALM(App.BusinessFlow))
             {
-                if (Reporter.ToUser(eUserMsgKeys.AskIfToSaveBFAfterExport, App.BusinessFlow.Name) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.AskIfToSaveBFAfterExport, App.BusinessFlow.Name) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(App.BusinessFlow);

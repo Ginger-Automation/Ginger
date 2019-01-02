@@ -18,23 +18,34 @@ limitations under the License.
 
 namespace Amdocs.Ginger.Common
 {
+
+    // Set the application log mode
     public enum eAppReporterLoggingLevel
     {
         Normal, Debug
     }
 
+
+    // Each message to be show to
     public enum eAppReportType
     {
        ToLog, ToUser, ToConsole, ToStatusBar 
     }
 
-    public enum eAppReporterLogLevel
+    // Each message log type
+    public enum eLogLevel
     {
         DEBUG, INFO, WARN, ERROR, FATAL
     }
 
-    public enum eAppReporterMessageType
+    // When message show to user it is, combine with above?
+    public enum eMessageType
     {
         INFO, WARN, ERROR, QUESTION
+    }
+
+    public enum eGingerHelperMsgType
+    {
+        INFO, PROCESS
     }
 }

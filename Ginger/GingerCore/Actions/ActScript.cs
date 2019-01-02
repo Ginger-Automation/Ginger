@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCore.Properties;
+using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -140,7 +141,7 @@ namespace GingerCore.Actions
         {
             if (ScriptName == null)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Script file not Selected. Kindly select suitable file");
+                Reporter.ToLog(eLogLevel.ERROR, "Script file not Selected. Kindly select suitable file");
                 this.Error = "Script file not loaded. Kindly select suitable file";
                 return;
             }
@@ -211,7 +212,7 @@ namespace GingerCore.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
                 this.Error = "Failed to execute the script. Details: " + e.Message;
             }
             if (!string.IsNullOrEmpty(ErrorBuffer))

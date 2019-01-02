@@ -24,6 +24,7 @@ using GingerCore.Actions.UIAutomation;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Actions.Windows;
 using GingerCore.Drivers.Common;
+using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using mshtml;
 using System;
@@ -179,25 +180,25 @@ namespace GingerCore.Drivers.WindowsLib
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act, e);
                 return;
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act, e);
                 return;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act, e);
                 return;
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.WARN, "Exception at Run action", e);
+                Reporter.ToLog(eLogLevel.WARN, "Exception at Run action", e);
                 act.Error = e.Message;
             }
         }

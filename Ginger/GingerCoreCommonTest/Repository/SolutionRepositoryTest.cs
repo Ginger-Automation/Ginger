@@ -49,7 +49,7 @@ namespace GingerCoreCommonTest.Repository
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
-        {
+        {            
             TempRepositoryFolder = TestResources.getGingerUnitTesterTempFolder("Solutions", "SRTestTemp");
             Console.WriteLine("SolutionRepositoryTest folder: " + TempRepositoryFolder);
 

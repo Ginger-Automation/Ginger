@@ -24,6 +24,7 @@ using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.Repository;
 using GingerCore.Variables;
+using GingerCoreNET.ReporterLib;
 using System;
 using System.Reflection;
 
@@ -162,7 +163,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to InvokPropertyChanngedForAllObjectFields for the object: " + this.ToString(), ex);
+                Reporter.ToLog(eLogLevel.WARN, "Failed to InvokPropertyChanngedForAllObjectFields for the object: " + this.ToString(), ex);
             }
         }
 
