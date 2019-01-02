@@ -41,41 +41,48 @@ namespace Ginger.ReporterLib
 
         public void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
         {
-            //try
-            //{
-            //    if (writeOnlyInDebugMode)
-            //        if (CurrentAppLogLevel != eAppReporterLoggingLevel.Debug)
-            //            return;
-            //    switch (logLevel)
-            //    {
-            //        case eAppReporterLogLevel.DEBUG:
-            //            log.Debug(messageToLog, exceptionToLog);
-            //            break;
-            //        case eAppReporterLogLevel.ERROR:
-            //            log.Error(messageToLog, exceptionToLog);
-            //            OnErrorReportedEvent();
-            //            break;
-            //        case eAppReporterLogLevel.FATAL:
-            //            log.Fatal(messageToLog, exceptionToLog);
-            //            break;
-            //        case eAppReporterLogLevel.INFO:
-            //            log.Info(messageToLog, exceptionToLog);
-            //            break;
-            //        case eAppReporterLogLevel.WARN:
-            //            log.Warn(messageToLog, exceptionToLog);
-            //            break;
-            //        default:
-            //            log.Info(messageToLog, exceptionToLog);
-            //            break;
-            //    }
+            try
+            {
+                // FIXME !!!!!!!!!!!!!!!!!!!!!!!
 
-            //    //if (writeAlsoToConsoleIfNeeded && AddAllReportingToConsole)
-            //    ToConsole(logLevel.ToString() + ": " + messageToLog, exceptionToLog);
-            //}
-            //catch (Exception ex)
-            //{
-            //    //failed to write to log
-            //}
+                //if (writeOnlyInDebugMode)
+                //    if (CurrentAppLogLevel != eAppReporterLoggingLevel.Debug)
+                //        return;
+                switch (logLevel)
+                {
+                    case eLogLevel.DEBUG:
+                        log.Debug(messageToLog, exceptionToLog);
+                        break;
+                    case eLogLevel.ERROR:
+                        log.Error(messageToLog, exceptionToLog);
+
+                        // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        // OnErrorReportedEvent();
+                        App.MainWindow.mErrorsNum++;
+                        App.MainWindow.UpdateErrorNotification();
+                        break;
+                    case eLogLevel.FATAL:
+                        log.Fatal(messageToLog, exceptionToLog);
+                        break;
+                    case eLogLevel.INFO:
+                        log.Info(messageToLog, exceptionToLog);
+                        break;
+                    case eLogLevel.WARN:
+                        log.Warn(messageToLog, exceptionToLog);
+                        break;
+                    default:
+                        log.Info(messageToLog, exceptionToLog);
+                        break;
+                }
+
+                //if (writeAlsoToConsoleIfNeeded && AddAllReportingToConsole)
+                // ToConsole(logLevel.ToString() + ": " + messageToLog, exceptionToLog);
+                Console.WriteLine(logLevel.ToString() + ": " + messageToLog, exceptionToLog);
+            }
+            catch (Exception ex)
+            {
+                //failed to write to log
+            }
         }
     }
 }

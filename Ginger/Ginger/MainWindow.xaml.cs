@@ -126,20 +126,22 @@ namespace Ginger
             }
         }
 
-        private int mErrorsNum = 0;
-        private void Reporter_ErrorReportedEvent()
-        {
-            try
-            {
-                UpdateErrorNotification();
-            }
-            catch(Exception ex)
-            {
-                //something went wrong
-            }
-        }
 
-        private void UpdateErrorNotification()
+        // temp public fix me !!!!!!!!!!!!!!!!!!
+        public int mErrorsNum = 0;
+        //private void Reporter_ErrorReportedEvent()
+        //{
+        //    try
+        //    {
+        //        UpdateErrorNotification();
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        //something went wrong
+        //    }
+        //}
+
+        public void UpdateErrorNotification()
         {
             Task.Factory.StartNew(() =>
             {
