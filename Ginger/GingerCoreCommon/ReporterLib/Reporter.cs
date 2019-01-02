@@ -147,10 +147,7 @@ namespace Amdocs.Ginger.Common
 
         #region Report to Ginger Helper
         public static Dictionary<eGingerHelperMsgKey, GingerHelperMsg> GingerHelperMsgsPool { get; set; }
-        private static Thread GingerHelperThread = null;
-        
-        private static bool GingerHelperWinIsLoading = false;
-        
+     
         public static void ToGingerHelper(eGingerHelperMsgKey messageKey, object btnHandler = null, params object[] messageArgs)
          {
          }

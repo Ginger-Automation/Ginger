@@ -26,7 +26,7 @@ namespace Ginger.Imports.UFT
 {
     public class CommonFunctionMapping : RepositoryItemBase
     {
-        public new static class Fields
+        public  static class Fields
         {
             public static string Function_Name = "Function_Name";
             public static string Action_Description = "Action_Description";

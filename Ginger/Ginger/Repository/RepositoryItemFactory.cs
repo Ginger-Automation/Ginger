@@ -95,10 +95,7 @@ namespace Ginger.Repository
         }
 
 
-        public ActivitiesGroup CreateActivitiesGroup()
-        {
-            return new ActivitiesGroup();
-        }
+ 
         public ObservableList<IDatabase> GetDatabaseList()
         {
             return new ObservableList<IDatabase>();

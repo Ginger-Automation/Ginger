@@ -142,7 +142,6 @@ namespace amdocs.ginger.GingerCoreNET
         public static void Init(IWorkSpaceEventHandler WSEH)
         {
             mWorkSpace = new WorkSpace();
-            WorkSpace.AppVersion = AppVersion;
             mWorkSpace.EventHandler = WSEH;
         }
 
