@@ -121,8 +121,10 @@ namespace Ginger.Run
 
         public void ConfigureRunnerForExecution(IGingerRunner runner)
         {
-            runner.SetExecutionEnvironment(RunsetExecutionEnvironment, RepositoryItemHelper.RepositoryItemFactory.GetAllEnvironments());
-            
+
+
+            runner.SetExecutionEnvironment(RunsetExecutionEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
+
             runner.CurrentSolution = WorkSpace.Instance.Solution;
             runner.SolutionAgents = RepositoryItemHelper.RepositoryItemFactory.GetAllIAgents();
             // runner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();

@@ -35,7 +35,7 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
     public class EnvironmentsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         public RepositoryFolder<ProjEnvironment> mProjEnvironmentFolder;        
-        private ObservableList<ProjEnvironment> mChildEnvs = null;
+     
         private EnvsListPage mEnvsListPage;
 
         public EnvironmentsFolderTreeItem(RepositoryFolder<ProjEnvironment> projEnvironmentFolder)
