@@ -77,7 +77,7 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
-            return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig);
+            return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig,ref result);
 
         }
 

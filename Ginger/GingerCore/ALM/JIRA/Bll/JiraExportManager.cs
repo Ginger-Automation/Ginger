@@ -1,5 +1,6 @@
 ﻿using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -49,46 +50,71 @@ namespace GingerCore.ALM.JIRA.Bll
             return result;
         }
 
-        public bool ExecuteDataToJira(BusinessFlow bizFlow, PublishToALMConfig publishToALMConfig)
+        public bool ExecuteDataToJira(BusinessFlow bizFlow, PublishToALMConfig publishToALMConfig, ref string result)
         {
-            bool result = false;
+            bool resultFlag = false;
             if (bizFlow.ExternalID != "0" && (!String.IsNullOrEmpty(bizFlow.ExternalID)))
             {
-                foreach(var actGroup in bizFlow.ActivitiesGroups)
+                foreach (var actGroup in bizFlow.ActivitiesGroups)
                 {
-                    RunStatus jiraStatus = ConvertGingerStatusToJira(actGroup.RunStatus);
                     var testExecutionData = CreateTestRunData(actGroup);
                     if (!string.IsNullOrEmpty(testExecutionData.TestCaseRunId))
                     {
-                       var executionResponse= jiraRepObj.SetRunStatus(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, testExecutionData.TestCaseRunId, jiraStatus);
-                        if (executionResponse.AuthenticationResponseObj.ErrorCode == 0)
-                            result = true;
-                        else
-                            result = false;
+                        List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == actGroup.Name)).Select(a => a).ToList();
+                        JiraRunStatus runs = new JiraRunStatus();
+                        JiraRunStepStautusColl stepColl = new JiraRunStepStautusColl();
+                        runs.steps = stepColl;
+                        foreach (var act in activities)
+                        {
+                            RunStatus jiraStatus = ConvertGingerStatusToJira(act.Status.HasValue ? act.Status.Value : eRunStatus.NA);
+                            string comment = CreateCommentForRun(act.Acts.ToList());
+                            stepColl.Add(new JiraRunStepStautus() { comment = comment, status = jiraStatus });
+                        }
+                        //var executionResponse = jiraRepObj.SetRunStatus(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, testExecutionData.TestCaseRunId, jiraStatus);
+                        resultFlag = jiraRepObj.ExecuteRunStatusBySteps(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, runs, testExecutionData.TestCaseRunId);
                     }
                 }
             }
-            return result;
+            if (resultFlag)
+                result = "Export has been finished successfully";
+            else
+                result = "Error Has been Happend while export to ALM";
+            return resultFlag;
         }
 
-        private RunStatus ConvertGingerStatusToJira(ActivitiesGroup.eActivitiesGroupRunStatus runStatus)
+        private string CreateCommentForRun(List<Act> list)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (list.Exists(a => !string.IsNullOrEmpty(a.Error)))
+            {
+                sb.Append("Errors:");
+                list.ForEach(x =>
+                    {
+                        sb.AppendLine();
+                        sb.Append(x.Error);
+                    });
+            }
+            return sb.ToString();
+        }
+
+        private RunStatus ConvertGingerStatusToJira(eRunStatus runStatus)
         {
             RunStatus responseStatus = RunStatus.EXECUTING;
-            switch(runStatus)
+            switch (runStatus)
             {
-                case ActivitiesGroup.eActivitiesGroupRunStatus.Blocked:
+                case eRunStatus.Blocked:
                     responseStatus = RunStatus.BLOCKED;
                     break;
-                case ActivitiesGroup.eActivitiesGroupRunStatus.Failed:
+                case eRunStatus.Failed:
                     responseStatus = RunStatus.FAIL;
                     break;
-                case ActivitiesGroup.eActivitiesGroupRunStatus.Passed:
+                case eRunStatus.Passed:
                     responseStatus = RunStatus.PASS;
                     break;
-                case ActivitiesGroup.eActivitiesGroupRunStatus.Skipped:
+                case eRunStatus.Skipped:
                     responseStatus = RunStatus.ABORTED;
                     break;
-                case ActivitiesGroup.eActivitiesGroupRunStatus.Pending:
+                case eRunStatus.Pending:
                     responseStatus = RunStatus.TODO;
                     break;
             }
