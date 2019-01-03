@@ -155,7 +155,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             bool overrideFile = true;
             if (File.Exists(fileName))
             {
-                if (MessageBox.Show("File already exists, do you want to override?", "File Exists", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+                if (MessageBox.Show("File already exists, do you want to override?", "File Exists", System.Windows.MessageBoxButton.OKCancel) == System.Windows.MessageBoxResult.Cancel)
                 {
                     overrideFile = false;
                 }
@@ -188,7 +188,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
         }
 
@@ -210,7 +210,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return parameters;
         }
@@ -243,7 +243,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 string NameAfterEdit = selectedGlobalAppModelParameter.PlaceHolder;
                 if (PlaceholderBeforeEdit != NameAfterEdit)
                 {
-                    if (Reporter.ToUser(eUserMsgKeys.ParameterUpdate, "The Global Parameter name may be used in Solution items Value Expression, Do you want to automatically update all those Value Expression instances with the parameter name change?") == MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKeys.ParameterUpdate, "The Global Parameter name may be used in Solution items Value Expression, Do you want to automatically update all those Value Expression instances with the parameter name change?") == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                     {
                         await Task.Run(() =>
                         {
@@ -348,7 +348,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to updated the Model Global Param name change for the property '{0}' in the item '{1}'", mi.Name, item.ToString()), ex);
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to updated the Model Global Param name change for the property '{0}' in the item '{1}'", mi.Name, item.ToString()), ex);
                 }
             }
         }
@@ -446,7 +446,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             if (xModelsGlobalParamsGrid.Grid.SelectedItems.Count > 0)
             {
                 string message = "After deletion there will be no way to restore deleted parameters.\nAre you sure that you want to delete the selected parameters?";
-                if (Reporter.ToUser(eUserMsgKeys.ParameterDelete, message) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.ParameterDelete, message) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     List<GlobalAppModelParameter> selectedItemsToDelete = new List<GlobalAppModelParameter>();
                     foreach (GlobalAppModelParameter selectedParam in xModelsGlobalParamsGrid.Grid.SelectedItems)
@@ -462,7 +462,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             if (xModelsGlobalParamsGrid.Grid.Items.Count > 0)
             {
                 string message = "After deletion there will be no way to restore deleted parameters.\nAre you sure that you want to delete All parameters?";
-                if (Reporter.ToUser(eUserMsgKeys.ParameterDelete, message) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.ParameterDelete, message) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                     while (xModelsGlobalParamsGrid.Grid.SelectedItems.Count > 0)
                         DeleteGlobalParam((RepositoryItemBase)xModelsGlobalParamsGrid.Grid.SelectedItems[0]);
             }

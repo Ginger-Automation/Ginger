@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,11 +16,21 @@ limitations under the License.
 */
 #endregion
 
+using System.Collections.Generic;
+using Amdocs.Ginger.Common;
+using Ginger.Reports;
+using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+
 namespace Amdocs.Ginger.Repository
 {
     public interface ISolution
     {
         string Name { get; set; }
         string Folder { get; set; }
+        ObservableList<VariableBase> Variables { get; set; }
+        ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
+        ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList { get; set; }
+        ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList { get; set; }
     }
 }

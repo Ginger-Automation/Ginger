@@ -65,7 +65,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         {
             if (mApplicationAPIModel.ReturnValues.Count > 0)
             {
-                if (Reporter.ToUser(eUserMsgKeys.APIModelAlreadyContainsReturnValues, mApplicationAPIModel.ReturnValues.Count) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.APIModelAlreadyContainsReturnValues, mApplicationAPIModel.ReturnValues.Count) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     BrowseAndParseResponseFile();
                 }

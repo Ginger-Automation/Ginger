@@ -35,6 +35,7 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using GingerTestHelper;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace UnitTests.UITests.PBDriverTest
 {
@@ -71,9 +72,7 @@ namespace UnitTests.UITests.PBDriverTest
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test PB Driver";
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.PowerBuilder;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.PowerBuilder;            
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "PBTestAPP" });
             Activity activity = new Activity();
             activity.TargetApplication = "PBTestApp";
@@ -87,7 +86,7 @@ namespace UnitTests.UITests.PBDriverTest
             a.Driver = mDriver;
             a.DriverType = Agent.eDriverType.PowerBuilder;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(a);
 
             

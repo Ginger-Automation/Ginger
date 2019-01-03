@@ -110,7 +110,7 @@ namespace Ginger.DataSource
 
             foreach (object o in SelectedItemsList)
             {
-                if (Reporter.ToUser(eUserMsgKeys.DeleteRepositoryItemAreYouSure, ((DataSourceTable)o).GetNameForFileName()) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.DeleteRepositoryItemAreYouSure, ((DataSourceTable)o).GetNameForFileName()) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     ((DataSourceTable)o).DSC.DeleteTable(((DataSourceTable)o).Name);
                 }
@@ -124,7 +124,7 @@ namespace Ginger.DataSource
                 Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
                 return;
             }
-            if ((Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == MessageBoxResult.Yes)
+            if ((Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 mDSTableList = mDSDetails.DSC.GetTablesList();
                 foreach (DataSourceTable dsTable in mDSTableList)
@@ -160,7 +160,7 @@ namespace Ginger.DataSource
 
             foreach (object o in SelectedItemsList)
             {
-                if (Reporter.ToUser(eUserMsgKeys.RenameRepositoryItemAreYouSure, ((DataSourceTable)o).GetNameForFileName()) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.RenameRepositoryItemAreYouSure, ((DataSourceTable)o).GetNameForFileName()) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     string oldName = ((DataSourceTable)o).Name;
                     InputBoxWindow.OpenDialog("Rename", "Table Name:", ((DataSourceTable)o), DataSourceBase.Fields.Name);

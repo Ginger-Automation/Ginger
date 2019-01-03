@@ -217,7 +217,7 @@ namespace Ginger.ALM
         {
             if (grdDefectsProfiles.Grid.SelectedItems.Count > 0)
             {
-                if (Reporter.ToUser(eUserMsgKeys.AskBeforeDefectProfileDeleting) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.AskBeforeDefectProfileDeleting) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     List<ALMDefectProfile> selectedItemsToDelete = new List<ALMDefectProfile>();
                     foreach (ALMDefectProfile selectedProfile in grdDefectsProfiles.Grid.SelectedItems)
