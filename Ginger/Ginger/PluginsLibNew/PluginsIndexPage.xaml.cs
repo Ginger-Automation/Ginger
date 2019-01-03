@@ -21,8 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -94,10 +92,9 @@ namespace Ginger.PlugInsWindows
         }
 
         private void GetPluginsList()
-        {            
-            PluginsManager p = new PluginsManager(WorkSpace.Instance.SolutionRepository);
+        {                                    
             xProcessingImage.Visibility = Visibility.Visible;
-            xPluginsGrid.DataSourceList = p.GetOnlinePluginsIndex();
+            xPluginsGrid.DataSourceList = WorkSpace.Instance.PlugInsManager.GetOnlinePluginsIndex();
             xProcessingImage.Visibility = Visibility.Collapsed;         
         }
 
@@ -130,9 +127,8 @@ namespace Ginger.PlugInsWindows
             OnlinePluginPackageRelease release = (OnlinePluginPackageRelease)xVersionComboBox.SelectedItem;
             Task.Factory.StartNew(() =>
             {                                
-                PluginsManager p = new PluginsManager(WorkSpace.Instance.SolutionRepository);
                 OnlinePluginPackage onlinePluginPackage = (OnlinePluginPackage)xPluginsGrid.CurrentItem;
-                p.InstallPluginPackage(onlinePluginPackage, release);
+                WorkSpace.Instance.PlugInsManager.InstallPluginPackage(onlinePluginPackage, release);
                 onlinePluginPackage.Status = "Installed";
             }).ContinueWith((a) =>
             {                

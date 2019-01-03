@@ -52,7 +52,7 @@ namespace Ginger
                 }
                 catch(Exception ex)
                 {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Refresh progress bar failed", ex); // !!!!!!!!!!!!!!!!!!!!!!
+                Reporter.ToLog(eLogLevel.ERROR, "Refresh progress bar failed", ex); // !!!!!!!!!!!!!!!!!!!!!!
                 }
 
             }
@@ -422,7 +422,7 @@ namespace Ginger
             //}
             //catch (Exception ex)
             //{
-            //    Reporter.ToLog(eLogLevel.WARN, "Failed to clear control validations", ex, true, true)
+            //    Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to clear control validations", ex, true, true)
             // }
         }
 

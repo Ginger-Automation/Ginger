@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using TDAPIOLELib;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.ALM
 {

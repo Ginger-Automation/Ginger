@@ -32,6 +32,7 @@ using System.Windows.Input;
 using System.Linq;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Activities
 {
@@ -281,7 +282,7 @@ namespace Ginger.Activities
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 UndoChangesAndClose();
             }

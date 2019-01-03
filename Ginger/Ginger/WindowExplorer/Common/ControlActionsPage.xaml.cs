@@ -32,6 +32,7 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.WindowExplorer
 {
@@ -194,7 +195,7 @@ namespace Ginger.WindowExplorer
             App.BusinessFlow.AddAct(act);
 
             int selectedActIndex = -1;
-            ObservableList<Act> actsList = App.BusinessFlow.CurrentActivity.Acts;
+            ObservableList<IAct> actsList = App.BusinessFlow.CurrentActivity.Acts;
             if (actsList.CurrentItem != null)
             {
                 selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
@@ -252,11 +253,11 @@ namespace Ginger.WindowExplorer
             }
 
             App.AutomateTabGingerRunner.PrepActionVE(act);
-            ApplicationAgent ag = App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent ag =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
             if (ag != null)
             {
                 App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
-                ag.Agent.RunAction(act);
+               ((Agent) ag.Agent).RunAction(act);
             }
             
             TestStatusTextBlock.Text = string.Empty;

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.UserControlsLib.VisualFlow;
 using GingerCore;
 using GingerCore.Actions;
@@ -125,7 +126,7 @@ namespace Ginger.BusinessFlowLib
 
                         //TODO: update the FlowControlFE to be on same y of the Activity and x + 150
                         
-                        if (FC.FlowControlAction == FlowControl.eFlowControlAction.GoToActivity)
+                        if (FC.FlowControlAction == eFlowControlAction.GoToActivity)
                         {
                             // Add Link from FC to target Activity if condition met
                             
@@ -138,7 +139,7 @@ namespace Ginger.BusinessFlowLib
                             mFlowDiagram.AddConnector(FL3);
                         }
 
-                        if (FC.FlowControlAction == FlowControl.eFlowControlAction.StopBusinessFlow || FC.FlowControlAction == FlowControl.eFlowControlAction.StopRun)
+                        if (FC.FlowControlAction == eFlowControlAction.StopBusinessFlow || FC.FlowControlAction == eFlowControlAction.StopRun)
                         {                        
                             FlowLink FL3 = new FlowLink(FlowControlFE, EndFlowElement);                         
                             FL3.LinkStyle = FlowLink.eLinkStyle.DottedArrow;
@@ -148,7 +149,7 @@ namespace Ginger.BusinessFlowLib
                         }
                         //TODO: handle all other FC actions
 
-                        //if (FC.FlowControlAction == FlowControl.eFlowControlAction.SetVariableValue )
+                        //if (FC.FlowControlAction == eFlowControlAction.SetVariableValue )
                         //{
                         //    FlowLink FL3 = new FlowLink(FlowControlFE, EndFlowElement);
                         //    FL3.LinkStyle = FlowLink.eLinkStyle.DottedArrow;

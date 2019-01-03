@@ -34,6 +34,7 @@ using Ginger.BusinessFlowWindows;
 using Ginger.BusinessFlowFolder;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Repository
 {
@@ -199,7 +200,7 @@ namespace Ginger.Repository
                     if (dragedItemInGrid != null)
                         xActivitiesGroupsRepositoryGrid.Grid.SelectedItem = dragedItemInGrid;
                 }
-                catch(Exception ex){ Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                catch(Exception ex){ Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }
         }
 

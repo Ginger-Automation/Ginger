@@ -16,13 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.Drivers;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using System;
 using System.Reflection;
 
 namespace GingerCoreNET.Drivers.CommunicationProtocol
-{    
+{
     // a wrapper class for the objects requested by the clients
     public class RemoteObjectProxy<T> : DispatchProxy
     {        

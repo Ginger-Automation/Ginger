@@ -21,6 +21,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCore.Variables;
+using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -433,7 +434,7 @@ namespace GingerCore.Actions
                 {
                     System.Threading.Thread.Sleep(3000);
                     Conn.Open();
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
                 }
 
                 OleDbCommand Cmd = new OleDbCommand();
@@ -566,7 +567,7 @@ namespace GingerCore.Actions
                 {
                     System.Threading.Thread.Sleep(3000);
                     Conn.Open();
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
                 }
 
                 OleDbCommand Cmd = new OleDbCommand();
@@ -712,7 +713,7 @@ namespace GingerCore.Actions
                 }
                 catch (Exception ex)
                 {
-                    // Reporter.ToLog(eLogLevel.ERROR, "Wrting into excel got error " + ex.Message);
+                    // Reporter.ToLog(eAppReporterLogLevel.ERROR, "Wrting into excel got error " + ex.Message);
                     this.Error = "Error when trying to update the excel: " + ex.Message + Environment.NewLine + "UpdateSQL=" + updateSQL;
                 }
                 finally

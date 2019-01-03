@@ -39,8 +39,7 @@ namespace GingerCoreCommonTest.Repository
     // Test Multi thread getting the same data - repository folder
     // Test Big solution
 
-    [TestClass]
-    [Ignore]
+    [TestClass]    
     [Level1]
     public class SolutionRepositoryTest
     {
@@ -50,7 +49,7 @@ namespace GingerCoreCommonTest.Repository
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
-        {
+        {            
             TempRepositoryFolder = TestResources.getGingerUnitTesterTempFolder("Solutions", "SRTestTemp");
             Console.WriteLine("SolutionRepositoryTest folder: " + TempRepositoryFolder);
 
