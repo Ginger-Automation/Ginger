@@ -878,5 +878,40 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             // TODO: if in same grid then do move, 
         }
+        public enum eUcTreeValidationRules
+        {
+            NoItemSelected,            
+        }
+
+        public List<eUcTreeValidationRules> ValidationRules = new List<eUcTreeValidationRules>();
+
+        public bool HasValidationError()
+        {
+            bool validationRes = false;
+            foreach (eUcTreeValidationRules rule in ValidationRules)
+            {
+                if(rule == eUcTreeValidationRules.NoItemSelected)
+                {                    
+                    if (Tree.SelectedItem == null)
+                    {
+                        validationRes = true;
+                    }                    
+                }
+            }
+           
+            //set border color based on validation
+            if (validationRes == true)
+            { Tree.BorderThickness = new Thickness(1);
+                Tree.BorderBrush = System.Windows.Media.Brushes.Red;
+            }                
+            else
+            {
+                Tree.BorderThickness = new Thickness(0);
+                Tree.BorderBrush = FindResource("$Color_DarkBlue") as Brush;
+            }                
+
+            return validationRes;
+        }
     }
+
 }

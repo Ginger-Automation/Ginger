@@ -74,20 +74,20 @@ namespace Ginger.SourceControl
             SourceControlClassComboBox.ComboBox.Items.RemoveAt(0);//removing the NONE option from user selection
 
             //ProjectPage Binding.
-            App.ObjFieldBinding(SourceControlLocalFolderTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlLocalFolder);
+            App.ObjFieldBinding(SourceControlLocalFolderTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlLocalFolder));
             if (String.IsNullOrEmpty(App.UserProfile.SourceControlLocalFolder))
             {
                 // Default local solutions folder
                 mSourceControl.SourceControlLocalFolder = @"C:\GingerSourceControl\Solutions\";
             }
 
-            App.ObjFieldBinding(ConfigureProxyCheckBox, CheckBox.IsCheckedProperty, mSourceControl, SourceControlBase.Fields.SourceControlConfigureProxy);
+            App.ObjFieldBinding(ConfigureProxyCheckBox, CheckBox.IsCheckedProperty, mSourceControl, nameof(SourceControlBase.SourceControlConfigureProxy));
 
-            App.ObjFieldBinding(ProxyAddressTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlProxyAddress);
+            App.ObjFieldBinding(ProxyAddressTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlProxyAddress));
             if (String.IsNullOrEmpty(App.UserProfile.SolutionSourceControlProxyAddress))
                 mSourceControl.SourceControlProxyAddress = @"http://genproxy.amdocs.com";
 
-            App.ObjFieldBinding(ProxyPortTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlProxyPort);
+            App.ObjFieldBinding(ProxyPortTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlProxyPort));
             if (String.IsNullOrEmpty(App.UserProfile.SolutionSourceControlProxyPort))
                 mSourceControl.SourceControlProxyPort = @"8080";
 
@@ -109,9 +109,9 @@ namespace Ginger.SourceControl
         
         private void Bind()
         {
-            App.ObjFieldBinding(SourceControlURLTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlURL);
-            App.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlUser);
-            App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlPass);
+            App.ObjFieldBinding(SourceControlURLTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlURL));
+            App.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlUser));
+            App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlPass));
             App.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlTimeout));
             UpdateTimeoutVisibility();
             SourceControlPassTextBox.Password = mSourceControl.SourceControlPass;
@@ -200,9 +200,9 @@ namespace Ginger.SourceControl
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = SolutionInfo.Fields.SourceControlLocation, Header = "Source Control Solution Name", WidthWeight = 30, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = SolutionInfo.Fields.LocalFolder, Header = "Solution Local Folder Path", WidthWeight = 50, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = SolutionInfo.Fields.ExistInLocaly, Header = "Exist Locally", StyleType = GridColView.eGridColStyleType.Text, WidthWeight = 20, MaxWidth = 800, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(SolutionInfo.SourceControlLocation), Header = "Source Control Solution Name", WidthWeight = 30, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(SolutionInfo.LocalFolder), Header = "Solution Local Folder Path", WidthWeight = 50, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(SolutionInfo.ExistInLocaly), Header = "Exist Locally", StyleType = GridColView.eGridColStyleType.Text, WidthWeight = 20, MaxWidth = 800, ReadOnly = true });
 
             SolutionsGrid.SetAllColumnsDefaultView(view);
             SolutionsGrid.InitViewItems();
@@ -354,6 +354,12 @@ namespace Ginger.SourceControl
                 mSourceControl.SourceControlConfigureProxy = App.UserProfile.SolutionSourceControlConfigureProxy;
                 mSourceControl.SourceControlProxyAddress = App.UserProfile.SolutionSourceControlProxyAddress;
                 mSourceControl.SourceControlProxyPort = App.UserProfile.SolutionSourceControlProxyPort;
+
+                // If the UserProfile has been deleted or been created for the first time
+                if (App.UserProfile.SolutionSourceControlTimeout == 0)
+                {
+                    App.UserProfile.SolutionSourceControlTimeout = 80;
+                }
                 mSourceControl.SourceControlTimeout = App.UserProfile.SolutionSourceControlTimeout;
 
                 mSourceControl.PropertyChanged += SourceControl_PropertyChanged;

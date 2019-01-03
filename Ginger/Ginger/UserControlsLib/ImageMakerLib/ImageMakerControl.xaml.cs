@@ -175,6 +175,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.GingerLogoGray:
                     SetAsStaticImage("GingerByAmdocsLogoGray.png");
                     break;
+                case eImageType.GingerSplash:
+                    SetAsStaticImage("GingerSplashImage.png");
+                    break;
                 #endregion
 
 
@@ -647,6 +650,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.GitHub:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Github);
+                    break;
+                case eImageType.Ping:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
                     break;
                 #endregion
 

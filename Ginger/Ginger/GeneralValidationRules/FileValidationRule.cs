@@ -28,6 +28,16 @@ namespace Ginger.GeneralValidationRules
 {
     public class FileValidationRule : ValidationRule
     {
+        string fileExtension = "";  //default File Extension
+        public FileValidationRule()
+        {
+            
+        }
+
+        public FileValidationRule(string fileExt)
+        {
+            fileExtension = fileExt;
+        }        
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             if (value == null)
@@ -37,6 +47,10 @@ namespace Ginger.GeneralValidationRules
             else if(!System.IO.File.Exists((string)value))
             {
                 return new ValidationResult(false, "File not found");
+            }
+            else if (!((string)value).ToLower().EndsWith(fileExtension.ToLower()))
+            {
+                return new ValidationResult(false, "File Name Should end with " + fileExtension);
             }
             else
             {

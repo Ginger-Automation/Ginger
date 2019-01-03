@@ -124,7 +124,7 @@ namespace Ginger.ApiModelsFolder
                                     EAIV.OptionalValues.Add(optionalValue.Value);
                                 }
 
-                            if (EAIV.Description != null && !EAIV.Description.Contains(AMDP.Description))
+                            if (!string.IsNullOrEmpty(EAIV.Description) && !EAIV.Description.Contains(AMDP.Description))
                                 EAIV.Description += " | " + AMDP.Description;
                         }
                         else

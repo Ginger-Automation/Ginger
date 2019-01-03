@@ -43,6 +43,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
     {
         ActUIElement mAction;
         PlatformInfoBase mPlatform;
+        string mExistingPOMAndElementGuidString = null;
 
         public ActUIElementEditPage(ActUIElement act)
         {
@@ -261,6 +262,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
             else
             {
+
                 List<ElementConfigControl> configControlsList = GetRequiredConfigControls();
                 Page elementEditPage = null;
                 if (configControlsList.Count != 0)
@@ -461,12 +463,24 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 case eLocateBy.POMElement:                 
                     ElementTypeComboBox.IsEnabled = false;
-                    return new LocateByPOMElementPage(mAction);
+                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAction);
+                    locateByPOMElementPage.ElementChangedPageEvent -= POMElementChanged;
+                    locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
+                    return locateByPOMElementPage;
                 case eLocateBy.ByXY:                   
                     return new LocateByXYEditPage(mAction);
                 default:                 
                     return new LocateValueEditPage(mAction);
             }
+        }
+
+        private void POMElementChanged()
+        {
+            if (mExistingPOMAndElementGuidString != mAction.ElementLocateValue)
+            {
+                mAction.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, string.Empty);
+            }
+            ShowControlSpecificPage();
         }
 
         private void UpdateActionInfo(ActUIElement.eElementAction SelectedAction)
@@ -523,9 +537,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
+
+
         private List<string> GetPomElementOptionalValues()
         {
             List<string> optionalValues = new List<string>();
+            mExistingPOMAndElementGuidString = mAction.ElementLocateValue;
             string[] pOMandElementGUIDs = mAction.ElementLocateValue.Split('_');
             Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
             ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
