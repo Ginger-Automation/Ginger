@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.UserControls;
+﻿using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.UserControls;
 using Ginger;
 using GingerWPFUnitTest.POMs;
 using System;
@@ -52,65 +53,139 @@ namespace GingerTest.POMs.Common
 
         public void ClickOnCheckBox(string checkboxHeaderValue, string fieldToSearchOnHeader, string fieldValueToSearch)
         {
-            int i = 0;
-
-
-            foreach (var item in mGrid.DataSourceList)
+            try
             {
-                DataGridCellsPresenter presenter = null;
-                DataGridRow row = mGrid.Grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
-                Execute(() =>
-                {
-                    presenter = General.GetVisualChild<DataGridCellsPresenter>(row);
-                });
+                int i = 0;
 
-                foreach (DataGridCell cell in presenter.ItemContainerGenerator.Items)
+
+                foreach (var item in mGrid.DataSourceList)
                 {
-                    Object o1 = null;
-                    Execute(() =>
+
+                    string actualFieldName = item.GetType().GetProperty(fieldToSearchOnHeader).GetValue(item).ToString();
+                    if (actualFieldName == fieldValueToSearch)
                     {
-                        o1 = General.GetVisualChild<CheckBox>(cell);
-                    });
-                    
-                    object o = cell.GetType().GetProperty(fieldToSearchOnHeader);
+                        DataGridCellsPresenter presenter = null;
+                        CheckBox checkbox = null;
+                        DataGridRow row = mGrid.Grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
 
+                        //object a = row.GetType().GetProperty(checkboxHeaderValue).GetValue(row);
+
+                        Execute(() =>
+                        {
+                            presenter = General.GetVisualChild<DataGridCellsPresenter>(row);
+
+                            object a = presenter.ItemContainerGenerator.Items[0].GetType().GetProperty(checkboxHeaderValue).GetValue(presenter.ItemContainerGenerator.Items[0]);
+
+
+
+                            if (a != null)
+                            {
+                                DataGridCell cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(0);
+                                checkbox = General.GetVisualChild<CheckBox>(cell);
+                            }
+
+                            //((DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(1)).TabIndex;
+
+
+ 
+
+                        });
+
+                        if (checkbox.IsChecked == true)
+                        {
+                            checkbox.IsChecked = false;
+                        }
+                        else
+                        {
+                            checkbox.IsChecked = true;
+                        }
+                    }
                 }
+
+
             }
-
-
-
-            foreach (DataGridRow row in mGrid.GetDataGridRows(mGrid.Grid))
+            catch (Exception ex)
             {
-                try
-                {
 
-                    CheckBox cb = (CheckBox)mGrid.GetDataTemplateCellControl<CheckBox>(row, 0);
-                }
-                catch
-                {
-
-                }
-
-
-
-                DataGridCell cell = null;
-                
-                Execute(() => {
-                    cell = mGrid.GetDataGridCell(row, i);
-
-                });
-                
-                
-                i++;
             }
-
-            foreach (var item in mGrid.DataSourceList)
-            {
-                //if (item.GetType().GetProperty(property).GetValue(item).ToString() == value)
-                //{
-                //    mGrid.GetDataGridRows(mGrid.Grid);
-                //}
-            }
+           
         }
+
+
+                //DataGridCellsPresenter presenter = null;
+                //DataGridRow row = mGrid.Grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+                //Execute(() =>
+                //{
+                //    presenter = General.GetVisualChild<DataGridCellsPresenter>(row);
+                //});
+
+                //try
+                //{
+
+                //    CheckBox o = null;
+
+                //    Execute(() =>
+                //    {
+                //        DataGridCell cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(0);
+
+                //        o = General.GetVisualChild<CheckBox>(cell);
+                //        ((CheckBox)o).IsChecked = false;
+                //    });
+                   
+                //}
+                //catch (Exception ex)
+                //{
+
+                //}
+
+
+                //foreach (UIElementFilter cell in presenter.ItemContainerGenerator.Items)
+                //{
+                //    //Object o1 = null;
+                //    //Execute(() =>
+                //    //{
+                //    //    o1 = General.GetVisualChild<CheckBox>(cell);
+                //    //});
+
+                //    //object o = cell.GetType().GetProperty(fieldToSearchOnHeader);
+
+                //}
+           
+
+
+
+            //foreach (DataGridRow row in mGrid.GetDataGridRows(mGrid.Grid))
+            //{
+            //    try
+            //    {
+
+            //        CheckBox cb = (CheckBox)mGrid.GetDataTemplateCellControl<CheckBox>(row, 0);
+            //    }
+            //    catch
+            //    {
+
+            //    }
+
+
+
+            //    DataGridCell cell = null;
+                
+            //    Execute(() => {
+            //        cell = mGrid.GetDataGridCell(row, i);
+
+            //    });
+                
+                
+            //    i++;
+            //}
+
+            //foreach (var item in mGrid.DataSourceList)
+            //{
+            //    //if (item.GetType().GetProperty(property).GetValue(item).ToString() == value)
+            //    //{
+            //    //    mGrid.GetDataGridRows(mGrid.Grid);
+            //    //}
+            //}
+        
     }
 }

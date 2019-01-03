@@ -297,7 +297,7 @@ namespace GingerWPFUnitTest.POMs
             {
                 ClickResourcesRibbon();
                 Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
-                TwoLevelMenuPage p = (TwoLevelMenuPage)f.Content;
+                //TwoLevelMenuPage p = (TwoLevelMenuPage)f.Content;
 
                 TwoLevelMenuPage resourcesPage = (TwoLevelMenuPage)f.Content;
 
