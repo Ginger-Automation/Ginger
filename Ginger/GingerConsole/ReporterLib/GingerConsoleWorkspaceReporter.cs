@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.GingerConsole.ReporterLib
             return defualtResualt; // TEMP !!!!!!!!!            
         }
 
-        public override void ToStatus(string statusText)
+        public override void ToStatus(eStatusMessageType messageType, string statusText)
         {
             Console.WriteLine(statusText);
         }

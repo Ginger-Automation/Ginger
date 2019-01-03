@@ -28,9 +28,9 @@ namespace Amdocs.Ginger.Common
             Console.WriteLine("ToLog: " + messageToLog);
         }
 
-        public override void ToStatus(string statusText)
+        public override void ToStatus(eStatusMessageType messageType, string statusText)
         {
-            Console.WriteLine("ToStatus: " + statusText);
+            Console.WriteLine("ToStatus: " + messageType + " " + statusText);
         }
     }
 }

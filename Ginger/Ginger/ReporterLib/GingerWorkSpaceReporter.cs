@@ -28,25 +28,17 @@ namespace Ginger.ReporterLib
             return result;
         }
 
-        public override void ToStatus(string statusText)
+        public override void ToStatus(eStatusMessageType messageType, string statusText)
         {
-            // GingerHelperEventArgs e = new GingerHelperEventArgs(GingerHelperEventArgs.eGingerHelperEventActions.Show, eGingerHelperMsgType.INFO, null, statusText);
-
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // App.MainWindow.Reporter_HandlerGingerHelperEvent(e);
-            App.MainWindow.ShowStatus(statusText);
+            // TODO: Add icon, other info? tooltip seperate
+            App.MainWindow.ShowStatus(messageType, statusText);
         }
 
-
-        // Remove and use the above with default values !!!!!!!!!!!!!!!!!!!!!!!!
-
-        
 
         public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
         {
             try
             {
-
                 switch (logLevel)
                 {
                     case eLogLevel.DEBUG:
@@ -67,14 +59,12 @@ namespace Ginger.ReporterLib
                     default:
                         log.Info(messageToLog, exceptionToLog);
                         break;
-                }
-
-                //if (writeAlsoToConsoleIfNeeded && AddAllReportingToConsole)
-                // ToConsole(logLevel.ToString() + ": " + messageToLog, exceptionToLog);
+                }                
                 Console.WriteLine(logLevel.ToString() + ": " + messageToLog, exceptionToLog);
             }
             catch (Exception ex)
             {
+                // TODO: throw?
                 //failed to write to log
             }
         }
