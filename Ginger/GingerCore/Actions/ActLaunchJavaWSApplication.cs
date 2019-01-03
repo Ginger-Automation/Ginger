@@ -378,9 +378,13 @@ namespace GingerCore.Actions
             {
                 mJavaWSEXEPath_Calc = CalculateValue(mJavaWSEXEPath);
                 if (string.IsNullOrEmpty(mJavaWSEXEPath_Calc))
+                {
                     mJavaWSEXEPath_Calc = CommonLib.GetJavaHome();
+                }
                 if (mJavaWSEXEPath_Calc.ToLower().Contains("bin") == false)
+                {
                     mJavaWSEXEPath_Calc = Path.Combine(mJavaWSEXEPath_Calc, @"bin");
+                }
 
                 mURL_Calc = CalculateValue(mURL);
 
