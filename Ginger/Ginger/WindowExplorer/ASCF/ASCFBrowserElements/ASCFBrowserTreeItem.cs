@@ -57,7 +57,7 @@ namespace Ginger.Actions.Locators.ASCF
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             //TODO: fix me hard coded 0      
-            ASCFDriver d = (ASCFDriver)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent.Driver;
+            ASCFDriver d = (ASCFDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
 
             d.SetCurrentBrowserControl(eLocateBy.ByName, Path);            
             

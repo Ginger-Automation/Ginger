@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using GingerCoreNET.ReporterLib;
 using System;
 using System.Windows;
 using System.Windows.Controls;

@@ -134,7 +134,7 @@ namespace GingerCore.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
             }
         }
         //to get the absolute path of output file
@@ -313,7 +313,7 @@ namespace GingerCore.Actions
             }
             catch (Exception exc)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, exc.Message);
+                Reporter.ToLog(eLogLevel.ERROR, exc.Message);
             }
             finally
             {

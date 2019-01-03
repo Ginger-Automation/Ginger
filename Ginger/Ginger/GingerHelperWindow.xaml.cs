@@ -84,7 +84,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to control the Ginger Helper animation", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to control the Ginger Helper animation", ex);
             }
         }
 

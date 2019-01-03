@@ -33,6 +33,7 @@ using Amdocs.Ginger.CoreNET.Execution;
 using GingerTestHelper;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace UnitTests.UITests.JavaDriverTest
 {
@@ -69,9 +70,7 @@ namespace UnitTests.UITests.JavaDriverTest
                 mBF.Activities = new ObservableList<Activity>();
                 mBF.Name = "BF Test Java Driver";
                 Platform p = new Platform();
-                p.PlatformType = ePlatformType.Java;
-                mBF.Platforms = new ObservableList<Platform>();
-                mBF.Platforms.Add(p);
+                p.PlatformType = ePlatformType.Java;                
                 mBF.TargetApplications.Add(new TargetApplication() { AppName = "JavaTestApp" });
                 Activity activity = new Activity();
                 activity.TargetApplication = "JavaTestApp";
@@ -103,7 +102,7 @@ namespace UnitTests.UITests.JavaDriverTest
                 a.Name = "Java Agent";
                 a.Driver = mDriver;
 
-                mGR.SolutionAgents = new ObservableList<Agent>();
+                mGR.SolutionAgents = new ObservableList<IAgent>();
                 mGR.SolutionAgents.Add(a);
 
                 ApplicationAgent AA = new ApplicationAgent();
