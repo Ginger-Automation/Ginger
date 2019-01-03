@@ -81,7 +81,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void SourceControlLock(object sender, RoutedEventArgs e)
         {
             string lockComment = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("Lock", "Lock Comment:", ref lockComment, System.IO.Path.GetInvalidFileNameChars()))
+            if (GingerCore.General.GetInputWithValidation("Lock", "Lock Comment:", ref lockComment))
             {
                 SourceControlIntegration.Lock(App.UserProfile.Solution.SourceControl, this.NodePath(), lockComment);
                 mTreeView.Tree.RefreshHeader((ITreeViewItem)this);

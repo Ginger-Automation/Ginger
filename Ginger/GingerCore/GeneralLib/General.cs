@@ -480,7 +480,7 @@ namespace GingerCore
             return false;
         }
 
-        public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed, bool isMultiline = false)
+        public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed = null, bool isMultiline = false)
         {
             bool returnWindow = GingerCore.GeneralLib.InputBoxWindow.OpenDialog(header, label, ref resultValue, isMultiline);
 
@@ -492,7 +492,7 @@ namespace GingerCore
                     Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Value cannot be empty.");
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
-                if (!(resultValue.IndexOfAny(CharsNotAllowed) < 0))
+                if (CharsNotAllowed != null && !(resultValue.IndexOfAny(CharsNotAllowed) < 0))
                 {
                     System.Text.StringBuilder builder = new System.Text.StringBuilder();
                     foreach (char value in CharsNotAllowed)
