@@ -77,6 +77,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             Assert.AreEqual(ext, "Ginger.ApplicationAPIModel");
         }
 
+        [Ignore]
         [TestMethod]
         public void AddAPIFromXMLAndAvoidDuplicateNodesTest()
         {
@@ -107,6 +108,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             Assert.AreEqual(AppModelParametersAvoidNodes.Count, 1);
         }
 
+        [Ignore]
         [TestMethod]
         public void AddAPIFromJSONAndAvoidDuplicateNodesTest()
         {

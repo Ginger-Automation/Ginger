@@ -237,7 +237,7 @@ namespace Amdocs.Ginger.Repository
 
             if (FullPath == null || !Directory.Exists(PathHelper.GetLongPath(FullPath)))
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "RepositoryFolder/LoadFolderFiles- Invalid folder: " + Folder);
+                Reporter.ToLog(eLogLevel.ERROR, "RepositoryFolder/LoadFolderFiles- Invalid folder: " + Folder);
                 return null;                
             }
 
@@ -263,7 +263,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 catch(Exception ex)
                 {
-                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("RepositoryFolder/LoadFolderFiles- Failed to load the Repository Item XML which in file: '{0}'.", FileName), ex);
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("RepositoryFolder/LoadFolderFiles- Failed to load the Repository Item XML which in file: '{0}'.", FileName), ex);
                 }
             });
 
@@ -391,7 +391,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch(Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
             }
 
         }
@@ -412,7 +412,7 @@ namespace Amdocs.Ginger.Repository
         Mutex m = new Mutex();
         private void FileWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            AppReporter.ToConsole("FileWatcher change detected: " + e.FullPath + " , " + e.ChangeType);
+            Reporter.ToConsole(eLogLevel.DEBUG, "FileWatcher change detected: " + e.FullPath + " , " + e.ChangeType);
             try
             {                
                 m.WaitOne();
@@ -443,14 +443,14 @@ namespace Amdocs.Ginger.Repository
             }
             catch(Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
             }
                         
             finally
             {
                 m.ReleaseMutex();
             }
-            AppReporter.ToConsole("FileWatcher change handled: " + e.FullPath + " , " + e.ChangeType);
+            Reporter.ToConsole(eLogLevel.DEBUG, "FileWatcher change handled: " + e.FullPath + " , " + e.ChangeType);
         }
 
         private void HandleFileChange(FileSystemEventArgs e)

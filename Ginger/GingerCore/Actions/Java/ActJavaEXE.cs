@@ -202,7 +202,7 @@ namespace GingerCore.Actions.Java
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
                 this.Error = "Failed to execute the script. Details: " + e.Message;
 
                 return DataBuffer + "\n" + ErrorBuffer;
