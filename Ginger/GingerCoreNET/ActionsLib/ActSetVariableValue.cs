@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCore.Variables;
@@ -86,18 +85,15 @@ namespace GingerCore.Actions
                 return;
             }
 
+            string calculatedValue = ValueExpression.Calculate(this.Value);
             if (SetVariableValueOption == VariableBase.eSetValueOptions.SetValue)
-            {               
-                ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow,DSList);
-                VE.Value = this.Value;
-
+            {                
                 if (Var.GetType() == typeof(VariableString))
                 {
-                    ((VariableString)Var).Value = VE.ValueCalculated;
+                    ((VariableString)Var).Value = calculatedValue;
                 }
                 else if (Var.GetType() == typeof(VariableSelectionList))
-                {
-                    string calculatedValue = VE.ValueCalculated;
+                {                     
                     if (((VariableSelectionList)Var).OptionalValuesList.Where(pv => pv.Value == calculatedValue).SingleOrDefault() != null)
                     {
                         ((VariableSelectionList)Var).Value = calculatedValue;
@@ -110,8 +106,7 @@ namespace GingerCore.Actions
                     }
                 }
                 else if (Var.GetType() == typeof(VariableList))
-                {
-                    string calculatedValue = VE.ValueCalculated;
+                {                    
                     string[] possibleVals = ((VariableList)Var).Formula.Split(',');
                     if (possibleVals != null && possibleVals.Contains(calculatedValue))
                     {
@@ -126,18 +121,16 @@ namespace GingerCore.Actions
                 }
                 else if (Var.GetType() == typeof(VariableDynamic))
                 {
-                    ((VariableDynamic)Var).ValueExpression = VE.Value;
+                    ((VariableDynamic)Var).ValueExpression = this.Value;
                 }
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.ResetValue)
             {                  
-                    ((VariableBase)Var).ResetValue();
+                    (Var).ResetValue();
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.ClearSpecialChar)
             {
-                ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                VE.Value = this.Value;
-                string specChar = VE.ValueCalculated;
+                string specChar = ValueExpression.Calculate(this.Value);
                 if(string.IsNullOrEmpty(specChar))
                 {
                     specChar = @"{}(),\""";

@@ -368,11 +368,8 @@ namespace GingerCore.Actions
         }
 
         private string CalculateValue(string valueTocalc)
-        {
-            //if (mVE == null)
-            mVE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow,DSList);
-            mVE.Value = valueTocalc;
-            return mVE.ValueCalculated.Trim();
+        {            
+            return ValueExpression.Calculate(valueTocalc).Trim(); 
         }
 
         private bool CalculateArguments()

@@ -139,6 +139,7 @@ namespace UnitTests.NonUITests
             act1.AddNewReturnParams = true;
             act1.AddOrUpdateReturnParamActual(ParamName, "378");
             act1.AddOrUpdateReturnParamExpected(ParamName, "37");  // failed due to regex
+            mGR.PrepActionValueExpression(act1);
 
             //Act
             mGR.CalculateActionFinalStatus(act1);
