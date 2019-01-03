@@ -16,24 +16,23 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
+using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Platforms;
-using System;
-using System.Linq;
-using GingerCore.Drivers.CommunicationProtocol;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
-using System.Collections.Generic;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Execution;
-using GingerTestHelper;
-using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
+using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace UnitTests.UITests.JavaDriverTest
 {
@@ -85,7 +84,12 @@ namespace UnitTests.UITests.JavaDriverTest
                 LJA.Port ="9898";
                 LJA.URL = TestResources.GetTestResourcesFile(@"JavaTestApp\JavaTestApp.jar");
                 activity.Acts.Add(LJA);
-                LJA.Execute();
+                mGR.PrepActionValueExpression(LJA);
+                LJA.Execute();                
+                if (LJA.Status != eRunStatus.Passed)
+                {
+                    throw new Exception(LJA.Error);
+                }
 
                 mDriver = new JavaDriver(mBF);
                 mDriver.JavaAgentHost = "127.0.0.1";
@@ -114,8 +118,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
                 mGR.SetCurrentActivityAgent();
 
-                GingerCore.Drivers.CommunicationProtocol.PayLoad PL = new GingerCore.Drivers.CommunicationProtocol.PayLoad("SwitchWindow");
-                // PL.AddValue("ByTitle");
+                PayLoad PL = new PayLoad("SwitchWindow");                
                 PL.AddValue("Java Swing Test App");
                 PL.ClosePackage();
                 PayLoad RC = mDriver.Send(PL);
