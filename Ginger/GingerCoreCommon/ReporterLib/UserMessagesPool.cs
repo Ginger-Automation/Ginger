@@ -529,6 +529,10 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMessagesPool.Add(eUserMsgKeys.CurrentActionNotSaved, new UserMessage(eMessageType.INFO, "Current Action Not Saved", "Before using the 'next/previous action' button, Please save the current action", MessageBoxButton.OK, MessageBoxResult.None));
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.LoseChangesWarn, new UserMessage(eMessageType.WARN, "Save Changes", "The operation may result with lost of un-saved local changes." + Environment.NewLine + "Please make sure all changes were saved before continue." + Environment.NewLine + Environment.NewLine + "To perform the operation?", MessageBoxButton.YesNo, MessageBoxResult.No));
+
+
+
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.CompilationErrorOccured, new UserMessage(eMessageType.ERROR, "Compilation Error Occurred", "Compilation error occurred." + Environment.NewLine + "Error Details: " + Environment.NewLine + " '{0}'.", MessageBoxButton.OK, MessageBoxResult.None));
         }
     }
 }

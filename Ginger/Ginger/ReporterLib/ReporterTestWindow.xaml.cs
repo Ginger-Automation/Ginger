@@ -25,6 +25,7 @@ namespace Ginger.ReporterLib
             {
                 UserMessage mess;
                 MessageInfo messageInfo = new MessageInfo();
+                messageInfo.MessageKey = o;
                 bool b = Reporter.UserMessagesPool.TryGetValue(o, out mess);               
                 if (!b)
                 {
@@ -34,8 +35,7 @@ namespace Ginger.ReporterLib
                 {
 
                     messageInfo.caption = mess.Caption;
-                    messageInfo.message = mess.Message;
-                    messageInfo.MessageKey = o;
+                    messageInfo.message = mess.Message;                    
                     messageInfo.status = "OK";
                 }
                 
