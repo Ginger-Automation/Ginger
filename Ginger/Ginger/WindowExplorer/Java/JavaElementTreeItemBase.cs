@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Ginger.WindowExplorer.HTMLCommon;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.WindowExplorer.Java
 {
@@ -34,17 +35,25 @@ namespace Ginger.WindowExplorer.Java
         public Boolean IsExpandable { get { return this.JavaElementInfo.IsExpandable; } set { this.JavaElementInfo.IsExpandable = value; } }
 
        public List<ITreeViewItem> Childrens()
-        {         
-            PayLoad Response = getChilderns();
-            List<PayLoad> controls = Response.GetListPayLoad();
-            List<ITreeViewItem> Childrens= new List<ITreeViewItem>();
-            if (Response.Name == "ContainerComponents")           
-               Childrens = GetControlsAsTreeItems(controls);
-          
-           if (Response.Name == "HTML Element Children")
-               Childrens = GetHTMLControlsAsTreeItems(controls);
+        {
+            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            try
+            {
+                PayLoad Response = getChilderns();
+                List<PayLoad> controls = Response.GetListPayLoad();
+               
+                if (Response.Name == "ContainerComponents")
+                    Childrens = GetControlsAsTreeItems(controls);
 
+                if (Response.Name == "HTML Element Children")
+                    Childrens = GetHTMLControlsAsTreeItems(controls);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Not able to get children node", ex, true);
+            }
             return Childrens;
+
         }
 
        List<ITreeViewItem> GetControlsAsTreeItems(List<PayLoad> controls)
