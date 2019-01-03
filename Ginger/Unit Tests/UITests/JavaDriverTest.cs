@@ -118,7 +118,11 @@ namespace UnitTests.UITests.JavaDriverTest
                 // PL.AddValue("ByTitle");
                 PL.AddValue("Java Swing Test App");
                 PL.ClosePackage();
-                GingerCore.Drivers.CommunicationProtocol.PayLoad RC = mDriver.Send(PL);                
+                PayLoad RC = mDriver.Send(PL);
+                if (RC.IsErrorPayLoad())
+                {
+                    throw new Exception("Error cannot start Java driver - " + RC.GetValueString());
+                }
             }
         }
 
