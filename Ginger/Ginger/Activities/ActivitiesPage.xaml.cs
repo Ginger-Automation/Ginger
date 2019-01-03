@@ -36,6 +36,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.BusinessFlowFolder
 {
@@ -214,7 +215,7 @@ namespace Ginger.BusinessFlowFolder
             {
                 mBusinessFlow.CurrentActivity = (Activity)grdActivities.CurrentItem;
                 if (mBusinessFlow.CurrentActivity != null)
-                    mBusinessFlow.CurrentActivity.PropertyChanged += CurrentActivity_PropertyChanged;
+                  ((Activity)  mBusinessFlow.CurrentActivity).PropertyChanged += CurrentActivity_PropertyChanged;
             }
         }
 
@@ -238,15 +239,15 @@ namespace Ginger.BusinessFlowFolder
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.TargetApplication, WidthWeight = 7.5, Header = "T. Application" });
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ActivitiesGroupID, Header = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), WidthWeight = 7.5, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.VariablesNames, Header = GingerDicser.GetTermResValue(eTermResKey.Variables), WidthWeight = 7.5, BindingMode = BindingMode.OneWay });           
-            List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(Activity.eActivityAutomationStatus));
+            List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(eActivityAutomationStatus));
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.AutomationStatus, WidthWeight = 6, Header="Auto. Status", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = automationStatusList });
-            List<GingerCore.General.ComboEnumItem> runOptionList = GingerCore.General.GetEnumValuesForCombo(typeof(Activity.eActionRunOption));
+            List<GingerCore.General.ComboEnumItem> runOptionList = GingerCore.General.GetEnumValuesForCombo(typeof(eActionRunOption));
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ActionRunOption, WidthWeight = 10, Header = "Actions Run Option", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = runOptionList });
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Status, WidthWeight = 6, Header="Run Status", BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new ActivityStatusConverter(), TextBlock.ForegroundProperty)) });                       
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ElapsedSecs, WidthWeight = 6, Header="Elapsed", BindingMode = BindingMode.OneWay, HorizontalAlignment = System.Windows.HorizontalAlignment.Right });                        
             grdActivities.SetAllColumnsDefaultView(defView);
 
-            //# Custome Views
+            //# Custom Views
             GridViewDef desView = new GridViewDef(eAutomatePageViewStyles.Design.ToString());
             desView.GridColsView = new ObservableList<GridColView>();
             desView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Status, Visible = false });
@@ -284,10 +285,10 @@ namespace Ginger.BusinessFlowFolder
 
         private void ResetActivity(object sender, RoutedEventArgs e)
         {
-            mBusinessFlow.CurrentActivity.Reset();
+           ((Activity) mBusinessFlow.CurrentActivity).Reset();
         }
 
-        //TODO: put in seperate class
+        //TODO: put in separate class
         public class ActivityStatusConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter,

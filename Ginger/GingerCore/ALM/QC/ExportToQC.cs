@@ -28,6 +28,7 @@ using System.IO.Compression;
 using System.Reflection;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.IO;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.ALM.QC
 {
@@ -59,16 +60,16 @@ namespace GingerCore.ALM.QC
                     {
                         foreach (ActivitiesGroup activGroup in activGroups)
                         {
-                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == ActivitiesGroup.eActivitiesGroupRunStatus.Passed)
-                            || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == ActivitiesGroup.eActivitiesGroupRunStatus.Failed)
+                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
+                            || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
                             || publishToALMConfig.FilterStatus == FilterByStatus.All)
                             {
                                 TSTest tsTest = null;
-                                //go by TC ID = TC Instancs ID
+                                //go by TC ID = TC Instance ID
                                 tsTest = qcTSTests.Where(x => x.TestId == activGroup.ExternalID && x.ID == activGroup.ExternalID2).FirstOrDefault();
                                 if (tsTest == null)
                                 {
-                                    //go by Linked TC ID + TC Instancs ID
+                                    //go by Linked TC ID + TC Instance ID
                                     tsTest = qcTSTests.Where(x => ImportFromQC.GetTSTestLinkedID(x) == activGroup.ExternalID && x.ID == activGroup.ExternalID2).FirstOrDefault();
                                 }
                                 if (tsTest == null)
@@ -144,7 +145,7 @@ namespace GingerCore.ALM.QC
                                             {
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed:
                                                     step.Status = "Failed";
-                                                    List<Act> failedActs= matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
+                                                    List<IAct> failedActs= matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
                                                     string errors = string.Empty;
                                                     foreach (Act act in failedActs) errors += act.Error + Environment.NewLine;
                                                     step["ST_ACTUAL"] = errors;
@@ -228,7 +229,7 @@ namespace GingerCore.ALM.QC
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- "+ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
                 //if (!silentMode)
                 //    Reporter.ToUser(eUserMsgKeys.ErrorWhileExportingExecDetails, ex.Message);
                 return false;
@@ -236,7 +237,7 @@ namespace GingerCore.ALM.QC
         }
 
         /// <summary>
-        /// Export Activities Group details to QC, can be used for creating new matching QC Test Case or updating an exisitng one
+        /// Export Activities Group details to QC, can be used for creating new matching QC Test Case or updating an existing one
         /// </summary>
         /// <param name="activitiesGroup">Activities Group to Export</param>
         /// <param name="mappedTest">The QC Test Case which mapped to the Activities Group (in case exist) and needs to be updated</param>
@@ -265,7 +266,7 @@ namespace GingerCore.ALM.QC
                 else
                 {
                     //##update existing test case
-                    test = mappedTest;
+                    test = ImportFromQC.GetQCTest(activitiesGroup.ExternalID);
 
                     //delete the un-needed steps
                     DesignStepFactory stepF = test.DesignStepFactory;
@@ -310,14 +311,14 @@ namespace GingerCore.ALM.QC
 
                 //Add/update all test steps + Parameters
                 foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
-                    ExportActivityAsTestStep(test, actIdent.IdentifiedActivity);
+                    ExportActivityAsTestStep(test, (Activity)actIdent.IdentifiedActivity);
 
                 return true;
             }
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export the Activities Group to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Activities Group to QC/ALM", ex);
                 return false;
             }
         }
@@ -361,14 +362,14 @@ namespace GingerCore.ALM.QC
                 foreach (VariableBase var in activity.Variables)
                 {
                     paramsSigns += "&lt;&lt;&lt;" + var.Name.ToLower() + "&gt;&gt;&gt;<br />";
-                    //try to add the paramter to the test case parameters list
+                    //try to add the parameter to the test case parameters list
                     try
                     {
                         testParams.AddParam(var.Name.ToLower(), "String");
                         testParams.Save();
                         test.Post();
                     }
-                    catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                    catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 }
             }
             description = description.Replace("<<&Parameters&>>", paramsSigns);
@@ -453,7 +454,7 @@ namespace GingerCore.ALM.QC
                     if (ex.Message.Contains("The Test Set already exists"))
                     {
                         result = "Cannot export Business Flow - The Test Set already exists in the selected folder. ";
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, result, ex);
+                        Reporter.ToLog(eLogLevel.ERROR, result, ex);
                         return false;
                     }
 
@@ -470,7 +471,7 @@ namespace GingerCore.ALM.QC
                     catch(Exception e)
                     {
                         tsFilter["CY_FOLDER_ID"] = "\"" + testSetParentFolder.Path.ToString() + "\"";
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                     }
 
                     List TestsetList = TSetFact.NewList(tsFilter.Text);
@@ -498,13 +499,20 @@ namespace GingerCore.ALM.QC
                             ag.ExternalID2 = tsTest.ID;//the test case instance ID in the test set- used for exporting the execution details
                         }
                     }
+                    else
+                    {
+                        foreach (ActivityIdentifiers actIdent in ag.ActivitiesIdentifiers)
+                        {
+                            ExportActivityAsTestStep(ImportFromQC.GetQCTest(ag.ExternalID),(Activity) actIdent.IdentifiedActivity);
+                        }
+                    }
                 }
                 return true;
             }
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export the Business Flow to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Business Flow to QC/ALM", ex);
                 return false;
             }
         }
@@ -577,7 +585,7 @@ namespace GingerCore.ALM.QC
             catch (Exception ex)
             {
                 //String Text = "Defect Creation Failed.";
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return 0;
             }
         }

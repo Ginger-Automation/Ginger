@@ -39,6 +39,8 @@ using System.Windows.Threading;
 using System.Xml;
 using GingerCore.DataSource;
 using System.Reflection;
+using amdocs.ginger.GingerCoreNET;
+using GingerCoreNET.ReporterLib;
 
 namespace GingerCore
 {
@@ -593,7 +595,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
                 return false;
             }
 
@@ -618,16 +620,11 @@ namespace GingerCore
             }
             catch(IOException ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
             }
             
         }
-        public static Bitmap FileToBitmapImage(String path)
-        {
-            if (string.IsNullOrEmpty(path)) return null;
-            Bitmap bmp = (Bitmap)Bitmap.FromFile(path);
-            return (bmp);
-        }
+        
 
         public static string GetGingerEXEPath()
         {
@@ -636,21 +633,7 @@ namespace GingerCore
             return exeLocation;
         }
 
-        public static bool IsNumeric(string sValue)
-        {
-            // simple method to check is strign is number
-            // there are many other alternatives, just keep it simple and make sure it run fast as it is going to be used a lot, for every return value calc   
-            // regec and other are more expensive
-
-        foreach (char c in sValue)
-            {
-                if (!char.IsDigit(c) && c != '.')
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        
 
         public static List<GingerCore.General.ComboEnumItem> GetEnumValuesForCombo(Type Etype)
         {
@@ -764,31 +747,7 @@ namespace GingerCore
                 }
             }
         }
-        public static Dictionary<string, object> DeserializeJson(string json)
-        {
-            if (json.StartsWith("["))
-            {
-                Dictionary<string, object> dictionary = new Dictionary<string, object>();
-
-                JArray a = JArray.Parse(json);
-
-                int ArrayCount = 1;
-                foreach (JObject o in a.Children<JObject>())
-                {
-                    dictionary.Add(ArrayCount.ToString(), o);
-                    ArrayCount++;
-
-                }
-                return dictionary;
-            }
-            else
-            {
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                Dictionary<string, object> dictionary =
-                    serializer.Deserialize<Dictionary<string, object>>(json);
-                return dictionary;
-            }
-        }
+       
 
         public static List<XmlNodeItem> GetXMLNodesItems(XmlDocument xmlDoc,bool DisableProhibitDtd = false)
         {
@@ -863,20 +822,13 @@ namespace GingerCore
 
         public static void ClearDirectoryContent(string DirPath)
         {
-            //clear directory
-            System.IO.DirectoryInfo di = new DirectoryInfo(DirPath);
-            foreach (FileInfo file in di.GetFiles())
-                file.Delete();
-            foreach (DirectoryInfo dir in di.GetDirectories())
-                dir.Delete(true);
+            Amdocs.Ginger.Common.GeneralLib.General.ClearDirectoryContent(DirPath);
         }
 
         //HTML Report related methods added here 
         public static string TimeConvert(string s)
         {
-            double seconds = Convert.ToDouble(s);
-            TimeSpan ts = TimeSpan.FromSeconds(seconds);
-            return ts.ToString(@"hh\:mm\:ss");
+            return Amdocs.Ginger.Common.GeneralLib.General.TimeConvert(s);
         }
 
         public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
@@ -1065,7 +1017,7 @@ namespace GingerCore
                     if (!RegistryFunctions.CheckRegistryValueExist(eRegistryRoot.HKEY_CURRENT_USER, registryKeyPath,
                                     requiredValueName, requiredValue, Microsoft.Win32.RegistryValueKind.DWord, true, true))
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_BROWSER_EMULATION' value to both Local Machine and User level");
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_BROWSER_EMULATION' value to both Local Machine and User level");
                     }
                 }
                 //End
@@ -1086,14 +1038,14 @@ namespace GingerCore
                     if (!RegistryFunctions.CheckRegistryValueExist(eRegistryRoot.HKEY_CURRENT_USER, registryKeyPath,
                                 requiredValueName, requiredValue, Microsoft.Win32.RegistryValueKind.DWord, true, true))
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_SCRIPTURL_MITIGATION' value to both Local Machine and User level");
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_SCRIPTURL_MITIGATION' value to both Local Machine and User level");
                     }
                 }
                 //End
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to complete the registry values check", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to complete the registry values check", ex);
                 Reporter.ToUser(eUserMsgKeys.RegistryValuesCheckFailed);
             }
         }
@@ -1162,7 +1114,7 @@ namespace GingerCore
                 if (DataSource.FileFullPath.StartsWith("~"))
                 {
                     DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
-                    DataSource.FileFullPath = Path.Combine(DataSource.ContainingFolderFullPath.Replace("DataSources", "") , DataSource.FileFullPath);
+                    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
                 }
                 DataSource.Init(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();

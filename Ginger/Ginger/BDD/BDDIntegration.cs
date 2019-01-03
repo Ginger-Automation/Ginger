@@ -23,6 +23,7 @@ using GingerCore;
 using GingerWPF.WizardLib;
 using System.IO;
 using Ginger.SolutionWindows.TreeViewItems;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.BDD
 {

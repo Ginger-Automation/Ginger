@@ -88,26 +88,26 @@ namespace Ginger.WindowExplorer
         }
 
         private eWindowExplorerPageContext mContext;
-        
+
         // We can open it from agents grid, or from Action Edit page with Action 
-        // If we open from ActionEdit Page then we update the act with locator
+        // If we open from ActionEdit Page then we update the act with Locator
         public WindowExplorerPage(ApplicationAgent ApplicationAgent,  Act Act = null, eWindowExplorerPageContext Context = eWindowExplorerPageContext.WindowExplorerPage)
         {           
             InitializeComponent();
 
             mContext = Context;
             
-            mPlatform = PlatformInfoBase.GetPlatformImpl(ApplicationAgent.Agent.Platform);
+            mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
 
             //Instead of check make it disabled ?
-            if ((ApplicationAgent.Agent.Driver is IWindowExplorer) == false)
+            if ((((Agent)ApplicationAgent.Agent).Driver is IWindowExplorer) == false)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Control selection is not available yet for driver - " + ApplicationAgent.Agent.Driver.GetType().ToString());
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Control selection is not available yet for driver - " + ((Agent)ApplicationAgent.Agent).Driver.GetType().ToString());
                 _GenWin.Close();
                 return;                
             }
             
-            IWindowExplorer WindowExplorerDriver = (IWindowExplorer)ApplicationAgent.Agent.Driver;
+            IWindowExplorer WindowExplorerDriver = (IWindowExplorer)((Agent)ApplicationAgent.Agent).Driver;
                 
             mWindowExplorerDriver = WindowExplorerDriver;
             mAction = Act;
@@ -147,39 +147,47 @@ namespace Ginger.WindowExplorer
 
         private void RefreshControlProperties(object sender, RoutedEventArgs e)
         {
-            //TODO: fix me for cached properties like ASCFBrowserElements, it will nto work
+            //TODO: fix me for cached properties like ASCFBrowserElements, it will not work
             if (mCurrentControlTreeViewItem != null)
             ControlPropertiesGrid.DataSourceList = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();            
         }
 
         private void UpdateWindowsList()
         {
-            List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();            
-            WindowsComboBox.ItemsSource = list;
-            WindowsComboBox.DisplayMemberPath = "WinInfo";
-
-            AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
-
-            if (ActiveWindow != null)
+            try
             {
-                foreach (AppWindow w in list)
+                List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();
+                WindowsComboBox.ItemsSource = list;
+                WindowsComboBox.DisplayMemberPath = "WinInfo";
+
+                AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
+
+                if (ActiveWindow != null)
                 {
-                    if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
+                    foreach (AppWindow w in list)
                     {
-                        WindowsComboBox.SelectedValue = w;
-                        return;
+                        if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
+                        {
+                            WindowsComboBox.SelectedValue = w;
+                            return;
+                        }
+                    }
+                }
+
+                //TODO: If no selection then select the first if only one window exist in list
+                if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
+                {
+                    if (WindowsComboBox.Items.Count == 1)
+                    {
+                        WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
                     }
                 }
             }
-
-            //TODO: If no selection then select the first if only one window exist in list
-            if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
+            catch (Exception ex)
             {
-                if (WindowsComboBox.Items.Count == 1)
-                {
-                    WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
-                }
+                Reporter.ToLog(eLogLevel.ERROR,ex.ToString(), writeOnlyInDebugMode: true);
             }
+            
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
@@ -338,14 +346,14 @@ namespace Ginger.WindowExplorer
 
             ControlsViewsExpander.IsEnabled = ControlsViewsExpanderFlag;
             if (ControlsViewsExpanderFlag)
-                ControlsViewsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorC")).ToString());
+                ControlsViewsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString());
             else
                 ControlsViewsExpanderLable.Foreground = Brushes.Gray;
 
 
             SelectedControlDetailsExpander.IsEnabled = SelectedControlDetailsExpanderFlag;
             if (SelectedControlDetailsExpanderFlag)
-                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorC")).ToString());
+                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString());
             else
                 SelectedControlDetailsExpanderLable.Foreground = Brushes.Gray;
 
@@ -481,7 +489,7 @@ namespace Ginger.WindowExplorer
                 else
                 {
                     //TODO:If item not found in a tree and user confirms add it to control tree                        
-                    if ((Reporter.ToUser(eUserMsgKeys.ConfirmToAddTreeItem)) == MessageBoxResult.Yes)
+                    if ((Reporter.ToUser(eUserMsgKeys.ConfirmToAddTreeItem)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                     {
                         //TODO: Need to move this to IWindowExplorer and each driver will implement this and return matching ITreeViewItem for Element.
                         if(mSpyElement is UIAElementInfo)
@@ -512,7 +520,7 @@ namespace Ginger.WindowExplorer
                         }
                         else if(mSpyElement is JavaElementInfo)
                         {
-                            //TODO: Fix me to add if spy elment is not present on tree.
+                            //TODO: Fix me to add if spy element is not present on tree.
                             Reporter.ToUser(eUserMsgKeys.FailedToAddTreeItem, "", "Adding spy element dynamically is not yet supported for this driver");
                         }
                         else
@@ -576,7 +584,7 @@ namespace Ginger.WindowExplorer
                     EI.WindowExplorer = mWindowExplorerDriver;
                     mWindowExplorerDriver.HighLightElement(EI);
                     
-                    //General tab will show the generic elemnt inof page, customized page will be in Data tab
+                    //General tab will show the generic element info page, customized page will be in Data tab
                     mControlFrameContentPage = new ElementInfoPage(EI);
                     ControlFrame.Content = mControlFrameContentPage;
                     SetDetailsExpanderDesign(true, EI);
@@ -599,7 +607,7 @@ namespace Ginger.WindowExplorer
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in ShowCurrentControlInfo", ex);                
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in ShowCurrentControlInfo", ex);                
                 Reporter.ToUser(eUserMsgKeys.ObjectLoad);
             }
         }        
@@ -626,11 +634,11 @@ namespace Ginger.WindowExplorer
                         }
                         else
                         {                                                               // this "else" is temporary. Currently only ePlatformType.Web is overided
-                            list = ((IWindowExplorerTreeItem)iv).GetElementActions();   // case will be removed once all platformes will be overrided
+                            list = ((IWindowExplorerTreeItem)iv).GetElementActions();   // case will be removed once all platforms will be overrided
                         }                                                               //
 
-                        //If no element actions returned then no need to get locators. 
-                        if (list == null || list.Count == 0)
+                    //If no element actions returned then no need to get locator's. 
+                    if (list == null || list.Count == 0)
                         {
                             SetActionsTabDesign(false);                          
                             return;
@@ -686,7 +694,7 @@ namespace Ginger.WindowExplorer
                     HTMLPageTreeItem HPTI = new HTMLPageTreeItem();
                     HTMLElementInfo EI = new HTMLElementInfo();
                     EI.ElementTitle = AW.Title;
-                    EI.XPath = "html";
+                    EI.XPath = "/html";
                     EI.WindowExplorer = mWindowExplorerDriver;
                     HPTI.ElementInfo = EI;                                                                
                     InitTree(HPTI);
@@ -989,8 +997,8 @@ namespace Ginger.WindowExplorer
             {
                 if (CheckedFilteringCreteriaList.Count == 0)
                 {
-                    MessageBoxResult result = Reporter.ToUser(eUserMsgKeys.FilterNotBeenSet);
-                    if (result == MessageBoxResult.OK)
+                    Amdocs.Ginger.Common.MessageBoxResult result = Reporter.ToUser(eUserMsgKeys.FilterNotBeenSet);
+                    if (result == Amdocs.Ginger.Common.MessageBoxResult.OK)
                     {
                         RefreshControlsGrid();
                         return true;
@@ -1008,8 +1016,8 @@ namespace Ginger.WindowExplorer
             }
             else
             {
-                MessageBoxResult result = Reporter.ToUser(eUserMsgKeys.RetreivingAllElements);
-                if (result == MessageBoxResult.OK)
+                Amdocs.Ginger.Common.MessageBoxResult result = Reporter.ToUser(eUserMsgKeys.RetreivingAllElements);
+                if (result == Amdocs.Ginger.Common.MessageBoxResult.OK)
                 {
                     RefreshControlsGrid();
                     return true;
@@ -1087,7 +1095,7 @@ namespace Ginger.WindowExplorer
             else
             {
                 SelectedControlDetailsExpanderLable.Content = "'" + selectedElementInfo.ElementTitle + "' Element Details & Actions";
-                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorC")).ToString()); ;
+                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString()); ;
                 SelectedControlDetailsExpander.IsEnabled = true;
                 if (mFirstElementSelectionDone == false)
                 {
@@ -1141,7 +1149,7 @@ namespace Ginger.WindowExplorer
         private void SetAutoMapElementTypes()
         {
             List<eElementType> UIElementsTypeList = null;
-            switch (mApplicationAgent.Agent.Platform)
+            switch (((Agent)mApplicationAgent.Agent).Platform)
             {
                 case ePlatformType.Web:
                     WebPlatform webPlatformInfo = new WebPlatform();

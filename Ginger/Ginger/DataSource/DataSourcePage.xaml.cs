@@ -61,8 +61,7 @@ namespace Ginger.DataSource
                 App.ObjFieldBinding(DataSourceNameTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.Name);
                 App.ObjFieldBinding(txtDataSourcePath, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.FilePath, BindingMode.OneWay);
                 App.ObjFieldBinding(DataSourceTypeTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.DSType, BindingMode.OneWay);
-
-                InitDSConnection();
+                                
                 SetGridView();
                 SetGridData();                
             }
@@ -93,33 +92,13 @@ namespace Ginger.DataSource
             grdTableList.SetAllColumnsDefaultView(view);
             grdTableList.InitViewItems();
         }
-
-        private void InitDSConnection()
-        {
-            if (mDSDetails.DSType == DataSourceBase.eDSType.MSAccess)
-            {
-                DataSourceBase ADC;
-                ADC = new AccessDataSource();
-                if (mDSDetails.FilePath.StartsWith("~"))
-                {
-                    mDSDetails.FileFullPath = mDSDetails.FilePath.Replace(@"~\", "").Replace("~", "");
-                    mDSDetails.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, mDSDetails.FileFullPath);
-                }
-                ADC.Init(mDSDetails.FileFullPath);
-                mDSDetails.DSC = ADC;
-            }
-
-        }
+        
         private void SetGridData()
         {
             mDSTableList = mDSDetails.DSC.GetTablesList();           
             grdTableList.DataSourceList = mDSTableList;           
         }
-
-        public ObservableList<DataSourceTable> GetTableList()
-        {
-            return mDSTableList;
-        }
+        
         private void DeleteSelectedTables(object sender, RoutedEventArgs e)
         {
             if (grdTableList.Grid.SelectedItems.Count == 0)
@@ -131,7 +110,7 @@ namespace Ginger.DataSource
 
             foreach (object o in SelectedItemsList)
             {
-                if (Reporter.ToUser(eUserMsgKeys.DeleteRepositoryItemAreYouSure, ((DataSourceTable)o).GetNameForFileName()) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.DeleteRepositoryItemAreYouSure, ((DataSourceTable)o).GetNameForFileName()) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     ((DataSourceTable)o).DSC.DeleteTable(((DataSourceTable)o).Name);
                 }
@@ -145,7 +124,7 @@ namespace Ginger.DataSource
                 Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
                 return;
             }
-            if ((Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == MessageBoxResult.Yes)
+            if ((Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 mDSTableList = mDSDetails.DSC.GetTablesList();
                 foreach (DataSourceTable dsTable in mDSTableList)
@@ -181,7 +160,7 @@ namespace Ginger.DataSource
 
             foreach (object o in SelectedItemsList)
             {
-                if (Reporter.ToUser(eUserMsgKeys.RenameRepositoryItemAreYouSure, ((DataSourceTable)o).GetNameForFileName()) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.RenameRepositoryItemAreYouSure, ((DataSourceTable)o).GetNameForFileName()) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     string oldName = ((DataSourceTable)o).Name;
                     InputBoxWindow.OpenDialog("Rename", "Table Name:", ((DataSourceTable)o), DataSourceBase.Fields.Name);

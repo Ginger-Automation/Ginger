@@ -37,6 +37,7 @@ using FlaUI.UIA3.Identifiers;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.WindowsLib
 {
@@ -151,7 +152,7 @@ namespace GingerCore.Drivers.WindowsLib
                     ConditionBase CurCond2 = new PropertyCondition(AutomationObjectIds.NameProperty, LocateValue);
                     CurAE = this.CurrentWindow.FindFirst(TreeScope.Subtree, CurCond2);
 
-                    //For old compativity where Name was the text we fail over to search by Text, PB Only, it is slower as it scan the tree and call win api to get the text
+                    //For old compatibility where Name was the text we fail over to search by Text, PB Only, it is slower as it scan the tree and call win api to get the text
                     if (Object.ReferenceEquals(CurAE, null) && mPlatform == ePlatform.PowerBuilder)
                     {
                     }
@@ -681,6 +682,21 @@ namespace GingerCore.Drivers.WindowsLib
 
             return rc;
         }
+        public string GetElementID(ElementInfo EI)
+        {
+            return "";
+        }
+
+        public string GetElementTagName(ElementInfo EI)
+        {
+            return "";
+        }
+
+        public List<object> GetAllElementsByLocator(eLocateBy LocatorType, string LocValue)
+        {
+            return null;
+        }
+        
 
         public ElementInfo GetPreviousSibling(ElementInfo EI)
         {

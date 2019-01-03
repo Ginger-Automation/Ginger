@@ -14,7 +14,7 @@
             <RowDefinition Height="52*"/>
         </Grid.RowDefinitions>
 
-        <Ginger:ucGrid x:Name="VariablesGrid" Grid.Row="0" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" IsReadOnly="True">
+        <Ginger:ucGrid x:Name="VariablesGrid" AutomationProperties.AutomationId="VariablesGrid AID" Grid.Row="0" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" IsReadOnly="True">
             <Ginger:ucGrid.Title>
                 <GingerCore:ucTextDicResource Text="[Variables]"/>
             </Ginger:ucGrid.Title>

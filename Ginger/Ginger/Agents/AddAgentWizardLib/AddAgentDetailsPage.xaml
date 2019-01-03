@@ -14,21 +14,44 @@
                 <Label Content="Name:" Style="{StaticResource @LabelStyle}"/>
                 <TextBox x:Name="xAgentNameTextBox" AutomationProperties.AutomationId="Name AID"  TextWrapping="Wrap" Text="" Style="{StaticResource @TextBoxStyle}" FontWeight="Bold" Margin="5,0,0,0" />
             </StackPanel>
-
+            
             <StackPanel Margin="0,20,0,0">
                 <Label Content="Description:" Style="{StaticResource @LabelStyle}"/>
                 <TextBox x:Name="xAgentDescriptionTextBox" TextWrapping="Wrap" Text="" Style="{StaticResource @TextBoxStyle}" Height="50" Margin="5,0,0,0"/>
                 <Ginger:ucTagsViewer x:Name="xAgentTagsViewer" Margin="0,10,0,0" HorizontalAlignment="Left"/>
             </StackPanel>
 
-            <StackPanel Margin="0,20,0,0">
-                <Label Content="Platform Type:" Style="{StaticResource @LabelStyle}"/>
-                <ComboBox x:Name="xPlatformTypeComboBox"  AutomationProperties.AutomationId="Platform Type AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <Label Content="Type:" Style="{StaticResource @LabelStyle}" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" Margin="10" VerticalAlignment="Center">
+                    <RadioButton x:Name="xDriverRadioButton" Margin="5" Checked="xDriverRadioButton_Checked">Driver</RadioButton>
+                    <RadioButton x:Name="xPluginRadioButton" Margin="5" Checked="xPluginRadioButton_Checked">Plugin</RadioButton>
+                </StackPanel>
+            </StackPanel>
+            
+
+            <StackPanel x:Name="xPluginConfigStackPanel" Visibility="Visible">
+                <StackPanel Margin="0,10,0,0">
+                    <Label Content="Plugin Id:" Style="{StaticResource @LabelStyle}"/>
+                    <ComboBox x:Name="xPluginIdComboBox" SelectionChanged="xPluginIdComboBox_SelectionChanged"  Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
+                </StackPanel>
+
+                <StackPanel Margin="0,10,0,0">
+                    <Label Content="Service Id:" Style="{StaticResource @LabelStyle}"/>
+                    <ComboBox x:Name="xServiceIdComboBox"  Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
+                </StackPanel>
             </StackPanel>
 
-            <StackPanel x:Name="xDriverTypeStackPanel" Margin="0,20,0,0">
-                <Label Content="Driver Type:" Style="{StaticResource @LabelStyle}"/>
-                <ComboBox x:Name="xDriverTypeComboBox" AutomationProperties.AutomationId="Driver Type AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
+            <StackPanel x:Name="xDriverConfigStackPanel" Visibility="Collapsed">
+                <StackPanel Margin="0,10,0,0">
+                    <Label Content="Platform Type:" Style="{StaticResource @LabelStyle}"/>
+                    <ComboBox x:Name="xPlatformTypeComboBox"  AutomationProperties.AutomationId="Platform Type AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
+                </StackPanel>
+
+                <StackPanel x:Name="xDriverTypeStackPanel" Margin="0,10,0,0">
+                    <Label Content="Driver Type:" Style="{StaticResource @LabelStyle}"/>
+                    <ComboBox x:Name="xDriverTypeComboBox" AutomationProperties.AutomationId="Driver Type AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
+                </StackPanel>
             </StackPanel>
         </StackPanel>
     </Grid>

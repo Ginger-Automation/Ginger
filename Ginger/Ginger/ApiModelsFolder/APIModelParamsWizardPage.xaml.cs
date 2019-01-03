@@ -124,7 +124,7 @@ namespace Ginger.ApiModelsFolder
                                     EAIV.OptionalValues.Add(optionalValue.Value);
                                 }
 
-                            if (EAIV.Description != null && !EAIV.Description.Contains(AMDP.Description))
+                            if (!string.IsNullOrEmpty(EAIV.Description) && !EAIV.Description.Contains(AMDP.Description))
                                 EAIV.Description += " | " + AMDP.Description;
                         }
                         else
@@ -171,7 +171,7 @@ namespace Ginger.ApiModelsFolder
         {
             xAPIModelParamsValueUCGrid.Title = "API Parameters Consolidation";
             xAPIModelParamsValueUCGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
-            xAPIModelParamsValueUCGrid.AddToolbarTool(eImageType.DataSource, "Map Output Parameters to DataSource", new RoutedEventHandler(MapOutputToDataSource));
+            xAPIModelParamsValueUCGrid.AddToolbarTool(eImageType.DataSource, "Map API Parameters to DataSource", new RoutedEventHandler(MapOutputToDataSource));
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
@@ -195,6 +195,9 @@ namespace Ginger.ApiModelsFolder
         {
             try
             {
+                if (Reporter.ToUser(eUserMsgKeys.ParamExportMessage) == Amdocs.Ginger.Common.MessageBoxResult.No)
+                    return;
+
                 DataSourceTablesListPage dataSourceTablesListPage = new DataSourceTablesListPage();
                 dataSourceTablesListPage.ShowAsWindow();
 
@@ -202,8 +205,8 @@ namespace Ginger.ApiModelsFolder
                 {
                     Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
                     return;
-                }
-                                               
+                }                
+
                 foreach (EnhancedActInputValue inputVal in mAddApiModelActionWizardPage.EnhancedInputValueList)
                 {
                     string sColName = inputVal.Param.Replace("[", "_").Replace("]", "").Replace("{", "").Replace("}", "");
@@ -213,7 +216,7 @@ namespace Ginger.ApiModelsFolder
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR,"Error occured while mapping the API Model params to Data Source", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the API Model params to Data Source", ex);
                 Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
             }
         }

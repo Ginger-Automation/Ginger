@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
@@ -266,7 +267,7 @@ namespace Ginger.Variables
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to load the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Actions-Variables dependencies grid data", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Actions-Variables dependencies grid data", ex);
                 Reporter.ToUser(eUserMsgKeys.ActionsDependenciesLoadFailed, ex.Message);
             }
         }
@@ -289,7 +290,7 @@ namespace Ginger.Variables
                             Style colStyle = new System.Windows.Style(typeof(DataGridColumnHeader));                          
                             SolidColorBrush backgroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString(variableColumnBackgroundColor[colorIndx % 8]);
                             colStyle.Setters.Add(new Setter(DataGridColumnHeader.BackgroundProperty, backgroundColor));
-                            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorA")).ToString());
+                            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
                             colStyle.Setters.Add(new Setter(DataGridColumnHeader.ForegroundProperty, foregroundColor));
                             colStyle.Setters.Add(new Setter(DataGridColumnHeader.FontWeightProperty, FontWeights.Bold));
                             colStyle.Setters.Add(new Setter(DataGridColumnHeader.BorderThicknessProperty, new Thickness(0.5, 0.5, 0.5, 0.5)));
@@ -305,7 +306,7 @@ namespace Ginger.Variables
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid columns", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid columns", ex);
                 }
                 grdDependencies.SetGridColumnsWidth();//fix columns width
 
@@ -322,7 +323,7 @@ namespace Ginger.Variables
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid data", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid data", ex);
             }
         }
 
@@ -477,7 +478,7 @@ namespace Ginger.Variables
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to set the " + mDepededItemType.ToString() + "-Variables dependencies helper text", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to set the " + mDepededItemType.ToString() + "-Variables dependencies helper text", ex);
             }
         }
 
@@ -629,7 +630,7 @@ namespace Ginger.Variables
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do Auto check in 'VariablesDependenciesPage' grid", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to do Auto check in 'VariablesDependenciesPage' grid", ex);
             }
         }
 
@@ -672,7 +673,7 @@ namespace Ginger.Variables
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 UndoChangesAndClose();
             }
@@ -708,7 +709,7 @@ namespace Ginger.Variables
                         case (eDependedItemsType.Actions):
                             foreach (DataRowView row in grdDependencies.grdMain.Items)
                             {
-                                Act act = ((Activity)mParentObject).Acts[grdDependencies.grdMain.Items.IndexOf(row)];
+                                IAct act = ((Activity)mParentObject).Acts[grdDependencies.grdMain.Items.IndexOf(row)];
                                 int colsIndex = 2;
                                 foreach (VariableBase var in mParentListVars)
                                 {
@@ -736,7 +737,7 @@ namespace Ginger.Variables
                         case (eDependedItemsType.Activities):
                             foreach (DataRowView row in grdDependencies.grdMain.Items)
                             {
-                                Activity act = ((BusinessFlow)mParentObject).Activities[grdDependencies.grdMain.Items.IndexOf(row)];
+                                Activity act =(Activity)((BusinessFlow)mParentObject).Activities[grdDependencies.grdMain.Items.IndexOf(row)];
                                 int colsIndex = 2;
                                 foreach (VariableBase var in mParentListVars)
                                 {
@@ -771,7 +772,7 @@ namespace Ginger.Variables
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, ex.Message);
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to save the " + mDepededItemType.ToString() + "-Variables dependencies configurations", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to save the " + mDepededItemType.ToString() + "-Variables dependencies configurations", ex);
                 _pageGenericWin.Close();
             }
         }

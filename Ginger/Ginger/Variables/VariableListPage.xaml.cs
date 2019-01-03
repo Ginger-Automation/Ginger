@@ -30,8 +30,8 @@ namespace Ginger.Variables
         {
             InitializeComponent();
 
-            App.ObjFieldBinding(txtValueList, TextBox.TextProperty, var, VariableList.Fields.ValueList);
-            App.ObjFieldBinding(cbRandomOrder, CheckBox.IsCheckedProperty, var, VariableList.Fields.RandomOrder);
+            App.ObjFieldBinding(txtValueList, TextBox.TextProperty, var, nameof(VariableList.ValueList));
+            App.ObjFieldBinding(cbRandomOrder, CheckBox.IsCheckedProperty, var, nameof(VariableList.RandomOrder));
         }
     }
 }

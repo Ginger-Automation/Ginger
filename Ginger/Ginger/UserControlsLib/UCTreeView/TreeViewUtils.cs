@@ -75,12 +75,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 }
                 catch(Exception e)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, e.StackTrace);
+                    Reporter.ToLog(eLogLevel.ERROR, e.StackTrace);
                 }
             }
 
             //Add source control icon
-            if (itemSourceControlStateIcon != eImageType.Null)
+            if (itemSourceControlStateIcon != eImageType.Null && itemObj != null)
             {
                 try
                 {
@@ -94,7 +94,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 catch(Exception ex)
                 {
                     // TODO: write to log
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
             }
 

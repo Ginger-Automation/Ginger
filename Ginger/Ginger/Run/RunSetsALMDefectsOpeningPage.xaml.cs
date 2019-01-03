@@ -116,10 +116,15 @@ namespace Ginger.Run
 
         private void OpenDefectForSelectedSuggestions_Click(object sender, RoutedEventArgs e)
         {
+            if (!ALMIntegration.Instance.AlmConfigurations.UseRest)
+            {
+                Reporter.ToUser(eUserMsgKeys.ALMDefectsUserInOtaAPI, "");
+                return;
+            }
             if ((App.RunsetExecutor.DefectSuggestionsList != null) && (App.RunsetExecutor.DefectSuggestionsList.Count > 0) &&
                 (App.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && (x.ALMDefectID == null || x.ALMDefectID == string.Empty)).ToList().Count > 0))
             {
-                if (Reporter.ToUser(eUserMsgKeys.AskALMDefectsOpening, App.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && (x.ALMDefectID == null || x.ALMDefectID == string.Empty)).ToList().Count) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.AskALMDefectsOpening, App.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && (x.ALMDefectID == null || x.ALMDefectID == string.Empty)).ToList().Count) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     Mouse.OverrideCursor = Cursors.Wait;
                     Dictionary<Guid, Dictionary<string, string>> defectsForOpening = new Dictionary<Guid, Dictionary<string, string>>();

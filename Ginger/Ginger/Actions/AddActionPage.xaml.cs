@@ -18,6 +18,9 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository.PlugInsLib;
+using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
@@ -43,7 +46,7 @@ namespace Ginger.Actions
     public partial class AddActionPage : Page
     {
         GenericWindow _pageGenericWin = null;
-        ObservableList<Act> mActionsList;
+        ObservableList<IAct> mActionsList;
         // bool IsPlugInAvailable = false;
 
         public AddActionPage()
@@ -68,27 +71,28 @@ namespace Ginger.Actions
             {
                 try
                 {
-                    List<StandAloneAction> actions = pluginPackage.LoadServicesInfoFromFile(); // GetStandAloneActions();
-                    
-                    foreach (StandAloneAction standAloneAction in actions)
+                    foreach (PluginServiceInfo pluginServiceInfo in pluginPackage.Services)
                     {
-                        ActPlugIn act = new ActPlugIn();                        
-                        act.Description = standAloneAction.Description;
-                        act.PluginId = pluginPackage.PluginID;
-                        act.ServiceId = standAloneAction.ServiceId;
-                        act.ActionId = standAloneAction.ActionId;
-                        foreach (var v in standAloneAction.InputValues)
+                        foreach (PluginServiceActionInfo pluginServiceAction in pluginServiceInfo.Actions)
                         {
-                            if (v.Param == "GA") continue; // not needed
-                            act.InputValues.Add(new ActInputValue() { Param = v.Param, ParamTypeEX = v.ParamTypeStr  });
-                        }                        
-                        act.Active = true;                        
-                        PlugInsActions.Add(act);
+                            ActPlugIn act = new ActPlugIn();
+                            act.Description = pluginServiceAction.Description;
+                            act.PluginId = pluginPackage.PluginId;
+                            act.ServiceId = pluginServiceInfo.ServiceId;
+                            act.ActionId = pluginServiceAction.ActionId;
+                            foreach (var v in pluginServiceAction.InputValues)
+                            {
+                                if (v.Param == "GA") continue; // not needed
+                                act.InputValues.Add(new ActInputValue() { Param = v.Param, ParamTypeEX = v.ParamTypeStr });
+                            }
+                            act.Active = true;
+                            PlugInsActions.Add(act);
+                        }
                     }
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get the Action of the Plugin '" + pluginPackage.PluginID + "'", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the Action of the Plugin '" + pluginPackage.PluginId + "'", ex);
                 }
             }
           
@@ -135,11 +139,11 @@ namespace Ginger.Actions
             ObservableList<Act> Acts = new ObservableList<Act>();
             AppDomain.CurrentDomain.Load("GingerCore");
 
+       Assembly GC=AppDomain.CurrentDomain.GetAssemblies().
+          SingleOrDefault(assembly => assembly.GetName().Name == "GingerCore");
+
             var ActTypes =
-                from type in typeof(Act).Assembly.GetTypes()
-                where type.IsSubclassOf(typeof(Act))
-                && type != typeof(ActWithoutDriver)
-                select type;
+                from type in GC.GetTypes() where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) select type;
             
             foreach (Type t in ActTypes)
             {
@@ -148,12 +152,12 @@ namespace Ginger.Actions
                 if (a.IsSelectableAction == false) 
                     continue;
 
-                TargetApplication TA = (from x in App.BusinessFlow.TargetApplications where x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
+                TargetApplication TA = (TargetApplication)(from x in App.BusinessFlow.TargetApplications where x.Name == App.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
                 if (TA == null)
                 {
                     if (App.BusinessFlow.TargetApplications.Count == 1)
                     {
-                        TA = App.BusinessFlow.TargetApplications.FirstOrDefault();
+                        TA = (TargetApplication)App.BusinessFlow.TargetApplications.FirstOrDefault();
                         App.BusinessFlow.CurrentActivity.TargetApplication = TA.AppName;
                     }
                     else
@@ -256,7 +260,7 @@ namespace Ginger.Actions
                     int selectedActIndex = -1;
                     if (mActionsList.CurrentItem != null)
                     {
-                        selectedActIndex = mActionsList.IndexOf((Act)mActionsList.CurrentItem);
+                        selectedActIndex = mActionsList.IndexOf((IAct)mActionsList.CurrentItem);
                     }
                     mActionsList.Add(aNew);
                     if (selectedActIndex >= 0)
@@ -269,6 +273,31 @@ namespace Ginger.Actions
                     //allowing to edit the action
                     ActionEditPage actedit = new ActionEditPage(aNew);
                     actedit.ShowAsWindow();
+
+                    if (aNew is ActPlugIn)
+                    {
+                        ActPlugIn p = (ActPlugIn)aNew;
+                        // TODO: add per group or... !!!!!!!!!
+
+                        //Check if target already exist else add it
+                        // TODO: search only in targetplugin type
+                        TargetPlugin targetPlugin = (TargetPlugin)(from x in App.BusinessFlow.TargetApplications where x.Name == p.ServiceId select x).SingleOrDefault();
+                        if (targetPlugin == null)
+                        {
+                            // check if interface add it
+                            // App.BusinessFlow.TargetApplications.Add(new TargetPlugin() { AppName = p.ServiceId });
+
+                            App.BusinessFlow.TargetApplications.Add(new TargetPlugin() {PluginId = p.PluginId,  ServiceId = p.ServiceId });
+
+                            //Search for default agent which match 
+                            App.AutomateTabGingerRunner.UpdateApplicationAgents();
+                            // TODO: update automate page target/agent
+
+                            // if agent not found auto add or ask user 
+                        }
+
+                    }
+                    
                 }
             }
         }
@@ -298,7 +327,7 @@ namespace Ginger.Actions
         /// </summary>
         /// <param name="ActionsList"></param>
         /// <param name="windowStyle"></param>
-        public void ShowAsWindow(ObservableList<Act> ActionsList, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        public void ShowAsWindow(ObservableList<IAct> ActionsList, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             mActionsList = ActionsList;
 
@@ -327,9 +356,9 @@ namespace Ginger.Actions
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (ActionsTabs.SelectedItem == tab)
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
@@ -338,7 +367,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in PlugIn tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in PlugIn tabs style", ex);
             }
             ShowSelectedActionDetails();
         }

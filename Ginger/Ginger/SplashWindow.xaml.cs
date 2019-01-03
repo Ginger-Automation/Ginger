@@ -33,7 +33,7 @@ namespace Ginger
 
         public SplashWindow()
         {
-            //load defualt dics to be used for splash screen till customized dics will be loaded from user profile 
+            //load default dics to be used for splash screen till customized dics will be loaded from user profile 
             App.LoadApplicationDictionaries();
 
             InitializeComponent();
@@ -95,7 +95,7 @@ namespace Ginger
 
         public void LoadingInfo(string txt)
         {
-            lblLoadingInfo.Content = txt;            
+          //  lblLoadingInfo.Content = txt;            
         }
     }
 }

@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Amdocs.Ginger.Common.Enums;
 using GingerWPF.TreeViewItemsLib;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -106,19 +107,23 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         private void RefreshItems(object sender, RoutedEventArgs e)
-        {           
-            mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-            if (Reporter.ToUser(eUserMsgKeys.LooseLocalChanges) == MessageBoxResult.No)
+        {   
+            if (Reporter.ToUser(eUserMsgKeys.LooseLocalChanges) == Amdocs.Ginger.Common.MessageBoxResult.No)
             {
                 return;
             }
+            mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
+            if (mDataSourceTablePage != null)
+            {
+                mDataSourceTablePage.RefreshGrid();
+            }
             DSTableDetails.DataTable.RejectChanges();
-            DSTableDetails.DirtyStatus = eDirtyStatus.NoChange;            
+            DSTableDetails.DirtyStatus = eDirtyStatus.NoChange;                        
         }
                
         private void DeleteTable(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.DeleteRepositoryItemAreYouSure, DSTableDetails.GetNameForFileName()) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.DeleteRepositoryItemAreYouSure, DSTableDetails.GetNameForFileName()) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 mTreeView.Tree.DeleteItemAndSelectParent(this);
                 DSDetails.DSTableList.Remove(DSTableDetails);
@@ -176,12 +181,22 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         private void Rename(object sender, RoutedEventArgs e)
-        {            
+        {         
+            if (Reporter.ToUser(eUserMsgKeys.LooseLocalChanges) == Amdocs.Ginger.Common.MessageBoxResult.No)
+            {
+                return;
+            }
             string oldName = DSTableDetails.Name;
             RenameItem("Table Name:", DSTableDetails, DataSourceTable.Fields.Name);
             try
             {
                 DSTableDetails.DSC.RenameTable(oldName, DSTableDetails.Name);
+                DSTableDetails.DataTable.RejectChanges();
+                if (mDataSourceTablePage != null)
+                {
+                    mDataSourceTablePage.RefreshGrid();
+                }                
+                DSTableDetails.DirtyStatus = eDirtyStatus.NoChange;
             }
             catch(Exception ex)
             {
@@ -193,7 +208,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
        
          private void Duplicate(object sender, RoutedEventArgs e)
          {
-            if (Reporter.ToUser(eUserMsgKeys.LooseLocalChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.LooseLocalChanges) == Amdocs.Ginger.Common.MessageBoxResult.No)
             {
                 return;
             }

@@ -56,8 +56,7 @@ namespace Amdocs.Ginger.Common
         public bool BFPageActivitiesHookOnlyNewActivities { get { return GetFeature(nameof(BFPageActivitiesHookOnlyNewActivities)).Selected; } set { UpdateFeature(nameof(BFPageActivitiesHookOnlyNewActivities), value); } }
 
         // POM
-        public bool ShowPOMInWindowExplorer { get { return GetFeature(nameof(ShowPOMInWindowExplorer)).Selected; } set { UpdateFeature(nameof(ShowPOMInWindowExplorer), value); } }
-        public bool ShowPOMInResourcesTab{ get { return GetFeature(nameof(ShowPOMInResourcesTab)).Selected; } set { UpdateFeature(nameof(ShowPOMInResourcesTab), value); } }
+        public bool ShowPOMInWindowExplorer { get { return GetFeature(nameof(ShowPOMInWindowExplorer)).Selected; } set { UpdateFeature(nameof(ShowPOMInWindowExplorer), value); } }       
 
 
         // ALM
@@ -88,8 +87,7 @@ namespace Amdocs.Ginger.Common
             mFeatures.Add(new BetaFeature() { Group = "Business Flows", Description = "BF Activities page hook only new activities - speed", ID = nameof(BFPageActivitiesHookOnlyNewActivities) });
 
             // POM
-            mFeatures.Add(new BetaFeature() { Group = "POM", Description = "Show POM in Window Explorer", ID = nameof(ShowPOMInWindowExplorer)});
-            mFeatures.Add(new BetaFeature() { Group = "POM", Description = "Show POM in Resources Tab", ID = nameof(ShowPOMInResourcesTab)});
+            mFeatures.Add(new BetaFeature() { Group = "POM", Description = "Show POM in Window Explorer", ID = nameof(ShowPOMInWindowExplorer)});           
 
             //ALM
             mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Rally", ID = nameof(Rally) });           

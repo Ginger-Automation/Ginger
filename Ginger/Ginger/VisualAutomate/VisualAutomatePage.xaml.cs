@@ -47,7 +47,7 @@ namespace Ginger.VisualAutomate
             // Bind the title label to the BF Name
             App.ObjFieldBinding(lblTitle, ContentProperty, BF, BusinessFlow.Fields.Name, BindingMode.OneWay);
 
-            //TODO: if big flow takes time to load then show laoding message
+            //TODO: if big flow takes time to load then show loading message
             if (mBusinessFlow.CurrentActivity ==null && mBusinessFlow.Activities.Count>0)
             {
                 mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
@@ -56,7 +56,7 @@ namespace Ginger.VisualAutomate
             ActivitiesComboBox.ItemsSource = mBusinessFlow.Activities;
             ActivitiesComboBox.DisplayMemberPath = Activity.Fields.ActivityName;
 
-            CreateActivityDiagram(mBusinessFlow.CurrentActivity);
+            CreateActivityDiagram((Activity)mBusinessFlow.CurrentActivity);
 
             SetActionsGridView();            
         }
@@ -129,7 +129,7 @@ namespace Ginger.VisualAutomate
 
         private void RefreshDiagram()
         {
-            CreateActivityDiagram(mBusinessFlow.CurrentActivity);
+            CreateActivityDiagram((Activity)mBusinessFlow.CurrentActivity);
         }
 
         private void ActivitiesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -26,6 +26,7 @@ using GingerCore;
 using Amdocs.Ginger.Common.Enums;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Environments
 {
@@ -55,15 +56,17 @@ namespace Ginger.Environments
             {
                 Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
                 String intialValue = selectedEnvDB.Pass;
-                if (intialValue != null)
+                if (!string.IsNullOrEmpty(intialValue))
                 {
                     bool res = false;
-                    String deCryptValue = EncryptionHandler.DecryptString(intialValue, ref res);
-                    selectedEnvDB.Pass = null;
-                    if (res == false)
+                    if (!EncryptionHandler.IsStringEncrypted(intialValue))
                     {
-                        selectedEnvDB.Pass = EncryptionHandler.EncryptString(intialValue, ref res); ;
-                    }
+                        selectedEnvDB.Pass = EncryptionHandler.EncryptString(intialValue, ref res);
+                        if (res == false)
+                        {
+                            selectedEnvDB.Pass = null;
+                        }
+                    }                   
                 }
             }
         }
@@ -98,7 +101,7 @@ namespace Ginger.Environments
             {
                 if (ex.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
                 {
-                    if (Reporter.ToUser(eUserMsgKeys.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKeys.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                     {
                         System.Diagnostics.Process.Start("https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149");
                         System.Diagnostics.Process.Start("http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html");

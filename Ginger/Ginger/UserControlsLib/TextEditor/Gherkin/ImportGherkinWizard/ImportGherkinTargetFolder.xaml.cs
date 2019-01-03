@@ -27,6 +27,7 @@ using Amdocs.Ginger.Common.Enums;
 using System.Collections.Generic;
 using System.IO;
 using Ginger.GherkinLib;
+using Amdocs.Ginger.ValidationRules;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {
@@ -56,7 +57,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     {
                         BusinessFlowsFolderTreeItem bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(),eBusinessFlowsTreeViewMode.ReadOnly);
                         
-                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);
+                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);                        
                     }
                     else if(mContext == eImportGherkinFileContext.BusinessFlowFolder)
                     {
@@ -65,10 +66,11 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                         documentsFolderRoot.Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents");
                         documentsFolderRoot.Folder = "Documents";
                         mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage("Documents", eImageType.File, documentsFolderRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);                        
+                    }                    
+                    mTargetFolderSelectionPage.xTreeView.xTreeViewTree.ValidationRules.Add(UCTreeView.eUcTreeValidationRules.NoItemSelected);
 
-                    }
                     mTargetFolderSelectionPage.OnSelect += MTargetFolderSelectionPage_OnSelectItem;
-
+                    
                     TargetPath.Content = mTargetFolderSelectionPage;
                     break;
                 case EventType.LeavingForNextPage:
@@ -80,13 +82,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     { 
                         wiz.bizFlowTargetFolder = (ITreeViewItem)mTargetFolder;
                     }
-                    break;
-                case EventType.Validate:                    
-                    if (mTargetFolder == null)
-                    {
-                        //TODO  : Select target Fodler error
-                    }
-                    break;                                    
+                    break;                       
             }
 
         }

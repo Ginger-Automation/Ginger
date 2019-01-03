@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Activities;
 using Ginger.BusinessFlowWindows;
@@ -67,7 +68,7 @@ namespace Ginger.BusinessFlowFolder
 
             if (mBusinessFlow.TargetApplications == null)
             {
-                mBusinessFlow.TargetApplications = new ObservableList<TargetApplication>();
+                mBusinessFlow.TargetApplications = new ObservableList<TargetBase>();
             }
             PlatformListBox.ItemsSource = mBusinessFlow.TargetApplications;
             PlatformListBox.DisplayMemberPath = nameof(TargetApplication.AppName);
@@ -122,6 +123,8 @@ namespace Ginger.BusinessFlowFolder
             {
                 xAutomateBtn.Visibility = Visibility.Collapsed;
             }
+
+            SetExpandersLabels();
         }
         
         private void TrackBusinessFlowAutomationPrecentage()
@@ -129,7 +132,7 @@ namespace Ginger.BusinessFlowFolder
             mBusinessFlow.Activities.CollectionChanged += mBusinessFlowActivities_CollectionChanged;
             foreach (Activity activity in mBusinessFlow.Activities)
             {
-                try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; }catch(Exception ex){ Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }  //to make sure wont be added twice              
+                try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; }catch(Exception ex){ Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }  //to make sure wont be added twice              
                 activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
             }
         }
@@ -153,7 +156,7 @@ namespace Ginger.BusinessFlowFolder
             {
                 foreach (Activity activity in mBusinessFlow.Activities)
                 {
-                    try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; } catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }  //to make sure wont be added twice              
+                    try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; } catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }  //to make sure wont be added twice              
                     activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
                 }
             }
@@ -208,8 +211,8 @@ namespace Ginger.BusinessFlowFolder
 
             //make sure all Activities mapped to Application after change
             foreach (Activity activity in mBusinessFlow.Activities)
-                if (mBusinessFlow.TargetApplications.Where(x => x.AppName == activity.TargetApplication).FirstOrDefault() == null)
-                    activity.TargetApplication = mBusinessFlow.TargetApplications[0].AppName;
+                if (mBusinessFlow.TargetApplications.Where(x => x.Name == activity.TargetApplication).FirstOrDefault() == null)
+                    activity.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
         }
 
         private void ActivitiesGroupsExpander_Expanded(object sender, RoutedEventArgs e)
@@ -289,7 +292,7 @@ namespace Ginger.BusinessFlowFolder
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 UndoChanges();
                 _pageGenericWin.Close();
@@ -328,6 +331,53 @@ namespace Ginger.BusinessFlowFolder
         private void xAutomateBtn_Click(object sender, RoutedEventArgs e)
         {
            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, mBusinessFlow);
+        }
+
+        private void SetExpandersLabels()
+        {
+            UpdateVariabelsExpanderLabel();
+            mBusinessFlow.Variables.CollectionChanged += Variables_CollectionChanged;
+            UpdateActivitiesGroupsExpanderLabel();
+            mBusinessFlow.ActivitiesGroups.CollectionChanged += ActivitiesGroups_CollectionChanged;
+            UpdateActivitiesExpanderLabel();
+            mBusinessFlow.Activities.CollectionChanged += Activities_CollectionChanged;
+        }
+
+        private void Activities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateActivitiesExpanderLabel();
+        }
+
+        private void ActivitiesGroups_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateActivitiesGroupsExpanderLabel();
+        }
+
+        private void Variables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateVariabelsExpanderLabel();
+        }
+
+        private void UpdateVariabelsExpanderLabel()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                VariablesExpanderLabel.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mBusinessFlow.Variables.Count);
+            });
+        }
+        private void UpdateActivitiesGroupsExpanderLabel()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                ActivitiesGroupsExpanderLabel.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups), mBusinessFlow.ActivitiesGroups.Count);
+            });
+        }
+        private void UpdateActivitiesExpanderLabel()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                ActivitiesExpanderLabel.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Activities), mBusinessFlow.Activities.Count);
+            });
         }
     }
 }

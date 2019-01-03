@@ -125,7 +125,7 @@ namespace GingerCore.Actions
         {
 
             SpeechRecognitionEngine SpeechEngine = new SpeechRecognitionEngine(); //create new speech engine
-            Grammar Grm = new DictationGrammar(); //Create grammer
+            Grammar Grm = new DictationGrammar(); //Create grammar
 
             SpeechEngine.LoadGrammar(Grm);
 
@@ -150,7 +150,7 @@ namespace GingerCore.Actions
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     break;
                 }
             }
@@ -235,7 +235,7 @@ namespace GingerCore.Actions
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     break;
                 }
             }

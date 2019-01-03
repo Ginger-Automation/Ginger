@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.GeneralWindows;
 using Ginger.Reports;
@@ -42,17 +60,18 @@ namespace Ginger.ConfigurationsLib
         {
             TwoLevelMenu twoLevelMenu = new TwoLevelMenu();
 
-            TopMenuItem targetApplicationsMenu = new TopMenuItem(eImageType.Application, "Target Applications", ConsoleKey.T, "Target Applications AID", "Name & Platformes of the Applications which been tested in current Solution");
+            TopMenuItem targetApplicationsMenu = new TopMenuItem(eImageType.Application, "Target Applications", ConsoleKey.T, "Target Applications AID", "Name & Platforms of the Applications which been tested in current Solution");
             targetApplicationsMenu.Add(eImageType.Application, "", GetTargetApplicationsPage, ConsoleKey.T, "", "AID");
             twoLevelMenu.Add(targetApplicationsMenu);
 
-            TopMenuItem agentsMenu = new TopMenuItem(eImageType.Agent, "Agents", ConsoleKey.A, "Agents AID", "Agents are the drivers which comunicates with the tested application");
+            TopMenuItem agentsMenu = new TopMenuItem(eImageType.Agent, "Agents", ConsoleKey.A, "Agents AID", "Agents are the drivers which communicates with the tested application");
             agentsMenu.Add(eImageType.Agent, "", AgentsList, ConsoleKey.A, "", "AID");
             twoLevelMenu.Add(agentsMenu);
-           
+
             TopMenuItem reportsMenu = new TopMenuItem(eImageType.Report, "Reports", ConsoleKey.R, "Reports_AID", "Reports Templates and Configurations");
             reportsMenu.Add(eImageType.Report, "Reports Templates", ReportsList, ConsoleKey.R, "Reports Templates are used to define the HTML report content and design", "Reports AID");
-            reportsMenu.Add(eImageType.Config, "General Configurations", ReportsConfig, ConsoleKey.R, "Global Reports Configurations", "Reports Config AID");           
+            reportsMenu.Add(eImageType.Config, "General Reports Configurations", ReportsConfig, ConsoleKey.R, "Global Reports Configurations", "Reports Config AID");
+            reportsMenu.Add(eImageType.Config, "Execution Logger Configurations", ExecutionLoggerConfig, ConsoleKey.R, "Execution Logger Configurations", "Execution Logger Config AID");
             twoLevelMenu.Add(reportsMenu);
 
             TopMenuItem tagsMenu = new TopMenuItem(eImageType.Tag, "Tags", ConsoleKey.T, "Tags AID", "List of Tags to be used for marking any of the Solution items with");
@@ -70,8 +89,12 @@ namespace Ginger.ConfigurationsLib
 
         private static Page ReportsConfig()
         {
-            return new HTMLReportsConfigurationPage();
-            
+            return new HTMLReportsConfigurationPage();            
+        }
+
+        private static Page ExecutionLoggerConfig()
+        {           
+            return ExecutionResultsConfiguration.Instance;
         }
 
         private static Page AgentsList()

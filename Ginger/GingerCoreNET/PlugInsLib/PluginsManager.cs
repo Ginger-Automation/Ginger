@@ -16,29 +16,40 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.Repository.PlugInsLib;
+using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Net.Http;
-using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
 {
     public class PluginsManager
     {
         private ObservableList<PluginPackage> mPluginPackages;
+        SolutionRepository mSolutionRepository;
 
-        public PluginsManager()
+
+        ObservableList<PluginProcessWrapper> mProcesses = new ObservableList<PluginProcessWrapper>();
+
+        public ObservableList<PluginProcessWrapper> PluginProcesses
         {
-            mPluginPackages = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            get
+            {
+                return mProcesses;
+            }
+        }
+
+
+        public PluginsManager(SolutionRepository solutionRepository)
+        {
+            mSolutionRepository = solutionRepository;
+            mPluginPackages = solutionRepository.GetAllRepositoryItems<PluginPackage>();
         }
 
         public class DriverInfo
@@ -47,67 +58,7 @@ namespace Amdocs.Ginger.Repository
             public string PluginPackageFolder { get; set; }
         }
 
-        public List<DriverInfo> GetAllDrivers()
-        {
-            //TODO: cache !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            List<DriverInfo> drivers = new List<DriverInfo>();
-
-            foreach (PluginPackage p in mPluginPackages)
-            {
-                //foreach (string s in p.GetDrivers())
-                //{
-                //    DriverInfo di = new DriverInfo();
-                //    di.Name = s;
-                //    di.PluginPackageFolder = p.Folder;
-                //    drivers.Add(di);
-                //}
-            }
-            return drivers;
-        }
-
-        //public List<GingerAction> GetDriverActions(DriverInfo DI)
-        //{
-        //    List<GingerAction> actions = new List<GingerAction>();
-        //    PluginPackage p = (from x in mPluginPackages where x.Folder == DI.PluginPackageFolder select x).FirstOrDefault();
-        //    PluginDriverBase driver = p.GetDriver(DI.Name);
-        //    foreach (ActionHandler AH in driver.ActionHandlers)
-        //    {
-        //        GingerAction GA = new GingerAction(AH.ID);
-        //        UpdateActionParamTypes(GA, AH.MethodInfo);
-        //        actions.Add(GA);
-        //    }
-        //    return actions;
-        //}
-
-        ObservableList<StandAloneAction> list;
-        public ObservableList<StandAloneAction> GetStandAloneActions()
-        {
-            if (list == null)
-            {
-                list = new ObservableList<StandAloneAction>();
-                foreach (PluginPackage p in mPluginPackages)
-                {
-                    foreach (StandAloneAction SAA in p.GetStandAloneActions())
-                    {
-                        list.Add(SAA);
-                    }
-                }
-            }
-            return list;
-        }
-
-        //private void UpdateActionParamTypes(GingerAction gA, MethodInfo methodInfo)
-        //{
-        //    foreach (ParameterInfo PI in methodInfo.GetParameters())
-        //    {
-        //        if (PI.ParameterType != typeof(GingerAction))
-        //        {
-        //            ActionParam AP = gA.InputParams.GetOrCreateParam(PI.Name);
-        //            AP.ParamType = PI.ParameterType;
-        //        }
-        //    }
-        //}
-
+      
         public void AddPluginPackage(string folder)
         {
             // Verify folder exist
@@ -116,8 +67,8 @@ namespace Amdocs.Ginger.Repository
                 throw new Exception("Plugin folder not found: " + folder);
             }            
 
-            PluginPackage p = new PluginPackage(folder);            
-            mPluginPackages.Add(p);
+            PluginPackage pluginPackage = new PluginPackage(folder);                                 
+            mSolutionRepository.AddRepositoryItem(pluginPackage);
         }
 
         private void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
@@ -126,163 +77,14 @@ namespace Amdocs.Ginger.Repository
             Console.WriteLine(s);
         }
 
-        static Assembly LoadFromSameFolder(object sender, ResolveEventArgs args)
+
+        public string InstallPluginPackage(OnlinePluginPackage onlinePluginPackage, OnlinePluginPackageRelease release)
         {
-            string folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string assemblyPath = Path.Combine(folderPath, new AssemblyName(args.Name).Name + ".dll");
-            if (File.Exists(assemblyPath))
-            {
-                Assembly assembly = Assembly.LoadFrom(assemblyPath);
-
-
-                return assembly;
-            }
-            else
-            {
-                return null;
-            }
+            string folder = onlinePluginPackage.InstallPluginPackage(release);
+            AddPluginPackage(folder);
+            return folder;
         }
 
-        internal DriverInfo GetDriverInfo(string PluginDriverName)
-        {
-            foreach (DriverInfo di in GetAllDrivers())
-            {
-                if (di.Name == PluginDriverName)
-                {
-                    return di;
-                }
-            }
-            return null;
-        }
-
-        //internal ActionHandler GetStandAloneActionHandler(string pluginID, string ID)
-        //{
-        //    foreach (PluginPackage PP in mPluginPackages)
-        //    {
-        //        PP.ScanPackage();
-        //        ActionHandler AH = PP.GetStandAloneActionHandler(ID);
-        //        if (AH != null)
-        //        {
-        //            return AH;
-        //        }
-        //    }
-        //    throw new Exception("Action handler not found for Action ID: " + ID);
-        //}
-
-        static List<PluginPackage> mInstalledPluginPackages = null;
-
-        // Get list of installed plugins in Ginger folder 'PluginPackages'
-        public List<PluginPackage> GetInstalledPluginPackages()
-        {
-            if (mInstalledPluginPackages != null)
-            {
-                //TODO: check for new added plugins
-
-                return mInstalledPluginPackages;
-            }
-
-            mInstalledPluginPackages = new List<PluginPackage>();
-
-            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-            if (path.Contains("GingerWPF"))   // We are running from GingerWPF in debug mode
-            {
-                path = path.Replace(@"GingerWPF\bin\Debug", "");   // temp need to be Ginger installation folder !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            }
-
-            if (path.Contains("GingerCoreNETUnitTest"))   // We are running from GingerWPF in debug mode
-            {
-                path = path.Replace(@"GingerCoreNETUnitTest\bin\Debug\netcoreapp2.0", "");
-            }
-
-            string pluginPackagesPath = Path.Combine(path, "PluginPackages");
-
-            // Each directory is a plugin package
-
-            foreach (string d in Directory.GetDirectories(pluginPackagesPath))
-            {
-                PluginPackage p = new PluginPackage(d);
-                mInstalledPluginPackages.Add(p);
-            }
-            return mInstalledPluginPackages;
-        }
-
-        
-
-
-
-
-        //public void Execute(string PluginId, string ServiceId, NewPayLoad payLoad)
-        //{            
-        //    GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
-
-        //    // string PID = GA.InputParams["PluginID"].GetValueAsString();
-        //    PluginPackage p = (from x in mPluginPackages where x.PluginID == PluginId select x).SingleOrDefault();
-        //    if (p == null)
-        //    {
-        //        throw new Exception("Plugin id not found: " + PluginId);
-        //        // GA.AddError("Execute", "Plugin id not found: " + PID);
-        //        // return;
-        //    }
-
-        //    //TODO: use nameof after ActPlugin move to common
-        //    // string serviceID = GA.InputParams["PluginActionID"].GetValueAsString();
-
-
-        //    GingerNodeInfo GNI = (from x in gingerGrid.NodeList where x.Name == p.PluginID select x).FirstOrDefault();
-        //    //run script only if service is not up            
-        //    if (GNI == null)
-        //    {
-        //        string script = CommandProcessor.CreateLoadPluginScript(p.Folder);
-
-        //        // hard coded!!!!!!!!!!  - use ServiceId
-        //        script += CommandProcessor.CreateStartServiceScript("PACTService", p.PluginID, SocketHelper.GetLocalHostIP(), gingerGrid.Port);
-        //        // script += CommandProcessor.CreateStartServiceScript("ExcelService", p.PluginID, SocketHelper.GetLocalHostIP(), gingerGrid.Port);
-
-
-        //        Task t = new Task(() =>
-        //        {
-        //            // GingerConsoleHelper.Execute(script);  // keep it for regular service dll load
-        //            string StarterDLL = Path.Combine(p.Folder, "GingerPACTPluginConsole.dll");  //??
-        //            StartService(StarterDLL);
-        //        });
-        //        t.Start();
-        //    }                
-
-        //    int counter = 0;
-        //    while (GNI == null && counter < 30)
-        //    {
-        //        Thread.Sleep(1000);
-        //        GNI = (from x in gingerGrid.NodeList where x.Name == "PACT" select x).FirstOrDefault();                
-        //        counter++;
-        //    }
-        //    if (GNI == null)
-        //    {
-        //       // GA.AddError("Execute", "Cannot execute action beacuse Service was not found or was not abale to start: " + p.PluginID);
-        //    }
-
-        //    GingerNodeProxy GNA = new GingerNodeProxy(GNI);
-        //    GNA.Reserve();
-        //    GNA.GingerGrid = gingerGrid;
-
-        //    //GNA.RunAction(GA);
-        //}
-
-
-        //public void StartService(string DLLFile)
-        //{            
-        //    string cmd = "dotnet " + DLLFile ;            
-        //    System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
-
-        //    // The following commands are needed to redirect the standard output.
-        //    // This means that it will be redirected to the Process.StandardOutput StreamReader.
-        //    procStartInfo.UseShellExecute = true; // false
-        //    // Do not create the black window.
-        //    // Now we create a process, assign its ProcessStartInfo and start it
-        //    System.Diagnostics.Process proc = new System.Diagnostics.Process();
-        //    proc.StartInfo = procStartInfo;
-        //    proc.Start();            
-        //}
 
         public string CreatePluginPackageInfo(string id, string version)
         {
@@ -344,119 +146,92 @@ namespace Amdocs.Ginger.Repository
         //            return null;
         //        }
 
-
-        public void StartService(string PluginId)
+       
+        public System.Diagnostics.Process StartService(string pluginId, string serviceID)
         {
-            if (string.IsNullOrEmpty(PluginId))
+            if (string.IsNullOrEmpty(pluginId))
             {
-                throw new Exception("Plugin action missing PluginId");
+                throw new ArgumentNullException(nameof(pluginId));
             }
-            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == PluginId select x).SingleOrDefault();
+            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
+
+            // TODO: only once !!!!!!!!!!!!!!!!!!!!!!!!! temp             
+            pluginPackage.LoadServicesFromJSON();
+
 
             if (pluginPackage == null)
-            {
-                throw new Exception("PluginPackage not found in solution PluginId=" + PluginId);
+            {                
+                throw new Exception("PluginPackage not found in solution PluginId=" + pluginId);
             }
             if (string.IsNullOrEmpty(pluginPackage.StartupDLL))
             {
-                throw new Exception("PluginPackage StartupDLL is missing in the Ginger.PluginPackage.json" + PluginId);
+                throw new Exception("StartupDLL is missing in the Ginger.PluginPackage.json for: " + pluginId);
             }
 
             string dll = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
 
-            string nodeFileName = NodeConfigFile.CreateNodeConfigFile(PluginId + "1");  // TODO: check if 1 exist then try 2,3 in case more than one same id service start
+            string nodeFileName = NodeConfigFile.CreateNodeConfigFile(pluginId + "1", serviceID);  // TODO: check if 1 exist then try 2,3 in case more than one same id service start
             string cmd = "dotnet \"" + dll + "\" \"" + nodeFileName + "\"";
             System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);            
-            procStartInfo.UseShellExecute = true;             
+            procStartInfo.UseShellExecute = true;
+            
+            // TODO: Make it config not to show the console window
+           // procStartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo = procStartInfo;
             proc.Start();
-
+            mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
+            return proc;
             //TODO: delete the temp file - or create temp files tracker with auto delete 
         }
 
 
-        public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
+        public void CloseAllRunningPluginProcesses()
         {
-            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == pluginId select x).SingleOrDefault();
-            StandAloneAction standAloneAction = (from x in pluginPackage.LoadServicesInfoFromFile() where x.ServiceId == serviceId && x.ActionId == actionId select x).SingleOrDefault();
-            return standAloneAction.InputValues;
+            foreach (PluginProcessWrapper process in mProcesses)
+            {
+                process.Close();                
+            }
+            mProcesses.Clear();
         }
 
-        public ObservableList<OnlinePluginPackage> GetPluginsIndex()
+        public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
         {
-            //TODO: conver json to objects and return list to show in grid
+            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
+            PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();            
+            PluginServiceActionInfo actionInfo = (from x in pluginServiceInfo.Actions where x.ActionId == actionId select x).SingleOrDefault();
+            return actionInfo.InputValues;
+        }
 
+        public ObservableList<OnlinePluginPackage> GetOnlinePluginsIndex()
+        {
             // edit at: "https://github.com/Ginger-Automation/Ginger-Plugins-Index/blob/master/PluginsList.json";
 
-            // raw url to get the file content
+            // raw url to get the file content            
             string url = "https://raw.githubusercontent.com/Ginger-Automation/Ginger-Plugins-Index/master/PluginsList.json";
-            string packagesjson = GetResponseString(url).Result;
-
-            ObservableList<OnlinePluginPackage> list = JsonConvert.DeserializeObject<ObservableList<OnlinePluginPackage>>(packagesjson);
+            ObservableList < OnlinePluginPackage > list = GitHTTPClient.GetJSON<ObservableList<OnlinePluginPackage>>(url);
+            ObservableList<PluginPackage> installedPlugins = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            foreach (OnlinePluginPackage onlinePluginPackage in list)
+            {                
+                PluginPackage pluginPackage = (from x in installedPlugins where x.PluginId == onlinePluginPackage.Id select x).SingleOrDefault();
+                if (pluginPackage != null)
+                {                
+                    onlinePluginPackage.Status = "Installed - " + pluginPackage.PluginPackageVersion;
+                }
+            }
             return list;
         }
 
-        async Task<string> GetResponseString(string url)
+        
+
+        public bool IsSessionService(string pluginId, string serviceId)
         {
-            using (var client = new HttpClient())
-            {
-                var result = client.GetAsync(url).Result;
-
-                if (result.IsSuccessStatusCode)
-                {
-                    var json = await result.Content.ReadAsStringAsync();
-                    //TODO: convert json to list of objects
-                    return json;
-                }
-                else
-                {
-                    return "Error: " + result.ReasonPhrase;
-                }
-            }
+            // TODO: Cache
+            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
+            pluginPackage.LoadServicesFromJSON();
+            PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
+            return pluginServiceInfo.IsSession;
         }
-
-        public void InstallPluginPackage(OnlinePluginPackage onlinePluginPackage)
-        {
-            //TODO: get package info and install
-            // Temp hard coded for test
-
-            if (onlinePluginPackage.Name == "PACT")
-            {
-                string url = "https://github.com/Ginger-Automation/Ginger-PACT-Plugin/releases/download/v1.0/Ginger.PACT.PluginPackage.zip";
-                string folder = DownLoadPackage(url).Result;
-                AddPluginPackage(folder + @"\Ginger.PACT.PluginPackage");     // temp FIXME!!! get the url from Git of latest version
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
-            
-        }
-
-        async Task<string> DownLoadPackage(string url)
-        {
-            //TODO: show user some progress... update a shared string status
-            using (var client = new HttpClient())
-            {
-                var result = client.GetAsync(url).Result;
-
-                if (result.IsSuccessStatusCode)
-                {
-                    byte[] zipContent = await result.Content.ReadAsByteArrayAsync();  // Get the Plugin package zip content
-                    string fileName = Path.GetTempFileName();  // temp file for the zip
-                    File.WriteAllBytes(fileName, zipContent);  // save content to file                    
-                    string localPluginPackageFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile); // target folder to extract the plugin to on user folder
-                    localPluginPackageFolder = Path.Combine(localPluginPackageFolder, "Ginger", "PluginPackages"); // Extract it to: \users\[user]\Ginger\PluginPackages/[PluginFolder]
-                    ZipFile.ExtractToDirectory(fileName, localPluginPackageFolder); // Extract 
-                    return localPluginPackageFolder;
-                }
-                else
-                {
-                    throw new Exception("Error downloading Plugin Package: " + result.ReasonPhrase + Environment.NewLine + url);
-                }
-            }
-        }
-
     }
 }

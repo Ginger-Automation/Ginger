@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Ginger.DataSource;
 
 namespace Ginger.Actions.WebServices
 {
@@ -41,6 +42,8 @@ namespace Ginger.Actions.WebServices
         private ActWebAPIModel mAct;
         ApplicationAPIModel AAMB;
         SingleItemTreeViewSelectionPage apiModelPage;
+        RepositoryFolder<ApplicationAPIModel> mAPIModelFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
+
         public ActWebAPIModelEditPage(ActWebAPIModel Act)
         {
             InitializeComponent();
@@ -71,6 +74,7 @@ namespace Ginger.Actions.WebServices
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
+            APIModelParamsValueUCGrid.AddToolbarTool(eImageType.DataSource, "Map API Parameters to DataSource", new RoutedEventHandler(MapOutputToDataSource));
 
             view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.Param), Header = "Parameter", WidthWeight = 20, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.Description), Header = "Description", WidthWeight = 20, ReadOnly = true });
@@ -190,8 +194,8 @@ namespace Ginger.Actions.WebServices
 
         private bool ChangeAPIMapping(bool showNewMappingMessage = false)
         {
-            RepositoryFolder<ApplicationAPIModel> APIModels = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
-            if (APIModels.GetFolderItems().Count == 0)
+            ObservableList<ApplicationAPIModel> APIModelsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>();
+            if (APIModelsList.Count == 0)
             {
                 Reporter.ToUser(eUserMsgKeys.NoAPIExistToMappedTo);
                 return false;
@@ -202,7 +206,8 @@ namespace Ginger.Actions.WebServices
 
             if (apiModelPage == null)
             {
-                AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModels);
+                RepositoryFolder<ApplicationAPIModel> APIModelsFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
+                AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModelsFolder);
                 apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single);
             }
             List<object> selectedList = apiModelPage.ShowAsWindow();
@@ -219,10 +224,40 @@ namespace Ginger.Actions.WebServices
 
         private void UpdateOptionalValuesAndParams(bool showParametersUpdatedMessage = false)
         {
-            APIModelTextBox.Text = AAMB.Name;
+            APIModelTextBox.Text = AAMB.FilePath.Substring(0, AAMB.FilePath.LastIndexOf("\\")).Substring(mAPIModelFolder.FolderFullPath.Length) + @"\" + AAMB.ItemName;
             if (UpdateParamsEnhancedLists(AAMB.MergedParamsList) && showParametersUpdatedMessage)
                 Reporter.ToUser(eUserMsgKeys.APIParametersListUpdated);
             UpdateOptionalValues();
+        }
+
+        private void MapOutputToDataSource(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (Reporter.ToUser(eUserMsgKeys.ParamExportMessage) == Amdocs.Ginger.Common.MessageBoxResult.No)
+                    return;
+
+                DataSourceTablesListPage dataSourceTablesListPage = new DataSourceTablesListPage();
+                dataSourceTablesListPage.ShowAsWindow();
+
+                if (dataSourceTablesListPage.DSName == "" || dataSourceTablesListPage.DSTableName == "")
+                {
+                    Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
+                    return;
+                }
+
+                foreach (EnhancedActInputValue inputVal in mAct.APIModelParamsValue)
+                {
+                    string sColName = inputVal.Param.Replace("[", "_").Replace("]", "").Replace("{", "").Replace("}", "");
+                    inputVal.Value = "{DS Name=" + dataSourceTablesListPage.DSName + " DST=" + dataSourceTablesListPage.DSTableName + " ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=" + sColName + " IROW=NxtAvail}";
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the API Model params to Data Source", ex);
+                Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
+            }
         }
     }
 }

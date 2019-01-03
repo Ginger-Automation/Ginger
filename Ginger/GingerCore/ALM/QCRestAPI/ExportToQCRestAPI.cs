@@ -1,17 +1,36 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using ALM_Common.DataContracts;
+using ALMRestClient;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using GingerCore.Activities;
+using GingerCore.Variables;
 using QCRestClient;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using ALM_Common.DataContracts;
-using GingerCore.Variables;
-using System.Reflection;
-using GingerCore.Actions;
-using ALMRestClient;
-using Amdocs.Ginger.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Reflection;
 
 namespace GingerCore.ALM.QCRestAPI
 {
@@ -20,7 +39,7 @@ namespace GingerCore.ALM.QCRestAPI
 
         #region public Methods
         /// <summary>
-        /// Export Activities Group details to QC, can be used for creating new matching QC Test Case or updating an exisitng one
+        /// Export Activities Group details to QC, can be used for creating new matching QC Test Case or updating an existing one
         /// </summary>
         /// <param name="activitiesGroup">Activities Group to Export</param>
         /// <param name="mappedTest">The QC Test Case which mapped to the Activities Group (in case exist) and needs to be updated</param>
@@ -39,7 +58,7 @@ namespace GingerCore.ALM.QCRestAPI
 
                     int order = 1;
                     foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
-                        CreateTestStep(test, actIdent.IdentifiedActivity, designStepsFields, designStepsParamsFields, order++);
+                        CreateTestStep(test, (Activity)actIdent.IdentifiedActivity, designStepsFields, designStepsParamsFields, order++);
                 }
                 else //##update existing test case
                 {
@@ -52,7 +71,7 @@ namespace GingerCore.ALM.QCRestAPI
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export the Activities Group to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Activities Group to QC/ALM", ex);
                 return false;
             }
         }
@@ -81,7 +100,7 @@ namespace GingerCore.ALM.QCRestAPI
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export the Business Flow to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Business Flow to QC/ALM", ex);
                 return false;
             }
         }
@@ -110,16 +129,16 @@ namespace GingerCore.ALM.QCRestAPI
                     {
                         foreach (ActivitiesGroup activGroup in activGroups)
                         {
-                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == ActivitiesGroup.eActivitiesGroupRunStatus.Passed)
-                            || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == ActivitiesGroup.eActivitiesGroupRunStatus.Failed)
+                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
+                            || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
                             || publishToALMConfig.FilterStatus == FilterByStatus.All)
                             {
                                 QCTestInstance tsTest = null;
-                                //go by TC ID = TC Instancs ID
+                                //go by TC ID = TC Instances ID
                                 tsTest = qcTSTests.Find(x => x.TestId == activGroup.ExternalID && x.Id == activGroup.ExternalID2);
                                 if (tsTest == null)
                                 {
-                                    //go by Linked TC ID + TC Instancs ID
+                                    //go by Linked TC ID + TC Instances ID
                                     tsTest = qcTSTests.Find(x => ImportFromQCRest.GetTSTestLinkedID(x) == activGroup.ExternalID && x.Id == activGroup.ExternalID2);
                                 }
                                 if (tsTest == null)
@@ -219,7 +238,7 @@ namespace GingerCore.ALM.QCRestAPI
                                             {
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed:
                                                     runStep.Status = "Failed";
-                                                    List<Act> failedActs = matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
+                                                    List<IAct> failedActs = matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
                                                     string errors = string.Empty;
                                                     foreach (Act act in failedActs) errors += act.Error + Environment.NewLine;
                                                     runStep.Actual = errors;
@@ -309,7 +328,7 @@ namespace GingerCore.ALM.QCRestAPI
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
                 return false;
             }
 
@@ -387,11 +406,11 @@ namespace GingerCore.ALM.QCRestAPI
                 if (ex.Message.Contains("The Test Set already exists"))
                 {
                     string result = "Cannot export Business Flow - The Test Set already exists in the selected folder. ";
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, result, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, result, ex);
                     return null;
                 }
 
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
@@ -430,7 +449,7 @@ namespace GingerCore.ALM.QCRestAPI
                 foreach (VariableBase var in activity.Variables)
                 {
                     paramsSigns += "&lt;&lt;&lt;" + var.Name.ToLower() + "&gt;&gt;&gt;<br />";
-                    //try to add the paramter to the test case parameters list
+                    //try to add the parameter to the test case parameters list
                     try
                     {
                         QCTestCaseParam newParam = new QCTestCaseParam();
@@ -454,7 +473,7 @@ namespace GingerCore.ALM.QCRestAPI
                         QCItem itemTestCaseParam = ConvertObjectValuesToQCItem(newParam, ResourceType.TEST_CASE_PARAMETERS);
                         QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_CASE_PARAMETERS, itemTestCaseParam);
                     }
-                    catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                    catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 }
             }
             description = description.Replace("<<&Parameters&>>", paramsSigns);
@@ -529,7 +548,7 @@ namespace GingerCore.ALM.QCRestAPI
             {
                 if(activitiesGroup.ActivitiesIdentifiers[i].ActivityExternalID == null)
                 {
-                    CreateTestStep(test, activitiesGroup.ActivitiesIdentifiers[i].IdentifiedActivity, designStepsFields, designStepsParamsFields, i + 1);
+                    CreateTestStep(test,(Activity) activitiesGroup.ActivitiesIdentifiers[i].IdentifiedActivity, designStepsFields, designStepsParamsFields, i + 1);
                 }
             }
 
@@ -556,7 +575,7 @@ namespace GingerCore.ALM.QCRestAPI
 
             foreach (QCTestCaseStep step in testCaseDesignStep)
             {
-                Activity identifiedActivity = activitiesGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.Id).FirstOrDefault().IdentifiedActivity;
+                Activity identifiedActivity =(Activity) activitiesGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.Id).FirstOrDefault().IdentifiedActivity;
                 //set item fields
                 foreach (ExternalItemFieldBase field in designStepsFields)
                 {
@@ -583,7 +602,7 @@ namespace GingerCore.ALM.QCRestAPI
                     foreach (VariableBase var in identifiedActivity.Variables)
                     {
                         paramsSigns += "&lt;&lt;&lt;" + var.Name.ToLower() + "&gt;&gt;&gt;<br />";
-                        //try to add the paramter to the test case parameters list
+                        //try to add the parameter to the test case parameters list
                         try
                         {
                             QCTestCaseParam newParam = new QCTestCaseParam();
@@ -607,7 +626,7 @@ namespace GingerCore.ALM.QCRestAPI
                             QCItem itemTestCaseParam = ConvertObjectValuesToQCItem(newParam, ResourceType.TEST_CASE_PARAMETERS);
                             QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_CASE_PARAMETERS, itemTestCaseParam);
                         }
-                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                        catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                     }
                 }
 
@@ -691,7 +710,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
@@ -730,7 +749,7 @@ namespace GingerCore.ALM.QCRestAPI
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
                 }
             }

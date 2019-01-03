@@ -105,8 +105,8 @@ namespace Amdocs.Ginger.Repository
         {
             return mDynamicListWrapper.GetListItemProperties();
         }
-
-        public ObservableList<dynamic> ListStringValue
+        
+        public ObservableList<dynamic> ListDynamicValue
         {
             get
             {
@@ -167,6 +167,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         // For List<T> keep the type of list item
+        [IsSerializedForLocalRepository]
         public string ParamTypeEX { get; set; }
 
         public override string GetNameForFileName()

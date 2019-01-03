@@ -90,6 +90,12 @@ namespace Ginger.SolutionWindows
                     FilesListBox.ItemsSource = mFilesToShow;
                     break;
             }
+
+            //sorting
+            if (FilesListBox.Items != null && FilesListBox.Items.Count > 0)
+            {
+                FilesListBox.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("", System.ComponentModel.ListSortDirection.Ascending));
+            }
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
@@ -120,7 +126,7 @@ namespace Ginger.SolutionWindows
                 NewRepositorySerializer newSerilizer = new NewRepositorySerializer();
                 mFailedFiles = new List<string>();
                 string backupFolderPath = BackupFolderTextBox.Text;
-                //make sure back direcroty exist if not create
+                //make sure back directory exist if not create
                 if (!Directory.Exists(backupFolderPath))
                 {
                     MakeSurePathExistforBakFile(backupFolderPath + @"\");
@@ -130,7 +136,7 @@ namespace Ginger.SolutionWindows
                 foreach (string filePathToConvert in mFilesToShow)
                 {
                     string filePath = filePathToConvert;
-                    //remove info extention
+                    //remove info extension
                     if (filePath.Contains("-->"))
                     {
                         filePath = filePath.Remove(filePath.IndexOf("-->"));
@@ -147,12 +153,12 @@ namespace Ginger.SolutionWindows
                         //make sure backup was created
                         if (File.Exists(BakFile) == true)
                         {
-                            //Do Upgrade by unserilize and serlize the item using new serilizer
-                            //unserilize
+                            //Do Upgrade by unserialize and serialize the item using new serializer
+                            //unserialize
                             string itemXML = File.ReadAllText(filePath);
                             RepositoryItemBase itemObject = (RepositoryItemBase)NewRepositorySerializer.DeserializeFromText(itemXML);
                             itemObject.FilePath = filePath;
-                            //serlize
+                            //serialize
                             newSerilizer.SaveToFile(itemObject, filePath);
                         }
                         else
@@ -164,7 +170,7 @@ namespace Ginger.SolutionWindows
                     {
 
 
-                        Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to upgrade the solution file '{0}'", filePath), ex);
+                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to upgrade the solution file '{0}'", filePath), ex);
                         mFailedFiles.Add(filePathToConvert);
                     }
                 }
@@ -183,7 +189,7 @@ namespace Ginger.SolutionWindows
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to upgrade the solution files", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to upgrade the solution files", ex);
                 Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error occurred during upgrade, details: " + ex.Message);
                 _pageGenericWin.Close();
             }

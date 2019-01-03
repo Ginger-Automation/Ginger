@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -26,7 +28,7 @@ namespace Ginger.Run.RunSetActions
     /// </summary>
     public partial class RunSetActionEditPage : Page
     {
-        private RunSetActionBase mRunSetAction;
+        RunSetActionBase mRunSetAction;
         public RunSetActionEditPage(RunSetActionBase RunSetAction)
         {
             InitializeComponent();
@@ -42,11 +44,26 @@ namespace Ginger.Run.RunSetActions
             App.ObjFieldBinding(StatusTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Status);
             App.ObjFieldBinding(ErrorsTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Errors);
 
-            Page p = mRunSetAction.GetEditPage();
+            //Page p = mRunSetAction.GetEditPage();
+            Page p = GetEditPage(mRunSetAction.GetEditPage());
+
             ActionEditPageFrame.Content = p;
 
             if (mRunSetAction.SupportRunOnConfig)
                 RunActionBtn.Visibility = Visibility.Visible;
+        }
+
+        public Page GetEditPage(string R)
+        { 
+                string classname = "Ginger.Run.RunSetActions." + R.ToString();
+                Type t = Assembly.GetExecutingAssembly().GetType(classname);
+                if (t == null)
+                {
+                    throw new Exception("Runset edit page not found - " + classname);
+                }
+                Page p = (Page)Activator.CreateInstance(t, mRunSetAction);
+
+            return p;
         }
 
         private void RunActionBtn_Click(object sender, RoutedEventArgs e)

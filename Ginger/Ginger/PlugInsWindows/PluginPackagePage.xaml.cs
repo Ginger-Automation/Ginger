@@ -17,9 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
-using GingerCore.Helpers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -43,18 +43,16 @@ namespace Ginger.PlugInsWindows
         }
 
         private void Init()
-        {
-            txtBlkDescritpion.Text = string.Empty;
-            TextBlockHelper TBH = new TextBlockHelper(txtBlkDescritpion);
+        {            
+            // xSummaryTextBlock.Text = string.Empty;
+            // TextBlockHelper TBH = new TextBlockHelper(txtBlkDescritpion);
+            // xSummaryTextBlock.Text = mPluginPackage.des
 
-            PlugInNamelbl.BindControl(mPluginPackage, nameof(PluginPackage.PluginID));
-            //GingerCore.General.ObjFieldBinding(PlugInNamelbl, Label.ContentProperty, mPlugInWrapper, nameof(PluginPackage.Name), BindingMode.OneWay);
-            //GingerCore.General.ObjFieldBinding(txtBlkDescritpion, TextBlock.TextProperty, mPlugInWrapper, nameof(PlugInWrapper.Description), BindingMode.OneWay);
-            //GingerCore.General.ObjFieldBinding(PlugInTypelbl, Label.ContentProperty, mPlugInWrapper, nameof(PlugInWrapper.PlugInType), BindingMode.OneWay);
-            //GingerCore.General.ObjFieldBinding(PlugInVersionlbl, Label.ContentProperty, mPlugInWrapper, nameof(PlugInWrapper.PlugInVersion), BindingMode.OneWay);
-            //PlugInFolderlbl.Content = mPlugInWrapper.FullPlugInRootPath.ToLower().Replace(App.UserProfile.Solution.Folder.ToLower(), "~");
+            PlugInNamelbl.BindControl(mPluginPackage, nameof(PluginPackage.PluginId));
+            xPlugInPackageVersionLabel.BindControl(mPluginPackage, nameof(PluginPackage.PluginPackageVersion));
+            xPlugInFolderLabel.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
 
-
+            mPluginPackage.LoadServicesFromJSON();
             SetServicesGrid();
             SetActionsGrid();
             // SetTextEditorGrid();
@@ -62,51 +60,37 @@ namespace Ginger.PlugInsWindows
 
 
         private void SetServicesGrid()
-        {
-            ServicesGrid.ShowEdit = Visibility.Collapsed;
-            ServicesGrid.ShowUpDown = Visibility.Collapsed;
-         
+        {            
+            xServicesGrid.ShowEdit = Visibility.Collapsed;
+            xServicesGrid.ShowUpDown = Visibility.Collapsed;
+            xServicesGrid.ShowTitle = Visibility.Collapsed;
+
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = "Id", Header = "Id", AllowSorting = true, WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "ServiceId", Header = "Service Id", AllowSorting = true, WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "Description", Header = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            ServicesGrid.SetAllColumnsDefaultView(view);
-            ServicesGrid.InitViewItems();
+            view.GridColsView.Add(new GridColView() { Field = nameof(PluginServiceInfo.ServiceId), Header = "Service Id", AllowSorting = true, WidthWeight = 200, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(PluginServiceInfo.Description), Header = "Description", AllowSorting = true, WidthWeight = 400, BindingMode = BindingMode.OneWay });
 
-            var services = mPluginPackage.LoadServicesInfoFromFile(); 
-            PlugInsActionsGrid.Grid.ItemsSource = services;
+            xServicesGrid.SetAllColumnsDefaultView(view);
+            xServicesGrid.InitViewItems();
+            xServicesGrid.DataSourceList = mPluginPackage.Services;
+
 
         }
 
         private void SetActionsGrid()
         {
-            PlugInsActionsGrid.ShowEdit = Visibility.Collapsed;
-            PlugInsActionsGrid.ShowUpDown = Visibility.Collapsed;
-            PlugInsActionsGrid.ShowTitle = Visibility.Collapsed;
-
-            //if (mPluginPackage.TextEditors().Count() == 0)
-            //{
-            //    TextEditorTab.Visibility = Visibility.Hidden;
-            //    ActionsTab.Visibility = Visibility.Collapsed;
-            //    PlugInsActionsGrid.ShowTitle = Visibility.Visible;
-            //    PlugInsActionsGrid.SetTitleLightStyle = true;
-            //}
+            xServiceActionGrid.ShowEdit = Visibility.Collapsed;
+            xServiceActionGrid.ShowUpDown = Visibility.Collapsed;
+            // xServiceActionGrid.ShowTitle = Visibility.Collapsed;
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = "Description", Header = "Action Type", AllowSorting = true, WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "UserDescription", Header = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            PlugInsActionsGrid.SetAllColumnsDefaultView(view);
-            PlugInsActionsGrid.InitViewItems();
-
-            ObservableList<StandAloneAction> list = new ObservableList<StandAloneAction>();
-            foreach(StandAloneAction action in mPluginPackage.LoadServicesInfoFromFile())
-            {
-                list.Add(action);
-            }
-            PlugInsActionsGrid.DataSourceList =  list; 
             
+            view.GridColsView.Add(new GridColView() { Field = nameof(PluginServiceActionInfo.ActionId), Header = "Action Id", AllowSorting = true, WidthWeight = 200, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(PluginServiceActionInfo.Description), Header = "Description", AllowSorting = true, WidthWeight = 400, BindingMode = BindingMode.OneWay });
+
+            xServiceActionGrid.SetAllColumnsDefaultView(view);
+            xServiceActionGrid.InitViewItems();            
         }
 
         private void SetTextEditorGrid()
@@ -148,9 +132,9 @@ namespace Ginger.PlugInsWindows
             //                if (ctrl.GetType() == typeof(TextBlock))
             //                {
             //                    if (PlugInTab.SelectedItem == tab)
-            //                        ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+            //                        ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
             //                    else
-            //                        ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+            //                        ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
             //                    ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
             //                }
@@ -159,8 +143,14 @@ namespace Ginger.PlugInsWindows
             //}
             //catch (Exception ex)
             //{
-            //    Reporter.ToLog(eLogLevel.ERROR, "Error in PlugIn tabs style", ex);
+            //    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in PlugIn tabs style", ex);
             //}
+        }
+
+        private void XServicesGrid_RowChangedEvent(object sender, System.EventArgs e)
+        {
+            PluginServiceInfo pluginServiceInfo = (PluginServiceInfo)xServicesGrid.CurrentItem;
+            xServiceActionGrid.DataSourceList = new ObservableList<PluginServiceActionInfo>(pluginServiceInfo.Actions);
         }
     }
 }

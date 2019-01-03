@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -39,8 +39,8 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
         PowerBuilder,
         Java,
         MainFrame,
-        Android,
-        AndroidDevice,  // rename to Andorid, join with Android
+        //Android,
+        AndroidDevice,  // rename to Android, join with Android
         IOS
     }
 

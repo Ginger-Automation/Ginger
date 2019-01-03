@@ -95,7 +95,7 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 if(!deleteWithoutAsking)
                 {
-                    if(Reporter.ToUser(eUserMsgKeys.DeleteItem, repoItem.GetNameForFileName()) == MessageBoxResult.No)
+                    if(Reporter.ToUser(eUserMsgKeys.DeleteItem, repoItem.GetNameForFileName()) == Amdocs.Ginger.Common.MessageBoxResult.No)
                     {
                         return false;
                     }                        
@@ -241,7 +241,7 @@ namespace GingerWPF.TreeViewItemsLib
         {
             try
             {
-                if (Reporter.ToUser(eUserMsgKeys.RefreshFolder) == System.Windows.MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.RefreshFolder) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     mBulkOperationIsInProcess = true;
                     //refresh cache
@@ -258,7 +258,7 @@ namespace GingerWPF.TreeViewItemsLib
             catch (Exception ex)
             {                
                 Reporter.ToUser(eUserMsgKeys.RefreshFailed, "Failed to refresh the item type cache for the folder: " + path);
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 mBulkOperationIsInProcess = false;
             }
         }
@@ -266,36 +266,15 @@ namespace GingerWPF.TreeViewItemsLib
         public override ITreeViewItem AddSubFolder(Type typeOfFolder, string newFolderName, string newFolderPath)
         {
             try
-            {
-                object folderItem;
+            {               
                 RepositoryFolderBase repoFolder = (RepositoryFolderBase)(((ITreeViewItem)this).NodeObject());
-                object newFolder = repoFolder.AddSubFolder(newFolderName);
+                repoFolder.AddSubFolder(newFolderName);
 
-
-                //FIXME not good approuch
-                try
-                {
-                    folderItem = Activator.CreateInstance(this.GetType(), newFolder);
-                }
-                catch (Exception ex)
-                {
-                    folderItem = Activator.CreateInstance(this.GetType(),
-                                                                    BindingFlags.CreateInstance |
-                                                                    BindingFlags.Public |
-                                                                    BindingFlags.Instance |
-                                                                    BindingFlags.OptionalParamBinding, null, new object[] { repoFolder }, CultureInfo.CurrentCulture);
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                }
-                if (folderItem == null)
-                {
-                    return null;
-                }
-
-                return (ITreeViewItem)folderItem;
+                return null;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
@@ -309,7 +288,7 @@ namespace GingerWPF.TreeViewItemsLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
             return true;
@@ -319,7 +298,7 @@ namespace GingerWPF.TreeViewItemsLib
         {
             try
             {
-                if (Reporter.ToUser(eUserMsgKeys.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     //delete root and refresh tree                    
                     WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)((ITreeViewItem)this).NodeObject());
@@ -353,7 +332,7 @@ namespace GingerWPF.TreeViewItemsLib
 
                 if (mBulkOperationIsInProcess) return;
 
-                // Since refresh of tree items can be triggered from FileWatcher runnning on seperate thread, all TV handling is done on the TV.Dispatcher
+                // Since refresh of tree items can be triggered from FileWatcher running on separate thread, all TV handling is done on the TV.Dispatcher
                 switch (e.Action)
                 {
                     case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
@@ -463,7 +442,7 @@ namespace GingerWPF.TreeViewItemsLib
         
         public void SourceControlUndoChanges(object sender, System.Windows.RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.SureWantToDoRevert) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.SureWantToDoRevert) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.RevertChangesFromSourceControl);
                 SourceControlIntegration.Revert(App.UserProfile.Solution.SourceControl, this.NodePath());                
@@ -474,7 +453,7 @@ namespace GingerWPF.TreeViewItemsLib
 
         public void SourceControlGetLatestVersion(object sender, System.Windows.RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.LoseChangesWarn) == MessageBoxResult.No) return;
+            if (Reporter.ToUser(eUserMsgKeys.LoseChangesWarn) == Amdocs.Ginger.Common.MessageBoxResult.No) return;
 
             Reporter.ToGingerHelper(eGingerHelperMsgKey.GetLatestFromSourceControl);
             if (string.IsNullOrEmpty(this.NodePath()))
@@ -516,7 +495,7 @@ namespace GingerWPF.TreeViewItemsLib
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
 
             
-            //Add direct childrens        
+            //Add direct children's        
             ObservableList<T> folderItems = RF.GetFolderItems();
             // why we need -? in case we did refresh and reloaded the item TODO: research, make children called once
             folderItems.CollectionChanged -= TreeFolderItems_CollectionChanged;
@@ -538,7 +517,7 @@ namespace GingerWPF.TreeViewItemsLib
         /// The function creates the tree node item header
         /// </summary>
         /// <param name="repoItem">The repository item which the tree nodes represents</param>
-        /// <param name="imageType">The image type which assosicated with the repository item- should be pulled from the repoItem</param>
+        /// <param name="imageType">The image type which associated with the repository item- should be pulled from the repoItem</param>
         /// <param name="NameProperty">The field of the item which holds the item name or static name in case the repository item is null</param>
         /// <returns></returns>
         protected StackPanel NewTVItemHeaderStyle(RepositoryItemBase repoItem, eImageType imageType = eImageType.Null, string NameProperty = "")
@@ -609,7 +588,7 @@ namespace GingerWPF.TreeViewItemsLib
         /// The function creates the folder tree node header
         /// </summary>
         /// <param name="repoItemFolder">the Repository Folder Base</param>      
-        /// <param name="imageType">Only if need diffrent icon than defualt one then require to provide it</param> 
+        /// <param name="imageType">Only if need different icon than default one then require to provide it</param> 
         /// <returns></returns>
         protected StackPanel NewTVItemFolderHeaderStyle(RepositoryFolderBase repoItemFolder, eImageType imageType= eImageType.Null)
         {

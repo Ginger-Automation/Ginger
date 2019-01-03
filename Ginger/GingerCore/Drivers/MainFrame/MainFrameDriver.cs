@@ -20,9 +20,8 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using GingerCore.Actions.MainFrame;
-using GingerCore.Drivers.Common;
+using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Open3270;
 using Open3270.TN3270;
@@ -158,9 +157,12 @@ namespace GingerCore.Drivers.MainFrame
                 mDriverWindow = new MainFrameDriverWindow(this);
                 mDriverWindow.Show();
                 mDriverWindow.Refresh();
-                OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-                Dispatcher = mDriverWindow.Dispatcher;
+
+                Dispatcher = new DriverWindowDispatcher(mDriverWindow.Dispatcher);
+                Dispatcher.Invoke(new Action(() => OnDriverMessage(eDriverMessageType.DriverStatusChanged)));
                 System.Windows.Threading.Dispatcher.Run();
+
+                
             }
             else
             {
@@ -494,20 +496,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new NotImplementedException();
         }
 
-        public override List<Actions.ActButton> GetAllButtons()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override List<Actions.ActWindow> GetAllWindows()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override List<Actions.ActLink> GetAllLinks()
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public override void HighlightActElement(Actions.Act act)
         {
@@ -713,7 +702,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new System.NotImplementedException();
         }
 
-        public System.Collections.Generic.List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        public System.Collections.Generic.List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
         {
             List<ElementInfo> Eil = new System.Collections.Generic.List<ElementInfo>();
 

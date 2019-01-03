@@ -21,6 +21,7 @@ using System.IO;
 using Amdocs.Ginger.Common;
 using GingerCore.Repository;
 using GingerCore.Repository.UpgradeLib;
+using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.XMLConverters
 {
@@ -168,13 +169,13 @@ namespace GingerCore.XMLConverters
                             inputXML = updatedXML;
                             break;
                         default:
-                            Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to upgrade the XML of the file '{0}' due to unkonwn version", xmlFilePath));
+                            Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to upgrade the XML of the file '{0}' due to unknown version", xmlFilePath));
                             return null;
                     }
 
                     if (string.IsNullOrEmpty(updatedXML) || currentXmlVersion < 0)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to upgrade the XML of the file '{0}'", xmlFilePath));
+                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to upgrade the XML of the file '{0}'", xmlFilePath));
                         return null;
                     }
 
@@ -186,7 +187,7 @@ namespace GingerCore.XMLConverters
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to upgrade the XML of the file '{0}'", xmlFilePath), ex);
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to upgrade the XML of the file '{0}'", xmlFilePath), ex);
                 return null;
             }
         }

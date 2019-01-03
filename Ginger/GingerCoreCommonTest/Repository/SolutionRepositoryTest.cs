@@ -39,8 +39,7 @@ namespace GingerCoreCommonTest.Repository
     // Test Multi thread getting the same data - repository folder
     // Test Big solution
 
-    [TestClass]
-    [Ignore]
+    [TestClass]    
     [Level1]
     public class SolutionRepositoryTest
     {
@@ -50,7 +49,7 @@ namespace GingerCoreCommonTest.Repository
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
-        {
+        {            
             TempRepositoryFolder = TestResources.getGingerUnitTesterTempFolder("Solutions", "SRTestTemp");
             Console.WriteLine("SolutionRepositoryTest folder: " + TempRepositoryFolder);
 
@@ -65,7 +64,6 @@ namespace GingerCoreCommonTest.Repository
                                                                rootFolder: SolutionRepository.cSolutionRootFolderSign + "MyRepositoryItems", 
                                                                containRepositoryItems: true, 
                                                                displayName: "My Repository Item", 
-                                                               addToRootFolders: true,
                                                                PropertyNameForFileName: nameof(MyRepositoryItem.Name)
                                                                );
 
@@ -89,7 +87,6 @@ namespace GingerCoreCommonTest.Repository
                                                                rootFolder: SolutionRepository.cSolutionRootFolderSign + "MyRepositoryItems",
                                                                containRepositoryItems: true,
                                                                displayName: "My Repository Item",
-                                                               addToRootFolders: true,
                                                                PropertyNameForFileName: nameof(MyRepositoryItem.Name)
                                                                );
 
@@ -270,7 +267,7 @@ namespace GingerCoreCommonTest.Repository
 
             // Call get MRIs so the MRI will be also in a list cache, so we can validate removal from list too
             ObservableList<MyRepositoryItem> MRIs = mSolutionRepository.GetAllRepositoryItems<MyRepositoryItem>();
-            //The added MRI in Arrange will apear in the list
+            //The added MRI in Arrange will appear in the list
 
             //Act            
             mSolutionRepository.DeleteRepositoryItem(MRI);
@@ -385,7 +382,7 @@ namespace GingerCoreCommonTest.Repository
         //    mSolutionRepository.DeleteRepositoryItemFolder(folderToDelete);
 
         //    //Assert
-        //    Assert.IsTrue(Directory.Exists(folderToDelete.FolderFullPath) == false, "Verify Direcorty not exist");
+        //    Assert.IsTrue(Directory.Exists(folderToDelete.FolderFullPath) == false, "Verify Directory not exist");
         //    Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI1.Guid)), null, "make sure all deleted folder items were removed from cache");
         //    Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI3.Guid)), null, "make sure all deleted folder sub folder items were removed from cache");
         //}

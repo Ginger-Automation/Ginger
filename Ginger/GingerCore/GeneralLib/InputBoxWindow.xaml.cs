@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using GingerCoreNET.ReporterLib;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -151,7 +153,7 @@ namespace GingerCore.GeneralLib
                         builder.Append(value);
                         builder.Append(" ");
                     }                    
-                    Reporter.ToUser(eUserMsgKeys.ValueIssue, "Value cannot contain charaters like: {0}", builder.ToString());
+                    Reporter.ToUser(eUserMsgKeys.ValueIssue, "Value cannot contain characters like: " +  builder);
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
             }

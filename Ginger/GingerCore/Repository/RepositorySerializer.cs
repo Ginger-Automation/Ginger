@@ -18,12 +18,13 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.Reports;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
-using GingerCore.XMLConverters;
+using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -43,16 +43,16 @@ namespace GingerCore.Repository
 
 
     // This class is for storing RepositoryItem on disk, it needs to be serialized to XML
-    // reason for not using some of the exisiting options:
-    // Binary - makes it diffcult to compare version/history in CC + some say it is slower!?
-    // XML formatter - the default have some chllenges and with some NG objects    
-    // Pros - With our own seriliaztion we can solve the problem of copy vs link of Action, during load/save we can take the items from repo
+    // reason for not using some of the existing options:
+    // Binary - makes it difficult to compare version/history in CC + some say it is slower!?
+    // XML formatter - the default have some challenges and with some NG objects    
+    // Pros - With our own serialization we can solve the problem of copy vs link of Action, during load/save we can take the items from repo
     // We can have several style of serialization - 1 store to repo - not all attrs are save, 2 store local save most attrs
     // It should work faster - to be tested and optimized
-    // + We can keep backword compatibiity much easier
-    // + It solve the copy/link to other repo item during serailzation/de-serailzation
+    // + We can keep backward compatibility much easier
+    // + It solve the copy/link to other repo item during serialization/de-serialization
     // It will also solve problems with older agents - no need to update all agents, since sending xml and parsing with defaults
-    // we can also decide on ad hoc serialzation based on the target: if we send it to agent, save to disk or other
+    // we can also decide on ad hoc serialization based on the target: if we send it to agent, save to disk or other
     // We can also decide on ignore error and get partial object - to be fixed- but maybe better than nothing
     // We cam also read partial files - i.e: if we just need the Business flow name for list, no need to read all file
     // We can add custom attr at the top
@@ -429,6 +429,7 @@ namespace GingerCore.Repository
         static Assembly GingerAssembly = System.Reflection.Assembly.Load("Ginger");
         static Assembly GingerCoreAssembly = System.Reflection.Assembly.GetExecutingAssembly();
         static Assembly GingerCoreCommon = typeof(RepositoryItemBase).Assembly;
+        static Assembly GingerCoreNET = typeof(HTMLReportConfiguration).Assembly;
 
 
         private static object xmlReadObject(Object Parent, XmlReader xdr, RepositoryItemBase targetObj = null)
@@ -486,6 +487,12 @@ namespace GingerCore.Repository
                     
                     
                     obj = GingerCoreCommon.CreateInstance(ClassName);
+                }
+
+
+                if (obj == null) //GingerCoreNET assembly
+                {                    
+                    obj = GingerCoreNET.CreateInstance(ClassName);
                 }
 
                 if (obj == null)
@@ -680,12 +687,12 @@ namespace GingerCore.Repository
                                 }
                                 else
                                 {
-                                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
+                                    Reporter.ToLog(eLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
                                 }
                             }
                             else
                             {
-                                Reporter.ToLog(eAppReporterLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
+                                Reporter.ToLog(eLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
                             }
 
                             xdr.MoveToNextAttribute();
@@ -703,7 +710,7 @@ namespace GingerCore.Repository
             }
             catch (Exception ex)
             {                
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
             }
         }
 
@@ -900,13 +907,13 @@ namespace GingerCore.Repository
                 }
                 else
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath), writeOnlyInDebugMode: true);
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath), writeOnlyInDebugMode: true);
                     return null;//failed to get the version
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath), writeOnlyInDebugMode: true);
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath), writeOnlyInDebugMode: true);
                 Console.WriteLine(ex.StackTrace);
                 return null;//failed to get the version
             }
@@ -981,7 +988,7 @@ namespace GingerCore.Repository
             switch (EventArgs.EventType)
             {
                 case NewRepositorySerilizerEventArgs.eEventType.LoadWithOldSerilizerRequired:
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("New Serialzier is calling Old Serialzier for loading the file: '{0}'", EventArgs.FilePath), null, writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("New Serialzier is calling Old Serialzier for loading the file: '{0}'", EventArgs.FilePath), null, writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
                     return DeserializeFromText(EventArgs.XML, EventArgs.TargetObj);
             }
 

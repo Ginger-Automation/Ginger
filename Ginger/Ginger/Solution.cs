@@ -20,8 +20,8 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Utils;
 using Ginger.ALM;
-using Ginger.GeneralLib;
 using Ginger.Reports;
 using GingerCore;
 using GingerCore.Variables;
@@ -31,12 +31,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ginger.SolutionGeneral
 {
-    public class Solution : RepositoryItemBase
+    public class Solution : RepositoryItemBase,ISolution
     {
         public SourceControlBase SourceControl { get; set; }
 
@@ -62,7 +62,7 @@ namespace Ginger.SolutionGeneral
             return solution;
         }
 
-        public enum eSolutionItemToSave { GeneralDetails, TargetApplications, GlobalVariabels, Tags, ALMSettings, SourceControlSettings, ReportsSettings}
+        public enum eSolutionItemToSave { GeneralDetails, TargetApplications, GlobalVariabels, Tags, ALMSettings, SourceControlSettings, LoggerConfiguration, ReportConfiguration}
         public void SaveSolution(bool showWarning = true, eSolutionItemToSave solutionItemToSave = eSolutionItemToSave.GeneralDetails)
         {
             bool doSave = false;
@@ -98,39 +98,36 @@ namespace Ginger.SolutionGeneral
                         bldExtraChangedItems.Append("Source Control Details, ");
                     }                        
                 }
-                if (solutionItemToSave != eSolutionItemToSave.ReportsSettings)
+                if (solutionItemToSave != eSolutionItemToSave.LoggerConfiguration)
                 {
-                    if (ExecutionLoggerConfigurationSetList != null && (ExecutionLoggerConfigurationSetList.Count != lastSavedSolution.ExecutionLoggerConfigurationSetList.Count || HTMLReportsConfigurationSetList.Count != lastSavedSolution.HTMLReportsConfigurationSetList.Count))
+                    if (ExecutionLoggerConfigurationSetList != null && lastSavedSolution.ExecutionLoggerConfigurationSetList.Count!=0)
                     {
-                        bldExtraChangedItems.Append("Reports Settings, ");
-                    }
-                    else
-                    {
-                        if (ExecutionLoggerConfigurationSetList != null)
+                        foreach (ExecutionLoggerConfiguration config in ExecutionLoggerConfigurationSetList)
                         {
-                            foreach (ExecutionLoggerConfiguration config in ExecutionLoggerConfigurationSetList)
+                            if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
-                                if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
-                                {
-                                    bldExtraChangedItems.Append("Reports Settings, ");
-                                    break;
-                                }
+                                bldExtraChangedItems.Append("Execution Logger configuration, ");
+                                break;
                             }
                         }
-                        if (!bldExtraChangedItems.ToString().Contains("Reports Settings"))
+                    }
+                }
+                if(solutionItemToSave != eSolutionItemToSave.ReportConfiguration )
+                {
+                    if (HTMLReportsConfigurationSetList!=null && lastSavedSolution.HTMLReportsConfigurationSetList.Count != 0)
+                    {
+                        foreach (HTMLReportsConfiguration config in HTMLReportsConfigurationSetList)
                         {
-                            foreach (HTMLReportsConfiguration config in HTMLReportsConfigurationSetList)
+                            if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
-                                if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
-                                {
 
-                                    bldExtraChangedItems.Append("Reports Settings, ");
-                                    break;
-                                }
+                                bldExtraChangedItems.Append("Report configuration");
+                                break;
                             }
                         }
                     }
-                }                
+                }     
+
                 if (solutionItemToSave != eSolutionItemToSave.GlobalVariabels)
                 {
                     if (Variables.Count != lastSavedSolution.Variables.Count)
@@ -194,7 +191,7 @@ namespace Ginger.SolutionGeneral
                 {
                     extraChangedItems= extraChangedItems.TrimEnd();
                     extraChangedItems= extraChangedItems.TrimEnd(new char[] { ',' });                    
-                    if (Reporter.ToUser(eUserMsgKeys.SolutionSaveWarning, extraChangedItems) == System.Windows.MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKeys.SolutionSaveWarning, extraChangedItems) == MessageBoxResult.Yes)
                     {
                         doSave = true;
                     }
@@ -305,12 +302,12 @@ namespace Ginger.SolutionGeneral
                 HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
                 HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
             }
-
+            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
             App.AutomateTabGingerRunner.ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ApplicationPlatform> ApplicationPlatforms;
+        public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
 
         public string MainApplication
         {
@@ -450,13 +447,13 @@ namespace Ginger.SolutionGeneral
 
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList = new ObservableList<ExecutionLoggerConfiguration>();
+        public ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList { get; set; } = new ObservableList<ExecutionLoggerConfiguration>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
+        public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList { get; set; } = new ObservableList<HTMLReportsConfiguration>();
 
         //public string VariablesNames
         //{

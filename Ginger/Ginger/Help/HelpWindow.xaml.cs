@@ -71,7 +71,7 @@ namespace Ginger.Help
                 }
                 catch(Exception ex)
                 {
-                    ShowFile(Path.Combine(mHelpFolder, @"Index.mht")); Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    ShowFile(Path.Combine(mHelpFolder, @"Index.mht")); Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
             }            
         }
@@ -162,7 +162,7 @@ namespace Ginger.Help
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -186,12 +186,11 @@ namespace Ginger.Help
             try
             {
                 mWebBrowser.Dispose();
-                mWebBrowser = null;
+                mWebBrowser = null;                
                 VideoPlayer.Pause();
             }
             catch(Exception ex)
-            {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            {               
             }
         }
     }

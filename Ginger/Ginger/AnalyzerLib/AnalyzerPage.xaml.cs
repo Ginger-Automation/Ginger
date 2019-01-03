@@ -131,7 +131,7 @@ namespace Ginger.AnalyzerLib
 
             mIssues.Clear();
             CriticalAndHighIssuesLabelCounter.Content = "0";
-            CriticalAndHighIssuesLabelCounter.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#20334f");   //"#20334f";
+            CriticalAndHighIssuesLabelCounter.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#152B37");   //"#20334f";
             CanAutoFixLableCounter.Content = "0";
             await Analyze();
         }
@@ -144,7 +144,7 @@ namespace Ginger.AnalyzerLib
 
         private async Task Analyze()
         {         
-                // Each anlyzer will set to true once completed, this is prep for multi run in threads for speed
+                // Each analyzer will set to true once completed, this is prep for multi run in threads for speed
                 BusyInProcess = true;
                 mAnalyzerCompleted = false;
                 mAnalyzeDoneOnce = true;
@@ -222,7 +222,7 @@ namespace Ginger.AnalyzerLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -240,7 +240,7 @@ namespace Ginger.AnalyzerLib
                     issues = AnalyzeGingerRunner.Analyze(GR, App.UserProfile.Solution.ApplicationPlatforms);
                     AddIssues(issues);
 
-                    //Code to analyze Runner Unique Busines flow with Source BF
+                    //Code to analyze Runner Unique Businessflow with Source BF
                     List<Guid> checkedGuidList = new List<Guid>();
                     foreach (BusinessFlow BF in GR.BusinessFlows)
                     {
@@ -305,7 +305,7 @@ namespace Ginger.AnalyzerLib
         {
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();            
             BusinessFlow BusinessFlow = App.BusinessFlow;
-            Activity activity = BusinessFlow.Activities[0];
+            Activity activity = (Activity)BusinessFlow.Activities[0];
             string variableSourceType = "";
             string variableSourceName = "";
             ObservableList<VariableBase> AvailableAllVariables = new ObservableList<VariableBase>();
@@ -335,7 +335,7 @@ namespace Ginger.AnalyzerLib
                 AvailableAllVariables = solution.Variables;
                 variableSourceType = "Solution";
                 variableSourceName = solution.Name;                
-                activity = BusinessFlow.Activities[0];
+                activity = (Activity)BusinessFlow.Activities[0];
             }
 
 
@@ -638,7 +638,7 @@ namespace Ginger.AnalyzerLib
             }
             // TODO: click/use the same code on solution which will save all changed items...
             // Meanwhile the below is good start 
-            if (Reporter.ToUser(eUserMsgKeys.SaveAllItemsParentWarning) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.SaveAllItemsParentWarning) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 BusyInProcess = true;
                 SetStatus("Starting to Save Fixed Items...");

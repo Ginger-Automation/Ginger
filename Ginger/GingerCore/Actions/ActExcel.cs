@@ -17,20 +17,19 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Repository;
+using GingerCore.Helpers;
+using GingerCore.Properties;
+using GingerCore.Variables;
+using GingerCoreNET.ReporterLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
-using System.Linq;
-using System.Windows;
-using GingerCore.Helpers;
-using GingerCore.Properties;
-using GingerCore.Variables;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using Amdocs.Ginger.Repository;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 //TODO: add and use below with ReadCellDataNew - need to be tested
 // using DocumentFormat.OpenXml.Packaging;
@@ -435,7 +434,7 @@ namespace GingerCore.Actions
                 {
                     System.Threading.Thread.Sleep(3000);
                     Conn.Open();
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
                 }
 
                 OleDbCommand Cmd = new OleDbCommand();
@@ -568,7 +567,7 @@ namespace GingerCore.Actions
                 {
                     System.Threading.Thread.Sleep(3000);
                     Conn.Open();
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
                 }
 
                 OleDbCommand Cmd = new OleDbCommand();
@@ -714,7 +713,7 @@ namespace GingerCore.Actions
                 }
                 catch (Exception ex)
                 {
-                    // Reporter.ToLog(eLogLevel.ERROR, "Wrting into excel got error " + ex.Message);
+                    // Reporter.ToLog(eAppReporterLogLevel.ERROR, "Wrting into excel got error " + ex.Message);
                     this.Error = "Error when trying to update the excel: " + ex.Message + Environment.NewLine + "UpdateSQL=" + updateSQL;
                 }
                 finally

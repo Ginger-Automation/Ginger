@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using GingerCoreNET.ReporterLib;
 using System;
 using System.Windows;
 
@@ -64,7 +66,7 @@ namespace GingerCore
             }
         }
 
-public GingerHelperEventArgs(eGingerHelperEventActions EventAction, eGingerHelperMsgType messageType, RoutedEventHandler btnHandler = null, GingerHelperMsg helperMsg=null)
+        public GingerHelperEventArgs(eGingerHelperEventActions EventAction, eGingerHelperMsgType messageType, RoutedEventHandler btnHandler = null, GingerHelperMsg helperMsg=null)
         {
             mHelperMsg = helperMsg;
             mGingerHelperEventActions = EventAction;

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Platforms;
@@ -76,7 +77,7 @@ namespace Ginger.Run
                     if (optionalAgentsList != null && mGingerRunner != null)
                     {
                         //remove already mapped agents
-                        List<ApplicationAgent> mappedApps = mGingerRunner.ApplicationAgents.Where(x => x.Agent != null).ToList();
+                        List<IApplicationAgent> mappedApps = mGingerRunner.ApplicationAgents.Where(x => x.Agent != null).ToList();
                         foreach (ApplicationAgent mappedApp in mappedApps)
                         {
                             if (mappedApp.Agent.Platform == appPlatform && mappedApp != mApplicationAgent)
@@ -86,6 +87,17 @@ namespace Ginger.Run
                         foreach (Agent agent in optionalAgentsList) optionalAgents.Add(agent);
                     }
                 }
+            }
+
+
+            // FIXME : !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // Add Plugin agents
+            // if (mApplicationAgent.target - plugin...) search based on type
+            // Search plugins            
+            var list = from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.ServiceId == mApplicationAgent.AppName select x;
+            foreach (Agent agent in list)
+            {
+                optionalAgents.Add(agent);
             }
 
             if (optionalAgents.Count == 0)

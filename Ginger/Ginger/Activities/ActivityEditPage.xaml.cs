@@ -65,10 +65,10 @@ namespace Ginger.BusinessFlowWindows
             else
                 mActivityParentBusinessFlow = App.BusinessFlow;
 
-            List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(Activity.eActivityAutomationStatus));
+            List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(eActivityAutomationStatus));
             AutomationStatusCombo.ItemsSource = automationStatusList;
             RunOptionCombo.BindControl(activity, Activity.Fields.ActionRunOption);            
-            HandlerTypeCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(ErrorHandler.eHandlerType));
+            HandlerTypeCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eHandlerType));
 
             App.FillComboFromEnumVal(cmbErrorHandlerMapping, mActivity.ErrorHandlerMappingType);
             App.ObjFieldBinding(txtActivityName, TextBox.TextProperty, mActivity, Activity.Fields.ActivityName);
@@ -129,14 +129,16 @@ namespace Ginger.BusinessFlowWindows
             if (!mActivity.IsNotGherkinOptimizedActivity)
                 txtActivityName.IsEnabled = false;
 
+            SetExpandersLabels();
+
             txtActivityName.Focus();        
         }
 
         private void FillTargetAppsComboBox()
         {
             TargetApplicationComboBox.ItemsSource = mActivityParentBusinessFlow.TargetApplications;
-            TargetApplicationComboBox.SelectedValuePath = TargetApplication.Fields.AppName;
-            TargetApplicationComboBox.DisplayMemberPath = TargetApplication.Fields.AppName;
+            TargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
+            TargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
         }
 
         public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset=false)
@@ -191,7 +193,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void CloseWinClicked(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 UndoChangesAndClose();
             }
@@ -204,7 +206,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void ParentItemSaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (mActivityParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning) == MessageBoxResult.Yes)
+            if (mActivityParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {                
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivityParentBusinessFlow);
                 saveWasDone = true;
@@ -274,7 +276,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void cmbErrorHandlerMapping_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cmbErrorHandlerMapping.SelectedValue.ToString() == Activity.eHandlerMappingType.SpecificErrorHandlers.ToString())
+            if (cmbErrorHandlerMapping.SelectedValue.ToString() == eHandlerMappingType.SpecificErrorHandlers.ToString())
             {
                 btnSpecificErrorHandler.Visibility = Visibility.Visible;
 
@@ -289,6 +291,39 @@ namespace Ginger.BusinessFlowWindows
             ErrorHandlerMappingPage errorHandlerMappingPage = new ErrorHandlerMappingPage(mActivity, mActivityParentBusinessFlow);
             errorHandlerMappingPage.ShowAsWindow();
             AutoLogProxy.UserOperationEnd();
+        }
+
+        private void SetExpandersLabels()
+        {
+            UpdateVariabelsExpanderLabel();
+            mActivity.Variables.CollectionChanged += Variables_CollectionChanged;
+            UpdateActionsExpanderLabel();
+            mActivity.Acts.CollectionChanged += Acts_CollectionChanged;
+        }
+
+        private void Acts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateActionsExpanderLabel();
+        }
+
+        private void Variables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateVariabelsExpanderLabel();
+        }
+
+        private void UpdateVariabelsExpanderLabel()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                VariablesExpanderLabel.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mActivity.Variables.Count);
+            });
+        }
+        private void UpdateActionsExpanderLabel()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                ActionsExpanderLabel.Content = string.Format("Actions ({0})", mActivity.Acts.Count);
+            });
         }
     }
 }

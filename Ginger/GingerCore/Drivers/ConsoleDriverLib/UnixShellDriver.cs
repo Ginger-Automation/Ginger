@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
+using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Renci.SshNet;
 using System;
@@ -113,7 +114,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 if (string.IsNullOrEmpty(Host) || string.IsNullOrEmpty(Port.ToString()) || string.IsNullOrEmpty(UserName))
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "One of Settings of Agent is Empty ");
+                    Reporter.ToLog(eLogLevel.INFO, "One of Settings of Agent is Empty ");
                     throw new Exception("One of Settings of Agent is Empty ");    
                 }
                 if (Password == null)
@@ -124,7 +125,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 }
                 catch (Exception)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "Error Connecting to Host: " + Host + " with Port: " + Port);
+                    Reporter.ToLog(eLogLevel.INFO, "Error Connecting to Host: " + Host + " with Port: " + Port);
                     throw new Exception("Error Connecting to Host: " + Host + " with Port: " + Port);
                 }
 
@@ -169,7 +170,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 }
                 else
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "Error connecting to UnixServer - " + Host);
+                    Reporter.ToLog(eLogLevel.INFO, "Error connecting to UnixServer - " + Host);
                     throw new Exception("Error connecting to UnixServer - " + Host);
                 }
             }
@@ -203,7 +204,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 {
                     ss.WriteByte(System.Convert.ToByte(Convert.ToInt32(command)));
                 }
-                catch(Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                catch(Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }
             else
             {
@@ -263,7 +264,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
             }            
             mConsoleDriverWindow.ConsoleWriteText(reply.ToString(),true);
             reply.Clear();
@@ -300,12 +301,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         if (!string.IsNullOrEmpty(p.Value))
                             cmd += " " + p.ValueForDriver;
                     if (UnixScriptFilePath.Trim().EndsWith(".sh", StringComparison.CurrentCultureIgnoreCase))
-                        return "sh " + UnixScriptFilePath + cmd;
+                        return "dos2unix " + UnixScriptFilePath + ";sh " + UnixScriptFilePath + cmd;
                     else
-                        return "" + UnixScriptFilePath + cmd;
+                        return "dos2unix " + UnixScriptFilePath + "; " + UnixScriptFilePath + cmd;
                
                 default:
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "Error - unknown command");
+                    Reporter.ToLog(eLogLevel.INFO, "Error - unknown command");
                     ErrorMessageFromDriver += "Error - unknown command";
                     return "Error - unknown command";
             }

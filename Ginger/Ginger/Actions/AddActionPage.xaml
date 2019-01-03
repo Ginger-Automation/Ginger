@@ -15,17 +15,17 @@
             <ColumnDefinition Width="100*"/>
         </Grid.ColumnDefinitions>
          
-        <TabControl x:Name="ActionsTabs" Grid.Row="1" HorizontalAlignment="Stretch" Background="{StaticResource @Skin1_ColorC}" SelectionChanged="ActionsTabs_SelectionChanged" Loaded="Tab_GotFocus" >
+        <TabControl x:Name="ActionsTabs" Grid.Row="1" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="ActionsTabs_SelectionChanged" Loaded="Tab_GotFocus" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
+                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
                     <Setter Property="Height" Value="25"/>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="False" >
-                            <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True" >
-                            <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
                         </Trigger>
                     </Style.Triggers>
                 </Style>
@@ -35,7 +35,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource @PlatformAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
-                        <TextBlock Text="Platform Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
+                        <TextBlock Text="Platform Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="PlatformActionsGrid" RowChangedEvent="ActionsGrid_RowChangedEvent" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" IsReadOnly="True"  />
@@ -44,7 +44,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource @GeneralAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
-                        <TextBlock Text="General Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
+                        <TextBlock Text="General Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="GeneralActionsGrid" RowChangedEvent="ActionsGrid_RowChangedEvent"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" IsReadOnly="True"  />
@@ -53,7 +53,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource @PluginAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
-                        <TextBlock Text="PlugIns Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
+                        <TextBlock Text="PlugIns Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="PlugInsActionsGrid" RowChangedEvent="ActionsGrid_RowChangedEvent"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" IsReadOnly="True"  />
@@ -75,14 +75,14 @@
                 </TabItem.Resources>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="Legacy Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="SemiBold" />
+                        <TextBlock Text="Legacy Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="SemiBold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="LegacyActionsGrid" RowChangedEvent="ActionsGrid_RowChangedEvent"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" IsReadOnly="True"  />
             </TabItem>
         </TabControl>
 
-        <GridSplitter ResizeDirection="Columns" Grid.Column="0" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="{StaticResource @Skin1_ColorA}" IsEnabled="True" Margin="0,0,0,0"/>
+        <GridSplitter ResizeDirection="Columns" Grid.Column="0" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" Margin="0,0,0,0"/>
         
         <Frame x:Name="ActDescriptionFrm" Content="Action Description" Grid.Column="1" Margin="0,0,0,0"
                    NavigationUIVisibility="Hidden"                                  

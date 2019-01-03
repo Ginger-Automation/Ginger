@@ -91,8 +91,7 @@ namespace Ginger.Run
             grdExecutionsHistory.InitViewItems();
 
             grdExecutionsHistory.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
-            grdExecutionsHistory.AddToolbarTool("@Open_16x16.png", "Open Execution Results Main Folder", new RoutedEventHandler(GetExecutionResultsFolder));
-            grdExecutionsHistory.AddToolbarTool("@Config3_16x16.png", "Execution Logger Configurations", new RoutedEventHandler(ExecutionResultsConfigWindow));
+            grdExecutionsHistory.AddToolbarTool("@Open_16x16.png", "Open Execution Results Main Folder", new RoutedEventHandler(GetExecutionResultsFolder));            
             grdExecutionsHistory.AddToolbarTool("@Delete_16x16.png", "Delete Selected Execution Results", new RoutedEventHandler(DeleteSelectedExecutionResults));
             grdExecutionsHistory.AddToolbarTool("@Trash_16x16.png", "Delete All Execution Results", new RoutedEventHandler(DeleteAllSelectedExecutionResults));
             grdExecutionsHistory.RowDoubleClick += OpenExecutionResultsFolder;
@@ -150,7 +149,7 @@ namespace Ginger.Run
 
         private void DeleteSelectedExecutionResults(object sender, System.Windows.RoutedEventArgs e)
         {
-            if ((Reporter.ToUser(eUserMsgKeys.ExecutionsResultsToDelete)) == MessageBoxResult.Yes)
+            if ((Reporter.ToUser(eUserMsgKeys.ExecutionsResultsToDelete)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 foreach (RunSetReport runSetReport in grdExecutionsHistory.Grid.SelectedItems)
                 {
@@ -169,7 +168,7 @@ namespace Ginger.Run
         }
         private void DeleteAllSelectedExecutionResults(object sender, System.Windows.RoutedEventArgs e)
         {
-            if ((Reporter.ToUser(eUserMsgKeys.AllExecutionsResultsToDelete)) == MessageBoxResult.Yes)
+            if ((Reporter.ToUser(eUserMsgKeys.AllExecutionsResultsToDelete)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 foreach (RunSetReport runSetReport in grdExecutionsHistory.Grid.Items)
                 {
@@ -248,11 +247,6 @@ namespace Ginger.Run
         private void OpenExecutionResultsFolder(object sender, EventArgs e)
         {
             OpenExecutionResultsFolder();
-        }
-
-        private void ExecutionResultsConfigWindow(object sender, System.Windows.RoutedEventArgs e)
-        {
-            Ginger.Reports.ExecutionLoggerConfiguration.ExecutionResultsConfigurationPage();
         }
 
         private void ReportBtnClicked(object sender, RoutedEventArgs e)

@@ -32,6 +32,7 @@ using Ginger.Run;
 using GingerCoreNET.GeneralLib;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -81,6 +82,7 @@ namespace Ginger.BusinessFlowWindows
             }         
            
             ViewModel activity = new ViewModel(activityStatList);
+            ActivityChart.ChartTitle = GingerDicser.GetTermResValue(eTermResKey.Activities);
             ActivityChart.DataContext = activity;
 
             //Action

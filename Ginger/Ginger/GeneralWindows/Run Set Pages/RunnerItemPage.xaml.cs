@@ -33,6 +33,7 @@ using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Common.Enums;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Run
 {
@@ -49,7 +50,7 @@ namespace Ginger.Run
         }
 
         public delegate void RunnerItemEventHandler(RunnerItemEventArgs EventArgs);
-        public static event RunnerItemEventHandler RunnerItemEvent;
+        private static event RunnerItemEventHandler RunnerItemEvent;
         public void OnRunnerItemEvent(RunnerItemEventArgs.eEventType eventType, RunnerItemPage runnerItemPage, eRunnerItemType runnerItemType, Object runnerItemObject)
         {
             RunnerItemEventHandler handler = RunnerItemEvent;
@@ -115,6 +116,15 @@ namespace Ginger.Run
                 if (mItemChilds == null)
                     LoadChildRunnerItems();
                 return mItemChilds;
+            }
+        }
+
+        public static void SetRunnerItemEvent(RunnerItemEventHandler runnerItemEvent)
+        {
+            if(RunnerItemEvent == null)
+            {
+                RunnerItemEvent -= runnerItemEvent;
+                RunnerItemEvent += runnerItemEvent;
             }
         }
 

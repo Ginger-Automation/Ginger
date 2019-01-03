@@ -69,7 +69,7 @@ namespace Ginger.Environments
                 if (changedParam.Name != changedParam.NameBeforeEdit)
                 {
                     //ask user if want us to update the parameter name in all BF's
-                    if (Reporter.ToUser(eUserMsgKeys.ChangingEnvironmentParameterValue) == MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKeys.ChangingEnvironmentParameterValue) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                     {
                         UpdateVariableNameChange(changedParam);
                     }
@@ -80,32 +80,30 @@ namespace Ginger.Environments
                 GeneralParam selectedEnvParam = (GeneralParam)grdAppParams.CurrentItem;
 
                 String intialValue = selectedEnvParam.Value;
-                if (intialValue != null)
+                bool res = false;
+                if (!string.IsNullOrEmpty(intialValue))
                 {
                     if (selectedEnvParam.Encrypt == true)
                     {
-                        bool res = false;
-                        String value = selectedEnvParam.Value;
-                        UpdateVariableNameChange(selectedEnvParam);
-                        selectedEnvParam.Value = null;
-                        selectedEnvParam.Value = EncryptionHandler.EncryptString(intialValue, ref res);
-                    }
-                    else if (selectedEnvParam.Encrypt == false)
-                    {
-                        bool res = false;
-
-
-                        String deCryptValue = EncryptionHandler.DecryptString(intialValue, ref res);
-
-                        if (res == true)
+                        //UpdateVariableNameChange(selectedEnvParam); // why is that needed here?
+                        if (!EncryptionHandler.IsStringEncrypted(intialValue))
                         {
-                            selectedEnvParam.Value = null;
+                            selectedEnvParam.Value = EncryptionHandler.EncryptString(intialValue, ref res);
+                            if (res == false)
+                            {
+                                selectedEnvParam.Value = null;
+                            }
                         }
-
-                        else
+                    }
+                    else
+                    {
+                        if (EncryptionHandler.IsStringEncrypted(intialValue))
                         {
-                            selectedEnvParam.Value = null;
-                            selectedEnvParam.Value = intialValue;
+                            selectedEnvParam.Value = EncryptionHandler.DecryptString(intialValue, ref res);
+                            if (res == false)
+                            {
+                                selectedEnvParam.Value = null;
+                            }
                         }
                     }
                 }
@@ -180,46 +178,33 @@ namespace Ginger.Environments
 
         private void param_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == GeneralParam.Fields.Name)
-            {
-               // loop
-            }
-            if (e.PropertyName == GeneralParam.Fields.Value)
-            {
-            }
             if (e.PropertyName == GeneralParam.Fields.Encrypt)
             {
                 GeneralParam param = (GeneralParam)sender;
-                bool Envalue = param.Encrypt;
-
                 String intialValue = param.Value;
-
-                if (intialValue != null)
+                bool res = false;
+                if (!string.IsNullOrEmpty(intialValue))
                 {
-                    if (Envalue == true)
+                    if (param.Encrypt == true)
                     {
-                        bool res = false;
-
-                        param.Value = null;
-                        param.Value = EncryptionHandler.EncryptString(intialValue, ref res);
-                    }
-
-                    else if (Envalue == false)
-                    {
-                        bool res = false;
-
-
-                        String deCryptValue = EncryptionHandler.DecryptString(intialValue, ref res);
-
-                        if (res == true)
+                        if (!EncryptionHandler.IsStringEncrypted(intialValue))
                         {
-                            param.Value = null;
+                            param.Value = EncryptionHandler.EncryptString(intialValue, ref res);
+                            if (res == false)
+                            {
+                                param.Value = null;
+                            }
                         }
-
-                        else
+                    }
+                    else
+                    {
+                        if (EncryptionHandler.IsStringEncrypted(intialValue))
                         {
-                            param.Value = null;
-                            param.Value = intialValue;
+                            param.Value = EncryptionHandler.DecryptString(intialValue, ref res);
+                            if (res == false)
+                            {
+                                param.Value = null;
+                            }
                         }
                     }
                 }

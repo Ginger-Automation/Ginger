@@ -32,6 +32,7 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.WindowExplorer
 {
@@ -41,14 +42,14 @@ namespace Ginger.WindowExplorer
     public partial class ControlActionsPage : Page
     {
         public Act mAction; // If we come here from EditAction page to update the locator
-        public ObservableList<Act> mActions; // List of availble actions to choos from
+        public ObservableList<Act> mActions; // List of available actions to choose from
         public ObservableList<ElementLocator> mLocators;
         private IWindowExplorer mWindowExplorerDriver;
         ElementInfo mElementInfo = null;
         Page mDataPage = null;
         double mLastDataGridRowHeight = 50;
 
-        // when launching from Window explore we get also availble actions to choose so user can add
+        // when launching from Window explore we get also available actions to choose so user can add
         public ControlActionsPage(IWindowExplorer driver, ElementInfo ElementInfo, ObservableList<Act> Actions, Page DataPage)
         {
             InitializeComponent();
@@ -86,7 +87,7 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        // when launching from Action Edit Page we show only Locators to choose, and later on replcae LovBy/LocValue
+        // when launching from Action Edit Page we show only Locator's to choose, and later on replace LovBy/LocValue
         public ControlActionsPage(Act Act, ElementInfo EI)
         {
             InitializeComponent();
@@ -194,7 +195,7 @@ namespace Ginger.WindowExplorer
             App.BusinessFlow.AddAct(act);
 
             int selectedActIndex = -1;
-            ObservableList<Act> actsList = App.BusinessFlow.CurrentActivity.Acts;
+            ObservableList<IAct> actsList = App.BusinessFlow.CurrentActivity.Acts;
             if (actsList.CurrentItem != null)
             {
                 selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
@@ -252,11 +253,11 @@ namespace Ginger.WindowExplorer
             }
 
             App.AutomateTabGingerRunner.PrepActionVE(act);
-            ApplicationAgent ag = App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent ag =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
             if (ag != null)
             {
                 App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
-                ag.Agent.RunAction(act);
+               ((Agent) ag.Agent).RunAction(act);
             }
             
             TestStatusTextBlock.Text = string.Empty;

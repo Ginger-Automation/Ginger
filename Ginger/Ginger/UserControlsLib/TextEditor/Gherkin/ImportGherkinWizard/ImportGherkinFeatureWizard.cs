@@ -26,6 +26,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {
@@ -34,13 +35,14 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         // shared data across pages goes here        
                 
         public string mFolder;
-        public bool Imported;
-        public string mFeatureFile;
+        public bool Imported;        
         public BusinessFlow BizFlow;
         public GenericWindow genWin;
         public eImportGherkinFileContext mContext;
         public string FetaureFileName;
-        ImportGherkinTargetFolder importGherkinTargetFolder;        
+        ImportGherkinTargetFolder importGherkinTargetFolder;
+        public string mFeatureFile { get; set; }
+
         public ITreeViewItem bizFlowTargetFolder { get; set; }
         public ITreeViewItem featureTargetFolder { get; set; }
         
@@ -135,7 +137,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
             File.Copy(mFeatureFile, targetFile);
             Reporter.ToUser(eUserMsgKeys.GherkinFeatureFileImportedSuccessfully, targetFile);            
-            ((DocumentsFolderTreeItem)featureTargetFolder).mTreeView.Tree.RefresTreeNodeChildrens(featureTargetFolder);
+            ((DocumentsFolderTreeItem)featureTargetFolder).TreeView.Tree.RefresTreeNodeChildrens(featureTargetFolder);
 
             return targetFile;
         }

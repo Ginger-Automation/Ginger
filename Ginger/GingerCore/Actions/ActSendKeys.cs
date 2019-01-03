@@ -153,7 +153,7 @@ namespace Ginger.Actions
                 String titleFromUser = LocateValueCalculated;               
                 if (string.IsNullOrEmpty(titleFromUser))
                 {
-                    Error= "Missing window Locate Value value.";
+                    Error= "Missing window Locate Value.";
                     return;
 
                 }
@@ -161,18 +161,18 @@ namespace Ginger.Actions
             catch (Exception e)
             {
                 Error = "Failed to get the window Locate By/Value";
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}", e);
                 return;
             }
 
 
                 IntPtr winhandle = IntPtr.Zero;
                 AutomationElement window;
-              
 
 
-                //Wait max up to 30 secs for the window to apear
-                for (int i = 0; i < 30; i++)
+
+            //Wait max up to 30 secs for the window to appear
+            for (int i = 0; i < 30; i++)
                 {
                     window = GetWindow(LocateValueCalculated);
 
@@ -272,7 +272,7 @@ namespace Ginger.Actions
                 
                 if (WindowTitle == null)
                     WindowTitle = "";
-                Reporter.ToLog(eAppReporterLogLevel.INFO, $"Method - {MethodBase.GetCurrentMethod().Name}, WindowTitle - {WindowTitle}");
+                Reporter.ToLog(eLogLevel.INFO, $"Method - {MethodBase.GetCurrentMethod().Name}, WindowTitle - {WindowTitle}");
                 switch (LocateBy)
                 {
                        

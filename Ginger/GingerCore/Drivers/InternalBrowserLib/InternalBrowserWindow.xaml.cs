@@ -17,27 +17,27 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions;
+using GingerCore.Drivers.InternalBrowserLib;
+using GingerCore.GeneralLib;
+using GingerCoreNET.ReporterLib;
+using mshtml;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using mshtml;
-using GingerCore.Actions;
-using System.Drawing;
 using System.Windows.Threading;
-using System.Collections;
-using GingerCore.Drivers.InternalBrowserLib;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Reflection;
-using GingerCore.GeneralLib;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Drivers
 {
@@ -86,7 +86,7 @@ namespace GingerCore.Drivers
             if (mBusinessFlow!= null)
             {
                 lstActivities.ItemsSource = mBusinessFlow.Activities;
-                // Select the first Acitivity
+                // Select the first Activity
                 if (mBusinessFlow.Activities!= null &&  mBusinessFlow.Activities.Count > 0)
                 {
                     lstActivities.SelectedItem = lstActivities.Items[0];
@@ -132,7 +132,7 @@ namespace GingerCore.Drivers
             {
                 browser.GoBack();
             }
-            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
         }
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
@@ -141,7 +141,7 @@ namespace GingerCore.Drivers
             {
             browser.Refresh();
             }
-            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
         }
 
         private void btnGotoURL_Click(object sender, RoutedEventArgs e)
@@ -595,7 +595,7 @@ namespace GingerCore.Drivers
                 else if (e.getAttribute("Name").Trim()!="")
                     elName = e.getAttribute("Name");
             }catch(Exception ex)
-            { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+            { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             string elValue = (e.innerText == null) ? elName : e.innerText; 
             eTagName.Content = elType + "-" + elValue;
             doElemMenu(e);
@@ -967,7 +967,7 @@ namespace GingerCore.Drivers
             }
             catch (System.InvalidCastException eICE)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {eICE.Message}", eICE);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {eICE.Message}", eICE);
             }
             txtURL.Text = mDocument.url;
             HideJsScriptErrors(browser);
@@ -1017,7 +1017,7 @@ namespace GingerCore.Drivers
             }
             catch(System.InvalidCastException eICE)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {eICE.Message}", eICE);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {eICE.Message}", eICE);
             }
 
             if (btnMarker.IsChecked == true) SetDocMouseOver();

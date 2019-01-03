@@ -49,7 +49,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private Dictionary<string, int> AllPlaceHolders = new Dictionary<string, int>();
         private List<Element> ElementsList = new List<Element>();
         private List<ComplexType> ComplexTypesList = new List<ComplexType>();
-        private ObservableList<ApplicationAPIModel> AAMList = new ObservableList<ApplicationAPIModel>();
+        private ObservableList<ApplicationAPIModel> mAAMList = new ObservableList<ApplicationAPIModel>();
         private List<Tuple<string,string>> AllURLs = new List<Tuple<string, string>>();
         private List<ServiceDescriptionExtended> mServiceDescriptionsExtendedList = new List<ServiceDescriptionExtended>();
         private BindingCollection bindColl;
@@ -65,10 +65,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
 
 
-        public override ObservableList<ApplicationAPIModel> ParseDocument(string URL, bool avoidDuplicatesNodes = false)
+        public override ObservableList<ApplicationAPIModel> ParseDocument(string URL, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
         {
             mURL = URL;
-            
+            mAAMList = AAMSList;
             AddServiceDescription(URL);
 
             //Make it recursivly
@@ -135,7 +135,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             string UserTempFile = Path.Combine(UserTempPath, "APIParserLogFile" + timeStamp + ".log");
             File.WriteAllText(UserTempFile, LogFile);
 
-            return AAMList;
+            return mAAMList;
         }
 
         private void ImportAllServiceDescription(ImportCollection imports, string containingFolder)
@@ -270,7 +270,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
                     AAM.ReturnValues = XMLTemplateParser.ParseXMLResponseSampleIntoReturnValues(ResponseBody);
 
-                    AAMList.Add(AAM);
+                    mAAMList.Add(AAM);
                 }
 
             }
@@ -1036,7 +1036,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private string GetNameWithoutDots(string headNameSpace, List<string> AllNameSpacesShortCuts = null)
         {
-            //TODO:Get A List to make it uniq
+            //TODO:Get A List to make it unique
             if (string.IsNullOrEmpty(headNameSpace))
                 return string.Empty;
             string s = string.Empty;
@@ -1115,23 +1115,24 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 if (!string.IsNullOrEmpty(URLTuple.Item1))
                 {
                     string CompleteURL = GetCompleteURL(URLTuple.Item1, URLTuple.Item2);
-                    XmlTextReader reader = new XmlTextReader(CompleteURL);
-                    XmlSchema schema = XmlSchema.Read(reader, null);
-
-                    if (!string.IsNullOrEmpty(schema.TargetNamespace) && !AllNameSpaces.ContainsKey(schema.TargetNamespace))
+                    using (XmlReader reader = XmlReader.Create(CompleteURL))
                     {
-                        List<string> AllNameSpaceURLs = new List<string>();
-                        AllNameSpaceURLs.Add(CompleteURL);
-                        AllNameSpaces.Add(schema.TargetNamespace, AllNameSpaceURLs);
-                        AllSourcesNameSpaces.Add(AllNameSpaceURLs, schema.TargetNamespace);
+                        XmlSchema schema = XmlSchema.Read(reader, null);
+                        if (!string.IsNullOrEmpty(schema.TargetNamespace) && !AllNameSpaces.ContainsKey(schema.TargetNamespace))
+                        {
+                            List<string> AllNameSpaceURLs = new List<string>();
+                            AllNameSpaceURLs.Add(CompleteURL);
+                            AllNameSpaces.Add(schema.TargetNamespace, AllNameSpaceURLs);
+                            AllSourcesNameSpaces.Add(AllNameSpaceURLs, schema.TargetNamespace);
+                        }
+                        else if (schema.TargetNamespace != null && AllNameSpaces.ContainsKey(schema.TargetNamespace))
+                        {
+                            AllNameSpaces[schema.TargetNamespace].Add(CompleteURL);
+                            KeyValuePair<List<string>, string> KeyValue = AllSourcesNameSpaces.Where(x => x.Value == schema.TargetNamespace).FirstOrDefault();
+                            KeyValue.Key.Add(CompleteURL);
+                        }
+                        GetAllElementsAndComplexTypesFromImportedSchema(schema);
                     }
-                    else if (schema.TargetNamespace != null && AllNameSpaces.ContainsKey(schema.TargetNamespace))
-                    {
-                        AllNameSpaces[schema.TargetNamespace].Add(CompleteURL);
-                        KeyValuePair<List<string>, string> KeyValue = AllSourcesNameSpaces.Where(x => x.Value == schema.TargetNamespace).FirstOrDefault();
-                        KeyValue.Key.Add(CompleteURL);
-                    }
-                    GetAllElementsAndComplexTypesFromImportedSchema(schema);
                 }
             }
         }
@@ -1993,7 +1994,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             if (directory != containigFolder)
             {
                 int ContainingFolderLeanth = containigFolder.Length;
-                if (ContainingFolderLeanth < directory.Length)
+                if (ContainingFolderLeanth < directory.Length && !directory.StartsWith("http"))
                     relativeDirectories = directory.Substring(ContainingFolderLeanth).TrimStart('\\');
             }
             GetAllURLsFFromSchemaItems(Items, relativeDirectories, containigFolder);

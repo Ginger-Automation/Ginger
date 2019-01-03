@@ -228,7 +228,7 @@ namespace Amdocs.Ginger.Repository
 
 
         // Generic handling for any RI type
-        // This is recursive function which run in parallel for extreme speed, be carefull! 
+        // This is recursive function which run in parallel for extreme speed, be careful! 
         private ObservableList<T> LoadFolderFiles<T>(string Folder = null)
         {
             // for each file we check if in cache return from cache else load from file system and cache the item             
@@ -237,7 +237,7 @@ namespace Amdocs.Ginger.Repository
 
             if (FullPath == null || !Directory.Exists(PathHelper.GetLongPath(FullPath)))
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "RepositoryFolder/LoadFolderFiles- Invalid folder: " + Folder);
+                Reporter.ToLog(eLogLevel.ERROR, "RepositoryFolder/LoadFolderFiles- Invalid folder: " + Folder);
                 return null;                
             }
 
@@ -263,7 +263,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 catch(Exception ex)
                 {
-                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("RepositoryFolder/LoadFolderFiles- Failed to load the Repository Item XML which in file: '{0}'.", FileName), ex);
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("RepositoryFolder/LoadFolderFiles- Failed to load the Repository Item XML which in file: '{0}'.", FileName), ex);
                 }
             });
 
@@ -337,7 +337,10 @@ namespace Amdocs.Ginger.Repository
 
         public override void PauseFileWatcher()
         {
-            if (mFileWatcher == null) return;
+            if (mFileWatcher == null)
+            {
+                return;
+            }
             if (mFileWatcher.EnableRaisingEvents != false)
             {
                 mFileWatcher.EnableRaisingEvents = false;
@@ -380,7 +383,7 @@ namespace Amdocs.Ginger.Repository
                 item.FileName = e.FullPath;
                 item.FilePath = e.FullPath;
 
-                // set Folder item cache as it depends ont he file name, so remove the old name and add with new name
+                // set Folder item cache as it depends on the file name, so remove the old name and add with new name
                 mFolderItemsCache.DeleteItem(e.OldFullPath);
                 mFolderItemsCache[e.FullPath] = item;
 
@@ -388,7 +391,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch(Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
             }
 
         }
@@ -409,7 +412,7 @@ namespace Amdocs.Ginger.Repository
         Mutex m = new Mutex();
         private void FileWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            AppReporter.ToConsole("FileWatcher change detected: " + e.FullPath + " , " + e.ChangeType);
+            Reporter.ToConsole(eLogLevel.DEBUG, "FileWatcher change detected: " + e.FullPath + " , " + e.ChangeType);
             try
             {                
                 m.WaitOne();
@@ -440,14 +443,14 @@ namespace Amdocs.Ginger.Repository
             }
             catch(Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
             }
                         
             finally
             {
                 m.ReleaseMutex();
             }
-            AppReporter.ToConsole("FileWatcher change handled: " + e.FullPath + " , " + e.ChangeType);
+            Reporter.ToConsole(eLogLevel.DEBUG, "FileWatcher change handled: " + e.FullPath + " , " + e.ChangeType);
         }
 
         private void HandleFileChange(FileSystemEventArgs e)
@@ -501,7 +504,7 @@ namespace Amdocs.Ginger.Repository
                     //delete the folder from folders cache  
                     if (mSubFoldersCache != null)
                     {
-                        mSubFoldersCache.Remove(sf2);
+                        mSubFoldersCache.Remove(sf2);                        
                     }
 
                     break;
@@ -579,6 +582,7 @@ namespace Amdocs.Ginger.Repository
             //add to file system
             try
             {
+                GetSubFolders();//calling it so it will find exisitng folders before adding new one
                 Directory.CreateDirectory(PathHelper.GetLongPath(FullPath));
                 GetSubFolders().Add(subfolder);
                 subfolder.StartFileWatcher();
@@ -637,7 +641,7 @@ namespace Amdocs.Ginger.Repository
             }
             else
             {
-                throw new Exception("Failed to delete RI File not found - " + repositoryItem.FilePath);
+               //Ignore -  No need to delete as it is possible the user deleted it from the file system and not from Ginger
             }
 
             RemoveItemFromLists(repositoryItem);

@@ -35,12 +35,21 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     class DataSourceFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
+        public enum eDataTableView
+        {
+            All, Key, Customized
+        }
+
+        private eDataTableView mDataSourceView;
+
         private DataSourcesPage mDataSourcesPage;
         private RepositoryFolder<DataSourceBase> mDataSourcesRepositoryFolder;
 
-        public DataSourceFolderTreeItem(RepositoryFolder<DataSourceBase> repositoryFolder)
+
+        public DataSourceFolderTreeItem(RepositoryFolder<DataSourceBase> repositoryFolder, eDataTableView TableView=eDataTableView.All)
         {
             mDataSourcesRepositoryFolder = repositoryFolder;
+            mDataSourceView = TableView;
         }
 
         
@@ -59,7 +68,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {           
-            return NewTVItemFolderHeaderStyle(mDataSourcesRepositoryFolder, eImageType.DataSource);
+            return NewTVItemFolderHeaderStyle(mDataSourcesRepositoryFolder);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -71,12 +80,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (item is DataSourceBase)
             {
-                return new DataSourceTreeItem() { DSDetails = (DataSourceBase)item };
+                return new DataSourceTreeItem((DataSourceBase)item, mDataSourceView);
             }
 
             if (item is RepositoryFolderBase)
             {
-                return new DataSourceFolderTreeItem((RepositoryFolder<DataSourceBase>)item);
+                return new DataSourceFolderTreeItem((RepositoryFolder<DataSourceBase>)item,mDataSourceView);
             }
 
             throw new Exception("Error unknown item added to Agents folder");

@@ -49,6 +49,18 @@ namespace Ginger.Actions._Common.ActUIElementLib
         eLocateBy mLocateBy;
         string mLocateValue;
 
+        public delegate void ElementChangedEventHandler();
+
+        public event ElementChangedEventHandler ElementChangedPageEvent;
+
+        public void ElementChangedEvent()
+        {
+            if (ElementChangedPageEvent != null)
+            {
+                ElementChangedPageEvent();
+            }
+        }
+
         public LocateByPOMElementPage(Act Action)
         {
             InitializeComponent();
@@ -93,16 +105,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
                             }
                             else
                             {
-                                xPOMElementsGrid.DataSourceList = mSelectedPOM.MappedUIElements;
+                                xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
+
                                 xPOMElementsGrid.Grid.SelectedItem = selectedPOMElement;
                                 if (mAction is ActUIElement)
                                 {
                                     ((ActUIElement)mAction).ElementType = selectedPOMElement.ElementTypeEnum;
                                 }
-                                xPOMElementComboBox.IsEnabled = true;
-                                xHeaderTextBlock.Text = selectedPOMElement.ElementName; 
-                                xHeaderTextBlock.Visibility = Visibility.Visible;
-                                xPOMElementComboBox.SelectedItem = xHeaderTextBlock;
+                                xPOMElementTextBox.Text = selectedPOMElement.ElementName;
                                 HighlightButton.IsEnabled = true;
                             }
                         }
@@ -115,6 +125,16 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     }
                 }
             }
+        }
+
+        private ObservableList<ElementInfo> GenerateElementsDataSourseList()
+        {
+            ObservableList<ElementInfo> tempList = new ObservableList<ElementInfo>();
+            foreach (ElementInfo EI in mSelectedPOM.MappedUIElements)
+            {
+                tempList.Add(EI);
+            }
+            return tempList;
         }
 
         private void SelectPOM_Click(object sender, RoutedEventArgs e)
@@ -134,10 +154,28 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 mSelectedPOM = (ApplicationPOMModel)selectedPOMs[0];
                 SetPOMPathToShow();
-
-                xPOMElementsGrid.DataSourceList = mSelectedPOM.MappedUIElements;
-                xPOMElementComboBox.IsEnabled = true;
+                xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
+                xPOMElementTextBox.Text = string.Empty;
+                if (mAction is ActUIElement)
+                {
+                    ((ActUIElement)mAction).ElementType = eElementType.Unknown;
+                    ((ActUIElement)mAction).ElementLocateValue = string.Empty;
+                }
+                else
+                {
+                    mAction.LocateValue = string.Empty;
+                }
+                SelectElement();
             }
+        }
+
+        private void SelectElement()
+        {
+            xPOMElementTextBox.Visibility = Visibility.Collapsed;
+            xPOMElementsGrid.Visibility = Visibility.Visible;
+            xSelectElement.Visibility = Visibility.Visible;
+            xPOMElementsGrid.Refresh();
+            ArrowExpended = true;
         }
 
         private void SetPOMPathToShow()
@@ -152,35 +190,21 @@ namespace Ginger.Actions._Common.ActUIElementLib
             e.Handled = true;
         }
 
-        private void POMElementComboBox_DropDownOpened(object sender, System.EventArgs e)
+        private void SelectElement_Click(object sender, RoutedEventArgs e)
         {
-            xHeaderTextBlock.Visibility = Visibility.Collapsed;
-            xPOMElementsGrid.Refresh();
+            SelectElement();
         }
 
-        private void POMElementComboBox_DropDownClosed(object sender, System.EventArgs e)
+        private void EndSelectingElement()
         {
-            xHeaderTextBlock.Visibility = Visibility.Visible;
-            xHeaderTextBlock.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
-            xPOMElementComboBox.SelectedItem = xHeaderTextBlock;
-        }
-
-        private void SetControlsGridView()
-        {
-            xPOMElementsGrid.SetTitleLightStyle = true;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 30, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), Header = "Description", WidthWeight = 30, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnumDescription), Header = "Type", WidthWeight = 40, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            xPOMElementsGrid.SetAllColumnsDefaultView(view);
-            xPOMElementsGrid.InitViewItems();
-        }
-
-        private void xPOMElementsGrid_RowChangedEvent(object sender, System.EventArgs e)
-        {
-            if ((xPOMElementComboBox.IsEnabled) && ((DataGrid)sender).SelectedItem != null)
+            xPOMElementTextBox.Visibility = Visibility.Visible;
+            xPOMElementsGrid.Visibility = Visibility.Collapsed;
+            xSelectElement.Visibility = Visibility.Collapsed;
+            ArrowExpended = false;
+            if ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem != null)
             {
+                xPOMElementTextBox.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
+
                 if (mAction is ActUIElement)
                 {
                     ((ActUIElement)mAction).ElementType = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum;
@@ -195,22 +219,55 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 {
                     mAction.LocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
                 }
-
-                HighlightButton.IsEnabled = true;
             }
+
+
+            HighlightButton.IsEnabled = true;
+        }
+
+        private void SetControlsGridView()
+        {
+            xPOMElementsGrid.SetTitleLightStyle = true;
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 30, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), Header = "Description", WidthWeight = 30, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnumDescription), Header = "Type", WidthWeight = 40, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            xPOMElementsGrid.SetAllColumnsDefaultView(view);
+            xPOMElementsGrid.InitViewItems();
         }
 
         private void HighlightElementClicked(object sender, RoutedEventArgs e)
         {
-            ApplicationAgent currentAgent = App.AutomateTabGingerRunner.ApplicationAgents.Where(z => z.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
-            if ((currentAgent == null) || !(currentAgent.Agent.Driver is IWindowExplorer) || (currentAgent.Agent.Status != Agent.eStatus.Running))
+            ApplicationAgent currentAgent = (ApplicationAgent)App.AutomateTabGingerRunner.ApplicationAgents.Where(z => z.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
+            if ((currentAgent == null) || !(((Agent)currentAgent.Agent).Driver is IWindowExplorer) || (((Agent)currentAgent.Agent).Status != Agent.eStatus.Running))
             {
                 Reporter.ToUser(eUserMsgKeys.NoRelevantAgentInRunningStatus);
             }
             else
             {
-                ((IWindowExplorer)currentAgent.Agent.Driver).HighLightElement((ElementInfo)xPOMElementsGrid.Grid.SelectedItem, true);
+                ((IWindowExplorer)((Agent)currentAgent.Agent).Driver).HighLightElement((ElementInfo)xPOMElementsGrid.Grid.SelectedItem, true);
             }
+        }
+
+
+        bool ArrowExpended = false;
+        private void ArrowDownClicked(object sender, RoutedEventArgs e)
+        {
+            if (ArrowExpended)
+            {
+                EndSelectingElement();
+            }
+            else
+            {
+                SelectElement();
+            }
+        }
+
+        private void SelectElementsClicked(object sender, RoutedEventArgs e)
+        {
+            EndSelectingElement();
+            ElementChangedEvent();
         }
     }
 }

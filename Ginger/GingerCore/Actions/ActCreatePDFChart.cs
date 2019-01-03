@@ -29,6 +29,8 @@ using PdfSharp.Pdf;
 using PdfSharp;
 using System.Diagnostics;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNET.ReporterLib;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Actions
 {
@@ -262,7 +264,7 @@ namespace GingerCore.Actions
                     }
                     catch(Exception e)
                     {
-
+                        Reporter.ToLog(eLogLevel.INFO, "", e);
                     }
                 }
                 else

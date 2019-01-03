@@ -23,7 +23,6 @@ using GingerCore.Actions;
 using GingerCore.Actions.Android;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
-using GingerCore.Drivers.Common;
 using GingerCore.Drivers.CommunicationProtocol;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using SharpAdbClient;
@@ -131,7 +130,7 @@ namespace GingerCore.Drivers.AndroidADB
             if (ConnectedToDevice)
             {
                 OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-                Dispatcher = DriverWindow.Dispatcher;
+                Dispatcher = new DriverWindowDispatcher(DriverWindow.Dispatcher);
                 System.Windows.Threading.Dispatcher.Run();
             }
             else
@@ -767,20 +766,7 @@ namespace GingerCore.Drivers.AndroidADB
             return "TBD";
         }
 
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
-
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
-
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
+        
 
         public override bool IsRunning()
         {
@@ -844,7 +830,7 @@ namespace GingerCore.Drivers.AndroidADB
         {
             return null;
         }
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
         {
             List<ElementInfo> list = new List<ElementInfo>();
 
@@ -1270,7 +1256,7 @@ namespace GingerCore.Drivers.AndroidADB
                                         break;
                                     }
                             }
-                            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                         }
 
                         if (!skipElement)
@@ -1308,7 +1294,7 @@ namespace GingerCore.Drivers.AndroidADB
                             element_Start_Y = -1;
                             element_Max_X = -1;
                             element_Max_Y = -1;
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         }
                       
 
@@ -1344,7 +1330,7 @@ namespace GingerCore.Drivers.AndroidADB
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
