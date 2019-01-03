@@ -737,7 +737,6 @@
     <Compile Include="UserControls\XMLViewer.xaml.cs">
       <DependentUpon>XMLViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reporter\UserMessagesPool.cs" />
     <Compile Include="Repository\RepositorySerializer.cs" />
     <Compile Include="Drivers\ASCF\ASCFDriver.cs" />
     <Compile Include="Drivers\InternalBrowserLib\InternalBrowserWindow.xaml.cs">
