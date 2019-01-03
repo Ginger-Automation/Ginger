@@ -528,6 +528,7 @@
     <Compile Include="ReporterLib\MessageBoxWindow.xaml.cs">
       <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ReporterLib\MessageInfo.cs" />
     <Compile Include="ReporterLib\ReporterTestWindow.xaml.cs">
       <DependentUpon>ReporterTestWindow.xaml</DependentUpon>
     </Compile>

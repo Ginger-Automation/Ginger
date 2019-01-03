@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace Ginger.ReporterLib
@@ -18,17 +19,31 @@ namespace Ginger.ReporterLib
 
         private void FillListBox()
         {
+            List<MessageInfo> messages = new List<MessageInfo>();
             Array arr = Enum.GetValues(typeof(eUserMsgKeys));
             foreach (eUserMsgKeys o in arr)
             {
                 UserMessage mess;
+                MessageInfo messageInfo = new MessageInfo();
                 bool b = Reporter.UserMessagesPool.TryGetValue(o, out mess);               
                 if (!b)
                 {
-                    // TODO: FIXME handle missing messages
+                    messageInfo.status = "Message not found in pool";
                 }
+                else
+                {
+
+                    messageInfo.caption = mess.Caption;
+                    messageInfo.message = mess.Message;
+                    messageInfo.MessageKey = o;
+                    messageInfo.status = "OK";
+                }
+                
+                
+                
+                messages.Add(messageInfo);
             }
-            xListBox.ItemsSource = arr;
+            xDataGrid.ItemsSource = messages;
         }
 
         private void XSimpleInfoMessageButton_Click(object sender, RoutedEventArgs e)
@@ -43,9 +58,12 @@ namespace Ginger.ReporterLib
             MessageBox.Show("You selected: " + messageBoxResult);
         }
 
-        private void XListBox_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+       
+
+        private void XDataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            eUserMsgKeys mess = (eUserMsgKeys)xListBox.SelectedValue;
+            MessageInfo messageInfo = (MessageInfo)xDataGrid.SelectedValue;
+            eUserMsgKeys mess = messageInfo.MessageKey;
             Amdocs.Ginger.Common.MessageBoxResult messageBoxResult = Reporter.ToUser(mess, "This is a message");
             MessageBox.Show("You selected: " + messageBoxResult);
         }

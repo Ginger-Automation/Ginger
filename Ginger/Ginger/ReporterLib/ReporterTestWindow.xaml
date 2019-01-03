@@ -7,12 +7,14 @@
         Title="ReporterTestWindow" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="53*"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="366*"/>
         </Grid.RowDefinitions>
-        <Button x:Name="xSimpleInfoMessageButton" Content="Simple Info Message" Click="XSimpleInfoMessageButton_Click" HorizontalAlignment="Left" Height="38" Margin="10,10,0,0" VerticalAlignment="Top" Width="117"/>
-        <Button x:Name="xYesNoButton" Content="Yes/No" Click="XYesNoButton_Click" HorizontalAlignment="Left" Height="44" Margin="147,7,0,0" VerticalAlignment="Top" Width="135"/>
-        <ListBox x:Name="xListBox" MouseDoubleClick="XListBox_MouseDoubleClick" HorizontalAlignment="Left" Height="309" Margin="24,28,0,0" Grid.Row="1" VerticalAlignment="Top" Width="198"/>
+        <StackPanel Orientation="Horizontal">
+            <Button x:Name="xSimpleInfoMessageButton" Content="Simple Info Message" Click="XSimpleInfoMessageButton_Click" Width="Auto"/>
+            <Button x:Name="xYesNoButton" Content="Yes/No" Click="XYesNoButton_Click" Width="Auto"/>
+        </StackPanel>
 
+        <DataGrid x:Name="xDataGrid" MouseDoubleClick="XDataGrid_MouseDoubleClick" Grid.Row="1" IsReadOnly="True"/>
     </Grid>
 </Window>
