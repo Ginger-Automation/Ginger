@@ -80,7 +80,7 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
-        public void Simple_Act()
+        public void SimpleAct()
         {
             //Arrange
             ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://ginger-automation.github.io/test.html", Active = true };
@@ -94,11 +94,12 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
-        public void Simple_Act_With_Error()
+        public void SimpleActWithError()
         {
             //Arrange
             ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://ginger-automation.github.io/test.html", Active = true };
             act1.Error = "Cannot go to URL";
+            mGR.PrepActionValueExpression(act1);
 
             //Act
             mGR.CalculateActionFinalStatus(act1);
@@ -109,7 +110,7 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
-        public void Simple_Act_ReturnValue_As_Expected()
+        public void SimpleActReturnValueAsExpected()
         {
             //Arrange
             string ParamName = "p1";
@@ -117,6 +118,7 @@ namespace UnitTests.NonUITests
             act1.AddNewReturnParams = true;
             act1.AddOrUpdateReturnParamActual(ParamName, "ABC");
             act1.AddOrUpdateReturnParamExpected(ParamName, "ABC");
+            mGR.PrepActionValueExpression(act1);
 
             //Act
             mGR.CalculateActionFinalStatus(act1);
@@ -129,7 +131,7 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
-        public void Simple_Act_ReturnValue_Not_As_Expected()
+        public void SimpleActReturnValueNotAsExpected()
         {
             //Arrange
             string ParamName = "p1";
@@ -149,7 +151,7 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
-        public void Activity_With_Action_Pass()
+        public void ActivityWithActionPass()
         {
             //Arrange
             //string ParamName = "p1";
@@ -188,7 +190,7 @@ namespace UnitTests.NonUITests
 
         [TestMethod]
         [Ignore]
-        public void Activity_With_Action_Fail_And_RunOption_Stop()
+        public void ActivityWithActionFailAndRunOptionStop()
         {
             Activity a1 = new Activity();
             a1.Active = true;
@@ -215,7 +217,7 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
-        public void Activity_With_Action_Fail_And_RunOption_Continue()
+        public void ActivityWithActionFailAndRunOptionContinue()
         {
             Activity a1 = new Activity();
             a1.Active = true;
@@ -244,7 +246,7 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
-        public void BF_No_Activities()
+        public void BFNoActivities()
         {
             //Arrange
             mBF = new BusinessFlow();
@@ -279,7 +281,7 @@ namespace UnitTests.NonUITests
       
         //[TestMethod]
         //[Ignore]
-        //public void BF_Activities_All_Pass()
+        //public void BFActivitiesAllPass()
         //{
         //    Activity a1 = new Activity();
         //    a1.Active = true;
@@ -307,7 +309,7 @@ namespace UnitTests.NonUITests
 
         //[TestMethod]
         //[Ignore]
-        //public void BF_With_Activity_Fail_And_Mandatory()
+        //public void BFWithActivityFailAndMandatory()
         //{
         //    Activity a1 = new Activity() { };
         //    a1.Active = true;
@@ -345,7 +347,7 @@ namespace UnitTests.NonUITests
 
         //[TestMethod]
         //[Ignore]
-        //public void BF_With_Activity_Fail_But_Not_Manadatory()
+        //public void BFWithActivityFailButNotManadatory()
         //{
         //    Activity a1 = new Activity() { };
         //    a1.Active = true;
@@ -383,7 +385,7 @@ namespace UnitTests.NonUITests
 
         //[TestMethod]
         //[Ignore]
-        //public void Timeout_WithAgent()
+        //public void TimeoutWithAgent()
         //{            
         //    Activity a1 = new Activity();
         //    a1.Active = true;
@@ -407,7 +409,7 @@ namespace UnitTests.NonUITests
 
 
         [TestMethod]
-        public void Test_CalculateActivityStatus_Failed_Action()
+        public void TestCalculateActivityStatusFailedAction()
         {
 
             Activity a1 = new Activity();
@@ -426,7 +428,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(a1.Status, eRunStatus.Failed, "a1.Status=eRunStatus.Failed");
         }
         [TestMethod]
-        public void Test_CalculateActivityStatus_FailedAction_Then_Stop()
+        public void TestCalculateActivityStatusFailedActionThenStop()
         {
 
             Activity a1 = new Activity();
@@ -451,7 +453,7 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
-        public void Test_CalculateBFStatus_FailedActivity()
+        public void TestCalculateBFStatusFailedActivity()
         {
 
             AutoLogProxy.Init("UT Build");
@@ -473,7 +475,7 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
-        public void Test_CalculateBFStatus_FailedActivity_ThenStopped()
+        public void TestCalculateBFStatusFailedActivityThenStopped()
         {
 
             AutoLogProxy.Init("UT Build");
@@ -504,9 +506,9 @@ namespace UnitTests.NonUITests
       
 
 
-        //LastExecutedActivityStatus_WhenRunFromSharedRepository
+        //LastExecutedActivityStatusWhenRunFromSharedRepository
 
-        //LastExecutedActivityStatus_WithGoToActivity
+        //LastExecutedActivityStatusWithGoToActivity
 
 
     }
