@@ -83,6 +83,7 @@ namespace GingerCoreNETUnitTest.Script
 
 
         [TestMethod]
+        [Ignore]
         public void SplitExpressionTest()
         {
             //Arrange
@@ -208,6 +209,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "Right Expression Test");
         }
 
+        [Ignore]
         [TestMethod]
         public void LTrimExpressionTest()
         {
@@ -237,6 +239,8 @@ namespace GingerCoreNETUnitTest.Script
         }
 
         [TestMethod]
+
+        [Ignore]
         public void RTrimExpressionTest()
         {
             //Arrange

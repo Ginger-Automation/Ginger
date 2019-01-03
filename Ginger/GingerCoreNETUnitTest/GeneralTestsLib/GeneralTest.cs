@@ -41,7 +41,7 @@ namespace GingerCoreNETUnitTests.GeneralTestsLib
 
         }
 
-        
+        [Ignore]
         [TestMethod]
         public void CheckReferences()
         {
