@@ -48,7 +48,29 @@ namespace GingerCoreNETUnitTest.Script
             DateTime localDate = DateTime.Now;
 
             //Assert            
-            Assert.AreEqual(localDate.ToString(), result, "Simple Expression Test");
+            Assert.AreEqual(localDate.ToString(), result, "Now Expression Test");
         }
+
+
+        [TestMethod]
+        public void WeekdayExpressionTest()
+        {
+            //Arrange
+            string evalExpr = "Weekday(Now)";
+
+            //Act
+            string result = VBS.ExecuteVBSEval(evalExpr);
+
+            int weekDay = ((int)DateTime.Now.DayOfWeek == 0) ? 7 : (int)DateTime.Now.DayOfWeek + 1;
+
+            //Assert            
+            Assert.AreEqual(weekDay + "", result, "Weekday Expression Test");
+        }
+
+
+
     }
 }
+
+
+
