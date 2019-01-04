@@ -85,10 +85,9 @@ namespace GingerCoreNETUnitTest.Script
             string result_2 = VBS.ExecuteVBSEval(evalExpr_2);
 
             //Assert            
-            Assert.AreEqual(expectedResult_1, result_1, "Round Expression Test");
-            Assert.AreEqual(expectedResult_2, result_2, "Round Expression Test");
+            Assert.AreEqual(expectedResult_1, result_1, "Int Expression Test");
+            Assert.AreEqual(expectedResult_2, result_2, "Int Expression Test");
         }
-
 
 
     }
