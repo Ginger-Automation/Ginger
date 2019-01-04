@@ -33,8 +33,9 @@ namespace GingerAutoPilotTest
             // We provide the assembly to GingerTestHelper.TestResources so it can locate the 'TestResources' folder path
             TestResources.Assembly = Assembly.GetExecutingAssembly();
 
+            // Not needed since we will use the one Ginger set
             // Init Reporter
-            Reporter.WorkSpaceReporter = new UnitTestWorkspaceReporter();
+            // Reporter.WorkSpaceReporter = new UnitTestWorkspaceReporter();
         }
     }
 }
