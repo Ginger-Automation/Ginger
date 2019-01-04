@@ -18,7 +18,7 @@ limitations under the License.
 
 using System;
 
-namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
+namespace GingerCore
 {
     //This class is for annotation of Agent configurable props
     public class UserConfiguredAttribute : Attribute

@@ -37,6 +37,7 @@ using FlaUI.UIA3.Identifiers;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.WindowsLib
 {

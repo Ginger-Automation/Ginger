@@ -26,6 +26,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {

@@ -45,6 +45,7 @@ using Ginger.SolutionGeneral;
 using System.IO;
 using System.Dynamic;
 using Newtonsoft.Json.Linq;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger
 {
@@ -269,7 +270,7 @@ namespace Ginger
             catch (Exception ex)
             {
 
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Add Security Configuration Failed: ", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Add Security Configuration Failed: ", ex);
             }
         }
 

@@ -169,7 +169,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 bool overrideFile = true;
                 if (File.Exists(fileName))
                 {
-                    if (MessageBox.Show("File already exists, do you want to override?", "File Exists", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+                    if (MessageBox.Show("File already exists, do you want to override?", "File Exists", System.Windows.MessageBoxButton.OKCancel) == System.Windows.MessageBoxResult.Cancel)
                     {
                         overrideFile = false;
                     }
@@ -185,7 +185,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
         }
 
@@ -207,7 +207,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return parameters;
         }
@@ -235,7 +235,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
         }        
         
@@ -285,20 +285,20 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void DeleteParams(bool ClearAllParams)
         {
-            MessageBoxResult messageResult = System.Windows.MessageBoxResult.No;
+            Amdocs.Ginger.Common.MessageBoxResult messageResult = Amdocs.Ginger.Common.MessageBoxResult.No;
             if (mApplicationModel is ApplicationAPIModel && (((ApplicationAPIModel)mApplicationModel).ContentType == ApplicationAPIUtils.eContentType.XML || ((ApplicationAPIModel)mApplicationModel).ContentType == ApplicationAPIUtils.eContentType.JSon))
             {                
                 messageResult = Reporter.ToUser(eUserMsgKeys.DeleteNodesFromRequest);
             }
 
-            if (messageResult == System.Windows.MessageBoxResult.Yes)
+            if (messageResult == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 if (ClearAllParams)
                     SyncParamsPendingDeleteWithBodyNodes(new List<AppModelParameter>(ParamsList));
                 else
                     SyncParamsPendingDeleteWithBodyNodes(new List<AppModelParameter>(ModelParametersGrid.Grid.SelectedItems.Cast<AppModelParameter>().ToList()));
             }
-            else if (messageResult == System.Windows.MessageBoxResult.No)
+            else if (messageResult == Amdocs.Ginger.Common.MessageBoxResult.No)
             {
                 if (ModelParametersGrid.Grid.Items.Count == 0)
                 {
@@ -306,7 +306,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                     return;
                 }
 
-                if (ClearAllParams && (Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == MessageBoxResult.Yes)
+                if (ClearAllParams && (Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     ModelParametersGrid.DataSourceList.SaveUndoData();
                     ParamsList.ClearAll();
@@ -391,7 +391,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 ModelParametersGrid.DataSourceList.Move(ModelParametersGrid.DataSourceList.Count - 1, selctedIndex);
 
                 //Update all places with new placeholder merged param name                            
-                if(Reporter.ToUser(eUserMsgKeys.ParameterMerge) == MessageBoxResult.Yes)
+                if(Reporter.ToUser(eUserMsgKeys.ParameterMerge) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     mApplicationModel.UpdateParamsPlaceholder(mApplicationModel, placeHoldersToReplace, newParamName);
                 }

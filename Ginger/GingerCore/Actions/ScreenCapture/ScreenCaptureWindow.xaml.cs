@@ -23,6 +23,7 @@ using System.Windows.Input;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Actions.ScreenCapture
 {

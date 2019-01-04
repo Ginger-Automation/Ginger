@@ -84,7 +84,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to control the Ginger Helper animation", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to control the Ginger Helper animation", ex);
             }
         }
 
@@ -103,7 +103,7 @@ namespace Ginger
                 BoardBtn.Content = messageToShow.BtnContent;
                 BoardBtn.Click += btnHandler;
             }
-            if (messageToShow.MessageType == eGingerHelperMsgType.PROCESS)//show animation
+            if (messageToShow.MessageType == eStatusMessageType.PROCESS)//show animation
             {
                 ProcessAnimationControl(true);
             }

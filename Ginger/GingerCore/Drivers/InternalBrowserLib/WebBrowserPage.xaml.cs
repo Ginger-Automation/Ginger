@@ -17,13 +17,14 @@ limitations under the License.
 #endregion
 
 
+using Amdocs.Ginger.Common;
+using GingerCoreNET.ReporterLib;
+using mshtml;
 using System;
 using System.Collections;
 using System.Reflection;
 using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using mshtml;
 
 namespace GingerCore.Drivers
 {

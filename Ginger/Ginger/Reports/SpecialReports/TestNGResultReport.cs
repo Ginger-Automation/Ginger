@@ -22,6 +22,7 @@ using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCore.Actions;
 using Ginger.Reports;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Reports
 {
@@ -49,7 +50,7 @@ namespace Ginger.Reports
             foreach (BusinessFlowReport BFR in BizFlows)
             {
                 string BFResults = "";
-                BusinessFlow BF = BFR.GetBusinessFlow();
+                BusinessFlow BF =(BusinessFlow)BFR.GetBusinessFlow();
                 totalCount = totalCount + BF.Activities.Count;
                 reportClasses = reportClasses + @"
             <class name=""" + BF.Name + @".Ginger Business Flow"">";

@@ -82,7 +82,7 @@ namespace GingerTest.WizardLib
         public void VerifyButtonsOnStartThenCancel()
         {
             //Arrange            
-            string folder = TestResources.getGingerUnitTesterTempFolder("MyWizardItemsFolder1");
+            string folder = TestResources.GetTestTempFolder("MyWizardItemsFolder1");
 
             //Act
             WizardPOM mWizard = ShowMyWizard(folder);
@@ -104,7 +104,7 @@ namespace GingerTest.WizardLib
         public void CreateMyWizardItem()
         {
             //Arrange            
-            string folder = TestResources.getGingerUnitTesterTempFolder("MyWizardItemsFolder2");
+            string folder = TestResources.GetTestTempFolder("MyWizardItemsFolder2");
 
             //Act
             WizardPOM mWizard = ShowMyWizard(folder);
@@ -128,7 +128,7 @@ namespace GingerTest.WizardLib
             //Arrange            
 
             double width = 1200;
-            string folder = TestResources.getGingerUnitTesterTempFolder("MyWizardItemsFolder3");
+            string folder = TestResources.GetTestTempFolder("MyWizardItemsFolder3");
 
             //Act
             WizardPOM mWizard = ShowMyWizard(folder, width);
