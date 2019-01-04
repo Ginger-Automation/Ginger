@@ -95,7 +95,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 if (mConsoleDriverWindow != null)
                 {
                     mConsoleDriverWindow.Close();
-                    Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
+                    Dispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
                     Thread.Sleep(100);
                     mConsoleDriverWindow = null;
                 }
