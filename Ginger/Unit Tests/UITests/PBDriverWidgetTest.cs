@@ -16,35 +16,28 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Platforms;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.UIElement;
-using GingerTestHelper;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
+using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace UnitTests.UITests.PBDriverTest
 {
-       
+
     [TestClass]
     public class PBDriverWidgetTest
     {
         public static BusinessFlow mBF;
-        static Process proc;
+        static System.Diagnostics.Process proc;
         // make it static for reuse so no need to init every time when running test by click test button
         static PBDriver mDriver = null;
         static GingerRunner mGR = null;
@@ -55,7 +48,7 @@ namespace UnitTests.UITests.PBDriverTest
             // launch PB Test App
             if (proc == null || proc.HasExited)
             {
-                proc = new Process();
+                proc = new System.Diagnostics.Process();
                 proc.StartInfo.FileName = @"pb_test_app.exe";
                 proc.StartInfo.WorkingDirectory = TestResources.GetTestResourcesFolder("PBTestApp");
                 Console.WriteLine(proc.StartInfo.WorkingDirectory);
