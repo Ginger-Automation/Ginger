@@ -23,7 +23,7 @@ using GingerWPF.ApplicationModelsLib.APIModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 
-namespace GingerWPFUnitTest.APIModelLib
+namespace GingerTest
 {
     [TestClass]
     public class WSDLParserTest
