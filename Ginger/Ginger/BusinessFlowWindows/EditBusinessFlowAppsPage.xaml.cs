@@ -66,7 +66,7 @@ namespace Ginger.BusinessFlowWindows
                  AP1.Platform = AP.Platform;
 
                  // If this App was selected before then mark it 
-                 TargetApplication APS = (from x in mBusinessFlow.TargetApplications where x.AppName == AP.AppName select x).FirstOrDefault();
+                 TargetApplication APS = (TargetApplication)(from x in mBusinessFlow.TargetApplications where x.Name == AP.AppName select x).FirstOrDefault();
 
                  if (APS != null)
                  {

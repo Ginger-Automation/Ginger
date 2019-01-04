@@ -120,7 +120,7 @@ namespace Ginger
                             grdMain.CommitEdit();
                             grdMain.CancelEdit();
                             mCollectionView.Filter = FilterGridRows;
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         }
                     }
                     this.Dispatcher.Invoke(() =>
@@ -141,7 +141,7 @@ namespace Ginger
                 catch (InvalidOperationException ioe)
                 {
                     //Think this happen I tried to rename an activity I'd just added.
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to set ucGrid.DataSourceList", ioe);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to set ucGrid.DataSourceList", ioe);
                 }
                 if (mObjList != null)
                 {
@@ -245,7 +245,7 @@ namespace Ginger
                                 sb.Append(PI.GetValue(obj).ToString()).Append("~");
                             }
                         }
-                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                        catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                     }
                 }
             }
@@ -263,7 +263,7 @@ namespace Ginger
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
             }
             return sb.ToString().ToUpper();
@@ -704,7 +704,7 @@ namespace Ginger
                 return;
             }
 
-            if ((Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == MessageBoxResult.Yes)
+            if ((Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 mObjList.SaveUndoData();
                 mObjList.ClearAll();
@@ -1836,7 +1836,7 @@ public void RemoveCustomView(string viewName)
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Operation Failed");
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -1852,7 +1852,7 @@ public void RemoveCustomView(string viewName)
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Operation Failed");
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 

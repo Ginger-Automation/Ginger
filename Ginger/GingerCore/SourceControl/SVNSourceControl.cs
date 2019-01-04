@@ -17,20 +17,19 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SourceControl;
 using SharpSvn;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+
 
 namespace GingerCore.SourceControl
 {
@@ -224,7 +223,7 @@ namespace GingerCore.SourceControl
             catch (Exception ex)
             {
                 error = ex.Message + Environment.NewLine + ex.InnerException;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to communicate with SVN server through path " + Path + " got error " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to communicate with SVN server through path " + Path + " got error " + ex.Message);
                 return files;
             }
 
@@ -279,14 +278,14 @@ namespace GingerCore.SourceControl
                 if (result.Revision != -1)
                 {
                     if (supressMessage == true)
-                        Reporter.ToLog(eAppReporterLogLevel.INFO, "The solution was updated successfully to revision:  " + result.Revision);
+                        Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully to revision:  " + result.Revision);
                     else
                         Reporter.ToUser(eUserMsgKeys.UpdateToRevision, result.Revision);
                 }
                 else
                 {
                     if (supressMessage == true)
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to update the solution from source control.Error Details: 'The files are not connected to source control'");
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to update the solution from source control.Error Details: 'The files are not connected to source control'");
                     else
                         Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "The files are not connected to source control");
                 }
@@ -358,7 +357,7 @@ namespace GingerCore.SourceControl
                             SvnUnlockArgs args = new SvnUnlockArgs();
                             args.BreakLock = true;
                             unlockResult = client.RemoteUnlock(targetUri, args);
-                            if (unlockResult == false && Reporter.ToUser(eUserMsgKeys.SourceControlUnlockFaild, file, targetUri.ToString()) == MessageBoxResult.No)
+                            if (unlockResult == false && Reporter.ToUser(eUserMsgKeys.SourceControlUnlockFaild, file, targetUri.ToString()) == Amdocs.Ginger.Common.MessageBoxResult.No)
                             {
                                 error = "Check in aborted";
                                 return false;
@@ -403,7 +402,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
         }
 
@@ -425,7 +424,7 @@ namespace GingerCore.SourceControl
             catch (Exception ex)
             {
                 ListEventArgs = null;
-                Reporter.ToLog(eAppReporterLogLevel.WARN, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.WARN, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
@@ -466,7 +465,7 @@ namespace GingerCore.SourceControl
 
                 if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner != SourceControlUser)
                 {
-                    if ((Reporter.ToUser(eUserMsgKeys.SourceControlFileLockedByAnotherUser, Path, ListEventArgs[0].Lock.Owner, ListEventArgs[0].Lock.Comment) == MessageBoxResult.Yes))
+                    if ((Reporter.ToUser(eUserMsgKeys.SourceControlFileLockedByAnotherUser, Path, ListEventArgs[0].Lock.Owner, ListEventArgs[0].Lock.Comment) == Amdocs.Ginger.Common.MessageBoxResult.Yes))
                     {
                         SvnUnlockArgs args = new SvnUnlockArgs();
                         args.BreakLock = true;

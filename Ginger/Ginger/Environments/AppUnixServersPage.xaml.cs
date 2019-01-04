@@ -72,14 +72,14 @@ namespace Ginger.Environments
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = UnixServer.Fields.Name, WidthWeight = 300 });
-            view.GridColsView.Add(new GridColView() { Field = UnixServer.Fields.Description, WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = UnixServer.Fields.Host, WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = UnixServer.Fields.Username, WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = UnixServer.Fields.Password, WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = UnixServer.Fields.PrivateKey, WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = UnixServer.Fields.PrivateKeyPassPhrase, WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = UnixServer.Fields.RootPath, WidthWeight = 200, Header = "Root Path" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(UnixServer.Name), WidthWeight = 300 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(UnixServer.Description), WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(UnixServer.Host), WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(UnixServer.Username), WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(UnixServer.Password), WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(UnixServer.PrivateKey), WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(UnixServer.PrivateKeyPassPhrase), WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(UnixServer.RootPath), WidthWeight = 200, Header = "Root Path" });
             
             grdAppUnixs.SetAllColumnsDefaultView(view);
             grdAppUnixs.InitViewItems();

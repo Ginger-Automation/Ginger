@@ -86,7 +86,28 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.LeavingForNextPage:
                 case EventType.Finish:
                     mPomAllElementsPage.FinishEditInAllGrids();
+                    if (mPomAllElementsPage != null)
+                    {
+                        mPomAllElementsPage.StopSpy();
+                    }
+                    ResetDriverStopProcess();
                     break;
+                case EventType.Cancel:
+                    if (mPomAllElementsPage != null)
+                    {
+                        mPomAllElementsPage.StopSpy();
+                    }
+                    ResetDriverStopProcess();
+
+                    break;
+            }
+        }
+
+        private void ResetDriverStopProcess()
+        {
+            if (mWizard.Agent != null && (DriverBase)mWizard.Agent.Driver != null)
+            {
+                ((DriverBase)mWizard.Agent.Driver).mStopProcess = false;
             }
         }
 
@@ -147,7 +168,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "POM: Learned Element Info from type was failed to be added to Page Elements", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "POM: Learned Element Info from type was failed to be added to Page Elements", ex);
             }
         }
         
@@ -172,7 +193,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void ReLearnButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.POMWizardReLearnWillDeleteAllElements) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.POMWizardReLearnWillDeleteAllElements) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 mWizard.IsLearningWasDone = false;
                 Learn();

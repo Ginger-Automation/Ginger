@@ -73,6 +73,10 @@ namespace GingerCore.GeneralLib
                 //TODO: find from registry or somewhere else
                 return string.Empty;
             }
+
+            // TODO:  put in GingerUtils
+            // TODO: if no env var then try to do shell: where java check if good for windows and Linux
+            // + search C:\Program Files (x86)\Common Files\Oracle\Java\javapath
         }
     }
 }

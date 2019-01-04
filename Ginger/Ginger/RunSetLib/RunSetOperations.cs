@@ -22,8 +22,10 @@ using Ginger.Run;
 using GingerCore;
 using GingerCore.GeneralLib;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger
 {
@@ -34,12 +36,33 @@ namespace Amdocs.Ginger
         {
             if (string.IsNullOrEmpty(runSetName))
             {
-                if (!InputBoxWindow.GetInputWithValidation(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)), string.Format("{0} Name:", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ref runSetName, System.IO.Path.GetInvalidPathChars()))
+
+                do
                 {
-                    return null;
-                }                    
+                    if (!string.IsNullOrEmpty(runSetName.Trim()))
+                    {
+                        Reporter.ToUser(eUserMsgKeys.DuplicateRunsetName, runSetName);
+                    }
+
+                    bool returnWindow = InputBoxWindow.OpenDialog(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)),
+                                                                        string.Format("{0} Name:", GingerDicser.GetTermResValue(eTermResKey.RunSet)),
+                                                                                ref runSetName);
+
+                    if (returnWindow)
+                    {
+                        if (string.IsNullOrEmpty(runSetName.Trim()))
+                        {
+                            Reporter.ToUser(eUserMsgKeys.ValueIssue, "Value cannot be empty");
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                while (string.IsNullOrEmpty(runSetName.Trim()) || WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>().Where(r => r.ItemName.ToLower() == runSetName.ToLower()).FirstOrDefault() != null);
             }
-            
+
             RunSetConfig runSetConfig = new RunSetConfig();
             runSetConfig.Name = runSetName;
             runSetConfig.GingerRunners.Add(new GingerRunner() { Name = "Runner 1" });
@@ -47,11 +70,11 @@ namespace Amdocs.Ginger
             if (runSetsFolder == null)
             {
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(runSetConfig);
-            }                
+            }
             else
             {
                 runSetsFolder.AddRepositoryItem(runSetConfig);
-            }                
+            }
 
             return runSetConfig;
         }

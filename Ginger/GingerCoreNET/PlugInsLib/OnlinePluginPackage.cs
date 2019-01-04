@@ -30,7 +30,7 @@ namespace Amdocs.Ginger.Repository
 {
     public class OnlinePluginPackage : INotifyPropertyChanged
     {
-        public string Name { get; set; }
+        public string Id { get; set; }
         public string Description { get; set; }
         public string URL { get; set; }
 
@@ -109,7 +109,7 @@ namespace Amdocs.Ginger.Repository
 
         public string InstallPluginPackage(OnlinePluginPackageRelease release)
         {
-            string pluginSubFolder = Path.Combine(Name, release.Version);
+            string pluginSubFolder = Path.Combine(Id, release.Version);
             string folder = DownloadPackage(release.assets[0].browser_download_url, pluginSubFolder).Result;
             return folder;
         }

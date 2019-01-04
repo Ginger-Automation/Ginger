@@ -124,7 +124,7 @@ namespace Ginger.ApiModelsFolder
                                     EAIV.OptionalValues.Add(optionalValue.Value);
                                 }
 
-                            if (EAIV.Description != null && !EAIV.Description.Contains(AMDP.Description))
+                            if (!string.IsNullOrEmpty(EAIV.Description) && !EAIV.Description.Contains(AMDP.Description))
                                 EAIV.Description += " | " + AMDP.Description;
                         }
                         else
@@ -195,7 +195,7 @@ namespace Ginger.ApiModelsFolder
         {
             try
             {
-                if (Reporter.ToUser(eUserMsgKeys.ParamExportMessage) == MessageBoxResult.No)
+                if (Reporter.ToUser(eUserMsgKeys.ParamExportMessage) == Amdocs.Ginger.Common.MessageBoxResult.No)
                     return;
 
                 DataSourceTablesListPage dataSourceTablesListPage = new DataSourceTablesListPage();
@@ -216,7 +216,7 @@ namespace Ginger.ApiModelsFolder
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while mapping the API Model params to Data Source", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the API Model params to Data Source", ex);
                 Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
             }
         }

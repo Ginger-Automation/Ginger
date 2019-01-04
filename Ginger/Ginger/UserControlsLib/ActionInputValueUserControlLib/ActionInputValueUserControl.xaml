@@ -3,11 +3,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.UserControlsLib.ActionInputValueUserControlLib.ActionInputValueUserControl"
+             xmlns:Ginger="clr-namespace:Ginger"
+             xmlns:Actions="clr-namespace:Ginger.Activities" 
+             x:Class="Ginger.UserControlsLib.ActionInputValueUserControlLib.ActionInputValueUserControl"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="300">
-    <Grid>
-        <Grid.ColumnDefinitions>
+
+    <StackPanel Name="PagePanel" Background="{StaticResource $BackgroundColor_LightGray}">
+        <!--<Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*"/>
             <ColumnDefinition Width="30"/>
         </Grid.ColumnDefinitions>
@@ -16,16 +19,31 @@
         
         <DataGrid x:Name="ValueDataGrid" Visibility="Collapsed"/>
         <Ginger:ucGrid x:Name="xUCcGrid"  Visibility="Collapsed"/>
-        
-        
+              
         <ComboBox x:Name="ValueComboBox" Height="25" Visibility="Collapsed"/>
 
-        <Button x:Name="ValueExpressionButton" Grid.Column="1" Width="20" Click="ValueExpressionButton_Click" Content="..."/>
+        <CheckBox x:Name="xValueCheckBox" Visibility="Collapsed" ></CheckBox>
         
+        <Button x:Name="ValueExpressionButton" Grid.Column="1" Width="20" Click="ValueExpressionButton_Click" Content="..."/>-->
+        
+        <StackPanel.Resources>
+            <DataTemplate x:Key="ValueExpressionButton">
+                    <Button x:Name="GridVEButton" Content="..." Click="GridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                </DataTemplate>
+        </StackPanel.Resources>
 
+        <StackPanel x:Name="xTextBoxInputPnl">
+            <Label x:Name="xTextBoxInputLabel" Style="{StaticResource $LabelStyle}" Content="Input Name:"></Label>
+            <Actions:UCValueExpression x:Name="xTextBoxInputTextBox" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+        </StackPanel>
 
+        <StackPanel x:Name="xComboBoxInputPnl">
+            <Label x:Name="xComboBoxInputLabel" Style="{StaticResource $LabelStyle}" Content="Input Name:"></Label>
+            <ComboBox  x:Name="xComboBoxInputComboBox"  Style="{StaticResource $FlatInputComboBoxStyle}" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        </StackPanel>
 
+        <CheckBox x:Name="xCheckBoxInput" Style="{StaticResource $CeckBoxStyle}" Content="Input Name"></CheckBox>
 
-
-    </Grid>
+        <Ginger:ucGrid x:Name="xListInputGrid" Title="List Input" ShowEdit="Collapsed" ShowRefresh="Collapsed"/>
+    </StackPanel>
 </UserControl>

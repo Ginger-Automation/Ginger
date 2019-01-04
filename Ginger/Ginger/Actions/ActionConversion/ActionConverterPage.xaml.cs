@@ -70,7 +70,7 @@ namespace Ginger.Actions.ActionConversion
 
             btnConvert.Visibility = Visibility.Collapsed;
 
-            cmbTargetApp.BindControl(mBusinessFlow.TargetApplications.Select(x => x.AppName).ToList());
+            cmbTargetApp.BindControl(mBusinessFlow.TargetApplications.Select(x => x.Name).ToList());
             if ((cmbTargetApp != null) && (cmbTargetApp.Items.Count > 0))
             {
                 cmbTargetApp.SelectedIndex = 0;
@@ -145,7 +145,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 mBusinessFlow.CurrentActivity = (Activity)grdGroups.CurrentItem;
                 if (mBusinessFlow.CurrentActivity != null)
-                    mBusinessFlow.CurrentActivity.PropertyChanged += CurrentActivity_PropertyChanged;
+                   ((Activity) mBusinessFlow.CurrentActivity).PropertyChanged += CurrentActivity_PropertyChanged;
             }
         }
 
@@ -164,7 +164,7 @@ namespace Ginger.Actions.ActionConversion
         {
             // fetch list of existing platforms in the business flow
             List<ePlatformType> lstExistingPlatform = mSolution.ApplicationPlatforms.Where(x => mBusinessFlow.TargetApplications
-                                               .Any(a => a.AppName == x.AppName)).Select(x => x.Platform).ToList();
+                                               .Any(a => a.Name == x.AppName)).Select(x => x.Platform).ToList();
             Dictionary<ePlatformType, string> lstMissingPlatform = new Dictionary<ePlatformType, string>();
             // create list of missing platforms
             foreach (ActionConversionHandler ACH in lstActionToBeConverted)
@@ -182,7 +182,7 @@ namespace Ginger.Actions.ActionConversion
                 foreach (var item in lstMissingPlatform)
                 {
                     // ask the user if he wants to continue with the conversion, if there are missing target platforms
-                    if (Reporter.ToUser(eUserMsgKeys.MissingTargetPlatformForConversion, item.Value, item.Key) == MessageBoxResult.No)
+                    if (Reporter.ToUser(eUserMsgKeys.MissingTargetPlatformForConversion, item.Value, item.Key) == Amdocs.Ginger.Common.MessageBoxResult.No)
                         return false;
                 }
             }
@@ -301,7 +301,7 @@ namespace Ginger.Actions.ActionConversion
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - " , ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - " , ex);
                     Reporter.ToUser(eUserMsgKeys.ActivitiesConversionFailed);
                 }
                 finally
@@ -313,7 +313,7 @@ namespace Ginger.Actions.ActionConversion
             Reporter.CloseGingerHelper();
 
             // ask the user if he wants to convert more actions once the conversion is done successfully                       
-            if (Reporter.ToUser(eUserMsgKeys.SuccessfulConversionDone) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.SuccessfulConversionDone) == Amdocs.Ginger.Common.MessageBoxResult.No)
             {
                 _pageGenericWin.Close();
             }
@@ -414,7 +414,7 @@ namespace Ginger.Actions.ActionConversion
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            cmbTargetApp.BindControl(mBusinessFlow.TargetApplications.Select(x => x.AppName).ToList());
+            cmbTargetApp.BindControl(mBusinessFlow.TargetApplications.Select(x => x.Name).ToList());
             if ((cmbTargetApp != null) && (cmbTargetApp.Items.Count > 0))
             {
                 cmbTargetApp.SelectedIndex = 0;

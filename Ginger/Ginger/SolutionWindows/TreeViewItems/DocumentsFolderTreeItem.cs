@@ -115,7 +115,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (System.Exception excpt)
             {
-               Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to add Document Folder to tree",excpt,true);
+               Reporter.ToLog(eLogLevel.ERROR, "Failed to add Document Folder to tree",excpt,true);
             }
         }
 
@@ -314,7 +314,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override void DeleteTreeFolder()
         {
-            if (Reporter.ToUser(eUserMsgKeys.DeleteTreeFolderAreYouSure, Folder) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.DeleteTreeFolderAreYouSure, Folder) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 try
                 {

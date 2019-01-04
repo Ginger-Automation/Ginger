@@ -68,12 +68,12 @@ namespace Ginger.Variables
             editMode = mode;
             mParent = parent;
 
-            App.ObjFieldBinding(txtVarName, TextBox.TextProperty, mVariable, VariableBase.Fields.Name);
-            App.ObjFieldBinding(txtVarDescritpion, TextBox.TextProperty, mVariable, VariableBase.Fields.Description);
-            App.ObjFieldBinding(txtFormula, TextBox.TextProperty, mVariable, VariableBase.Fields.Formula, BindingMode.OneWay);
-            App.ObjFieldBinding(txtCurrentValue, TextBox.TextProperty, mVariable, VariableBase.Fields.Value, BindingMode.OneWay);
-            App.ObjFieldBinding(cbSetAsInputValue, CheckBox.IsCheckedProperty, mVariable, VariableBase.Fields.SetAsInputValue);
-            App.ObjFieldBinding(cbSetAsOutputValue, CheckBox.IsCheckedProperty, mVariable, VariableBase.Fields.SetAsOutputValue);
+            App.ObjFieldBinding(txtVarName, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
+            App.ObjFieldBinding(txtVarDescritpion, TextBox.TextProperty, mVariable, nameof(VariableBase.Description));
+            App.ObjFieldBinding(txtFormula, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
+            App.ObjFieldBinding(txtCurrentValue, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
+            App.ObjFieldBinding(cbSetAsInputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsInputValue));
+            App.ObjFieldBinding(cbSetAsOutputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
 
             if (mode ==eEditMode.Global)
             {
@@ -131,13 +131,13 @@ namespace Ginger.Variables
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to load the variable type configurations page", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the variable type configurations page", ex);
             }
         }
 
         private void mVariable_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == VariableBase.Fields.VariableEditPage)
+            if (e.PropertyName == nameof(VariableBase.VariableEditPage))
             {
                 LoadVarPage();
             }
@@ -240,7 +240,7 @@ namespace Ginger.Variables
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 UndoChangesAndClose();
             }
@@ -283,7 +283,7 @@ namespace Ginger.Variables
 
         private void SetLinkedVarCombo()
         {
-            App.ObjFieldBinding(linkedvariableCombo, ComboBox.SelectedValueProperty, mVariable, VariableBase.Fields.LinkedVariableName);
+            App.ObjFieldBinding(linkedvariableCombo, ComboBox.SelectedValueProperty, mVariable, nameof(VariableBase.LinkedVariableName));
 
             List<string> varsList = new List<string>();
             linkedvariableCombo.ItemsSource = varsList;
@@ -348,7 +348,7 @@ namespace Ginger.Variables
 
         private void linkedvariableCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mVariable.OnPropertyChanged(VariableBase.Fields.LinkedVariableName);
+            mVariable.OnPropertyChanged(nameof(VariableBase.LinkedVariableName));
         }
     }
 }

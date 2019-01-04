@@ -209,7 +209,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
             }
             else
@@ -369,7 +369,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             catch (Exception ex)
             {
                 xSaveExcelLable.Visibility = Visibility.Visible;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
 
             GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);
@@ -401,7 +401,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             bool overrideFile = true;
             if (File.Exists(fileName))
             {
-                if(MessageBox.Show("File already exists, do you want to override?", "File Exists", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+                if(MessageBox.Show("File already exists, do you want to override?", "File Exists", System.Windows.MessageBoxButton.OKCancel) == System.Windows.MessageBoxResult.Cancel)
                 {
                     overrideFile = false;
                 }
@@ -510,7 +510,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     if (ex.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
                     {
-                        if (Reporter.ToUser(eUserMsgKeys.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == MessageBoxResult.Yes)
+                        if (Reporter.ToUser(eUserMsgKeys.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                         {
                             System.Diagnostics.Process.Start("https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149");
                             System.Diagnostics.Process.Start("http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html");
