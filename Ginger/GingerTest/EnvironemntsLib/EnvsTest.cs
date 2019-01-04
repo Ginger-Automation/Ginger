@@ -43,7 +43,7 @@ namespace GingerWPFUnitTest
             
             mTC = TC;            
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\EnvsTest");
-            SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\EnvsTest");
+            SolutionFolder = TestResources.GetTestTempFolder(@"Solutions\EnvsTest");
             if (Directory.Exists(SolutionFolder))
             {
                 Directory.Delete(SolutionFolder, true);

@@ -103,7 +103,7 @@ namespace Ginger
                 BoardBtn.Content = messageToShow.BtnContent;
                 BoardBtn.Click += btnHandler;
             }
-            if (messageToShow.MessageType == eGingerHelperMsgType.PROCESS)//show animation
+            if (messageToShow.MessageType == eStatusMessageType.PROCESS)//show animation
             {
                 ProcessAnimationControl(true);
             }
