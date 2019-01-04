@@ -16,21 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using GingerCore.Variables;
 using GingerTest.POMs;
 using GingerTestHelper;
 using GingerWPFUnitTest;
-using GingerWPFUnitTest.GeneralLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace GingerTest.VariablesLib
+namespace GingerTest
 {
     [TestClass]
     [Level3]
