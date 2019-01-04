@@ -1588,12 +1588,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         Database db;
         List<object> SQLResult = new List<object>();
         DataTable dtDB = new DataTable();
-        public void SetDBDetails(string dbType, string host, string user, string password)
+        public void SetDBDetails(string dbType, string host, string user, string password, string connectionString = null)
         {
             db = new Database();
             db.TNS = host;
             db.User = user;
             db.Pass = password;
+            if(!string.IsNullOrEmpty(connectionString))
+                db.ConnectionString = connectionString;
             db.DBType = (Database.eDBTypes)Enum.Parse(typeof(Database.eDBTypes), dbType);
         }
         public List<string> GetDBTypeList()

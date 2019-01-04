@@ -82,6 +82,15 @@ namespace Ginger.Environments
                 db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                 db.ProjEnvironment = App.AutomateTabEnvironment;
                 db.BusinessFlow = App.BusinessFlow;
+                if (string.IsNullOrEmpty(db.ConnectionString) && db.TNS.ToLower().Contains("data source=") && db.TNS.ToLower().Contains("password=") && db.TNS.ToLower().Contains("user id="))
+                {
+                    System.Data.SqlClient.SqlConnectionStringBuilder scSB = new System.Data.SqlClient.SqlConnectionStringBuilder();
+                    scSB.ConnectionString = db.TNS;
+                    db.TNS = scSB.DataSource;
+                    db.User = scSB.UserID;
+                    db.Pass = scSB.Password;
+                    db.ConnectionString = scSB.ConnectionString;
+                }
 
                 db.CloseConnection();
                 if (db.Connect(true))
