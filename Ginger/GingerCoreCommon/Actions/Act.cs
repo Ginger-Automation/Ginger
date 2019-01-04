@@ -134,7 +134,8 @@ namespace GingerCore.Actions
             public static string SupportSimulation = "SupportSimulation";
         }
 
-
+        // Being set by GingerRunner in PrepAction
+        public IValueExpression ValueExpression { get; set; }
 
         #region Serialized Attributes
         // -----------------------------------------------------------------------------------------------------------------------------------------------

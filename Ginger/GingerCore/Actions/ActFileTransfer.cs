@@ -270,10 +270,7 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
-            string sPCPath="";
-           // ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow);
-
-
+            string sPCPath="";           
             sPCPath = drvPCPath;
             
             string UnixTargetFilePath = "";

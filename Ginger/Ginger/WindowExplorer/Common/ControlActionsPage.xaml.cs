@@ -252,7 +252,7 @@ namespace Ginger.WindowExplorer
                 act.Value = ValueTextBox.Text;
             }
 
-            App.AutomateTabGingerRunner.PrepActionVE(act);
+            App.AutomateTabGingerRunner.PrepActionValueExpression(act);
             ApplicationAgent ag =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
             if (ag != null)
             {
