@@ -26,7 +26,6 @@ using System.Reflection;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Amdocs.Ginger.Common;
 using System.Threading;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
