@@ -23,6 +23,7 @@ namespace Amdocs.Ginger.Common
         string Value { get; set; }
         string ValueCalculated { get; }
         bool DecryptFlag { get; set; }
-        
+
+        string Calculate(string expression);
     }
 }

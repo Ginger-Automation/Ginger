@@ -280,18 +280,16 @@ namespace GingerCore.Actions
 
         private bool SetDBConnection()
         {
-            //TODO: add on null or not found throw execption so it will fail
-            ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow,DSList);
-            VE.Value = this.AppName;
-            string AppNameCalculated = VE.ValueCalculated;
+            //TODO: add on null or not found throw execption so it will fail            
+            string AppNameCalculated = ValueExpression.Calculate(this.AppName);
             EnvApplication App = (from a in RunOnEnvironment.Applications where a.Name == AppNameCalculated select a).FirstOrDefault();
             if (App == null)
             {
                 Error= "The mapped Environment Application '" + AppNameCalculated + "' was not found in the '" + RunOnEnvironment.Name +"' Environment which was selected for execution.";
                 return false;
             }
-            VE.Value = DBName;
-            string DBNameCalculated = VE.ValueCalculated;
+            
+            string DBNameCalculated = ValueExpression.Calculate(DBName);
             DB = (Database)(from d in App.Dbs where d.Name == DBNameCalculated select d).FirstOrDefault();
             if (DB ==null)
             {
@@ -438,14 +436,12 @@ namespace GingerCore.Actions
             }
         }
         private void updateQueryParams()
-        {
-            ValueExpression Ve = new ValueExpression(this.RunOnEnvironment, this.RunOnBusinessFlow, this.DSList);
+        {            
             foreach (ActInputValue AIV in QueryParams)
             {
                 if (!String.IsNullOrEmpty(AIV.Value))
-                {
-                    Ve.Value = AIV.Value;
-                    AIV.ValueForDriver = Ve.ValueCalculated;
+                {                    
+                    AIV.ValueForDriver = ValueExpression.Calculate(AIV.Value);
                 }
             }
         }

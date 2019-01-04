@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions;
@@ -30,7 +31,6 @@ using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -38,16 +38,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
-using System;
-using System.Diagnostics;
-using Ginger.Actions;
-using System.Windows.Data;
-using GingerCore.Platforms;
-using Ginger.Imports.UFT;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Imports.QTP
 {
@@ -932,7 +922,7 @@ namespace Ginger.Imports.QTP
 
         private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Process wordProcess = new Process();
+            System.Diagnostics.Process wordProcess = new System.Diagnostics.Process();
             wordProcess.StartInfo.FileName = Directory.GetCurrentDirectory() + @"\Help\Import_From_ASAP.pdf";
             wordProcess.StartInfo.UseShellExecute = true;
             wordProcess.Start();
