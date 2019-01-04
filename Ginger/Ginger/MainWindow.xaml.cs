@@ -243,50 +243,37 @@ namespace Ginger
         }
 
 
-        // New method to set staus bar 
-        internal void ShowStatus(string statusText)
+        // New method to set staus bar text and icon
+        internal void ShowStatus(eStatusMessageType messageType, string statusText)
         {
-            xProcessMsgPnl.Visibility = Visibility.Visible;
-            xProcessMsgTxtBlock.Text = statusText;
-            xProcessMsgTxtBlock.ToolTip = statusText;
-        }
-
-
-        // ??? !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        private DateTime mProcessMsgShowTime;
-        public async void Reporter_HandlerGingerHelperEvent(GingerHelperEventArgs e)
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                if (e.GingerHelperEventActions == GingerHelperEventArgs.eGingerHelperEventActions.Show)
+            this.Dispatcher.Invoke(() => {
+                if (!string.IsNullOrEmpty(statusText))
                 {
-                    if (e.MessageType == eGingerHelperMsgType.PROCESS)
-                    {
-                        xProcessMsgIcon.ImageType = eImageType.Processing;
-                    }
-                    else
-                    {
-                        xProcessMsgIcon.ImageType = eImageType.Info;
-                    }
                     xProcessMsgPnl.Visibility = Visibility.Visible;
-                    xProcessMsgTxtBlock.Text = e.HelperMsg.MsgContent;
-                    xProcessMsgTxtBlock.ToolTip= e.HelperMsg.MsgContent;
-                    mProcessMsgShowTime = DateTime.Now;
-                    GingerCore.General.DoEvents();
+                    xProcessMsgTxtBlock.Text = statusText;
+                    xProcessMsgTxtBlock.ToolTip = statusText;
+
+                    switch(messageType)
+                    {
+                        case eStatusMessageType.PROCESS:
+                            xProcessMsgIcon.ImageType = eImageType.Processing;
+                            break;
+
+                        case eStatusMessageType.INFO:
+                            xProcessMsgIcon.ImageType = eImageType.Info;
+                            break;                                                
+                    }
+                    
+                    // GingerCore.General.DoEvents();
                 }
                 else
                 {
-                    if (xProcessMsgPnl.Visibility == Visibility.Visible)
-                    {
-                        while ((DateTime.Now - mProcessMsgShowTime).TotalSeconds < 1)
-                        {
-                            Task.Delay(100);  
-                        }
-                        xProcessMsgPnl.Visibility = Visibility.Collapsed;
-                    }
+                    xProcessMsgPnl.Visibility = Visibility.Collapsed;
                 }
             });
+            
         }
+
 
         internal void AutoLoadLastSolution()
         {
