@@ -25,11 +25,9 @@ using GingerCore.Environments;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.DriversLib;
 using GingerCoreNET.RosLynLib;
-using GingerCoreNET.RunLib;
 using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -296,7 +294,7 @@ namespace Ginger.GingerCoreNETTestLib
             Log("BFs count=" + BFs.Count);
         }
 
-        private void Log(string txt, Stopwatch st = null)
+        private void Log(string txt, System.Diagnostics.Stopwatch st = null)
         {
             LogTextBox.Dispatcher.Invoke(() =>
                 {
@@ -354,7 +352,7 @@ namespace Ginger.GingerCoreNETTestLib
                 long StartBytes = System.GC.GetTotalMemory(true);
                 Log("Running: " + a.Name);
 
-                Stopwatch st = Stopwatch.StartNew();
+                System.Diagnostics.Stopwatch st = System.Diagnostics.Stopwatch.StartNew();
                 a.Action.Invoke();
                 st.Stop();
 

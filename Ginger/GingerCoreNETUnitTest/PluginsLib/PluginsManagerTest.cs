@@ -63,7 +63,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
             string PluginId = "PACT";
             string PluginVersion = "1.6";
-            string path = TestResources.getGingerUnitTesterTempFolder(@"Solutions\PluginsManagerSR1");
+            string path = TestResources.GetTestTempFolder(@"Solutions\PluginsManagerSR1");
             if (Directory.Exists(path))
             {
                 Directory.Delete(path, true);

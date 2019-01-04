@@ -59,7 +59,7 @@ namespace UnitTests.NonUITests
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "VM" });            
 
             mGR = new GingerRunner();
-            mGR.SolutionFolder = TestResources.getGingerUnitTesterTempFolder("");
+            mGR.SolutionFolder = TestResources.GetTestTempFolder("");
 
             Agent a = new Agent();            
             a.DriverType = Agent.eDriverType.SeleniumChrome;

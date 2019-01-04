@@ -49,7 +49,7 @@ namespace GingerTest.VariablesLib
             mTC = TC;
 
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\BasicSimple");
-            SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\VariablesTest");
+            SolutionFolder = TestResources.GetTestTempFolder(@"Solutions\VariablesTest");
             if (Directory.Exists(SolutionFolder))
             {
                 Directory.Delete(SolutionFolder, true);
