@@ -27,7 +27,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
-namespace GingerWPFUnitTest.UserControlsLib.ImageMakerLib
+namespace GingerTest
 {
 
     [TestClass]
