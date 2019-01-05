@@ -20,13 +20,13 @@ limitations under the License.
 
 using GingerTestHelper;
 using GingerWPF.WizardLib;
-using GingerWPFUnitTest;
 using GingerWPFUnitTest.POMs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 using System.Threading.Tasks;
+using GingerTest.WizardLib;
 
-namespace GingerTest.WizardLib
+namespace GingerTest
 {
     [TestClass]
     public class WizardTest
