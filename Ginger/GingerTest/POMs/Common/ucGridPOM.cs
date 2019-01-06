@@ -32,7 +32,6 @@ namespace GingerTest.POMs.Common
             }
         }
 
-
         /// <summary>
         /// Select a row in the grid
         /// </summary>
@@ -53,43 +52,32 @@ namespace GingerTest.POMs.Common
 
         public void ClickOnCheckBox(string checkboxHeaderValue, string fieldToSearchOnHeader, string fieldValueToSearch)
         {
-            try
+            foreach (var item in mGrid.DataSourceList)
             {
-                int i = 0;
-
-
-                foreach (var item in mGrid.DataSourceList)
+                string actualFieldName = item.GetType().GetProperty(fieldToSearchOnHeader).GetValue(item).ToString();
+                if (actualFieldName == fieldValueToSearch)
                 {
+                    DataGridCellsPresenter presenter = null;
+                    CheckBox checkbox = null;
+                 
 
-                    string actualFieldName = item.GetType().GetProperty(fieldToSearchOnHeader).GetValue(item).ToString();
-                    if (actualFieldName == fieldValueToSearch)
+                    Execute(() =>
                     {
-                        DataGridCellsPresenter presenter = null;
-                        CheckBox checkbox = null;
-                        DataGridRow row = mGrid.Grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+                        mGrid.Grid.SelectedItem = item;
+                        mGrid.ScrollToViewCurrentItem();
+                    });
 
-                        //object a = row.GetType().GetProperty(checkboxHeaderValue).GetValue(row);
-
-                        Execute(() =>
+                    SleepWithDoEvents(1000);
+                    DataGridRow row = mGrid.Grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+                    Execute(() =>
+                    {
+                        presenter = General.GetVisualChild<DataGridCellsPresenter>(row);
+                        object a = presenter.ItemContainerGenerator.Items[0].GetType().GetProperty(checkboxHeaderValue).GetValue(presenter.ItemContainerGenerator.Items[0]);
+                        if (a != null)
                         {
-                            presenter = General.GetVisualChild<DataGridCellsPresenter>(row);
-
-                            object a = presenter.ItemContainerGenerator.Items[0].GetType().GetProperty(checkboxHeaderValue).GetValue(presenter.ItemContainerGenerator.Items[0]);
-
-
-
-                            if (a != null)
-                            {
-                                DataGridCell cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(0);
-                                checkbox = General.GetVisualChild<CheckBox>(cell);
-                            }
-
-                            //((DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(1)).TabIndex;
-
-
- 
-
-                        });
+                            DataGridCell cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(0);
+                            checkbox = General.GetVisualChild<CheckBox>(cell);
+                        }
 
                         if (checkbox.IsChecked == true)
                         {
@@ -99,93 +87,9 @@ namespace GingerTest.POMs.Common
                         {
                             checkbox.IsChecked = true;
                         }
-                    }
+                    });
                 }
-
-
             }
-            catch (Exception ex)
-            {
-
-            }
-           
         }
-
-
-                //DataGridCellsPresenter presenter = null;
-                //DataGridRow row = mGrid.Grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
-                //Execute(() =>
-                //{
-                //    presenter = General.GetVisualChild<DataGridCellsPresenter>(row);
-                //});
-
-                //try
-                //{
-
-                //    CheckBox o = null;
-
-                //    Execute(() =>
-                //    {
-                //        DataGridCell cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(0);
-
-                //        o = General.GetVisualChild<CheckBox>(cell);
-                //        ((CheckBox)o).IsChecked = false;
-                //    });
-                   
-                //}
-                //catch (Exception ex)
-                //{
-
-                //}
-
-
-                //foreach (UIElementFilter cell in presenter.ItemContainerGenerator.Items)
-                //{
-                //    //Object o1 = null;
-                //    //Execute(() =>
-                //    //{
-                //    //    o1 = General.GetVisualChild<CheckBox>(cell);
-                //    //});
-
-                //    //object o = cell.GetType().GetProperty(fieldToSearchOnHeader);
-
-                //}
-           
-
-
-
-            //foreach (DataGridRow row in mGrid.GetDataGridRows(mGrid.Grid))
-            //{
-            //    try
-            //    {
-
-            //        CheckBox cb = (CheckBox)mGrid.GetDataTemplateCellControl<CheckBox>(row, 0);
-            //    }
-            //    catch
-            //    {
-
-            //    }
-
-
-
-            //    DataGridCell cell = null;
-                
-            //    Execute(() => {
-            //        cell = mGrid.GetDataGridCell(row, i);
-
-            //    });
-                
-                
-            //    i++;
-            //}
-
-            //foreach (var item in mGrid.DataSourceList)
-            //{
-            //    //if (item.GetType().GetProperty(property).GetValue(item).ToString() == value)
-            //    //{
-            //    //    mGrid.GetDataGridRows(mGrid.Grid);
-            //    //}
-            //}
-        
     }
 }

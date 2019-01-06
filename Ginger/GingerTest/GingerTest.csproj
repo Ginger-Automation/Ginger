@@ -162,6 +162,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TestResources\HTML\HTMLControls.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\Solutions\AgentsTest\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>

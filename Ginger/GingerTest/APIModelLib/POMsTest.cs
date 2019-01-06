@@ -10,6 +10,8 @@ using GingerTest.POMs;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore;
 using System.Linq;
+using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerTest.APIModelLib
 {
@@ -63,18 +65,57 @@ namespace GingerTest.APIModelLib
         [TestMethod]
         public void AddPOMUsingWizard()
         {
-            //Arrange       
-            POMsPOM POM = mGingerAutomator.MainWindowPOM.GotoPOMs();
+            //Arrange  
+            string name = "MyNewPOM";
+            POMsPOM pOMsPOM = mGingerAutomator.MainWindowPOM.GotoPOMs();
 
 
             Agent ChromeAgent = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == "ChromeAgent" select x).SingleOrDefault();
             //Act
-            POM.CreatePOM("MyWebApp", ChromeAgent, "http://www.facebook.com");
-            //AgentsPOM.SelectAgent(name);
-            //Agent agent = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == name select x).SingleOrDefault();
+            pOMsPOM.CreatePOM(name, "MyWebApp", ChromeAgent, @"HTML\HTMLControls.html",new List<eElementType>() {eElementType.Button,eElementType.Canvas,eElementType.Label });
+            pOMsPOM.SelectPOM(name);
+            ApplicationPOMModel pom = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == name select x).SingleOrDefault();
 
             //Assert
-            //Assert.AreEqual(name, agent.Name, "Agent.Name is same");
+            Assert.AreEqual(name, pom.Name, "POM.Name is same");
+        }
+
+
+        [TestMethod]
+        public void POMValidateElementsLearnigTest()
+        {
+            //Arrange  
+            string name = "MyNewPOM";
+            POMsPOM pOMsPOM = mGingerAutomator.MainWindowPOM.GotoPOMs();
+
+
+            Agent ChromeAgent = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == "ChromeAgent" select x).SingleOrDefault();
+            //Act
+            pOMsPOM.CreatePOM(name, "MyWebApp", ChromeAgent, @"HTML\HTMLControls.html", new List<eElementType>() { eElementType.Button, eElementType.Canvas, eElementType.Label });
+            pOMsPOM.SelectPOM(name);
+            ApplicationPOMModel pom = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == name select x).SingleOrDefault();
+
+            //Assert
+            Assert.AreEqual(pom.MappedUIElements.Count, "42", "POM.Name is same");
+            Assert.AreEqual(pom.UnMappedUIElements.Count, "77", "POM.Name is same");
+        }
+
+        public void POMValidaetPropertiesLearnigTest()
+        {
+            //Arrange  
+            string name = "MyNewPOM";
+            POMsPOM pOMsPOM = mGingerAutomator.MainWindowPOM.GotoPOMs();
+
+
+            Agent ChromeAgent = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == "ChromeAgent" select x).SingleOrDefault();
+            //Act
+            pOMsPOM.CreatePOM(name, "MyWebApp", ChromeAgent, @"HTML\HTMLControls.html", new List<eElementType>() { eElementType.Button, eElementType.Canvas, eElementType.Label });
+            pOMsPOM.SelectPOM(name);
+            ApplicationPOMModel pom = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == name select x).SingleOrDefault();
+
+            //Assert
+            Assert.AreEqual(pom.MappedUIElements.Count, "42", "POM.Name is same");
+            Assert.AreEqual(pom.UnMappedUIElements.Count, "77", "POM.Name is same");
         }
 
 
