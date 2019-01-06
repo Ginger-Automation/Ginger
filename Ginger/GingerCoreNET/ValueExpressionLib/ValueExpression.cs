@@ -24,7 +24,6 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
-using GingerCoreNET.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -132,6 +131,13 @@ namespace GingerCore
                 Calculate();
                 return mValueCalculated;
             }
+        }
+
+        public string Calculate(string expression)
+        {
+            Value = expression;
+            Calculate();            
+            return mValueCalculated;
         }
 
         public override string ToString()

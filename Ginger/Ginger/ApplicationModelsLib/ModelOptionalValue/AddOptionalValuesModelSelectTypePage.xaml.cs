@@ -39,6 +39,8 @@ using System.Diagnostics;
 using System.Reflection;
 using Amdocs.Ginger.ValidationRules;
 using System.IO;
+using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 {
@@ -473,7 +475,25 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 try
                 {
-                    mAddModelOptionalValuesWizard.ImportOptionalValues.SetDBDetails(xDBTypeComboBox.SelectedValue.ToString(), xBDHostTextBox.Text.Trim(), xDBUserTextBox.Text.Trim(), xDBPasswordTextBox.Text.Trim());
+                    SqlConnectionStringBuilder scSB = new SqlConnectionStringBuilder();
+
+                    if (Regex.IsMatch(xBDHostTextBox.Text, "(Data Source=)", RegexOptions.IgnoreCase)
+                        && Regex.IsMatch(xBDHostTextBox.Text, "(User ID=)", RegexOptions.IgnoreCase)
+                            && Regex.IsMatch(xBDHostTextBox.Text, "(Password=)", RegexOptions.IgnoreCase))
+                    {
+                        scSB.ConnectionString = xBDHostTextBox.Text.Trim();
+                        xBDHostTextBox.Text = scSB.DataSource;
+                        xDBUserTextBox.Text = scSB.UserID;
+                        xDBPasswordTextBox.Text = scSB.Password;
+                    }
+                    else if(xDBTypeComboBox.SelectedValue.ToString() == GingerCore.Environments.Database.eDBTypes.Oracle.ToString() )
+                    {
+                        scSB.DataSource = xBDHostTextBox.Text;
+                        scSB.UserID = xDBUserTextBox.Text;
+                        scSB.Password = xDBPasswordTextBox.Text;
+                    }
+
+                    mAddModelOptionalValuesWizard.ImportOptionalValues.SetDBDetails(xDBTypeComboBox.SelectedValue.ToString(), xBDHostTextBox.Text.Trim(), xDBUserTextBox.Text.Trim(), xDBPasswordTextBox.Text.Trim(), scSB.ConnectionString);
                     if (mAddModelOptionalValuesWizard.ImportOptionalValues.Connect())
                     {
                         xSQLLable.Visibility = Visibility.Visible;

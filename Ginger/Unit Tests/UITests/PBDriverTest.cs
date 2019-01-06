@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Diagnostics;
 using Amdocs.Ginger.Common;
 using Ginger.Run;
 using GingerCore;
@@ -39,7 +38,7 @@ namespace UnitTest {
     public class PBDriverTest 
     {
         public static BusinessFlow mBF;
-        static Process proc;
+        static System.Diagnostics.Process proc;
         // make it static for reuse so no need to init every time when running test by click test button
         static PBDriver mDriver = null;
         static GingerRunner mGR = null;
@@ -50,7 +49,7 @@ namespace UnitTest {
             // launch PB Test App
             if (proc == null || proc.HasExited)
             {
-                proc = new Process();
+                proc = new System.Diagnostics.Process();
                 proc.StartInfo.FileName = @"pb_test_app.exe";
                 proc.StartInfo.WorkingDirectory = TestResources.GetTestResourcesFolder("PBTestApp");
                 Console.WriteLine(proc.StartInfo.WorkingDirectory);

@@ -264,20 +264,12 @@ namespace GingerCore.Actions.Java
             string[] lines = DataBuffer.Split('\n');
             return lines;             
         }
-
-        ValueExpression mVE = null;
-        private string CalculateValue(string valueTocalc)
-        {
-            mVE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-            mVE.Value = valueTocalc;
-            return mVE.ValueCalculated.Trim();
-        }
-
+        
         private bool CalculateArguments()
         {
             try
             {
-                mJavaWSEXEPath_Calc = CalculateValue(mJavaWSEXEPath);
+                mJavaWSEXEPath_Calc = ValueExpression.Calculate(mJavaWSEXEPath);
                 if (string.IsNullOrEmpty(mJavaWSEXEPath_Calc))
                     mJavaWSEXEPath_Calc = CommonLib.GetJavaHome();               
 
