@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GingerTestHelper;
 using GingerWPFUnitTest;
@@ -12,6 +10,8 @@ using GingerCore;
 using System.Linq;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Media.Imaging;
+using GingerCore.Drivers;
 
 namespace GingerTest.APIModelLib
 {
@@ -25,11 +25,13 @@ namespace GingerTest.APIModelLib
         static string SolutionFolder;
         static GingerAutomator mGingerAutomator;
 
-
         [ClassInitialize]
         public static void ClassInit(TestContext TC)
         {
+            //Arrange  
             mTC = TC;
+            string name = "MyNewPOM";
+            string description = "MyDescription";
 
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\POMsTest");
             SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\POMsTest");
@@ -39,10 +41,18 @@ namespace GingerTest.APIModelLib
             }
 
             CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
-
             mGingerAutomator = GingerAutomator.StartSession();
             mGingerAutomator.OpenSolution(SolutionFolder);
+            mPOMsPOM = mGingerAutomator.MainWindowPOM.GotoPOMs();
+
+            mChromeAgent = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == "ChromeAgent" select x).SingleOrDefault();
+            //Act
+            mLearnedPOM = mPOMsPOM.CreatePOM(name, description, "MyWebApp", mChromeAgent, @"HTML\HTMLControls.html", new List<eElementType>() { eElementType.Button, eElementType.Canvas, eElementType.Label });
         }
+
+        static Agent mChromeAgent = null;
+        static POMsPOM mPOMsPOM = null;
+        static ApplicationPOMModel mLearnedPOM = null;
 
         [ClassCleanup]
         public static void ClassCleanup()
@@ -52,87 +62,81 @@ namespace GingerTest.APIModelLib
 
         [TestInitialize]
         public void TestInitialize()
-        {
-
-        }
+        {}
 
         [TestCleanup]
         public void TestCleanUp()
-        {
-
-        }
+        {}
 
         [TestMethod]
-        public void AddPOMUsingWizard()
+        public void ValidatePOMWasAddedToPOMsTree()
         {
-            //Arrange  
-            string name = "MyNewPOM";
-            POMsPOM pOMsPOM = mGingerAutomator.MainWindowPOM.GotoPOMs();
-
-
-            Agent ChromeAgent = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == "ChromeAgent" select x).SingleOrDefault();
             //Act
-            pOMsPOM.CreatePOM(name, "MyWebApp", ChromeAgent, @"HTML\HTMLControls.html",new List<eElementType>() {eElementType.Button,eElementType.Canvas,eElementType.Label });
-            pOMsPOM.SelectPOM(name);
-            ApplicationPOMModel pom = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == name select x).SingleOrDefault();
+            mPOMsPOM.SelectPOM(mLearnedPOM.Name);
+            ApplicationPOMModel treePOM = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == mLearnedPOM.Name select x).SingleOrDefault();
 
             //Assert
-            Assert.AreEqual(name, pom.Name, "POM.Name is same");
+            Assert.AreEqual(mLearnedPOM.Name, treePOM.Name, "POM.Name is same");
         }
 
 
         [TestMethod]
-        public void POMValidateElementsLearnigTest()
+        public void ValidatePOMGeneralDetails()
         {
-            //Arrange  
-            string name = "MyNewPOM";
-            POMsPOM pOMsPOM = mGingerAutomator.MainWindowPOM.GotoPOMs();
-
-
-            Agent ChromeAgent = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == "ChromeAgent" select x).SingleOrDefault();
-            //Act
-            pOMsPOM.CreatePOM(name, "MyWebApp", ChromeAgent, @"HTML\HTMLControls.html", new List<eElementType>() { eElementType.Button, eElementType.Canvas, eElementType.Label });
-            pOMsPOM.SelectPOM(name);
-            ApplicationPOMModel pom = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == name select x).SingleOrDefault();
-
             //Assert
-            Assert.AreEqual(pom.MappedUIElements.Count, "42", "POM.Name is same");
-            Assert.AreEqual(pom.UnMappedUIElements.Count, "77", "POM.Name is same");
-        }
-
-        public void POMValidaetPropertiesLearnigTest()
-        {
-            //Arrange  
-            string name = "MyNewPOM";
-            POMsPOM pOMsPOM = mGingerAutomator.MainWindowPOM.GotoPOMs();
-
-
-            Agent ChromeAgent = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == "ChromeAgent" select x).SingleOrDefault();
-            //Act
-            pOMsPOM.CreatePOM(name, "MyWebApp", ChromeAgent, @"HTML\HTMLControls.html", new List<eElementType>() { eElementType.Button, eElementType.Canvas, eElementType.Label });
-            pOMsPOM.SelectPOM(name);
-            ApplicationPOMModel pom = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == name select x).SingleOrDefault();
-
-            //Assert
-            Assert.AreEqual(pom.MappedUIElements.Count, "42", "POM.Name is same");
-            Assert.AreEqual(pom.UnMappedUIElements.Count, "77", "POM.Name is same");
+            Assert.AreEqual(mLearnedPOM.Name, "MyNewPOM", "POM.Name check");
+            Assert.AreEqual(mLearnedPOM.Description, "MyDescription", "POM.Description check");
+            Assert.IsTrue(mLearnedPOM.PageURL.EndsWith("TestResources/HTML/HTMLControls.html"), "POM.URL check");
+            Assert.AreEqual(mLearnedPOM.TargetApplicationKey.ToString(), "MyWebApp~843fb8a6-a844-45e9-b7ef-b045b6433c44", "POM.TargetApplicationKey is same");
         }
 
 
+        [TestMethod]
+        public void ValidatePOMScreenshotWasTaken()
+        {
+            //Act
+            BitmapSource source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mLearnedPOM.ScreenShotImage.ToString()));
+            //Assert  
+            Assert.IsNotNull(source, "POM.ScreenShotImage converted to sourse check");
+        }
+
+
+        [TestMethod]
+        public void ValidateLearnedItems()
+        {
+            //Act
+            ElementInfo EI1 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "Mexico INPUT.RADIO" && x.ElementTypeEnum == eElementType.RadioButton).FirstOrDefault();
+            ElementInfo EI2 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "id123 input" && x.ElementTypeEnum == eElementType.TextBox).FirstOrDefault();
+
+            //Assert  
+            Assert.AreEqual(mLearnedPOM.MappedUIElements.Count, 42, "POM.MappedUIElements.Coun check");
+            Assert.AreEqual(mLearnedPOM.UnMappedUIElements.Count, 77, "POM.UnMappedUIElements.Count check");
+            Assert.IsNotNull(EI1, "POM.Element learned check");
+            Assert.IsNotNull(EI2, "POM.Element learned check");
+        }
+
+        [TestMethod]
+        public void ValidateElementsProperties()
+        {
+            //Assert  
+            Assert.AreEqual(mLearnedPOM.MappedUIElements[0].Properties.Count, 8, "POM.properties check");
+            Assert.AreEqual(mLearnedPOM.UnMappedUIElements[1].Properties.Count, 7, "POM.properties check");
+        }
+
+
+        [TestMethod]
+        public void ValidateElementsLocators()
+        {
+            //Assert  
+            Assert.AreEqual(mLearnedPOM.MappedUIElements[3].Locators.Count, 2, "POM.Locators check");
+            Assert.AreEqual(mLearnedPOM.UnMappedUIElements[4].Locators.Count, 3, "POM.Locators check");
+        }
 
         public POMsTest()
-        {
-            //
-            // TODO: Add constructor logic here
-            //
-        }
+        {}
 
         private TestContext testContextInstance;
 
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
         public TestContext TestContext
         {
             get
@@ -143,36 +147,6 @@ namespace GingerTest.APIModelLib
             {
                 testContextInstance = value;
             }
-        }
-
-        #region Additional test attributes
-        //
-        // You can use the following additional attributes as you write your tests:
-        //
-        // Use ClassInitialize to run code before running the first test in the class
-        // [ClassInitialize()]
-        // public static void MyClassInitialize(TestContext testContext) { }
-        //
-        // Use ClassCleanup to run code after all tests in a class have run
-        // [ClassCleanup()]
-        // public static void MyClassCleanup() { }
-        //
-        // Use TestInitialize to run code before running each test 
-        // [TestInitialize()]
-        // public void MyTestInitialize() { }
-        //
-        // Use TestCleanup to run code after each test has run
-        // [TestCleanup()]
-        // public void MyTestCleanup() { }
-        //
-        #endregion
-
-        [TestMethod]
-        public void TestMethod1()
-        {
-            //
-            // TODO: Add test logic here
-            //
         }
     }
 }

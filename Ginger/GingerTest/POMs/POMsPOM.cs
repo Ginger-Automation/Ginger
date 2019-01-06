@@ -30,20 +30,18 @@ namespace GingerTest.POMs
 
         public SingleItemTreeViewExplorerPagePOM POMsTree { get { return mTreeView; } }
 
-        public ApplicationPOMModel CreatePOM(string POMName, string targetApp, Agent ChromeAgent, string URL, List<eElementType> elementTypeCheckBoxToClickList)
+        public ApplicationPOMModel CreatePOM(string POMName, string POMDescription, string targetApp, Agent ChromeAgent, string URL, List<eElementType> elementTypeCheckBoxToClickList)
         {
             mTreeView.AddButton.Click();
             SleepWithDoEvents(100);
 
-            return CreatePOMOnWizard(POMName, targetApp, ChromeAgent, URL, elementTypeCheckBoxToClickList);
+            return CreatePOMOnWizard(POMName, POMDescription, targetApp, ChromeAgent, URL, elementTypeCheckBoxToClickList);
         }
 
-        private ApplicationPOMModel CreatePOMOnWizard(string POMName, string targetApp, Agent agent, string URL,List<eElementType> elementTypeCheckBoxToClickList)
+        private ApplicationPOMModel CreatePOMOnWizard(string POMName,string POMDescription, string targetApp, Agent agent, string URL,List<eElementType> elementTypeCheckBoxToClickList)
         {
             WizardPOM wizard = WizardPOM.CurrentWizard;
-            //skip intro page
             wizard.NextButton.Click();
-            //set name
             ucAgentControl ucAgentControl = (ucAgentControl)wizard.CurrentPage["ucAgentControl AID"].dependencyObject;
             ucAgentControlPOM ucAgentControlPOM = new ucAgentControlPOM(ucAgentControl);
             ucAgentControlPOM.SelectValueUCAgentControl(agent);
@@ -66,10 +64,16 @@ namespace GingerTest.POMs
             wizard.NextButton.Click();
             SleepWithDoEvents(2000);
             wizard.CurrentPage["Name POMID"].SetText(POMName);
+            wizard.CurrentPage["Description POMID"].SetText(POMDescription);
             wizard.FinishButton.Click();
-            // Verify agent appear on tree, might take some time
-            bool b = mTreeView.IsItemExist(POMName);
-            if (!b) throw new Exception("Cannot find new POM in tree: " + POMName);
+            SleepWithDoEvents(2000);
+
+            // Verify pom appear on tree, might take some time
+            bool isExist = mTreeView.IsItemExist(POMName);
+            if (!isExist)
+            {
+                throw new Exception("Cannot find new POM in tree: " + POMName);
+            }
             ApplicationPOMModel POM = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == POMName select x).SingleOrDefault();
             return POM;
         }
