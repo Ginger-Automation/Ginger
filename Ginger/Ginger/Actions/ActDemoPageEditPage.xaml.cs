@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Actions;
 using System.Collections.Generic;

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions;
@@ -29,7 +30,6 @@ using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -170,12 +170,12 @@ namespace Ginger.Imports.UFT
         private void SaveCommonFunctionMapping(object sender, RoutedEventArgs e)
         {
             //temp TODO: fix me to select file
-            mCommonFunctionConvertor.SaveToFile(@"c:\temp\CommonFunctionConvertor.xml");
+            //mCommonFunctionConvertor.SaveToFile(@"c:\temp\CommonFunctionConvertor.xml");
         }
 
         private void AddAction(object sender, RoutedEventArgs e)
         {
-            ObservableList<Act> ActionsList = new ObservableList<Act>();
+            ObservableList<IAct> ActionsList = new ObservableList<IAct>();
 
             // We create one dummy activity in case we convert code without function
             mBusinessFlow.Activities = new ObservableList<Activity>();
@@ -190,7 +190,7 @@ namespace Ginger.Imports.UFT
             addAction.ShowAsWindow(ActionsList);
 
             // We will get only one action currently
-            Act a = ActionsList[0];
+            Act a = (Act)ActionsList[0];
             CommonFunctionMapping CFM = new CommonFunctionMapping();                        
             CFM.TargetAction = a;
             mCommonFunctionConvertor.CommonFunctionMappingList.Add(CFM);
@@ -1179,7 +1179,7 @@ namespace Ginger.Imports.UFT
 
         private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Process wordProcess = new Process();
+            System.Diagnostics.Process wordProcess = new System.Diagnostics.Process();
             wordProcess.StartInfo.FileName = Directory.GetCurrentDirectory() + @"\Help\Import_From_ASAP.pdf";
             wordProcess.StartInfo.UseShellExecute = true;
             wordProcess.Start();

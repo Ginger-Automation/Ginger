@@ -642,7 +642,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
         }
 
@@ -765,7 +765,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == Amdocs.Ginger.Common.MessageBoxResult.No)
             {
                 UndoChangesAndClose();
             }
