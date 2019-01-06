@@ -57,12 +57,13 @@ namespace GingerCore.ALM.JIRA
         {
             GetJiraDomainProjects();
             List<ProjectArea> currentProjects = jiraDomainsProjectsDataList.Where(x => x.DomainName.Equals(ALMCore.AlmConfig.ALMDomain)).Select(prjs => prjs.Projects).FirstOrDefault();
-            IProjectDefinitions selectedProj = currentProjects.Where(prj => prj.ProjectName.Equals(ALMCore.AlmConfig.ALMProjectName)).FirstOrDefault();
+            IProjectDefinitions selectedProj = currentProjects.Where(prj => prj.Prefix.Equals(ALMCore.AlmConfig.ALMProjectKey)).FirstOrDefault();
             if (selectedProj != null)
             {
                 //Save selected project details
                 connectedProjectDefenition = selectedProj;
                 ALMCore.AlmConfig.ALMProjectName = selectedProj.ProjectName;
+                ALMCore.AlmConfig.ALMProjectKey = selectedProj.Prefix;
                 JiraCore.ALMProjectGuid = selectedProj.Guid;
                 JiraCore.ALMProjectGroupName = selectedProj.Prefix;
                 return true;
@@ -83,15 +84,82 @@ namespace GingerCore.ALM.JIRA
 
         public ObservableList<JiraTestSet> GetJiraTestSets()
         {
-            AlmResponseWithData<JiraFieldColl> getTestsSet =  JiraRep.GetIssueFields(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET);
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
-            jiraDomainsProjectsDataList = JiraRep.GetLoginProjects(loginData.User, loginData.Password, loginData.Server).DataResult;
-            ObservableList<JiraTestSet> jiraDomains = new ObservableList<JiraTestSet>();
-            foreach (var domain in jiraDomainsProjectsDataList)
+            AlmResponseWithData<List<JiraIssue>> getTestsSet = jiraRepositoryObj.GetJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET, null);
+            
+            ObservableList<JiraTestSet> jiratestset = new ObservableList<JiraTestSet>();
+            List<string> testSetKeys = new List<string> { "reporter", "created", "summary", "project" };
+            foreach (var item in getTestsSet.DataResult)
             {
-                //jiraDomains.Add(domain.DomainName);
+                JiraTestSet issue = new JiraTestSet();
+                issue.ID = item.id.ToString();
+                issue.URLPath = item.self;
+                issue.Key = item.key;
+                
+                foreach (string tsKey in testSetKeys)
+                {
+                    if (item.fields.ContainsKey(tsKey))
+                    {
+                        string fieldValue = getSelectedFieldValue(item.fields[tsKey], tsKey);
+                        switch (tsKey)
+                        {
+                            case "created":
+                                issue.DateCreated = fieldValue;
+                                break;
+                            case "summary":
+                                issue.Name = fieldValue;
+                                break;
+                            case "reporter":
+                                issue.CreatedBy = fieldValue;
+                                break;
+                            case "project":
+                                issue.Project = fieldValue;
+                                break;
+                        }
+                    }
+                }
+                jiratestset.Add(issue);
             }
-            return jiraDomains;
+            return jiratestset;
+        }
+
+        private string getSelectedFieldValue(dynamic fields, string fieldName)
+        {
+            Dictionary<string, object> array = new Dictionary<string, object>();
+            FieledSchema temp = jiraRepositoryObj.GetFieldFromTemplateByName(ALM_Common.DataContracts.ResourceType.TEST_SET, "DE", fieldName);
+            if(temp == null)
+            {
+                return "";
+            }
+            switch(temp.type)
+            {
+                case "string":
+                    return fields.Value;
+                case "object":
+                    var jsonTemplateObj = Newtonsoft.Json.Linq.JObject.Parse(temp.data);
+                    return fields[((Newtonsoft.Json.Linq.JProperty)jsonTemplateObj.First).Name];
+            }
+            return "";
+        }
+
+        private string getFieldName(dynamic d)
+        {
+            string itemValue;
+            object propValue = d.GetType().GetProperties();
+            foreach (Newtonsoft.Json.Linq.JProperty property in d.Properties())
+            {
+
+            }
+            switch (d.GetType().Name)
+            {
+                case "JObject":
+                    //dynamic json = Newtonsoft.Json.Linq.JValue.Parse(d);
+                    itemValue = d.name;
+                    break;
+                case "JValue":
+                    itemValue = d;
+                    break;
+            }
+            return "";
         }
 
         public bool IsServerConnected()
@@ -109,9 +177,9 @@ namespace GingerCore.ALM.JIRA
             return isUserAuthen;
         }
 
-        internal List<string> GetJiraDomainProjects()
+        internal Dictionary<string, string> GetJiraDomainProjects()
         {
-            List<string> jiraProjects = new List<string>();
+            Dictionary<string, string> jiraProjects = new Dictionary<string, string>();
             List<ProjectArea> currentDomainProject = new List<ProjectArea>();
             if (jiraDomainsProjectsDataList == null)
             {
@@ -122,12 +190,12 @@ namespace GingerCore.ALM.JIRA
                 currentDomainProject = jiraDomainsProjectsDataList.Where(dom => dom.DomainName.Equals(ALMCore.AlmConfig.ALMDomain)).Select(prj => prj.Projects).FirstOrDefault();
                 foreach (var proj in currentDomainProject)
                 {
-                    jiraProjects.Add(proj.ProjectName);
+                    jiraProjects.Add(proj.Prefix,proj.ProjectName);
                 }
             }
             return jiraProjects;
         }
-
+        
         internal List<string> GetJiraDomains()
         {
             LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };

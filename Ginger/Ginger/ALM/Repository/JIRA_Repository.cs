@@ -102,7 +102,7 @@ namespace Ginger.ALM.Repository
 
         public override IEnumerable<object> GetTestSetExplorer(string path)
         {
-            throw new NotImplementedException();
+            return ((JiraCore)this.AlmCore).GetJiraTestSets();
         }
 
         public override object GetTSRunStatus(object tsItem)
@@ -112,7 +112,8 @@ namespace Ginger.ALM.Repository
 
         public override void ImportALMTests(string importDestinationFolderPath)
         {
-            return;
+            JIRA.JiraImportReviewPage win = new JIRA.JiraImportReviewPage();
+            win.ShowAsWindow();
         }
 
         public override void ImportALMTestsById(string importDestinationFolderPath)

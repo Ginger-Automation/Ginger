@@ -52,63 +52,54 @@ namespace GingerCore.ALM.JIRA
                 LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
                 AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList;
                 AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testSetFieldsList;
+                AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testExecutionFieldsList;
+
                 testSetFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMDomain, ALM_Common.DataContracts.ResourceType.TEST_SET);
-
                 testCaseFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMDomain, ALM_Common.DataContracts.ResourceType.TEST_CASE);
-                //get Test Set fields
-                foreach (var field in testSetFieldsList.DataResult)
-                {
-                    if (string.IsNullOrEmpty(field.name)) continue;
-
-                    ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
-                    itemfield.ID = field.name;
-                    itemfield.Name = field.name;
-                    itemfield.Mandatory = field.required;
-                    itemfield.ItemType = ResourceType.TEST_SET.ToString();
-
-                    if (field.allowedValues.Count > 0)
-                    {
-                        itemfield.SelectedValue = (field.allowedValues[0].name != null) ? field.allowedValues[0].name : field.allowedValues[0].value;
-                        foreach (var item in field.allowedValues)
-                        {
-                            itemfield.PossibleValues.Add((item.name != null) ? item.name : item.value);
-                        }
-                    }
-                    else
-                    {
-                        itemfield.SelectedValue = "Unassigned";
-                    }
-                    fields.Add(itemfield);
-                }
-                //Get Test Case fields
-                foreach (var field in testCaseFieldsList.DataResult)
-                {
-                    if (string.IsNullOrEmpty(field.name)) continue;
-
-                    ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
-                    itemfield.ID = field.name;
-                    itemfield.Name = field.name;
-                    itemfield.Mandatory = field.required;
-                    itemfield.ItemType = ResourceType.TEST_CASE.ToString();
-
-                    if (field.allowedValues.Count > 0)
-                    {
-                        itemfield.SelectedValue = (field.allowedValues[0].name != null) ? field.allowedValues[0].name : field.allowedValues[0].value;
-                        foreach (var item in field.allowedValues)
-                        {
-                            itemfield.PossibleValues.Add((item.name != null)? item.name: item.value);
-                        }
-                    }
-                    else
-                    {
-                        itemfield.SelectedValue = "Unassigned";
-                    }
-                    fields.Add(itemfield);
-                }
+                testExecutionFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMDomain, ALM_Common.DataContracts.ResourceType.TEST_CASE_EXECUTION_RECORDS);
+                
+                fields.Append(SetALMItemsFields(testSetFieldsList, ResourceType.TEST_SET));
+                fields.Append(SetALMItemsFields(testCaseFieldsList, ResourceType.TEST_CASE));
+                fields.Append(SetALMItemsFields(testExecutionFieldsList, ResourceType.TEST_CASE_EXECUTION_RECORDS));
             }
             catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
 
             return fields;
+        }
+
+        private static ObservableList<ExternalItemFieldBase> SetALMItemsFields( AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList, ResourceType fieldResourceType)
+        {
+            ObservableList<ExternalItemFieldBase> resourceFields = new ObservableList<ExternalItemFieldBase>();
+            string fieldResourceTypeToString = fieldResourceType.ToString();
+            if (fieldResourceType == ResourceType.TEST_CASE_EXECUTION_RECORDS)
+            {
+                fieldResourceTypeToString = "TEST_EXECUTION";
+            }
+            foreach (var field in testCaseFieldsList.DataResult)
+            {
+                if (string.IsNullOrEmpty(field.name)) continue;
+
+                ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
+                itemfield.ID = field.name;
+                itemfield.Name = field.name;
+                itemfield.Mandatory = field.required;
+                itemfield.ItemType = fieldResourceTypeToString;
+
+                if (field.allowedValues.Count > 0)
+                {
+                    itemfield.SelectedValue = (field.allowedValues[0].name != null) ? field.allowedValues[0].name : field.allowedValues[0].value;
+                    foreach (var item in field.allowedValues)
+                    {
+                        itemfield.PossibleValues.Add((item.name != null) ? item.name : item.value);
+                    }
+                }
+                else
+                {
+                    itemfield.SelectedValue = "Unassigned";
+                }
+                resourceFields.Add(itemfield);
+            }
+            return resourceFields;
         }
     }
 }

@@ -11,7 +11,7 @@
     <Grid Name="pageGrid">
         <Grid.Resources>
             <DataTemplate x:Key="ImportButton">
-                <Button x:Name="ReportBtn" Click="ImportBtnClicked" ToolTip="Import This TestPlan" Style="{StaticResource @InputImageGridCellButtonStyle}">
+                <Button x:Name="ReportBtn" Click="ImportBtnClicked" ToolTip="Import This TestSet" Style="{StaticResource @InputImageGridCellButtonStyle}">
                     <Image Source="{StaticResource @ImportScript_16x16}" Height="16" Width="16"/>
                 </Button>
             </DataTemplate>

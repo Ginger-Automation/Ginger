@@ -50,16 +50,16 @@ namespace Ginger.ALM.JIRA
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = mTestSet.TestSetID , Header = "Test Set ID", WidthWeight = 15, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = mTestSet.TestSetName, Header = "Test Set Name",  ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = mTestSet.CreatedBy, Header = "Created By", WidthWeight = 25, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = mTestSet.DateCreated, Header = "Creation Date", WidthWeight = 25, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.JiraID , Header = "Test Set ID", WidthWeight = 15, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.Name, Header = "Test Set Name",  ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.CreatedBy, Header = "Created By", WidthWeight = 25, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.CreationDate, Header = "Creation Date", WidthWeight = 25, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = "Import Test Set", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ImportButton"] });
             grdJiraTestSets.SetAllColumnsDefaultView(view);
             grdJiraTestSets.InitViewItems();
 
             grdJiraTestSets.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
-            //grdJiraTestPlanes.AddToolbarTool("@ImportScript_16x16.png", "Import The Selected TestSet", new RoutedEventHandler(ImportTestSet));
+            grdJiraTestSets.AddToolbarTool("@ImportScript_16x16.png", "Import The Selected TestSet", new RoutedEventHandler(ImportTestSet));
         }
 
         private void SetGridData()
@@ -67,7 +67,7 @@ namespace Ginger.ALM.JIRA
 
             Mouse.OverrideCursor = Cursors.Wait;
             ObservableList<JiraTestSet> mJiraTestSetsListSortedByDate = new ObservableList<JiraTestSet>();
-            foreach (JiraTestSet testSet in JiraConnect.Instance.GetJiraTestSets())
+            foreach (JiraTestSet testSet in ALMIntegration.Instance.GetTestSetExplorer(""))
             {
                 mJiraTestSetsListSortedByDate.Add(testSet);
             }
@@ -85,17 +85,17 @@ namespace Ginger.ALM.JIRA
             SetGridData();
         }
 
-        private void ImportTestPlan(object sender, RoutedEventArgs e)
+        private void ImportTestSet(object sender, RoutedEventArgs e)
         {
-            ImportTestPlan();
+            ImportTestSet();
         }
 
-        private void ImportTestPlan(object sender, EventArgs e)
+        private void ImportTestSet(object sender, EventArgs e)
         {
-            ImportTestPlan();
+            ImportTestSet();
         }
 
-        private void ImportTestPlan()
+        private void ImportTestSet()
         {
             if (grdJiraTestSets.CurrentItem == null)
             {
@@ -105,13 +105,36 @@ namespace Ginger.ALM.JIRA
 
             if (ALMIntegration.Instance.ShowImportReviewPage(mImportDestinationPath, grdJiraTestSets.CurrentItem) == true)
             {
+                ObservableList<Object> jiraTestSetList = new ObservableList<Object>();
+                jiraTestSetList.Add(mTestSet);
 
+                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, jiraTestSetList) == true)
+                {
+                    _pageGenericWin.Close();
+                }
             }
         }
 
         private void ImportBtnClicked(object sender, RoutedEventArgs e)
         {
-            ImportTestPlan();
+            ImportTestSet(sender);
+        }
+
+        private void ImportTestSet(object sender)
+        {
+            ObservableList<JiraTestSet> jiraTestSetList = new ObservableList<JiraTestSet>();
+            ///*jiraTestSetList.Add((sender A*/);
+            if (grdJiraTestSets.CurrentItem == null)
+            {
+                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                return;
+            }
+            
+
+            if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, jiraTestSetList) == true)
+            {
+                _pageGenericWin.Close();
+            }
         }
     }
 }

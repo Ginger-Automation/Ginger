@@ -21,18 +21,29 @@ namespace GingerCore.ALM.JIRA
 {
     public class JiraTestSet
     {
+        public static partial class Fields
+        {
+            public static string Seq = "Seq";
+            public static string Name = "Name";
+            public static string JiraID = "Key";
+            public static string CreatedBy = "CreatedBy";
+            public static string CreationDate = "DateCreated";
+            public static string URLPath = "URLPath";
+        }
         public JiraTestSet()
         {
             this.Tests = new List<JiraTest>();
         }
-
-        public string TestSetName { get; set; }
-        public string TestSetPath { get; set; }
-        public string TestSetID { get; set; }
-        public string TestSetVersion { get; set; }
-        public string TestSetProject { get; set; }
-        public List<JiraTest> Tests { get; set; }
+        public int Seq { get; set; }
+        public string Name { get; set; }
+        public string URLPath { get; set; }
+        public string ID { get; set; }
+        public string Version { get; set; }
+        public string Project { get; set; }
         public string CreatedBy { get; set; }
         public string DateCreated { get; set; }
+        public string Key { get; set; }
+        public string Description { get; set; }
+        public List<JiraTest> Tests { get; set; }
     }
 }
