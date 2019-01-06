@@ -23,13 +23,13 @@ namespace UnitTests.NonUITests.AutoPilot
     [TestClass]
     public class POMLearningTests
     {
-        ObservableList<ElementInfo> mElementsList;
+        static ObservableList<ElementInfo> mElementsList;
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
             //Arrange
-            ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();
+            mElementsList = new ObservableList<ElementInfo>();
             SeleniumDriver seleniumDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
             seleniumDriver.StartDriver();
             string html = TestResources.GetTestResourcesFile(@"HTML\SCMCusotmersIndex.HTML");
