@@ -41,10 +41,6 @@ namespace Ginger.Environments
             {
                 return new ValidationResult(false, "Environment with the same name already exist");
             }
-            else if (value.ToString().Trim().IndexOfAny(new char[] { '/', '\\', '*', ':', '?', '"', '<', '>', '|' }) != -1)
-            {                
-                return new ValidationResult(false, "Invalid chars in Environment name");
-            }
             else
             {
                 return new ValidationResult(true, null);
