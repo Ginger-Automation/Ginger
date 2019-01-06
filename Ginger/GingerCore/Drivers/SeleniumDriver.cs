@@ -6048,17 +6048,8 @@ namespace GingerCore.Drivers
             {
                 var xLocator = Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate));
                 var yLocator = Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate));
-
-                if (xLocator > -1 && yLocator  > -1)
-                {
-                    DoDragandDropByOffSet(sourceElement, xLocator, yLocator);
-                }
-                else
-                {
-                    act.Error = "target xy co-oridante is not correct: " + "X:"+ xLocator + "and Y:"+ yLocator;
-                }
+                DoDragandDropByOffSet(sourceElement, xLocator, yLocator);
             }
-
         }
 
         private void DoDragandDropByOffSet(IWebElement sourceElement, int xLocator, int yLocator)
