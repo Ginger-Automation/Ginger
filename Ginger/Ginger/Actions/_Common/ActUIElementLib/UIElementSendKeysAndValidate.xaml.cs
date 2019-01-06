@@ -64,7 +64,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             HandleLocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.HandleElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
 
             ValidationType.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationType), Platform.GetPlatformUIValidationTypesList(), false, null);
-            ValidationElement.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementType), Platform.GetPlatformUIElementsType(), false, null);
+            ValidationElement.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElement), Platform.GetPlatformUIElementsType(), false, null);
             LocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocateBy), Platform.GetPlatformUIElementLocatorsList(), false, null);
             LocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
             ValidationElementValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementValue), true, false, UCValueExpression.eBrowserType.Folder);

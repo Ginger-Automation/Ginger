@@ -69,7 +69,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             //TODO: Binding of all UI elements
             ClickType.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ClickType), mPlatform.GetPlatformUIClickTypeList(), false, null);
             xValidationType.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationType), mPlatform.GetPlatformUIValidationTypesList(), false, null);
-            xValidationElementTypeComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementType), mPlatform.GetPlatformUIElementsType(), false, null);
+            xValidationElementTypeComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElement), mPlatform.GetPlatformUIElementsType(), false, null);
             xValidationElementLocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocateBy), mPlatform.GetPlatformUIElementLocatorsList(), false, null);
             SetLocateValueFrame();
             GingerCore.General.ActInputValueBinding(LoopThroughClicks, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.LoopThroughClicks, "False"));
@@ -108,7 +108,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 case eLocateBy.POMElement:
                     xValidationElementTypeComboBox.IsEnabled = false;
-                    ActInputValue objValidationElementType = mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementType, string.Empty);
+                    ActInputValue objValidationElementType = mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElement, string.Empty);
                     ActInputValue objValidationElementLocatorValue = mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocatorValue, "");
                     LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(objValidationElementType, nameof(ActInputValue.Value), objValidationElementLocatorValue, nameof(ActInputValue.Value));
                     return locateByPOMElementPage;

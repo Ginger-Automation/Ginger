@@ -1767,7 +1767,7 @@ namespace GingerCore.Drivers
                 act.Error = "Unkown Validation Type";
                 return "false";
             }
-            string validationElementType = act.GetInputParamValue(ActUIElement.Fields.ValidationElementType);
+            string validationElementType = act.GetInputParamValue(ActUIElement.Fields.ValidationElement);
             
             eLocateBy validationElementLocateby;
             if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString(), out validationElementLocateby) == false)
@@ -1898,7 +1898,7 @@ namespace GingerCore.Drivers
                 act.Error = "Unkown Validation Type";
                 return "false";
             }
-            string validationElementType = act.GetInputParamValue(ActUIElement.Fields.ValidationElementType);
+            string validationElementType = act.GetInputParamValue(ActUIElement.Fields.ValidationElement);
 
             eLocateBy validationElementLocateby;
             if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString(), out validationElementLocateby) == false)
