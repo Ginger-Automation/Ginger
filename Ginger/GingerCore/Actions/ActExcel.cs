@@ -637,10 +637,8 @@ namespace GingerCore.Actions
                             //keeping the translation of vars to support prevoius implementation
                             VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
                             if (var != null)
-                            {
-                                ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                                VE.Value = var.Value;
-                                var.Value = VE.ValueCalculated;
+                            {                                
+                                var.Value = ValueExpression.Calculate(var.Value);
                                 txt = var.Value;
                             }
 
@@ -679,9 +677,8 @@ namespace GingerCore.Actions
                             VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
                             if (var != null)
                             {
-                                ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                                VE.Value = var.Value;
-                                var.Value = VE.ValueCalculated;
+                                
+                                var.Value = ValueExpression.Calculate(var.Value);
                                 if (var != null)
                                     txt = var.Value;
                                 else

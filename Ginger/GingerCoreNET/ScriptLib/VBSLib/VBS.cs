@@ -16,10 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using GingerCoreNET.RosLynLib;
 using System;
-using System.IO;
+using System.Diagnostics;
 using System.Threading;
-using GingerCore.Actions;
 
 namespace GingerCore.GeneralLib
 {
@@ -30,22 +31,25 @@ namespace GingerCore.GeneralLib
         string ErrorBuffer = "";
         string result;
 
+
+        static CodeProcessor mCodeProcessor = new CodeProcessor();
         public static string ExecuteVBSEval(string Expr)
         {
             VBS vbs = new VBS();
             return vbs.Execute(Expr);
+            //string result =mCodeProcessor.EvalExpression(Expr);
+            //return result;
         }
 
         public string Execute(string Expr)
         {
-            
+            Stopwatch st = Stopwatch.StartNew();                
             //Create temp vbs file
             string fileName="";
 
             try
             {
                 fileName = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".vbs";
-
             }
             catch (Exception)
             {
@@ -66,7 +70,8 @@ namespace GingerCore.GeneralLib
             {
                 result = result.Trim();
             }
-
+            st.Stop();
+            Reporter.ToLog(eLogLevel.DEBUG, "Executed VBS - Elapsed: " + st.ElapsedMilliseconds + " ,Expression: " + Expr + " ,Result: " + result);
             return result;
         }   
         
