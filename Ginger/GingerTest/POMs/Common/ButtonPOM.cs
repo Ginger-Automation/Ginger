@@ -16,8 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using GingerTest.VideosLib;
-using GingerWPFUnitTest;
 using GingerWPFUnitTest.POMs;
 using System.Threading;
 using System.Windows.Controls;
