@@ -295,7 +295,6 @@ namespace GingerWPFUnitTest.POMs
             {
                 ClickResourcesRibbon();
                 Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
-                //TwoLevelMenuPage p = (TwoLevelMenuPage)f.Content;
 
                 TwoLevelMenuPage resourcesPage = (TwoLevelMenuPage)f.Content;
 
@@ -327,8 +326,6 @@ namespace GingerWPFUnitTest.POMs
                     }
                 }
             });
-
-            if (POMs == null) throw new Exception("Cannot goto POMs");
 
             return POMs;
 

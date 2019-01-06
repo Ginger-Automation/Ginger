@@ -3,7 +3,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GingerTestHelper;
 using GingerWPFUnitTest;
 using System.IO;
-using GingerWPFUnitTest.GeneralLib;
 using GingerTest.POMs;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore;
@@ -21,52 +20,40 @@ namespace GingerTest.APIModelLib
     {
         static GingerWPF.WorkSpaceLib.WorkSpaceEventHandler WSEH = new GingerWPF.WorkSpaceLib.WorkSpaceEventHandler();
 
-        static TestContext mTC;
-        static string SolutionFolder;
-        static GingerAutomator mGingerAutomator;
+        static POMsPOM mPOMsPOM = null;
+        static ApplicationPOMModel mLearnedPOM = null;
+
 
         [ClassInitialize]
-        public static void ClassInit(TestContext TC)
+        public static void ClassInit()
         {
             //Arrange  
-            mTC = TC;
             string name = "MyNewPOM";
             string description = "MyDescription";
 
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\POMsTest");
-            SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\POMsTest");
+            string SolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\POMsTest");
             if (Directory.Exists(SolutionFolder))
             {
                 Directory.Delete(SolutionFolder, true);
             }
 
             CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
-            mGingerAutomator = GingerAutomator.StartSession();
+            GingerAutomator mGingerAutomator = GingerAutomator.StartSession();
             mGingerAutomator.OpenSolution(SolutionFolder);
             mPOMsPOM = mGingerAutomator.MainWindowPOM.GotoPOMs();
 
-            mChromeAgent = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == "ChromeAgent" select x).SingleOrDefault();
+            Agent mChromeAgent = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == "ChromeAgent" select x).SingleOrDefault();
             //Act
             mLearnedPOM = mPOMsPOM.CreatePOM(name, description, "MyWebApp", mChromeAgent, @"HTML\HTMLControls.html", new List<eElementType>() { eElementType.Button, eElementType.Canvas, eElementType.Label });
         }
 
-        static Agent mChromeAgent = null;
-        static POMsPOM mPOMsPOM = null;
-        static ApplicationPOMModel mLearnedPOM = null;
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
             GingerAutomator.EndSession();
         }
-
-        [TestInitialize]
-        public void TestInitialize()
-        {}
-
-        [TestCleanup]
-        public void TestCleanUp()
-        {}
 
         [TestMethod]
         public void ValidatePOMWasAddedToPOMsTree()
@@ -131,9 +118,6 @@ namespace GingerTest.APIModelLib
             Assert.AreEqual(mLearnedPOM.MappedUIElements[3].Locators.Count, 2, "POM.Locators check");
             Assert.AreEqual(mLearnedPOM.UnMappedUIElements[4].Locators.Count, 3, "POM.Locators check");
         }
-
-        public POMsTest()
-        {}
 
         private TestContext testContextInstance;
 

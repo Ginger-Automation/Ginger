@@ -68,12 +68,6 @@ namespace GingerTest.POMs
             wizard.FinishButton.Click();
             SleepWithDoEvents(2000);
 
-            // Verify pom appear on tree, might take some time
-            bool isExist = mTreeView.IsItemExist(POMName);
-            if (!isExist)
-            {
-                throw new Exception("Cannot find new POM in tree: " + POMName);
-            }
             ApplicationPOMModel POM = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == POMName select x).SingleOrDefault();
             return POM;
         }
