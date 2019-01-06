@@ -38,7 +38,8 @@ namespace GingerCore.ALM
 
         public override bool ConnectALMProject()
         {
-            return QCConnect.ConnectQCProject(ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMDomain, ALMCore.AlmConfig.ALMProjectName);
+            ALMCore.AlmConfig.ALMProjectName = ALMCore.AlmConfig.ALMProjectKey;
+            return QCConnect.ConnectQCProject(ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMDomain, ALMCore.AlmConfig.ALMProjectKey);
         }
 
         public override Boolean IsServerConnected()
@@ -55,7 +56,7 @@ namespace GingerCore.ALM
         {
             return QCConnect.GetQCDomains();
         }
-        public override List<string> GetALMDomainProjects(string ALMDomain)
+        public override Dictionary<string,string> GetALMDomainProjects(string ALMDomain)
         {
             ALMCore.AlmConfig.ALMDomain = ALMDomain;
             return QCConnect.GetQCDomainProjects(ALMCore.AlmConfig.ALMDomain);

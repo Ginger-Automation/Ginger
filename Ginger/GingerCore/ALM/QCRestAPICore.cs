@@ -54,7 +54,7 @@ namespace GingerCore.ALM
             return QCRestAPIConnect.GetQCDomains();
         }
 
-        public override List<string> GetALMDomainProjects(string ALMDomainName)
+        public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
         {
             ALMCore.AlmConfig.ALMDomain = ALMDomainName;
             return QCRestAPIConnect.GetQCDomainProjects(ALMCore.AlmConfig.ALMDomain);

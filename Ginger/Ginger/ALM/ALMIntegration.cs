@@ -86,7 +86,7 @@ namespace Ginger.ALM
         public void SetALMCoreConfigurations()
         {
             ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
-            AlmCore.SetALMConfigurations(App.UserProfile.Solution.ALMServerURL, App.UserProfile.Solution.UseRest,  App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMDomain, App.UserProfile.Solution.ALMProject);
+            AlmCore.SetALMConfigurations(App.UserProfile.Solution.ALMServerURL, App.UserProfile.Solution.UseRest,  App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMDomain, App.UserProfile.Solution.ALMProject, App.UserProfile.Solution.ALMProjectKey);
             SyncConfigurations();
         }
 
@@ -98,6 +98,7 @@ namespace Ginger.ALM
             App.UserProfile.ALMPassword = ALMCore.AlmConfig.ALMPassword;
             App.UserProfile.Solution.ALMDomain = ALMCore.AlmConfig.ALMDomain;
             App.UserProfile.Solution.ALMProject = ALMCore.AlmConfig.ALMProjectName;
+            App.UserProfile.Solution.ALMProjectKey = ALMCore.AlmConfig.ALMProjectKey;
         }
 
         public ALMConfig AlmConfigurations
@@ -143,7 +144,7 @@ namespace Ginger.ALM
             ALMCore.AlmConfig.ALMPassword = newPassword;
         }
 
-        public void SetALMProject(string newProject)
+        public void SetALMProject(KeyValuePair<string,string> newProject)
         {
             AlmRepo.SetALMProject(newProject);
         }
@@ -225,10 +226,10 @@ namespace Ginger.ALM
             return domainList;
         }
 
-        public List<string> GetALMDomainProjects(string ALMDomain, eALMConnectType almConectStyle)
+        public Dictionary<string, string> GetALMDomainProjects(string ALMDomain, eALMConnectType almConectStyle)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            List<string> projectsList = new List<string>();
+            Dictionary<string, string> projectsList = new Dictionary<string, string>();
             if (AutoALMServerConnect(almConectStyle))
             {
                 projectsList = AlmCore.GetALMDomainProjects(ALMDomain);

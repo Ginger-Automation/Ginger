@@ -80,7 +80,7 @@ namespace GingerCore.ALM
             throw new NotImplementedException();
         }
 
-        public override List<string> GetALMDomainProjects(string ALMDomainName)
+        public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
         {
             AlmConfig.ALMDomain = ALMDomainName;
             return jiraConnectObj.GetJiraDomainProjects();
@@ -110,6 +110,10 @@ namespace GingerCore.ALM
         public bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup,string uploadPath, IEnumerable<ExternalItemFieldBase> testCaseFields, IEnumerable<ExternalItemFieldBase> designStepsFields, ref string res)
         {
             return true;
+        }
+        public ObservableList<JiraTestSet> GetJiraTestSets()
+        {
+            return jiraConnectObj.GetJiraTestSets();
         }
     }
 }

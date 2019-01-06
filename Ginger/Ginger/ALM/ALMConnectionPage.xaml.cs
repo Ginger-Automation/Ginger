@@ -50,7 +50,7 @@ namespace Ginger.ALM
             App.ObjFieldBinding(RestAPICheckBox, CheckBox.IsCheckedProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.UseRest));
             App.ObjFieldBinding(UserNameTextBox, TextBox.TextProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMUserName));
             App.ObjFieldBinding(DomainComboBox, ComboBox.SelectedValueProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMDomain));
-            App.ObjFieldBinding(ProjectComboBox, ComboBox.SelectedValueProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMProjectName));
+            App.ObjFieldBinding(ProjectComboBox, ComboBox.SelectedValueProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMProjectKey));
             PasswordTextBox.Password = ALMIntegration.Instance.ALMPassword(); //can't do regular binding with PasswordTextBox control for security reasons
 
             if (!WorkSpace.Instance.BetaFeatures.Rally)
@@ -260,27 +260,33 @@ namespace Ginger.ALM
                     DomainComboBox.SelectedItem = currSelectedDomain;
                 }
 
-                List<string> lstProjects = ALMIntegration.Instance.GetALMDomainProjects(currSelectedDomain, almConectStyle);
+                Dictionary<string,string> lstProjects = ALMIntegration.Instance.GetALMDomainProjects(currSelectedDomain, almConectStyle);
 
-                string currSavedProj = App.UserProfile.Solution.ALMProject;
+                KeyValuePair<string, string> currSavedProj = new KeyValuePair<string, string>(App.UserProfile.Solution.ALMProjectKey, App.UserProfile.Solution.ALMProject);
                 ProjectComboBox.Items.Clear();
-                foreach (string project in lstProjects)
-                    ProjectComboBox.Items.Add(project);
+                foreach (KeyValuePair<string,string> project in lstProjects)
+                {
+                    ProjectComboBox.SelectedValuePath = "Key";
+                    ProjectComboBox.DisplayMemberPath = "Value";
+                    ProjectComboBox.Items.Add(new KeyValuePair<string, string>(project.Key, project.Value));
+                }
 
                 if (ProjectComboBox.Items.Count > 0)
                 {
-                    if (string.IsNullOrEmpty(currSavedProj) == false)
+                    if (string.IsNullOrEmpty(currSavedProj.Key) == false)
                     {
                         if (ProjectComboBox.Items.Contains(currSavedProj))
                         {
                             ProjectComboBox.SelectedIndex = ProjectComboBox.Items.IndexOf(currSavedProj);
-                            App.UserProfile.Solution.ALMProject = currSavedProj;
+                            App.UserProfile.Solution.ALMProject = currSavedProj.Value;
+                            App.UserProfile.Solution.ALMProjectKey = currSavedProj.Key;
                         }
                     }
                     if (ProjectComboBox.SelectedIndex == -1)
                     {
                         ProjectComboBox.SelectedIndex = 0;
                         App.UserProfile.Solution.ALMProject = ProjectComboBox.Text;
+                        App.UserProfile.Solution.ALMProjectKey = ProjectComboBox.SelectedValuePath;
                     }
 
                 }
@@ -537,10 +543,8 @@ namespace Ginger.ALM
             if (ServerURLTextBox.Text.ToLower().Contains("qcbin"))
             {
                 //remove rest of URL
-                ServerURLTextBox.Text = ServerURLTextBox.Text.Substring(0,
-                                           ServerURLTextBox.Text.ToLower().IndexOf("qcbin") + 5);
+                ServerURLTextBox.Text = ServerURLTextBox.Text.Substring(0,ServerURLTextBox.Text.ToLower().IndexOf("qcbin") + 5);
             }
-
             SetControls();
         }
 
@@ -559,7 +563,15 @@ namespace Ginger.ALM
         private void ProjectComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ProjectComboBox != null && ProjectComboBox.SelectedItem != null)
-                ALMIntegration.Instance.SetALMProject(ProjectComboBox.SelectedItem.ToString());
+            {
+                ALMIntegration.Instance.SetALMProject((KeyValuePair<string, string>)ProjectComboBox.SelectedItem);
+                return;
+            }
+            if (ProjectComboBox != null && ProjectComboBox.SelectionBoxItem != null)
+            {
+                ProjectComboBox.SelectedItem = ProjectComboBox.SelectionBoxItem;
+                ALMIntegration.Instance.SetALMProject((KeyValuePair<string, string>)ProjectComboBox.SelectionBoxItem);
+            }
         }
 
         private void TestALMConnectionButton_Click(object sender, RoutedEventArgs e)
