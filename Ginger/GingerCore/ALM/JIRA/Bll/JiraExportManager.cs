@@ -55,6 +55,11 @@ namespace GingerCore.ALM.JIRA.Bll
             bool resultFlag = false;
             if (bizFlow.ExternalID != "0" && (!String.IsNullOrEmpty(bizFlow.ExternalID)))
             {
+                if (string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunName))
+                {
+                    String timeStamp = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+                    publishToALMConfig.VariableForTCRunName = "GingerRun_" + timeStamp;
+                }
                 foreach (var actGroup in bizFlow.ActivitiesGroups)
                 {
                     var testExecutionData = CreateTestRunData(actGroup);
@@ -62,6 +67,7 @@ namespace GingerCore.ALM.JIRA.Bll
                     {
                         List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == actGroup.Name)).Select(a => a).ToList();
                         JiraRunStatus runs = new JiraRunStatus();
+                        runs.comment = publishToALMConfig.VariableForTCRunName;
                         JiraRunStepStautusColl stepColl = new JiraRunStepStautusColl();
                         runs.steps = stepColl;
                         foreach (var act in activities)
