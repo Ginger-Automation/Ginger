@@ -26,6 +26,7 @@ using GingerCore;
 using Amdocs.Ginger.Common.Enums;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Environments
 {
@@ -84,6 +85,15 @@ namespace Ginger.Environments
                 db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                 db.ProjEnvironment = App.AutomateTabEnvironment;
                 db.BusinessFlow = App.BusinessFlow;
+                if (string.IsNullOrEmpty(db.ConnectionString) && db.TNS.ToLower().Contains("data source=") && db.TNS.ToLower().Contains("password=") && db.TNS.ToLower().Contains("user id="))
+                {
+                    System.Data.SqlClient.SqlConnectionStringBuilder scSB = new System.Data.SqlClient.SqlConnectionStringBuilder();
+                    scSB.ConnectionString = db.TNS;
+                    db.TNS = scSB.DataSource;
+                    db.User = scSB.UserID;
+                    db.Pass = scSB.Password;
+                    db.ConnectionString = scSB.ConnectionString;
+                }
 
                 db.CloseConnection();
                 if (db.Connect(true))
@@ -100,7 +110,7 @@ namespace Ginger.Environments
             {
                 if (ex.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
                 {
-                    if (Reporter.ToUser(eUserMsgKeys.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKeys.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                     {
                         System.Diagnostics.Process.Start("https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149");
                         System.Diagnostics.Process.Start("http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html");

@@ -149,7 +149,7 @@ namespace Ginger.Run
 
         private void DeleteSelectedExecutionResults(object sender, System.Windows.RoutedEventArgs e)
         {
-            if ((Reporter.ToUser(eUserMsgKeys.ExecutionsResultsToDelete)) == MessageBoxResult.Yes)
+            if ((Reporter.ToUser(eUserMsgKeys.ExecutionsResultsToDelete)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 foreach (RunSetReport runSetReport in grdExecutionsHistory.Grid.SelectedItems)
                 {
@@ -168,7 +168,7 @@ namespace Ginger.Run
         }
         private void DeleteAllSelectedExecutionResults(object sender, System.Windows.RoutedEventArgs e)
         {
-            if ((Reporter.ToUser(eUserMsgKeys.AllExecutionsResultsToDelete)) == MessageBoxResult.Yes)
+            if ((Reporter.ToUser(eUserMsgKeys.AllExecutionsResultsToDelete)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 foreach (RunSetReport runSetReport in grdExecutionsHistory.Grid.Items)
                 {

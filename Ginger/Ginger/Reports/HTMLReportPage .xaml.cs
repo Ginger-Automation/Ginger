@@ -121,7 +121,7 @@ namespace Ginger.Reports
             ObservableList<Bitmap> Bitmp = new ObservableList<Bitmap>();
             foreach (String bitmapsource in ScreenShots)
             {
-                Bitmap bmp = GingerCore.General.FileToBitmapImage(bitmapsource);
+                Bitmap bmp = Ginger.Utils.BitmapManager.FileToBitmapImage(bitmapsource);
                 var txt = string.Empty;
              
                 //Bitmap bitmap;

@@ -249,7 +249,7 @@ namespace Ginger.SourceControl
                 GetProjetList();
                 Mouse.OverrideCursor = null;
 
-                if (getProjectResult && (Reporter.ToUser(eUserMsgKeys.DownloadedSolutionFromSourceControl, sol.LocalFolder) == MessageBoxResult.Yes))
+                if (getProjectResult && (Reporter.ToUser(eUserMsgKeys.DownloadedSolutionFromSourceControl, sol.LocalFolder) == Amdocs.Ginger.Common.MessageBoxResult.Yes))
                 {
                     OpenSolution(sol.LocalFolder, ProjectURI);
 
@@ -405,7 +405,7 @@ namespace Ginger.SourceControl
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error Occured :", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error Occured :", ex);
             }
             finally
             {

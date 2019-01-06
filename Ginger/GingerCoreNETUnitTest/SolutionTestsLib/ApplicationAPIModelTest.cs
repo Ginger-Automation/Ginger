@@ -39,7 +39,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         public static void ClassInitialize(TestContext TC)
         {            
 
-            string TempSolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\APIModelsTest");
+            string TempSolutionFolder = TestResources.GetTestTempFolder(@"Solutions\APIModelsTest");
             if (Directory.Exists(TempSolutionFolder))
             {
                 Directory.Delete(TempSolutionFolder, true);
@@ -77,6 +77,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             Assert.AreEqual(ext, "Ginger.ApplicationAPIModel");
         }
 
+        [Ignore]
         [TestMethod]
         public void AddAPIFromXMLAndAvoidDuplicateNodesTest()
         {
@@ -107,6 +108,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             Assert.AreEqual(AppModelParametersAvoidNodes.Count, 1);
         }
 
+        [Ignore]
         [TestMethod]
         public void AddAPIFromJSONAndAvoidDuplicateNodesTest()
         {

@@ -154,7 +154,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            if (Reporter.ToUser(eUserMsgKeys.DeleteRepositoryItemAreYouSure, FileName) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.DeleteRepositoryItemAreYouSure, FileName) == Amdocs.Ginger.Common.MessageBoxResult.No)
                 return false;
 
             try

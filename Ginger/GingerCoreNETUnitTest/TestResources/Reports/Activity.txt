@@ -1,0 +1,1 @@
+{"Seq":1,"GUID":"4b536b9e-f3b8-445d-810b-a1a83619dbe6","ActivityName":"Initial Setup","Description":"Initial set up of variables are created here","StartTimeStamp":"2018-12-26T09:53:36.7927974Z","EndTimeStamp":"2018-12-26T09:53:38.8414048Z","Elapsed":2044,"RunStatus":"Passed","VariablesBeforeExec":[],"VariablesAfterExec":[]}

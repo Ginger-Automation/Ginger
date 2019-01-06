@@ -44,7 +44,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             DummyWorkSpace ws = new DummyWorkSpace();
             WorkSpace.Init(ws);
 
-            string folder = TestResources.getGingerUnitTesterTempFolder("Solutions", "PluginTest");
+            string folder = TestResources.GetTestTempFolder("Solutions", "PluginTest");
 
             if (Directory.Exists(folder))
             {
