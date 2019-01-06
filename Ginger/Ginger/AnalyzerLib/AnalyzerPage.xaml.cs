@@ -222,7 +222,7 @@ namespace Ginger.AnalyzerLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -305,7 +305,7 @@ namespace Ginger.AnalyzerLib
         {
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();            
             BusinessFlow BusinessFlow = App.BusinessFlow;
-            Activity activity = BusinessFlow.Activities[0];
+            Activity activity = (Activity)BusinessFlow.Activities[0];
             string variableSourceType = "";
             string variableSourceName = "";
             ObservableList<VariableBase> AvailableAllVariables = new ObservableList<VariableBase>();
@@ -335,7 +335,7 @@ namespace Ginger.AnalyzerLib
                 AvailableAllVariables = solution.Variables;
                 variableSourceType = "Solution";
                 variableSourceName = solution.Name;                
-                activity = BusinessFlow.Activities[0];
+                activity = (Activity)BusinessFlow.Activities[0];
             }
 
 
@@ -638,7 +638,7 @@ namespace Ginger.AnalyzerLib
             }
             // TODO: click/use the same code on solution which will save all changed items...
             // Meanwhile the below is good start 
-            if (Reporter.ToUser(eUserMsgKeys.SaveAllItemsParentWarning) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.SaveAllItemsParentWarning) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 BusyInProcess = true;
                 SetStatus("Starting to Save Fixed Items...");

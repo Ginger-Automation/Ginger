@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.ALM.Rally;
 using Ginger.Repository;
 using GingerCore;
@@ -62,19 +63,19 @@ namespace Ginger.ALM.Repository
         public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
         {
             bool isConnectSucc = false;
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "Connecting to Rally server");
+            Reporter.ToLog(eLogLevel.INFO, "Connecting to Rally server");
             try
             {
                 isConnectSucc = ALMIntegration.Instance.AlmCore.ConnectALMServer();
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error connecting to Rally server", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Error connecting to Rally server", e);
             }
 
             if (!isConnectSucc)
             {
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Could not connect to Rally server");
+                Reporter.ToLog(eLogLevel.INFO, "Could not connect to Rally server");
                 if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
                     Reporter.ToUser(eUserMsgKeys.ALMConnectFailure);
                 else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
@@ -99,8 +100,8 @@ namespace Ginger.ALM.Repository
                         BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == RallyID + "=" + testPlan.RallyID).FirstOrDefault();
                         if (existedBF != null)
                         {
-                            MessageBoxResult userSelection = Reporter.ToUser(eUserMsgKeys.TestSetExists, testPlan.Name);
-                            if (userSelection == MessageBoxResult.Yes)
+                            Amdocs.Ginger.Common.MessageBoxResult userSelection = Reporter.ToUser(eUserMsgKeys.TestSetExists, testPlan.Name);
+                            if (userSelection == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                             {
                                 File.Delete(existedBF.FileName);
                             }

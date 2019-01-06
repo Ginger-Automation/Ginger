@@ -80,7 +80,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             else
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error unknown item added to Activitiess folder");
+                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Activitiess folder");
                 throw new NotImplementedException();
             }
         }

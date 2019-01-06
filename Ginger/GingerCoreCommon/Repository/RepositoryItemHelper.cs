@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -25,5 +25,6 @@ namespace Amdocs.Ginger.Common
     public class RepositoryItemHelper
     {
         public static IRepositoryItemFactory RepositoryItemFactory { get; set; }
+
     }
 }
