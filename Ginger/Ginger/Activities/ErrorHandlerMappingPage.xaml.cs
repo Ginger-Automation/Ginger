@@ -45,7 +45,7 @@ namespace Ginger.Activities
             mBusinessFlow = businessFlow;
 
             lstCurrentBusinessFlowErrorHandler = new ObservableList<ErrorHandler>(mBusinessFlow.Activities.Where(a => a.GetType() == typeof(ErrorHandler) && a.Active == true
-                      && ((GingerCore.ErrorHandler)a).HandlerType == GingerCore.ErrorHandler.eHandlerType.Error_Handler).Cast<ErrorHandler>().ToList());
+                      && ((ErrorHandler)a).HandlerType == eHandlerType.Error_Handler).Cast<ErrorHandler>().ToList());
 
             if (mActivity.MappedErrorHandlers.Count!= 0)
             {
@@ -140,7 +140,7 @@ namespace Ginger.Activities
             {
                 mBusinessFlow.CurrentActivity = (Activity)grdErrorHandler.CurrentItem;
                 if (mBusinessFlow.CurrentActivity != null)
-                    mBusinessFlow.CurrentActivity.PropertyChanged += CurrentActivity_PropertyChanged;
+                   ((Activity) mBusinessFlow.CurrentActivity).PropertyChanged += CurrentActivity_PropertyChanged;
             }
         }
         private void MarkUnMarkAllActivities(bool ActiveStatus)

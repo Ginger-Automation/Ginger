@@ -20,6 +20,7 @@ using System;
 using System.Threading;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
+using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Drivers.ScriptDriverLib
@@ -47,7 +48,7 @@ namespace GingerCore.Drivers.ScriptDriverLib
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
             }
             p.Start();
 

@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
+using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Variables
 {
@@ -62,29 +63,6 @@ namespace GingerCore.Variables
             //Details
         }
         
-        public new static partial class Fields
-        {
-            public static string Image = "Image";
-            public static string Name = "Name";
-            public static string Description = "Description";
-            public static string VariableUIType = "VariableUIType";            
-            public static string Value = "Value";
-            public static string Formula = "Formula";        
-            public static string ParentType = "ParentType";
-            public static string ParentName = "ParentName";
-            public static string VarValChanged = "VarValChanged";
-            public static string DiffrentFromOrigin = "DiffrentFromOrigin";            
-            public static string VariableEditPage = "VariableEditPage";
-            public static string LinkedVariableName = "LinkedVariableName";
-            public static string SetAsInputValue = "SetAsInputValue";
-            public static string SetAsOutputValue = "SetAsOutputValue";
-            public static string PossibleOutputVariables = "PossibleOutputVariables";
-            public static string MappedOutputVariable = "MappedOutputVariable";
-            public static string MappedOutputType = "MappedOutputType";
-            public static string MappedOutputValue = "MappedOutputValue";
-            public static string SupportSetValue = "SupportSetValue";
-        }
-
         public override string ToString()
         {
             return Name;
@@ -107,7 +85,7 @@ namespace GingerCore.Variables
                 if (mSetAsInputValue != value)
                 {
                     mSetAsInputValue = value;
-                    OnPropertyChanged(Fields.SetAsInputValue);
+                    OnPropertyChanged(nameof(SetAsInputValue));
                 }
             }
         }
@@ -122,7 +100,7 @@ namespace GingerCore.Variables
                 if (mSetAsOutputValue != value)
                 {
                     mSetAsOutputValue = value;
-                    OnPropertyChanged(Fields.SetAsOutputValue);
+                    OnPropertyChanged(nameof(SetAsOutputValue));
                 }
             }
         }
@@ -182,7 +160,7 @@ namespace GingerCore.Variables
                             this.ResetValue();
                     }        
                     
-                    OnPropertyChanged(Fields.Formula);
+                    OnPropertyChanged(nameof(Formula));
                 }
                 return mFormula;
             }
@@ -197,7 +175,7 @@ namespace GingerCore.Variables
                            this.ResetValue();
                     }
                     
-                    OnPropertyChanged(Fields.Formula);
+                    OnPropertyChanged(nameof(Formula));
                 }
             }
         }
@@ -217,7 +195,7 @@ namespace GingerCore.Variables
         public string ParentName { get; set; }
         private bool mVarValChanged;
         [IsSerializedForLocalRepository]
-        public bool VarValChanged { get { return mVarValChanged; } set { mVarValChanged = value; OnPropertyChanged(Fields.VarValChanged); } }
+        public bool VarValChanged { get { return mVarValChanged; } set { mVarValChanged = value; OnPropertyChanged(nameof(VarValChanged)); } }
 
         //used to identify the variables which the user customized for specific BF run
         private bool mDiffrentFromOrigin;
@@ -233,7 +211,7 @@ namespace GingerCore.Variables
                 }
                 return mDiffrentFromOrigin;
             }
-            set { mDiffrentFromOrigin = value; OnPropertyChanged(Fields.DiffrentFromOrigin); } }
+            set { mDiffrentFromOrigin = value; OnPropertyChanged(nameof(DiffrentFromOrigin)); } }
 
         public string NameBeforeEdit;
 
@@ -266,7 +244,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex, true);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex, true);
                 }
 
                 if (value is IObservableList)
@@ -327,7 +305,7 @@ namespace GingerCore.Variables
 
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
-                dynamic value = null;
+                object value = null;
                 try
                 {
                     if (mi.MemberType == MemberTypes.Property)
@@ -339,13 +317,13 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex, true);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex, true);
                     value = null;
                 } 
                 
                 if (value is IObservableList)
                 {
-                    foreach (object o in value)
+                    foreach (object o in (IObservableList)value)
                         GetListOfUsedVariables(o, ref usedVariables);
                 }
                 else
@@ -367,10 +345,10 @@ namespace GingerCore.Variables
                                             if (usedVariables.Contains(value.ToString()) == false)
                                                 usedVariables.Add(value.ToString());
                                     }
-                                }
-                                else if(mi.Name == "ValueCalculated" && mi.DeclaringType.Name == "FlowControl") // get used variable in flow control with set variable action type.
-                                {
-                                    string[] vals = value.Split(new[] { '=' });
+                                }                               
+                                else if(mi.Name == "FlowControlAction" && value.ToString() == "SetVariableValue") //get used variable in flow control with set variable action type.
+                                {                                    
+                                    string[] vals = ((string)item.GetType().GetRuntimeProperty("ValueCalculated").GetValue(item)).Split(new[] { '=' });
                                     const int count = 2;
                                     if (vals.Count() == count && !usedVariables.Contains(vals[0]))
                                     {                                       
@@ -381,7 +359,7 @@ namespace GingerCore.Variables
                                 {
                                     if(!usedVariables.Contains(value))
                                     {
-                                        usedVariables.Add(value);
+                                        usedVariables.Add((string)value);
                                     }
                                 }
                                 else
@@ -406,7 +384,7 @@ namespace GingerCore.Variables
                         }
                         catch (Exception ex)
                         {
-                            // TODO: FIXME!!! no empty exception
+                            Reporter.ToLog(eLogLevel.INFO, "Failed to get list of used variables", ex);
                         } 
                     }
                 }
@@ -473,17 +451,17 @@ namespace GingerCore.Variables
                         int originalIndex = 0;
 
                         //TODO: Fix the issues
-                        if (hostItem is IActivity)
+                        if (hostItem is Activity)
                         {
-                            originalIndex = ((IActivity)hostItem).GetVariables().IndexOf(variableBaseInstance);
-                            ((IActivity)hostItem).GetVariables().Remove(variableBaseInstance);
-                            ((IActivity)hostItem).GetVariables().Insert(originalIndex, newInstance);
+                            originalIndex = ((Activity)hostItem).GetVariables().IndexOf(variableBaseInstance);
+                            ((Activity)hostItem).GetVariables().Remove(variableBaseInstance);
+                            ((Activity)hostItem).GetVariables().Insert(originalIndex, newInstance);
                         }
                         else
                         {
-                            originalIndex = ((IBusinessFlow)hostItem).GetVariables().IndexOf(variableBaseInstance);
-                            ((IBusinessFlow)hostItem).GetVariables().Remove(variableBaseInstance);
-                            ((IBusinessFlow)hostItem).GetVariables().Insert(originalIndex, newInstance);
+                            originalIndex = ((BusinessFlow)hostItem).GetVariables().IndexOf(variableBaseInstance);
+                            ((BusinessFlow)hostItem).GetVariables().Remove(variableBaseInstance);
+                            ((BusinessFlow)hostItem).GetVariables().Insert(originalIndex, newInstance);
                         }
                     }
                     break;
@@ -519,7 +497,7 @@ namespace GingerCore.Variables
             set
             {
                 mPossibleOutputVariables = value;
-                OnPropertyChanged(Fields.PossibleOutputVariables);
+                OnPropertyChanged(nameof(PossibleOutputVariables));
             }
         }
 
@@ -537,8 +515,8 @@ namespace GingerCore.Variables
                     DiffrentFromOrigin = true;
                     mMappedOutputType = eOutputType.Variable;
                     mMappedOutputValue = value;
-                    OnPropertyChanged(Fields.MappedOutputType);
-                    OnPropertyChanged(Fields.MappedOutputValue);
+                    OnPropertyChanged(nameof(MappedOutputType));
+                    OnPropertyChanged(nameof(MappedOutputValue));
                 }                    
             }
         }
@@ -552,7 +530,7 @@ namespace GingerCore.Variables
             set
             {
                 mMappedOutputType = value;
-                OnPropertyChanged(Fields.MappedOutputType);
+                OnPropertyChanged(nameof(MappedOutputType));
             }
         }
 
@@ -571,7 +549,7 @@ namespace GingerCore.Variables
                     DiffrentFromOrigin = true;
                 else
                     DiffrentFromOrigin = false;
-                OnPropertyChanged(Fields.MappedOutputValue);
+                OnPropertyChanged(nameof(MappedOutputValue));
             }
         }
         public abstract bool SupportSetValue { get; }

@@ -1,31 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Platforms;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.UIElement;
-using GingerTestHelper;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace UnitTests.UITests.PBDriverTest
 {
-       
+
     [TestClass]
     public class PBDriverWidgetTest
     {
         public static BusinessFlow mBF;
-        static Process proc;
+        static System.Diagnostics.Process proc;
         // make it static for reuse so no need to init every time when running test by click test button
         static PBDriver mDriver = null;
         static GingerRunner mGR = null;
@@ -36,7 +48,7 @@ namespace UnitTests.UITests.PBDriverTest
             // launch PB Test App
             if (proc == null || proc.HasExited)
             {
-                proc = new Process();
+                proc = new System.Diagnostics.Process();
                 proc.StartInfo.FileName = @"pb_test_app.exe";
                 proc.StartInfo.WorkingDirectory = TestResources.GetTestResourcesFolder("PBTestApp");
                 Console.WriteLine(proc.StartInfo.WorkingDirectory);
@@ -53,9 +65,7 @@ namespace UnitTests.UITests.PBDriverTest
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test PB Driver";
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.PowerBuilder;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.PowerBuilder;            
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "PBTestAPP" });
             Activity activity = new Activity();
             activity.TargetApplication = "PBTestApp";
@@ -69,7 +79,7 @@ namespace UnitTests.UITests.PBDriverTest
             a.Driver = mDriver;
             a.DriverType = Agent.eDriverType.PowerBuilder;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(a);
 
             

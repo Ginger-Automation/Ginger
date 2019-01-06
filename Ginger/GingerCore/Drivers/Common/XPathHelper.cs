@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common.UIElement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Drivers.Common
 {
@@ -400,6 +401,75 @@ namespace GingerCore.Drivers.Common
             ElementInfo EI =  GetElementByXpath(XPath);
             list.Add(EI);
             return list;
+        }
+
+        public string GetElementRelXPath(ElementInfo elemInfo)
+        {
+            var relxpath = "";
+            string xpath = elemInfo.XPath;
+            List<object> elemsList = null;
+            try
+            {
+                while (relxpath.IndexOf("//") == -1 && elemInfo.ElementObject != null)
+                {
+                    string id = mDriver.GetElementID(elemInfo);
+                    if (!string.IsNullOrEmpty(id))
+                    {
+                        relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@id='" + id + "']");
+                        elemsList = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath,relxpath);
+                        if (elemsList == null || (elemsList != null && elemsList.Count() < 2)) {
+                            continue;
+                        }                        
+                    }
+                    string name = Convert.ToString(mDriver.GetElementProperty(elemInfo,"name"));
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        if(relxpath == "")
+                        { 
+                            relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@name='" + name + "']");
+                        }
+                        else
+                        { 
+                            relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@id='" + id + "' and @name ='" + name + "']");
+                        }
+                        elemsList = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath, relxpath);
+                        if (elemsList == null || (elemsList != null && elemsList.Count() < 2))
+                        {
+                            continue;
+                        }
+                    }
+                    if(relxpath.IndexOf("//") != -1 && elemsList != null)
+                    {
+                        string path = relxpath;
+                        for (int i = 1; i <= elemsList.Count(); i++)
+                        {
+                            relxpath = "(" + path + ")[" + i + "]";
+                            List<object> newElem = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath, relxpath);
+                            if (newElem != null && newElem.Count() >0 && newElem[0].Equals(elemInfo.ElementObject))
+                            {
+                                break;
+                            }
+                        }
+                        continue;
+                    }
+                    elemInfo = mDriver.GetElementParent(elemInfo); 
+                    if(relxpath== "" && elemInfo is HTMLElementInfo && !String.IsNullOrEmpty(((HTMLElementInfo)elemInfo).RelXpath))
+                    {
+                        relxpath = xpath.Replace(elemInfo.XPath, ((HTMLElementInfo)elemInfo).RelXpath);
+                        break;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                relxpath = xpath;
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in GetElementRelXPath ::", e, true, true);
+            }
+            if (relxpath == "")
+            {
+                relxpath = xpath;
+            }                
+            return relxpath;
         }
     }
 }

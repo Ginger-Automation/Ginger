@@ -34,6 +34,7 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace UnitTests.NonUITests
 {
@@ -54,18 +55,16 @@ namespace UnitTests.NonUITests
             mBF.Name = "BF Visual Testing";
             mBF.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.Web;            
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "VM" });            
 
             mGR = new GingerRunner();
-            mGR.SolutionFolder = TestResources.getGingerUnitTesterTempFolder("");
+            mGR.SolutionFolder = TestResources.GetTestTempFolder("");
 
             Agent a = new Agent();            
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(a);
             
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "VM", Agent = a });

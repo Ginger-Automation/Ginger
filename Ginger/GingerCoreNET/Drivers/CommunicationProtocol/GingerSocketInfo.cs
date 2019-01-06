@@ -41,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         public int OutgoingRequetsesCounter = 0;        
         public int BytesIn = 0;
         public int bytesOut = 0;
-        public int ResponseTimeoutMS = 60000;
+        public int ResponseTimeoutMS = 1000*60*60;//1 hour
         
         // Class using it attach its handler to Action
         public Action<GingerSocketInfo> MessageHandler { get; set; }
@@ -81,6 +81,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         
         public NewPayLoad SendRequest(NewPayLoad payload)
         {
+            // get stuck when Ginger close
             while (mProcessingStatus != eProcessingStatus.Ready && mProcessingStatus != eProcessingStatus.ResponseCompleted)
             {
                 Thread.Sleep(1);  //TODO: add timeout!!! or??
@@ -245,6 +246,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             {
                 gingerSocketInfo.Response = new NewPayLoad("SessionID", SessionID);
                 gingerSocketInfo.Response.PaylodType = NewPayLoad.ePaylodType.SocketResponse;  
+                return;
+            }
+            if (Req.Name == "NodeClosing")
+            {
+                gingerSocketInfo.Response = new NewPayLoad("OK", "Bye");
+                gingerSocketInfo.Response.PaylodType = NewPayLoad.ePaylodType.SocketResponse;
+                // TODO: close...
                 return;
             }
 

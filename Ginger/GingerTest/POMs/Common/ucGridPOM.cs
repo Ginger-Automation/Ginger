@@ -1,4 +1,4 @@
-﻿using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.UserControls;
 using Ginger;
 using GingerWPFUnitTest.POMs;

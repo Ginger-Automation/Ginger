@@ -37,6 +37,7 @@ using FlaUI.UIA3.Identifiers;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.WindowsLib
 {
@@ -681,6 +682,21 @@ namespace GingerCore.Drivers.WindowsLib
 
             return rc;
         }
+        public string GetElementID(ElementInfo EI)
+        {
+            return "";
+        }
+
+        public string GetElementTagName(ElementInfo EI)
+        {
+            return "";
+        }
+
+        public List<object> GetAllElementsByLocator(eLocateBy LocatorType, string LocValue)
+        {
+            return null;
+        }
+        
 
         public ElementInfo GetPreviousSibling(ElementInfo EI)
         {
