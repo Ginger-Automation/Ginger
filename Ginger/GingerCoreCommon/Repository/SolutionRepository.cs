@@ -400,6 +400,8 @@ namespace Amdocs.Ginger.Repository
 
         public void AddItemInfo<T>(string pattern, string rootFolder, bool containRepositoryItems, string displayName, string PropertyNameForFileName)
         {
+          // Type type = RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(typeof(T));
+          
             SolutionRepositoryItemInfo<T> SRII = new SolutionRepositoryItemInfo<T>();
             SRII.ItemFileSystemRootFolder = rootFolder;
             SRII.PropertyForFileName = PropertyNameForFileName;
@@ -413,6 +415,9 @@ namespace Amdocs.Ginger.Repository
         private SolutionRepositoryItemInfoBase GetSolutionRepositoryItemInfo(Type type)
         {
             SolutionRepositoryItemInfoBase SRII;
+
+           //type= RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(type);
+
             mSolutionRepositoryItemInfoDictionary.TryGetValue(type, out SRII);
 
             if (SRII == null)
@@ -428,6 +433,8 @@ namespace Amdocs.Ginger.Repository
 
             return SRII;
         }
+
+
 
         private SolutionRepositoryItemInfo<T> GetSolutionRepositoryItemInfo<T>()
         {
@@ -610,7 +617,7 @@ namespace Amdocs.Ginger.Repository
             }
             else
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Move repository item because source or target folders failed to be identified for item '{0}' and target folder '{1}'.", repositoryItem.FilePath, targetFolder));
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Move repository item because source or target folders failed to be identified for item '{0}' and target folder '{1}'.", repositoryItem.FilePath, targetFolder));
             }
         }
 
@@ -656,7 +663,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 catch (IOException ex)
                 {                    
-                   AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Shared Repository moving item to PrevVersion", ex);
+                   Reporter.ToLog(eLogLevel.ERROR, "Shared Repository moving item to PrevVersion", ex);
                 }
                 
             }

@@ -33,6 +33,7 @@ using System.Xml.Serialization;
 using System.Reflection;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.IO;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.ALM.RQM
 {
@@ -111,8 +112,8 @@ namespace GingerCore.ALM.RQM
             List<ExecutionResult> exeResultList = new List<ExecutionResult>();
             foreach (ActivitiesGroup activGroup in businessFlow.ActivitiesGroups)
             {                 
-                if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == ActivitiesGroup.eActivitiesGroupRunStatus.Passed) 
-                    || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == ActivitiesGroup.eActivitiesGroupRunStatus.Failed)
+                if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed) 
+                    || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
                     || publishToALMConfig.FilterStatus == FilterByStatus.All)
                 {
                     ExecutionResult exeResult = GetExeResultforAg(businessFlow, bfExportedID, activGroup, ref result, testPlan);
@@ -133,7 +134,7 @@ namespace GingerCore.ALM.RQM
             }
             catch
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to Update Execution Record Results");
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Update Execution Record Results");
             }
 
             //
@@ -150,7 +151,7 @@ namespace GingerCore.ALM.RQM
             }
             catch
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to Update Execution Record Results");
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Update Execution Record Results");
             }
 
             //
@@ -205,7 +206,7 @@ namespace GingerCore.ALM.RQM
                         }
                         catch
                         {
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to attach report Per ActivityGroup - " + activGroup.Name);
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to attach report Per ActivityGroup - " + activGroup.Name);
                         }
                     }
                 }
@@ -223,7 +224,7 @@ namespace GingerCore.ALM.RQM
             }
             else result = resultInfo.ErrorDesc;
 
-            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export execution details to RQM/ALM");
+            Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to RQM/ALM");
             return false;
         }
 
@@ -351,7 +352,7 @@ namespace GingerCore.ALM.RQM
                     }
                     catch
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to create Execution Record Per Activity - " + currentActivity.EntityName);
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to create Execution Record Per Activity - " + currentActivity.EntityName);
                     }
                 }
                 if (string.IsNullOrEmpty(txExportID) || string.IsNullOrEmpty(tsExportID) || string.IsNullOrEmpty(erExportID) || txExportID.Equals("0") || tsExportID.Equals("0") || erExportID.Equals("0"))
@@ -379,8 +380,8 @@ namespace GingerCore.ALM.RQM
                         case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed:
                             exeStep.StepStatus = ACL_Data_Contract.ExecutoinStatus.Failed;
                             string errors = string.Empty;
-                            List<Act> failedActs = act.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
-                            foreach (Act action in failedActs) errors += action.Error + Environment.NewLine;
+                            List<IAct> failedActs = act.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
+                            foreach (IAct action in failedActs) errors += action.Error + Environment.NewLine;
                             exeStep.StepActualResult = errors;
                             break;
                         case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed:
@@ -420,7 +421,7 @@ namespace GingerCore.ALM.RQM
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export execution details to RQM/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to RQM/ALM", ex);
                 return null;
             }
         }
@@ -479,7 +480,7 @@ namespace GingerCore.ALM.RQM
             catch (Exception ex)
             {
                 result = "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " to RQM/ALM " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " to RQM/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " to RQM/ALM", ex);
                 return false;
             }
 
@@ -518,7 +519,7 @@ namespace GingerCore.ALM.RQM
             catch (Exception ex)
             {
                 result = "Failed to export the Business Flow to RQM/ALM " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export the Business Flow to RQM/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Business Flow to RQM/ALM", ex);
                 return false;
             }
 
@@ -554,7 +555,7 @@ namespace GingerCore.ALM.RQM
             else
             {
                 result = "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to RQM/ALM, " + resultInfo.ErrorDesc;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export the Business Flow to RQM/ALM, " + resultInfo.ErrorDesc);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Business Flow to RQM/ALM, " + resultInfo.ErrorDesc);
                 return false;
             }
         }
@@ -578,7 +579,7 @@ namespace GingerCore.ALM.RQM
                 catch (Exception e)
                 {
                     testPlan.ShouldUpdated = false;
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 }
             }
 
@@ -617,7 +618,7 @@ namespace GingerCore.ALM.RQM
                 catch (Exception e)
                 {
                     testCase.ShouldUpdated = false;
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 }
             }
 
@@ -657,19 +658,19 @@ namespace GingerCore.ALM.RQM
                     catch (Exception e)
                     {
                         activityStep.ShouldUpdated = false;
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                     }
                 }
 
                 if (actIden == null || actIden.IdentifiedActivity == null)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error: When Exporting to RQM, ActivityIdentifiers object or actIden.IdentifiedActivity is null and cannot export to RQM");
+                    Reporter.ToLog(eLogLevel.ERROR, "Error: When Exporting to RQM, ActivityIdentifiers object or actIden.IdentifiedActivity is null and cannot export to RQM");
                     break;
                 }
 
                 activityStep.EntityName = actIden.ActivityName;
                 string description = actIden.ActivityDescription == null ? string.Empty : actIden.ActivityDescription;
-                activityStep.StepExpResults = actIden.IdentifiedActivity.Expected;
+                activityStep.StepExpResults =((Activity)( actIden.IdentifiedActivity)).Expected;
                 activityStep.StepOrderId = orderID;
                 orderID++;
                 activityStep.EntityId = 0;
@@ -711,7 +712,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 //No matches found
                 return "0";
             }
@@ -731,7 +732,7 @@ namespace GingerCore.ALM.RQM
             }
             else
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Could not export to RQM, External Items Fields values are missing");
+                Reporter.ToLog(eLogLevel.ERROR, "Could not export to RQM, External Items Fields values are missing");
             }
             return propertiesList;
         }

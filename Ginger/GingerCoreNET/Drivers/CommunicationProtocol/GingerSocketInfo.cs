@@ -248,6 +248,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 gingerSocketInfo.Response.PaylodType = NewPayLoad.ePaylodType.SocketResponse;  
                 return;
             }
+            if (Req.Name == "NodeClosing")
+            {
+                gingerSocketInfo.Response = new NewPayLoad("OK", "Bye");
+                gingerSocketInfo.Response.PaylodType = NewPayLoad.ePaylodType.SocketResponse;
+                // TODO: close...
+                return;
+            }
 
             throw new Exception("SocketRequestHandler - Unknown Request: " + Req.Name);
         }

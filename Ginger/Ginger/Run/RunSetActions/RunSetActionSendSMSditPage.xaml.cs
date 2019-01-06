@@ -35,7 +35,7 @@ namespace Ginger.Run.RunSetActions
             if (runSetActionSendSMS.SMSEmail == null)
             {
                 runSetActionSendSMS.SMSEmail = new Email();                
-            }
+            }/*
 
             App.ObjFieldBinding(SMTPMailHostTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPMailHost);
             App.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPPort);
@@ -53,7 +53,7 @@ namespace Ginger.Run.RunSetActions
             App.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPPort);
             App.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPUser);
             App.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPPass);
-        }
+        */}
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
