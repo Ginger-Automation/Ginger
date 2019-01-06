@@ -29,16 +29,6 @@ namespace GingerTest.POMs.Common
         }
 
 
-        //public void SelectValueUCAgentControl(Agent agent)
-        //{
-        //    Execute(() => {
-        //        ((ComboBox)mUCAgentControl.FindName("xAgentsComboBox")).SelectedValue = agent;
-        //    });
-        //}
-
-
-
-
         public void UCAgentControlStatusButtonClick()
         {
             Task.Factory.StartNew(() =>

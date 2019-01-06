@@ -261,8 +261,6 @@ namespace GingerWPFUnitTest.POMs
                 Frame f = (Frame)mMainWindow .FindName("xMainWindowFrame");
                 TwoLevelMenuPage p = (TwoLevelMenuPage)f.Content;
                 
-                //ListView lvi =  (ListView)FindElementByAutomationID<ListViewItem>(p, "Agents AID");
-
                 TwoLevelMenuPage configurationsPage = (TwoLevelMenuPage)f.Content;
 
                 ListView lv = (ListView)configurationsPage.FindName("xMainNavigationListView");
