@@ -22,6 +22,7 @@ using GingerCore.Activities;
 using System;
 using System.Collections.Generic;
 using GingerCore.ALM.QC;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.ALM.Repository
 {

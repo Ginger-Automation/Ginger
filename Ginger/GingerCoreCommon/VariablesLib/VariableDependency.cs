@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -23,13 +23,7 @@ using System.Collections.Generic;
 namespace GingerCore.Variables
 {
     public class VariableDependency : RepositoryItemBase
-    {
-        public new static class Fields
-        {
-            public static string VariableGuid = "VariableGuid";
-            public static string VariableName = "VariableName";
-            public static string VariableValues = "VariableValues";
-        }
+    {        
 
         public VariableDependency()
         {

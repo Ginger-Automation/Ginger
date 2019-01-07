@@ -1,6 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCore;
@@ -35,9 +36,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBusinessFlow.Name = "MyDriver BF";
             mBusinessFlow.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.NA; 
-            mBusinessFlow.Platforms = new ObservableList<Platform>();
-            mBusinessFlow.Platforms.Add(p);
+            p.PlatformType = ePlatformType.NA;             
             mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = mAppName });
 
             mGingerRunner = new GingerRunner();
@@ -46,7 +45,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Agent agent = new Agent();
             agent.AgentType = Agent.eAgentType.Service;
 
-            mGingerRunner.SolutionAgents = new ObservableList<Agent>();
+            mGingerRunner.SolutionAgents = new ObservableList<IAgent>();
             mGingerRunner.SolutionAgents.Add(agent);
 
             mGingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = mAppName, Agent = agent });
@@ -59,7 +58,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.SolutionRepository = Ginger.App.CreateGingerSolutionRepository();
 
-            string solutionfolder = TestResources.getGingerUnitTesterTempFolder("sol1");
+            string solutionfolder = TestResources.GetTestTempFolder("sol1");
             if (Directory.Exists(solutionfolder))
             {
                 Directory.Delete(solutionfolder,true);

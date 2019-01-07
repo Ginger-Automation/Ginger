@@ -21,14 +21,15 @@ using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
+using GingerCore.Environments;
 
 namespace GingerCore.Variables
 {
     public class VariableDynamic : VariableBase
     {
         // Do not serialize being set at runtime by Ginger Runner
-        IProjEnvironment mProjEnvironment;
-        IBusinessFlow mBusinessFlow;
+        ProjEnvironment mProjEnvironment;
+        BusinessFlow mBusinessFlow;
 
         private string mValueExpression;
         [IsSerializedForLocalRepository]
@@ -47,7 +48,7 @@ namespace GingerCore.Variables
             get { return GingerDicser.GetTermResValue(eTermResKey.Variable) + " Dynamic"; }
         }
 
-        public void Init(IProjEnvironment ProjEnvironment, IBusinessFlow BusinessFlow)
+        public void Init(ProjEnvironment ProjEnvironment, BusinessFlow BusinessFlow)
         {
             mProjEnvironment = ProjEnvironment;
             mBusinessFlow = BusinessFlow;

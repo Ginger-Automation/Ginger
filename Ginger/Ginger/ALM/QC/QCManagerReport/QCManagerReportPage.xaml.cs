@@ -236,7 +236,7 @@ namespace Ginger.ALM.QC
                                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                                 Activity repoStepActivity = activities.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
                                 if (repoStepActivity != null)
-                                    if (repoStepActivity.AutomationStatus == Activity.eActivityAutomationStatus.Automated)
+                                    if (repoStepActivity.AutomationStatus ==eActivityAutomationStatus.Automated)
                                         automatedStepsCouter++;
                             }
                         }
@@ -316,7 +316,7 @@ namespace Ginger.ALM.QC
                 catch (Exception ex)
                 {
                     testCaseDetails.LastExecutionTime = (filteredRuns[0].ExecutionDate);
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
                 testCaseDetails.LastExecutionStatus = filteredRuns[0].Status;
             }

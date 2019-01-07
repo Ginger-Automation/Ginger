@@ -22,14 +22,12 @@ using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTest.POMs;
 using GingerTestHelper;
-using GingerWPFUnitTest.GeneralLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading;
 
-namespace GingerWPFUnitTest.AgentsLib
+namespace GingerTest
 {
     [TestClass]
     [Level3]
@@ -47,7 +45,7 @@ namespace GingerWPFUnitTest.AgentsLib
             mTC = TC;
             
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\AgentsTest");
-            SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\AgentsTest");
+            SolutionFolder = TestResources.GetTestTempFolder(@"Solutions\AgentsTest");
             if (Directory.Exists(SolutionFolder))
             {
                 Directory.Delete(SolutionFolder, true);

@@ -69,7 +69,7 @@ namespace Ginger.Environments
                 if (changedParam.Name != changedParam.NameBeforeEdit)
                 {
                     //ask user if want us to update the parameter name in all BF's
-                    if (Reporter.ToUser(eUserMsgKeys.ChangingEnvironmentParameterValue) == MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKeys.ChangingEnvironmentParameterValue) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                     {
                         UpdateVariableNameChange(changedParam);
                     }

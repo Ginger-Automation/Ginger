@@ -38,7 +38,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         public RepositoryFolder<HTMLReportConfiguration> mHtmlReportsFolder;
         private HTMLReportTemplatesListPage mHTMLReportTemplatesListPage;
-        private ObservableList<HTMLReportConfiguration> mChildReports = null;
+       
 
         public HTMLGingerReportsTreeItem(RepositoryFolder<HTMLReportConfiguration> htmlReportsFolder)
         {
