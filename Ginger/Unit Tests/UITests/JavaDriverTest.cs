@@ -16,23 +16,23 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
+using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Platforms;
-using System;
-using System.Linq;
-using GingerCore.Drivers.CommunicationProtocol;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
-using System.Collections.Generic;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Execution;
-using GingerTestHelper;
-using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace UnitTests.UITests.JavaDriverTest
 {
@@ -69,9 +69,7 @@ namespace UnitTests.UITests.JavaDriverTest
                 mBF.Activities = new ObservableList<Activity>();
                 mBF.Name = "BF Test Java Driver";
                 Platform p = new Platform();
-                p.PlatformType = ePlatformType.Java;
-                mBF.Platforms = new ObservableList<Platform>();
-                mBF.Platforms.Add(p);
+                p.PlatformType = ePlatformType.Java;                
                 mBF.TargetApplications.Add(new TargetApplication() { AppName = "JavaTestApp" });
                 Activity activity = new Activity();
                 activity.TargetApplication = "JavaTestApp";
@@ -86,7 +84,13 @@ namespace UnitTests.UITests.JavaDriverTest
                 LJA.Port ="9898";
                 LJA.URL = TestResources.GetTestResourcesFile(@"JavaTestApp\JavaTestApp.jar");
                 activity.Acts.Add(LJA);
+                mGR.PrepActionValueExpression(LJA);
                 LJA.Execute();
+                // TODO: add wait till action done and check status
+                //if (!string.IsNullOrEmpty(LJA.Error))
+                //{
+                 //   throw new Exception(LJA.Error);
+                //}
 
                 mDriver = new JavaDriver(mBF);
                 mDriver.JavaAgentHost = "127.0.0.1";
@@ -103,7 +107,7 @@ namespace UnitTests.UITests.JavaDriverTest
                 a.Name = "Java Agent";
                 a.Driver = mDriver;
 
-                mGR.SolutionAgents = new ObservableList<Agent>();
+                mGR.SolutionAgents = new ObservableList<IAgent>();
                 mGR.SolutionAgents.Add(a);
 
                 ApplicationAgent AA = new ApplicationAgent();
@@ -115,11 +119,14 @@ namespace UnitTests.UITests.JavaDriverTest
 
                 mGR.SetCurrentActivityAgent();
 
-                GingerCore.Drivers.CommunicationProtocol.PayLoad PL = new GingerCore.Drivers.CommunicationProtocol.PayLoad("SwitchWindow");
-                // PL.AddValue("ByTitle");
+                PayLoad PL = new PayLoad("SwitchWindow");                
                 PL.AddValue("Java Swing Test App");
                 PL.ClosePackage();
-                GingerCore.Drivers.CommunicationProtocol.PayLoad RC = mDriver.Send(PL);                
+                PayLoad RC = mDriver.Send(PL);
+                if (RC.IsErrorPayLoad())
+                {
+                    throw new Exception("Error cannot start Java driver - " + RC.GetValueString());
+                }
             }
         }
 

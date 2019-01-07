@@ -368,11 +368,8 @@ namespace GingerCore.Actions
         }
 
         private string CalculateValue(string valueTocalc)
-        {
-            //if (mVE == null)
-            mVE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow,DSList);
-            mVE.Value = valueTocalc;
-            return mVE.ValueCalculated.Trim();
+        {            
+            return ValueExpression.Calculate(valueTocalc).Trim(); 
         }
 
         private bool CalculateArguments()
@@ -381,9 +378,13 @@ namespace GingerCore.Actions
             {
                 mJavaWSEXEPath_Calc = CalculateValue(mJavaWSEXEPath);
                 if (string.IsNullOrEmpty(mJavaWSEXEPath_Calc))
+                {
                     mJavaWSEXEPath_Calc = CommonLib.GetJavaHome();
+                }
                 if (mJavaWSEXEPath_Calc.ToLower().Contains("bin") == false)
+                {
                     mJavaWSEXEPath_Calc = Path.Combine(mJavaWSEXEPath_Calc, @"bin");
+                }
 
                 mURL_Calc = CalculateValue(mURL);
 
@@ -583,7 +584,7 @@ namespace GingerCore.Actions
             catch (Exception ex)
             {
                 Error = "Failed to launch the java application with the command '" + javaExecuter + " " + command + "'";
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
                 return false;
             }
         }
@@ -624,7 +625,7 @@ namespace GingerCore.Actions
             catch (Exception ex)
             {
                 Error = "Failed to attach the Ginger Agent with the command '" + javaExecuter + " " + command + "'";
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
                 return false;
             }
         }
@@ -762,7 +763,7 @@ namespace GingerCore.Actions
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in FindProcessWindowTitle", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception in FindProcessWindowTitle", ex);
                 }
             }
             return false;
@@ -887,7 +888,7 @@ namespace GingerCore.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception when checking IsInstrumentationModuleLoaded", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception when checking IsInstrumentationModuleLoaded", e);
             }
 
             return false;

@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.WebServices.WebAPI;
@@ -29,7 +30,7 @@ namespace Ginger.ApiModelsFolder
     {
         private ObservableList<ApplicationAPIModel> mAAMList = new ObservableList<ApplicationAPIModel>();
 
-        ObservableList<Act> mActions = App.BusinessFlow.CurrentActivity.Acts;
+        ObservableList<IAct> mActions = App.BusinessFlow.CurrentActivity.Acts;
 
         public AddApiModelActionWizardPage()
         {

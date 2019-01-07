@@ -18,14 +18,13 @@ limitations under the License.
 
 using GingerCore.Environments;
 using GingerTestHelper;
-using GingerWPFUnitTest.GeneralLib;
 using GingerWPFUnitTest.POMs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace GingerWPFUnitTest
+namespace GingerTest
 {
     [TestClass]
     [Level3]
@@ -43,7 +42,7 @@ namespace GingerWPFUnitTest
             
             mTC = TC;            
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\EnvsTest");
-            SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\EnvsTest");
+            SolutionFolder = TestResources.GetTestTempFolder(@"Solutions\EnvsTest");
             if (Directory.Exists(SolutionFolder))
             {
                 Directory.Delete(SolutionFolder, true);

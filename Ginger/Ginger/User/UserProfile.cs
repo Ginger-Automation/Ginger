@@ -97,7 +97,16 @@ namespace Ginger
 
         public string LocalWorkingFolder { get; set; }
 
-        public Solution mSolution { get; set; }
+        public Solution mSolution {
+            get
+            {
+                return (Solution)WorkSpace.Instance.Solution;
+            }
+            set
+            {
+                WorkSpace.Instance.Solution = value;
+            }
+        }
 
         public Solution Solution
         {
@@ -162,7 +171,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do Recent Solutions list clean up", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to do Recent Solutions list clean up", ex);
             }
         }
 
@@ -202,7 +211,7 @@ namespace Ginger
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to load the recent solution which in path '{0}'", s), ex);
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to load the recent solution which in path '{0}'", s), ex);
                     }
 
                     counter++;
@@ -407,7 +416,7 @@ namespace Ginger
             {
                 SaveRecentAppAgentsMapping();
             }
-            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
 
             RepositorySerializer.SaveToFile(this, UserProfileFilePath);
         }
@@ -504,7 +513,7 @@ namespace Ginger
                 try
                 {
                     DateTime UserProfileDT = File.GetLastWriteTime(UserProfileFilePath);
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("Loading existing User Profile at '{0}'", UserProfileFilePath));
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("Loading existing User Profile at '{0}'", UserProfileFilePath));
                     string userProfileTxt = File.ReadAllText(UserProfileFilePath);
                     UserProfile up = (UserProfile)NewRepositorySerializer.DeserializeFromText(userProfileTxt);
                     up.FilePath = UserProfileFilePath;
@@ -519,11 +528,11 @@ namespace Ginger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to load the existing User Profile at '{0}'", UserProfileFilePath), ex);
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to load the existing User Profile at '{0}'", UserProfileFilePath), ex);
                 }
             }
 
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "Creating new User Profile");
+            Reporter.ToLog(eLogLevel.INFO, "Creating new User Profile");
 
             UserProfile up2 = new UserProfile();
             up2.LoadDefaults();

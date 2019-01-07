@@ -289,7 +289,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                    Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
                 }
             }
         }
@@ -649,7 +649,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return value;
         }
@@ -684,7 +684,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return cName.ToString();
         }
@@ -714,7 +714,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return res;
         }
@@ -787,7 +787,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return isValid;
         }
@@ -961,7 +961,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR,"Error while exporting Paramters to File", ex);
+                Reporter.ToLog(eLogLevel.ERROR,"Error while exporting Paramters to File", ex);
             }
 
             return filePath;
@@ -1364,7 +1364,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error while exporting Paramters to File", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error while exporting Paramters to File", ex);
             }
         }
 
@@ -1525,7 +1525,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR,"Failed to Export to Data Source",ex);
+                Reporter.ToLog(eLogLevel.ERROR,"Failed to Export to Data Source",ex);
                 Reporter.ToUser(eUserMsgKeys.ExportFailed, "Data Source");
             }
         }
@@ -1546,7 +1546,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return defColList;
         }
@@ -1567,7 +1567,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
         }
 
@@ -1588,12 +1588,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         Database db;
         List<object> SQLResult = new List<object>();
         DataTable dtDB = new DataTable();
-        public void SetDBDetails(string dbType, string host, string user, string password)
+        public void SetDBDetails(string dbType, string host, string user, string password, string connectionString = null)
         {
             db = new Database();
             db.TNS = host;
             db.User = user;
             db.Pass = password;
+            if(!string.IsNullOrEmpty(connectionString))
+                db.ConnectionString = connectionString;
             db.DBType = (Database.eDBTypes)Enum.Parse(typeof(Database.eDBTypes), dbType);
         }
         public List<string> GetDBTypeList()

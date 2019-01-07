@@ -55,13 +55,15 @@ namespace Ginger.Variables
 
         private void txtPasswordValue_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            bool res, checkValueDecrypt;
-            res = false;
-            checkValueDecrypt = true;
-            EncryptionHandler.DecryptString(txtPasswordValue.Text, ref checkValueDecrypt);
-
-            if (!checkValueDecrypt) txtPasswordValue.Text = EncryptionHandler.EncryptString(txtPasswordValue.Text, ref res);
-
+            bool res = false;
+            if (!EncryptionHandler.IsStringEncrypted(txtPasswordValue.Text))
+            {
+                txtPasswordValue.Text = EncryptionHandler.EncryptString(txtPasswordValue.Text, ref res);
+                if (res == false)
+                {
+                    txtPasswordValue.Text = string.Empty;
+                }
+            }
         }
 
     }

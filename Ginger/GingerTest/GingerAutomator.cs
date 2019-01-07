@@ -24,7 +24,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
-namespace GingerWPFUnitTest
+namespace GingerTest
 {
 
     public class GingerAutomator
@@ -121,7 +121,7 @@ namespace GingerWPFUnitTest
             int i = 0;
             while (MainWindowPOM == null && i <600)
             {
-                Thread.Sleep(100);
+                    Thread.Sleep(100);
                 i++;
             }
 

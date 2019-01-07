@@ -47,7 +47,7 @@ namespace Ginger.ALM
 
             mItemsFields = App.UserProfile.Solution.ExternalItemsFields;
             ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, false, null);
-            if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == MessageBoxResult.Yes)
+            if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 RunWorker(true);
             }
@@ -72,7 +72,7 @@ namespace Ginger.ALM
 
         private void Refresh(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 RunWorker(true);
         }
 

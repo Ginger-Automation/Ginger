@@ -79,11 +79,11 @@ namespace Ginger.Actions
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
 
-            viewCols.Add(new GridColView() { Field = FlowControl.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = FlowControl.Fields.Condition, Header = "Condition", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.getDataColValueExpressionTemplate("ConditionVE") });
-            viewCols.Add(new GridColView() { Field = FlowControl.Fields.ConditionCalculated, Header = "Condition Calculated", WidthWeight = 150, BindingMode = BindingMode.OneWay });            
-            view.GridColsView.Add(new GridColView() { Field = FlowControl.Fields.FlowControlAction, Header = "Action", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = GetDataColActionFlowControlTemplate("ActionForEdit") });
-            viewCols.Add(new GridColView() { Field = FlowControl.Fields.Status, WidthWeight = 150 });      
+            viewCols.Add(new GridColView() { Field = nameof(FlowControl.Active), WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(FlowControl.Condition), Header = "Condition", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.getDataColValueExpressionTemplate(nameof(FlowControl.ConditionVE)) });
+            viewCols.Add(new GridColView() { Field = nameof(FlowControl.ConditionCalculated), Header = "Condition Calculated", WidthWeight = 150, BindingMode = BindingMode.OneWay });            
+            view.GridColsView.Add(new GridColView() { Field = nameof(FlowControl.FlowControlAction), Header = "Action", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = GetDataColActionFlowControlTemplate(nameof(FlowControl.ActionForEdit)) });
+            viewCols.Add(new GridColView() { Field = nameof(FlowControl.Status), WidthWeight = 150 });      
             FlowControlGrid.SetAllColumnsDefaultView(view);
             FlowControlGrid.InitViewItems();
         }

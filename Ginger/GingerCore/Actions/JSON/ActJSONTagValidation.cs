@@ -144,13 +144,11 @@ namespace GingerCore.Actions.JSON
             foreach (General.XmlNodeItem outputItem in outputTagsList)
             {
                 foreach (ActInputValue aiv in DynamicElements)
-                {
-                    ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                    VE.Value = @aiv.Param;
-
-                    if (outputItem.path == "/root/"+VE.ValueCalculated)
+                {                    
+                    string calculatedValue = ValueExpression.Calculate(@aiv.Param);
+                    if (outputItem.path == "/root/" + calculatedValue)
                     {
-                        AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value.ToString(), VE.ValueCalculated);
+                        AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value.ToString(), calculatedValue);
                         if (aiv.Value == null || aiv.Value == String.Empty)
                         {
                         }

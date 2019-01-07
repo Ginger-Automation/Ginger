@@ -75,7 +75,7 @@
 
         <StackPanel Grid.Row="3"  Margin="0,20,0,0">
             <Label Content="Configurations Description:" Style="{StaticResource $LabelStyle}"></Label>
-            <TextBlock x:Name="ActionInfoLabel" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" DockPanel.Dock="Top" TextAlignment="Left"  FontSize="12" Margin="0,0,0,0"></TextBlock>
+            <TextBlock x:Name="xActionInfoLabel" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" DockPanel.Dock="Top" TextAlignment="Left"  FontSize="12" Margin="0,0,0,0"></TextBlock>
         </StackPanel>
     </Grid>
 </Page>

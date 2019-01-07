@@ -22,6 +22,7 @@ using System.ComponentModel;
 using System.IO.Compression;
 using System.Linq;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;

@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
+using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Variables
 {
@@ -243,7 +244,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex, true);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex, true);
                 }
 
                 if (value is IObservableList)
@@ -316,7 +317,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex, true);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex, true);
                     value = null;
                 } 
                 
@@ -383,7 +384,7 @@ namespace GingerCore.Variables
                         }
                         catch (Exception ex)
                         {
-                            // TODO: FIXME!!! no empty exception
+                            Reporter.ToLog(eLogLevel.INFO, "Failed to get list of used variables", ex);
                         } 
                     }
                 }
@@ -450,17 +451,17 @@ namespace GingerCore.Variables
                         int originalIndex = 0;
 
                         //TODO: Fix the issues
-                        if (hostItem is IActivity)
+                        if (hostItem is Activity)
                         {
-                            originalIndex = ((IActivity)hostItem).GetVariables().IndexOf(variableBaseInstance);
-                            ((IActivity)hostItem).GetVariables().Remove(variableBaseInstance);
-                            ((IActivity)hostItem).GetVariables().Insert(originalIndex, newInstance);
+                            originalIndex = ((Activity)hostItem).GetVariables().IndexOf(variableBaseInstance);
+                            ((Activity)hostItem).GetVariables().Remove(variableBaseInstance);
+                            ((Activity)hostItem).GetVariables().Insert(originalIndex, newInstance);
                         }
                         else
                         {
-                            originalIndex = ((IBusinessFlow)hostItem).GetVariables().IndexOf(variableBaseInstance);
-                            ((IBusinessFlow)hostItem).GetVariables().Remove(variableBaseInstance);
-                            ((IBusinessFlow)hostItem).GetVariables().Insert(originalIndex, newInstance);
+                            originalIndex = ((BusinessFlow)hostItem).GetVariables().IndexOf(variableBaseInstance);
+                            ((BusinessFlow)hostItem).GetVariables().Remove(variableBaseInstance);
+                            ((BusinessFlow)hostItem).GetVariables().Insert(originalIndex, newInstance);
                         }
                     }
                     break;
