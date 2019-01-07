@@ -528,7 +528,6 @@
     <Compile Include="Reports\ReportTemplate.cs" />
     <Compile Include="Repository\RepositoryItemFactory.cs" />
     <Compile Include="Run\RuntimeObjectFactory.cs" />
-    <Compile Include="Solution.cs" />
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>

@@ -19,12 +19,14 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Utils;
-using Ginger.ALM;
+
 using Ginger.Reports;
 using GingerCore;
 using GingerCore.Variables;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.SourceControl;
 using System.Collections.Concurrent;
@@ -303,7 +305,7 @@ namespace Ginger.SolutionGeneral
                 HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
             }
             Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
-            App.AutomateTabGingerRunner.ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            Helper.RuntimeObjectFactory.RunExecutioFrom(eExecutedFrom.Automation).ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
 
         [IsSerializedForLocalRepository]
@@ -421,28 +423,30 @@ namespace Ginger.SolutionGeneral
             });
         }
 
-        internal ReportTemplate CreateNewReportTemplate(string path = "")
+        public object CreateNewReportTemplate(string path = "")
         {
-            ReportTemplate NewReportTemplate = new ReportTemplate() { Name = "New Report Template", Status = ReportTemplate.eReportStatus.Development };
-            
-            ReportTemplateSelector RTS = new ReportTemplateSelector();
-            RTS.ShowAsWindow();
+            //ReportTemplate NewReportTemplate = new ReportTemplate() { Name = "New Report Template", Status = ReportTemplate.eReportStatus.Development };
 
-            if (RTS.SelectedReportTemplate != null)
-            {
+            //ReportTemplateSelector RTS = new ReportTemplateSelector();
+            //RTS.ShowAsWindow();
 
-                NewReportTemplate.Xaml = RTS.SelectedReportTemplate.Xaml;
+            //if (RTS.SelectedReportTemplate != null)
+            //{
 
-                //Make it Generic or Const string for names used for File
-                string NewReportName = string.Empty;
-                if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
-                {
-                    NewReportTemplate.Name = NewReportName;                    
-                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);
-                }
-                return NewReportTemplate;
-            }
-            return null;
+            //    NewReportTemplate.Xaml = RTS.SelectedReportTemplate.Xaml;
+
+            //    //Make it Generic or Const string for names used for File
+            //    string NewReportName = string.Empty;
+            //    if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
+            //    {
+            //        NewReportTemplate.Name = NewReportName;                    
+            //        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);
+            //    }
+            //    return NewReportTemplate;
+            //}
+            //return null;
+            object report = RepositoryItemHelper.RepositoryItemFactory.CreateNewReportTemplate(path);
+            return report;
         }
 
 

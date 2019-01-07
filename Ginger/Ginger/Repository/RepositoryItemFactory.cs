@@ -820,6 +820,30 @@ namespace Ginger.Repository
                                                                                                                         extraInformationCalculated + "\\" + System.IO.Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
             }
         }
+
+        public object CreateNewReportTemplate(string path = "")
+        {
+            ReportTemplate NewReportTemplate = new ReportTemplate() { Name = "New Report Template", Status = ReportTemplate.eReportStatus.Development };
+
+            ReportTemplateSelector RTS = new ReportTemplateSelector();
+            RTS.ShowAsWindow();
+
+            if (RTS.SelectedReportTemplate != null)
+            {
+
+                NewReportTemplate.Xaml = RTS.SelectedReportTemplate.Xaml;
+
+                //Make it Generic or Const string for names used for File
+                string NewReportName = string.Empty;
+                if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
+                {
+                    NewReportTemplate.Name = NewReportName;
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);
+                }
+                return NewReportTemplate;
+            }
+            return null;
+        }
     }
     
 }
