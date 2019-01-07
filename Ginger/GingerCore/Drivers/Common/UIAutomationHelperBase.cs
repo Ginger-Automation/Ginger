@@ -29,6 +29,7 @@ using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.Common
 {
@@ -78,18 +79,18 @@ namespace GingerCore.Drivers.Common
             }
             catch (COMException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "COM Exception when GetActElement Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "COM Exception when GetActElement Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 throw e;
 
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Element not available Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 throw e;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Argument Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Argument Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 throw e;
             }
             return CurAE;

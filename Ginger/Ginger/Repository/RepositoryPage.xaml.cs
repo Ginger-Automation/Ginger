@@ -44,8 +44,8 @@ namespace Ginger.Repository
 
         public Visibility ShowActivitiesGroupRepository
         {
-            get { return tbiActivitiesGroups.Visibility; }
-            set { tbiActivitiesGroups.Visibility = value; }
+            get { return tbActivitiesGroups.Visibility; }
+            set { tbActivitiesGroups.Visibility = value; }
         }
         public Visibility ShowActivitiesRepository
         {
@@ -98,18 +98,18 @@ namespace Ginger.Repository
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
             // We do load on demand
-            if (tabRepository.SelectedItem == tbiActivitiesGroups)
+            if (tabRepository.SelectedItem == tbActivitiesGroups)
             {
-                if (((string)tbiActivitiesGroups.Tag) != "Done")
+                if (((string)tbActivitiesGroups.Tag) != "Done")
                 {
                     ActivitiesGroupsRepoPage = new ActivitiesGroupsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>(), mBusinessFlow);
                     frmActivitiesGroups.Content = ActivitiesGroupsRepoPage;
                     // Mark that this tab is loaded with info
-                    tbiActivitiesGroups.Tag = "Done";
+                    tbActivitiesGroups.Tag = "Done";
                 }
             }
 
@@ -149,7 +149,7 @@ namespace Ginger.Repository
 
         public void RefreshCurrentRepo()
         {
-            tbiActivitiesGroups.Tag = string.Empty;
+            tbActivitiesGroups.Tag = string.Empty;
             tbiActivities.Tag = string.Empty;
             tbiActions.Tag = string.Empty;
             tbiVariables.Tag = string.Empty;

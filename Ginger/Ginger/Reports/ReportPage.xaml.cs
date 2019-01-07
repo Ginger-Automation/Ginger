@@ -25,6 +25,7 @@ using System.Windows.Documents;
 using System.Windows.Markup;
 using System.IO;
 using GingerCore;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Reports
 {

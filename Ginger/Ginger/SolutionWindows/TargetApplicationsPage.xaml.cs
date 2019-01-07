@@ -129,7 +129,7 @@ namespace Ginger.SolutionWindows
         private void UpdateApplicationNameChangeInSolution(ApplicationPlatform app)
         {
             int numOfAfectedBFs = 0;
-            if (Reporter.ToUser(eUserMsgKeys.UpdateApplicationNameChangeInSolution) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.UpdateApplicationNameChangeInSolution) == Amdocs.Ginger.Common.MessageBoxResult.No)
             {
                 return;
             }

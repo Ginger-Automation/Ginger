@@ -72,7 +72,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
 
                 if (activity.ActivitiesGroupID != null && activity.ActivitiesGroupID != string.Empty)
                 {
-                    ActivitiesGroup group = App.BusinessFlow.ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
+                    ActivitiesGroup group =(ActivitiesGroup) App.BusinessFlow.ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
                     if (group != null)
                     {
                         ObservableList<ActivitiesGroup> repoGroups = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
@@ -98,7 +98,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         {
             if (item is Activity)
             {
-                return typeof(Activity.eItemParts);
+                return typeof(eItemParts);
             }
             else if (item is Act)
             {

@@ -30,7 +30,6 @@ using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -136,7 +135,7 @@ namespace Ginger.SourceControl
                          {
                              if (SCFI.Path.Contains('\\') && (SCFI.Path.LastIndexOf('\\') + 1 < SCFI.Path.Length - 1))
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
-                             Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                             Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                          }
                     
                          if (string.IsNullOrEmpty(SCFI.Path)) SCFI.FileType = "";
@@ -207,7 +206,7 @@ namespace Ginger.SourceControl
                     Reporter.ToUser(eUserMsgKeys.AskToAddCheckInComment);
                     return;
                 }
-                if (Reporter.ToUser(eUserMsgKeys.SourceControlChkInConfirmtion, SelectedFiles.Count) == MessageBoxResult.No)
+                if (Reporter.ToUser(eUserMsgKeys.SourceControlChkInConfirmtion, SelectedFiles.Count) == Amdocs.Ginger.Common.MessageBoxResult.No)
                     return;
                 string Comments = CommentsTextBox.Text.ToString();
                 // performing on the another thread 
@@ -230,12 +229,12 @@ namespace Ginger.SourceControl
                                 pathsToCommit.Add(fi.Path);
                                 break;
                             case SourceControlFileInfo.eRepositoryItemStatus.Modified:
-                                if (fi.Locked && fi.LockedOwner != App.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKeys.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == MessageBoxResult.Yes)
+                                if (fi.Locked && fi.LockedOwner != App.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKeys.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                                 {
                                     SourceControlIntegration.UpdateFile(App.UserProfile.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
                                 }
-                                else if (fi.Locked && fi.LockedOwner == App.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKeys.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == MessageBoxResult.Yes)
+                                else if (fi.Locked && fi.LockedOwner == App.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKeys.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                                 {
                                     SourceControlIntegration.UpdateFile(App.UserProfile.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
@@ -348,13 +347,13 @@ namespace Ginger.SourceControl
                 new Action(
                     delegate ()
                     {
-                        if (CommitSuccess && conflictHandled && Reporter.ToUser(eUserMsgKeys.SourceControlChkInConflictHandled) == MessageBoxResult.Yes)
+                        if (CommitSuccess && conflictHandled && Reporter.ToUser(eUserMsgKeys.SourceControlChkInConflictHandled) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                         {
                             Init();
                             CommentsTextBox.Text = string.Empty;
                             mCheckInWasDone = true;
                         }
-                        else if (CommitSuccess && Reporter.ToUser(eUserMsgKeys.SourceControlChkInSucss) == MessageBoxResult.Yes)
+                        else if (CommitSuccess && Reporter.ToUser(eUserMsgKeys.SourceControlChkInSucss) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                         {
                             Init();
                             CommentsTextBox.Text = string.Empty;
@@ -429,7 +428,7 @@ namespace Ginger.SourceControl
 
                 if (obj != null && ((RepositoryItemBase)obj).DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
                 {
-                    if (Reporter.ToUser(eUserMsgKeys.SourceControlCheckInUnsavedFileChecked, SCFI.Name) == MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKeys.SourceControlCheckInUnsavedFileChecked, SCFI.Name) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                     {
                         Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.UserProfile.Solution.GetNameForFileName(), "item");                        
                         WorkSpace.Instance.SolutionRepository.SaveRepositoryItem((RepositoryItemBase)obj);                        
@@ -477,17 +476,17 @@ namespace Ginger.SourceControl
         public void openDiff(string diff)
         {
             System.Diagnostics.Process p = new System.Diagnostics.Process();
-            p.StartInfo = new ProcessStartInfo("TortoiseUDiff.exe");
+            p.StartInfo = new System.Diagnostics.ProcessStartInfo("TortoiseUDiff.exe");
             p.StartInfo.RedirectStandardInput = true;
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.RedirectStandardError = true;
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            p.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.CreateNoWindow = true;
 
             try
             {
-                Process udiff = Process.Start(p.StartInfo);
+                System.Diagnostics.Process udiff = System.Diagnostics.Process.Start(p.StartInfo);
                 StreamWriter myWriter = udiff.StandardInput;
                 myWriter.AutoFlush = true;
                 myWriter.Write(diff);
@@ -501,7 +500,7 @@ namespace Ginger.SourceControl
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
             }
         }
     }

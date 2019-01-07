@@ -34,8 +34,7 @@ using Newtonsoft.Json;
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 {
     public class SwaggerParser : APIConfigurationsDocumentParserBase
-    {
-        string ResolvedJson = "";
+    {        
         SwaggerDocument Swaggerdoc = null;
 
         public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> SwaggerModels, bool avoidDuplicatesNodes = false)
@@ -362,7 +361,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
             string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation);
             object[] BodyandModelParameters = JSONTemplateParser.GenerateBodyANdModelParameters(SampleBody);
             aAM.RequestBody = (string)BodyandModelParameters[0];
-          return (ObservableList<AppModelParameter>)BodyandModelParameters[1];
+            return (ObservableList<AppModelParameter>)BodyandModelParameters[1];
         }
 
         private void GenerateFormParameters(ApplicationAPIModel aAM, SwaggerOperation operation, bool isMultiPartFormdata = false)

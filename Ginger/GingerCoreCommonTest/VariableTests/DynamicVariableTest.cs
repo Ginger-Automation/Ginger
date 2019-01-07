@@ -119,7 +119,6 @@ namespace GingerCoreCommonTest.VariableTests
         {
             //Arrange
             string valExpr = "{VBS Eval=1+1}";
-            string expectedResult = "2";
             VariableDynamic variableDynamic = new VariableDynamic();
             variableDynamic.Name = "d1";
             variableDynamic.Value = valExpr;

@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Windows;
+using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Helpers;
 
