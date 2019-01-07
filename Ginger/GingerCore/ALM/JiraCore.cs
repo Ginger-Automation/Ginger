@@ -77,7 +77,8 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
-            throw new NotImplementedException();
+            return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig,ref result);
+
         }
 
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
@@ -107,9 +108,14 @@ namespace GingerCore.ALM
             throw new NotImplementedException();
         }
 
-        public bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup,string uploadPath, IEnumerable<ExternalItemFieldBase> testCaseFields, IEnumerable<ExternalItemFieldBase> designStepsFields, ref string res)
+        public bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, IEnumerable<ExternalItemFieldBase> testCaseFields, ref string errorResult)
         {
-            return true;
+            return exportMananger.ExportActivitesToJira(activtiesGroup, testCaseFields,ref errorResult);
+        }
+
+        public bool ExportBfToAlm(BusinessFlow businessFlow,IEnumerable<ExternalItemFieldBase>testCaseFields, IEnumerable<ExternalItemFieldBase> testSetFields, IEnumerable<ExternalItemFieldBase> testExecutionFields, ref string responseStr)
+        {
+            return exportMananger.ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
         }
         public ObservableList<JiraTestSet> GetJiraTestSets()
         {

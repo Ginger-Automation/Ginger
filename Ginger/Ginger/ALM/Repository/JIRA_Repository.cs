@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using ALM_Common.DataContracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
@@ -55,8 +56,7 @@ namespace Ginger.ALM.Repository
             {
             ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(App.UserProfile.Solution.ExternalItemsFields);
                 var testCaseFields = allFields.Where(a => a.ItemType == ResourceType.TEST_CASE.ToString());
-                var designStepsFields = allFields.Where(a => a.ItemType == ResourceType.DESIGN_STEP.ToString());
-                bool exportRes = ((JiraCore)this.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, uploadPath, testCaseFields, designStepsFields, ref responseStr);
+                bool exportRes = ((JiraCore)this.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, testCaseFields, ref responseStr);
 
                 Reporter.CloseGingerHelper();
                 if (exportRes)
@@ -67,6 +67,7 @@ namespace Ginger.ALM.Repository
                         WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(activtiesGroup);
                         Reporter.CloseGingerHelper();
                     }
+                    Reporter.ToUser(eUserMsgKeys.ExportItemToALMSucceed);
                     return true;
                 }
                 else
@@ -77,12 +78,61 @@ namespace Ginger.ALM.Repository
 
         public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
-            throw new NotImplementedException();
+            bool askToSaveBF = false;
+            foreach (ActivitiesGroup group in grdActivitiesGroups)
+            {
+                if (ExportActivitiesGroupToALM(group))
+                    askToSaveBF = true;
+            }
+
+            if (askToSaveBF)
+                if (Reporter.ToUser(eUserMsgKeys.AskIfToSaveBFAfterExport, businessFlow.Name) == MessageBoxResult.Yes)
+                {
+                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, businessFlow.Name,
+                      GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
+                    Reporter.CloseGingerHelper();
+                }
         }
 
         public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
-            throw new NotImplementedException();
+            bool result = false;
+            string responseStr = string.Empty;
+
+            if (businessFlow != null)
+            {
+                if (businessFlow.ActivitiesGroups.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " do not include " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " which supposed to be mapped to ALM Test Cases, please add at least one " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " before doing export.");
+                    return false;
+                }
+                else
+                {
+                    ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(App.UserProfile.Solution.ExternalItemsFields);
+                    ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
+                    var testCaseFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_CASE.ToString())&&(a.ToUpdate || a.Mandatory));
+                    var testSetFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_SET.ToString()) && (a.ToUpdate || a.Mandatory));
+                    var testExecutionFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_CASE_EXECUTION_RECORDS.ToString()) && (a.ToUpdate || a.Mandatory));
+                    var exportRes = ((JiraCore)this.AlmCore).ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
+                    if (exportRes)
+                    {
+                        if (performSaveAfterExport)
+                        {
+                            Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
+                            Reporter.CloseGingerHelper();
+                        }
+                        if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                            Reporter.ToUser(eUserMsgKeys.ExportItemToALMSucceed);
+                        return true;
+                    }
+                    else
+                if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                        Reporter.ToUser(eUserMsgKeys.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, responseStr);
+                }
+            }
+            return result;
         }
 
         public override eUserMsgKeys GetDownloadPossibleValuesMessage()
