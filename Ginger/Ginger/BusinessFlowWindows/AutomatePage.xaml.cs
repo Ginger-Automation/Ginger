@@ -37,6 +37,7 @@ using Ginger.GherkinLib;
 using Ginger.Reports;
 using Ginger.Repository;
 using Ginger.Run;
+using Ginger.TimeLineLib;
 using Ginger.UserControlsLib.TextEditor;
 using Ginger.Variables;
 using GingerCore;
@@ -1436,6 +1437,12 @@ namespace Ginger
             }
 
             RibbonRow.Height = new GridLength(120);
+        }
+
+        private void TimeLineReportButton_Click(object sender, RoutedEventArgs e)
+        {
+            TimeLinePage timeLinePage = new TimeLinePage(App.AutomateTabGingerRunner.mGingerRunnerTimeLine.timeLineEvents);
+            timeLinePage.ShowAsWindow();
         }
     }
 }
