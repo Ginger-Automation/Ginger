@@ -109,7 +109,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void AddApplication(object sender, RoutedEventArgs e)
         {
             string appName = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("Add Application", "Application Name:", ref appName, System.IO.Path.GetInvalidFileNameChars()))
+            if (GingerCore.General.GetInputWithValidation("Add Application", "Application Name:", ref appName))
             {
                 EnvApplication app= new EnvApplication();
                 app.Name= appName;
