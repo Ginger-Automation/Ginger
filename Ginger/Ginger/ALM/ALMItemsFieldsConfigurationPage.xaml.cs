@@ -90,9 +90,7 @@ namespace Ginger.ALM
         {
             // TODO Rearrange save function to keep old fields value.
             ObservableList<ExternalItemFieldBase> tempItemList = new ObservableList<ExternalItemFieldBase>();
-            //foreach (ExternalItemFieldBase field in mItemsFields.Where(x => x.ToUpdate == true).ToList())
-            //    tempItemList.Add(field);
-            App.UserProfile.Solution.ExternalItemsFields = ALMIntegration.Instance.getUpdatedFields(mItemsFields, false);
+            App.UserProfile.Solution.ExternalItemsFields = ALMIntegration.Instance.GetUpdatedFields(mItemsFields, false);
             App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
             App.UserProfile.Solution.ExternalItemsFields = mItemsFields;
             genWin.Close();

@@ -215,6 +215,5 @@ namespace GingerCore.ALM
             get { return ImportFromRally.GingerActivitiesRepo; }
             set { ImportFromRally.GingerActivitiesRepo = value; }
         }
-        public override ObservableList<ExternalItemFieldBase> almItemFields { get; set; }
     }
 }

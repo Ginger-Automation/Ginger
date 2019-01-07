@@ -111,10 +111,10 @@ namespace GingerCore.ALM
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
             ObservableList<ExternalItemFieldBase> tempFieldsList = ImportFromQCRest.GetALMItemFields(resourceType);
-            almItemFields = new ObservableList<ExternalItemFieldBase>();
+            AlmItemFields = new ObservableList<ExternalItemFieldBase>();
             foreach (ExternalItemFieldBase item in tempFieldsList)
             {
-                almItemFields.Add((ExternalItemFieldBase)item.CreateCopy());
+                AlmItemFields.Add((ExternalItemFieldBase)item.CreateCopy());
             }
             return tempFieldsList;
         }
@@ -133,6 +133,5 @@ namespace GingerCore.ALM
         {
             return ImportFromQCRest.GetQCTest(testID);
         }
-        public override ObservableList<ExternalItemFieldBase> almItemFields { get; set; }
     }
 }
