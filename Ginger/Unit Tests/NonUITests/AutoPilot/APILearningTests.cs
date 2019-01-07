@@ -120,14 +120,15 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(AAMSList.Count, 22, "Is API's equal to 6");
             Assert.AreEqual(AAMSList[0].EndpointURL, "https://petstore.swagger.io/v2/pet", "Is EndpointURL equal");
             Assert.AreEqual(String.IsNullOrEmpty(AAMSList[0].RequestBody), false, "Is body not empty equal");
-            Assert.AreEqual(AAMSList[0].AppModelParameters.Count, 7, "are parameters are equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters.Count, 8, "are parameters are equal");
             Assert.AreEqual(AAMSList[0].AppModelParameters[0].PlaceHolder, "<ID>", "are parameters are equal");
-            Assert.AreEqual(AAMSList[0].AppModelParameters[1].PlaceHolder, "<CATEGORY>", "are parameters are equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[1].PlaceHolder, "<ID1>", "are parameters are equal");
             Assert.AreEqual(AAMSList[0].AppModelParameters[2].PlaceHolder, "<NAME>", "are parameters are equal");
-            Assert.AreEqual(AAMSList[0].AppModelParameters[3].PlaceHolder, "<PHOTOURLS[0]>", "are parameters are equal");
-            Assert.AreEqual(AAMSList[0].AppModelParameters[4].PlaceHolder, "<ID1>", "Is parameter name equal");
-            Assert.AreEqual(AAMSList[0].AppModelParameters[5].PlaceHolder, "<NAME1>", "Is parameter name equal");
-            Assert.AreEqual(AAMSList[0].AppModelParameters[6].PlaceHolder, "<STATUS>", "Is parameter name equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[3].PlaceHolder, "<NAME1>", "are parameters are equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[4].PlaceHolder, "<PHOTOURLS[0]>", "Is parameter name equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[5].PlaceHolder, "<ID2>", "Is parameter name equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[6].PlaceHolder, "<NAME2>", "Is parameter name equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[7].PlaceHolder, "<STATUS>", "Is parameter name equal");
         }
     }
 }
