@@ -83,21 +83,6 @@ namespace GingerCoreNETUnitTest.Script
 
 
         [TestMethod]
-        [Ignore]
-        public void SplitExpressionTest()
-        {
-            //Arrange
-            string evalExpr = "Split(\"My-TeslaTest\",\"-\")";
-            string expectedResult = "My";
-
-            //Act
-            string result = VBS.ExecuteVBSEval(evalExpr);
-
-            //Assert            
-            Assert.AreEqual(expectedResult, result, "MID Expression Test");
-        }
-
-        [TestMethod]
         public void ReplaceExpressionTest()
         {
             //Arrange
