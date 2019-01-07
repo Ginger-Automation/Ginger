@@ -16,20 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
+using GingerCore.Helpers;
+using GingerCore.Properties;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using GingerCore.Properties;
-using GingerCore.Repository;
+using System.Data;
 using System.Data.OleDb;
 using System.IO;
-using System.Data;
-using GingerCore.Platforms;
-using GingerCore.Helpers;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common;
+using System.Text;
 
 namespace GingerCore.Actions
 {
@@ -70,8 +67,7 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public eFileAction FileAction { get; set; }
-
-        public ValueExpression VE { get; set; }
+        
 
         public new static partial class Fields
         {
@@ -126,7 +122,7 @@ namespace GingerCore.Actions
                     case eFileAction.CSVFromTemplate:
                         string CompleteOutputFileName = GenerateOutputPath();
                         string txt = GenerateCSVFromTemplate();
-                        System.IO.File.WriteAllText(CompleteOutputFileName, txt, Encoding.UTF8);                       
+                        File.WriteAllText(CompleteOutputFileName, txt, Encoding.UTF8);                       
                         break;
                     default:
                         break;
@@ -242,11 +238,9 @@ namespace GingerCore.Actions
             return sbheader.Append(sbdata.ToString()).Append(sbtrailer.ToString()).ToString();
         }
 
-        private string ProcessLine(string l)
+        private string ProcessLine(string line)
         {
-            // TODO: process params VE          
-            VE.Value = l;
-            return VE.ValueCalculated;
+            return ValueExpression.Calculate(line);
         }
 
         private List<string> ProcessData(string l)
@@ -274,9 +268,8 @@ namespace GingerCore.Actions
                         continue;
                     template = template.Replace(",,", ",#,");
                     template = template.Replace("{Param=" + headers[j] + "}", tmp[j]);
-                }
-                VE.Value = template;
-                results.Add(VE.ValueCalculated);
+                }                
+                results.Add(ValueExpression.Calculate(template));
             }
 
             return results;

@@ -34,7 +34,6 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -166,7 +165,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
                 List<AppParameters> parameters = GetParameterList();
                 string filePath = im.ExportParametersToExcelFile(parameters, "GlobalParameters");
-                Process.Start(filePath); 
+                System.Diagnostics.Process.Start(filePath); 
             }
         }
 

@@ -23,7 +23,8 @@ namespace Amdocs.Ginger.Common
 
         public abstract MessageBoxResult MessageBoxShow(string messageText, string caption, MessageBoxButton buttonsType, MessageBoxImage messageImage, MessageBoxResult defualtResualt);
 
-        public abstract void ToStatus(string statusText);
+        public abstract void ToStatus(eStatusMessageType messageType, string statusText);
+
         
     }
 }

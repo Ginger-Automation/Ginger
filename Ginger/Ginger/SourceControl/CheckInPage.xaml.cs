@@ -30,7 +30,6 @@ using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -477,17 +476,17 @@ namespace Ginger.SourceControl
         public void openDiff(string diff)
         {
             System.Diagnostics.Process p = new System.Diagnostics.Process();
-            p.StartInfo = new ProcessStartInfo("TortoiseUDiff.exe");
+            p.StartInfo = new System.Diagnostics.ProcessStartInfo("TortoiseUDiff.exe");
             p.StartInfo.RedirectStandardInput = true;
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.RedirectStandardError = true;
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            p.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.CreateNoWindow = true;
 
             try
             {
-                Process udiff = Process.Start(p.StartInfo);
+                System.Diagnostics.Process udiff = System.Diagnostics.Process.Start(p.StartInfo);
                 StreamWriter myWriter = udiff.StandardInput;
                 myWriter.AutoFlush = true;
                 myWriter.Write(diff);

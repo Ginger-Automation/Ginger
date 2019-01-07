@@ -1105,7 +1105,7 @@ namespace Ginger.Actions
             if (aa != null)
             {
                 DriverBase driver =((Agent) aa.Agent).Driver;
-                App.AutomateTabGingerRunner.PrepActionVE(mAction);
+                App.AutomateTabGingerRunner.PrepActionValueExpression(mAction);
                 if (driver != null)
                 {
                     driver.HighlightActElement(mAction);

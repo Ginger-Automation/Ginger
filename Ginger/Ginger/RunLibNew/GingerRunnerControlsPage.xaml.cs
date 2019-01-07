@@ -23,8 +23,6 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCoreNET.RunLib;
 using GingerWPF.AgentsLib;
-using GingerWPF.BindingLib;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -36,7 +34,7 @@ namespace GingerWPF.RunLib
     public partial class GingerRunnerControlsPage : Page
     {
         GingerRunner mGingerRunner;
-        Stopwatch mStopwatch;
+        System.Diagnostics.Stopwatch mStopwatch;
         public GingerRunnerControlsPage(GingerRunner GingerRunner)
         {
             InitializeComponent();
@@ -70,7 +68,7 @@ namespace GingerWPF.RunLib
 
             StatusImageControl.ImageType = eImageType.Processing;
 
-            if (mStopwatch == null) mStopwatch = new Stopwatch();
+            if (mStopwatch == null) mStopwatch = new System.Diagnostics.Stopwatch();
             mStopwatch.Reset();
             mStopwatch.Start();
         }

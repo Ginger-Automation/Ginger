@@ -42,7 +42,6 @@ using IWshRuntimeLibrary;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -1461,8 +1460,8 @@ namespace Ginger.Run
                         string fileName = System.IO.Path.GetFileName(txt_file);
                         if (fileName.Contains(".html"))
                         {
-                            Process.Start(reportsResultFolder);
-                            Process.Start(reportsResultFolder + "\\" + fileName);
+                            System.Diagnostics.Process.Start(reportsResultFolder);
+                            System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
                         }
                     }
                 }

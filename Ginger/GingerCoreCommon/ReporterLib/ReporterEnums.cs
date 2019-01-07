@@ -44,7 +44,7 @@ namespace Amdocs.Ginger.Common
         INFO, WARN, ERROR, QUESTION
     }
 
-    public enum eGingerHelperMsgType
+    public enum eStatusMessageType
     {
         INFO, PROCESS
     }
