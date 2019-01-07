@@ -40,10 +40,6 @@ namespace Ginger.Agents
             {
                 return new ValidationResult(false, "Agent with the same name already exist");
             }
-            else if (value.ToString().Trim().IndexOfAny(new char[] { '/', '\\', '*', ':', '?', '"', '<', '>', '|' }) != -1)
-            {                
-                return new ValidationResult(false, "Invalid chars in Agent name");
-            }
             else
             {
                 return new ValidationResult(true, null);

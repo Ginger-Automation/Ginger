@@ -22,14 +22,12 @@ using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTest.POMs;
 using GingerTestHelper;
-using GingerWPFUnitTest.GeneralLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading;
 
-namespace GingerWPFUnitTest.AgentsLib
+namespace GingerTest
 {
     [TestClass]
     [Level3]

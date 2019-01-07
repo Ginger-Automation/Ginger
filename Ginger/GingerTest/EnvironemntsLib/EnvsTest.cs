@@ -18,14 +18,13 @@ limitations under the License.
 
 using GingerCore.Environments;
 using GingerTestHelper;
-using GingerWPFUnitTest.GeneralLib;
 using GingerWPFUnitTest.POMs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace GingerWPFUnitTest
+namespace GingerTest
 {
     [TestClass]
     [Level3]
