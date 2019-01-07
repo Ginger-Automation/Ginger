@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using GingerCoreNET.GeneralLib;
 
 namespace Ginger
 {
@@ -495,7 +496,9 @@ namespace Ginger
         {
             if (General.isDesignMode()) return null;
 
-            string InstallationConfigurationPath = System.Reflection.Assembly.GetExecutingAssembly().Location.Replace("Ginger.exe", "Ginger.InstallationConfiguration.Json");
+            string InstallationConfigurationPath = Assembly.GetExecutingAssembly().Location.Replace(Path.GetFileName(Assembly.GetExecutingAssembly().Location), "Ginger.InstallationConfiguration.Json");
+
+
             DateTime InstallationDT = File.GetLastWriteTime(InstallationConfigurationPath);
 
             string UserConfigJsonString = string.Empty;
@@ -584,7 +587,7 @@ namespace Ginger
             string defualtFolder = WorkSpace.Instance.DefualtUserLocalWorkingFolder;//calling it so it will be created
         }
 
-        internal string GetDefaultReport()
+        public string GetDefaultReport()
         {
             if (!string.IsNullOrEmpty(ReportTemplateName))
             {

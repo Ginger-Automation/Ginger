@@ -58,7 +58,7 @@ namespace Ginger.ALM
             {
                 RallyRadioButton.Visibility = Visibility.Hidden;
                 if ((ALMIntegration.eALMType)App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RALLY)
-                    App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.QC;
+                    App.UserProfile.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
             }
 
             if (almConnectStyle != ALMIntegration.eALMConnectType.Silence)
@@ -428,7 +428,7 @@ namespace Ginger.ALM
                     case "QCRadioButton":
                         if ((ALMIntegration.eALMType)App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.QC)
                         {
-                            App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.QC;
+                            App.UserProfile.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
                             ClearALMConfigs();
                         }
 
@@ -436,7 +436,7 @@ namespace Ginger.ALM
                     case "RQMRadioButton":
                         if ((ALMIntegration.eALMType)App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.RQM)
                         {
-                            App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.RQM;
+                            App.UserProfile.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM;
                             ClearALMConfigs();
                             ALMIntegration.Instance.UpdateALMType(ALMIntegration.eALMType.RQM);
                             ALMIntegration.Instance.SetALMCoreConfigurations(); //Because RQM need to update the server field from existing package
