@@ -146,7 +146,7 @@ namespace GingerCore.Drivers.MainFrame
             IsServerAvailable = GingerCore.Common.Utility.IsServerListening(this.HostName, HostPort);
             if (!IsServerAvailable)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.MainframeIncorrectConfiguration);
+                Reporter.ToGingerHelper(eStatusMsgKey.MainframeIncorrectConfiguration);
                 return;
             }
 

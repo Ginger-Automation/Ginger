@@ -22,7 +22,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GingerCoreNET.ReporterLib;
 
 namespace Amdocs.Ginger.Common
 {
@@ -60,22 +59,22 @@ namespace Amdocs.Ginger.Common
 
         #region Report to User
         
-        public static Dictionary<eUserMsgKeys, UserMessage> UserMessagesPool { get; set; }
+        public static Dictionary<eUserMsgKey, UserMsg> UserMsgsPool { get; set; }
 
-        public static MessageBoxResult ToUser(eUserMsgKeys messageKey, params object[] messageArgs)
+        public static eUserMsgSelection ToUser(eUserMsgKey messageKey, params object[] messageArgs)
         {
-            UserMessage messageToShow = null;
+            UserMsg messageToShow = null;
             string messageText = string.Empty;
-            MessageBoxImage messageImage = MessageBoxImage.None;
+            eUserMsgIcon messageImage = eUserMsgIcon.None;
 
             try
             {
                 //get the message from pool
 
                 // FIXME improve if as already found !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                if ((UserMessagesPool != null) && UserMessagesPool.Keys.Contains(messageKey))
+                if ((UserMsgsPool != null) && UserMsgsPool.Keys.Contains(messageKey))
                 {
-                    messageToShow = UserMessagesPool[messageKey];
+                    messageToShow = UserMsgsPool[messageKey];
                 }
                 if (messageToShow == null) // Message not found in message pool
                 {
@@ -87,29 +86,29 @@ namespace Amdocs.Ginger.Common
                     }
 
                     string txt = messageKey.ToString() + " - " + mess + "{Error message key not found!}" ;
-                    WorkSpaceReporter.MessageBoxShow(txt, "Ginger",  MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
+                    WorkSpaceReporter.ToUser(txt, "Ginger",  eUserMsgOption.OK, eUserMsgIcon.Information, eUserMsgSelection.OK);
 
                     ToLog(eLogLevel.WARN, "The user message with key: '" + messageKey + "' was not found! and won't show to the user!");
-                    return MessageBoxResult.None;
+                    return eUserMsgSelection.None;
                 }
 
                 //set the message type
                 switch (messageToShow.MessageType)
                 {
-                    case eMessageType.ERROR:
-                        messageImage = MessageBoxImage.Error;
+                    case eUserMsgType.ERROR:
+                        messageImage = eUserMsgIcon.Error;
                         break;
-                    case eMessageType.INFO:
-                        messageImage = MessageBoxImage.Information;
+                    case eUserMsgType.INFO:
+                        messageImage = eUserMsgIcon.Information;
                         break;
-                    case eMessageType.QUESTION:
-                        messageImage = MessageBoxImage.Question;
+                    case eUserMsgType.QUESTION:
+                        messageImage = eUserMsgIcon.Question;
                         break;
-                    case eMessageType.WARN:
-                        messageImage = MessageBoxImage.Warning;
+                    case eUserMsgType.WARN:
+                        messageImage = eUserMsgIcon.Warning;
                         break;
                     default:
-                        messageImage = MessageBoxImage.Information;
+                        messageImage = eUserMsgIcon.Information;
                         break;
                 }
 
@@ -133,7 +132,7 @@ namespace Amdocs.Ginger.Common
                 }
 
                 //show the messege and return user selection
-                MessageBoxResult userSelection = WorkSpaceReporter.MessageBoxShow(messageText, messageToShow.Caption, messageToShow.ButtonsType, messageImage, messageToShow.DefualtResualt);                
+                eUserMsgSelection userSelection = WorkSpaceReporter.ToUser(messageText, messageToShow.Caption, messageToShow.SelectionOptions, messageImage, messageToShow.DefualtSelectionOption);                
 
 
                 if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
@@ -153,20 +152,20 @@ namespace Amdocs.Ginger.Common
                 ToLog(eLogLevel.ERROR, "Failed to show the user message with the key: " + messageKey, ex);
 
                 string txt = "Failed to show the user message with the key: " + messageKey;
-                WorkSpaceReporter.MessageBoxShow(txt, "Ginger", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
+                WorkSpaceReporter.ToUser(txt, "Ginger", eUserMsgOption.OK, eUserMsgIcon.Information, eUserMsgSelection.OK);
                 
-                return MessageBoxResult.None;
+                return eUserMsgSelection.None;
             }
         }
         #endregion Report to User
 
         #region Report to Ginger Helper
-        public static Dictionary<eGingerHelperMsgKey, GingerHelperMsg> GingerHelperMsgsPool { get; set; }
+        public static Dictionary<eStatusMsgKey, StatusMsg> StatusMsgsPool { get; set; }
 
         static Stopwatch mLastStatusTime = new Stopwatch();
-        public static void ToGingerHelper(eGingerHelperMsgKey messageKey, object btnHandler = null, params object[] messageArgs)
+        public static void ToGingerHelper(eStatusMsgKey messageKey, object btnHandler = null, params object[] messageArgs)
          {            
-            GingerHelperMsg messageToShow = null;
+            StatusMsg messageToShow = null;
             string messageContent = string.Empty;
             string orgMessageContent = string.Empty;
             try
@@ -174,9 +173,9 @@ namespace Amdocs.Ginger.Common
                 // TODO: use TryGet
 
                 //get the message from pool
-                if ((GingerHelperMsgsPool != null) && GingerHelperMsgsPool.Keys.Contains(messageKey))
+                if ((StatusMsgsPool != null) && StatusMsgsPool.Keys.Contains(messageKey))
                 {
-                    messageToShow = GingerHelperMsgsPool[messageKey];
+                    messageToShow = StatusMsgsPool[messageKey];
                 }
                 if (messageToShow == null)
                 {
@@ -186,7 +185,7 @@ namespace Amdocs.Ginger.Common
                     {
                         mess += o.ToString() + " ";
                     }                    
-                    ToUser(eUserMsgKeys.StaticErrorMessage, "Cannot find MessageKey: " + messageKey);
+                    ToUser(eUserMsgKey.StaticErrorMessage, "Cannot find MessageKey: " + messageKey);
                     ToLog(eLogLevel.WARN, "The Ginger Helper message with key: '" + messageKey + "' was not found! and won't show to the user!");
                 }
                 orgMessageContent = messageToShow.MsgContent;
@@ -229,7 +228,7 @@ namespace Amdocs.Ginger.Common
                 {
                     Task.Delay(100);
                 }                
-                WorkSpaceReporter.ToStatus(eStatusMessageType.INFO, null);
+                WorkSpaceReporter.ToStatus(eStatusMsgType.INFO, null);
                 mLastStatusTime.Reset();
                 bClosing = false;
             });
@@ -253,7 +252,7 @@ namespace Amdocs.Ginger.Common
                 }
 
                 // Console.WriteLine(msg + System.Environment.NewLine);
-                WorkSpaceReporter.ConsoleWriteLine(logLevel, msg);
+                WorkSpaceReporter.ToConsole(logLevel, msg);
             }
             catch (Exception ex)
             {

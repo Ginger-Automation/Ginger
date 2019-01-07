@@ -159,7 +159,7 @@ namespace Ginger.Run
                     BF1 = (from bfr in businessFlows where bfr.Name == bf.BusinessFlowName select bfr).FirstOrDefault();
                 if (BF1 == null)
                 {
-                    //Reporter.ToUser(eUserMsgKeys.CannontFindBusinessFlow, bf.BusinessFlowName);
+                    //Reporter.ToUser(eUserMsgKey.CannontFindBusinessFlow, bf.BusinessFlowName);
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Can not find the '{0}' {1} for the '{2}' {3}", bf.BusinessFlowName, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     continue;
                 }
@@ -621,7 +621,7 @@ namespace Ginger.Run
             if (mRunSetConfig.RunWithAnalyzer)
             {
                 //check if not including any High or Critical issues before execution
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                Reporter.ToGingerHelper(eStatusMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
               
                      x = await RepositoryItemHelper.RepositoryItemFactory.AnalyzeRunset(mRunSetConfig, runInSilentMode);
                 

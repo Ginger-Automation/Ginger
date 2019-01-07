@@ -104,7 +104,7 @@ namespace Ginger.Repository
                 }
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
 
         private void EditVar(object sender, RoutedEventArgs e)
@@ -120,7 +120,7 @@ namespace Ginger.Repository
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectVariable);
+                Reporter.ToUser(eUserMsgKey.AskToSelectVariable);
             }
         }
 
@@ -132,7 +132,7 @@ namespace Ginger.Repository
                 usagePage.ShowAsWindow();
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
 
         private void grdVariables_PreviewDragItem(object sender, EventArgs e)

@@ -122,7 +122,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
             BusinessFlow BF = businessFlows.Where(x => x.ExternalID != null ? System.IO.Path.GetFullPath(x.ExternalID.Replace("~", App.UserProfile.Solution.Folder)) == System.IO.Path.GetFullPath(Path) : false).FirstOrDefault();
             if (BF == null)
-                Reporter.ToUser(eUserMsgKeys.GherkinNotifyBFIsNotExistForThisFeatureFile, FileName);
+                Reporter.ToUser(eUserMsgKey.GherkinNotifyBFIsNotExistForThisFeatureFile, FileName);
             else
             {
                 App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.Automate, BF);
@@ -138,7 +138,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Failed to open document using external application, error: " + ex.Message);                
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to open document using external application, error: " + ex.Message);                
             }
 }
 
@@ -154,7 +154,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            if (Reporter.ToUser(eUserMsgKeys.DeleteRepositoryItemAreYouSure, FileName) == Amdocs.Ginger.Common.MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.DeleteRepositoryItemAreYouSure, FileName) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 return false;
 
             try
@@ -167,7 +167,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Delete document failed, error: " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Delete document failed, error: " + ex.Message);
                 return false;
             }
 

@@ -65,7 +65,7 @@ namespace Ginger.Actions.Locators.ASCF
 
             if (lst == null)
             { 
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, "Cannot list Browser elements" );
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, "Cannot list Browser elements" );
                 return null;
                 }
 

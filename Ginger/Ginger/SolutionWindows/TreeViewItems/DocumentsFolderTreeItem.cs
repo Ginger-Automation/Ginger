@@ -228,7 +228,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     AddChildToTree(FullFilePath);
                 }
                 else
-                    Reporter.ToUser(eUserMsgKeys.NotifyFileSelectedFromTheSolution, FullFilePath);
+                    Reporter.ToUser(eUserMsgKey.NotifyFileSelectedFromTheSolution, FullFilePath);
             }
         }
 
@@ -288,7 +288,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     
                 }
                 else
-                    Reporter.ToUser(eUserMsgKeys.GherkinNotifyFeatureFileExists, FullFilePath);
+                    Reporter.ToUser(eUserMsgKey.GherkinNotifyFeatureFileExists, FullFilePath);
             }
         }
 
@@ -307,14 +307,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Add sub folder failed, error: " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Add sub folder failed, error: " + ex.Message);
                 return null;
             }
 }
 
         public override void DeleteTreeFolder()
         {
-            if (Reporter.ToUser(eUserMsgKeys.DeleteTreeFolderAreYouSure, Folder) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.DeleteTreeFolderAreYouSure, Folder) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 try
                 {
@@ -325,7 +325,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Delete folder failed, error: " + ex.Message);
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Delete folder failed, error: " + ex.Message);
                 }
             }
         }
@@ -361,7 +361,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Rename folder failed, error: " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Rename folder failed, error: " + ex.Message);
                 return false;
             }
 

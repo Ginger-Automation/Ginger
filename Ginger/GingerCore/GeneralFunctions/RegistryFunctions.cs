@@ -197,7 +197,7 @@ namespace GingerCore.GeneralFunctions
                         else
                         {
                             //ask user
-                            if ((Reporter.ToUser(eUserMsgKeys.AddRegistryValue, rootType + "\\" + keyPath)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                            if ((Reporter.ToUser(eUserMsgKey.AddRegistryValue, rootType + "\\" + keyPath)) == eUserMsgSelection.Yes)
                                 addValue = true;
                             else
                                 return false;
@@ -220,7 +220,7 @@ namespace GingerCore.GeneralFunctions
                                 if (!silentMode)
                                 {
                                     //show success to user
-                                    Reporter.ToUser(eUserMsgKeys.AddRegistryValueSucceed, rootType + "\\" + keyPath);
+                                    Reporter.ToUser(eUserMsgKey.AddRegistryValueSucceed, rootType + "\\" + keyPath);
                                 }
                                 return true;
                             }
@@ -230,7 +230,7 @@ namespace GingerCore.GeneralFunctions
                                 if (!silentMode)
                                 {
                                     //show failure to user
-                                    Reporter.ToUser(eUserMsgKeys.AddRegistryValueFailed, rootType + "\\" + keyPath);
+                                    Reporter.ToUser(eUserMsgKey.AddRegistryValueFailed, rootType + "\\" + keyPath);
                                 }
                                 return false;
                             }
@@ -240,7 +240,7 @@ namespace GingerCore.GeneralFunctions
                             if (!silentMode)
                             {
                                 //show failure to user
-                                Reporter.ToUser(eUserMsgKeys.AddRegistryValueFailed, rootType + "\\" + keyPath);
+                                Reporter.ToUser(eUserMsgKey.AddRegistryValueFailed, rootType + "\\" + keyPath);
                             }
                             return false;
                         }
@@ -254,7 +254,7 @@ namespace GingerCore.GeneralFunctions
                                                                                         rootType + "\\" + keyPath, ex);                
                 if (!silentMode)
                 {
-                    Reporter.ToUser(eUserMsgKeys.RegistryValuesCheckFailed);
+                    Reporter.ToUser(eUserMsgKey.RegistryValuesCheckFailed);
                 }
                 return false;
             }

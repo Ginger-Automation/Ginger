@@ -78,7 +78,7 @@ namespace GingerCore.Drivers.ScriptDriverLib
                      return cmd; 
                     }
                 default:
-                    Reporter.ToUser(eUserMsgKeys.UnknownConsoleCommand, act.ScriptCommand);
+                    Reporter.ToUser(eUserMsgKey.UnknownConsoleCommand, act.ScriptCommand);
                     return "Error - unknown command";
             }
         }

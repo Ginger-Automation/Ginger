@@ -196,7 +196,7 @@ namespace Ginger.Repository
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.GetRepositoryItemUsagesFailed, mRepoItem.GetNameForFileName(), ex.Message);
+                Reporter.ToUser(eUserMsgKey.GetRepositoryItemUsagesFailed, mRepoItem.GetNameForFileName(), ex.Message);
             }
         }        
 
@@ -240,7 +240,7 @@ namespace Ginger.Repository
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 
@@ -308,7 +308,7 @@ namespace Ginger.Repository
                     }
                 }
 
-                Reporter.ToUser(eUserMsgKeys.UpdateRepositoryItemUsagesSuccess);
+                Reporter.ToUser(eUserMsgKey.UpdateRepositoryItemUsagesSuccess);
             });
         }
 
@@ -323,7 +323,7 @@ namespace Ginger.Repository
                    {
                        try
                        {
-                           Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, usage.HostBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                           Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, usage.HostBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(usage.HostBusinessFlow);
                            usage.Status = RepositoryItemUsage.eStatus.UpdatedAndSaved;
                            Reporter.CloseGingerHelper();

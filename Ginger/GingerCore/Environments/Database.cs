@@ -552,7 +552,7 @@ namespace GingerCore.Environments
                 catch (Exception e)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "", e);
-                    //Reporter.ToUser(eUserMsgKeys.DbTableError, "table columns", e.Message);
+                    //Reporter.ToUser(eUserMsgKey.DbTableError, "table columns", e.Message);
                     throw (e);
                 }
                 finally

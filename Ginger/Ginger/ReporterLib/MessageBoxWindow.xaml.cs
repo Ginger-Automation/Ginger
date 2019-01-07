@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.ReporterLib
 {
@@ -8,11 +9,11 @@ namespace Ginger.ReporterLib
     public partial class MessageBoxWindow : Window
     {
 
-        public Amdocs.Ginger.Common.MessageBoxResult messageBoxResult { get; set; }
+        public Amdocs.Ginger.Common.eUserMsgSelection messageBoxResult { get; set; }
 
         
-        public MessageBoxWindow(string txt, string caption, Amdocs.Ginger.Common.MessageBoxButton buttonsType,
-                                            GingerCoreNET.ReporterLib.MessageBoxImage messageImage, Amdocs.Ginger.Common.MessageBoxResult defualtResualt)
+        public MessageBoxWindow(string txt, string caption, eUserMsgOption buttonsType,
+                                            eUserMsgIcon messageImage, eUserMsgSelection defualtResualt)
         {
             InitializeComponent();
 
@@ -27,18 +28,18 @@ namespace Ginger.ReporterLib
 
             switch (buttonsType)
             {
-                case Amdocs.Ginger.Common.MessageBoxButton.OK:
+                case Amdocs.Ginger.Common.eUserMsgOption.OK:
                        xOKButton.Visibility = Visibility.Visible;
                     break;
-                case Amdocs.Ginger.Common.MessageBoxButton.OKCancel:
+                case Amdocs.Ginger.Common.eUserMsgOption.OKCancel:
                     xOKButton.Visibility = Visibility.Visible;
                     xCancelButton.Visibility = Visibility.Visible;
                     break;
-                case Amdocs.Ginger.Common.MessageBoxButton.YesNo:
+                case Amdocs.Ginger.Common.eUserMsgOption.YesNo:
                     xYesButton.Visibility = Visibility.Visible; ;
                     xNoButton.Visibility = Visibility.Visible;
                     break;
-                case Amdocs.Ginger.Common.MessageBoxButton.YesNoCancel:
+                case Amdocs.Ginger.Common.eUserMsgOption.YesNoCancel:
                     xYesButton.Visibility = Visibility.Visible; ;
                     xNoButton.Visibility = Visibility.Visible;
                     xCancelButton.Visibility = Visibility.Visible;
@@ -47,48 +48,46 @@ namespace Ginger.ReporterLib
 
             switch (messageImage)
             {
-                case GingerCoreNET.ReporterLib.MessageBoxImage.Error:
+                case eUserMsgIcon.Error:
                     xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Error;
                     break;
-                case GingerCoreNET.ReporterLib.MessageBoxImage.Information:
+                case eUserMsgIcon.Information:
                     xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Info;
                     break;
-                case GingerCoreNET.ReporterLib.MessageBoxImage.None:
+                case eUserMsgIcon.None:
                     xImage.Visibility = Visibility.Collapsed;
                     break;
-                case GingerCoreNET.ReporterLib.MessageBoxImage.Question:
+                case eUserMsgIcon.Question:
                     xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Question;
                     break;
-                case GingerCoreNET.ReporterLib.MessageBoxImage.Warning:
-                    xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Power; //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                case eUserMsgIcon.Warning:
+                    xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Info; //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     break;
             }
 
         }
-        
-      
+              
         private void xOKButton_Click(object sender, RoutedEventArgs e)
         {
-            messageBoxResult = Amdocs.Ginger.Common.MessageBoxResult.OK;
+            messageBoxResult = Amdocs.Ginger.Common.eUserMsgSelection.OK;
             this.Close();
         }
 
-
         private void XYesButton_Click(object sender, RoutedEventArgs e)
         {
-            messageBoxResult = Amdocs.Ginger.Common.MessageBoxResult.Yes;
+            messageBoxResult = Amdocs.Ginger.Common.eUserMsgSelection.Yes;
             this.Close();
         }
 
         private void XNoButton_Click(object sender, RoutedEventArgs e)
         {
-            messageBoxResult = Amdocs.Ginger.Common.MessageBoxResult.No;
+            messageBoxResult = Amdocs.Ginger.Common.eUserMsgSelection.No;
             this.Close();
         }
 
         private void XCancelButton_Click(object sender, RoutedEventArgs e)
         {
-            messageBoxResult = Amdocs.Ginger.Common.MessageBoxResult.Cancel;
+            messageBoxResult = Amdocs.Ginger.Common.eUserMsgSelection.Cancel;
             this.Close();
         }
     }

@@ -191,7 +191,7 @@ namespace Ginger.SolutionGeneral
                 {
                     extraChangedItems= extraChangedItems.TrimEnd();
                     extraChangedItems= extraChangedItems.TrimEnd(new char[] { ',' });                    
-                    if (Reporter.ToUser(eUserMsgKeys.SolutionSaveWarning, extraChangedItems) == MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKey.SolutionSaveWarning, extraChangedItems) == eUserMsgSelection.Yes)
                     {
                         doSave = true;
                     }
@@ -200,7 +200,7 @@ namespace Ginger.SolutionGeneral
 
             if (doSave)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, "Solution Configurations", "item");
+                Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, "Solution Configurations", "item");
                 RepositorySerializer.SaveToFile(this, FilePath);
                 this.SetDirtyStatusToNoChange();
                 Reporter.CloseGingerHelper();

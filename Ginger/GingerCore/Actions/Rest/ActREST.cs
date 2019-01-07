@@ -710,7 +710,7 @@ namespace GingerCore.Actions.REST
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToUser(eUserMsgKeys.FileOperationError, e.Message);
+                    Reporter.ToUser(eUserMsgKey.FileOperationError, e.Message);
                 }
             }
             else

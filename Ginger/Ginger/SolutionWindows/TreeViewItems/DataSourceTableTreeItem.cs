@@ -108,7 +108,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void RefreshItems(object sender, RoutedEventArgs e)
         {   
-            if (Reporter.ToUser(eUserMsgKeys.LooseLocalChanges) == Amdocs.Ginger.Common.MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.LooseLocalChanges) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 return;
             }
@@ -123,7 +123,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                
         private void DeleteTable(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.DeleteRepositoryItemAreYouSure, DSTableDetails.GetNameForFileName()) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.DeleteRepositoryItemAreYouSure, DSTableDetails.GetNameForFileName()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 mTreeView.Tree.DeleteItemAndSelectParent(this);
                 DSDetails.DSTableList.Remove(DSTableDetails);
@@ -155,7 +155,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 sSheetName= DSTableDetails.Name;
             }
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportItem, null, DSTableDetails.Name, "Data Source Table");
+            Reporter.ToGingerHelper(eStatusMsgKey.ExportItem, null, DSTableDetails.Name, "Data Source Table");
             DSTableDetails.DSC.ExporttoExcel(DSTableDetails.Name, sExcelPath, sSheetName);            
             Reporter.CloseGingerHelper();
         }
@@ -182,7 +182,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void Rename(object sender, RoutedEventArgs e)
         {         
-            if (Reporter.ToUser(eUserMsgKeys.LooseLocalChanges) == Amdocs.Ginger.Common.MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.LooseLocalChanges) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 return;
             }
@@ -200,7 +200,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch(Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.RenameItemError, ex.Message);
+                Reporter.ToUser(eUserMsgKey.RenameItemError, ex.Message);
                 DSTableDetails.Name = oldName;
             }
         }
@@ -208,7 +208,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
        
          private void Duplicate(object sender, RoutedEventArgs e)
          {
-            if (Reporter.ToUser(eUserMsgKeys.LooseLocalChanges) == Amdocs.Ginger.Common.MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.LooseLocalChanges) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 return;
             }

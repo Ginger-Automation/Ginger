@@ -490,7 +490,7 @@ namespace GingerCore
                 resultValue = resultValue.Trim();
                 if (string.IsNullOrEmpty(resultValue.Trim()))
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Value cannot be empty.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot be empty.");
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
                 if (CharsNotAllowed != null && !(resultValue.IndexOfAny(CharsNotAllowed) < 0))
@@ -501,7 +501,7 @@ namespace GingerCore
                         builder.Append(value);
                         builder.Append(" ");
                     }
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Value cannot contain charaters like:" + "\n" + builder.ToString());
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot contain charaters like:" + "\n" + builder.ToString());
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
             }
@@ -517,12 +517,12 @@ namespace GingerCore
                 resultValue = resultValue.Trim();
                 if (string.IsNullOrEmpty(resultValue.Trim()))
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Value cannot be empty.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot be empty.");
                     return SelectInputWithValidation(header, label, ref resultValue, mValues);
                 }
                 if (!(mValues.Contains(resultValue)))
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Value must be form the list");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value must be form the list");
                     return SelectInputWithValidation(header, label, ref resultValue, mValues);
                 }
             }
@@ -1046,7 +1046,7 @@ namespace GingerCore
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to complete the registry values check", ex);
-                Reporter.ToUser(eUserMsgKeys.RegistryValuesCheckFailed);
+                Reporter.ToUser(eUserMsgKey.RegistryValuesCheckFailed);
             }
         }
 

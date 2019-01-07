@@ -62,7 +62,7 @@ namespace Ginger.Reports
             }
             catch (Exception ex)
             {                
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error in Customized report XML - " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in Customized report XML - " + ex.Message);
             }
         }
 

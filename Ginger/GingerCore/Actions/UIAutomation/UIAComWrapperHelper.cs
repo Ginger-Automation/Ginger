@@ -1327,7 +1327,7 @@ namespace GingerCore.Drivers
                 }
                 catch (IndexOutOfRangeException)
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.InvalidIndexValue, index + "\n\n Valid Index should be between 0 to " + (elementList.Count - 1));
+                    Reporter.ToUser(eUserMsgKey.InvalidIndexValue, index + "\n\n Valid Index should be between 0 to " + (elementList.Count - 1));
                 }
             }
             return element;
@@ -3248,7 +3248,7 @@ namespace GingerCore.Drivers
                             return nodeNames[nodeNames.Count - 1] + "not found" + value;
                         break;
                     default:                        
-                        Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
+                        Reporter.ToUser(eUserMsgKey.ActionNotImplemented, controlType);
                         break;
 
                 }
@@ -3521,7 +3521,7 @@ namespace GingerCore.Drivers
                     }
                     break;
                 default:
-                    Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
+                    Reporter.ToUser(eUserMsgKey.ActionNotImplemented, controlType);
                     break;
             }
         }
@@ -3563,7 +3563,7 @@ namespace GingerCore.Drivers
                     }
                     break;
                 default:
-                    Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
+                    Reporter.ToUser(eUserMsgKey.ActionNotImplemented, controlType);
                     break;
             }
         }
@@ -3993,7 +3993,7 @@ namespace GingerCore.Drivers
                     break;
 
                 default:
-                    Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
+                    Reporter.ToUser(eUserMsgKey.ActionNotImplemented, controlType);
                     break;
             }
             return "not found";
@@ -4038,7 +4038,7 @@ namespace GingerCore.Drivers
                     }
 
                 default:
-                    Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
+                    Reporter.ToUser(eUserMsgKey.ActionNotImplemented, controlType);
                     break;
 
             }
@@ -5801,7 +5801,7 @@ namespace GingerCore.Drivers
             }
             else
             {                
-                Reporter.ToUser(eUserMsgKeys.ObjectUnavailable, "Selected Object is not available");
+                Reporter.ToUser(eUserMsgKey.ObjectUnavailable, "Selected Object is not available");
             }
             return list;
         }
@@ -6364,7 +6364,7 @@ namespace GingerCore.Drivers
 
 
                 default:                    
-                    Reporter.ToUser(eUserMsgKeys.PatternNotHandled, "Pattern not handled yet - " + PatternType);
+                    Reporter.ToUser(eUserMsgKey.PatternNotHandled, "Pattern not handled yet - " + PatternType);
                     break;
             }
         }

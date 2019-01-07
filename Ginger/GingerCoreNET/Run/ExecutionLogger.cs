@@ -936,7 +936,7 @@ namespace Ginger.Run
 
                 if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
                 {
-                 //TODO   AppReporter.ToUser(eUserMsgKeys.ExecutionsResultsProdIsNotOn);
+                 //TODO   AppReporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                     return string.Empty;
                 }
 
@@ -981,7 +981,7 @@ namespace Ginger.Run
                 reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), false,null, null,false, currentConf.HTMLReportConfigurationMaximalFolderSize);
                 if (reportsResultFolder == string.Empty)
                 {
-               //TODO     AppReporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to generate the report for the '" + WorkSpace.Businessflow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
+               //TODO     AppReporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + WorkSpace.Businessflow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
                     return;
                 }
                 else
@@ -1010,14 +1010,14 @@ namespace Ginger.Run
             exec_folder = GenerateBusinessflowOfflineExecutionLogger(environment, BusinessFlow, RunsetName);
             if(string.IsNullOrEmpty(exec_folder))
             {
-                Reporter.ToUser(eUserMsgKeys.ExecutionsResultsProdIsNotOn);
+                Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
             }
             reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), false, null, reportsResultFolder,false,currentConf.HTMLReportConfigurationMaximalFolderSize);
 
             if (reportsResultFolder == string.Empty)
             {
-                Reporter.ToUser(eUserMsgKeys.AutomationTabExecResultsNotExists);
+                Reporter.ToUser(eUserMsgKey.AutomationTabExecResultsNotExists);
                 return;
             }
             else

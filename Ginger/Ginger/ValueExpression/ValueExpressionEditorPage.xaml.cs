@@ -579,7 +579,7 @@ namespace Ginger
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 

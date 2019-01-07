@@ -511,9 +511,9 @@ namespace Ginger.ALM
             catch (Exception) { }
 
             if (connectionSucc)
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Passed! ALM connection test passed successfully");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Passed! ALM connection test passed successfully");
             else
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Failed! ALM connection test failed, Please check ALM connection details");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Failed! ALM connection test failed, Please check ALM connection details");
             Mouse.OverrideCursor = null;
         }
 

@@ -179,7 +179,7 @@ namespace Ginger.Run.RunSetActions
 
         internal void RunAction(ReportInfo RI)
         {
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ExecutingRunSetAction, null, this.Name);
+            Reporter.ToGingerHelper(eStatusMsgKey.ExecutingRunSetAction, null, this.Name);
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Execution Started for the Run Set Operation from Type '{1}' and Name '{0}'", this.Name, this.Type), writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);

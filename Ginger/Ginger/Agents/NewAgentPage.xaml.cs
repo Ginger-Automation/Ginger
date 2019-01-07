@@ -62,10 +62,10 @@ namespace Ginger.Agents
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             //validate details
-            if (AgentNameTextBox.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKeys.MissingNewAgentDetails, "name"); return; }
-            else if (AgentNameTextBox.Text.Trim().IndexOfAny(new char[] { '/', '\\', '*', ':', '?', '"', '<', '>', '|' }) != -1) { Reporter.ToUser(eUserMsgKeys.InvalidCharactersWarning, string.Empty); return; }
-            else if (PlatformTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKeys.MissingNewAgentDetails, "Platform type"); return; }
-            else if (DriverTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKeys.MissingNewAgentDetails, "Driver type"); return; }
+            if (AgentNameTextBox.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.MissingNewAgentDetails, "name"); return; }
+            else if (AgentNameTextBox.Text.Trim().IndexOfAny(new char[] { '/', '\\', '*', ':', '?', '"', '<', '>', '|' }) != -1) { Reporter.ToUser(eUserMsgKey.InvalidCharactersWarning, string.Empty); return; }
+            else if (PlatformTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKey.MissingNewAgentDetails, "Platform type"); return; }
+            else if (DriverTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKey.MissingNewAgentDetails, "Driver type"); return; }
 
             okClicked = true;
             _pageGenericWin.Close();

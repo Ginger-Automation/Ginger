@@ -231,7 +231,7 @@ namespace GingerCore.ALM.QC
                 result = "Unexpected error occurred- "+ex.Message;
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
                 //if (!silentMode)
-                //    Reporter.ToUser(eUserMsgKeys.ErrorWhileExportingExecDetails, ex.Message);
+                //    Reporter.ToUser(eUserMsgKey.ErrorWhileExportingExecDetails, ex.Message);
                 return false;
             }
         }

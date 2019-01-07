@@ -65,13 +65,13 @@ namespace Ginger.WindowExplorer.HTMLCommon
             catch
             {
                 ((SeleniumDriver)ElementInfo.WindowExplorer).InjectGingerLiveSpyAndStartClickEvent(ElementInfo);
-                Reporter.ToUser(eUserMsgKeys.ClickElementAgain);
+                Reporter.ToUser(eUserMsgKey.ClickElementAgain);
             }
 
             if (x == "undefined" || x == "undefined")
             {
                 ((SeleniumDriver)ElementInfo.WindowExplorer).StartClickEvent(ElementInfo);
-                Reporter.ToUser(eUserMsgKeys.ClickElementAgain);
+                Reporter.ToUser(eUserMsgKey.ClickElementAgain);
             }
             else
             {

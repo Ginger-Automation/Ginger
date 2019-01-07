@@ -229,7 +229,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
             }
             if (ShowMessage)
-                Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParametersCounter);
+                Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParametersCounter);
         }
         /// <summary>
         /// Update optional values only for selected parameters  according to xml file
@@ -272,7 +272,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
             }
             if (ShowMessage)
-            { Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParametersCounter); }
+            { Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParametersCounter); }
         }
         #endregion
 
@@ -338,7 +338,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
             }
             if (ShowMessage)
-                Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParametersCounter);
+                Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParametersCounter);
         }
         /// <summary>
         /// Update optional values only for selected parameter according to json file
@@ -366,7 +366,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
             }
             if (ShowMessage)
-                Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParametersCounter);
+                Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParametersCounter);
         }
         #endregion
 
@@ -444,7 +444,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             
             if (ShowMessage)
-                Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParameters);
+                Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParameters);
         }
  
         public void PopulateExcelDBOptionalValuesForAPIParametersExcelDB(ObservableList<GlobalAppModelParameter> mGlobalParamterList, List<GlobalAppModelParameter> SelectedParametersGridList, List<ParameterValues> ParameterValuesByNameDic)
@@ -526,7 +526,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
 
             if (ShowMessage)
-                Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParameters);
+                Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParameters);
         }
         #endregion
 
@@ -614,7 +614,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 break;
                             case "No value given for one or more required parameters.":
                                 if (ShowMessage)
-                                    Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
+                                    Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
                                 break;
                             default:
                                 if (ShowMessage)
@@ -837,12 +837,12 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 break;
                             case "No value given for one or more required parameters.":
                                 if (ShowMessage)
-                                    Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
+                                    Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
                                 break;
                             default:
                                 if (ShowMessage)
                                 {
-                                    Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, ex.Message);
+                                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
                                 }
                                 break;
                         }
@@ -956,7 +956,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 bool isExportSuccess = ExportToExcel(dtTemplate, filePath, dtTemplate.TableName);
                 if (isExportSuccess && ShowMessage)
                 {
-                    Reporter.ToUser(eUserMsgKeys.ExportDetails, "Excel File");
+                    Reporter.ToUser(eUserMsgKey.ExportDetails, "Excel File");
                 }
             }
             catch (Exception ex)
@@ -1046,7 +1046,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             bool IsExportSuccess = ExportToExcel(dtTemplate, PathToExport, dtTemplate.TableName);
             if (IsExportSuccess && ShowMessage)
-                Reporter.ToUser(eUserMsgKeys.ExportDetails , "Excel File");
+                Reporter.ToUser(eUserMsgKey.ExportDetails , "Excel File");
             return IsExportSuccess;
         }
 
@@ -1124,7 +1124,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             catch(Exception ex)
             {
                 if (ShowMessage)
-                    Reporter.ToUser(eUserMsgKeys.ExportFailed, "Excel File", ex.Message.ToString());
+                    Reporter.ToUser(eUserMsgKey.ExportFailed, "Excel File", ex.Message.ToString());
             }
             return false;
         }
@@ -1461,7 +1461,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 break;
                             case "No value given for one or more required parameters.":
                                 if (ShowMessage)
-                                    Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
+                                    Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
                                 break;
                             default:
                                 if (ShowMessage)
@@ -1520,13 +1520,13 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         dr["GINGER_USED"] = "False";
                     }                    
                     mDSDetails.SaveTable(dtTemplate);                    
-                    Reporter.ToUser(eUserMsgKeys.ExportDetails,"Data Source");
+                    Reporter.ToUser(eUserMsgKey.ExportDetails,"Data Source");
                 }                
             }
             catch (System.Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR,"Failed to Export to Data Source",ex);
-                Reporter.ToUser(eUserMsgKeys.ExportFailed, "Data Source");
+                Reporter.ToUser(eUserMsgKey.ExportFailed, "Data Source");
             }
         }
 

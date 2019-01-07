@@ -264,7 +264,7 @@ namespace Ginger.DataSource
         {
             if (grdTableData.Grid.SelectedItems.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.SelectItemToDelete);
+                Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
                 return;
             }
             List<object> SelectedItemsList = grdTableData.Grid.SelectedItems.Cast<object>().ToList();
@@ -278,10 +278,10 @@ namespace Ginger.DataSource
         {
             if (grdTableData.Grid.Items.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
+                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
                 return;
             }
-            if ((Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 List<object> AllItemsList = grdTableData.Grid.Items.Cast<object>().ToList();
                 foreach (object o in AllItemsList)
@@ -294,7 +294,7 @@ namespace Ginger.DataSource
         {
             if (grdTableData.Grid.SelectedItems.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
                 return;
             }
             List<object> SelectedItemsList = grdTableData.Grid.SelectedItems.Cast<object>().ToList();
@@ -314,7 +314,7 @@ namespace Ginger.DataSource
         
         private void AddColumn(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.SaveLocalChanges) == Amdocs.Ginger.Common.MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.SaveLocalChanges) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 return;
             }
@@ -339,7 +339,7 @@ namespace Ginger.DataSource
 
         private void RemoveColumn(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.SaveLocalChanges) == Amdocs.Ginger.Common.MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.SaveLocalChanges) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 return;
             }
@@ -362,7 +362,7 @@ namespace Ginger.DataSource
 
         private void UndoTableChanges(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.SaveLocalChanges) == Amdocs.Ginger.Common.MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.SaveLocalChanges) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 return;
             }
@@ -372,7 +372,7 @@ namespace Ginger.DataSource
 
         private void RefreshTable(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.SaveLocalChanges) == Amdocs.Ginger.Common.MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.SaveLocalChanges) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 return;
             }
@@ -395,7 +395,7 @@ namespace Ginger.DataSource
                 ((DataRowView)grdTableData.Grid.CurrentItem).EndEdit();
             grdTableData.Grid.CommitEdit();
             mDSTableDetails.DSC.SaveTable(mDSTableDetails.DataTable);            
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem,null, mDSTableDetails.Name, "Data Source Table");
+            Reporter.ToGingerHelper(eStatusMsgKey.SaveItem,null, mDSTableDetails.Name, "Data Source Table");
             SetGridData();
             mDSTableDetails.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange;
             Reporter.CloseGingerHelper();
@@ -434,7 +434,7 @@ namespace Ginger.DataSource
                     }
                 }
                 if (status == false)
-                    Reporter.ToUser(eUserMsgKeys.GingerKeyNameError,mDSTableDetails.Name);
+                    Reporter.ToUser(eUserMsgKey.GingerKeyNameError,mDSTableDetails.Name);
             }            
             return status;               
         }
@@ -442,7 +442,7 @@ namespace Ginger.DataSource
 
         private void Rename_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.SaveLocalChanges) == Amdocs.Ginger.Common.MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.SaveLocalChanges) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 return;
             }

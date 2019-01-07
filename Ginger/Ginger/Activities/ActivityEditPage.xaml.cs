@@ -193,7 +193,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void CloseWinClicked(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
             }
@@ -206,7 +206,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void ParentItemSaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (mActivityParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (mActivityParentBusinessFlow != null && Reporter.ToUser(eUserMsgKey.SaveItemParentWarning) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {                
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivityParentBusinessFlow);
                 saveWasDone = true;

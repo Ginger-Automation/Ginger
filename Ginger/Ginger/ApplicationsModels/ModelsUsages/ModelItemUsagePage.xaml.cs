@@ -109,7 +109,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.GetModelItemUsagesFailed, mModelItem.GetNameForFileName(), ex.Message);
+                Reporter.ToUser(eUserMsgKey.GetModelItemUsagesFailed, mModelItem.GetNameForFileName(), ex.Message);
             }
             finally
             {
@@ -138,7 +138,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 

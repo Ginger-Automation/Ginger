@@ -93,12 +93,12 @@ namespace Ginger.Agents
                     if (String.IsNullOrEmpty(errorMessage))
                         errorMessage = "Failed to Connect the agent";
                     
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgentFailed,null, errorMessage);
+                    Reporter.ToGingerHelper(eStatusMsgKey.StartAgentFailed,null, errorMessage);
                 }
             }
             catch(Exception ex)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgentFailed, null, ex.Message);
+                Reporter.ToGingerHelper(eStatusMsgKey.StartAgentFailed, null, ex.Message);
            }         
         }
 
@@ -139,7 +139,7 @@ namespace Ginger.Agents
                 }               
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.DriverNotSupportingWindowExplorer, ((Agent)AG.Agent).DriverType);
+                    Reporter.ToUser(eUserMsgKey.DriverNotSupportingWindowExplorer, ((Agent)AG.Agent).DriverType);
                 }
             }
         }
@@ -147,7 +147,7 @@ namespace Ginger.Agents
         private void StartAppAgent(ApplicationAgent AG)
         {
             AutoLogProxy.UserOperationStart("StartAgentButton_Click");
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
+            Reporter.ToGingerHelper(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
             if (((Agent)AG.Agent).Status == Agent.eStatus.Running) ((Agent)AG.Agent).Close();
 
             ((Agent)AG.Agent).ProjEnvironment = App.AutomateTabEnvironment;

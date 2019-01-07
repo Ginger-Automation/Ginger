@@ -1638,7 +1638,7 @@ namespace GingerCore.Drivers
 
                 case ActGenElement.eGenElementAction.MsgBox: //TODO: FIXME: This action should not be part of GenElement
                     string msg = act.GetInputParamCalculatedValue("Value");
-                    Reporter.ToUser(eUserMsgKeys.ScriptPaused);
+                    Reporter.ToUser(eUserMsgKey.ScriptPaused);
                     break;
 
                 case ActGenElement.eGenElementAction.GetStyle:

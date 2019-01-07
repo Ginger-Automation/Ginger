@@ -7,9 +7,8 @@ using System.Text;
 namespace Amdocs.Ginger.GingerConsole.ReporterLib
 {
     class GingerConsoleWorkspaceReporter : WorkSpaceReporterBase
-    {
-        
-        public override MessageBoxResult MessageBoxShow(string messageText, string caption, MessageBoxButton buttonsType, MessageBoxImage messageImage, MessageBoxResult defualtResualt)
+    {        
+        public override eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt)
         {
             string txt = caption + Environment.NewLine;
             txt += messageText;
@@ -20,26 +19,22 @@ namespace Amdocs.Ginger.GingerConsole.ReporterLib
                 // show buttons [Ok] - O
                 // Y, N, C
             }
-
-
             Console.WriteLine(txt);
 
             Console.ReadKey();
             return defualtResualt; // TEMP !!!!!!!!!            
         }
 
-        public override void ToStatus(eStatusMessageType messageType, string statusText)
+        public override void ToStatus(eStatusMsgType messageType, string statusText)
         {
             Console.WriteLine(statusText);
-        }
-        
+        }        
 
         public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
         {
             throw new NotImplementedException();
         }
         
-        // TODO: override WriteToConsole with color and...
-        
+        // TODO: override WriteToConsole with color and...        
     }
 }

@@ -469,7 +469,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             if (xDBTypeComboBox.SelectedValue == null || string.IsNullOrEmpty(xBDHostTextBox.Text.Trim()))
             {
-                Reporter.ToUser(eUserMsgKeys.ErrorConnectingToDataBase, "Please Fill all connection details.");
+                Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, "Please Fill all connection details.");
             }
             else
             {
@@ -510,7 +510,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     if (ex.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
                     {
-                        if (Reporter.ToUser(eUserMsgKeys.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                        if (Reporter.ToUser(eUserMsgKey.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         {
                             System.Diagnostics.Process.Start("https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149");
                             System.Diagnostics.Process.Start("http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html");
@@ -518,7 +518,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         }
                     }
                     else
-                        Reporter.ToUser(eUserMsgKeys.ErrorConnectingToDataBase, ex.Message);
+                        Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
                 }
             }
         }

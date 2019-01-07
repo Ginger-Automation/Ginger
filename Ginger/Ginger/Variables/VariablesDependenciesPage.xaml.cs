@@ -172,7 +172,7 @@ namespace Ginger.Variables
                             }
                             else
                             {
-                                Reporter.ToUser(eUserMsgKeys.DuplicateVariable, listVar.Name, varOptionalVal.Value);
+                                Reporter.ToUser(eUserMsgKey.DuplicateVariable, listVar.Name, varOptionalVal.Value);
                                 mParentListVars.Clear();
                                 mDependsDT.Clear();
                                 grdDependencies.UseGridWithDataTableAsSource(mDependsDT);
@@ -268,7 +268,7 @@ namespace Ginger.Variables
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to load the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Actions-Variables dependencies grid data", ex);
-                Reporter.ToUser(eUserMsgKeys.ActionsDependenciesLoadFailed, ex.Message);
+                Reporter.ToUser(eUserMsgKey.ActionsDependenciesLoadFailed, ex.Message);
             }
         }
 
@@ -607,10 +607,10 @@ namespace Ginger.Variables
                                 foreach (DataRow row in mDependsDT.Rows)
                                     row[selectedCol.DisplayIndex] = checkValue;
                             else
-                                Reporter.ToUser(eUserMsgKeys.SelectValidColumn);
+                                Reporter.ToUser(eUserMsgKey.SelectValidColumn);
                         }
                         else
-                            Reporter.ToUser(eUserMsgKeys.SelectValidColumn);
+                            Reporter.ToUser(eUserMsgKey.SelectValidColumn);
                         break;
 
                     case eAutoCheckArea.Row:
@@ -621,7 +621,7 @@ namespace Ginger.Variables
                                 selectedRow.Row[i] = checkValue;
                         }
                         else
-                            Reporter.ToUser(eUserMsgKeys.SelectValidRow);
+                            Reporter.ToUser(eUserMsgKey.SelectValidRow);
                         break;
                 }
 
@@ -673,7 +673,7 @@ namespace Ginger.Variables
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
             }
@@ -771,7 +771,7 @@ namespace Ginger.Variables
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, ex.Message);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to save the " + mDepededItemType.ToString() + "-Variables dependencies configurations", ex);
                 _pageGenericWin.Close();
             }

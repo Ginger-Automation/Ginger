@@ -140,7 +140,7 @@ namespace Ginger.Repository
                     }
                 }
                 else
-                    Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                    Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
 
@@ -154,7 +154,7 @@ namespace Ginger.Repository
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 
@@ -167,7 +167,7 @@ namespace Ginger.Repository
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
 

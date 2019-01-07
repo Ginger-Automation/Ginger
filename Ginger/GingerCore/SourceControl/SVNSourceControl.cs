@@ -280,14 +280,14 @@ namespace GingerCore.SourceControl
                     if (supressMessage == true)
                         Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully to revision:  " + result.Revision);
                     else
-                        Reporter.ToUser(eUserMsgKeys.UpdateToRevision, result.Revision);
+                        Reporter.ToUser(eUserMsgKey.UpdateToRevision, result.Revision);
                 }
                 else
                 {
                     if (supressMessage == true)
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to update the solution from source control.Error Details: 'The files are not connected to source control'");
                     else
-                        Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "The files are not connected to source control");
+                        Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
                 }
 
             }
@@ -357,7 +357,7 @@ namespace GingerCore.SourceControl
                             SvnUnlockArgs args = new SvnUnlockArgs();
                             args.BreakLock = true;
                             unlockResult = client.RemoteUnlock(targetUri, args);
-                            if (unlockResult == false && Reporter.ToUser(eUserMsgKeys.SourceControlUnlockFaild, file, targetUri.ToString()) == Amdocs.Ginger.Common.MessageBoxResult.No)
+                            if (unlockResult == false && Reporter.ToUser(eUserMsgKey.SourceControlUnlockFaild, file, targetUri.ToString()) == eUserMsgSelection.No)
                             {
                                 error = "Check in aborted";
                                 return false;
@@ -370,11 +370,11 @@ namespace GingerCore.SourceControl
                 if (result != null)
                     if (result.Revision != -1)
                     {
-                        Reporter.ToUser(eUserMsgKeys.CommitedToRevision, result.Revision);
+                        Reporter.ToUser(eUserMsgKey.CommitedToRevision, result.Revision);
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKeys.SourceControlCommitFailed, "The files are not connected to source control");
+                        Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, "The files are not connected to source control");
                     }
             }
             catch (Exception e)
@@ -465,7 +465,7 @@ namespace GingerCore.SourceControl
 
                 if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner != SourceControlUser)
                 {
-                    if ((Reporter.ToUser(eUserMsgKeys.SourceControlFileLockedByAnotherUser, Path, ListEventArgs[0].Lock.Owner, ListEventArgs[0].Lock.Comment) == Amdocs.Ginger.Common.MessageBoxResult.Yes))
+                    if ((Reporter.ToUser(eUserMsgKey.SourceControlFileLockedByAnotherUser, Path, ListEventArgs[0].Lock.Owner, ListEventArgs[0].Lock.Comment) == eUserMsgSelection.Yes))
                     {
                         SvnUnlockArgs args = new SvnUnlockArgs();
                         args.BreakLock = true;
@@ -526,7 +526,7 @@ namespace GingerCore.SourceControl
 
                 string fileContent = File.ReadAllText(Path);
                 if (fileContent.Contains("<<<<<<<"))
-                    Reporter.ToUser(eUserMsgKeys.SourceControlConflictResolveFailed, Path);
+                    Reporter.ToUser(eUserMsgKey.SourceControlConflictResolveFailed, Path);
             }
             catch (Exception e)
             {

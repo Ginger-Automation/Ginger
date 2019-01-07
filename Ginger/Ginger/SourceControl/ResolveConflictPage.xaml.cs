@@ -96,7 +96,7 @@ namespace Ginger.SourceControl
 
         private void resolve_Click(object sender, EventArgs e)
         {
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ResolveSourceControlConflicts);
+            Reporter.ToGingerHelper(eStatusMsgKey.ResolveSourceControlConflicts);
             switch (mResolveOperation)
             {
                 case eResolveOperations.AcceptServer:

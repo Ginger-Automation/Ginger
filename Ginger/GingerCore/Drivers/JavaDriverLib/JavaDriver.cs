@@ -1859,7 +1859,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             if (Response.IsErrorPayLoad())
             {                
-                Reporter.ToUser(eUserMsgKeys.FailedToInitiate, "JEditor Element");
+                Reporter.ToUser(eUserMsgKey.FailedToInitiate, "JEditor Element");
                 return;
             }
         }
@@ -1886,7 +1886,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             if (Response.IsErrorPayLoad())
             {
                 //TODO:: Handle exception                 
-                Reporter.ToUser(eUserMsgKeys.FailedToInitiate, "Browser Element");
+                Reporter.ToUser(eUserMsgKey.FailedToInitiate, "Browser Element");
                 return;
             }
         }
@@ -2257,7 +2257,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     });
 
                     Mouse.OverrideCursor = null;                    
-                    Reporter.ToUser(eUserMsgKeys.InitializeBrowser);
+                    Reporter.ToUser(eUserMsgKey.InitializeBrowser);
                     return null;
                 }
                 else
@@ -2281,7 +2281,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else
             {                
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error in GetActiveForm");
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in GetActiveForm");
                 return null;
             }
         }
@@ -2302,7 +2302,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             catch (Exception ex)
             {                
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error in GetHTMLElements - " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in GetHTMLElements - " + ex.Message);
                 return null;
             }
         }

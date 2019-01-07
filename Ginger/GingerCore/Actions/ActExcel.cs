@@ -771,10 +771,10 @@ namespace GingerCore.Actions
                         case "Syntax error in FROM clause.":
                             break;
                         case "No value given for one or more required parameters.":
-                            Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
+                            Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
                             break;
                         default:                            
-                            Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, ex.Message);
+                            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
                             break;
                     }
                     return null;

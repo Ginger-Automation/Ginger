@@ -713,7 +713,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             catch (Exception e)
             {                
-                Reporter.ToUser(eUserMsgKeys.FailedToCreateRequestResponse, e.Message);
+                Reporter.ToUser(eUserMsgKey.FailedToCreateRequestResponse, e.Message);
             }
             return fileName;
         }

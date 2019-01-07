@@ -155,7 +155,7 @@ namespace Ginger.UserControlsLib.TextEditor
 
         public void Save()
         {            
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, Path.GetFileName(FileName), "file");
+            Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, Path.GetFileName(FileName), "file");
             textEditor.Save(FileName);
             Reporter.CloseGingerHelper();
         }
@@ -423,18 +423,18 @@ namespace Ginger.UserControlsLib.TextEditor
             BackgroundRenderer.Segments.Clear();
             if (!string.IsNullOrEmpty(args.ErrorMessage))
             {
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, args.ErrorMessage);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, args.ErrorMessage);
 
                 if (args.ErrorLines != null)
                     AddSegments(args.ErrorLines);               
             }
            else if (!string.IsNullOrEmpty(args.SuccessMessage))//succ
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, args.SuccessMessage);
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, args.SuccessMessage);
             }
             else if (!string.IsNullOrEmpty(args.WarnMessage))//warn
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, args.WarnMessage);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, args.WarnMessage);
             }
         }
 

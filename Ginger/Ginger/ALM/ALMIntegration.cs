@@ -170,9 +170,9 @@ namespace Ginger.ALM
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error connecting to ALM project", e);
                 if (almConectStyle == eALMConnectType.Manual)
-                    Reporter.ToUser(eUserMsgKeys.ALMLoginFailed, e.Message);
+                    Reporter.ToUser(eUserMsgKey.ALMLoginFailed, e.Message);
                 else if (almConectStyle == eALMConnectType.Auto)
-                    Reporter.ToUser(eUserMsgKeys.ALMConnectFailureWithCurrSettings, e.Message);
+                    Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, e.Message);
             }
 
             if(connResult)
@@ -198,7 +198,7 @@ namespace Ginger.ALM
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error disconnecting from ALM", e);
                 if (almConectStyle == eALMConnectType.Manual)
-                    Reporter.ToUser(eUserMsgKeys.ALMOperationFailed, "disconnect server", e.Message);
+                    Reporter.ToUser(eUserMsgKey.ALMOperationFailed, "disconnect server", e.Message);
             }
         }
 
@@ -250,7 +250,7 @@ namespace Ginger.ALM
                             if (BizFlow.ExternalID != "0" && !String.IsNullOrEmpty(BizFlow.ExternalID))
                             {
                                 Reporter.ToLog(eLogLevel.INFO, "Executing RunSet Action Publish to ALM for Business flow: " + BizFlow.Name);
-                                Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportExecutionDetails, null, BizFlow.Name, "ALM");
+                                Reporter.ToGingerHelper(eStatusMsgKey.ExportExecutionDetails, null, BizFlow.Name, "ALM");
 
                                 if (publishToALMConfig.ToAttachActivitiesGroupReport)
                                 {
@@ -590,7 +590,7 @@ namespace Ginger.ALM
             return AlmRepo.LoadALMConfigurations();
         }
 
-        public eUserMsgKeys GetDownloadPossibleValuesMessage()
+        public eUserMsgKey GetDownloadPossibleValuesMessage()
         {
             return AlmRepo.GetDownloadPossibleValuesMessage();
         }

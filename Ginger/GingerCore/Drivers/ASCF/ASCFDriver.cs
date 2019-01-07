@@ -164,7 +164,7 @@ namespace GingerCore.Drivers.ASCF
                 General.DoEvents();
                 //Connect Failed after x retry...   
                 IsTryingToConnect = false;
-                Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, "ASCF","");
+                Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, "ASCF","");
             });
         }
 
@@ -178,7 +178,7 @@ namespace GingerCore.Drivers.ASCF
             
             for (int i = 0; i < 240; i++)
             {                
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.ASCFTryToConnect,null, "Try#" + i);
+                Reporter.ToGingerHelper(eStatusMsgKey.ASCFTryToConnect,null, "Try#" + i);
                 try
                 {
                     clientSocket.Connect(serverAddress);
@@ -1070,7 +1070,7 @@ namespace GingerCore.Drivers.ASCF
         {
             if (!SocketConnected(clientSocket))
             {
-                Reporter.ToUser(eUserMsgKeys.ASCFNotConnected);
+                Reporter.ToUser(eUserMsgKey.ASCFNotConnected);
                 return;
             }
 

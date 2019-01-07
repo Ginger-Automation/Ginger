@@ -322,7 +322,7 @@ namespace Ginger.Reports
 
             if (_existingTemplatePage)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, _HTMLReportConfiguration.GetNameForFileName(), "item");                
+                Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, _HTMLReportConfiguration.GetNameForFileName(), "item");                
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(_HTMLReportConfiguration);
                 Reporter.CloseGingerHelper();
             }
@@ -443,7 +443,7 @@ namespace Ginger.Reports
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.ImageSize, "30");
+                    Reporter.ToUser(eUserMsgKey.ImageSize, "30");
                 }
             }
         }

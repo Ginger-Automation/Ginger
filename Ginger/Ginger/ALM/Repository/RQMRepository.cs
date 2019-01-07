@@ -85,9 +85,9 @@ namespace Ginger.ALM.Repository
             {
                 Reporter.ToLog(eLogLevel.INFO, "Could not connect to RQM server");
                 if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
-                    Reporter.ToUser(eUserMsgKeys.ALMConnectFailure);
+                    Reporter.ToUser(eUserMsgKey.ALMConnectFailure);
                 else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
-                    Reporter.ToUser(eUserMsgKeys.ALMConnectFailureWithCurrSettings);
+                    Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings);
             }
 
             return isConnectSucc;
@@ -109,14 +109,14 @@ namespace Ginger.ALM.Repository
                         BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == RQMID + "=" + testPlan.RQMID).FirstOrDefault();
                         if (existedBF != null)
                         {
-                            Amdocs.Ginger.Common.MessageBoxResult userSelection = Reporter.ToUser(eUserMsgKeys.TestSetExists, testPlan.Name);
-                            if (userSelection == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                            Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testPlan.Name);
+                            if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                             {
                                 File.Delete(existedBF.FileName);
                             }
                         }
 
-                        Reporter.ToGingerHelper(eGingerHelperMsgKey.ALMTestSetImport, null, testPlan.Name);
+                        Reporter.ToGingerHelper(eStatusMsgKey.ALMTestSetImport, null, testPlan.Name);
 
                         // convert test set into BF
                         BusinessFlow tsBusFlow = ALMIntegration.Instance.AlmCore.ConvertRQMTestPlanToBF(testPlan);
@@ -150,10 +150,10 @@ namespace Ginger.ALM.Repository
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToUser(eUserMsgKeys.ErrorInTestsetImport, testPlan.Name, ex.Message);
+                        Reporter.ToUser(eUserMsgKey.ErrorInTestsetImport, testPlan.Name, ex.Message);
                     }
 
-                    Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
+                    Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
                 }
                 return true;
             }
@@ -190,24 +190,24 @@ namespace Ginger.ALM.Repository
 
             if (businessFlow.ActivitiesGroups.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
 
             bool exportRes = false;
 
             string res = string.Empty;
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportItemToALM, null, "Selected Activities Groups");
+            Reporter.ToGingerHelper(eStatusMsgKey.ExportItemToALM, null, "Selected Activities Groups");
             exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBfActivitiesGroupsToALM(businessFlow, grdActivitiesGroups, ref res);
 
             if (exportRes)
             {
                 //Check if we need to perform save
-                Reporter.ToUser(eUserMsgKeys.ExportItemToALMSucceed);
+                Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
+                Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
 
             Reporter.CloseGingerHelper();
@@ -219,19 +219,19 @@ namespace Ginger.ALM.Repository
 
             if (App.UserProfile.Solution.ExternalItemsFields.Where(x => x.ItemType == "TestCase").ToList().Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Current solution have no pre-difined values for RQM's mandatory fieds. Please configure before doing export. ('ALM'-'ALM Items Fields Configuration')");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Current solution have no pre-difined values for RQM's mandatory fieds. Please configure before doing export. ('ALM'-'ALM Items Fields Configuration')");
                 return false;
             }
 
             if (businessFlow.ActivitiesGroups.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " do not include " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " which supposed to be mapped to ALM Test Cases, please add at least one " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " before doing export.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " do not include " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " which supposed to be mapped to ALM Test Cases, please add at least one " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " before doing export.");
                 return false;
             }
 
             bool exportRes = false;
             string res = string.Empty;
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportItemToALM, null, businessFlow.Name);
+            Reporter.ToGingerHelper(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
 
             exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRQM(businessFlow, App.UserProfile.Solution.ExternalItemsFields, ref res);
 
@@ -239,16 +239,16 @@ namespace Ginger.ALM.Repository
             {
                 if (performSaveAfterExport)
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
 
                 }
                 if(almConectStyle != ALMIntegration.eALMConnectType.Auto && almConectStyle != ALMIntegration.eALMConnectType.Silence)
-                    Reporter.ToUser(eUserMsgKeys.ExportItemToALMSucceed);
+                    Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
+                Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
 
             Reporter.CloseGingerHelper();
@@ -257,9 +257,9 @@ namespace Ginger.ALM.Repository
 
         #region External Item Fields
 
-        public override eUserMsgKeys GetDownloadPossibleValuesMessage()
+        public override eUserMsgKey GetDownloadPossibleValuesMessage()
         {
-            return eUserMsgKeys.AskIfToDownloadPossibleValues;
+            return eUserMsgKey.AskIfToDownloadPossibleValues;
         }
 
         #endregion External Item Fields

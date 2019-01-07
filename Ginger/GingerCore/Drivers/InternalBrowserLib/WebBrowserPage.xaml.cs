@@ -218,7 +218,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception ex)
             {                
-                Reporter.ToUser(eUserMsgKeys.JSExecutionFailed, ex.Message);
+                Reporter.ToUser(eUserMsgKey.JSExecutionFailed, ex.Message);
                 return null;
             }
         }

@@ -27,7 +27,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Amdocs.Ginger.Common;
-using GingerCoreNET.ReporterLib;
 
 namespace Amdocs.Ginger.Repository
 {

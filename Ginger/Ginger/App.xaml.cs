@@ -371,14 +371,11 @@ namespace Ginger
 
         public static void InitApp()
         {
-            // AppReporter.ReportEvent += Reporter.AppReporter_ReportEvent;
-
             // Add event handler for handling non-UI thread exceptions.
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StandAloneThreadExceptionHandler);
 
             Reporter.WorkSpaceReporter = new GingerWorkSpaceReporter();
-
 
             if (Environment.GetCommandLineArgs().Count() > 1)
             {
@@ -448,8 +445,8 @@ namespace Ginger
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
 
             Reporter.ToLog(eLogLevel.INFO, "Loading user messages pool");
-            UserMessagesPool.LoadUserMessgaesPool();
-            GingerHelperMsgsPool.LoadGingerHelperMsgsPool();
+            UserMsgsPool.LoadUserMsgsPool();
+            StatusMsgsPool.LoadStatusMsgsPool();
 
             Reporter.ToLog(eLogLevel.INFO, "Init the Centralized Auto Log");
             AutoLogProxy.Init(App.AppVersion);
@@ -503,7 +500,7 @@ namespace Ginger
                 }
             }
             Reporter.ToLog(eLogLevel.FATAL, ">>>>>>>>>>>>>> Error occurred on stand alone thread(non UI) - " + e.ExceptionObject);
-            //Reporter.ToUser(eUserMsgKeys.ThreadError, "Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
+            //Reporter.ToUser(eUserMsgKey.ThreadError, "Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
 
             if (App.RunningFromConfigFile == false)
             {
@@ -683,7 +680,7 @@ namespace Ginger
 
             if (App.UserProfile.SourceControlLocalFolder == string.Empty)
             {
-                Reporter.ToUser(eUserMsgKeys.SourceControlConnMissingLocalFolderInput);
+                Reporter.ToUser(eUserMsgKey.SourceControlConnMissingLocalFolderInput);
             }
             if (SolutionFolder.EndsWith("\\"))
                 SolutionFolder = SolutionFolder.Substring(0, SolutionFolder.Length - 1);
@@ -699,7 +696,7 @@ namespace Ginger
 
             if (sol == null)
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectSolution);
+                Reporter.ToUser(eUserMsgKey.AskToSelectSolution);
                 return;
             }
 
@@ -846,13 +843,13 @@ namespace Ginger
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKeys.SolutionLoadError, "Load solution from file failed.");
+                        Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Load solution from file failed.");
                         return false;
                     }
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.BeginWithNoSelectSolution);
+                    Reporter.ToUser(eUserMsgKey.BeginWithNoSelectSolution);
                     return false;
                 }
 
@@ -1089,7 +1086,7 @@ namespace Ginger
                 {
                     if (string.IsNullOrEmpty(App.UserProfile.Solution.MainApplication))
                     {
-                        Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "You must have at least one Target Application configured, please set it up.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You must have at least one Target Application configured, please set it up.");
                         return;
                     }
                     else

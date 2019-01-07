@@ -820,7 +820,7 @@ namespace Ginger.Run
                 //Not suppose to happen but just in case        
                 if (act == null)
                 {
-                    Reporter.ToUser(eUserMsgKeys.AskToSelectAction);
+                    Reporter.ToUser(eUserMsgKey.AskToSelectAction);
                     return;
                 }
 
@@ -1757,7 +1757,7 @@ namespace Ginger.Run
 
             if (string.IsNullOrEmpty(AppName))
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Please select Target Application for the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " and " + GingerDicser.GetTermResValue(eTermResKey.Activity));
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select Target Application for the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " and " + GingerDicser.GetTermResValue(eTermResKey.Activity));
                 CurrentBusinessFlow.CurrentActivity.CurrentAgent = null;
                 return;
             }
@@ -1766,7 +1766,7 @@ namespace Ginger.Run
             if (AA == null || ((Agent)AA.Agent) == null)
             {
 
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "The current target application, " + AppName + ", doesn't have a mapped agent assigned to it");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The current target application, " + AppName + ", doesn't have a mapped agent assigned to it");
                 CurrentBusinessFlow.CurrentActivity.CurrentAgent = null;
                 return;
             }
@@ -2137,7 +2137,7 @@ namespace Ginger.Run
                         {
                             case eFlowControlAction.MessageBox:
                                 string txt = act.ValueExpression.Calculate(FC.Value);                                
-                                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, txt);
+                                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, txt);
                                 break;
                             case eFlowControlAction.GoToAction:
                                 if (GotoAction(FC, act))
@@ -2406,7 +2406,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + fc.GetNameFromValue() + "' was not found in Shared Repository");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + fc.GetNameFromValue() + "' was not found in Shared Repository");
                 return false;
             }
         }

@@ -89,7 +89,7 @@ namespace GingerCore.SourceControl
                     Pull();
                     using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
                     {
-                        Reporter.ToUser(eUserMsgKeys.CommitedToRevision, repo.Head.Tip.Sha);
+                        Reporter.ToUser(eUserMsgKey.CommitedToRevision, repo.Head.Tip.Sha);
                     }
                 }
                 catch (Exception e)
@@ -103,7 +103,7 @@ namespace GingerCore.SourceControl
                     catch { }
 
                     conflictsPaths = GetConflictsPaths();
-                    Reporter.ToUser(eUserMsgKeys.SourceControlCommitFailed, "The files are not connected to source control");
+                    Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, "The files are not connected to source control");
                     result = false;
                 }
             }
@@ -233,7 +233,7 @@ namespace GingerCore.SourceControl
                             Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully, Update status: " + result.Status + ", to Revision :"  + repo.Head.Tip.Sha);
 
                         else
-                            Reporter.ToUser(eUserMsgKeys.GitUpdateState, result.Status, repo.Head.Tip.Sha);
+                            Reporter.ToUser(eUserMsgKey.GitUpdateState, result.Status, repo.Head.Tip.Sha);
                     }
                 }
                 else
@@ -241,7 +241,7 @@ namespace GingerCore.SourceControl
                     if (supressMessage == true)
                         Reporter.ToLog(eLogLevel.INFO, "Failed to update the solution from source control.Error Details: 'The files are not connected to source control'");
                     else
-                        Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "The files are not connected to source control");
+                        Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
                 }
 
             }

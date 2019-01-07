@@ -46,7 +46,7 @@ namespace Ginger.Export
             }
             catch(Exception e) 
             {
-                Reporter.ToUser(eUserMsgKeys.FailedToExportBF, e.Message);
+                Reporter.ToUser(eUserMsgKey.FailedToExportBF, e.Message);
             }
         }
 

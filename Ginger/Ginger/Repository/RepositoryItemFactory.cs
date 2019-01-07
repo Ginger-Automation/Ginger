@@ -236,7 +236,7 @@ namespace Ginger.Repository
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, zAgent.Name, e.Message);
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, zAgent.Name, e.Message);
                 }
 
                 if (zAgent.AgentType == eAgentType.Service)
@@ -370,7 +370,7 @@ namespace Ginger.Repository
                 {
                     if (!runInSilentMode)
                     {
-                        Reporter.ToUser(eUserMsgKeys.AnalyzerFoundIssues);
+                        Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
                         analyzerPage.ShowAsWindow();
                     }
                     return 1;

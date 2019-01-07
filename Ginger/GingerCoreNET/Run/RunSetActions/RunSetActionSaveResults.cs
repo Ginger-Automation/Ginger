@@ -62,7 +62,7 @@ namespace Ginger.Run.RunSetActions
                 if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
                 {
 
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
+                    Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
                     string folder = Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults");
                     if (!Directory.Exists(folder))
                     {
@@ -80,7 +80,7 @@ namespace Ginger.Run.RunSetActions
 
                 if (!string.IsNullOrEmpty(SaveResultstoFolderName))
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, SaveResultstoFolderName, "Execution Summary");
+                    Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, SaveResultstoFolderName, "Execution Summary");
                     SaveBFResults(RI, SaveResultstoFolderName);
                     Reporter.CloseGingerHelper();
                 }

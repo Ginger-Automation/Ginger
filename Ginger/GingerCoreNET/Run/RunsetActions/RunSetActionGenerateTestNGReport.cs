@@ -65,7 +65,7 @@ namespace Ginger.Run.RunSetActions
             {
                 if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
+                    Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
                     if (!Directory.Exists(SaveResultsInSolutionFolderName))
                     {
                         Directory.CreateDirectory(SaveResultsInSolutionFolderName);

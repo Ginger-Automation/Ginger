@@ -24,7 +24,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Variables
 {

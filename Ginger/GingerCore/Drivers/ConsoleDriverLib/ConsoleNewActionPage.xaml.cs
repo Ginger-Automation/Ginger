@@ -73,7 +73,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
             else
             {                
-                Reporter.ToUser(eUserMsgKeys.AskToSelectBusinessflow);
+                Reporter.ToUser(eUserMsgKey.AskToSelectBusinessflow);
             }
         }
 

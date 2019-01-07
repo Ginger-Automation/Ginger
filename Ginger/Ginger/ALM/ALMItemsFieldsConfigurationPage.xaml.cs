@@ -47,7 +47,7 @@ namespace Ginger.ALM
 
             mItemsFields = App.UserProfile.Solution.ExternalItemsFields;
             ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, false, null);
-            if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 RunWorker(true);
             }
@@ -72,7 +72,7 @@ namespace Ginger.ALM
 
         private void Refresh(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 RunWorker(true);
         }
 
@@ -137,7 +137,7 @@ namespace Ginger.ALM
             LoadFieldsStatusLbl.Visibility = Visibility.Collapsed;
             grdQCFields.Visibility = Visibility.Visible;
             grdQCFields.DataSourceList = mItemsFields;
-            Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "ALM Item Fields population is complete");
+            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "ALM Item Fields population is complete");
         }
         #endregion
     }
