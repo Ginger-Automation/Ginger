@@ -12,6 +12,11 @@ namespace GingerUtils.TimeLine
         private uint mStart;
         private uint mEnd;
 
+        public double Start { get { return mStart; } set { mStart = (uint)value; } }
+        public double End { get { return mEnd; } set { mEnd = (uint)value; } }
+
+
+
         // Item level in the tree, root items are 0 
         public int Level { get; set; }
 
@@ -22,6 +27,13 @@ namespace GingerUtils.TimeLine
         {
         }
 
+        public TimeLineEvent(string itemType, string text, uint start)
+        {
+            mItemType = itemType;
+            mText = text;
+            mStart = start;
+        }
+
         public TimeLineEvent(string itemType, string text, uint start, uint end)
         {
             mItemType = itemType;
@@ -30,24 +42,11 @@ namespace GingerUtils.TimeLine
             mEnd = end;
         }
 
-        public static TimeLineEvent StartNew(string itemType , string text)
-        {
-            TimeLineEvent timeLineEvent = new TimeLineEvent();
-            timeLineEvent.mItemType = itemType;
-            timeLineEvent.mText = text;
-            timeLineEvent.mStart = (uint)(TimeLineEvents.Stopwatch.ElapsedMilliseconds);
-            return timeLineEvent;
-        }
-
+       
         public void AddSubEvent(TimeLineEvent timeLineEvent)
         {
             timeLineEvent.Level = this.Level + 1;
             mChildren.Add(timeLineEvent);
-        }
-
-        public void Stop()
-        {
-            mEnd = (uint)(TimeLineEvents.Stopwatch.ElapsedMilliseconds);
         }
 
         
@@ -65,6 +64,9 @@ namespace GingerUtils.TimeLine
         string mItemType;
         public string ItemType { get { return mItemType; } set { mItemType = value; } }
 
+        /// <summary>
+        /// Return elapsed in millis 
+        /// </summary>
         public uint Elapsed
         {
             get
@@ -94,9 +96,7 @@ namespace GingerUtils.TimeLine
         //}
 
        
-        public double Start { get { return mStart; }  set { mStart = (uint)value; } }
-        public double End { get { return mEnd; } set { mEnd = (uint)value; } }
-
+        
 
 
         

@@ -25,6 +25,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Run;
 using Ginger.BusinessFlowWindows;
 using Ginger.ReporterLib;
 using Ginger.Reports;
@@ -404,6 +405,7 @@ namespace Ginger
             Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
 
             AutomateTabGingerRunner = new GingerRunner(eExecutedFrom.Automation);
+            AutomateTabGingerRunner.RunListeners.Add(new GingerRunnerTimeLine());
 
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
@@ -476,8 +478,6 @@ namespace Ginger
             App.AppSplashWindow = null;
 
             AutoLogProxy.LogAppOpened();
-
-            AutomateTabGingerRunner.GiveUserFeedback = true;
 
             if ((App.UserProfile.Solution != null) && (App.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null))
             {

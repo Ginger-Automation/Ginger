@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.InterfacesLib;
+using Amdocs.Ginger.Run;
 using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
 using Ginger.Actions.ActionConversion;
@@ -46,7 +47,6 @@ using GingerCore.Actions.PlugIns;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Variables;
-using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -71,7 +71,7 @@ namespace Ginger
     /// <summary>
     /// Interaction logic for AutomatePage.xaml
     /// </summary>
-    public partial class AutomatePage : Page //NOSONAR 
+    public partial class AutomatePage : Page 
     {                 
         BusinessFlowPage mCurrentBusPage;
         VariablesPage mVariablesPage;
@@ -92,6 +92,8 @@ namespace Ginger
         GridLength mlastActivitiyActionsRowHeight = new GridLength(300, GridUnitType.Star);
         readonly GridLength mMinRowsExpanderSize = new GridLength(35);
         readonly GridLength mMinColsExpanderSize = new GridLength(35);
+
+        AutomatePageRunnerListener mAutomatePageRunnerListener;
 
         public void GoToBusFlowsListHandler(RoutedEventHandler clickHandler)
         {           
@@ -143,7 +145,10 @@ namespace Ginger
 
             App.PropertyChanged += AppPropertychanged;
             App.UserProfile.PropertyChanged += UserProfilePropertyChanged;
-            App.AutomateTabGingerRunner.GingerRunnerEvent += GingerRunner_GingerRunnerEvent;
+            // Add Listener so we can do GiveUserFeedback
+            mAutomatePageRunnerListener = new AutomatePageRunnerListener();
+            mAutomatePageRunnerListener.AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback;
+            App.AutomateTabGingerRunner.RunListeners.Add(mAutomatePageRunnerListener);
 
             App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEvent;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
@@ -151,7 +156,7 @@ namespace Ginger
             SetGridsView(eAutomatePageViewStyles.Design.ToString());
             SetGherkinOptions();                     
         }
-
+    
         private void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
         {
             switch (args.EventType)
@@ -185,15 +190,17 @@ namespace Ginger
             }
         }
 
-        private void GingerRunner_GingerRunnerEvent(GingerCoreNET.RunLib.GingerRunnerEventArgs EventArgs)
+        public void GiveUserFeedback(object sender, EventArgs e)
         {
-            this.Dispatcher.Invoke(() =>
+            // Run Do events on sepertate task so will not impact performance
+            Task.Factory.StartNew(() => 
             {
-                if (EventArgs.EventType == GingerRunnerEventArgs.eEventType.DoEventsRequired)
+                this.Dispatcher.Invoke(() =>
                 {
                     GingerCore.General.DoEvents();
-                }
+                });
             });
+           
         }
 
         private void SetFramesContent()
@@ -1441,7 +1448,8 @@ namespace Ginger
 
         private void TimeLineReportButton_Click(object sender, RoutedEventArgs e)
         {
-            TimeLinePage timeLinePage = new TimeLinePage(App.AutomateTabGingerRunner.mGingerRunnerTimeLine.timeLineEvents);
+            GingerRunnerTimeLine gingerRunnerTimeLine = (GingerRunnerTimeLine)(from x in App.AutomateTabGingerRunner.RunListeners where x.GetType() == typeof(GingerRunnerTimeLine) select x).SingleOrDefault();
+            TimeLinePage timeLinePage = new TimeLinePage(gingerRunnerTimeLine.timeLineEvents);
             timeLinePage.ShowAsWindow();
         }
     }

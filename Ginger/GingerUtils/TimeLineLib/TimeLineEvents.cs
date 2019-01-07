@@ -1,14 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace GingerUtils.TimeLine
 {
     public class TimeLineEvents
     {
-        // We track all events to same base using one Stopwatch and taking millis 
-        public static readonly Stopwatch Stopwatch = new Stopwatch();
-
         private List<TimeLineEvent> mEvents = new List<TimeLineEvent>();
 
         public IEnumerable<TimeLineEvent> Events
@@ -19,6 +15,10 @@ namespace GingerUtils.TimeLine
             }
         }
 
+        public void Clear()
+        {
+            mEvents.Clear();
+        }
 
         public void AddEvent(TimeLineEvent timeLineEvent)
         {
