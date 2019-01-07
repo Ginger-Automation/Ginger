@@ -188,6 +188,14 @@ namespace Ginger.WindowExplorer
             act.Active = true;
             act.AddNewReturnParams = true;
             act.Value = ValueTextBox.Text;
+            //Set action unique input values
+            if (mActInputValues != null)
+            {
+                foreach (ActInputValue iv in mActInputValues)
+                {
+                    act.AddOrUpdateInputParamValue(iv.Param, iv.Value);
+                }
+            }
 
             ElementLocator EL = (ElementLocator)mLocators.CurrentItem;
 
@@ -196,17 +204,7 @@ namespace Ginger.WindowExplorer
                 //Set UIElement action locator
                 ActUIElement actUI = (ActUIElement)act;
                 actUI.ElementLocateBy = EL.LocateBy;
-                actUI.ElementLocateValue = EL.LocateValue;         
-                
-                //Set action unique input values
-                if (mActInputValues!=null)
-                {
-                    foreach (ActInputValue iv in mActInputValues)
-                    {
-                        actUI.AddOrUpdateInputParamValue(iv.Param,iv.Value);
-                    }
-                }
-
+                actUI.ElementLocateValue = EL.LocateValue;                                        
                 act = actUI;
             }
             else

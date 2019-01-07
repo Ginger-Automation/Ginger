@@ -450,7 +450,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void RowSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {            
-            mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, RowSelectorValue.ComboBox.Text);
+            mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, RowSelectorValue.ComboBox.SelectedValue.ToString());
             App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
             SetDescriptionDetails();
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
@@ -573,7 +573,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (cmbColumnValue != null)
             {
                 if (cmbColumnValue.ComboBox.SelectedIndex != -1)
-                    colVal = cmbColumnValue.ComboBox.SelectedItem.ToString();
+                    colVal = cmbColumnValue.ComboBox.SelectedValue.ToString();
                 else
                     colVal = cmbColumnValue.ComboBox.Text;
                 description = description + " and Column:" + colVal;
@@ -581,7 +581,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer) && cmbColSelectorValue.ComboBox.SelectedIndex != -1 && WhereColumn != null && WhereColumn.ComboBox.SelectedIndex != -1 && RowSelectorValue != null
                 && WhereProperty != null && WhereProperty.ComboBox.SelectedIndex != -1 && WhereOperator != null && WhereOperator.ComboBox.SelectedIndex != -1)
-            {
+            {               
                 List<string> descriptionString = new List<string>();
                 descriptionString.Add("Get Value of Cell: ");
                 descriptionString.Add("Set Value of Cell: ");

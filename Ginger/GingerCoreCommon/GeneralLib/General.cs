@@ -81,19 +81,6 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 return false;
             }
 
-        }
-        public static void AddOrUpdateInputParamValue(string Param, string Value, ObservableList<ActInputValue> actInputValue)
-        {
-            // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = (from aiv in actInputValue where aiv.Param == Param select aiv).FirstOrDefault();
-            if (AIV == null)
-            {
-                AIV = new ActInputValue();
-                AIV.Param = Param;
-                actInputValue.Add(AIV);
-            }
-
-            AIV.Value = Value;
-        }       
+        }    
     }
 }
