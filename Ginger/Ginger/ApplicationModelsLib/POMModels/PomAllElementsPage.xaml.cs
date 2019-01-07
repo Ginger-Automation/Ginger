@@ -322,6 +322,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTestAllElements.Visibility = Visibility.Collapsed;
             xStopTestAllElements.Visibility = Visibility.Visible;
             mStopProcess = false;
+
             if (xMappedElementsTab.IsSelected)
             {
                 await Task.Run(() => TestAllElements(mPOM.MappedUIElements));
@@ -339,7 +340,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             int TotalElements = Elements.Count;
             int TotalFails = 0;
-
+            
             bool WarnErrorOccured = false;
             foreach (ElementInfo EI in Elements)
             {
@@ -353,7 +354,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     return;
                 }
 
-                if (mWinExplorer.TestElementLocators(EI.Locators,true))
+                if (mWinExplorer.TestElementLocators(EI,true))
                 {
                     EI.ElementStatus = ElementInfo.eElementStatus.Passed;
                 }
