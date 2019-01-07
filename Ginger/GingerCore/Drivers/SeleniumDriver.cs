@@ -118,7 +118,7 @@ namespace GingerCore.Drivers
         public bool BrowserMinimized { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("true")]
+        [UserConfiguredDefault("false")]//"driver is failing to launch when the mode is true"
         [UserConfiguredDescription("Hide the Driver Console (Command Prompt) Window")]
         public bool HideConsoleWindow { get; set; }
 
