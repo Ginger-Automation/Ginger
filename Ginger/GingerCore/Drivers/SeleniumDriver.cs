@@ -118,7 +118,7 @@ namespace GingerCore.Drivers
         public bool BrowserMinimized { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("true")]
+        [UserConfiguredDefault("false")]//"driver is failing to launch when the mode is true"
         [UserConfiguredDescription("Hide the Driver Console (Command Prompt) Window")]
         public bool HideConsoleWindow { get; set; }
 
@@ -436,11 +436,18 @@ namespace GingerCore.Drivers
                         if (SeleniumUserArgs != null)
                             foreach (string arg in SeleniumUserArgs)
                                 options.AddArgument(arg);
+                        if (HideConsoleWindow)
+                        {
+                            ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
+                            ChService.HideCommandPromptWindow = HideConsoleWindow;
+                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        }
 
-                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
-                        ChService.HideCommandPromptWindow = HideConsoleWindow;
-                        Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-
+                        else
+                        {
+                            
+                            Driver = new ChromeDriver(options);
+                        }
                         break;
 
                     #endregion
