@@ -125,7 +125,7 @@ namespace GingerCore.ALM.JIRA
         private string getSelectedFieldValue(dynamic fields, string fieldName)
         {
             Dictionary<string, object> array = new Dictionary<string, object>();
-            FieledSchema temp = jiraRepositoryObj.GetFieldFromTemplateByName(ALM_Common.DataContracts.ResourceType.TEST_SET, "DE", fieldName);
+            FieldSchema temp = jiraRepositoryObj.GetFieldFromTemplateByName(ALM_Common.DataContracts.ResourceType.TEST_SET, "DE", fieldName);
             if(temp == null)
             {
                 return "";
