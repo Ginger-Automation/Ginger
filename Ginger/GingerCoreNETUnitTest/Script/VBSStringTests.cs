@@ -81,6 +81,47 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "MID Expression Test");
         }
 
+        [TestMethod]
+        public void SplitExpressionTest()
+        {
+            //Arrange
+            string evalExpr = "Split(\"My-Tesla-Test\",\"-\")(1)";
+            string expectedResult = "Tesla";
+
+            //Act
+            string result = VBS.ExecuteVBSEval(evalExpr);
+
+            //Assert            
+            Assert.AreEqual(expectedResult, result, "Split Expression Test");
+        }
+
+        [TestMethod]
+        public void SplitExpressionTest_V2()
+        {
+            //Arrange
+            string evalExpr = "Split(\"My-Tesla-Test\",\"-\")(0)";
+            string expectedResult = "My";
+
+            //Act
+            string result = VBS.ExecuteVBSEval(evalExpr);
+
+            //Assert            
+            Assert.AreEqual(expectedResult, result, "Split Expression Test");
+        }
+
+        [TestMethod]
+        public void SplitExpressionTest_ReturnsEmpty()
+        {
+            //Arrange
+            string evalExpr = "Split(\"My-Tesla-Test\",\"-\")(3)";
+            string expectedResult = "";
+
+            //Act
+            string result = VBS.ExecuteVBSEval(evalExpr);
+
+            //Assert            
+            Assert.AreEqual(expectedResult, result, "Split Expression Test");
+        }
 
         [TestMethod]
         public void ReplaceExpressionTest()
