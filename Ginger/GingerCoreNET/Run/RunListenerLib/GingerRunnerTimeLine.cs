@@ -50,20 +50,7 @@ namespace Amdocs.Ginger.Run
         }
 
         #region Action
-        public override void ActionStart(uint eventTime, Act action)
-        {
-            ActionTimeLineEvent = new TimeLineEvent("Action", action.Description, eventTime);
-            if (ActivityTimeLineEvent != null)
-            {
-                PrepActionTimeLineEvent.AddSubEvent(ActionTimeLineEvent);
-            }
-        }
-
-
-        public override void ActionEnd(uint eventTime, Act action)
-        {
-            ActionTimeLineEvent.End = eventTime;
-        }
+       
 
         
         public override void PrepActionStart(uint eventTime, Act action)
@@ -77,6 +64,21 @@ namespace Amdocs.Ginger.Run
             PrepActionTimeLineEvent.End = eventTime;
         }
 
+
+        public override void ActionStart(uint eventTime, Act action)
+        {
+            ActionTimeLineEvent = new TimeLineEvent("Action", action.Description, eventTime);
+            if (ActivityTimeLineEvent != null)
+            {
+                ActivityTimeLineEvent.AddSubEvent(ActionTimeLineEvent);
+            }
+        }
+
+
+        public override void ActionEnd(uint eventTime, Act action)
+        {
+            ActionTimeLineEvent.End = eventTime;
+        }
         #endregion Action
 
 

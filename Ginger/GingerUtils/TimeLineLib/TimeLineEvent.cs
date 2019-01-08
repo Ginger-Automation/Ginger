@@ -22,6 +22,13 @@ namespace GingerUtils.TimeLine
 
         List<TimeLineEvent> mChildren = new List<TimeLineEvent>();
 
+        public List<TimeLineEvent> ChildrenList
+        {
+            get
+            {
+                return mChildren;               
+            }
+        }
 
         public TimeLineEvent()
         {

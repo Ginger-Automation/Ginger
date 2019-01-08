@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GingerUtils.TimeLine
 {
@@ -12,6 +13,14 @@ namespace GingerUtils.TimeLine
             get
             {
                 return mEvents;
+            }
+        }
+
+        public List<TimeLineEvent> EventList
+        {
+            get
+            {
+                return mEvents.Cast<TimeLineEvent>().ToList();
             }
         }
 
