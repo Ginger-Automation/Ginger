@@ -34,7 +34,7 @@ namespace GingerWPFUnitTest.APIModelLib
         [TestInitialize]
         public void TestInitialize()
         {
-            string TempSolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\WSDL");
+            string TempSolutionFolder = TestResources.GetTestTempFolder(@"Solutions\WSDL");
             if (Directory.Exists(TempSolutionFolder))
             {
                 Directory.Delete(TempSolutionFolder, true);

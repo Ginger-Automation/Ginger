@@ -62,7 +62,7 @@ namespace GingerTest.HTMLReportsLib
         private static void CreateTestSolution()
         {                        
             string sourceFolder = TestResources.GetTestResourcesFolder(@"Solutions\ReportSR");
-            solutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\ReportSR");
+            solutionFolder = TestResources.GetTestTempFolder(@"Solutions\ReportSR");
             if (Directory.Exists(solutionFolder))
             {
                 Directory.Delete(solutionFolder, true);

@@ -6,7 +6,7 @@ namespace Amdocs.Ginger.Common
 {
     public class GingerHelperMsg
     {
-        public GingerHelperMsg(eGingerHelperMsgType MessageType, string MsgHeader, string MsgContent, bool ShowBtn = false, string BtnContent = "")
+        public GingerHelperMsg(eStatusMessageType MessageType, string MsgHeader, string MsgContent, bool ShowBtn = false, string BtnContent = "")
         {
             this.MessageType = MessageType;
             this.MsgHeader = MsgHeader;
@@ -17,7 +17,7 @@ namespace Amdocs.Ginger.Common
 
 
 
-        public eGingerHelperMsgType MessageType { get; set; }
+        public eStatusMessageType MessageType { get; set; }
         public string MsgHeader { get; set; }
         public string MsgContent { get; set; }
         public bool ShowBtn { get; set; }

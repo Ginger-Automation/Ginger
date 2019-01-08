@@ -46,7 +46,7 @@ namespace GingerCoreCommonTest.Repository
             // Init SR
             mSolutionRepository = Ginger.App.CreateGingerSolutionRepository();
             Ginger.App.InitClassTypesDictionary();            
-            string TempRepositoryFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\SRTestTemp");            
+            string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTemp");            
             mSolutionRepository.Open(TempRepositoryFolder);
         }
 
@@ -54,7 +54,7 @@ namespace GingerCoreCommonTest.Repository
         {
             // First we create a basic solution with some sample items
             SolutionRepository SR = new SolutionRepository();            
-            string TempRepositoryFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\SRTestTemp");
+            string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTemp");
             if (Directory.Exists(TempRepositoryFolder))
             {
                 Directory.Delete(TempRepositoryFolder, true);
