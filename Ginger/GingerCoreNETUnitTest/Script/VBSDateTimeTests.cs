@@ -45,9 +45,10 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
             //12/31/2018 7:38:56 PM
-            DateTime localDate = DateTime.Now;
+            DateTime localDate = DateTime.Parse(result);
 
             //Assert            
+            Assert.IsTrue(!string.IsNullOrEmpty(result), "result not empty");
             Assert.AreEqual(localDate.ToString(), result, "Now Expression Test");
         }
 
