@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
@@ -3150,7 +3151,7 @@ namespace Ginger.Run
                 if (doContinueRun == false)
                 {
                     CurrentBusinessFlow.ExecutionLogActivityCounter = 0;
-               ((ExecutionLogger)ExecutionLogger).BusinessFlowStart(CurrentBusinessFlow);
+                    ((ExecutionLogger)ExecutionLogger).BusinessFlowStart(CurrentBusinessFlow);
                 }
 
                 //Executing the Activities
@@ -3289,28 +3290,32 @@ namespace Ginger.Run
         {
             // A flow is blocked if some activity failed and all the activities after it failed
             // A Flow is failed if one or more activities failed
+            // A flow is skipped if all acticities are marked skipped
 
             // Add Blocked
             bool Failed = false;
             bool Blocked = false;
             bool Stopped = false;
 
-            // Assume pass unless error
-            BF.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
-
+            // All activities skipped
             if (BF.Activities.Count == 0 ||
-                BF.Activities.Where(x=>x.GetType()== typeof(Activity) && x.Status== Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped).ToList().Count == BF.Activities.Where(x => x.GetType() == typeof(Activity)).ToList().Count)               
+                BF.Activities.Where(x=>x.GetType()== typeof(Activity) && x.Status== eRunStatus.Skipped).ToList().Count == BF.Activities.Where(x => x.GetType() == typeof(Activity)).ToList().Count)               
             {
-                BF.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                BF.RunStatus = eRunStatus.Skipped;
                 return;
             }
 
             if (considrePendingAsSkipped &&
-                BF.Activities.Where(x => x.GetType() == typeof(Activity) && x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending).ToList().Count == BF.Activities.Where(x => x.GetType() == typeof(Activity)).ToList().Count)
+                BF.Activities.Where(x => x.GetType() == typeof(Activity) && x.Status == eRunStatus.Pending).ToList().Count == BF.Activities.Where(x => x.GetType() == typeof(Activity)).ToList().Count)
             {
-                BF.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                BF.RunStatus = eRunStatus.Skipped;
                 return;
             }
+
+
+            // Assume pass unless error
+            eRunStatus newStatus = eRunStatus.Passed;
+
             foreach (Activity a in BF.Activities.Where(a => a.GetType() != typeof(ErrorHandler)))
             {
                 if (a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
@@ -3331,20 +3336,22 @@ namespace Ginger.Run
            
             if (Stopped) 
             {
-                BF.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
+                newStatus = eRunStatus.Stopped;
             }
             else if(Failed)
             {
-                BF.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                newStatus = eRunStatus.Failed;
             }
             else if(Blocked)
             {
-                BF.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
+                newStatus = eRunStatus.Blocked;
             }
             else
             {
-                BF.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                newStatus = eRunStatus.Passed;
             }
+
+            BF.RunStatus = newStatus;
         }
 
         public void CalculateActivitiesGroupFinalStatus(ActivitiesGroup AG, BusinessFlow BF)
