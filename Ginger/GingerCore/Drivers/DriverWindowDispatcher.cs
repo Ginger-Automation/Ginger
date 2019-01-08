@@ -13,6 +13,11 @@ namespace GingerCore.Drivers
             mDispatcher = dispatcher;
         }
 
+        public void BeginInvokeShutdown(dynamic dispatherPriority)
+        {
+            mDispatcher.BeginInvokeShutdown(dispatherPriority);
+        }
+
         public void Invoke(Action callback)
         {
             mDispatcher.Invoke(callback);
