@@ -93,7 +93,7 @@ namespace Ginger.Actions.WebServices
             GingerCore.General.ActInputValueBinding(AddXMLTagsToOutput, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.AddXMLResponse));
             GingerCore.General.ObjFieldBinding(OpenExecutionDirectoryButton, Button.IsEnabledProperty, mAct, ActSoapUI.Fields.isActionExecuted, BindingMode.OneWay);
             ProjectPropertiesGrid.VEGrid.AddToolbarTool("@Reset_16x16.png", "Reset Properties to default", new RoutedEventHandler(ResetProjectButton_Click));
-            App.AutomateTabGingerRunner.PrepActionValueExpression(mAct);
+            
         }
 
         private void MergeAndClearList()

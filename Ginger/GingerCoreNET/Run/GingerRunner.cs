@@ -1196,6 +1196,12 @@ namespace Ginger.Run
 
 
             // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! why flag
+
+            if (act.ValueExpression == null)
+            {
+                ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
+                act.ValueExpression = VE;
+            }
             act.ValueExpression.DecryptFlag = true;
             foreach (var IV in act.InputValues)
             {
@@ -1362,10 +1368,19 @@ namespace Ginger.Run
 
         }
 
-        public void PrepActionValueExpression(Act act)
+        public void PrepActionValueExpression(Act act, BusinessFlow businessflow = null)
         {
             // We create VE for action only one time here
-            ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
+            ValueExpression VE = null;
+            if (businessflow == null)
+            {
+                VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
+            }
+            else
+            {
+                VE = new ValueExpression(ProjEnvironment, businessflow, DSList);
+            }
+
             act.ValueExpression = VE;
 
             // TODO: remove when we no longer use LocateValue in Action
