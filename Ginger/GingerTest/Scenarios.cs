@@ -22,7 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GingerWPFUnitTest
+namespace GingerTest
 {
     class Scenarios
     {

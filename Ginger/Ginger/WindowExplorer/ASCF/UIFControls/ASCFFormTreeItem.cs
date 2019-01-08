@@ -56,7 +56,7 @@ namespace Ginger.Actions.Locators.ASCF
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             //TODO: fix hard coded [0] ref
-            ASCFDriver = (ASCFDriver)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent.Driver;
+            ASCFDriver = (ASCFDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
 
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 

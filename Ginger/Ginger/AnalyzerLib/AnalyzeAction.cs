@@ -31,6 +31,7 @@ using amdocs.ginger.GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.AnalyzerLib
 {
@@ -93,7 +94,7 @@ namespace Ginger.AnalyzerLib
                 {
                     if (f.Active == true)
                     {
-                        if (f.FlowControlAction == FlowControl.eFlowControlAction.GoToAction)
+                        if (f.FlowControlAction == eFlowControlAction.GoToAction)
                         {
                             string GoToActionName = f.GetNameFromValue();
                             if (parentActivity.GetAct(f.GetGuidFromValue(true), f.GetNameFromValue(true)) == null)
@@ -121,7 +122,7 @@ namespace Ginger.AnalyzerLib
                                 IssuesList.Add(AA);
                             }
                         }
-                        if (f.FlowControlAction == FlowControl.eFlowControlAction.GoToActivity)
+                        if (f.FlowControlAction == eFlowControlAction.GoToActivity)
                         {
                             string GoToActivity = f.GetNameFromValue();
                             //if (BusinessFlow.Activities.Where(x => (x.ActivityName == GoToActivity)).FirstOrDefault() == null)
@@ -150,7 +151,7 @@ namespace Ginger.AnalyzerLib
                                 IssuesList.Add(AA);
                             }
                         }
-                        if (f.FlowControlAction == FlowControl.eFlowControlAction.GoToNextActivity)
+                        if (f.FlowControlAction == eFlowControlAction.GoToNextActivity)
                         {
                             if (BusinessFlow.Activities.IndexOf(parentActivity) == (BusinessFlow.Activities.Count() - 1))
                             {
@@ -166,7 +167,7 @@ namespace Ginger.AnalyzerLib
                                 IssuesList.Add(AA);
                             }
                         }
-                        if (f.FlowControlAction == FlowControl.eFlowControlAction.SetVariableValue)
+                        if (f.FlowControlAction == eFlowControlAction.SetVariableValue)
                         {
                             if (string.IsNullOrEmpty(f.Value) || ValueExpression.IsThisDynamicVE(f.Value) == false)
                             {
@@ -187,7 +188,7 @@ namespace Ginger.AnalyzerLib
                                 }
                             }
                         }
-                        if (f.FlowControlAction == FlowControl.eFlowControlAction.RunSharedRepositoryActivity)
+                        if (f.FlowControlAction == eFlowControlAction.RunSharedRepositoryActivity)
                         {
                             if (string.IsNullOrEmpty(f.Value) || ValueExpression.IsThisDynamicVE(f.Value) == false)
                             {
@@ -209,7 +210,7 @@ namespace Ginger.AnalyzerLib
                                 }
                             }
                         }
-                        if (f.FlowControlAction == FlowControl.eFlowControlAction.GoToActivityByName)
+                        if (f.FlowControlAction == eFlowControlAction.GoToActivityByName)
                         {
                             if (string.IsNullOrEmpty(f.Value) || ValueExpression.IsThisDynamicVE(f.Value) == false)
                             {
@@ -385,7 +386,7 @@ namespace Ginger.AnalyzerLib
             //actions combination
             if (a.GetType() == typeof(ActLaunchJavaWSApplication))//forbidden combination: Launch & (platform\agent manipulation action)
             {
-                List<Act> driverActs = parentActivity.Acts.Where(x => ((x is ActWithoutDriver && x.GetType() != typeof(ActAgentManipulation)) == false) && x.Active == true).ToList();
+                List<IAct> driverActs = parentActivity.Acts.Where(x => ((x is ActWithoutDriver && x.GetType() != typeof(ActAgentManipulation)) == false) && x.Active == true).ToList();
                 if (driverActs.Count > 0)
                 {
                     string list = string.Join(",",driverActs.Select(x => x.ActionDescription).ToList().ToArray());
@@ -492,7 +493,7 @@ namespace Ginger.AnalyzerLib
             FlowControl flowControl = (FlowControl)AA.ErrorInfoObject;
             if (AA.mActivity.GetAct(flowControl.GetGuidFromValue(true), flowControl.GetNameFromValue(true)) == null)
             {
-                Act similarNameAct = AA.mActivity.Acts.Where(x => x.Description == flowControl.GetNameFromValue()).FirstOrDefault();
+                Act similarNameAct =(Act) AA.mActivity.Acts.Where(x => x.Description == flowControl.GetNameFromValue()).FirstOrDefault();
                 if (similarNameAct != null)
                 {
                     string updatedMappingValue= similarNameAct.Guid + flowControl.GUID_NAME_SEPERATOR + similarNameAct.Description;
@@ -519,7 +520,7 @@ namespace Ginger.AnalyzerLib
             FlowControl flowControl = (FlowControl)AA.ErrorInfoObject;
             if (AA.mBusinessFlow.GetActivity(flowControl.GetGuidFromValue(true), flowControl.GetNameFromValue(true)) == null)
             {
-                Activity similarNameActivity = AA.mBusinessFlow.Activities.Where(x => x.ActivityName == flowControl.GetNameFromValue()).FirstOrDefault();
+                Activity similarNameActivity = (Activity)AA.mBusinessFlow.Activities.Where(x => x.ActivityName == flowControl.GetNameFromValue()).FirstOrDefault();
                 if (similarNameActivity != null)
                 {
                     string updatedMappingValue = similarNameActivity.Guid + flowControl.GUID_NAME_SEPERATOR + similarNameActivity.Description;

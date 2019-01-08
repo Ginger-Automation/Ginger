@@ -91,13 +91,12 @@ namespace GingerCore.Actions
                 ConditionCalculated = "";
                 return;
             }
-
-            ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList);
-            VE.Value = Condition;
             
-            VE.Value = VE.Value.Replace("{ActionStatus}", act.Status.ToString());
+            ValueExpression.Value = Condition;
 
-            ConditionCalculated = VE.ValueCalculated;
+            ValueExpression.Value = ValueExpression.Value.Replace("{ActionStatus}", act.Status.ToString());
+
+            ConditionCalculated = ValueExpression.ValueCalculated;
         }
 
     }

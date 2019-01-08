@@ -528,7 +528,11 @@ namespace GingerCore.Actions.Common
         }
 
         [IsSerializedForLocalRepository]
-        public eElementAction ElementAction { get; set; }
+        public eElementAction ElementAction
+        {
+            get;
+            set;
+        }
 
         [IsSerializedForLocalRepository]
         public eLocateBy ElementLocateBy { get; set; }

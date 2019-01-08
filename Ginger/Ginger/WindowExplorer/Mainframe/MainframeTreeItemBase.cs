@@ -48,7 +48,7 @@ namespace Ginger.WindowExplorer.Mainframe
 
         public List<ITreeViewItem> Childrens()
         {    List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-            MFDriver = (MainFrameDriver)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent.Driver;
+            MFDriver = (MainFrameDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
           XMLScreen XMLS=MFDriver.GetRenderedScreen ();
             foreach(XMLScreenField xf in XMLS.Fields)
             {

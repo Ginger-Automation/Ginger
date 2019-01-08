@@ -60,6 +60,9 @@ namespace Amdocs.Ginger.Common.UIElement
         public bool IsAutoLearned { get; set; }
 
         public object ElementObject { get; set; }
+
+
+
         public Boolean IsExpandable { get; set; }
 
         public IWindowExplorer WindowExplorer { get; set; }        

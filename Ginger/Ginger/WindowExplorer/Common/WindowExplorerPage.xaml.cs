@@ -98,17 +98,17 @@ namespace Ginger.WindowExplorer
 
             mContext = Context;
             
-            mPlatform = PlatformInfoBase.GetPlatformImpl(ApplicationAgent.Agent.Platform);
+            mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
 
             //Instead of check make it disabled ?
-            if ((ApplicationAgent.Agent.Driver is IWindowExplorer) == false)
+            if ((((Agent)ApplicationAgent.Agent).Driver is IWindowExplorer) == false)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Control selection is not available yet for driver - " + ApplicationAgent.Agent.Driver.GetType().ToString());
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Control selection is not available yet for driver - " + ((Agent)ApplicationAgent.Agent).Driver.GetType().ToString());
                 _GenWin.Close();
                 return;                
             }
             
-            IWindowExplorer WindowExplorerDriver = (IWindowExplorer)ApplicationAgent.Agent.Driver;
+            IWindowExplorer WindowExplorerDriver = (IWindowExplorer)((Agent)ApplicationAgent.Agent).Driver;
                 
             mWindowExplorerDriver = WindowExplorerDriver;
             mAction = Act;
@@ -186,7 +186,7 @@ namespace Ginger.WindowExplorer
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR,ex.ToString(), writeOnlyInDebugMode: true);
+                Reporter.ToLog(eLogLevel.ERROR,ex.ToString(), writeOnlyInDebugMode: true);
             }
             
         }
@@ -490,7 +490,7 @@ namespace Ginger.WindowExplorer
                 else
                 {
                     //TODO:If item not found in a tree and user confirms add it to control tree                        
-                    if ((Reporter.ToUser(eUserMsgKeys.ConfirmToAddTreeItem)) == MessageBoxResult.Yes)
+                    if ((Reporter.ToUser(eUserMsgKeys.ConfirmToAddTreeItem)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                     {
                         //TODO: Need to move this to IWindowExplorer and each driver will implement this and return matching ITreeViewItem for Element.
                         if(mSpyElement is UIAElementInfo)
@@ -608,7 +608,7 @@ namespace Ginger.WindowExplorer
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in ShowCurrentControlInfo", ex);                
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in ShowCurrentControlInfo", ex);                
                 Reporter.ToUser(eUserMsgKeys.ObjectLoad);
             }
         }        
@@ -1000,8 +1000,8 @@ namespace Ginger.WindowExplorer
             {
                 if (CheckedFilteringCreteriaList.Count == 0)
                 {
-                    MessageBoxResult result = Reporter.ToUser(eUserMsgKeys.FilterNotBeenSet);
-                    if (result == MessageBoxResult.OK)
+                    Amdocs.Ginger.Common.MessageBoxResult result = Reporter.ToUser(eUserMsgKeys.FilterNotBeenSet);
+                    if (result == Amdocs.Ginger.Common.MessageBoxResult.OK)
                     {
                         RefreshControlsGrid();
                         return true;
@@ -1019,8 +1019,8 @@ namespace Ginger.WindowExplorer
             }
             else
             {
-                MessageBoxResult result = Reporter.ToUser(eUserMsgKeys.RetreivingAllElements);
-                if (result == MessageBoxResult.OK)
+                Amdocs.Ginger.Common.MessageBoxResult result = Reporter.ToUser(eUserMsgKeys.RetreivingAllElements);
+                if (result == Amdocs.Ginger.Common.MessageBoxResult.OK)
                 {
                     RefreshControlsGrid();
                     return true;
@@ -1152,7 +1152,7 @@ namespace Ginger.WindowExplorer
         private void SetAutoMapElementTypes()
         {
             List<eElementType> UIElementsTypeList = null;
-            switch (mApplicationAgent.Agent.Platform)
+            switch (((Agent)mApplicationAgent.Agent).Platform)
             {
                 case ePlatformType.Web:
                     WebPlatform webPlatformInfo = new WebPlatform();

@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.UIElement;
+using HtmlAgilityPack;
 
 namespace GingerCore.Drivers.Common
 {
@@ -95,6 +96,8 @@ namespace GingerCore.Drivers.Common
             // So we keep backward compatibility until all drivers do it correctly
             return mName;
         }
+
+        public HtmlNode HTMLElementObject { get; set; }
 
         public override string GetAbsoluteXpath()
         {
