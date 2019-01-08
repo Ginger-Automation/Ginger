@@ -54,7 +54,7 @@ namespace GingerCore.Actions.WebAPI
         ApplicationAPIUtils.eContentType eContentType;
         string ResponseMessage = null;
 
-        public bool RequestContstructor(ActWebAPIBase act, string ProxySettings)
+        public bool RequestContstructor(ActWebAPIBase act, string ProxySettings,bool useProxyServerSettings)
         {
             mAct = act;
             
@@ -81,7 +81,7 @@ namespace GingerCore.Actions.WebAPI
                 return false;
 
             //ProxySettings
-            SetProxySettings(ProxySettings);
+            SetProxySettings(ProxySettings, useProxyServerSettings);
 
             //Headers
             AddHeadersToClient();
@@ -126,10 +126,15 @@ namespace GingerCore.Actions.WebAPI
             }
         }
 
-        private void SetProxySettings(string ProxySettings)
+        private void SetProxySettings(string ProxySettings,bool useProxyServerSettings)
         {
+            //Set proxy settings from local Server Proxy settings
+            if (useProxyServerSettings)
+            {
+                Handler.Proxy = new WebProxy() { BypassProxyOnLocal = true };
+            }
             //Set proxy settings from local
-            if (string.IsNullOrEmpty(ProxySettings))
+            else if (string.IsNullOrEmpty(ProxySettings))
             {
                 Handler.Proxy = WebRequest.GetSystemWebProxy();
             }

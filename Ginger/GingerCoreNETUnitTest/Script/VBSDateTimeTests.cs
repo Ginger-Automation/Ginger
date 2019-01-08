@@ -58,9 +58,8 @@ namespace GingerCoreNETUnitTest.Script
             string evalExpr = "Weekday(Now)";
 
             //Act
-            string result = VBS.ExecuteVBSEval(evalExpr);
-
-            string weekDay = (((int)DateTime.Now.DayOfWeek == 0) ? 7 : (int)DateTime.Now.DayOfWeek + 1).ToString();
+            int result = int.Parse(VBS.ExecuteVBSEval(evalExpr)); 
+            int weekDay = (int)DateTime.Now.DayOfWeek + 1;
 
             //Assert            
             Assert.AreEqual(weekDay , result, "Weekday Expression Test");
