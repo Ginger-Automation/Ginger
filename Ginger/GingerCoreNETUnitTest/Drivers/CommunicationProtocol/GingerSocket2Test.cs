@@ -22,7 +22,6 @@ using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -37,8 +36,6 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
     [Level1]
     public class GingerSocket2Test
     {
-        
-
         // --------------------------------------------------------------------------------------------
         // Sample Ginger Server class
         // --------------------------------------------------------------------------------------------
@@ -182,7 +179,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             });
             task1.Start();
 
-            Thread.Sleep(100);
+            Thread.Sleep(1000);
 
             Task task2 = new Task(() =>
             {
@@ -191,7 +188,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             });
             task2.Start();
 
-            Thread.Sleep(500);
+            Thread.Sleep(1000);
 
         }
 
