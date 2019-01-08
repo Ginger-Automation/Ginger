@@ -73,7 +73,7 @@ namespace Amdocs.Ginger.Common
         
         void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
 
-        
+        string GenerateReportForREportTemplate(string ReportTemplateName, object RI, object RT);
 
         string GenerateTemplate(string templatename, object o);
         ITextBoxFormatter CreateTextBoxFormatter(object Textblock);

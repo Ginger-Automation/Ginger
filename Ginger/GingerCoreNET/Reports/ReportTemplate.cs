@@ -26,7 +26,7 @@ using System.Linq;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
-using GingerCore.Repository;
+
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -104,7 +104,7 @@ namespace Ginger.Reports
             }
         }
 
-        internal static string GenerateReport(string ReportTemplateName, ReportInfo RI)
+        public static string GenerateReport(string ReportTemplateName, ReportInfo RI)
         {
             GC.Collect();
 
@@ -119,18 +119,9 @@ namespace Ginger.Reports
 
             if (RT != null)
             {
-                ReportPage RP = new ReportPage(RI, RT.Xaml);
-                string FileName = Path.GetTempPath() + ReportTemplateName + ".rtf";
-                
-                if(System.IO.File.Exists(FileName))
-                    FileName = Path.GetTempPath() + " " + DateTime.Now.ToString("dMMMyyyy_HHmmss_fff") + "_"+ ReportTemplateName + ".rtf";
+                string PDFFileName;
 
-                GC.Collect();
-                RP.SaveReport(FileName);
-
-                string PDFFileName = FileName.Replace(".rtf", ".pdf");
-
-                RTFtoPDF.Convert(FileName,PDFFileName);
+                PDFFileName = RepositoryItemHelper.RepositoryItemFactory.GenerateReportForREportTemplate(ReportTemplateName, RI, RT);
 
                 return PDFFileName;
             }
@@ -141,7 +132,7 @@ namespace Ginger.Reports
             }
         }
 
-        internal static void GenerateIndividualReport(GingerRunner GR, String Template, ProjEnvironment Env, bool GetReportOnlyForExecutedFlow= false)
+        public static void GenerateIndividualReport(GingerRunner GR, String Template, ProjEnvironment Env, bool GetReportOnlyForExecutedFlow= false)
         {
             var mGR = GR;
             foreach (var BF in mGR.BusinessFlows)
@@ -174,7 +165,7 @@ namespace Ginger.Reports
             Process.Start(repFileName);
         }
 
-        internal static List<ReportTemplate> GetInternalTemplates()
+        public static List<ReportTemplate> GetInternalTemplates()
         {
             List<ReportTemplate> list = new List<ReportTemplate>();
 
