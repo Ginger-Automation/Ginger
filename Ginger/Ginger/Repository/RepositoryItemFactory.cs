@@ -868,6 +868,7 @@ namespace Ginger.Repository
 
         public void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder)
         {
+            //TODO: Remove from here and execute it in actual RunSetActionScript.cs (Not perticularly tested)
             ActScript act = new ActScript();
             string FileName = ScriptFileName.Replace(@"~\", SolutionFolder);
 
@@ -878,6 +879,11 @@ namespace Ginger.Repository
             act.ScriptInterpreterType = ActScript.eScriptInterpreterType.VBS;
             act.Execute();
             //this.Errors = act.Error;
+        }
+
+        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, string result, PublishToALMConfig PublishToALMConfig)
+        {
+            return ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, ALMIntegration.eALMConnectType.Auto, false);
         }
     }
     

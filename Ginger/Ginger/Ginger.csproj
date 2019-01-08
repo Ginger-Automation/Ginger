@@ -1439,7 +1439,6 @@
     <Compile Include="Run\RunSetActions\RunSetActionEditPage.xaml.cs">
       <DependentUpon>RunSetActionEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionPublishToQC.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionSaveResultsEditPage.xaml.cs">
       <DependentUpon>RunSetActionSaveResultsEditPage.xaml</DependentUpon>
     </Compile>
