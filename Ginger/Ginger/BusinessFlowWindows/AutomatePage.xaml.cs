@@ -145,18 +145,32 @@ namespace Ginger
 
             App.PropertyChanged += AppPropertychanged;
             App.UserProfile.PropertyChanged += UserProfilePropertyChanged;
-            // Add Listener so we can do GiveUserFeedback
-            mAutomatePageRunnerListener = new AutomatePageRunnerListener();
-            mAutomatePageRunnerListener.AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback;
-            App.AutomateTabGingerRunner.RunListeners.Add(mAutomatePageRunnerListener);
 
+            AddRunnerListeners();
+            
             App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEvent;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
 
             SetGridsView(eAutomatePageViewStyles.Design.ToString());
-            SetGherkinOptions();                     
+            SetGherkinOptions();
+
         }
-    
+
+        private void AddRunnerListeners()
+        {
+            
+            // Add Listener so we can do GiveUserFeedback
+            
+            mAutomatePageRunnerListener = new AutomatePageRunnerListener();
+            mAutomatePageRunnerListener.AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback;
+            App.AutomateTabGingerRunner.RunListeners.Add(mAutomatePageRunnerListener);
+
+            // TODO: do only if flag on !!!!!!!!!!!!!
+            App.AutomateTabGingerRunner.RunListeners.Add(new GingerRunnerTimeLine());
+            RunListenerBase.Start();
+
+        }
+
         private void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
         {
             switch (args.EventType)
