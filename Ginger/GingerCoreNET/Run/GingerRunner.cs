@@ -1196,6 +1196,12 @@ namespace Ginger.Run
 
 
             // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! why flag
+
+            if (act.ValueExpression == null)
+            {
+                ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
+                act.ValueExpression = VE;
+            }
             act.ValueExpression.DecryptFlag = true;
             foreach (var IV in act.InputValues)
             {
