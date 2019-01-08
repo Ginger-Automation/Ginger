@@ -60,7 +60,7 @@ namespace Ginger.ReporterLib
                     xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Question;
                     break;
                 case GingerCoreNET.ReporterLib.MessageBoxImage.Warning:
-                    xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Power; //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Info; //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     break;
             }
 
