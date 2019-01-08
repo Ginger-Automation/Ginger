@@ -49,23 +49,17 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             InitializeComponent();
             mAction = act;
-
             if (act.Platform == ePlatformType.NA)
             {
                 act.Platform = GetActionPlatform();
             }
             mPlatform = PlatformInfoBase.GetPlatformImpl(act.Platform);
-
             List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
-            ElementLocateByComboBox.BindControl(mAction, ActUIElement.Fields.ElementLocateBy, LocateByList);
-
+            ElementLocateByComboBox.BindControl(mAction, nameof(ActUIElement.ElementLocateBy), LocateByList);
+            ElementTypeComboBox.BindControl(mAction, nameof(ActUIElement.ElementType), mPlatform.GetPlatformUIElementsType());
             SetLocateValueFrame();
-
-            ElementTypeComboBox.BindControl(mAction, ActUIElement.Fields.ElementType, mPlatform.GetPlatformUIElementsType());
-
             ShowPlatformSpecificPage();
-            ShowControlSpecificPage();          
-
+            ShowControlSpecificPage();
             ElementLocateByComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
         }
 
@@ -91,7 +85,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mAction.LocateValue = string.Empty;
             mAction.LocateValueCalculated = string.Empty;
             mAction.ElementLocateValue = string.Empty;
-
             SetLocateValueFrame();
         }
 
@@ -112,6 +105,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
+        List<ActUIElement.eElementAction> mElementActionsList = new List<ActUIElement.eElementAction>();
+
         private void ElementTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ElementLocateByComboBox.IsEnabled = true;
@@ -126,9 +121,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 }
             }
             ElementTypeImage.Source = GetImageSource(mAction.Image);
-            List<ActUIElement.eElementAction> list = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);            
-            //ElementActionComboBox.BindControlWithGrouping(mAction, ActUIElement.Fields.ElementAction, list);
-            ElementActionComboBox.BindControl(mAction, ActUIElement.Fields.ElementAction, list);
+            mElementActionsList = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
+            ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
             UpdateActionInfo(mAction.ElementAction);
             UIElementActionEditPageFrame.Visibility = Visibility.Collapsed;
             if (mAction.ElementType != eElementType.Unknown && mAction.ElementAction != ActUIElement.eElementAction.Unknown)
@@ -477,7 +471,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 case eLocateBy.POMElement:                 
                     ElementTypeComboBox.IsEnabled = false;
-                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAction);
+
+                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAction, nameof(ActUIElement.ElementType), mAction, nameof(ActUIElement.ElementLocateValue));
                     locateByPOMElementPage.ElementChangedPageEvent -= POMElementChanged;
                     locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
                     return locateByPOMElementPage;
@@ -487,6 +482,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     return new LocateValueEditPage(mAction);
             }
         }
+
+        
 
         private void POMElementChanged()
         {
@@ -502,10 +499,10 @@ namespace Ginger.Actions._Common.ActUIElementLib
             // TODO - Add case for KeyboardChange event for LocateValue
             // TODO - Add KeyboardChangeEventHandler for LocateValueEditPage
 
-            ActionInfoLabel.Text = string.Empty;
-            TextBlockHelper text = new TextBlockHelper(ActionInfoLabel);
-            
-            ActionInfoLabel.Visibility = Visibility.Visible;
+            xActionInfoLabel.Text = string.Empty;
+            TextBlockHelper text = new TextBlockHelper(xActionInfoLabel);
+
+            xActionInfoLabel.Visibility = Visibility.Visible;
             if (mAction.ElementType.ToString() != null && mAction.ElementType.ToString() != "" && mAction.ElementType != eElementType.Unknown)
             {                
                 text.AddBoldText(string.Format("Configured '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));

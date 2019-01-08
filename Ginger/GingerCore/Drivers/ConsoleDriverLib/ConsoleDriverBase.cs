@@ -25,6 +25,8 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -91,7 +93,9 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 if (mConsoleDriverWindow != null)
                 {
-                    mConsoleDriverWindow.Close();                                        
+                    mConsoleDriverWindow.Close();
+                    Dispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
+                    Thread.Sleep(100);
                     mConsoleDriverWindow = null;
                 }
             }

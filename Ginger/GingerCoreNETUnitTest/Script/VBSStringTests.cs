@@ -182,6 +182,39 @@ namespace GingerCoreNETUnitTest.Script
         }
 
         [TestMethod]
+        public void InStrRevExpressionTest_FindStringPos()
+        {
+            //Arrange
+            string evalExpr = "InStrRev(\"This is a beautiful day!\",\"beautiful\")";
+            string expectedResult = "11";
+
+            //Act
+            string result = VBS.ExecuteVBSEval(evalExpr);
+
+            //Assert            
+            Assert.AreEqual(expectedResult, result, "InStrRev Expression Test");
+        }
+
+        [TestMethod]
+        public void InStrRevExpressionTest_FindLetterUsingDifferentStartPos()
+        {
+            //Arrange
+            string evalExpr = "InStrRev(\"This is a beautiful day!\",\"T\",-1,1)";
+            string expectedResult = "15";
+            string evalExpr1 = "InStrRev(\"This is a beautiful day!\",\"T\",-1,0)";
+            string expectedResult1 = "1";
+
+
+            //Act
+            string result = VBS.ExecuteVBSEval(evalExpr);
+            string result1 = VBS.ExecuteVBSEval(evalExpr1);
+
+            //Assert            
+            Assert.AreEqual(expectedResult, result, "InStrRev Expression Test");
+            Assert.AreEqual(expectedResult1, result1, "InStrRev Expression Test");
+        }
+
+        [TestMethod]
         public void LeftExpressionTest()
         {
             //Arrange
