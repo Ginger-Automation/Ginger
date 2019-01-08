@@ -1443,7 +1443,6 @@
     <Compile Include="Run\RunSetActions\RunSetActionSaveResultsEditPage.xaml.cs">
       <DependentUpon>RunSetActionSaveResultsEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionScript.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionGenerateTestNGReportEditPage.xaml.cs">
       <DependentUpon>RunSetActionGenerateTestNGReportEditPage.xaml</DependentUpon>
     </Compile>

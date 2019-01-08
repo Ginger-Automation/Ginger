@@ -85,5 +85,7 @@ namespace Amdocs.Ginger.Common
         void HTMLReportAttachment(string report, string reportsResultFolder, string reportresultfolder, string runsetfolder, object Attachment, object conf);
 
         object CreateNewReportTemplate(string path = "");
+
+        void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder);
     }
 }

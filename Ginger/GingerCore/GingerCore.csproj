@@ -418,9 +418,7 @@
     <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
     <Compile Include="Actions\VisualTesting\VisualCompareAnalyzerIntegration.cs" />
     <Compile Include="Actions\RobotFramework\GingerParam.cs" />
-    <Compile Include="Actions\WebServices\ActSoapUiInputValue.cs" />
     <Compile Include="Actions\WebServices\WebAPI\ActWebAPIModel.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\WebAPIKeyBodyValues.cs" />
     <Compile Include="Actions\Common\ActMedia.cs" />
     <Compile Include="Actions\Common\ActBattery.cs" />
     <Compile Include="Actions\Common\ActPhone.cs" />

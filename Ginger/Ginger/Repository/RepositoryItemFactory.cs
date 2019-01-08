@@ -26,6 +26,7 @@ using Ginger.Reports;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
@@ -863,6 +864,20 @@ namespace Ginger.Repository
             RTFtoPDF.Convert(FileName, PDFFileName);
 
             return PDFFileName;
+        }
+
+        public void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder)
+        {
+            ActScript act = new ActScript();
+            string FileName = ScriptFileName.Replace(@"~\", SolutionFolder);
+
+            Ginger.Run.RunSetActions.RunSetActionScript actionScript = new RunSetActionScript();
+            actionScript.VerifySolutionFloder(SolutionFolder, FileName);
+            
+            act.ScriptName = FileName;
+            act.ScriptInterpreterType = ActScript.eScriptInterpreterType.VBS;
+            act.Execute();
+            //this.Errors = act.Error;
         }
     }
     

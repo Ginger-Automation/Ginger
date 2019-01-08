@@ -20,7 +20,6 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
 using Ginger.Reports;
 using GingerCore.Actions;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -55,25 +54,7 @@ namespace Ginger.Run.RunSetActions
         {
             try
             {
-                ActScript act = new ActScript();
-                string FileName = ScriptFileName.Replace(@"~\", SolutionFolder);
-                if(string.IsNullOrEmpty(SolutionFolder))
-                {
-                    Errors = "Script path not provided.";
-                    Status = eRunSetActionStatus.Failed;
-                    return;
-                }
-                if (!System.IO.File.Exists(FileName))
-                {
-                    Errors = "File Not found: " + FileName;
-                    Status = eRunSetActionStatus.Failed;
-                    return;
-                }
-
-                act.ScriptName = FileName;
-                act.ScriptInterpreterType = ActScript.eScriptInterpreterType.VBS;
-                act.Execute();
-                this.Errors = act.Error;
+                RepositoryItemHelper.RepositoryItemFactory.ExecuteActScriptAction(SolutionFolder, FileName);
             }
             catch(Exception ex)
             {
@@ -82,9 +63,25 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
+        public void VerifySolutionFloder(string SolutionFolder, string FileName)
+        {
+            if (string.IsNullOrEmpty(SolutionFolder))
+            {
+               Errors = "Script path not provided.";
+                Status = eRunSetActionStatus.Failed;
+                return;
+            }
+            if (!System.IO.File.Exists(FileName))
+            {
+                Errors = "File Not found: " + FileName;
+                Status = eRunSetActionStatus.Failed;
+                return;
+            }
+        }
+
         public override string GetEditPage()
         {
-            RunSetActionScriptEditPage p = new RunSetActionScriptEditPage(this);
+            //RunSetActionScriptEditPage p = new RunSetActionScriptEditPage(this);
             return "RunSetActionScriptEditPage";
         }
 
