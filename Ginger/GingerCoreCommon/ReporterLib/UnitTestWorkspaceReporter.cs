@@ -20,7 +20,7 @@ namespace Amdocs.Ginger.Common
         }
         
 
-        public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
+        public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
             // For unit tests we write to console too
             Console.WriteLine("ToLog: " + messageToLog);

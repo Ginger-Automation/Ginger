@@ -11,7 +11,7 @@ namespace Amdocs.Ginger.Common
     /// </summary>
     public abstract class WorkSpaceReporterBase
     {
-        public abstract void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false);
+        public abstract void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null);
                 
         public void ToConsole(eLogLevel logLevel, string message)
         {

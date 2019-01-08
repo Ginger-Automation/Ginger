@@ -250,7 +250,7 @@ namespace Ginger.Imports.QTP
             
 
             //TODO: open the new BF in Automate tab + make sure it is added to the tree
-            Reporter.ToGingerHelper(eStatusMsgKey.ScriptImported_RefreshSolution);
+            Reporter.ToStatus(eStatusMsgKey.ScriptImported_RefreshSolution);
             _pageGenericWin.Close();
         }
 

@@ -800,20 +800,20 @@ namespace Ginger
                 }
             }
 
-            Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, App.BusinessFlow.Name,
+            Reporter.ToStatus(eStatusMsgKey.SaveItem, null, App.BusinessFlow.Name,
                                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(App.BusinessFlow);
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
         }
 
         private void UndoBizFlowChangesButton_Click(object sender, RoutedEventArgs e)
         {
             if (App.BusinessFlow != null && Reporter.ToUser(eUserMsgKey.AskIfSureWantToUndoChange) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
-                Reporter.ToGingerHelper(eStatusMsgKey.UndoChanges, null, App.BusinessFlow.Name);
+                Reporter.ToStatus(eStatusMsgKey.UndoChanges, null, App.BusinessFlow.Name);
                 App.BusinessFlow.RestoreFromBackup();
                 App.BusinessFlow.SaveBackup();
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
         }
 
@@ -1025,14 +1025,14 @@ namespace Ginger
             if (Analyz)
             {
                 //Run Analyzer check if not including any High or Critical issues before execution
-                Reporter.ToGingerHelper(eStatusMsgKey.AnalyzerIsAnalyzing, null, App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                 try
                 {
                     AnalyzerPage analyzerPage = new AnalyzerPage();
                     analyzerPage.Init(App.UserProfile.Solution, App.BusinessFlow);
                     await analyzerPage.AnalyzeWithoutUI();
 
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                     if (analyzerPage.TotalHighAndCriticalIssues > 0)
                     {
                         Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
@@ -1042,7 +1042,7 @@ namespace Ginger
                 }
                 finally
                 {
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                 }
             }
             try
@@ -1264,13 +1264,13 @@ namespace Ginger
             AutoLogProxy.UserOperationStart("StartAgent_Click");
 
             string agentsNames = App.AutomateTabGingerRunner.GetAgentsNameToRun();
-            Reporter.ToGingerHelper(eStatusMsgKey.StartAgents, null, agentsNames);
+            Reporter.ToStatus(eStatusMsgKey.StartAgents, null, agentsNames);
 
             App.AutomateTabGingerRunner.StopAgents();
             SetAutomateTabRunnerForExecution();
             App.AutomateTabGingerRunner.StartAgents();
 
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
             AutoLogProxy.UserOperationEnd();
         }
 
@@ -1395,9 +1395,9 @@ namespace Ginger
             {
                 if (Reporter.ToUser(eUserMsgKey.AskIfToSaveBFAfterExport, App.BusinessFlow.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
-                    Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(App.BusinessFlow);
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                 }
             }
         }

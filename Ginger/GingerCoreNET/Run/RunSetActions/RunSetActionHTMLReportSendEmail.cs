@@ -178,7 +178,7 @@ namespace Ginger.Run.RunSetActions
                 if (ReportItem != null && !WorkSpace.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                 {
                     Errors = "In order to get HTML report, please, perform executions before";
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                     Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
                     return;
                 }
@@ -198,7 +198,7 @@ namespace Ginger.Run.RunSetActions
                 else
                 {
                     Errors = "In order to get HTML report, please, perform executions before";
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                     Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
                     return;
                 }
@@ -371,7 +371,7 @@ namespace Ginger.Run.RunSetActions
             if (isSuccess == false)
             {
                 Errors = Email.Event;
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
                 Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
             }
         }

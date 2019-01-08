@@ -62,7 +62,7 @@ namespace Ginger.Run.RunSetActions
                 if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
                 {
 
-                    Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
                     string folder = Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults");
                     if (!Directory.Exists(folder))
                     {
@@ -75,14 +75,14 @@ namespace Ginger.Run.RunSetActions
                     }
                     SaveBFResults(RI, folder);
 
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                 }
 
                 if (!string.IsNullOrEmpty(SaveResultstoFolderName))
                 {
-                    Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, SaveResultstoFolderName, "Execution Summary");
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, SaveResultstoFolderName, "Execution Summary");
                     SaveBFResults(RI, SaveResultstoFolderName);
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                 }
 
                 //****----- condition  to check each business flow  ***////
@@ -136,14 +136,14 @@ namespace Ginger.Run.RunSetActions
                 else
                 {
                     Errors = "Folder path not provided";
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                     Status = RunSetActionBase.eRunSetActionStatus.Failed;
                 }
             }
             catch (Exception ex)
             {
                 Errors = "Failed: " + ex.Message;
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
                 Status = RunSetActionBase.eRunSetActionStatus.Failed;
             }
         }

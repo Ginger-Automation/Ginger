@@ -30,7 +30,7 @@ namespace Amdocs.Ginger.GingerConsole.ReporterLib
             Console.WriteLine(statusText);
         }        
 
-        public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
+        public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
             throw new NotImplementedException();
         }

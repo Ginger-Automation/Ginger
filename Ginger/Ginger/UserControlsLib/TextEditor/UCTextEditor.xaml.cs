@@ -155,9 +155,9 @@ namespace Ginger.UserControlsLib.TextEditor
 
         public void Save()
         {            
-            Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, Path.GetFileName(FileName), "file");
+            Reporter.ToStatus(eStatusMsgKey.SaveItem, null, Path.GetFileName(FileName), "file");
             textEditor.Save(FileName);
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
         }
 
         /// <summary>

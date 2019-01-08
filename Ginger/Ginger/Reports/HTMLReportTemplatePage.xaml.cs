@@ -322,9 +322,9 @@ namespace Ginger.Reports
 
             if (_existingTemplatePage)
             {
-                Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, _HTMLReportConfiguration.GetNameForFileName(), "item");                
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, _HTMLReportConfiguration.GetNameForFileName(), "item");                
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(_HTMLReportConfiguration);
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
         }
 

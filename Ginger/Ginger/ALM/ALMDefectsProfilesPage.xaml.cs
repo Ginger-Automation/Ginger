@@ -289,14 +289,14 @@ namespace Ginger.ALM
 
             foreach (ALMDefectProfile _ALMDefectProfile in mALMDefectProfiles.Where(x => x.ToUpdate == true).ToList())
             {
-                Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, _ALMDefectProfile.GetNameForFileName(), "item");
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, _ALMDefectProfile.GetNameForFileName(), "item");
                 if ((_ALMDefectProfile.ContainingFolder == null) || (_ALMDefectProfile.ContainingFolder == string.Empty))
                 {
                     _ALMDefectProfile.ContainingFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, _ALMDefectProfile.ObjFolderName);
                     _ALMDefectProfile.FilePath = _ALMDefectProfile.ContainingFolder + @"\" + _ALMDefectProfile.FilePath;
                 }
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(_ALMDefectProfile);
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
 
             genWin.Close();

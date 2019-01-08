@@ -98,10 +98,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (Reporter.ToUser(eUserMsgKey.SureWantToDoRevert) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
-                Reporter.ToGingerHelper(eStatusMsgKey.RevertChangesFromSourceControl);
+                Reporter.ToStatus(eStatusMsgKey.RevertChangesFromSourceControl);
                 SourceControlIntegration.Revert(App.UserProfile.Solution.SourceControl, this.NodePath());                
                 mTreeView.Tree.RefreshSelectedTreeNodeParent();
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
         }
 
@@ -109,14 +109,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
             
-            Reporter.ToGingerHelper(eStatusMsgKey.GetLatestFromSourceControl);
+            Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
             if (string.IsNullOrEmpty(this.NodePath()))
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
                 SourceControlIntegration.GetLatest(this.NodePath(), App.UserProfile.Solution.SourceControl);
             
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
         }
 
         
@@ -131,9 +131,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     return false;//no need to Save because not Dirty
                 }
 
-                Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, RI.GetNameForFileName(), "item");
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, RI.GetNameForFileName(), "item");
                 RI.Save();                
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
 
                 //refresh node header
                 mTreeView.Tree.RefreshHeader((ITreeViewItem)this); //needed?

@@ -395,10 +395,10 @@ namespace Ginger.DataSource
                 ((DataRowView)grdTableData.Grid.CurrentItem).EndEdit();
             grdTableData.Grid.CommitEdit();
             mDSTableDetails.DSC.SaveTable(mDSTableDetails.DataTable);            
-            Reporter.ToGingerHelper(eStatusMsgKey.SaveItem,null, mDSTableDetails.Name, "Data Source Table");
+            Reporter.ToStatus(eStatusMsgKey.SaveItem,null, mDSTableDetails.Name, "Data Source Table");
             SetGridData();
             mDSTableDetails.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange;
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
         }
 
         private bool TableValidation()

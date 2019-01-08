@@ -211,7 +211,7 @@ namespace Ginger.Actions.ActionConversion
 
                     // setting the conversion status label as visible
                     lblConversionStatus.Visibility = Visibility.Visible;
-                    Reporter.ToGingerHelper(eStatusMsgKey.BusinessFlowConversion, null, mBusinessFlow.Name);
+                    Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, mBusinessFlow.Name);
 
                     // create a new converted activity
                     if ((bool)radNewActivity.IsChecked)
@@ -310,7 +310,7 @@ namespace Ginger.Actions.ActionConversion
                 }
             }
             lblConversionStatus.Visibility = Visibility.Hidden;
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
 
             // ask the user if he wants to convert more actions once the conversion is done successfully                       
             if (Reporter.ToUser(eUserMsgKey.SuccessfulConversionDone) == Amdocs.Ginger.Common.eUserMsgSelection.No)

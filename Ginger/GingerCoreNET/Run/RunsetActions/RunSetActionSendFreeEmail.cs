@@ -95,7 +95,7 @@ namespace Ginger.Run.RunSetActions
             if (isSuccess == false)
             {
                 Errors = Email.Event;
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
                 Status = RunSetActionBase.eRunSetActionStatus.Failed;
             }
         }

@@ -389,8 +389,7 @@ namespace Ginger
                 {
                     // This Ginger is running with run set config will do the run and close Ginger
                     RunningFromConfigFile = true;
-                    // Reporter.CurrentAppLogLevel = eAppLogLevel.Debug; // !!!!!!!!!!!!!!!!!!!! TODO: set log level no user
-                    Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewed by Jenkins console and others)               
+                    Reporter.RunningFromConfigFile = true;
                 }
             }
 
@@ -619,8 +618,7 @@ namespace Ginger
         {
             string phase = "Running in Automatic Execution Mode";
             Reporter.ToLog(eLogLevel.INFO, phase);
-            Reporter.CurrentAppLogLevel = eAppReporterLoggingLevel.Debug;
-            Reporter.SetRunConfigMode(true);
+            
             AutoLogProxy.LogAppOpened();
             AppSplashWindow.LoadingInfo(phase);
 

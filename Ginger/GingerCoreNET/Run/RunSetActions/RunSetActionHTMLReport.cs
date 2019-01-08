@@ -122,7 +122,7 @@ namespace Ginger.Run.RunSetActions
             else
             {
                 Errors = "In order to get HTML report, please, perform executions before";
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
                 Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
                 return;
             }

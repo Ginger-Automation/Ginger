@@ -323,15 +323,15 @@ namespace Ginger.Repository
                    {
                        try
                        {
-                           Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, usage.HostBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                           Reporter.ToStatus(eStatusMsgKey.SaveItem, null, usage.HostBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(usage.HostBusinessFlow);
                            usage.Status = RepositoryItemUsage.eStatus.UpdatedAndSaved;
-                           Reporter.CloseGingerHelper();
+                           Reporter.HideStatusMessage();
                        }
                        catch (Exception ex)
                        {
                            usage.Status = RepositoryItemUsage.eStatus.SaveFailed;
-                           Reporter.CloseGingerHelper();
+                           Reporter.HideStatusMessage();
                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                        }
                    }

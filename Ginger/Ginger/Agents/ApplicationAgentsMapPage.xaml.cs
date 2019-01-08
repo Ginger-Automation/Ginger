@@ -93,12 +93,12 @@ namespace Ginger.Agents
                     if (String.IsNullOrEmpty(errorMessage))
                         errorMessage = "Failed to Connect the agent";
                     
-                    Reporter.ToGingerHelper(eStatusMsgKey.StartAgentFailed,null, errorMessage);
+                    Reporter.ToStatus(eStatusMsgKey.StartAgentFailed,null, errorMessage);
                 }
             }
             catch(Exception ex)
             {
-                Reporter.ToGingerHelper(eStatusMsgKey.StartAgentFailed, null, ex.Message);
+                Reporter.ToStatus(eStatusMsgKey.StartAgentFailed, null, ex.Message);
            }         
         }
 
@@ -147,7 +147,7 @@ namespace Ginger.Agents
         private void StartAppAgent(ApplicationAgent AG)
         {
             AutoLogProxy.UserOperationStart("StartAgentButton_Click");
-            Reporter.ToGingerHelper(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
+            Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
             if (((Agent)AG.Agent).Status == Agent.eStatus.Running) ((Agent)AG.Agent).Close();
 
             ((Agent)AG.Agent).ProjEnvironment = App.AutomateTabEnvironment;
@@ -162,7 +162,7 @@ namespace Ginger.Agents
                 WEP.ShowAsWindow();
             }
 
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
             AutoLogProxy.UserOperationEnd();
         }
 

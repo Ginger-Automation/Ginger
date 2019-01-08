@@ -164,7 +164,7 @@ namespace Ginger.ALM.Repository
                     try
                     {
                         //import test set data
-                        Reporter.ToGingerHelper(eStatusMsgKey.ALMTestSetImport, null, testSetItemtoImport.TestSetName);
+                        Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testSetItemtoImport.TestSetName);
                         GingerCore.ALM.QC.QCTestSet TS = new GingerCore.ALM.QC.QCTestSet();
                         TS.TestSetID = testSetItemtoImport.TestSetID;
                         TS.TestSetName = testSetItemtoImport.TestSetName;
@@ -199,7 +199,7 @@ namespace Ginger.ALM.Repository
                         }
                         
                         WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);                        
-                        Reporter.CloseGingerHelper();
+                        Reporter.HideStatusMessage();
                     }
                     catch (Exception ex)
                     {
@@ -266,7 +266,7 @@ namespace Ginger.ALM.Repository
             }
 
             //upload the Activities Group
-            Reporter.ToGingerHelper(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);
+            Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);
             string res = string.Empty;
 
             ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(App.UserProfile.Solution.ExternalItemsFields);
@@ -278,14 +278,14 @@ namespace Ginger.ALM.Repository
 
             bool exportRes = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, matchingTC, uploadPath, testCaseFields, designStepsFields, designStepsParamsFields, ref res);
 
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
             if (exportRes)
             {
                 if (performSaveAfterExport)
                 {
-                    Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, activtiesGroup.Name, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, activtiesGroup.Name, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(activtiesGroup);                    
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                 }
                 return true;
             }
@@ -360,7 +360,7 @@ namespace Ginger.ALM.Repository
             }
 
             //upload the business flow
-            Reporter.ToGingerHelper(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
+            Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
             string res = string.Empty;
 
             ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(App.UserProfile.Solution.ExternalItemsFields);
@@ -370,14 +370,14 @@ namespace Ginger.ALM.Repository
             ObservableList<ExternalItemFieldBase> testInstanceFields = CleanUnrelvantFields(allFields, ResourceType.TEST_CYCLE);
 
             bool exportRes = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToALM(businessFlow, matchingTS, testLabUploadPath, testSetFieldsFields, testInstanceFields, ref res);
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
             if (exportRes)
             {
                 if (performSaveAfterExport)
                 {
-                    Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);                    
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                 }
                 if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);

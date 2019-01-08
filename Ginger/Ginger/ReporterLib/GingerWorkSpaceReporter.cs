@@ -31,7 +31,7 @@ namespace Ginger.ReporterLib
             App.MainWindow.ShowStatus(messageType, statusText);
         }
 
-        public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
+        public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
             try
             {
@@ -56,12 +56,12 @@ namespace Ginger.ReporterLib
                         log.Info(messageToLog, exceptionToLog);
                         break;
                 }                
-                Console.WriteLine(logLevel.ToString() + ": " + messageToLog, exceptionToLog);
+                //Console.WriteLine(logLevel.ToString() + ": " + messageToLog, exceptionToLog);
             }
             catch (Exception ex)
             {
-                // TODO: throw?
                 //failed to write to log
+                throw (ex);
             }
         }
     }

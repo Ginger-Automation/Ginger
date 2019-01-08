@@ -289,7 +289,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                             catch (Exception ex)
                             {
                                 usage.Status = ModelItemUsage.eStatus.SaveFailed;
-                                Reporter.CloseGingerHelper();
+                                Reporter.HideStatusMessage();
                                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                             }
                         }

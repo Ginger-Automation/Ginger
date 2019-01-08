@@ -81,7 +81,7 @@ namespace Ginger
                 App.UserProfile.PropertyChanged += UserProfilePropertyChanged;
                 if (App.UserProfile.GingerStatus == eGingerStatus.Active)
                 {
-                    Reporter.ToGingerHelper(eStatusMsgKey.ExitMode);
+                    Reporter.ToStatus(eStatusMsgKey.ExitMode);
                 }
                 App.UserProfile.GingerStatus = eGingerStatus.Active;
                 App.UserProfile.SaveUserProfile();
@@ -112,7 +112,7 @@ namespace Ginger
                 //Messages
                 if (App.UserProfile.NewHelpLibraryMessgeShown == false)
                 {
-                    Reporter.ToGingerHelper(eStatusMsgKey.GingerHelpLibrary);
+                    Reporter.ToStatus(eStatusMsgKey.GingerHelpLibrary);
                     App.UserProfile.NewHelpLibraryMessgeShown = true;
                 }
 
@@ -576,14 +576,14 @@ namespace Ginger
 
             AutoLogProxy.UserOperationStart("btnSourceControlGetLatest_Click");
 
-            Reporter.ToGingerHelper(eStatusMsgKey.GetLatestFromSourceControl);
+            Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
             if (string.IsNullOrEmpty(App.UserProfile.Solution.Folder))
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
                 SourceControlIntegration.GetLatest(App.UserProfile.Solution.Folder, App.UserProfile.Solution.SourceControl);
 
             App.UpdateApplicationsAgentsMapping(false);
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
 
             AutoLogProxy.UserOperationEnd();
         }
@@ -601,9 +601,9 @@ namespace Ginger
         {
             AutoLogProxy.UserOperationStart("ResolveConflictsBtn_Click");
 
-            Reporter.ToGingerHelper(eStatusMsgKey.ResolveSourceControlConflicts);
+            Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
             SourceControlIntegration.ResolveConflicts(App.UserProfile.Solution.SourceControl, App.UserProfile.Solution.Folder, side);
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
 
             AutoLogProxy.UserOperationEnd();
         }

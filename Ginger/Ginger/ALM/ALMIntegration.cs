@@ -250,7 +250,7 @@ namespace Ginger.ALM
                             if (BizFlow.ExternalID != "0" && !String.IsNullOrEmpty(BizFlow.ExternalID))
                             {
                                 Reporter.ToLog(eLogLevel.INFO, "Executing RunSet Action Publish to ALM for Business flow: " + BizFlow.Name);
-                                Reporter.ToGingerHelper(eStatusMsgKey.ExportExecutionDetails, null, BizFlow.Name, "ALM");
+                                Reporter.ToStatus(eStatusMsgKey.ExportExecutionDetails, null, BizFlow.Name, "ALM");
 
                                 if (publishToALMConfig.ToAttachActivitiesGroupReport)
                                 {
@@ -268,7 +268,7 @@ namespace Ginger.ALM
                                         result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " - " + BizFlow.Name + " - Error when uploading to ALM." + Environment.NewLine;
                                     BizFlow.PublishStatus = BusinessFlow.ePublishStatus.PublishFailed;
                                 }
-                                Reporter.CloseGingerHelper();
+                                Reporter.HideStatusMessage();
                             }
                             else
                             {

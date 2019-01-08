@@ -155,9 +155,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 sSheetName= DSTableDetails.Name;
             }
-            Reporter.ToGingerHelper(eStatusMsgKey.ExportItem, null, DSTableDetails.Name, "Data Source Table");
+            Reporter.ToStatus(eStatusMsgKey.ExportItem, null, DSTableDetails.Name, "Data Source Table");
             DSTableDetails.DSC.ExporttoExcel(DSTableDetails.Name, sExcelPath, sSheetName);            
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
         }
 
         private void Commit(object sender, RoutedEventArgs e)

@@ -100,7 +100,7 @@ namespace Ginger.GeneralLib
                 {
                     mTextBlockHelper.AddFormattedText(log, Brushes.Orange);
                 }
-                else if(log.Contains("| ERROR |"))
+                else if(log.Contains("| ERROR |") || log.Contains("| FATAL |"))
                 {
                     mTextBlockHelper.AddFormattedText(log, Brushes.Red, isBold:true);
                 }

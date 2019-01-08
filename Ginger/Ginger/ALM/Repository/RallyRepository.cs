@@ -107,7 +107,7 @@ namespace Ginger.ALM.Repository
                             }
                         }
 
-                        Reporter.ToGingerHelper(eStatusMsgKey.ALMTestSetImport, null, testPlan.Name);
+                        Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testPlan.Name);
 
                         // convert test set into BF
                         BusinessFlow tsBusFlow = ALMIntegration.Instance.AlmCore.ConvertRallyTestPlanToBF(testPlan);
@@ -138,7 +138,7 @@ namespace Ginger.ALM.Repository
 
                         //save bf
                         WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);
-                        Reporter.CloseGingerHelper();
+                        Reporter.HideStatusMessage();
                     }
                     catch (Exception ex)
                     {
@@ -176,7 +176,7 @@ namespace Ginger.ALM.Repository
             bool exportRes;
 
             string res = string.Empty;
-            Reporter.ToGingerHelper(eStatusMsgKey.ExportItemToALM, null, "Selected Activities Groups");
+            Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, "Selected Activities Groups");
             exportRes = ((RallyCore)ALMIntegration.Instance.AlmCore).ExportBfActivitiesGroupsToALM(businessFlow, grdActivitiesGroups, ref res);
 
             if (exportRes)
@@ -189,7 +189,7 @@ namespace Ginger.ALM.Repository
                 Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
 
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
         }
 
         public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
@@ -204,7 +204,7 @@ namespace Ginger.ALM.Repository
 
             bool exportRes;
             string res = string.Empty;
-            Reporter.ToGingerHelper(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
+            Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
 
             exportRes = ((RallyCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRally(businessFlow, App.UserProfile.Solution.ExternalItemsFields, ref res);
 
@@ -212,7 +212,7 @@ namespace Ginger.ALM.Repository
             {
                 if (performSaveAfterExport)
                 {
-                    Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));                    
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));                    
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                 }
                 if(almConectStyle != ALMIntegration.eALMConnectType.Auto && almConectStyle != ALMIntegration.eALMConnectType.Silence)
@@ -224,7 +224,7 @@ namespace Ginger.ALM.Repository
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
 
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
             return exportRes;
         }
 

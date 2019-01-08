@@ -200,10 +200,10 @@ namespace Ginger.SolutionGeneral
 
             if (doSave)
             {
-                Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, "Solution Configurations", "item");
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, "Solution Configurations", "item");
                 RepositorySerializer.SaveToFile(this, FilePath);
                 this.SetDirtyStatusToNoChange();
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
         }
                 

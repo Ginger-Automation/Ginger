@@ -378,7 +378,7 @@ namespace Ginger.Repository
             }
             finally
             {
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
             return 0;
         }

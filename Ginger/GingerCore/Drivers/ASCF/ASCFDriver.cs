@@ -178,12 +178,12 @@ namespace GingerCore.Drivers.ASCF
             
             for (int i = 0; i < 240; i++)
             {                
-                Reporter.ToGingerHelper(eStatusMsgKey.ASCFTryToConnect,null, "Try#" + i);
+                Reporter.ToStatus(eStatusMsgKey.ASCFTryToConnect,null, "Try#" + i);
                 try
                 {
                     clientSocket.Connect(serverAddress);
                     mConnected = true;
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                     return;
                 }
                 //TODO: catch excpetion of socket not all..         
@@ -194,7 +194,7 @@ namespace GingerCore.Drivers.ASCF
                 }                
             }
             //Show message failed
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
         }
         
         public string Send(String Action, String LocateBy, String LocateValue, String Property, String Value, bool WaitForIdle)

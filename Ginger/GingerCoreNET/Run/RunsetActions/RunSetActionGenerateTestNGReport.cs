@@ -65,13 +65,13 @@ namespace Ginger.Run.RunSetActions
             {
                 if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
                 {
-                    Reporter.ToGingerHelper(eStatusMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
                     if (!Directory.Exists(SaveResultsInSolutionFolderName))
                     {
                         Directory.CreateDirectory(SaveResultsInSolutionFolderName);
                     }
                     SaveBFResults(RI, SaveResultsInSolutionFolderName, IsStatusByActivitiesGroup);
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                 }
                 else
                 {

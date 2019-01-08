@@ -30,35 +30,43 @@ namespace Amdocs.Ginger.Common
         public static WorkSpaceReporterBase WorkSpaceReporter { get; set; }
 
         public static ReporterData ReporterData = new ReporterData();
+                
+        public static bool RunningFromConfigFile = false;
 
-        public static eAppReporterLoggingLevel CurrentAppLogLevel;
 
-        
-
-        #region ReportToLog
-
-        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
+        #region ToLog
+        public static eAppReporterLoggingLevel AppLogLevel;
+        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
-            if (writeOnlyInDebugMode && CurrentAppLogLevel != eAppReporterLoggingLevel.Debug)
+            //if (writeOnlyInDebugMode && CurrentAppLogLevel != eAppReporterLoggingLevel.Debug)
+            if (logLevel == eLogLevel.DEBUG && AppLogLevel != eAppReporterLoggingLevel.Debug)
             {
                 return;
             }
-            if (logLevel == eLogLevel.ERROR)
+
+            if (logLevel == eLogLevel.ERROR || logLevel == eLogLevel.FATAL)
             {
                 ReporterData.ErrorCounter++;
             }
-            WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog, writeAlsoToConsoleIfNeeded);
+
+            if (RunningFromConfigFile)
+            {
+                ToConsole(logLevel, messageToLog, exceptionToLog);
+            }
+
+            WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);
         }
 
-        public static void ToLogAndConsole(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
-        {
-            ToLog(logLevel, messageToLog, exceptionToLog, false);
-            ToConsole(logLevel, messageToLog);            
-        }
-        #endregion Report to Log
+        //public static void ToLogAndConsole(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
+        //{
+        //    ToLog(logLevel, messageToLog, exceptionToLog, false);
+        //    ToConsole(logLevel, messageToLog);            
+        //}
+        #endregion ToLog
 
-        #region Report to User
-        
+
+
+        #region ToUser        
         public static Dictionary<eUserMsgKey, UserMsg> UserMsgsPool { get; set; }
 
         public static eUserMsgSelection ToUser(eUserMsgKey messageKey, params object[] messageArgs)
@@ -70,7 +78,6 @@ namespace Amdocs.Ginger.Common
             try
             {
                 //get the message from pool
-
                 // FIXME improve if as already found !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 if ((UserMsgsPool != null) && UserMsgsPool.Keys.Contains(messageKey))
                 {
@@ -122,48 +129,54 @@ namespace Amdocs.Ginger.Common
                     messageText = messageToShow.Message;
                 }
                                 
-                if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
+                if (AppLogLevel == eAppReporterLoggingLevel.Debug)
                 {
-                    ToLog(eLogLevel.INFO, "Showing User Message (Pop-Up): '" + messageText + "'");
+                    ToLog(eLogLevel.DEBUG, "Showing User Message: '" + messageText + "'");
                 }
-                else if (AddAllReportingToConsole)
+                if (RunningFromConfigFile)
                 {
-                    ToConsole(eLogLevel.DEBUG, "Showing User Message (Pop-Up): '" + messageText + "'");
+                    ToConsole(eLogLevel.INFO, "Showing User Message: '" + messageText + "'");
                 }
 
                 //show the messege and return user selection
                 eUserMsgSelection userSelection = WorkSpaceReporter.ToUser(messageText, messageToShow.Caption, messageToShow.SelectionOptions, messageImage, messageToShow.DefualtSelectionOption);                
 
-
-                if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
+                if (AppLogLevel == eAppReporterLoggingLevel.Debug)
                 {
-                    ToLog(eLogLevel.INFO, "User Selection for Pop-Up Message: '" + userSelection.ToString() + "'");
+                    ToLog(eLogLevel.DEBUG, "User Message Option Selection: '" + userSelection.ToString() + "'");
                 }
-                else if (AddAllReportingToConsole)
+                else if (RunningFromConfigFile)
                 {
-                    ToConsole(eLogLevel.DEBUG, "User Selection for Pop-Up Message: '" + userSelection.ToString() + "'");
+                    ToConsole(eLogLevel.INFO, "User Message Option Selection: '" + userSelection.ToString() + "'");
                 }
 
                 return userSelection;
-
             }
             catch (Exception ex)
             {
-                ToLog(eLogLevel.ERROR, "Failed to show the user message with the key: " + messageKey, ex);
-
                 string txt = "Failed to show the user message with the key: " + messageKey;
+
+                ToLog(eLogLevel.ERROR, txt, ex);
+
+                if (RunningFromConfigFile)
+                {
+                    ToConsole(eLogLevel.ERROR, txt, ex);
+                }
+                
                 WorkSpaceReporter.ToUser(txt, "Ginger", eUserMsgOption.OK, eUserMsgIcon.Information, eUserMsgSelection.OK);
                 
                 return eUserMsgSelection.None;
             }
         }
-        #endregion Report to User
+        #endregion ToUser
 
-        #region Report to Ginger Helper
+
+
+        #region ToStatus
         public static Dictionary<eStatusMsgKey, StatusMsg> StatusMsgsPool { get; set; }
-
         static Stopwatch mLastStatusTime = new Stopwatch();
-        public static void ToGingerHelper(eStatusMsgKey messageKey, object btnHandler = null, params object[] messageArgs)
+
+        public static void ToStatus(eStatusMsgKey messageKey, object btnHandler = null, params object[] messageArgs)
          {            
             StatusMsg messageToShow = null;
             string messageContent = string.Empty;
@@ -171,7 +184,6 @@ namespace Amdocs.Ginger.Common
             try
             {
                 // TODO: use TryGet
-
                 //get the message from pool
                 if ((StatusMsgsPool != null) && StatusMsgsPool.Keys.Contains(messageKey))
                 {
@@ -185,23 +197,24 @@ namespace Amdocs.Ginger.Common
                     {
                         mess += o.ToString() + " ";
                     }                    
-                    ToUser(eUserMsgKeys.StaticErrorMessage, "Cannot find MessageKey: " + messageKey);
-                    ToLog(eLogLevel.WARN, "The Status message with key: '" + messageKey + "' was not found! and won't show to the user!");
+                    ToUser(eUserMsgKey.StaticErrorMessage, "Cannot find Status message key: " + messageKey);
+                    ToLog(eLogLevel.ERROR, "The Status message with key: '" + messageKey + "' was not found! and won't show to the user!");
                 }
                 messageContent = messageToShow.MsgContent;
+
                 //enter message args if exist
                 if (messageArgs.Length > 0)
                 {
                     messageContent = string.Format(messageContent, messageArgs);
                 }
 
-                if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
+                if (AppLogLevel == eAppReporterLoggingLevel.Debug)
                 {
-                    ToLog(eLogLevel.INFO, "Showing Status Message: " + messageContent);
+                    ToLog(eLogLevel.DEBUG, "Showing Status Message: " + messageContent);
                 }
-                else if (AddAllReportingToConsole)
+                if (RunningFromConfigFile)
                 {
-                    ToConsole(eLogLevel.DEBUG, "Showing Status Message: " + messageContent);
+                    ToConsole(eLogLevel.INFO, "Showing Status Message: " + messageContent);
                 }
 
                 mLastStatusTime.Start();
@@ -215,14 +228,14 @@ namespace Amdocs.Ginger.Common
         }
 
         static bool bClosing = false;
-        public static void CloseGingerHelper()
+        public static void HideStatusMessage()
         {
             if (bClosing)
             {
                 return;
             }
             bClosing = true;
-            // TODO: run on task
+            
             Task t = new Task(() => {
                 while (mLastStatusTime.ElapsedMilliseconds < 1000)  // let the message show for at least one second
                 {
@@ -234,10 +247,11 @@ namespace Amdocs.Ginger.Common
             });
             t.Start();
         }
-        #endregion Report to Ginger Helper
+        #endregion ToStatus
 
-        #region Report to Console
-        public static bool AddAllReportingToConsole = false;
+
+
+        #region ToConsole        
         public static void ToConsole(eLogLevel logLevel, string messageToConsole, Exception exceptionToConsole = null)
         {
             try
@@ -251,81 +265,66 @@ namespace Amdocs.Ginger.Common
                     msg += Environment.NewLine + "Exception Details:" + Environment.NewLine + excFullInfo;
                 }
 
-                // Console.WriteLine(msg + System.Environment.NewLine);
                 WorkSpaceReporter.ToConsole(logLevel, msg);
             }
             catch (Exception ex)
             {
                 ToLog(eLogLevel.ERROR, "Failed to report to Console", ex);
             }
-        }
+        }        
+        #endregion ToConsole
+
+
         
-        #endregion Report to Console
-        
-        static StringBuilder dt()
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss - "));
-            return sb;
-        }
+        //static StringBuilder dt()
+        //{
+        //    StringBuilder sb = new StringBuilder();
+        //    sb.Append(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss - "));
+        //    return sb;
+        //}
 
 
-        //???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public static void ToTrace(string action, string info)
-        {
-            StringBuilder sb = dt();
-            sb.Append(action);
-            sb.Append(info);
-            Trace.WriteLine(sb.ToString());
-        }
+        ////???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //public static void ToTrace(string action, string info)
+        //{
+        //    StringBuilder sb = dt();
+        //    sb.Append(action);
+        //    sb.Append(info);
+        //    Trace.WriteLine(sb.ToString());
+        //}
 
 
-        //???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public static Stopwatch ToTraceStart(string action, string info)
-        {
-            Trace.WriteLine("{");
-            Trace.Indent();            
-            StringBuilder sb = dt();
-            sb.Append(action);
-            sb.Append(", ");
-            sb.Append(info);
-            sb.Append("*** START ***");
-            Trace.WriteLine(sb.ToString());         
-            Stopwatch st = new Stopwatch();
-            st.Start();
-            return st;
-        }
+        ////???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //public static Stopwatch ToTraceStart(string action, string info)
+        //{
+        //    Trace.WriteLine("{");
+        //    Trace.Indent();            
+        //    StringBuilder sb = dt();
+        //    sb.Append(action);
+        //    sb.Append(", ");
+        //    sb.Append(info);
+        //    sb.Append("*** START ***");
+        //    Trace.WriteLine(sb.ToString());         
+        //    Stopwatch st = new Stopwatch();
+        //    st.Start();
+        //    return st;
+        //}
 
-        //???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public static void ToTraceEnd(string action, string info, Stopwatch st)
-        {            
-            st.Stop();
+        ////???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //public static void ToTraceEnd(string action, string info, Stopwatch st)
+        //{            
+        //    st.Stop();
             
-            StringBuilder sb = dt();
-            sb.Append(action);
-            sb.Append(", ");
-            sb.Append(info);
-            sb.Append(", Elasped=");
-            sb.Append(st.ElapsedMilliseconds);
-            sb.Append(" *** END ***");
-            Trace.WriteLine(sb.ToString());                        
-            Trace.Unindent();
-            Trace.WriteLine("}");
-        }
-
-
-        private static bool RunningFromConfigFile = false;
-
-        
-
-        public static void SetRunConfigMode(bool RunConfigMode)
-        {
-            RunningFromConfigFile = RunConfigMode;
-        }
-
-
-    }
-
-
-    
+        //    StringBuilder sb = dt();
+        //    sb.Append(action);
+        //    sb.Append(", ");
+        //    sb.Append(info);
+        //    sb.Append(", Elasped=");
+        //    sb.Append(st.ElapsedMilliseconds);
+        //    sb.Append(" *** END ***");
+        //    Trace.WriteLine(sb.ToString());                        
+        //    Trace.Unindent();
+        //    Trace.WriteLine("}");
+        //}
+    }    
 }

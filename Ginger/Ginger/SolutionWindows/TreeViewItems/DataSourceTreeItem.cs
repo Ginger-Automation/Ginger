@@ -271,9 +271,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             foreach (DataSourceTable dsTable in DSDetails.DSTableList)
             {
-                Reporter.ToGingerHelper(eStatusMsgKey.ExportItem, null, dsTable.Name, "Data Source Table");
+                Reporter.ToStatus(eStatusMsgKey.ExportItem, null, dsTable.Name, "Data Source Table");
                 dsTable.DSC.ExporttoExcel(dsTable.Name, sExcelPath, dsTable.Name);                    
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
         }
 

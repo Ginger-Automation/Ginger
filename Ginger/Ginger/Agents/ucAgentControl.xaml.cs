@@ -209,14 +209,14 @@ namespace Ginger.Agents
             {
                 case Agent.eStatus.FailedToStart:
                 case Agent.eStatus.NotStarted:
-                    Reporter.ToGingerHelper(eStatusMsgKey.StartAgent, null, SelectedAgent.Name, "");
+                    Reporter.ToStatus(eStatusMsgKey.StartAgent, null, SelectedAgent.Name, "");
                     if (SelectedAgent.Status == Agent.eStatus.Running) SelectedAgent.Close();
                     SelectedAgent.SolutionFolder = App.UserProfile.Solution.Folder;
                     SelectedAgent.ProjEnvironment = null;// App.AutomateTabEnvironment;
                     SelectedAgent.BusinessFlow = null; //App.BusinessFlow; ;                    
                     SelectedAgent.DSList = null; //WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                     SelectedAgent.StartDriver();
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                     //If there is errorMessageFromDriver is populated then do not wait. 
                     if (SelectedAgent.Driver != null && String.IsNullOrEmpty(SelectedAgent.Driver.ErrorMessageFromDriver))
                         SelectedAgent.WaitForAgentToBeReady();
@@ -226,7 +226,7 @@ namespace Ginger.Agents
                         string errorMessage = SelectedAgent.Driver.ErrorMessageFromDriver;
                         if (String.IsNullOrEmpty(errorMessage))
                             errorMessage = "Failed to Connect the agent";
-                        Reporter.ToGingerHelper(eStatusMsgKey.StartAgentFailed, null, errorMessage);
+                        Reporter.ToStatus(eStatusMsgKey.StartAgentFailed, null, errorMessage);
                     }
                     SelectedAgent.Tag = "Started with Agent Control";
                     AgentStartedEvent();

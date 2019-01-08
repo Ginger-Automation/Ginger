@@ -621,7 +621,7 @@ namespace Ginger.Run
             if (mRunSetConfig.RunWithAnalyzer)
             {
                 //check if not including any High or Critical issues before execution
-                Reporter.ToGingerHelper(eStatusMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
               
                      x = await RepositoryItemHelper.RepositoryItemFactory.AnalyzeRunset(mRunSetConfig, runInSilentMode);
                 
