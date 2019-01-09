@@ -1606,11 +1606,9 @@ namespace GingerCore.Drivers.PBDriver
             {
                 element.scrollIntoView();
                 x = getelementXCordinate(element) + x;
-                Reporter.ToLogAndConsole(eLogLevel.INFO, "elementX::" + x);
-                Reporter.ToConsole(eLogLevel.DEBUG, "elementX::" + x);
+                Reporter.ToLog(eLogLevel.DEBUG, "elementX::" + x);
                 y = getelementYCordinate(element) + y;
-                Reporter.ToLogAndConsole(eLogLevel.INFO, "elementy::" + y);
-                Reporter.ToConsole(eLogLevel.DEBUG, "elementY::" + y);
+                Reporter.ToLog(eLogLevel.DEBUG, "elementy::" + y);
                 winAPI.SendRightClick(AEBrowser, x +"," + y );                
                 return true;
             }
@@ -1725,7 +1723,7 @@ namespace GingerCore.Drivers.PBDriver
 
         public IHTMLElement GetHTMLElementFromPoint(int x, int y)
         {
-            Reporter.ToLogAndConsole(eLogLevel.INFO, "GetHTMLElementFromPoint::" + x + "::" + y);
+            Reporter.ToLog(eLogLevel.DEBUG, "GetHTMLElementFromPoint::" + x + "::" + y);
             
             IHTMLElement Elem = mHtmlDocument.elementFromPoint(x, y);
             if (Elem.tagName.ToLower() == "iframe")
@@ -1739,7 +1737,7 @@ namespace GingerCore.Drivers.PBDriver
                     Elem = currentFrameDocument.elementFromPoint(x, y);
                 }                    
             }            
-            Reporter.ToLogAndConsole(eLogLevel.DEBUG, "GetHTMLElementFromPoint::" + Elem.className);
+            Reporter.ToLog(eLogLevel.DEBUG, "GetHTMLElementFromPoint::" + Elem.className);
             return Elem;
         }
 

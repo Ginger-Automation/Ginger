@@ -154,7 +154,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             bool overrideFile = true;
             if (File.Exists(fileName))
             {
-                if (MessageBox.Show("File already exists, do you want to override?", "File Exists", System.Windows.MessageBoxButton.OKCancel) == System.Windows.MessageBoxResult.Cancel)
+                if (Reporter.ToUser(eUserMsgKey.FileAlreadyExistWarn) == eUserMsgSelection.Cancel)
                 {
                     overrideFile = false;
                 }

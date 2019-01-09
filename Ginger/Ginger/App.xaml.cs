@@ -389,7 +389,8 @@ namespace Ginger
                 {
                     // This Ginger is running with run set config will do the run and close Ginger
                     RunningFromConfigFile = true;
-                    Reporter.RunningFromConfigFile = true;
+                    Reporter.RunningFromConfigFile = true; //needed so all reportering will be added to Consol
+                    //Reporter.AppLogLevel = eAppReporterLoggingLevel.Debug;//needed so all reportering will be added to Log file
                 }
             }
 
@@ -430,7 +431,7 @@ namespace Ginger
             App.UserProfile = UserProfile.LoadUserProfile();
 
             phase = "Configuring User Type";
-            Reporter.ToLogAndConsole(eLogLevel.INFO, phase);
+            Reporter.ToLog(eLogLevel.INFO, phase);
             AppSplashWindow.LoadingInfo(phase);
             UserProfile.LoadUserTypeHelper();
 

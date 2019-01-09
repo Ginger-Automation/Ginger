@@ -185,7 +185,7 @@ namespace Ginger.WindowExplorer
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,ex.ToString(), writeOnlyInDebugMode: true);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured while performing Update Window Explorer List", ex);
             }
             
         }

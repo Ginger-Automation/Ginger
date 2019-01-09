@@ -38,7 +38,11 @@ namespace Amdocs.Ginger.Common
         public static eAppReporterLoggingLevel AppLogLevel;
         public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
-            //if (writeOnlyInDebugMode && CurrentAppLogLevel != eAppReporterLoggingLevel.Debug)
+            if (RunningFromConfigFile)
+            {
+                ToConsole(logLevel, messageToLog, exceptionToLog);
+            }
+
             if (logLevel == eLogLevel.DEBUG && AppLogLevel != eAppReporterLoggingLevel.Debug)
             {
                 return;
@@ -48,20 +52,9 @@ namespace Amdocs.Ginger.Common
             {
                 ReporterData.ErrorCounter++;
             }
-
-            if (RunningFromConfigFile)
-            {
-                ToConsole(logLevel, messageToLog, exceptionToLog);
-            }
-
+           
             WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);
         }
-
-        //public static void ToLogAndConsole(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
-        //{
-        //    ToLog(logLevel, messageToLog, exceptionToLog, false);
-        //    ToConsole(logLevel, messageToLog);            
-        //}
         #endregion ToLog
 
 

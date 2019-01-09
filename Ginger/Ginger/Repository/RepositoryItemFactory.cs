@@ -605,11 +605,6 @@ namespace Ginger.Repository
             ALM.ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, ALM.ALMIntegration.eALMConnectType.Silence);
         }
 
-        public void MessageBoxShow(string message)
-        {
-            System.Windows.Forms.MessageBox.Show(message);
-        }
-
         public ITextBoxFormatter CreateTextBoxFormatter(object Textblock)
         {
             return new TextBoxFormatter(Textblock);
@@ -636,7 +631,7 @@ namespace Ginger.Repository
                 switch (param)
                 {
                     case "SourceControlType":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlType: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlType: '" + value + "'");
                         if (value.Equals("GIT"))
                             App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
                         else if (value.Equals("SVN"))
@@ -646,7 +641,7 @@ namespace Ginger.Repository
                         break;
 
                     case "SourceControlUrl":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlUrl: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlUrl: '" + value + "'");
                         if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                         {
                             if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
@@ -659,7 +654,7 @@ namespace Ginger.Repository
                         break;
 
                     case "SourceControlUser":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlUser: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlUser: '" + value + "'");
                         if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
                             value = "Test";
                         App.UserProfile.SourceControlUser = value;
@@ -667,13 +662,13 @@ namespace Ginger.Repository
                         break;
 
                     case "SourceControlPassword":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlPassword: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlPassword: '" + value + "'");
                         App.UserProfile.SourceControlPass = value;
                         scPswd = value;
                         break;
 
                     case "PasswordEncrypted":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "PasswordEncrypted: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.INFO, "PasswordEncrypted: '" + value + "'");
                         string pswd = App.UserProfile.SourceControlPass;
                         if (value == "Y")
                             pswd = EncryptionHandler.DecryptwithKey(App.UserProfile.SourceControlPass, App.ENCRYPTION_KEY);
@@ -683,7 +678,7 @@ namespace Ginger.Repository
                         break;
 
                     case "SourceControlProxyServer":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlProxyServer: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlProxyServer: '" + value + "'");
                         if (value == "")
                             App.UserProfile.SolutionSourceControlConfigureProxy = false;
                         else
@@ -698,14 +693,14 @@ namespace Ginger.Repository
                             App.UserProfile.SolutionSourceControlConfigureProxy = false;
                         else
                             App.UserProfile.SolutionSourceControlConfigureProxy = true;
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
                         App.UserProfile.SolutionSourceControlProxyPort = value;
                         break;
 
                     case "Solution":
                         if (scURL != null && scUser != "" && scPswd != null)
                         {
-                            Reporter.ToLogAndConsole(eLogLevel.INFO, "Downloading Solution from source control");
+                            Reporter.ToLog(eLogLevel.INFO, "Downloading Solution from source control");
                             if (value.IndexOf(".git") != -1)
                                 App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
                             else

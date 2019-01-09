@@ -138,7 +138,7 @@ namespace Amdocs.Ginger.Common
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty,
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
-        AskIfToUndoChanges
+        AskIfToUndoChanges, FileAlreadyExistWarn,
     }
 
     public static class UserMsgsPool
@@ -527,10 +527,7 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.LoseChangesWarn, new UserMsg(eUserMsgType.WARN, "Save Changes", "The operation may result with lost of un-saved local changes." + Environment.NewLine + "Please make sure all changes were saved before continue." + Environment.NewLine + Environment.NewLine + "To perform the operation?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
-
-
             Reporter.UserMsgsPool.Add(eUserMsgKey.CompilationErrorOccured, new UserMsg(eUserMsgType.ERROR, "Compilation Error Occurred", "Compilation error occurred." + Environment.NewLine + "Error Details: " + Environment.NewLine + " '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.CopiedVariableSuccessfully, new UserMsg(eUserMsgType.INFO, "Info Message", "'{0}' Business Flows Affected." + Environment.NewLine + Environment.NewLine + "Notice: Un-saved changes won't be saved.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RenameItemError, new UserMsg(eUserMsgType.ERROR, "Rename", "Failed to rename the Item. Error: '{0}'?", eUserMsgOption.OK, eUserMsgSelection.OK));
@@ -605,8 +602,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.InvalidDataSourceDetails, new UserMsg(eUserMsgType.ERROR, "Invalid Data Source Details", "The Data Source Details provided are Invalid.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteDSFileError, new UserMsg(eUserMsgType.WARN, "Delete DataSource File", "The Data Source File with the File Path '{0}' Could not be deleted. Please Delete file Manually", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.InvalidDSPath, new UserMsg(eUserMsgType.ERROR, "Invalid DataSource Path", "The Data Source with the File Path {0} is not valid. Please use correct File Path", eUserMsgOption.OK, eUserMsgSelection.None));
-            
-            
+                        
             Reporter.UserMsgsPool.Add(eUserMsgKey.InvalidColumnName, new UserMsg(eUserMsgType.ERROR, "Invalid Column Details", "The Column Name is invalid.", eUserMsgOption.OK, eUserMsgSelection.None));            
             Reporter.UserMsgsPool.Add(eUserMsgKey.CreateRunset, new UserMsg(eUserMsgType.WARN, "Create Runset", "No runset found, Do you want to create new runset", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteRunners, new UserMsg(eUserMsgType.WARN, "Delete Runners", "Are you sure you want to delete all runners", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -656,9 +652,6 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.ReportsTemplatesSaveWarn, new UserMsg(eUserMsgType.WARN, "Default Template Report Change", "Default change will cause all templates to be updated and saved, to continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToLoadPlugIn, new UserMsg(eUserMsgType.ERROR, "Failed to Load Plug In", "Ginger could not load the plug in '{0}'" + Environment.NewLine + "Error Details: {1}", eUserMsgOption.OK, eUserMsgSelection.None));
             
-            
-            
-            
             Reporter.UserMsgsPool.Add(eUserMsgKey.Failedtosaveitems, new UserMsg(eUserMsgType.ERROR, "Failed to Save", "Failed to do Save All", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AllItemsSaved, new UserMsg(eUserMsgType.INFO, "All Changes Saved", "All Changes Saved", eUserMsgOption.OK, eUserMsgSelection.None));                      
             Reporter.UserMsgsPool.Add(eUserMsgKey.NoConvertibleActionsFound, new UserMsg(eUserMsgType.INFO, "No Convertible Actions Found", "The selected " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " doesn't contain any convertible actions.", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -684,6 +677,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FindAndReplaceNoItemsToRepalce, new UserMsg(eUserMsgType.WARN, "No Suitable Items", "No suitable items selected to replace.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FindAndReplaceViewRunSetNotSupported, new UserMsg(eUserMsgType.INFO, "View Run Set", "View RunSet is not supported.", eUserMsgOption.OK, eUserMsgSelection.None));
 
+            Reporter.UserMsgsPool.Add(eUserMsgKey.FileAlreadyExistWarn, new UserMsg(eUserMsgType.WARN, "File Already Exists", "File already exists, do you want to override?", eUserMsgOption.OKCancel, eUserMsgSelection.Cancel));
         }
     }
 }

@@ -415,7 +415,7 @@ namespace GingerCore.Actions
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLogAndConsole(eLogLevel.FATAL, ex.Message);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get Excel Sheets", ex);
                     return new List<string>();
                 }
             }

@@ -412,11 +412,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
                 WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
 
-                Reporter.ToLog(eLogLevel.INFO, "RequestContstructor passed successfully", null, true, true);
+                Reporter.ToLog(eLogLevel.DEBUG, "RequestContstructor passed successfully");
 
                 if (WebAPI.SendRequest() == true)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "SendRequest passed successfully", null, true, true);
+                    Reporter.ToLog(eLogLevel.DEBUG, "SendRequest passed successfully");
 
                     //Call for  response validation
                     bool dontFailActionOnBadResponse = false;
@@ -424,14 +424,14 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     if (!dontFailActionOnBadResponse)
                         WebAPI.ValidateResponse();
 
-                    Reporter.ToLog(eLogLevel.INFO, "ValidateResponse passed successfully", null, true, true);
+                    Reporter.ToLog(eLogLevel.DEBUG, "ValidateResponse passed successfully");
 
                     WebAPI.SaveResponseToFile(SaveResponseXML, SavedXMLDirectoryPath);
                     WebAPI.HandlePostExecutionOperations();
                     //Parse response
                     WebAPI.ParseRespondToOutputParams();
 
-                    Reporter.ToLog(eLogLevel.INFO, "ParseRespondToOutputParams passed successfully", null, true, true);
+                    Reporter.ToLog(eLogLevel.DEBUG, "ParseRespondToOutputParams passed successfully");
                 }
             }
         }

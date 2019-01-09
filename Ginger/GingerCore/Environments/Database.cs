@@ -686,7 +686,7 @@ namespace GingerCore.Environments
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Failed to execute query:"+ SQL,e, writeOnlyInDebugMode:true);
+                Reporter.ToLog(eLogLevel.ERROR,"Failed to execute query:"+ SQL, e);
                 throw e;
             }
             finally
@@ -723,7 +723,7 @@ namespace GingerCore.Environments
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + SQL, e, writeOnlyInDebugMode: true);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + SQL, e);
                     throw e;
                 }
                 finally

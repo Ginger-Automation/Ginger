@@ -687,12 +687,12 @@ namespace GingerCore.Repository
                                 }
                                 else
                                 {
-                                    Reporter.ToLog(eLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
+                                    Reporter.ToLog(eLogLevel.DEBUG, "Property not Found: " + xdr.Name);
                                 }
                             }
                             else
                             {
-                                Reporter.ToLog(eLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
+                                Reporter.ToLog(eLogLevel.DEBUG, "Property not Found: " + xdr.Name);
                             }
 
                             xdr.MoveToNextAttribute();
@@ -907,13 +907,13 @@ namespace GingerCore.Repository
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath), writeOnlyInDebugMode: true);
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath));
                     return null;//failed to get the version
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath), writeOnlyInDebugMode: true);
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath));
                 Console.WriteLine(ex.StackTrace);
                 return null;//failed to get the version
             }
@@ -988,7 +988,7 @@ namespace GingerCore.Repository
             switch (EventArgs.EventType)
             {
                 case NewRepositorySerilizerEventArgs.eEventType.LoadWithOldSerilizerRequired:
-                    Reporter.ToLog(eLogLevel.INFO, string.Format("New Serialzier is calling Old Serialzier for loading the file: '{0}'", EventArgs.FilePath), null, writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("New Serialzier is calling Old Serialzier for loading the file: '{0}'", EventArgs.FilePath));
                     return DeserializeFromText(EventArgs.XML, EventArgs.TargetObj);
             }
 

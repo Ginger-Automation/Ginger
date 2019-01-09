@@ -618,7 +618,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 break;
                             default:
                                 if (ShowMessage)
-                                    System.Windows.MessageBox.Show(ex.Message);
+                                   Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
                                 break;
                         }
                         return null;
@@ -1465,7 +1465,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 break;
                             default:
                                 if (ShowMessage)
-                                    System.Windows.MessageBox.Show(ex.Message);
+                                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
                                 break;
                         }
                         return null;

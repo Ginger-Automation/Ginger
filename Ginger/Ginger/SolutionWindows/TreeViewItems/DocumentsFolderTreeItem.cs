@@ -115,7 +115,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (System.Exception excpt)
             {
-               Reporter.ToLog(eLogLevel.ERROR, "Failed to add Document Folder to tree",excpt,true);
+               Reporter.ToLog(eLogLevel.ERROR, "Failed to add Document Folder to tree",excpt);
             }
         }
 

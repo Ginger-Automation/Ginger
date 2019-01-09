@@ -2074,15 +2074,15 @@ namespace GingerCore.Drivers
                     {
                         ClickOnXYPoint(lineUp, "5,5");
                         iCount++;
-                        Reporter.ToLog(eLogLevel.INFO, "lineDown:iCount:" + iCount,null,true,true);
+                        Reporter.ToLog(eLogLevel.DEBUG, "lineDown:iCount:" + iCount);
                     }                    
                     for (int i = 0; i < iClick; i++)
                     {
                         ClickOnXYPoint(lineDown, "5,5");
-                        Reporter.ToLog(eLogLevel.INFO, "lineDown:" + iClick + ":" + i, null, true, true);
+                        Reporter.ToLog(eLogLevel.DEBUG, "lineDown:" + iClick + ":" + i);
                     }
                     ClickOnXYPoint(subElement, "10," + (10 + iPaneY));
-                    Reporter.ToLog(eLogLevel.INFO, "iPaneY:" + iPaneY, null, true, true);                   
+                    Reporter.ToLog(eLogLevel.DEBUG, "iPaneY:" + iPaneY);                   
 
                     string newValue = GetControlValue(AE);
                     bool ishandled = false;
@@ -2091,7 +2091,7 @@ namespace GingerCore.Drivers
                         int? loadTime = mLoadTimeOut.Value;
                         mLoadTimeOut = -1;
                         ishandled = LocateAndHandleActionElement(handleElementLocateby, handleElementLocateValue, subElementType, handleActionType);
-                        Reporter.ToLog(eLogLevel.INFO, "ishandled:" + ishandled, null, true, true);
+                        Reporter.ToLog(eLogLevel.DEBUG, "ishandled:" + ishandled);
                         if (ishandled)
                         {
                             iClick++;                            
@@ -2101,7 +2101,7 @@ namespace GingerCore.Drivers
                             iClick = 1;
                         }                            
                         mLoadTimeOut = loadTime;                        
-                        Reporter.ToLog(eLogLevel.INFO, "DefineHandleAction:" + iClick, null, true, true);
+                        Reporter.ToLog(eLogLevel.DEBUG, "DefineHandleAction:" + iClick);
                     }
                     else
                     { 
@@ -2119,10 +2119,10 @@ namespace GingerCore.Drivers
                             return "Error Occured while selecting :" + Value;
                         }
                     }
-                    Reporter.ToLog(eLogLevel.INFO, "oldValue:" + oldValue + " newValue:" + newValue + " endPane:" + endPane, null, true, true);
+                    Reporter.ToLog(eLogLevel.DEBUG, "oldValue:" + oldValue + " newValue:" + newValue + " endPane:" + endPane);
                     if (oldValue != newValue && endPane==false)
                     {
-                        Reporter.ToLog(eLogLevel.INFO, "in not end pane:", null, true, true);
+                        Reporter.ToLog(eLogLevel.DEBUG, "in not end pane:");
                         if (iLoop == 0 && iClick == 2)
                         { 
                             iLoop = 0;
@@ -2136,7 +2136,7 @@ namespace GingerCore.Drivers
                     else
                     {
                         iClick = 0;
-                        Reporter.ToLog(eLogLevel.INFO, "in end pane:", null, true, true);
+                        Reporter.ToLog(eLogLevel.DEBUG, "in end pane:");
                         endPane = true;
                         if (iPaneY < subElement.Current.BoundingRectangle.Height)
                         { 
@@ -2147,7 +2147,7 @@ namespace GingerCore.Drivers
                             break;
                         }
                     }
-                    Reporter.ToLog(eLogLevel.INFO, "iLoop now:" + iLoop, null, true, true);                    
+                    Reporter.ToLog(eLogLevel.DEBUG, "iLoop now:" + iLoop);                    
                 }                          
             }
             return "Could not find the Value in the list-" + Value;
@@ -2253,10 +2253,10 @@ namespace GingerCore.Drivers
         {
             object obj = FindElementByLocator(LocateBy, LocateValue);
             AutomationElement AE = (AutomationElement)obj;
-            Reporter.ToLogAndConsole(eLogLevel.INFO, "Check if AE NUll:");
+            Reporter.ToLog(eLogLevel.DEBUG, "Check if AE NUll:");
             if (AE == null)
                 return false;
-            Reporter.ToLogAndConsole(eLogLevel.INFO, "After AE not NUll:");
+            Reporter.ToLog(eLogLevel.DEBUG, "After AE not NUll:");
             switch (actionType)
             {
                 case ActUIElement.eElementAction.Click:                    
@@ -2292,7 +2292,7 @@ namespace GingerCore.Drivers
                 case ActUIElement.eElementAction.AcceptDialog:
                     if (AE != null)
                     {
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "In Accept Dialog:");
+                        Reporter.ToLog(eLogLevel.DEBUG, "In Accept Dialog:");
                         UIAElementInfo EI = new UIAElementInfo();
 
                         EI.ElementObject = AE;
@@ -2302,12 +2302,12 @@ namespace GingerCore.Drivers
                             if (((AutomationElement)elemInfo.ElementObject).Current.Name.ToString().ToLower() == "ok" )
                             {
                                 result = ClickElement(elemInfo.ElementObject);
-                                Reporter.ToLogAndConsole(eLogLevel.INFO, "after click ok:" + result);
+                                Reporter.ToLog(eLogLevel.DEBUG, "after click ok:" + result);
                                 if (result.ToLower().Contains("clicked successfully"))
                                 {
                                     return true;
                                 }
-                                Reporter.ToLogAndConsole(eLogLevel.INFO, "for break:");
+                                Reporter.ToLog(eLogLevel.DEBUG, "for break:");
                                 break;
                             }
                         }
