@@ -769,7 +769,7 @@ namespace Ginger
 
                 if (!SolutionFolder.EndsWith(@"\")) SolutionFolder += @"\";
                 string SolFile = System.IO.Path.Combine(SolutionFolder, @"Ginger.Solution.xml");
-                if (File.Exists(PathHelper.GetLongPath(SolFile)))
+                if (File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(SolFile)))
                 {
                     //get Solution files
                     IEnumerable<string> solutionFiles = Solution.SolutionFiles(SolutionFolder);
