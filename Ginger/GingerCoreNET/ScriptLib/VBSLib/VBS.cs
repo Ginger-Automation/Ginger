@@ -102,10 +102,10 @@ namespace GingerCore.GeneralLib
             p.BeginOutputReadLine();
             p.BeginErrorReadLine();
             p.WaitForExit();
-            //while (!p.HasExited)
-            //{
-            //    Thread.Sleep(100);  
-            //}
+            while (!p.HasExited)
+            {
+                Thread.Sleep(100);
+            }
 
             //catch (Exception e)
             //{
