@@ -245,7 +245,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             //TODO: change to wizard
             string BizFlowName = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name:", ref BizFlowName, System.IO.Path.GetInvalidFileNameChars()))
+            if (GingerCore.General.GetInputWithValidation("Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name:", ref BizFlowName))
             {
                 BusinessFlow BizFlow = App.CreateNewBizFlow(BizFlowName);
 

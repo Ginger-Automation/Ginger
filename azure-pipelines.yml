@@ -30,6 +30,7 @@ jobs:
     buildConfiguration: 'Release'
 
   steps:
+  - task: NuGetToolInstaller@0
   - task: NuGetCommand@2
     inputs:
       restoreSolution: '$(solution)'
@@ -39,9 +40,10 @@ jobs:
       solution: '$(solution)'
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
+
   - task: VSTest@2
     inputs:
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
-      TestAdapterPath:  'Ginger\packages\MSTest.TestAdapter.1.3.2\build\_common'
+      pathtoCustomTestAdapters:  'Ginger\packages\MSTest.TestAdapter.1.4.0\build\_common'
       testResultsFiles: '**/*.trx'

@@ -29,7 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace GingerCoreCommonTest.Repository
+namespace GingerTest
 {
 
     [TestClass]
