@@ -1,8 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
-using GingerCore;
-using GingerCoreNET.ReporterLib;
 using System;
-using System.Windows;
 
 namespace Ginger.ReporterLib
 {
@@ -10,17 +7,24 @@ namespace Ginger.ReporterLib
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         
-        public override Amdocs.Ginger.Common.eUserMsgSelection ToUser(string messageText, string caption, 
-                        Amdocs.Ginger.Common.eUserMsgOption buttonsType, eUserMsgIcon messageImage, 
-                        Amdocs.Ginger.Common.eUserMsgSelection defualtResault)
+        public override Amdocs.Ginger.Common.eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResault)
         {
-            Amdocs.Ginger.Common.eUserMsgSelection result = defualtResault;  // if user just close the window we return the default defined result
-            App.MainWindow.Dispatcher.Invoke(() =>
-            {                
-                    MessageBoxWindow messageBoxWindow = new MessageBoxWindow(messageText, caption, buttonsType, messageImage, defualtResault);                    
+            eUserMsgSelection result = defualtResault;  // if user just close the window we return the default defined result
+
+            if (!App.RunningFromConfigFile)
+            {
+                App.MainWindow.Dispatcher.Invoke(() =>
+                {
+                    UserMessageBox messageBoxWindow = new UserMessageBox(messageText, caption, buttonsType, messageImage, defualtResault);
                     messageBoxWindow.ShowDialog();
-                    result = messageBoxWindow.messageBoxResult; 
-            });
+                    result = messageBoxWindow.messageBoxResult;
+                });
+            }
+            else
+            {
+                //not showing pop up message because running from config file and not wanting to get stuck
+                ToLog(eLogLevel.WARN, string.Format("Not showing the User Message: '{0}' because application loaded in execution mode. Returning defualt selection value: '{1}'", messageText, defualtResault.ToString()));
+            }
 
             return result;
         }

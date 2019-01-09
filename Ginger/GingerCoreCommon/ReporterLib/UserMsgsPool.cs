@@ -177,9 +177,9 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.CtrlSsaveEnvApp, new UserMsg(eUserMsgType.WARN, "Save Environment", "Please select the environment to save.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.CtrlSMissingItemToSave, new UserMsg(eUserMsgType.WARN, "Missing Item to Save", "Please select individual item to save or use menu toolbar to save all the items.", eUserMsgOption.OK, eUserMsgSelection.None));
 
-            Reporter.UserMsgsPool.Add(eUserMsgKey.StaticErrorMessage, new UserMsg(eUserMsgType.ERROR, "Error Message", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.StaticWarnMessage, new UserMsg(eUserMsgType.WARN, "Warning Message", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.StaticInfoMessage, new UserMsg(eUserMsgType.INFO, "Info Message", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.StaticErrorMessage, new UserMsg(eUserMsgType.ERROR, "Error", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.StaticWarnMessage, new UserMsg(eUserMsgType.WARN, "Warning", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.StaticInfoMessage, new UserMsg(eUserMsgType.INFO, "Info", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToClose, new UserMsg(eUserMsgType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?" + Environment.NewLine + Environment.NewLine + "Notice: Un-saved changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.BusinessFlowNeedTargetApplication, new UserMsg(eUserMsgType.WARN, "Target Application Not Selected", "Target Application Not Selected! Please Select at least one Target Application", eUserMsgOption.OK, eUserMsgSelection.None));

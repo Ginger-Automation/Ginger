@@ -26,7 +26,6 @@ using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
 using System.IO;
 using GingerCoreNET.SourceControl;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.SourceControl
 {

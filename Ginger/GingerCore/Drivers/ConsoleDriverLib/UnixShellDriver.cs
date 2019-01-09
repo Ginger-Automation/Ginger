@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Renci.SshNet;
 using System;

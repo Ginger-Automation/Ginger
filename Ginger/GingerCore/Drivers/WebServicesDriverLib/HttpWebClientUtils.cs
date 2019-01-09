@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.WebServices;
-using GingerCoreNET.ReporterLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;

@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using GingerCoreNET.ReporterLib;
 using Open3270;
 using Open3270.TN3270;
 using System;

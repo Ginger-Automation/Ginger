@@ -33,7 +33,6 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Automation;
 using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.PBDriver
 {

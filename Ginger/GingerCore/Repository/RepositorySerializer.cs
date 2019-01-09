@@ -24,7 +24,6 @@ using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;

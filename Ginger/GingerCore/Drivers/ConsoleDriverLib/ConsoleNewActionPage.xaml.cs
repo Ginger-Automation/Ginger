@@ -21,7 +21,6 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerCore.Actions;
 using Ginger;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {

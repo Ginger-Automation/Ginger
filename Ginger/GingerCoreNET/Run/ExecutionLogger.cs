@@ -31,7 +31,6 @@ using GingerCore.Activities;
 using GingerCore.Environments;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
-using GingerCoreNET.ReporterLib;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

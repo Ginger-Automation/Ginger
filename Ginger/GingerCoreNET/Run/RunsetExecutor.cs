@@ -33,7 +33,6 @@ using GingerCoreNET.SourceControl;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCoreNET.ReporterLib;
 using Amdocs.Ginger;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.InterfacesLib;

@@ -29,7 +29,6 @@ using PdfSharp.Pdf;
 using PdfSharp;
 using System.Diagnostics;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNET.ReporterLib;
 using Amdocs.Ginger.Common;
 
 namespace GingerCore.Actions

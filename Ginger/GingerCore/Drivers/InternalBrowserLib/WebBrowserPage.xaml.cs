@@ -18,7 +18,6 @@ limitations under the License.
 
 
 using Amdocs.Ginger.Common;
-using GingerCoreNET.ReporterLib;
 using mshtml;
 using System;
 using System.Collections;

@@ -25,7 +25,6 @@ using Ginger.Reports;
 using Amdocs.Ginger;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCoreNET.ReporterLib;
 using Amdocs.Ginger.CoreNET.InterfacesLib;
 
 namespace Ginger.Run.RunSetActions

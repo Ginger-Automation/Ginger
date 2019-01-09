@@ -19,7 +19,6 @@ limitations under the License.
 using System;
 using System.Linq;
 using Amdocs.Ginger.Common;
-using GingerCoreNET.ReporterLib;
 using Microsoft.Win32;
 
 namespace GingerCore.GeneralFunctions

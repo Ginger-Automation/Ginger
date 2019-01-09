@@ -8,7 +8,6 @@ using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore;
-using GingerCoreNET.ReporterLib;
 using System;
 using System.Collections.Generic;
 using System.IO;

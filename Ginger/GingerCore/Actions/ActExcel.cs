@@ -21,7 +21,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCore.Variables;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;

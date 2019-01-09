@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-using GingerCoreNET.ReporterLib;
 using System.Diagnostics;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.Reports;

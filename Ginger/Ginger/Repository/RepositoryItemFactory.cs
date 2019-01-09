@@ -44,8 +44,6 @@ using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Drivers.WindowsLib;
 using GingerCore.Environments;
 using GingerCore.Variables;
-
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;

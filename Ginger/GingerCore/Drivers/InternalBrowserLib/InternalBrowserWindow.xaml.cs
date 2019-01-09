@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Drivers.InternalBrowserLib;
 using GingerCore.GeneralLib;
-using GingerCoreNET.ReporterLib;
 using mshtml;
 using System;
 using System.Collections;

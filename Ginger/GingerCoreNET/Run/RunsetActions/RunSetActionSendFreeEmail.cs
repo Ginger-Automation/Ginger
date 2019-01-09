@@ -10,7 +10,6 @@ using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
-using GingerCoreNET.ReporterLib;
 
 namespace Ginger.Run.RunSetActions
 {

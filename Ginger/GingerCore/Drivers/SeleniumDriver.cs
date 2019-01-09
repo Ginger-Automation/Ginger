@@ -51,7 +51,6 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using HtmlAgilityPack;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers
 {

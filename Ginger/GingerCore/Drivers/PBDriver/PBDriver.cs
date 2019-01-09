@@ -31,7 +31,6 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Threading;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.PBDriver
 {

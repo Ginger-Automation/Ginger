@@ -24,7 +24,6 @@ using GingerCore.Actions.Java;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.CommunicationProtocol;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;

@@ -26,7 +26,6 @@ using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
 using GingerCore.Environments;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;

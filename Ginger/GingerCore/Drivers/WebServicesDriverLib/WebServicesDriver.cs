@@ -24,7 +24,6 @@ using GingerCore.Actions;
 using GingerCore.Actions.WebAPI;
 using GingerCore.Actions.WebServices;
 using GingerCore.Actions.WebServices.WebAPI;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;

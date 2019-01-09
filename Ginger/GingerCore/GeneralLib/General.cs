@@ -40,7 +40,6 @@ using System.Xml;
 using GingerCore.DataSource;
 using System.Reflection;
 using amdocs.ginger.GingerCoreNET;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore
 {

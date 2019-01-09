@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Media;
 using Amdocs.Ginger.Common;
 
 namespace Ginger.ReporterLib
@@ -6,19 +7,20 @@ namespace Ginger.ReporterLib
     /// <summary>
     /// Interaction logic for MessageBoxWindow.xaml
     /// </summary>
-    public partial class MessageBoxWindow : Window
+    public partial class UserMessageBox : Window
     {
 
         public Amdocs.Ginger.Common.eUserMsgSelection messageBoxResult { get; set; }
 
         
-        public MessageBoxWindow(string txt, string caption, eUserMsgOption buttonsType,
+        public UserMessageBox(string txt, string caption, eUserMsgOption buttonsType,
                                             eUserMsgIcon messageImage, eUserMsgSelection defualtResualt)
         {
             InitializeComponent();
 
-            xMessageTextLabelBlock.Text = txt;
             this.Title = caption;
+
+            xMessageTextBlock.Text = txt;
             messageBoxResult = defualtResualt;
 
             xOKButton.Visibility = Visibility.Collapsed;
@@ -29,7 +31,7 @@ namespace Ginger.ReporterLib
             switch (buttonsType)
             {
                 case Amdocs.Ginger.Common.eUserMsgOption.OK:
-                       xOKButton.Visibility = Visibility.Visible;
+                    xOKButton.Visibility = Visibility.Visible;
                     break;
                 case Amdocs.Ginger.Common.eUserMsgOption.OKCancel:
                     xOKButton.Visibility = Visibility.Visible;
@@ -44,24 +46,31 @@ namespace Ginger.ReporterLib
                     xNoButton.Visibility = Visibility.Visible;
                     xCancelButton.Visibility = Visibility.Visible;
                     break;
+                default:
+                    xOKButton.Visibility = Visibility.Visible;
+                    break;
             }
 
             switch (messageImage)
             {
                 case eUserMsgIcon.Error:
-                    xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Error;
+                    xMessageImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Error;
+                    xMessageImage.ImageForeground = Brushes.DarkRed;
                     break;
                 case eUserMsgIcon.Information:
-                    xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Info;
+                    xMessageImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Info;
+                    xMessageImage.ImageForeground = Brushes.DarkBlue;
                     break;
                 case eUserMsgIcon.None:
-                    xImage.Visibility = Visibility.Collapsed;
+                    xMessageImage.Visibility = Visibility.Collapsed;
                     break;
                 case eUserMsgIcon.Question:
-                    xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Question;
+                    xMessageImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Question;
+                    xMessageImage.ImageForeground = Brushes.Purple;
                     break;
                 case eUserMsgIcon.Warning:
-                    xImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Info; //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    xMessageImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Warn;
+                    xMessageImage.ImageForeground = Brushes.DarkOrange;
                     break;
             }
 

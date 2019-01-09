@@ -33,7 +33,6 @@ using System.Diagnostics;
 using System.Reflection;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.ASCF
 {

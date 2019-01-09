@@ -20,7 +20,6 @@ using System;
 using System.Threading;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Drivers.ScriptDriverLib

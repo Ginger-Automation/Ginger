@@ -29,7 +29,6 @@ using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.Common
 {

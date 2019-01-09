@@ -478,6 +478,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Recover:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Recycle);
                     break;
+                case eImageType.Approve:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbsOutlineUp);
+                    break;
+                case eImageType.Reject:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbsOutlineDown);
+                    break;
+                case eImageType.Warn:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle);
+                    break;
                 #endregion
 
 

@@ -589,8 +589,8 @@
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ReporterLib\GingerWorkSpaceReporter.cs" />
-    <Compile Include="ReporterLib\MessageBoxWindow.xaml.cs">
-      <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
+    <Compile Include="ReporterLib\UserMessageBox.xaml.cs">
+      <DependentUpon>UserMessageBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="ReporterLib\MessageInfo.cs" />
     <Compile Include="ReporterLib\ReporterTestWindow.xaml.cs">
@@ -2866,7 +2866,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ReporterLib\MessageBoxWindow.xaml">
+    <Page Include="ReporterLib\UserMessageBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

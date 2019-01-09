@@ -41,7 +41,6 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.GeneralLib;
 using Ginger.Reports;
 using Amdocs.Ginger;
-using GingerCoreNET.ReporterLib;
 using Amdocs.Ginger.CoreNET.InterfacesLib;
 using GingerCore.DataSource;
 using Ginger.Reports.GingerExecutionReport;
