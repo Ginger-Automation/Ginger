@@ -596,7 +596,6 @@
     <Compile Include="ReporterLib\ReporterTestWindow.xaml.cs">
       <DependentUpon>ReporterTestWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportTemplate.cs" />
     <Compile Include="Repository\RepositoryItemFactory.cs" />
     <Compile Include="Run\RuntimeObjectFactory.cs" />
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
