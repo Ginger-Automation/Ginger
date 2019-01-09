@@ -485,7 +485,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedLocator != null)
             {
-                mWinExplorer.TestElementLocators(new ObservableList<ElementLocator>() { mSelectedLocator });
+                mWinExplorer.TestElementLocators(new ElementInfo() { Locators = new ObservableList<ElementLocator>() { mSelectedLocator } });
             }
         }
 
@@ -498,7 +498,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.TestElementLocators(mSelectedElement.Locators);
+                mWinExplorer.TestElementLocators(mSelectedElement);
             }
         }
 
