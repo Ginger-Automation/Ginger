@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace GingerCoreCommonTest.Repository
 {
-
+    [Ignore]
     [TestClass]
     [Level1]
     public class SolutionRepositoryLongPathTest
