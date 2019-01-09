@@ -35,7 +35,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();
         ApplicationPOMModel mNewLearnedPOM;
         ApplicationPOMModel mExistingPOM;
-        PomAllElementsPage mPomAllElementsPage = null;
+        PomElementsPage mPomElementsPage = null;
         List<eElementType> mSelectedElementTypesList = new List<eElementType>();
 
         public POMDeltaWizardPage()
@@ -54,41 +54,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     InitilizePomElementsMappingPage();
                     mAppPlatform = App.UserProfile.Solution.GetTargetApplicationPlatform(mExistingPOM.TargetApplicationKey);
                     SetAutoMapElementTypes();
-                    mPomAllElementsPage.SetAgent(mWizard.Agent);
+                    mPomElementsPage.SetAgent(mWizard.Agent);
                     xReLearnButton.Visibility = Visibility.Visible;
                     Learn();
-
-                    if (mPomAllElementsPage.mAgent == null)
-                    {
-                        
-                    }
-
-                    else
-                    {
-                        
-                    }
-                    
                     break;
-                case EventType.Active:
-
-                    break;
-                    //case EventType.LeavingForNextPage:
-                    //case EventType.Finish:
-                    //    mPomAllElementsPage.FinishEditInAllGrids();
-                    //    if (mPomAllElementsPage != null)
-                    //    {
-                    //        mPomAllElementsPage.StopSpy();
-                    //    }
-                    //    ResetDriverStopProcess();
-                    //    break;
-                    //case EventType.Cancel:
-                    //    if (mPomAllElementsPage != null)
-                    //    {
-                    //        mPomAllElementsPage.StopSpy();
-                    //    }
-                    //    ResetDriverStopProcess();
-
-                    //    break;
             }
         }
 
@@ -145,12 +114,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void InitilizePomElementsMappingPage()
         {
-            if (mPomAllElementsPage == null)
+            if (mPomElementsPage == null)
             {
                 mNewLearnedPOM = new ApplicationPOMModel();
-                mPomAllElementsPage = new PomAllElementsPage(mNewLearnedPOM, ePomElementsContext.Delta);
-                mPomAllElementsPage.ShowTestAllElementsButton = Visibility.Collapsed;
-                xPomElementsMappingPageFrame.Content = mPomAllElementsPage;
+                mPomElementsPage = new PomElementsPage(mExistingPOM,eElementsContext.AllDeltaElements);
+                xPomElementsMappingPageFrame.Content = mPomElementsPage;
             }
         }
 

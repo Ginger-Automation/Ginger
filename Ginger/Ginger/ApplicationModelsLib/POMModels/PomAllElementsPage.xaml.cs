@@ -73,26 +73,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public enum eElementsContext
         {
             Mapped,
-            Unmapped
+            Unmapped,
+            AllDeltaElements
         }
 
         public PomElementsPage mappedUIElementsPage;
         public PomElementsPage unmappedUIElementsPage;
 
-        public enum ePomElementsContext
-        {
-          Learn,
-          Edit,
-          Delta
-        }
 
-        private ePomElementsContext mContext;
-
-        public PomAllElementsPage(ApplicationPOMModel POM, ePomElementsContext context)
+        public PomAllElementsPage(ApplicationPOMModel POM)
         {
             InitializeComponent();
             mPOM = POM;
-            mContext = context;
             mPOM.MappedUIElements.CollectionChanged += MappedUIElements_CollectionChanged;
             mPOM.UnMappedUIElements.CollectionChanged += UnMappedUIElements_CollectionChanged;
 

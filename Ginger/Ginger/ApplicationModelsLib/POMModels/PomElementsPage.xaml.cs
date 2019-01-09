@@ -97,6 +97,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
+
+
         public PomElementsPage(ApplicationPOMModel pom, PomAllElementsPage.eElementsContext context)
         {
             InitializeComponent();
@@ -106,11 +108,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 mElements = mPOM.MappedUIElements;
             }
-            else
+            else if (mContext == PomAllElementsPage.eElementsContext.Unmapped)
             {
                 mElements = mPOM.UnMappedUIElements;
             }
-            
+            else if (mContext == PomAllElementsPage.eElementsContext.AllDeltaElements)
+            {
+                mElements = GingerCore.General.ConvertListToObservableList<ElementInfo>(mPOM.MappedUIElements.Union(mPOM.UnMappedUIElements).ToList());
+            }
+
             SetControlPropertiesGridView();
             SetLocatorsGridView();
             SetElementsGridView();

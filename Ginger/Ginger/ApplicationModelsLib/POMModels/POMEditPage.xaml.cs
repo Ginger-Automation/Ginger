@@ -114,7 +114,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
             xScreenShotFrame.Content = mScreenShotViewPage;
 
-            mPomAllElementsPage = new PomAllElementsPage(mPOM, ePomElementsContext.Edit);
+            mPomAllElementsPage = new PomAllElementsPage(mPOM);
             xUIElementsFrame.Content = mPomAllElementsPage;
 
             UIElementTabTextBlockUpdate();
