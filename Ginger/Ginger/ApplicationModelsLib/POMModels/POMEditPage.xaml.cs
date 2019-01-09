@@ -37,6 +37,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static Ginger.ApplicationModelsLib.POMModels.PomAllElementsPage;
 
 namespace Ginger.ApplicationModelsLib.POMModels
 {
@@ -113,7 +114,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
             xScreenShotFrame.Content = mScreenShotViewPage;
 
-            mPomAllElementsPage = new PomAllElementsPage(mPOM);
+            mPomAllElementsPage = new PomAllElementsPage(mPOM, ePomElementsContext.Edit);
             xUIElementsFrame.Content = mPomAllElementsPage;
 
             UIElementTabTextBlockUpdate();

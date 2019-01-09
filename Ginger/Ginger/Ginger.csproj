@@ -541,6 +541,10 @@
     </Compile>
     <Compile Include="ApplicationModelsLib\APIModels\NodeToDelete.cs" />
     <Compile Include="ApplicationModelsLib\ModelOptionalValue\ParameterValues.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\PomRelearnWizard.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMDeltaWizardPage.xaml.cs">
+      <DependentUpon>POMDeltaWizardPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMNameValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMTAValidationRule.cs" />
@@ -2721,6 +2725,10 @@
     <Page Include="ApplicationModelsLib\ModelParams Pages\ModelsGlobalParamsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMDeltaWizardPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMLearnConfigWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>

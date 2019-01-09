@@ -20,8 +20,10 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
+using Ginger.ApplicationModelsLib.POMModels.POMWizardLib;
 using Ginger.UserControls;
 using GingerCore;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -77,10 +79,20 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public PomElementsPage mappedUIElementsPage;
         public PomElementsPage unmappedUIElementsPage;
 
-        public PomAllElementsPage(ApplicationPOMModel POM)
+        public enum ePomElementsContext
+        {
+          Learn,
+          Edit,
+          Delta
+        }
+
+        private ePomElementsContext mContext;
+
+        public PomAllElementsPage(ApplicationPOMModel POM, ePomElementsContext context)
         {
             InitializeComponent();
             mPOM = POM;
+            mContext = context;
             mPOM.MappedUIElements.CollectionChanged += MappedUIElements_CollectionChanged;
             mPOM.UnMappedUIElements.CollectionChanged += UnMappedUIElements_CollectionChanged;
 
@@ -426,6 +438,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-
+        private void ReLearnClicked(object sender, RoutedEventArgs e)
+        {
+            WizardWindow.ShowWizard(new PomRelearnWizard(mPOM,mAgent));
+        }
     }
 }
