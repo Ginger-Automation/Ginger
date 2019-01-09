@@ -78,8 +78,8 @@ namespace Ginger.Reports
         // We use empty constructor when we load from file via Json
         public ActivityGroupReport()
         {
-           
-            mActivitiesGroup = RepositoryItemHelper.RepositoryItemFactory.CreateActivitiesGroup();
+
+            mActivitiesGroup = new ActivitiesGroup();
         }
 
         public ActivityGroupReport(ActivitiesGroup AG, BusinessFlow BF)

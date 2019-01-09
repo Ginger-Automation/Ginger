@@ -18,12 +18,14 @@ limitations under the License.
 
 namespace Amdocs.Ginger.Common
 {
-    public class MessageBoxResult
+
+    // Available buttons to answer a popup window, this enum is for the user selected button response
+    public enum MessageBoxResult
     {
-        public static MessageBoxResult None { get; internal set; }
-        public static MessageBoxResult Yes { get; internal set; }
-        public static MessageBoxResult No { get; internal set; }
-        public static MessageBoxResult Cancel { get; internal set; }
-        public static MessageBoxResult OK { get; set; }
+        None,
+        Yes,
+        No,
+        Cancel,
+        OK
     }
 }

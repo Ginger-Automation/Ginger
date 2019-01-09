@@ -38,7 +38,6 @@ using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.Drivers.CommunicationProtocol;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
@@ -1183,29 +1182,32 @@ namespace Ginger.Run
         public void ProcessReturnValueForDriver(Act act)
         {
             //Handle all output values, create Value for Driver for each
-            ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
-
+            
             foreach (ActReturnValue ARV in act.ActReturnValues)
-            {
-                VE.Value = ARV.Param;
-                ARV.ParamCalculated = VE.ValueCalculated;
-                VE.Value = ARV.Path;
-                ARV.PathCalculated = VE.ValueCalculated;
+            {                
+                ARV.ParamCalculated = act.ValueExpression.Calculate(ARV.Param);                
+                ARV.PathCalculated = act.ValueExpression.Calculate(ARV.Path);
             }
         }
 
         public void ProcessInputValueForDriver(Act act)
         {
-            //Handle all input values, create Value for Driver for each
-            ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
+            //Handle all input values, create Value for Driver for each            
 
-            VE.DecryptFlag = true;
+
+            // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! why flag
+
+            if (act.ValueExpression == null)
+            {
+                ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
+                act.ValueExpression = VE;
+            }
+            act.ValueExpression.DecryptFlag = true;
             foreach (var IV in act.InputValues)
             {
                 if (!string.IsNullOrEmpty(IV.Value))
-                {
-                    VE.Value = IV.Value;
-                    IV.ValueForDriver = VE.ValueCalculated;
+                {                     
+                    IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
                 }
                 else
                 {
@@ -1222,9 +1224,8 @@ namespace Ginger.Run
                     foreach (var IV in subList)
                     {
                         if (!string.IsNullOrEmpty(IV.Value))
-                        {
-                            VE.Value = IV.Value;
-                            IV.ValueForDriver = VE.ValueCalculated;
+                        {                            
+                            IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
                         }
                         else
                         {
@@ -1233,23 +1234,22 @@ namespace Ginger.Run
                     }
                 }
             }
+            act.ValueExpression.DecryptFlag = true;
         }
 
         private void ProcessWait(Act act, Stopwatch st)
-        {
-            ValueExpression valueExpression = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
-
-            valueExpression.Value = act.WaitVE;
-            if (!String.IsNullOrEmpty(valueExpression.ValueCalculated))
+        {            
+            string wait = act.ValueExpression.Calculate(act.WaitVE);
+            if (!String.IsNullOrEmpty(wait))
             {
                 try
                 {
-                    act.Wait = Int32.Parse(valueExpression.ValueCalculated);
+                    act.Wait = Int32.Parse(wait);
                 }
                 catch (System.FormatException ex)
                 {
                     act.Wait = 0;
-                    act.ExInfo = "Invalid value for Wait time : " + valueExpression.ValueCalculated;
+                    act.ExInfo = "Invalid value for Wait time : " + wait;
                     Reporter.ToLog(eLogLevel.INFO, "", ex);
                 }
             }
@@ -1323,6 +1323,8 @@ namespace Ginger.Run
 
             ResetAction(act);
 
+            PrepActionValueExpression(act);
+
             ProcessWait(act, st);
 
             if (mStopRun)
@@ -1358,7 +1360,7 @@ namespace Ginger.Run
                     ActExecutorType = eActionExecutorType.RunOnDriver;
             }
 
-            PrepActionVE(act);
+            
 
 
             UpdateActionStatus(act, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running, st);
@@ -1366,9 +1368,22 @@ namespace Ginger.Run
 
         }
 
-        public void PrepActionVE(Act act)
+        public void PrepActionValueExpression(Act act, BusinessFlow businessflow = null)
         {
-            ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
+            // We create VE for action only one time here
+            ValueExpression VE = null;
+            if (businessflow == null)
+            {
+                VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
+            }
+            else
+            {
+                VE = new ValueExpression(ProjEnvironment, businessflow, DSList);
+            }
+
+            act.ValueExpression = VE;
+
+            // TODO: remove when we no longer use LocateValue in Action
             if (!string.IsNullOrEmpty(act.LocateValue))
             {
                 
@@ -1379,11 +1394,8 @@ namespace Ginger.Run
             ProcessInputValueForDriver(act);
 
             ProcessReturnValueForDriver(act);
+                                    
             
-            //TODO: remove from here
-            //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //if (act.GetType() == typeof(ActGenerateFileFromTemplate))
-                //((ActGenerateFileFromTemplate)act).VE = VE;
         }
 
         internal void PrepDynamicVariables()
@@ -1726,15 +1738,15 @@ namespace Ginger.Run
         private void RunActionInSimulationMode(Act act, bool checkIfActionAllowedToRun = true)
         {
             if (act.ReturnValues.Count == 0)
+            {
                 return;
-
-            ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
+            }
+            
             foreach (ActReturnValue item in act.ActReturnValues)
             {
                 if (item.SimulatedActual != null)
-                {
-                    VE.Value = item.SimulatedActual;
-                    item.Actual = VE.ValueCalculated;
+                {                    
+                    item.Actual = act.ValueExpression.Calculate(item.SimulatedActual);
                 }
             }
 
@@ -1812,7 +1824,7 @@ namespace Ginger.Run
                 //Adding for New Control
                 else if (item.StoreTo == ActReturnValue.eStoreTo.DataSource && !String.IsNullOrEmpty(item.StoreToValue))
                 {
-                    GingerCore.ValueExpression.Calculate(ProjEnvironment, CurrentBusinessFlow, item.StoreToValue, DSList, true, item.Actual);
+                    act.ValueExpression.Calculate(item.Actual);
                 }
                 else if(item.StoreTo == ActReturnValue.eStoreTo.ApplicationModelParameter && !string.IsNullOrEmpty(item.StoreToValue))
                 {
@@ -2092,8 +2104,7 @@ namespace Ginger.Run
             try
             {                                                 
                 //TODO: on pass, on fail etc...
-                bool IsStopLoop = false;                
-                ValueExpression VE = new ValueExpression(this.ProjEnvironment, this.CurrentBusinessFlow, this.DSList);
+                bool IsStopLoop = false;                                
 
                 foreach (FlowControl FC in act.FlowControls)
                 {
@@ -2140,8 +2151,8 @@ namespace Ginger.Run
                         switch (FC.FlowControlAction)
                         {
                             case eFlowControlAction.MessageBox:
-                                VE.Value = FC.Value;                                
-                                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, VE.ValueCalculated);
+                                string txt = act.ValueExpression.Calculate(FC.Value);                                
+                                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, txt);
                                 break;
                             case eFlowControlAction.GoToAction:
                                 if (GotoAction(FC, act))
@@ -2200,9 +2211,8 @@ namespace Ginger.Run
                                 break;
                             case eFlowControlAction.SetVariableValue:
                                 try
-                                {
-                                    VE.Value = FC.Value;
-                                    string[] vals = VE.ValueCalculated.Split(new char[] { '=' });
+                                {                                    
+                                    string[] vals = act.ValueExpression.Calculate(FC.Value).Split(new char[] { '=' });
                                     if (vals.Count() == 2)
                                     {
                                         ActSetVariableValue setValueAct = new ActSetVariableValue();
@@ -2468,7 +2478,7 @@ namespace Ginger.Run
                 else
                 {
                     //get Expected Calculated
-                    ValueExpression ve = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
+                    ValueExpression ve = (ValueExpression)act.ValueExpression;
                     ve.Value = actReturnValue.Expected;
                     //replace {Actual} place holder with real Actual value
                     if (ve.Value.Contains("{Actual}"))

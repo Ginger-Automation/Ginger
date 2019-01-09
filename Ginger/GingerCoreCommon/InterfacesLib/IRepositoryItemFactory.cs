@@ -41,7 +41,7 @@ namespace Amdocs.Ginger.Common
     {        
         //BusinessFlow CreateBusinessFlow();
         //ObservableList<BusinessFlow> GetListofBusinessFlow();
-        ActivitiesGroup CreateActivitiesGroup();
+
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow);
 
         IValueExpression CreateValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null);
@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.Common
         ObservableList<IDatabase> GetDatabaseList();
         ObservableList<VariableBase> GetVariaables();
         ObservableList<IAgent> GetAllIAgents();
-        ObservableList<ProjEnvironment> GetAllEnvironments();
+     
 
         void StartAgentDriver(IAgent agent);
         Type GetDriverType(IAgent agent);

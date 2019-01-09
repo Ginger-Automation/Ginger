@@ -70,9 +70,5 @@ namespace Ginger.Run
 
         
 
-        public string GetNameForFileName()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

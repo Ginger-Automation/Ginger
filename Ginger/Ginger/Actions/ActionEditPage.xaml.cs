@@ -224,6 +224,7 @@ namespace Ginger.Actions
                 xRunStatusExpander.IsExpanded = false;
 
             InitActionLog();
+            App.AutomateTabGingerRunner.PrepActionValueExpression(mAction, actParentBusinessFlow);
         }
 
         private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -1105,7 +1106,7 @@ namespace Ginger.Actions
             if (aa != null)
             {
                 DriverBase driver =((Agent) aa.Agent).Driver;
-                App.AutomateTabGingerRunner.PrepActionVE(mAction);
+                App.AutomateTabGingerRunner.PrepActionValueExpression(mAction);
                 if (driver != null)
                 {
                     driver.HighlightActElement(mAction);

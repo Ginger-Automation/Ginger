@@ -96,10 +96,7 @@ namespace Ginger.Repository
         }
 
 
-        public ActivitiesGroup CreateActivitiesGroup()
-        {
-            return new ActivitiesGroup();
-        }
+ 
         public ObservableList<IDatabase> GetDatabaseList()
         {
             return new ObservableList<IDatabase>();
@@ -115,12 +112,7 @@ namespace Ginger.Repository
         {
             return new ObservableList<IAgent>( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x));
         }
-        public ObservableList<ProjEnvironment> GetAllEnvironments()
-        {
-            return new ObservableList<ProjEnvironment>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ListItems.ConvertAll(x => (ProjEnvironment)x));
-        }
-
-        //
+  
         public void StartAgentDriver(IAgent agent)
         {
             Agent zAgent = (Agent)agent;
@@ -600,11 +592,7 @@ namespace Ginger.Repository
             HTMLReportConfiguration currentTemplate = (HTMLReportConfiguration)a;
             System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
             CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
-            if (currentTemplate == null)
-            {
-                //ObservableList<HTMLReportConfiguration> HTMLReportConfigurationsq = (ObservableList<HTMLReportConfiguration>)HTMLReportConfigurations;
-                //currentTemplate = (HTMLReportConfiguration)HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
-            }
+           
             Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
         }
 

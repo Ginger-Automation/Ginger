@@ -368,11 +368,8 @@ namespace GingerCore.Actions
         }
 
         private string CalculateValue(string valueTocalc)
-        {
-            //if (mVE == null)
-            mVE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow,DSList);
-            mVE.Value = valueTocalc;
-            return mVE.ValueCalculated.Trim();
+        {            
+            return ValueExpression.Calculate(valueTocalc).Trim(); 
         }
 
         private bool CalculateArguments()
@@ -381,9 +378,13 @@ namespace GingerCore.Actions
             {
                 mJavaWSEXEPath_Calc = CalculateValue(mJavaWSEXEPath);
                 if (string.IsNullOrEmpty(mJavaWSEXEPath_Calc))
+                {
                     mJavaWSEXEPath_Calc = CommonLib.GetJavaHome();
+                }
                 if (mJavaWSEXEPath_Calc.ToLower().Contains("bin") == false)
+                {
                     mJavaWSEXEPath_Calc = Path.Combine(mJavaWSEXEPath_Calc, @"bin");
+                }
 
                 mURL_Calc = CalculateValue(mURL);
 

@@ -1,30 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using GingerCoreNET.ReporterLib;
 
 namespace Amdocs.Ginger.Common
 {
-    public class UnitTestWorkspaceReporter : IWorkSpaceReporter
+    // Reporter for running unit tests
+    public class UnitTestWorkspaceReporter : WorkSpaceReporterBase
     {
         public void ConsoleWriteLine(string message)
         {
-            Console.WriteLine(message);
+            // !!!!!!! Create GingerUtils.WriteConsole(formatted)
+
+            Console.WriteLine("Toconsole: " + message);
         }
 
-        public void ShowMessageToUser(string message)
+        public override MessageBoxResult MessageBoxShow(string messageText, string caption, MessageBoxButton buttonsType, MessageBoxImage messageImage, MessageBoxResult defualtResault)
         {
-            Console.WriteLine(message);
+            string txt = caption + Environment.NewLine;
+            txt += messageText;
+            Console.WriteLine("ToUser: " + txt);
+            return defualtResault;
+        }
+        
+
+        public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
+        {
+            // For unit tests we write to console too
+            Console.WriteLine("ToLog: " + messageToLog);
         }
 
-        public void ShowMessageToUser(UserMessage userMessage)
+        public override void ToStatus(eStatusMessageType messageType, string statusText)
         {
-            Console.WriteLine(userMessage.Message);
-        }
-
-        public void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
-        {
-            Console.WriteLine(messageToLog);
-            // TODO:  ???
+            Console.WriteLine("ToStatus: " + messageType + " " + statusText);
         }
     }
 }

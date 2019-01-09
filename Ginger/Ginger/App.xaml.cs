@@ -52,7 +52,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -78,11 +77,11 @@ namespace Ginger
 
         public static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";
 
-        public static FileVersionInfo ApplicationInfo
+        public static System.Diagnostics.FileVersionInfo ApplicationInfo
         {
             get
             {
-                return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+                return System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
             }
         }
         public static string AppName = ApplicationInfo.FileDescription;//"Ginger"
@@ -378,7 +377,7 @@ namespace Ginger
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StandAloneThreadExceptionHandler);
 
-            Reporter.workSpaceReporter = new GingerWorkSpaceReporter();
+            Reporter.WorkSpaceReporter = new GingerWorkSpaceReporter();
 
 
             if (Environment.GetCommandLineArgs().Count() > 1)

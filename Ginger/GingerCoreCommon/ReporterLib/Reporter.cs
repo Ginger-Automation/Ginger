@@ -21,28 +21,40 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
 using GingerCoreNET.ReporterLib;
 
 namespace Amdocs.Ginger.Common
 {
     public class Reporter 
-    {
-        public static IWorkSpaceReporter workSpaceReporter { get; set; }
+    {        
+        public static WorkSpaceReporterBase WorkSpaceReporter { get; set; }
+
+        public static ReporterData ReporterData = new ReporterData();
 
         public static eAppReporterLoggingLevel CurrentAppLogLevel;
 
-        #region ReportToLog
         
+
+        #region ReportToLog
+
         public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
-        {            
-            workSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog, writeAlsoToConsoleIfNeeded, writeOnlyInDebugMode);
+        {
+            if (writeOnlyInDebugMode && CurrentAppLogLevel != eAppReporterLoggingLevel.Debug)
+            {
+                return;
+            }
+            if (logLevel == eLogLevel.ERROR)
+            {
+                ReporterData.ErrorCounter++;
+            }
+            WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog, writeAlsoToConsoleIfNeeded);
         }
 
         public static void ToLogAndConsole(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
             ToLog(logLevel, messageToLog, exceptionToLog, false);
-            ToConsole(messageToLog);
+            ToConsole(logLevel, messageToLog);            
         }
         #endregion Report to Log
 
@@ -60,13 +72,12 @@ namespace Amdocs.Ginger.Common
             {
                 //get the message from pool
 
-
-                // FIXME improve if as alreayd found !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                // FIXME improve if as already found !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 if ((UserMessagesPool != null) && UserMessagesPool.Keys.Contains(messageKey))
                 {
                     messageToShow = UserMessagesPool[messageKey];
                 }
-                if (messageToShow == null)
+                if (messageToShow == null) // Message not found in message pool
                 {
                     // We do want to pop the error message so below is just in case...
                     string mess = "";
@@ -75,10 +86,8 @@ namespace Amdocs.Ginger.Common
                         mess += o.ToString() + " ";
                     }
 
-
-                    //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    // RepositoryItemHelper.RepositoryItemFactory.MessageBoxShow(messageKey.ToString() + " - " + mess);
-                    workSpaceReporter.ShowMessageToUser(messageKey.ToString() + " - " + mess);
+                    string txt = messageKey.ToString() + " - " + mess + "{Error message key not found!}" ;
+                    WorkSpaceReporter.MessageBoxShow(txt, "Ginger",  MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
 
                     ToLog(eLogLevel.WARN, "The user message with key: '" + messageKey + "' was not found! and won't show to the user!");
                     return MessageBoxResult.None;
@@ -113,28 +122,19 @@ namespace Amdocs.Ginger.Common
                 {
                     messageText = messageToShow.Message;
                 }
-
-                //show the messege and return user selection
-                //adding owner window to the message so it will appear on top of any other window including splash screen
-
+                                
                 if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
                 {
                     ToLog(eLogLevel.INFO, "Showing User Message (Pop-Up): '" + messageText + "'");
                 }
                 else if (AddAllReportingToConsole)
                 {
-                    ToConsole("Showing User Message (Pop-Up): '" + messageText + "'");
+                    ToConsole(eLogLevel.DEBUG, "Showing User Message (Pop-Up): '" + messageText + "'");
                 }
 
-                MessageBoxResult userSelection = MessageBoxResult.None; //????
+                //show the messege and return user selection
+                MessageBoxResult userSelection = WorkSpaceReporter.MessageBoxShow(messageText, messageToShow.Caption, messageToShow.ButtonsType, messageImage, messageToShow.DefualtResualt);                
 
-                workSpaceReporter.ShowMessageToUser(messageToShow);
-
-                //TODO: find a better option than loop... FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                //while (userSelection == null)
-                //{
-                //    Thread.Sleep(100);
-                //}
 
                 if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
                 {
@@ -142,7 +142,7 @@ namespace Amdocs.Ginger.Common
                 }
                 else if (AddAllReportingToConsole)
                 {
-                    ToConsole("User Selection for Pop-Up Message: '" + userSelection.ToString() + "'");
+                    ToConsole(eLogLevel.DEBUG, "User Selection for Pop-Up Message: '" + userSelection.ToString() + "'");
                 }
 
                 return userSelection;
@@ -151,8 +151,10 @@ namespace Amdocs.Ginger.Common
             catch (Exception ex)
             {
                 ToLog(eLogLevel.ERROR, "Failed to show the user message with the key: " + messageKey, ex);
+
+                string txt = "Failed to show the user message with the key: " + messageKey;
+                WorkSpaceReporter.MessageBoxShow(txt, "Ginger", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
                 
-                workSpaceReporter.ShowMessageToUser("Failed to show the user message with the key: " + messageKey);
                 return MessageBoxResult.None;
             }
         }
@@ -160,36 +162,98 @@ namespace Amdocs.Ginger.Common
 
         #region Report to Ginger Helper
         public static Dictionary<eGingerHelperMsgKey, GingerHelperMsg> GingerHelperMsgsPool { get; set; }
-        private static Thread GingerHelperThread = null;
-        
-        private static bool GingerHelperWinIsLoading = false;
-        
+
+        static Stopwatch mLastStatusTime = new Stopwatch();
         public static void ToGingerHelper(eGingerHelperMsgKey messageKey, object btnHandler = null, params object[] messageArgs)
-         {
-         }
-        
+         {            
+            GingerHelperMsg messageToShow = null;
+            string messageContent = string.Empty;
+            
+            try
+            {
+                // TODO: use TryGet
+
+                //get the message from pool
+                if ((GingerHelperMsgsPool != null) && GingerHelperMsgsPool.Keys.Contains(messageKey))
+                {
+                    messageToShow = GingerHelperMsgsPool[messageKey];
+                }
+                if (messageToShow == null)
+                {
+                    // We do want to pop the error message so below is just in case...
+                    string mess = "";
+                    foreach (object o in messageArgs)
+                    {
+                        mess += o.ToString() + " ";
+                    }                    
+                    ToUser(eUserMsgKeys.StaticErrorMessage, "Cannot find MessageKey: " + messageKey);
+                    ToLog(eLogLevel.WARN, "The Status message with key: '" + messageKey + "' was not found! and won't show to the user!");
+                }
+                messageContent = messageToShow.MsgContent;
+                //enter message args if exist
+                if (messageArgs.Length > 0)
+                {
+                    messageContent = string.Format(messageContent, messageArgs);
+                }
+
+                if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
+                {
+                    ToLog(eLogLevel.INFO, "Showing Status Message: " + messageContent);
+                }
+                else if (AddAllReportingToConsole)
+                {
+                    ToConsole(eLogLevel.DEBUG, "Showing Status Message: " + messageContent);
+                }
+
+                mLastStatusTime.Start();
+                WorkSpaceReporter.ToStatus(messageToShow.MessageType, messageContent);
+            }
+            catch (Exception ex)
+            {
+                ToLog(eLogLevel.ERROR, "Failed to show the Status message with the key: " + messageKey, ex);
+            }
+
+        }
+
+        static bool bClosing = false;
         public static void CloseGingerHelper()
         {
+            if (bClosing)
+            {
+                return;
+            }
+            bClosing = true;
+            // TODO: run on task
+            Task t = new Task(() => {
+                while (mLastStatusTime.ElapsedMilliseconds < 1000)  // let the message show for at least one second
+                {
+                    Task.Delay(100);
+                }                
+                WorkSpaceReporter.ToStatus(eStatusMessageType.INFO, null);
+                mLastStatusTime.Reset();
+                bClosing = false;
+            });
+            t.Start();
         }
         #endregion Report to Ginger Helper
 
         #region Report to Console
         public static bool AddAllReportingToConsole = false;
-        public static void ToConsole(string messageToConsole, Exception exceptionToConsole = null)
+        public static void ToConsole(eLogLevel logLevel, string messageToConsole, Exception exceptionToConsole = null)
         {
             try
             {
-                string msg = messageToConsole;
+                string msg = messageToConsole;                
                 if (exceptionToConsole != null)
                 {
                     string excFullInfo = "Error:" + exceptionToConsole.Message + Environment.NewLine;
                     excFullInfo += "Source:" + exceptionToConsole.Source + Environment.NewLine;
                     excFullInfo += "Stack Trace: " + exceptionToConsole.StackTrace;
-                    msg += System.Environment.NewLine + "Exception Details:" + System.Environment.NewLine + excFullInfo;
+                    msg += Environment.NewLine + "Exception Details:" + Environment.NewLine + excFullInfo;
                 }
 
                 // Console.WriteLine(msg + System.Environment.NewLine);
-                workSpaceReporter.ConsoleWriteLine(msg);
+                WorkSpaceReporter.ConsoleWriteLine(logLevel, msg);
             }
             catch (Exception ex)
             {
@@ -252,6 +316,9 @@ namespace Amdocs.Ginger.Common
 
 
         private static bool RunningFromConfigFile = false;
+
+        
+
         public static void SetRunConfigMode(bool RunConfigMode)
         {
             RunningFromConfigFile = RunConfigMode;

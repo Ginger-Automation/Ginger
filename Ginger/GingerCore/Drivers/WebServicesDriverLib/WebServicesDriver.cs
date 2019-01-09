@@ -113,7 +113,12 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         [UserConfiguredDefault("")]
         [UserConfiguredDescription("Proxy Settings | Host:Port Example: genproxy.amdocs.com:8080")]
         public string WebServicesProxy { get; set; }
-        
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Use Proxy Server Settings | Set to true in order to use local Proxy Server settings, if set to true configured Agent 'Proxy Settings' will be avoided. ")]
+        public bool UseServerProxySettings { get; set; }
+
         private bool mIsDriverWindowLaunched
         {
             get
@@ -402,7 +407,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             HttpWebClientUtils WebAPI = new HttpWebClientUtils();
 
             //Call for Request Construction
-            if (WebAPI.RequestContstructor(act, WebServicesProxy))
+            if (WebAPI.RequestContstructor(act, WebServicesProxy, UseServerProxySettings))
             {
 
                 WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);

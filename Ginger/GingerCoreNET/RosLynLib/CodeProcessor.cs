@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RosLynLib;
 using Amdocs.Ginger.Repository;
 using Microsoft.CodeAnalysis;
@@ -23,6 +24,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -32,8 +34,11 @@ namespace GingerCoreNET.RosLynLib
     {
         public string EvalExpression(string expression)
         {
+            Stopwatch st = Stopwatch.StartNew();
             Task<string> task = EvalExpressionTask(expression);
             task.Wait();
+            st.Stop();
+            Reporter.ToLog(eLogLevel.DEBUG, "Executed CodeProcessor - Elapsed: " + st.ElapsedMilliseconds + " ,Expression: " + expression + " ,Result: " + task.Result);
             return task.Result;
         }
 
