@@ -243,18 +243,7 @@ namespace amdocs.ginger.GingerCoreNET
             //}
         }
 
-        //private void CheckAssignAgent(ApplicationAgent aA)
-        //{
-        //    if (aA.Agent == null)
-        //    {
-        //        //TODO: FIXME - temp we get the first agent from solution !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //        aA.Agent = SolutionRepository.GetAllRepositoryItems<NewAgent>()[0];
-        //    }
-        //}
-
-        //public void SetAppAgents()
-        //{
-        //}
+        
 
         public void LoadUserProfile()
         {

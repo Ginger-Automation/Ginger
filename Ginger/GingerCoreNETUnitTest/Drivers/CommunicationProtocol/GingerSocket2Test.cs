@@ -314,7 +314,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             list.Add(sb.ToString().Substring(0, 1));
             list.Add(sb.ToString().Substring(0, 20000));
             list.Add(sb.ToString().Substring(0, 100));
-            // list.Add(sb.ToString().Substring(0, 1000000));           !!!!!!!!!!!!!!!FIXME
+            list.Add(sb.ToString().Substring(0, 1000000));      
             list.Add(sb.ToString().Substring(0, 400));
             list.Add(sb.ToString().Substring(0, 10000));
             list.Add(sb.ToString().Substring(0, 1024));

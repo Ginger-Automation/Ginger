@@ -180,7 +180,7 @@ namespace GingerCore
             }
             mValueCalculated = Value;
 
-            //Do the operation based on order!!!
+            //Do the operation based on order
             //First replace Vars - since they can appear in other func like VBS v1+v2 or VBS mid(v1,1,4);
             ReplaceVars();
 
@@ -193,7 +193,9 @@ namespace GingerCore
             CalculateFunctions();
 
             if (!string.IsNullOrEmpty(SolutionFolder))
+            {
                 mValueCalculated = mValueCalculated.Replace(@"~\", SolutionFolder);
+            }
 
         }
 
