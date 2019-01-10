@@ -46,4 +46,5 @@ jobs:
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
       pathtoCustomTestAdapters:  'Ginger\packages\MSTest.TestAdapter.1.4.0\build\_common'
+      uiTests: true
       testResultsFiles: '**/*.trx'
