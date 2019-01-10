@@ -49,7 +49,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "MID Expression Test");
         }
 
@@ -63,7 +63,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "MID Expression Test");
         }
 
@@ -77,7 +77,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "MID Expression Test");
         }
 
@@ -91,7 +91,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Split Expression Test");
         }
 
@@ -105,7 +105,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Split Expression Test");
         }
 
@@ -119,7 +119,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Split Expression Test");
         }
 
@@ -133,7 +133,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Replace Expression Test");
         }
 
@@ -147,7 +147,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Replace Expression Test");
         }
 
@@ -161,7 +161,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Replace Expression Test");
         }
 
@@ -175,7 +175,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "InStr Expression Test");
         }
 
@@ -189,7 +189,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "InStr Expression Test");
         }
 
@@ -203,7 +203,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "InStr Expression Test");
         }
 
@@ -217,7 +217,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "InStrRev Expression Test");
         }
 
@@ -235,7 +235,7 @@ namespace GingerCoreNETUnitTest.Script
             string result = VBS.ExecuteVBSEval(evalExpr);
             string result1 = VBS.ExecuteVBSEval(evalExpr1);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "InStrRev Expression Test");
             Assert.AreEqual(expectedResult1, result1, "InStrRev Expression Test");
         }
@@ -250,7 +250,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Left Expression Test");
         }
 
@@ -264,7 +264,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Right Expression Test");
         }
 
@@ -279,7 +279,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "LTrim Expression Test");
         }
 
@@ -293,7 +293,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Trim Expression Test");
         }
 
@@ -309,7 +309,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Trim Expression Test");
         }
 
