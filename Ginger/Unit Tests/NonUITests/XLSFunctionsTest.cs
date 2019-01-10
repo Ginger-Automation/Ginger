@@ -76,7 +76,7 @@ namespace UnitTests.NonUITests
             mGR.BusinessFlows.Add(mBF);
         }
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void OLD_ReadDataFromXLS()
         //{
         //    //TODO:  Obsolete remove old style
@@ -94,7 +94,7 @@ namespace UnitTests.NonUITests
 
         //}
         [Level2]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ReadDataFromXLSGetRowCount()
         {            
             // Arrange
@@ -118,7 +118,7 @@ namespace UnitTests.NonUITests
         /// Functionality checked: 1) read 1 val from Excel; 2) validate return value in action; 3) populate variable w return value
         /// </summary>
         
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void Read1ValueValidateAndPopulateVariable()
         //{
 

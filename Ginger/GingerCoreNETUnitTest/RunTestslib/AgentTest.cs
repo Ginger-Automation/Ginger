@@ -69,7 +69,7 @@
 
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void StartLocalDriverFromPlugin()
 //        {
 //            //Arrange  
@@ -99,7 +99,7 @@
 
         
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void StartX3LocalDriverFromPlugin()
 //        {
 //            //Arrange  
@@ -129,7 +129,7 @@
 //        }
 
 //        [Priority(9)]
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void StartFiveLocalDriverFromPluginParallerRun()
 //        {
 //            //Arrange  

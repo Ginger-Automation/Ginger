@@ -190,7 +190,7 @@ namespace GingerCoreNETUnitTests.CommandProcessorLib
 
             //assert
             Assert.AreEqual(result.GetType(), typeof(string));
-            Assert.AreEqual(result, "hellowworld");
+            Assert.AreEqual(result, "helloworld");
         }
 
     }

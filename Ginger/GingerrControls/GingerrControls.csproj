@@ -56,6 +56,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="ControlExtensions\TreeViewItemExtensions.cs" />
+    <Compile Include="LevelToMarginConverter.cs" />
     <Compile Include="TimeLineGraphLib\TimelineEventControl.xaml.cs">
       <DependentUpon>TimelineEventControl.xaml</DependentUpon>
     </Compile>
@@ -92,5 +94,6 @@
       <Name>GingerUtils</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

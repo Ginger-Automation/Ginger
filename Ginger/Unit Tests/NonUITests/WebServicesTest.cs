@@ -92,7 +92,7 @@ namespace UnitTests.NonUITests
             
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void APIModelExecutionTest()
         {
 
@@ -124,7 +124,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //[Ignore]
         //public void BizFlowSaveLoad()
         //{
@@ -132,7 +132,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //[Ignore]
         //public void WebServHelloWorld()
         //{
@@ -172,7 +172,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //[Ignore]
         //public void WebServCreateCustomer()
         //{
@@ -213,7 +213,7 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void WebServices_WebServiceSendXML()
         {
             WebServiceXML webServiceCall = new WebServiceXML();
@@ -229,7 +229,7 @@ namespace UnitTests.NonUITests
             
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void WebServices_WebAPISOAP()
         {
                        
@@ -278,7 +278,7 @@ namespace UnitTests.NonUITests
             }
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void WebServices_WebAPIRest()
         {
             WebServicesDriver mDriver = new WebServicesDriver(mBF);
@@ -328,7 +328,7 @@ namespace UnitTests.NonUITests
                 }
             }
         }       
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestXMLReader()
         {
 
