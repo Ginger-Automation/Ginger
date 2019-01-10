@@ -266,8 +266,6 @@ namespace Ginger.ALM
                 ProjectComboBox.Items.Clear();
                 foreach (KeyValuePair<string,string> project in lstProjects)
                 {
-                    ProjectComboBox.SelectedValuePath = "Key";
-                    ProjectComboBox.DisplayMemberPath = "Value";
                     ProjectComboBox.Items.Add(new KeyValuePair<string, string>(project.Key, project.Value));
                 }
 
