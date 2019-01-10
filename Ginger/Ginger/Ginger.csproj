@@ -463,6 +463,9 @@
     <Compile Include="ALM\JIRA\JiraImportReviewPage.xaml.cs">
       <DependentUpon>JiraImportReviewPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ALM\JIRA\JiraImportSetByIdPage.xaml.cs">
+      <DependentUpon>JiraImportSetByIdPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ALM\Repository\JIRA_Repository.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelBodyNodeSyncPage.xaml.cs">
       <DependentUpon>APIModelBodyNodeSyncPage.xaml</DependentUpon>
@@ -2610,6 +2613,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ALM\JIRA\JiraImportReviewPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ALM\JIRA\JiraImportSetByIdPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

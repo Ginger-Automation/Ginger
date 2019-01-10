@@ -30,8 +30,15 @@ namespace GingerCore.ALM.JIRA
 
         public string TestName { get; set; }
         public string TestID { get; set; }
+        public string TestKey { get; set; }
+        public string TestPath { get; set; }
         public string LinkedTestID { get; set; }
         public string Description { get; set; }
+        public string Status { get; set; }
+        public string CreatedBy { get; set; }
+        public string Project { get; set; }
+        public string Labels { get; set; }
+
         //Called Test Parameters
         public List<JiraTestParameter> Parameters { get; set; }  
         public List<JiraTestStep> Steps { get; set; } 

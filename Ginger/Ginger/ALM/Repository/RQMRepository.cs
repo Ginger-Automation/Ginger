@@ -61,7 +61,7 @@ namespace Ginger.ALM.Repository
                 importDestinationFolderPath = App.UserProfile.Solution.BusinessFlowsMainFolder;
 
             // get activities groups
-            RQMImportReviewPage win = new RQMImportReviewPage(RQMConnect.Instance.GetRQMTestPlanFullData(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, (RQMTestPlan)selectedTestPlan), importDestinationFolderPath);
+            RQMImportReviewPage win = new RQMImportReviewPage(RQMConnect.Instance.GetRQMTestPlanFullData(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProjectKey, (RQMTestPlan)selectedTestPlan), importDestinationFolderPath);
             win.ShowAsWindow();
 
             return true;

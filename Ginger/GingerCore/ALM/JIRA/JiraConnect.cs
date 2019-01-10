@@ -81,13 +81,123 @@ namespace GingerCore.ALM.JIRA
             }
             return false;
         }
+        public ObservableList<JiraTestSet> GetTestSetData(JiraTestSet currentTS)
+        {
+            WhereDataList filterData = new WhereDataList();
+            filterData.Add(new WhereData() { Name = "id", Values = new List<string>() { currentTS.Key }, Operator = WhereOperator.And });
+            AlmResponseWithData<List<JiraIssue>> getTestsSet = jiraRepositoryObj.GetJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET, filterData);
+            ObservableList<JiraTestSet> jiratestset = new ObservableList<JiraTestSet>();
+            List<FieldSchema> templates = JiraRepository.Settings.ExportSettings.Instance.GetSchemaByProject(ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET);
+            foreach (var item in getTestsSet.DataResult)
+            {
+                JiraTestSet issue = new JiraTestSet();
+                issue.ID = item.id.ToString();
+                issue.URLPath = item.self;
+                issue.Key = item.key;
+                
+                foreach (var tsKey in templates)
+                {
+                    if (item.fields.ContainsKey(tsKey.key))
+                    {
+                        List<string> fieldValue = getSelectedFieldValue(item.fields[tsKey.key], tsKey.name, ResourceType.TEST_SET);
+                        if (fieldValue != null && fieldValue.Count > 0)
+                        {
+                            switch (tsKey.key)
+                            {
+                                case "created":
+                                    issue.DateCreated = fieldValue.First();
+                                    break;
+                                case "summary":
+                                    issue.Name = fieldValue.First();
+                                    break;
+                                case "reporter":
+                                    issue.CreatedBy = fieldValue.First();
+                                    break;
+                                case "project":
+                                    issue.Project = fieldValue.First();
+                                    break;
+                                case "description":
+                                    issue.Description = fieldValue.First();
+                                    break;
+                                case "customfield_15611":
+                                    issue.Tests = new List<JiraTest>();
+                                    foreach (var val in fieldValue)
+                                    {
+                                        issue.Tests.Add(new JiraTest() { TestID = val });
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+                if(issue.Tests != null && issue.Tests.Count > 0)
+                {
+                    GetTestData(issue.Tests);
+                }
+                jiratestset.Add(issue);
+            }
+            return jiratestset;
+        }
+        private void GetTestData(List<JiraTest> tests)
+        {
+            WhereDataList filterData = new WhereDataList();
+            foreach (JiraTest test in tests)
+            {
+                filterData.Clear();
+                filterData.Add(new WhereData() { Name = "id", Values = new List<string>() { test.TestID }, Operator = WhereOperator.And });
+                AlmResponseWithData<List<JiraIssue>> getTest = jiraRepositoryObj.GetJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_CASE, filterData);
+                ObservableList<JiraTest> jiratests = new ObservableList<JiraTest>();
+                List<FieldSchema> templates = JiraRepository.Settings.ExportSettings.Instance.GetSchemaByProject(ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_CASE);
+                foreach (var item in getTest.DataResult)
+                {
+                    test.TestID = item.id.ToString();
+                    test.TestKey = item.key;
+                    test.TestPath = item.self;
 
+                    foreach (var tsKey in templates)
+                    {
+                        if (item.fields.ContainsKey(tsKey.key))
+                        {
+                            List<string> fieldValue = getSelectedFieldValue(item.fields[tsKey.key], tsKey.name, ResourceType.TEST_CASE);
+                            if (fieldValue != null && fieldValue.Count > 0)
+                            {
+                                switch (tsKey.name)
+                                {
+                                    case "Summary":
+                                        test.TestName = fieldValue.First();
+                                        break;
+                                    case "Reporter":
+                                        test.CreatedBy = fieldValue.First();
+                                        break;
+                                    case "Project":
+                                        test.Project = fieldValue.First();
+                                        break;
+                                    case "Description":
+                                        test.Description = fieldValue.First();
+                                        break;
+                                    case "Test Steps":
+                                        test.Steps = new List<JiraTestStep>();
+                                        var stepAnonymousTypeDef = new { id = 0, index = 0, step = string.Empty, data = string.Empty };
+                                        foreach (var val in fieldValue)
+                                        {
+                                            var stepAnonymous = Newtonsoft.Json.JsonConvert.DeserializeAnonymousType(val, stepAnonymousTypeDef);
+                                            test.Steps.Add(new JiraTestStep() { StepID = stepAnonymous.id.ToString(), StepName = stepAnonymous.step });
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         public ObservableList<JiraTestSet> GetJiraTestSets()
         {
             AlmResponseWithData<List<JiraIssue>> getTestsSet = jiraRepositoryObj.GetJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET, null);
             
             ObservableList<JiraTestSet> jiratestset = new ObservableList<JiraTestSet>();
             List<string> testSetKeys = new List<string> { "reporter", "created", "summary", "project" };
+            List<FieldSchema> templates = JiraRepository.Settings.ExportSettings.Instance.GetSchemaByProject(ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET);
             foreach (var item in getTestsSet.DataResult)
             {
                 JiraTestSet issue = new JiraTestSet();
@@ -99,21 +209,25 @@ namespace GingerCore.ALM.JIRA
                 {
                     if (item.fields.ContainsKey(tsKey))
                     {
-                        string fieldValue = getSelectedFieldValue(item.fields[tsKey], tsKey);
-                        switch (tsKey)
+                        string templateFieldName = templates.Where(fld => fld.key.Equals(tsKey)).Select(n => n.name).FirstOrDefault();
+                        List<string> fieldValue = getSelectedFieldValue(item.fields[tsKey], templateFieldName, ResourceType.TEST_SET);
+                        if (fieldValue != null && fieldValue.Count > 0)
                         {
-                            case "created":
-                                issue.DateCreated = fieldValue;
-                                break;
-                            case "summary":
-                                issue.Name = fieldValue;
-                                break;
-                            case "reporter":
-                                issue.CreatedBy = fieldValue;
-                                break;
-                            case "project":
-                                issue.Project = fieldValue;
-                                break;
+                            switch (tsKey)
+                            {
+                                case "created":
+                                    issue.DateCreated = fieldValue.First();
+                                    break;
+                                case "summary":
+                                    issue.Name = fieldValue.First();
+                                    break;
+                                case "reporter":
+                                    issue.CreatedBy = fieldValue.First();
+                                    break;
+                                case "project":
+                                    issue.Project = fieldValue.First();
+                                    break;
+                            }
                         }
                     }
                 }
@@ -122,23 +236,48 @@ namespace GingerCore.ALM.JIRA
             return jiratestset;
         }
 
-        private string getSelectedFieldValue(dynamic fields, string fieldName)
+        private List<string> getSelectedFieldValue(dynamic fields, string fieldName, ResourceType resourceType)
         {
-            Dictionary<string, object> array = new Dictionary<string, object>();
-            FieldSchema temp = jiraRepositoryObj.GetFieldFromTemplateByName(ALM_Common.DataContracts.ResourceType.TEST_SET, "DE", fieldName);
-            if(temp == null)
+            List<string> valuesList = new List<string>();
+            try
             {
-                return "";
+                FieldSchema temp = jiraRepositoryObj.GetFieldFromTemplateByName(resourceType, "DE", fieldName);
+                if (temp == null)
+                {
+                    return null;
+                }
+                switch (temp.type)
+                {
+                    case "string":
+                        valuesList.Add(fields.Value.ToString());
+                        break;
+                    case "object":
+                        var jsonTemplateObj = Newtonsoft.Json.Linq.JObject.Parse(temp.data);
+                        valuesList.Add((fields[((Newtonsoft.Json.Linq.JProperty)jsonTemplateObj.First).Name]).ToString());
+                        break;
+                    case "strings_array":
+                        foreach (var fieldIssue in fields)
+                        {
+                            valuesList.Add(fieldIssue.Value);
+                        }
+                        break;
+                    case "array":
+                        break;
+                    case "option":
+                        break;
+                    case "steps":
+                        foreach (var step in fields["steps"])
+                        {
+                            valuesList.Add(step.ToString());
+                        } 
+                        break;
+                }
             }
-            switch(temp.type)
+            catch(Exception ex)
             {
-                case "string":
-                    return fields.Value;
-                case "object":
-                    var jsonTemplateObj = Newtonsoft.Json.Linq.JObject.Parse(temp.data);
-                    return fields[((Newtonsoft.Json.Linq.JProperty)jsonTemplateObj.First).Name];
+
             }
-            return "";
+            return valuesList;
         }
 
         private string getFieldName(dynamic d)
@@ -188,10 +327,7 @@ namespace GingerCore.ALM.JIRA
             if (jiraDomainsProjectsDataList.Count > 0)
             {
                 currentDomainProject = jiraDomainsProjectsDataList.Where(dom => dom.DomainName.Equals(ALMCore.AlmConfig.ALMDomain)).Select(prj => prj.Projects).FirstOrDefault();
-                foreach (var proj in currentDomainProject)
-                {
-                    jiraProjects.Add(proj.Prefix,proj.ProjectName);
-                }
+                jiraProjects = currentDomainProject.ToDictionary(x => x.Prefix, x => x.ProjectName);
             }
             return jiraProjects;
         }

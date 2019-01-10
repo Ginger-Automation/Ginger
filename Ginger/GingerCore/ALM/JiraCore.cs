@@ -41,8 +41,16 @@ namespace GingerCore.ALM
         private JiraRepository.JiraRepository jiraRepObj;
         public static string ALMProjectGroupName { get; set; }
         public static string ALMProjectGuid { get; set; }
-        public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override ObservableList<Activity> GingerActivitiesRepo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
+        {
+            get { return ImportFromJira.GingerActivitiesGroupsRepo; }
+            set { ImportFromJira.GingerActivitiesGroupsRepo = value; }
+        }
+        public override ObservableList<Activity> GingerActivitiesRepo
+        {
+            get { return ImportFromJira.GingerActivitiesRepo; }
+            set { ImportFromJira.GingerActivitiesRepo = value; }
+        }
         public override ObservableList<ExternalItemFieldBase> almItemFields { get ; set ; }
         public JiraCore()
         {
@@ -120,6 +128,15 @@ namespace GingerCore.ALM
         public ObservableList<JiraTestSet> GetJiraTestSets()
         {
             return jiraConnectObj.GetJiraTestSets();
+        }
+        public ObservableList<JiraTestSet> GetJiraTestSetData(JiraTestSet selectedTS)
+        {
+            return jiraConnectObj.GetTestSetData(selectedTS);
+        }
+
+        public BusinessFlow ConvertJiraTestSetToBF(JiraTestSet testSet)
+        {
+            return ImportFromJira.ConvertQCTestSetToBF(testSet);
         }
     }
 }

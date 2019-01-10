@@ -123,13 +123,12 @@ namespace Ginger.ALM.JIRA
         private void ImportTestSet(object sender)
         {
             ObservableList<JiraTestSet> jiraTestSetList = new ObservableList<JiraTestSet>();
-            ///*jiraTestSetList.Add((sender A*/);
             if (grdJiraTestSets.CurrentItem == null)
             {
                 Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
                 return;
             }
-            
+            jiraTestSetList.Add(grdJiraTestSets.CurrentItem as JiraTestSet);
 
             if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, jiraTestSetList) == true)
             {
