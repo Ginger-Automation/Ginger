@@ -2900,18 +2900,7 @@ namespace GingerCore.Drivers
 
         private void SelectDropDownListOptionByValue(Act dd, string s, SelectElement se)
         {
-            try
-            {
-                se.SelectByValue(s);
-            }
-            catch(Exception ex)
-            {
-                if (ex.Message.StartsWith("Cannot locate option with value"))
-                {
-                    se.SelectByText(s);
-                }
-            }
-
+           se.SelectByValue(s);
         }
 
         #endregion
@@ -4273,14 +4262,31 @@ namespace GingerCore.Drivers
 
                 //Highlight element
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
-                string highlightJavascript = string.Empty;
 
-                //if (ElementInfo.ElementType == "INPUT.CHECKBOX" || ElementInfo.ElementType == "TR" || ElementInfo.ElementType == "TBODY")
-                if (ElementInfo.ElementTypeEnum == eElementType.CheckBox || ElementInfo.ElementTypeEnum == eElementType.TableItem || ElementInfo.ElementType == "TBODY")
-                    highlightJavascript = "arguments[0].style.outline='3px dashed red'";
-                else
-                    highlightJavascript = "arguments[0].style.border='3px dashed red'";
-                javascriptDriver.ExecuteScript(highlightJavascript, new object[] { el });
+                List<string> attributesList = new List<string>() { "arguments[0].style.outline='3px dashed rgb(244, 66, 179)'", "arguments[0].style.backgroundColor='rgb(244, 66, 179)'", "arguments[0].style.border='3px dashed rgb(244, 66, 179)'" };
+
+                foreach (string attribuet in attributesList)
+                {
+                    javascriptDriver.ExecuteScript(attribuet, new object[] { el });
+                }
+
+
+                //string highlightJavascript = string.Empty;
+
+                ////if (ElementInfo.ElementType == "INPUT.CHECKBOX" || ElementInfo.ElementType == "TR" || ElementInfo.ElementType == "TBODY")
+                //if ( ElementInfo.ElementTypeEnum == eElementType.TableItem || ElementInfo.ElementType == "TBODY")
+                //{
+                //    highlightJavascript = "arguments[0].style.outline='3px dashed rgb(244, 66, 179)'";
+                //}
+                //else if (ElementInfo.ElementTypeEnum == eElementType.CheckBox ||ElementInfo.ElementTypeEnum == eElementType.ComboBox)
+                //{
+                //    highlightJavascript = "arguments[0].style.backgroundColor='rgb(244, 66, 179)'";
+                //}
+                //else
+                //{
+                //    highlightJavascript = "arguments[0].style.border='3px dashed rgb(244, 66, 179)'";
+                //}
+                //javascriptDriver.ExecuteScript(highlightJavascript, new object[] { el });
 
                 LastHighLightedElement = el;
             }
@@ -4308,12 +4314,31 @@ namespace GingerCore.Drivers
                 {
                     ElementInfo elementInfo = GetElementInfoWithIWebElement(LastHighLightedElement,null, string.Empty);
 
-                    //Un Highlight
+                    List<string> attributesList = new List<string>() { "arguments[0].style.outline=''", "arguments[0].style.backgroundColor=''", "arguments[0].style.border=''" };
                     IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
-                    if (elementInfo.ElementTypeEnum == eElementType.CheckBox || elementInfo.ElementTypeEnum == eElementType.TableItem || elementInfo.ElementType == "TBODY")
-                        javascriptDriver.ExecuteScript("arguments[0].style.outline=''", LastHighLightedElement);
-                    else
-                        javascriptDriver.ExecuteScript("arguments[0].style.border=''", LastHighLightedElement);
+                    foreach (string attribuet in attributesList)
+                    {
+                        javascriptDriver.ExecuteScript(attribuet, new object[] { LastHighLightedElement });
+                    }
+
+
+                    //Un Highlight
+
+                    //string highlightJavascript = string.Empty;
+                    //if (elementInfo.ElementTypeEnum == eElementType.TableItem || elementInfo.ElementType == "TBODY")
+                    //{
+                    //    highlightJavascript = "arguments[0].style.outline=''";
+                    //}
+                    //else if (elementInfo.ElementTypeEnum == eElementType.ComboBox || elementInfo.ElementTypeEnum == eElementType.CheckBox)
+                    //{
+                    //    highlightJavascript = "arguments[0].style.backgroundColor=''";
+                    //}
+                    //else
+                    //{
+                    //    highlightJavascript = "arguments[0].style.border=''";
+                    //}
+
+                    //javascriptDriver.ExecuteScript(highlightJavascript, LastHighLightedElement);
                 }
             }
             catch (Exception ex)
@@ -6680,6 +6705,7 @@ namespace GingerCore.Drivers
 
                 List<ElementLocator> activesElementLocators = elementLocators.Where(x => x.Active == true).ToList();
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+                
                 foreach (ElementLocator el in activesElementLocators)
                 {
                     if (LocateElementByLocator(el, true) != null)
