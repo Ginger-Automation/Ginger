@@ -94,7 +94,7 @@ namespace GingerCore
         public static Regex rxEnvParamPattern = new Regex(@"{(\bEnvParam App=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public static Regex rxEnvUrlPattern = new Regex(@"{(\bEnvURL App=)\w+\b[^{}]*}", RegexOptions.Compiled);
         
-        private static Regex rx = new Regex(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
+        private static Regex VBSRegex = new Regex(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
         private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled);
         private static Regex rfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\((\")*([^\\)}\\({])*(\")*\\)}", RegexOptions.Compiled);
         // Enable setting value simply by assigned string, 
@@ -243,6 +243,8 @@ namespace GingerCore
             }
         }
 
+
+        // this is costly !!!!!!!!!!!!1 we find the matches... then destry and using regex, search for {
         public static bool IsThisDynamicVE(string VE)
         {
             MatchCollection VariablesMatches = rxVarPattern.Matches(VE);
@@ -255,7 +257,7 @@ namespace GingerCore
             if (DSmatches.Count > 0) { return true; }
             MatchCollection matchesRegEx = rxe.Matches(VE);
             if (matchesRegEx.Count > 0) { return true; }
-            MatchCollection matcheVBS = rx.Matches(VE);
+            MatchCollection matcheVBS = VBSRegex.Matches(VE);
             if (matcheVBS.Count > 0) { return true; }
 
             return false;
@@ -607,7 +609,7 @@ namespace GingerCore
             if (matches.Count == 0)
             {
                 // no variables found
-                matches = rx.Matches(value);
+                matches = VBSRegex.Matches(value);
                 if (matches.Count == 0)
                 {
                     matches = rfunc.Matches(value);
@@ -619,7 +621,7 @@ namespace GingerCore
             // found matched replace with var(s) funcs etc... value   
             foreach (Match match in matches)
             {
-                ms = rx.Matches(match.Value);
+                ms = VBSRegex.Matches(match.Value);
                 int iCount = 0;// defining no to go in endless loop
                 while (ms.Count > 0 && iCount < 10)
                 {
@@ -627,7 +629,7 @@ namespace GingerCore
                     {
                         ProcessFunction(m.Value);
                     }
-                    ms = rx.Matches(mValueCalculated);
+                    ms = VBSRegex.Matches(mValueCalculated);
                     iCount++;
                 }
             }
