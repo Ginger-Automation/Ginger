@@ -1,5 +1,4 @@
 ﻿using Amdocs.Ginger.Common;
-using GingerCoreNET.ReporterLib;
 using System;
 using System.Collections.Generic;
 using System.Text;
