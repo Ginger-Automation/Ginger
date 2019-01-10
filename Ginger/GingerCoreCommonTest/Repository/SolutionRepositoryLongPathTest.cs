@@ -131,7 +131,7 @@
 
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void GetAllRepositoryItems()
 //        {
 //            //Arrange
@@ -149,7 +149,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void AddNewMyRepositoryItemAndVerifyFileSaved()
 //        {
 //            //Arrange
@@ -166,7 +166,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void GetRepositoryItemByName()
 //        {
 //            //Arrange            
@@ -178,7 +178,7 @@
 //            Assert.IsTrue(MRI1 != null);
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void UpdateRepositoryItem()
 //        {
 //            //Arrange  
@@ -196,7 +196,7 @@
 //            Assert.AreEqual(MRI2.Name, MRI2FromDisk.Name);
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void DeleteRepositoryItem()
 //        {
 //            //Arrange            
@@ -213,7 +213,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void AddNewRepositoryItemThenGetByName()
 //        {
 //            //Arrange
@@ -232,7 +232,7 @@
 //            Assert.AreEqual(MRI1.Guid, MRI2.Guid);
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void AddNewMyRepositoryItemAndGetByGuid()
 //        {
 //            //Arrange
@@ -247,7 +247,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void AddAndDeleteRepositoryItem()
 //        {
 //            //Arrange
@@ -277,7 +277,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void GetMRIListThenAddNewMRI()
 //        {
 //            //Arrange
@@ -297,7 +297,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void AddMyRepositoryItemToSubFolder()
 //        {
 //            //Arrange
@@ -315,7 +315,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void DeleteMyRepositoryItemFromSubFolder()
 //        {
 //            //Arrange
@@ -334,7 +334,7 @@
 
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void DeleteMyRepositoryItemFromSubSubsubFolder()
 //        {
 //            //Arrange
@@ -353,7 +353,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void DeleteMRIsSubFolder()
 //        {
 //            //Arrange            
@@ -378,7 +378,7 @@
 //            Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI3.Guid)), null, "make sure all deleted folder sub folder items were removed from cache");
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void DeleteBfsSubFolderWithAllItemsLoaded()
 //        {
 //            //Arrange       
@@ -404,7 +404,7 @@
 //            Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI3.Guid)), null, "make sure all deleted folder sub folder items were removed from cache");
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void RenameBfsSubFolder()
 //        {
 //            //Arrange            
@@ -448,7 +448,7 @@
 
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void VerifyBFRepositoryItemHeader()
 //        {
 //            //Arrange
@@ -463,7 +463,7 @@
 //            Assert.AreEqual(MRI.RepositoryItemHeader.LastUpdateBy, Environment.UserName);
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void VerifyBFRepositoryItemHeaderVersionChangeAfterSave()
 //        {
 //            //Arrange
@@ -479,7 +479,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void ValidatelongFileMorethan255()
 //        {
 //            //Arrange
@@ -494,7 +494,7 @@
 //        }
 
 //        [Ignore]
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void ValidatelongFileName200_300()
 //        {
 //            // Since MAX_PATH is 260 we cover all the range to verify the automatic file name shrinker works well
@@ -522,7 +522,7 @@
 
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void ValidateInvlidCharsinFilename()
 //        {
 //            //Arrange
@@ -537,7 +537,7 @@
 //        }
 
 
-//        //[TestMethod]
+//        //[TestMethod]  [Timeout(60000)]
 //        //public void SaveRIThenLoadChanegNameSaveCheckFileName()
 //        //{
 //        //    //Arrange
@@ -551,7 +551,7 @@
 //        //    Assert.AreEqual(MRI.RepositoryItemHeader.Version, 2);
 //        //}
 
-//        //[TestMethod]
+//        //[TestMethod]  [Timeout(60000)]
 //        //public void ItemNotSerilizedIsNotSaved()
 //        //{
 //        //    //Arrange
@@ -566,7 +566,7 @@
 //        //}
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void FileWatcherChangeExisitingMRIOnDisk()
 //        {
 //            //Arrange

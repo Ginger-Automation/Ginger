@@ -77,7 +77,7 @@ namespace GingerTest
         }
 
         [Ignore]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VisualCompareAgentConfig()
         {
             //Arrange
@@ -98,7 +98,7 @@ namespace GingerTest
 
 
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddAgentUsingWizard()
         {
             //Arrange       
@@ -114,7 +114,7 @@ namespace GingerTest
             Assert.AreEqual(name, agent.Name, "Agent.Name is same");
         }
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RenameAgent()
         {
             //Arrange     
@@ -136,7 +136,7 @@ namespace GingerTest
         }
 
         [Ignore] // TODO: FIXME
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddAgentsFolderinFilesystemShowinTree()
         {
             //Arrange
@@ -153,7 +153,7 @@ namespace GingerTest
         }
 
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddAgentsFolderUsingMenu()
         {
             //Arrange
@@ -173,7 +173,7 @@ namespace GingerTest
         }
 
         [Ignore]  // FIXME failing because the folder doesn't expand to show the added agent
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddAgentsFolderUsingMenuAndAddAgent()
         {
             //Arrange
@@ -196,7 +196,7 @@ namespace GingerTest
         
         [Ignore] // TODO: FIXME not working when running multiple tests
         [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", @".\TestData\Agents.csv", "Agents#csv", DataAccessMethod.Sequential)]        
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CreateAgentsFromCSV()
         {
             // arrange
@@ -220,7 +220,7 @@ namespace GingerTest
         [Ignore]
         [DataRow("Web 1", "Web", "SeleniumChrome")]
         [DataRow("Web 2", "Web", "SeleniumFireFox")]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CreateAgentsbyTestData(string agentName, string platfromType, string driverType)
         {
             // arrange
@@ -240,7 +240,7 @@ namespace GingerTest
 
 
         [Ignore] // FIXME missing functionality
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CopyPasteAgentinAgentRoot()
         {
             //Arrange            
@@ -267,7 +267,7 @@ namespace GingerTest
         }
 
         [Ignore] // FIXME missing functionality
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CutPasteAgentFromRootToSubFolder()
         {
             //Arrange            
@@ -298,7 +298,7 @@ namespace GingerTest
         }
 
         [Ignore] // FIXME missing functionality
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CutPasteAgentFromSubFolderToRoot()
         {
             //Arrange            
@@ -329,7 +329,7 @@ namespace GingerTest
         }
 
         [Ignore] // failing because the sub folder is not auto expand
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void DuplicateAgentinSubFolder()
         {
             //Arrange
