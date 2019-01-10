@@ -677,6 +677,7 @@ namespace Ginger.Run
                         if (!offlineMode)
                         {
                             act.EndTimeStamp = DateTime.Now.ToUniversalTime();
+                        }                            
                             ProjEnvironment environment = null;
 
                             if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
@@ -732,8 +733,7 @@ namespace Ginger.Run
                         else
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Failed to create ExecutionLogger JSON file for the Action :" + act.Description + " because directory not exists :" + executionLogFolder + act.ExecutionLogFolder);
-                        }
-                    }
+                        }                    
 
                     //
                     // Defects Suggestion section (to be considered to remove to separate function)

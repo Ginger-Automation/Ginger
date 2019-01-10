@@ -6695,15 +6695,16 @@ namespace GingerCore.Drivers
             return true;
         }
 
-        bool IWindowExplorer.TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
+        bool IWindowExplorer.TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
         {
             try
             {
-
-                foreach (ElementLocator el in elementLocators)
+                mIsDriverBusy = true;
+                SwitchFrame(EI);
+                foreach (ElementLocator el in EI.Locators)
                     el.LocateStatus = ElementLocator.eLocateStatus.Pending;
 
-                List<ElementLocator> activesElementLocators = elementLocators.Where(x => x.Active == true).ToList();
+                List<ElementLocator> activesElementLocators = EI.Locators.Where(x => x.Active == true).ToList();
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
                 
                 foreach (ElementLocator el in activesElementLocators)
@@ -6737,6 +6738,8 @@ namespace GingerCore.Drivers
             finally
             {
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+                Driver.SwitchTo().DefaultContent();
+                mIsDriverBusy = false;
             }
 
         }
