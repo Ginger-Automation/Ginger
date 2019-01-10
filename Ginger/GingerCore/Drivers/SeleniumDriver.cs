@@ -3045,6 +3045,7 @@ namespace GingerCore.Drivers
 
         private void SwitchFrame(ElementInfo EI)
         {
+            UnhighlightLast();
             Driver.SwitchTo().DefaultContent();
             if (EI.Path != null)
             {
@@ -4228,6 +4229,8 @@ namespace GingerCore.Drivers
             HighlightElement(ElementInfo, null, locateElementByItLocators);
         }
 
+
+
         private void HighlightElement(ElementInfo ElementInfo, IWebElement el=null,  bool locateElementByItLocators = false)
         {
             try
@@ -4263,30 +4266,12 @@ namespace GingerCore.Drivers
                 //Highlight element
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
 
-                List<string> attributesList = new List<string>() { "arguments[0].style.outline='3px dashed rgb(244, 66, 179)'", "arguments[0].style.backgroundColor='rgb(244, 66, 179)'", "arguments[0].style.border='3px dashed rgb(244, 66, 179)'" };
+                List<string> attributesList = new List<string>() { "arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'" };
 
                 foreach (string attribuet in attributesList)
                 {
                     javascriptDriver.ExecuteScript(attribuet, new object[] { el });
                 }
-
-
-                //string highlightJavascript = string.Empty;
-
-                ////if (ElementInfo.ElementType == "INPUT.CHECKBOX" || ElementInfo.ElementType == "TR" || ElementInfo.ElementType == "TBODY")
-                //if ( ElementInfo.ElementTypeEnum == eElementType.TableItem || ElementInfo.ElementType == "TBODY")
-                //{
-                //    highlightJavascript = "arguments[0].style.outline='3px dashed rgb(244, 66, 179)'";
-                //}
-                //else if (ElementInfo.ElementTypeEnum == eElementType.CheckBox ||ElementInfo.ElementTypeEnum == eElementType.ComboBox)
-                //{
-                //    highlightJavascript = "arguments[0].style.backgroundColor='rgb(244, 66, 179)'";
-                //}
-                //else
-                //{
-                //    highlightJavascript = "arguments[0].style.border='3px dashed rgb(244, 66, 179)'";
-                //}
-                //javascriptDriver.ExecuteScript(highlightJavascript, new object[] { el });
 
                 LastHighLightedElement = el;
             }
@@ -4313,32 +4298,12 @@ namespace GingerCore.Drivers
                 if (LastHighLightedElement != null)
                 {
                     ElementInfo elementInfo = GetElementInfoWithIWebElement(LastHighLightedElement,null, string.Empty);
-
                     List<string> attributesList = new List<string>() { "arguments[0].style.outline=''", "arguments[0].style.backgroundColor=''", "arguments[0].style.border=''" };
                     IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
                     foreach (string attribuet in attributesList)
                     {
                         javascriptDriver.ExecuteScript(attribuet, new object[] { LastHighLightedElement });
                     }
-
-
-                    //Un Highlight
-
-                    //string highlightJavascript = string.Empty;
-                    //if (elementInfo.ElementTypeEnum == eElementType.TableItem || elementInfo.ElementType == "TBODY")
-                    //{
-                    //    highlightJavascript = "arguments[0].style.outline=''";
-                    //}
-                    //else if (elementInfo.ElementTypeEnum == eElementType.ComboBox || elementInfo.ElementTypeEnum == eElementType.CheckBox)
-                    //{
-                    //    highlightJavascript = "arguments[0].style.backgroundColor=''";
-                    //}
-                    //else
-                    //{
-                    //    highlightJavascript = "arguments[0].style.border=''";
-                    //}
-
-                    //javascriptDriver.ExecuteScript(highlightJavascript, LastHighLightedElement);
                 }
             }
             catch (Exception ex)
