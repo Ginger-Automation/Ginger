@@ -24,6 +24,8 @@ using GingerCore;
 using GingerCore.Platforms;
 using GingerCore.FlowControlLib;
 using Ginger.Run;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.AnalyzerLib
 {
@@ -41,7 +43,7 @@ namespace Ginger.AnalyzerLib
                 {
                     if (f.Active == true)
                     {
-                        if (f.BusinessFlowControlAction == FlowControl.eBusinessFlowControlAction.GoToBusinessFlow)
+                        if (f.BusinessFlowControlAction == eBusinessFlowControlAction.GoToBusinessFlow)
                         {
                             string GoToBusinessFlow = f.GetNameFromValue();
                             BusinessFlow bf = null;
@@ -54,19 +56,19 @@ namespace Ginger.AnalyzerLib
 
                             List<BusinessFlow> lstBusinessFlow = null;
                             if (guidToLookBy != Guid.Empty)
-                                lstBusinessFlow = GR.BusinessFlows.Where(x => x.InstanceGuid == guidToLookBy).ToList();
+                                lstBusinessFlow =  GR.BusinessFlows.Where(x => x.InstanceGuid == guidToLookBy).ToList();
 
                             if (lstBusinessFlow == null || lstBusinessFlow.Count == 0)
                                 bf = null;
                             else if (lstBusinessFlow.Count == 1)
-                                bf = lstBusinessFlow[0];
+                                bf =(BusinessFlow) lstBusinessFlow[0];
                             else//we have more than 1
                             {
-                                BusinessFlow firstActive = lstBusinessFlow.Where(x => x.Active == true).FirstOrDefault();
+                                BusinessFlow firstActive =(BusinessFlow) lstBusinessFlow.Where(x => x.Active == true).FirstOrDefault();
                                 if (firstActive != null)
                                     bf = firstActive;
                                 else
-                                    bf = lstBusinessFlow[0];//no one is Active so returning the first one
+                                    bf =(BusinessFlow) lstBusinessFlow[0];//no one is Active so returning the first one
                             }
                             if (bf == null)
                             {
@@ -80,7 +82,7 @@ namespace Ginger.AnalyzerLib
                                 ABF.Severity = eSeverity.High;
                             }
                         }
-                        if (f.BusinessFlowControlAction == FlowControl.eBusinessFlowControlAction.SetVariableValue)
+                        if (f.BusinessFlowControlAction == eBusinessFlowControlAction.SetVariableValue)
                         {
                             if (string.IsNullOrEmpty(f.Value) || ValueExpression.IsThisDynamicVE(f.Value) == false)
                             {

@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
@@ -60,9 +61,7 @@ namespace UnitTests.NonUITests
 
 
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.WebServices;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.WebServices;            
 
 
             mDriver = new WebServicesDriver(mBF);
@@ -76,12 +75,12 @@ namespace UnitTests.NonUITests
             mAG.Agent = wsAgent;
 
             mGR = new GingerRunner();
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(wsAgent);
 
             mGR.BusinessFlows.Add(mBF);
 
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "Creating the GingerCoreNET WorkSpace");
+            Reporter.ToLog(eLogLevel.INFO, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);         
 
@@ -93,7 +92,7 @@ namespace UnitTests.NonUITests
             
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void APIModelExecutionTest()
         {
 
@@ -125,7 +124,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //[Ignore]
         //public void BizFlowSaveLoad()
         //{
@@ -133,7 +132,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //[Ignore]
         //public void WebServHelloWorld()
         //{
@@ -173,7 +172,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //[Ignore]
         //public void WebServCreateCustomer()
         //{
@@ -214,7 +213,7 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void WebServices_WebServiceSendXML()
         {
             WebServiceXML webServiceCall = new WebServiceXML();
@@ -230,7 +229,7 @@ namespace UnitTests.NonUITests
             
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void WebServices_WebAPISOAP()
         {
                        
@@ -279,7 +278,7 @@ namespace UnitTests.NonUITests
             }
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void WebServices_WebAPIRest()
         {
             WebServicesDriver mDriver = new WebServicesDriver(mBF);
@@ -291,7 +290,7 @@ namespace UnitTests.NonUITests
             mAG.Agent = wsAgent;
 
             mGR = new GingerRunner();
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(wsAgent);
 
             mGR.BusinessFlows.Add(mBF);
@@ -329,7 +328,7 @@ namespace UnitTests.NonUITests
                 }
             }
         }       
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestXMLReader()
         {
 

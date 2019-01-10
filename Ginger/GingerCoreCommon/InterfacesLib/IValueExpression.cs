@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -22,5 +22,8 @@ namespace Amdocs.Ginger.Common
     {
         string Value { get; set; }
         string ValueCalculated { get; }
+        bool DecryptFlag { get; set; }
+
+        string Calculate(string expression);
     }
 }

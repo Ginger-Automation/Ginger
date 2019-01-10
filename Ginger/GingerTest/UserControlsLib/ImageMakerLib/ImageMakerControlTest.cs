@@ -27,7 +27,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
-namespace GingerWPFUnitTest.UserControlsLib.ImageMakerLib
+namespace GingerTest
 {
 
     [TestClass]
@@ -63,7 +63,7 @@ namespace GingerWPFUnitTest.UserControlsLib.ImageMakerLib
 
         private static Action EmptyDelegate = delegate () { };
         [Level3]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         [Ignore]
         public void ImageMakerControlsVisualTest1_50()
         {
@@ -90,7 +90,7 @@ namespace GingerWPFUnitTest.UserControlsLib.ImageMakerLib
 
 
         [Level3]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         [Ignore]
         public void ImageMakerControlsVisualTest51_100()
         {

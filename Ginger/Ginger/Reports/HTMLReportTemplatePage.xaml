@@ -167,7 +167,7 @@
                                                 </Grid>
                                             </TabItem>
 
-                                            <TabItem x:Name="tbiBusinessFlowField">
+                                            <TabItem x:Name="tbBusinessFlowField">
                                                 <TabItem.Header>
                                                     <StackPanel Orientation="Horizontal">
                                                         <CheckBox x:Name="bf_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
@@ -197,7 +197,7 @@
                                                 </Grid>
                                             </TabItem>
 
-                                            <TabItem x:Name="tbiActivityGroupsField">
+                                            <TabItem x:Name="tbActivityGroupsField">
                                                 <TabItem.Header>
                                                     <StackPanel Orientation="Horizontal">
                                                         <CheckBox x:Name="activityGroups_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>

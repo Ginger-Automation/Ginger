@@ -25,6 +25,7 @@ using GingerCore.Actions;
 using GingerCore.NoSqlBase.DataAccess;
 using System.Text.RegularExpressions;
 using Amdocs.Ginger.Common;
+using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.NoSqlBase
 {
@@ -75,7 +76,7 @@ namespace GingerCore.NoSqlBase
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to connect to Cassandra DB", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Cassandra DB", e);
                 throw (e);
             }
         }
@@ -350,7 +351,7 @@ namespace GingerCore.NoSqlBase
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
         }
 
@@ -442,7 +443,7 @@ namespace GingerCore.NoSqlBase
                         catch (Exception e)
                         {
                             Act.Error = "Please check the version of the Database and update on the Environment(by default it will take 2.2)" + e;
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                            Reporter.ToLog(eLogLevel.ERROR, e.Message);
                         }
                         break;
 
@@ -478,7 +479,7 @@ namespace GingerCore.NoSqlBase
                         catch (Exception e)
                         {
                             Act.Error = "Please check the version of the Database and update on the Environment(by default it will take 2.2)";
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                            Reporter.ToLog(eLogLevel.ERROR, e.Message);
                         }
                         break;
 
@@ -493,7 +494,7 @@ namespace GingerCore.NoSqlBase
             catch (Exception e)
             {
                 Act.Error = "Failed to execute";
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
             if (!Db.KeepConnectionOpen)
             {
@@ -579,7 +580,7 @@ namespace GingerCore.NoSqlBase
                         }
                         catch (Exception e)
                         {
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                         }
 
                     }
@@ -631,7 +632,7 @@ namespace GingerCore.NoSqlBase
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                     }
                 }
             }
@@ -675,13 +676,13 @@ namespace GingerCore.NoSqlBase
                             }
                             catch (Exception e)
                             {
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                             }
                         }
                     }
                 }
                 catch (Exception e)
-                { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
+                { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
             }
             else
             {// to retrieve values without udt

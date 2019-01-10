@@ -51,10 +51,10 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         }
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void AddPluginPackage()
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void InstalledPluginPackageFromOnline()
         {
             //Arrange   
@@ -63,7 +63,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
             string PluginId = "PACT";
             string PluginVersion = "1.6";
-            string path = TestResources.getGingerUnitTesterTempFolder(@"Solutions\PluginsManagerSR1");
+            string path = TestResources.GetTestTempFolder(@"Solutions\PluginsManagerSR1");
             if (Directory.Exists(path))
             {
                 Directory.Delete(path, true);
@@ -90,7 +90,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             Assert.AreEqual("PACT", pluginPackages[0].PluginId);            
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GenstalledPluginPackages()
         {
             //Arrange       

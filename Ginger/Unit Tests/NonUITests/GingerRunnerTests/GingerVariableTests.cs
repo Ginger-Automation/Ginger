@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
@@ -49,9 +50,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.Name = "BF Test Fire Fox";
             mBF.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.Web;            
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
             VariableString busFlowV1 = new VariableString() { Name = "BFV1", InitialStringValue = "1" };
@@ -63,7 +62,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(a);
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
@@ -79,7 +78,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.RunStatus = eRunStatus.Pending;
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestVariable_StringSetValue()
         {
             //Arrange
@@ -106,7 +105,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(v1.Value, newValue);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestVariable_StringResetValue()
         {
             //Arrange
@@ -132,7 +131,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(v1.Value, initialValue);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestVariable_StringClearSpecialChar()
         {
             //Arrange
@@ -166,7 +165,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             return new String(value.Except(specialCharacters).ToArray());
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestVariable_PasswordStringSetValue()
         {
             //Arrange
@@ -194,7 +193,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestVariable_RandomNumberSetValue()
         {
             //Arrange
@@ -224,7 +223,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestVariable_RandomStringSetValue()
         {
             //Arrange
@@ -252,7 +251,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestVariable_SelectionListSetValue()
         {
             //Arrange

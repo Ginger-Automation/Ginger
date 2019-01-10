@@ -207,7 +207,7 @@ namespace Ginger.GherkinLib
 
             for (int indx = 0; indx < BF.ActivitiesGroups.Count; indx++)
             {
-                if (BF.ActivitiesGroups[indx].ItemName != "Optimized Activities" && BF.ActivitiesGroups[indx].ItemName != "Optimized Activities - Not in Use")
+                if (((ActivitiesGroup)BF.ActivitiesGroups[indx]).ItemName != "Optimized Activities" && ((ActivitiesGroup)BF.ActivitiesGroups[indx]).ItemName != "Optimized Activities - Not in Use")
                 {
                     BF.ActivitiesGroups.RemoveAt(indx);
                     indx--;
@@ -280,7 +280,7 @@ namespace Ginger.GherkinLib
             {
                 // Find the Activity from the template BF with All activity, create a copy and add to BF
                 string GN = GherkinGeneral.GetActivityGherkinName(step.Text);
-                Activity a = SearchActivityByName(GN);
+                Activity a = (Activity)SearchActivityByName(GN);
                 if (a != null)
                 {                    
                     Activity a1 = (Activity)a.CreateCopy(false);

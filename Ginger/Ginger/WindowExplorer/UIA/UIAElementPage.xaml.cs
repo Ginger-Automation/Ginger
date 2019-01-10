@@ -22,6 +22,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common;
 using Ginger.Drivers.WindowsAutomation;
 using GingerCore;
 using GingerCore.Actions;

@@ -95,7 +95,7 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 if(!deleteWithoutAsking)
                 {
-                    if(Reporter.ToUser(eUserMsgKeys.DeleteItem, repoItem.GetNameForFileName()) == MessageBoxResult.No)
+                    if(Reporter.ToUser(eUserMsgKeys.DeleteItem, repoItem.GetNameForFileName()) == Amdocs.Ginger.Common.MessageBoxResult.No)
                     {
                         return false;
                     }                        
@@ -241,7 +241,7 @@ namespace GingerWPF.TreeViewItemsLib
         {
             try
             {
-                if (Reporter.ToUser(eUserMsgKeys.RefreshFolder) == System.Windows.MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.RefreshFolder) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     mBulkOperationIsInProcess = true;
                     //refresh cache
@@ -258,7 +258,7 @@ namespace GingerWPF.TreeViewItemsLib
             catch (Exception ex)
             {                
                 Reporter.ToUser(eUserMsgKeys.RefreshFailed, "Failed to refresh the item type cache for the folder: " + path);
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 mBulkOperationIsInProcess = false;
             }
         }
@@ -274,7 +274,7 @@ namespace GingerWPF.TreeViewItemsLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
@@ -288,7 +288,7 @@ namespace GingerWPF.TreeViewItemsLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
             return true;
@@ -298,7 +298,7 @@ namespace GingerWPF.TreeViewItemsLib
         {
             try
             {
-                if (Reporter.ToUser(eUserMsgKeys.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
                 {
                     //delete root and refresh tree                    
                     WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)((ITreeViewItem)this).NodeObject());
@@ -427,7 +427,7 @@ namespace GingerWPF.TreeViewItemsLib
                return;
             }
             string lockComment = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("Lock", "Lock Comment:", ref lockComment, System.IO.Path.GetInvalidFileNameChars()))
+            if (GingerCore.General.GetInputWithValidation("Lock", "Lock Comment:", ref lockComment))
             {
                 SourceControlIntegration.Lock(App.UserProfile.Solution.SourceControl, this.NodePath(), lockComment);
                 mTreeView.Tree.RefreshHeader((ITreeViewItem)this);
@@ -442,7 +442,7 @@ namespace GingerWPF.TreeViewItemsLib
         
         public void SourceControlUndoChanges(object sender, System.Windows.RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.SureWantToDoRevert) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.SureWantToDoRevert) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.RevertChangesFromSourceControl);
                 SourceControlIntegration.Revert(App.UserProfile.Solution.SourceControl, this.NodePath());                
@@ -453,7 +453,7 @@ namespace GingerWPF.TreeViewItemsLib
 
         public void SourceControlGetLatestVersion(object sender, System.Windows.RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.LoseChangesWarn) == MessageBoxResult.No) return;
+            if (Reporter.ToUser(eUserMsgKeys.LoseChangesWarn) == Amdocs.Ginger.Common.MessageBoxResult.No) return;
 
             Reporter.ToGingerHelper(eGingerHelperMsgKey.GetLatestFromSourceControl);
             if (string.IsNullOrEmpty(this.NodePath()))

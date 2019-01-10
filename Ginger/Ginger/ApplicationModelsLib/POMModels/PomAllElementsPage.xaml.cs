@@ -322,6 +322,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTestAllElements.Visibility = Visibility.Collapsed;
             xStopTestAllElements.Visibility = Visibility.Visible;
             mStopProcess = false;
+
             if (xMappedElementsTab.IsSelected)
             {
                 await Task.Run(() => TestAllElements(mPOM.MappedUIElements));
@@ -339,7 +340,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             int TotalElements = Elements.Count;
             int TotalFails = 0;
-
+            
             bool WarnErrorOccured = false;
             foreach (ElementInfo EI in Elements)
             {
@@ -353,7 +354,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     return;
                 }
 
-                if (mWinExplorer.TestElementLocators(EI.Locators,true))
+                if (mWinExplorer.TestElementLocators(EI,true))
                 {
                     EI.ElementStatus = ElementInfo.eElementStatus.Passed;
                 }
@@ -366,7 +367,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 if (!WarnErrorOccured && ((double)TotalFails / TotalElements) > 0.2)
                 {
                     WarnErrorOccured = true;
-                    if (Reporter.ToUser(eUserMsgKeys.POMNotOnThePageWarn, TotalFails, TotalElements) == MessageBoxResult.No)
+                    if (Reporter.ToUser(eUserMsgKeys.POMNotOnThePageWarn, TotalFails, TotalElements) == Amdocs.Ginger.Common.MessageBoxResult.No)
                     {
                         return;
                     }
@@ -422,7 +423,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in POM All Elements Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in POM All Elements Page tabs style", ex);
             }
         }
 

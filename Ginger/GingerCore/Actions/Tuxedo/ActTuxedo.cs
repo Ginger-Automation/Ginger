@@ -131,7 +131,7 @@ namespace GingerCore.Actions.Tuxedo
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Cannot Login to Unix" , ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Cannot Login to Unix" , ex);
                 throw (ex);
             }
             return false;
@@ -182,7 +182,7 @@ namespace GingerCore.Actions.Tuxedo
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
                 Error = e.Message;
             }
         }

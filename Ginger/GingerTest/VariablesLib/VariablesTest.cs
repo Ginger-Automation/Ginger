@@ -16,21 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using GingerCore.Variables;
 using GingerTest.POMs;
 using GingerTestHelper;
 using GingerWPFUnitTest;
-using GingerWPFUnitTest.GeneralLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace GingerTest.VariablesLib
+namespace GingerTest
 {
     [TestClass]
     [Level3]
@@ -49,7 +43,7 @@ namespace GingerTest.VariablesLib
             mTC = TC;
 
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\BasicSimple");
-            SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\VariablesTest");
+            SolutionFolder = TestResources.GetTestTempFolder(@"Solutions\VariablesTest");
             if (Directory.Exists(SolutionFolder))
             {
                 Directory.Delete(SolutionFolder, true);
@@ -81,7 +75,7 @@ namespace GingerTest.VariablesLib
         }
 
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddGlobalStringVariable()
         {
             //Arrange
