@@ -115,7 +115,8 @@ namespace GingerWPFUnitTest.POMs
         {
             get
             {
-                Page p = (Page)PageFrame.Content;
+                Page p = null;
+                p = (Page)PageFrame.Content;
                 return p;
             }
         }
