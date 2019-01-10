@@ -61,7 +61,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //after every test
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestActionLog_Text()
         {
             //Arrange
@@ -82,7 +82,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.IsTrue(IsFileContains(fileName, actionLogText));
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestActionLog_InputValues()
         {
             //Arrange 
@@ -110,7 +110,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.IsTrue(IsFileContains(fileName, INP_VAL_EXPECTED));            
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestActionLog_ReturnValues()
         {
             //Arrange  
@@ -138,7 +138,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(FindTextOccurrencesInFile(fileName, RET_VAL_EXPECTED), 2);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestActionLog_InputAndReturnValues()
         {
             //Arrange
@@ -173,7 +173,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.IsTrue(IsFileContains(fileName, RET_VAL_EXPECTED));
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestActionLog_RunStatusFailCheck()
         {
             //Arrange
@@ -196,7 +196,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.IsTrue(IsFileContains(fileName, "Failed"));
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestActionLog_RunStatusPassCheck()
         {
             //Arrange
@@ -219,7 +219,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.IsTrue(IsFileContains(fileName, "Passed"));
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestActionLog_NoFileExistsOnDisableLog()
         {
             //Arrange
@@ -241,7 +241,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.IsFalse(IsFileExists(fileName));
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestActionLog_MultipleOccurancesOfReturnValues()
         {
             //Arrange
@@ -281,7 +281,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(FindTextOccurrencesInFile(fileName, RET_VAL_EXPECTED), 3);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestActionLog_CheckActionLogEnableOptionSavedInBFXML()
         {
             //Arrange
