@@ -64,7 +64,7 @@ namespace Ginger.ReporterLib
         {
             MessageInfo messageInfo = (MessageInfo)xDataGrid.SelectedValue;
             eUserMsgKeys mess = messageInfo.MessageKey;
-            Amdocs.Ginger.Common.MessageBoxResult messageBoxResult = Reporter.ToUser(mess, "This is a message");
+            Amdocs.Ginger.Common.MessageBoxResult messageBoxResult = Reporter.ToUser(mess, "%1", "%2", "%3");
             MessageBox.Show("You selected: " + messageBoxResult);
         }
     }

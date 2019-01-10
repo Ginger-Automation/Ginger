@@ -39,7 +39,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         public static void ClassInitialize(TestContext TC)
         {            
 
-            string TempSolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\APIModelsTest");
+            string TempSolutionFolder = TestResources.GetTestTempFolder(@"Solutions\APIModelsTest");
             if (Directory.Exists(TempSolutionFolder))
             {
                 Directory.Delete(TempSolutionFolder, true);

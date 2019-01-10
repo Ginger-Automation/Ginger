@@ -58,7 +58,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.SolutionRepository = Ginger.App.CreateGingerSolutionRepository();
 
-            string solutionfolder = TestResources.getGingerUnitTesterTempFolder("sol1");
+            string solutionfolder = TestResources.GetTestTempFolder("sol1");
             if (Directory.Exists(solutionfolder))
             {
                 Directory.Delete(solutionfolder,true);

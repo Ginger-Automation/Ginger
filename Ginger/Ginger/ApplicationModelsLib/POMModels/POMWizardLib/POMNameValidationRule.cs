@@ -40,10 +40,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 return new ValidationResult(false, "POM with the same name already exist");
             }
-            else if (value.ToString().Trim().IndexOfAny(new char[] { '/', '\\', '*', ':', '?', '"', '<', '>', '|' }) != -1)
-            {
-                return new ValidationResult(false, "Invalid chars in POM name");
-            }
             else
             {
                 return new ValidationResult(true, null);

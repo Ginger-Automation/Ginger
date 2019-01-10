@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
 using GingerCoreNET.ReporterLib;
 
 namespace Amdocs.Ginger.Common
@@ -162,14 +162,78 @@ namespace Amdocs.Ginger.Common
 
         #region Report to Ginger Helper
         public static Dictionary<eGingerHelperMsgKey, GingerHelperMsg> GingerHelperMsgsPool { get; set; }
-     
+
+        static Stopwatch mLastStatusTime = new Stopwatch();
         public static void ToGingerHelper(eGingerHelperMsgKey messageKey, object btnHandler = null, params object[] messageArgs)
-         {
-            WorkSpaceReporter.ToStatus("koko"); 
-         }
-        
+         {            
+            GingerHelperMsg messageToShow = null;
+            string messageContent = string.Empty;
+            
+            try
+            {
+                // TODO: use TryGet
+
+                //get the message from pool
+                if ((GingerHelperMsgsPool != null) && GingerHelperMsgsPool.Keys.Contains(messageKey))
+                {
+                    messageToShow = GingerHelperMsgsPool[messageKey];
+                }
+                if (messageToShow == null)
+                {
+                    // We do want to pop the error message so below is just in case...
+                    string mess = "";
+                    foreach (object o in messageArgs)
+                    {
+                        mess += o.ToString() + " ";
+                    }                    
+                    ToUser(eUserMsgKeys.StaticErrorMessage, "Cannot find MessageKey: " + messageKey);
+                    ToLog(eLogLevel.WARN, "The Status message with key: '" + messageKey + "' was not found! and won't show to the user!");
+                }
+                messageContent = messageToShow.MsgContent;
+                //enter message args if exist
+                if (messageArgs.Length > 0)
+                {
+                    messageContent = string.Format(messageContent, messageArgs);
+                }
+
+                if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
+                {
+                    ToLog(eLogLevel.INFO, "Showing Status Message: " + messageContent);
+                }
+                else if (AddAllReportingToConsole)
+                {
+                    ToConsole(eLogLevel.DEBUG, "Showing Status Message: " + messageContent);
+                }
+
+                mLastStatusTime.Start();
+                WorkSpaceReporter.ToStatus(messageToShow.MessageType, messageContent);
+            }
+            catch (Exception ex)
+            {
+                ToLog(eLogLevel.ERROR, "Failed to show the Status message with the key: " + messageKey, ex);
+            }
+
+        }
+
+        static bool bClosing = false;
         public static void CloseGingerHelper()
         {
+            if (bClosing)
+            {
+                return;
+            }
+            bClosing = true;
+            // TODO: run on task
+            Task t = new Task(() => {
+                while (mLastStatusTime.ElapsedMilliseconds < 1000)  // let the message show for at least one second
+                {
+                    Task.Delay(100);
+                }                
+                WorkSpaceReporter.ToStatus(eStatusMessageType.INFO, null);
+                mLastStatusTime.Reset();
+                bClosing = false;
+            });
+            t.Start();
         }
         #endregion Report to Ginger Helper
 
