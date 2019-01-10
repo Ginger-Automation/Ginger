@@ -426,36 +426,36 @@ namespace Ginger
             // TODO: need to add a switch what we get from old ginger based on magic key
 
             phase = "Loading User Profile";
-            Reporter.ToLog(eLogLevel.INFO, phase);
+            Reporter.ToLog(eLogLevel.DEBUG, phase);
             AppSplashWindow.LoadingInfo(phase);
             App.UserProfile = UserProfile.LoadUserProfile();
 
             phase = "Configuring User Type";
-            Reporter.ToLog(eLogLevel.INFO, phase);
+            Reporter.ToLog(eLogLevel.DEBUG, phase);
             AppSplashWindow.LoadingInfo(phase);
             UserProfile.LoadUserTypeHelper();
 
 
             phase = "Loading User Selected Resource Dictionaries";
-            Reporter.ToLog(eLogLevel.INFO, phase);
+            Reporter.ToLog(eLogLevel.DEBUG, phase);
             AppSplashWindow.LoadingInfo(phase);
             if (App.UserProfile != null)
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, App.UserProfile.TerminologyDictionaryType);
             else
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
 
-            Reporter.ToLog(eLogLevel.INFO, "Loading user messages pool");
+            Reporter.ToLog(eLogLevel.DEBUG, "Loading user messages pool");
             UserMsgsPool.LoadUserMsgsPool();
             StatusMsgsPool.LoadStatusMsgsPool();
 
-            Reporter.ToLog(eLogLevel.INFO, "Init the Centralized Auto Log");
+            Reporter.ToLog(eLogLevel.DEBUG, "Init the Centralized Auto Log");
             AutoLogProxy.Init(App.AppVersion);
 
-            Reporter.ToLog(eLogLevel.INFO, "Initializing the Source control");
+            Reporter.ToLog(eLogLevel.DEBUG, "Initializing the Source control");
             AppSplashWindow.LoadingInfo(phase);
 
             phase = "Loading the Main Window";
-            Reporter.ToLog(eLogLevel.INFO, phase);
+            Reporter.ToLog(eLogLevel.DEBUG, phase);
             AppSplashWindow.LoadingInfo(phase);
             MainWindow = new Ginger.MainWindow();
             MainWindow.Show();
@@ -466,10 +466,8 @@ namespace Ginger
             {
                 HandleAutoRunMode();
             }
-
-            phase = "Application was loaded and ready";
-            Reporter.ToLog(eLogLevel.INFO, phase);
-            AppSplashWindow.LoadingInfo("Ready!");
+            
+            //AppSplashWindow.LoadingInfo("Ready!");
             App.AppSplashWindow = null;
 
             AutoLogProxy.LogAppOpened();
@@ -484,6 +482,8 @@ namespace Ginger
             // Register our own Ginger tool tip handler
             //--Canceling customize tooltip for now due to many issues and no real added value            
 
+            phase = "Application was loaded and ready";
+            Reporter.ToLog(eLogLevel.INFO, phase);
             mIsReady = true;
 
         }
@@ -777,7 +777,7 @@ namespace Ginger
                     //check if Ginger Upgrade is needed for loading this Solution
                     try
                     {
-                        Reporter.ToLog(eLogLevel.INFO, "Checking if Ginger upgrade is needed for loading the Solution");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Checking if Ginger upgrade is needed for loading the Solution");
                         ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
                         if (higherVersionFiles.Count > 0)
                         {

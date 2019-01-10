@@ -278,7 +278,7 @@ namespace Ginger.Run
             if (doContinueRun == false)
             {
                 RunSetConfig.LastRunsetLoggerFolder = "-1";
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Reseting {0} elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));                
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Reseting {0} elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));                
                 mStopwatch.Reset();
                 ResetRunnersExecutionDetails();
             }
@@ -289,13 +289,13 @@ namespace Ginger.Run
             mStopRun = false;
 
             //configure Runners for run
-            Reporter.ToLog(eLogLevel.INFO, string.Format("Configurating {0} elements for execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Configurating {0} elements for execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             ConfigureAllRunnersForExecution();
            
             //Process all pre execution Run Set Operations
             if (doContinueRun == false)
             {
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 //Dispatcher.CurrentDispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
                 //{
                     WorkSpace.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
@@ -305,11 +305,11 @@ namespace Ginger.Run
             //Start Run 
             if (doContinueRun == false)
             {
-                Reporter.ToLog(eLogLevel.INFO, string.Format("########################## Starting {0} Execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting {0} Execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 SetRunnersExecutionLoggerConfigs();//contains ExecutionLogger.RunSetStart()
             }
             else
-                Reporter.ToLog(eLogLevel.INFO, string.Format("########################## Continue {0} Execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Continue {0} Execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             mStopwatch.Start();
             if (RunSetConfig.RunModeParallel)
             {
@@ -375,21 +375,21 @@ namespace Ginger.Run
             mStopwatch.Stop();
 
             //Do post execution items
-            Reporter.ToLog(eLogLevel.INFO, string.Format("######## {0} Runners Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## {0} Runners Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             ExecutionLogger.RunSetEnd();
             if (mStopRun == false)
             {
                 // Process all post execution RunSet Operations
-                Reporter.ToLog(eLogLevel.INFO, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 //Dispatcher.CurrentDispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
                 //{
                     WorkSpace.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
                 //});
             }
-            Reporter.ToLog(eLogLevel.INFO, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             CreateGingerExecutionReportAutomaticly();
             CloseAllEnvironments();
-            Reporter.ToLog(eLogLevel.INFO, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
         }
 
         public void CreateGingerExecutionReportAutomaticly()

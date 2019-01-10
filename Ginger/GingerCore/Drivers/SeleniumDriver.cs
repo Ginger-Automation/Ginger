@@ -557,21 +557,24 @@ namespace GingerCore.Drivers
         {
             try
             {
-                Driver.Quit();
-                Driver = null;
+                if (Driver != null)
+                {
+                    Driver.Quit();
+                    Driver = null;
+                }
                 if (StartBMP)
                 {
                     BMPClient.Close();
                     BMPServer.Stop();
                 }
             }
-            catch (System.InvalidOperationException)
+            catch (System.InvalidOperationException ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "got System.InvalidOperationException when trying to close Selenium Driver");
+                Reporter.ToLog(eLogLevel.ERROR, "Got System.InvalidOperationException when trying to close Selenium Driver", ex);
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Selenium Driver - " + e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Selenium Driver", e);
             }
         }
 
@@ -3449,17 +3452,17 @@ namespace GingerCore.Drivers
                         {
                             exceptioncount = 0;
                             count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         }
                         catch (System.NullReferenceException ex)
                         {
                             count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         }
                         catch (Exception ex)
                         {
                             //throw exception to outer catch
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                             throw;
                         }
 
@@ -3493,7 +3496,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.NoSuchWindowException ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {"IsRunning() OpenQA.Selenium.NoSuchWindowException ex"}, Error - {ex.ToString()}", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Method - {"IsRunning() OpenQA.Selenium.NoSuchWindowException ex"}, Error - {ex.ToString()}", ex);
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
                         return true;
@@ -3505,7 +3508,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.WebDriverTimeoutException ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {"IsRunning() OpenQA.Selenium.NoSuchWindowException ex"}, Error - {ex.ToString()}", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Method - {"IsRunning() OpenQA.Selenium.NoSuchWindowException ex"}, Error - {ex.ToString()}", ex);
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
                         return true;
@@ -3517,7 +3520,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.WebDriverException ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {"IsRunning() OpenQA.Selenium.WebDriverException ex"}, Error - {ex.ToString()}", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Method - {"IsRunning() OpenQA.Selenium.WebDriverException ex"}, Error - {ex.ToString()}", ex);
 
                     if (PreviousRunStopped && ex.Message == "Unexpected error. Error 404: Not Found\r\nNot Found")
                         return true;
@@ -3530,7 +3533,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex2)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {"IsRunning(): ex2"}, Error - {ex2.ToString()}", ex2);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Method - {"IsRunning(): ex2"}, Error - {ex2.ToString()}", ex2);
                     if (ex2.Message.ToString().ToUpper().Contains("DIALOG"))
                         return true;
 
