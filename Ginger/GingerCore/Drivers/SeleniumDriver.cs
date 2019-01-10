@@ -2900,7 +2900,18 @@ namespace GingerCore.Drivers
 
         private void SelectDropDownListOptionByValue(Act dd, string s, SelectElement se)
         {
-            se.SelectByValue(s);
+            try
+            {
+                se.SelectByValue(s);
+            }
+            catch(Exception ex)
+            {
+                if (ex.Message.StartsWith("Cannot locate option with value"))
+                {
+                    se.SelectByText(s);
+                }
+            }
+
         }
 
         #endregion
