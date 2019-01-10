@@ -1,6 +1,8 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.UserControls;
 
 namespace Ginger.ReporterLib
 {
@@ -31,7 +33,7 @@ namespace Ginger.ReporterLib
             switch (buttonsType)
             {
                 case Amdocs.Ginger.Common.eUserMsgOption.OK:
-                    xOKButton.Visibility = Visibility.Visible;
+                    xOKButton.Visibility = Visibility.Visible;                    
                     break;
                 case Amdocs.Ginger.Common.eUserMsgOption.OKCancel:
                     xOKButton.Visibility = Visibility.Visible;
@@ -99,5 +101,33 @@ namespace Ginger.ReporterLib
             messageBoxResult = Amdocs.Ginger.Common.eUserMsgSelection.Cancel;
             this.Close();
         }
+
+        private void Window_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (xOKButton.IsKeyboardFocusWithin)
+                {
+                    xOKButton_Click(null, null);
+                }
+                else if (xYesButton.IsKeyboardFocusWithin)
+                {
+                    XYesButton_Click(null, null);
+                }
+                else if (xNoButton.IsKeyboardFocusWithin)
+                {
+                    XNoButton_Click(null, null);
+                }
+                else if (xCancelButton.IsKeyboardFocusWithin)
+                {
+                    XCancelButton_Click(null, null);
+                }
+                else
+                {
+                    this.Close();
+                }
+            }
+        }
+        
     }
 }

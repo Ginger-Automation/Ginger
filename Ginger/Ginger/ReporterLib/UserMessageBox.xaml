@@ -7,7 +7,9 @@
         x:Class="Ginger.ReporterLib.UserMessageBox"
         mc:Ignorable="d"
         Title="Ginger Message" Height="200" Width="400" WindowStyle="ToolWindow" ShowInTaskbar="False"  
-        WindowStartupLocation="CenterScreen" Topmost="True" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $amdocsLogoRadialGradientBrush}">
+        WindowStartupLocation="CenterScreen" Topmost="True" 
+        Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $amdocsLogoRadialGradientBrush}"
+        KeyUp="Window_KeyUp">
 
     <Border BorderBrush="DarkGray" BorderThickness="1">
         <Grid>
@@ -30,8 +32,8 @@
 
             <Border Grid.Row="1" BorderBrush="LightGray" BorderThickness="1">
                 <StackPanel  Orientation="Horizontal"  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" >
-                    <UserControls:ucButton x:Name="xOKButton" Click="xOKButton_Click" ButtonText="Ok" ButtonType="RoundTextAndImageButton"  ButtonImageType="Approve"  ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_UserMessage}" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" />
-                    <UserControls:ucButton x:Name="xYesButton" Click="XYesButton_Click" ButtonText="Yes" ButtonType="RoundTextAndImageButton" ButtonImageType="Approve"  ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_UserMessage}" ButtonFontImageSize="13" ButtonImageWidth="15" ButtonImageHeight="15" />
+                    <UserControls:ucButton x:Name="xOKButton" Click="xOKButton_Click" ButtonText="Ok" ButtonType="RoundTextAndImageButton"  ButtonImageType="Approve"  ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_UserMessage}" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" KeyDown="xOKButton_KeyDown"/>
+                    <UserControls:ucButton x:Name="xYesButton" Click="XYesButton_Click" ButtonText="Yes" ButtonType="RoundTextAndImageButton" ButtonImageType="Approve"  ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_UserMessage}" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" />
                     <UserControls:ucButton x:Name="xNoButton" Click="XNoButton_Click" ButtonText="No" ButtonType="RoundTextAndImageButton" ButtonImageType="Reject"  ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_UserMessage}" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" />
                     <UserControls:ucButton x:Name="xCancelButton" ButtonText="Cancel" Click="XCancelButton_Click" ButtonType="RoundTextAndImageButton" ButtonImageType="Cancel"  ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_UserMessage}" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" />
                 </StackPanel>
