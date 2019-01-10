@@ -75,7 +75,7 @@ namespace GingerTest
         }
 
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddGlobalStringVariable()
         {
             //Arrange

@@ -3058,7 +3058,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        private IWebElement LocateElementByLocators(ObservableList<ElementLocator> Locators)
+        public IWebElement LocateElementByLocators(ObservableList<ElementLocator> Locators)
         {
             IWebElement elem = null;
             foreach (ElementLocator locator in Locators)
