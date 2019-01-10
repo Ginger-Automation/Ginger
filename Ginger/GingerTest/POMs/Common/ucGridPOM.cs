@@ -38,16 +38,21 @@ namespace GingerTest.POMs.Common
         /// <param name="property">item property as defined in the class</param>
         /// <param name="value">text with of this property</param>
         internal void GotoRow(string property, string value)
-        {            
+        {
+            bool RowFound = false;
             foreach (var item in mGrid.DataSourceList)
             {
                 if (item.GetType().GetProperty(property).GetValue(item).ToString() == value)
                 {
-                    mGrid.DataSourceList.CurrentItem = item;                             
+                    mGrid.DataSourceList.CurrentItem = item;
+                    RowFound = true;
+                    break;
                 }
             }
-            
-            throw new Exception("Grid item not found for: " + property + "=" + value);
+            if (!RowFound)
+            {
+                throw new Exception("Grid item not found for: " + property + "=" + value);
+            }
         }
 
         public void ClickOnCheckBox(string checkboxHeaderValue, string fieldToSearchOnHeader, string fieldValueToSearch)
