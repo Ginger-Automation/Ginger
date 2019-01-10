@@ -55,7 +55,7 @@ namespace GingerCoreCommonTest.VariablesTest
             //after every test
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ActionUsedVar()
         {
             //Arrange            
@@ -72,7 +72,7 @@ namespace GingerCoreCommonTest.VariablesTest
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ActivityUsedVar()
         {
             //Arrange
@@ -93,7 +93,7 @@ namespace GingerCoreCommonTest.VariablesTest
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void UsedVarInFlowControlCondition()
         {
             //Arrange
@@ -112,7 +112,7 @@ namespace GingerCoreCommonTest.VariablesTest
             Assert.AreEqual("v1", usedVars[0], "usedVars[0]=v1");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void UsedVarInActionOutputExpected()
         {
             //Arrange
@@ -132,7 +132,7 @@ namespace GingerCoreCommonTest.VariablesTest
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void UsedVarInActionOutoutStoreToVar()
         {
             //Arrange
@@ -152,7 +152,7 @@ namespace GingerCoreCommonTest.VariablesTest
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SameVarUsedInSeveralPlaces()
         {
             //Arrange
@@ -173,7 +173,7 @@ namespace GingerCoreCommonTest.VariablesTest
             Assert.AreEqual("v1", usedVars[0], "usedVars[0]=v1");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void DifferenVarsUsedInSeveralPlaces()
         {
             //Arrange

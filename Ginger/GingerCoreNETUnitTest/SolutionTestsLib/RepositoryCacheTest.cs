@@ -41,7 +41,7 @@
 
 //        }
 
-//        //[TestMethod]
+//        //[TestMethod]  [Timeout(60000)]
 //        //public void WeakReferenceTest()
 //        //{
 //        //    Stopwatch st = new Stopwatch();
@@ -56,7 +56,7 @@
 //        //    Assert.IsTrue(WR.IsAlive == false);            
 //        //}
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void CachecSimpleInOut()
 //        {
 //            //Arrange            
@@ -71,7 +71,7 @@
 //            Assert.AreEqual(BF, BF2); // make sure they are same object/ref
 //        }
 
-//        //[TestMethod]
+//        //[TestMethod]  [Timeout(60000)]
 //        //public void CachecWithObjRelease()
 //        //{
 //        //    //Arrange            
@@ -91,7 +91,7 @@
 //        //}
 
 
-//        //[TestMethod]
+//        //[TestMethod]  [Timeout(60000)]
 //        //public void CachecWithObjReleaseAndGCCollect()
 //        //{
 //        //    //Arrange            
