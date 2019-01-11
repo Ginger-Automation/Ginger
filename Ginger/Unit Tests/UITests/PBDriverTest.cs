@@ -661,19 +661,7 @@ namespace UnitTest {
             string actual = act.GetReturnParam("Actual");
            Assert.AreEqual(actual, "Unchecked", "Ret Param Actual");
            Assert.AreEqual(act.Error, null, "Act.Error");
-
-            c1 = new ActPBControl();
-            c1.LocateBy = eLocateBy.ByName;
-            c1.ControlAction = ActPBControl.eControlAction.Click;
-            c1.LocateValueCalculated = "Exit";
-            c1.AddNewReturnParams = true;            
-            c1.Active = true;
-
-            mBF.CurrentActivity.Acts.Add(c1);
-            mBF.CurrentActivity.Acts.CurrentItem = c1;
-
-            //Act
-            mGR.RunAction(c1, false);
+      
         }
 
         [TestMethod]  [Timeout(60000)]
