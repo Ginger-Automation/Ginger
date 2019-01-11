@@ -62,7 +62,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VerifyApplicationAPIModelFileExtension()
         {
             // Need to verify ext is coming from ApplicationAPIModel and file name will not have ApplicationAPIModel 
@@ -78,7 +78,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         }
 
         [Ignore]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddAPIFromXMLAndAvoidDuplicateNodesTest()
         {
             //Arrange
@@ -109,7 +109,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         }
 
         [Ignore]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddAPIFromJSONAndAvoidDuplicateNodesTest()
         {
             //Arrange
@@ -138,7 +138,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
 
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ApplicationAPIModelVerifySavedFile()
         {
             // Arrange
@@ -164,7 +164,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ApplicationAPIModelMixSoapAndRestSaveAndLoad()
         {
             // Arrange
@@ -191,7 +191,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         }
 
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ApplicationAPIModelMultipleSoapAndRestSaveAndLoad()
         {
             // Arrange
@@ -224,7 +224,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             Assert.AreEqual(AAMBListSubFolder.Count,3, "Second Folder should have 3 files");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void APIParsingSavingAndPulling()
         {
             // Arrange
