@@ -30,7 +30,7 @@ jobs:
     agentname:  'VS2017-Win2016'
 
   
-  pool: 'Ginger Hosted Agents'
+  pool: 'VS2017-Win2016'
 
 
   steps:
