@@ -29,8 +29,9 @@ jobs:
     buildConfiguration: 'Release'
     agentname:  'VS2017-Win2016'
 
-  pool:
-    vmImage:  'Ginger Hosted Agents'
+  
+  pool: 'Ginger Hosted Agents'
+
 
   steps:
   - task: NuGetToolInstaller@0
