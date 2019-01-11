@@ -424,8 +424,16 @@ namespace GingerCore.Drivers
 
                 if (mPlatform == ePlatform.Windows)
                 {
+                    int gingerProcessId = Process.GetCurrentProcess().Id;
+
                     foreach (AutomationElement window in AppWindows)
                     {
+
+                        //Exclude own process
+                        if (window.Current.ProcessId == gingerProcessId)
+                        {
+                            continue;
+                        }
                         //list All Windows except PB windows - FNW
 
                         if (!window.Current.ClassName.StartsWith("FNW"))
