@@ -43,7 +43,7 @@ namespace Ginger.TimeLineLib
             //winButtons.Add(undoBtn);
             //winButtons.Add(okBtn);           
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, eWindowShowStyle.FreeMaximized, "Execution Timeline view", this);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, eWindowShowStyle.Free , "Execution Timeline view", this);
             
         }
 

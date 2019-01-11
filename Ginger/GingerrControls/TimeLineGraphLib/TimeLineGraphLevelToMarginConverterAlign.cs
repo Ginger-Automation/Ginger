@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using GingerUtils.TimeLine;
+using System;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
-namespace GingerControls
+namespace TimeLineControl
 {
-    public class LevelToMarginConverter : IValueConverter
+    public class TimeLineGraphLevelToMarginConverterAlign : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return new Thickness((int)value * 19, 0, 0, 0);  // index 19 pixel
+            // indent -19 pixel per level so all items will be in same line
+            return new Thickness(((TimeLineEvent)value).Level * -19, 0, 0, 0);  
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

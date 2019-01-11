@@ -57,7 +57,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="ControlExtensions\TreeViewItemExtensions.cs" />
-    <Compile Include="LevelToMarginConverter.cs" />
+    <Compile Include="TimeLineGraphLib\TimeLineGraphLevelToMarginConverterIndent.cs" />
+    <Compile Include="TimeLineGraphLib\TimeLineGraphLevelToMarginConverterAlign.cs" />
     <Compile Include="TimeLineGraphLib\TimelineEventControl.xaml.cs">
       <DependentUpon>TimelineEventControl.xaml</DependentUpon>
     </Compile>
