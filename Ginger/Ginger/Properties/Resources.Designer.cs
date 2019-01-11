@@ -123,6 +123,16 @@ namespace Ginger.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        public static byte[] SQLiteDataSource {
+            get {
+                object obj = ResourceManager.GetObject("SQLiteDataSource", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         public static byte[] ValueExpressionHighlighting {
             get {
                 object obj = ResourceManager.GetObject("ValueExpressionHighlighting", resourceCulture);

@@ -363,6 +363,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 ADC.Init(DSDetails.FileFullPath);
                 DSDetails.DSC = ADC;
             }
+             if (DSDetails.DSType == DataSourceBase.eDSType.SQLite)
+            {
+                DataSourceBase ADC;
+                ADC = new SQLiteDataSource();
+                if (DSDetails.FilePath.StartsWith("~"))
+                {
+                    DSDetails.FileFullPath = DSDetails.FilePath.Replace(@"~\", "").Replace("~", "");
+                    DSDetails.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, DSDetails.FileFullPath);
+                }
+                ADC.Init(DSDetails.FileFullPath);
+                DSDetails.DSC = ADC;
+            }
         }
     }
 }
