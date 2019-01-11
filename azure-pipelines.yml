@@ -38,6 +38,7 @@ jobs:
   - task: NuGetCommand@2
     inputs:
       restoreSolution: '$(solution)'
+    condition: succeededOrFailed()
 
   - task: VSBuild@1
     inputs:
