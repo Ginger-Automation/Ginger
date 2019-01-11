@@ -45,6 +45,31 @@ namespace Amdocs.Ginger.Repository
 
         public const string cSolutionRootFolderSign = @"~\"; // + Path.DirectorySeparatorChar;
 
+
+        /// <summary>
+        /// List of files and folders to exclude from solution load and Source Control
+        /// </summary>
+        public static List<string> RepositoryItemsToAvoid = new List<string>()
+        {
+             "AutoSave",
+             "Recover",
+             "RecentlyUsed.dat",
+             "Backups",
+             "ExecutionResults",
+             "HTMLReports",
+
+             @"SharedRepository\Activities\PrevVersions",
+             @"SharedRepository\Actions\PrevVersions",
+             @"SharedRepository\Variables\PrevVersions",
+             @"SharedRepository\ActivitiesGroup\PrevVersions",
+
+             @"SharedRepository\Activities\PrevVerions",
+             @"SharedRepository\Actions\PrevVerions",
+             @"SharedRepository\Variables\PrevVerions",
+             @"SharedRepository\ActivitiesGroup\PrevVerions"
+        };
+
+
         private ISolution mSolution = null;
         public ISolution Solution
         {
@@ -372,7 +397,7 @@ namespace Amdocs.Ginger.Repository
                             Parallel.ForEach(SubFolders, sf =>
                             {
                                 // Add all files of sub folder
-                                if (!General.IsFolderToAvoid(sf))
+                                if (!IsRepositoryItemToAvoid(sf))
                                 {
                                     AddFolderFiles(fileEntries, sf, folder.ItemFilePattern);
                                 }
@@ -392,6 +417,23 @@ namespace Amdocs.Ginger.Repository
                        .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
                        .ToUpperInvariant();
         }
+
+
+        public bool IsRepositoryItemToAvoid(string itemToCheck)
+        {
+            foreach (string item in RepositoryItemsToAvoid)
+            {
+                string itemFullPath = Path.Combine(SolutionFolder, item);
+
+                if (itemToCheck == itemFullPath)
+                {
+                    return true;
+                }                   
+            }
+
+            return false;
+        }
+
         #endregion Public Functions
 
         #region Private Functions        
@@ -633,7 +675,7 @@ namespace Amdocs.Ginger.Repository
             {
                 RepositoryFolderBase repostitoryFolder = GetItemRepositoryFolder(repositoryItem);
                 
-                string targetPath=Path.Combine(repostitoryFolder.FolderFullPath, General.FolderToAvoid.PrevVersions.ToString());
+                string targetPath=Path.Combine(repostitoryFolder.FolderFullPath, "PrevVersions");
                 if (!Directory.Exists(targetPath))
                 {
                     repostitoryFolder.PauseFileWatcher();

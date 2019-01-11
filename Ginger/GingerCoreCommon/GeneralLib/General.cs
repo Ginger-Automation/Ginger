@@ -27,17 +27,7 @@ using Amdocs.Ginger.Repository;
 namespace Amdocs.Ginger.Common.GeneralLib
 {
     public static class General
-    {
-        /// <summary>
-        /// List of folders to exclude from Loading and Source Control
-        /// </summary>
-        public enum FolderToAvoid
-        {            
-            AutoSave,
-            PrevVersions,
-            PrevVerions,
-            Recover            
-        }
+    {      
 
 
         public static string LocalUserApplicationDataFolderPath
@@ -72,16 +62,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
-
-        public static bool IsFolderToAvoid(string folderName)
-        {
-           if(folderName==FolderToAvoid.AutoSave.ToString() || folderName == FolderToAvoid.Recover.ToString()
-                ||folderName== FolderToAvoid.PrevVersions.ToString() || folderName == FolderToAvoid.PrevVerions.ToString())
-            {
-                return true;
-            }
-            return false;
-        }
+        
 
         /// <summary>
         /// Should use the function temporary till solution will be implemented for VE fields search
