@@ -805,6 +805,8 @@ namespace Ginger
                         WorkSpace.Instance.SolutionRepository = CreateGingerSolutionRepository();
                         WorkSpace.Instance.SolutionRepository.Open(SolutionFolder);
 
+                        WorkSpace.Instance.PlugInsManager.SolutionChanged(WorkSpace.Instance.SolutionRepository);
+
                         HandleSolutionLoadSourceControl(sol);
                         HandleAutomateRunner(sol);
 
@@ -815,7 +817,7 @@ namespace Ginger
                         App.UserProfile.Solution.SetReportsConfigurations();
                         App.UserProfile.LoadRecentAppAgentMapping();
                         AutoLogProxy.SetAccount(sol.Account);
-
+                       
                         SetDefaultBusinessFlow();
 
                         if (!App.RunningFromConfigFile)
