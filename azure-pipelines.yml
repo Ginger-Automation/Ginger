@@ -22,15 +22,15 @@ jobs:
 
 
 - job: Windows
- pool:
-    vmImage:  'Ginger Hosted Agents'
+
   variables:  
     solution: '**/*.sln'
     buildPlatform: 'Any CPU'
     buildConfiguration: 'Release'
+    agentname:  'VS2017-Win2016'
 
-
- 
+  pool:
+    vmImage:  'Ginger Hosted Agents'
 
   steps:
   - task: NuGetToolInstaller@0
