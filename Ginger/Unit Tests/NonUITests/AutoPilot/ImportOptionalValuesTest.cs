@@ -45,7 +45,7 @@ namespace UnitTests.NonUITests.AutoPilot
             ImportOptionalValues.ShowMessage = false;
         }
         [Level2]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ImportOptionalFromExcelRegressionTest()
         {/*
             createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"AutoPilot\ImportOptionalValue\createPayment.xml");
@@ -66,7 +66,7 @@ namespace UnitTests.NonUITests.AutoPilot
         */
         }
         [Level2]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ImportOptionalFromDBRegressionTest()
         {
            /* createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"AutoPilot\ImportOptionalValue\createPayment.xml");

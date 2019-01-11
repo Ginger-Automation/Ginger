@@ -53,7 +53,7 @@ namespace GingerTest
 
         [Ignore] // TODO: FIXME
         [Level2]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GenerateAPIfromWSDL()
         {
             // Arrange
