@@ -1630,7 +1630,7 @@ namespace Ginger.Run
                             GingerNodeInfo GNI = null;
                             try
                             {
-                                GNI = GetGNIFor((ActPlugIn)act);
+                                GNI = GetGingerNodeInfoForPluginAction((ActPlugIn)act);
                                 if (GNI != null)
                                 {
                                     ExecutePlugInAction((ActPlugIn)act, GNI);
@@ -1901,7 +1901,7 @@ namespace Ginger.Run
        // keep list of GNI for Plugin which are session
         Dictionary<string, GingerNodeInfo> dic = new Dictionary<string, GingerNodeInfo>();
 
-        private GingerNodeInfo GetGNIFor(ActPlugIn actPlugin)
+        private GingerNodeInfo GetGingerNodeInfoForPluginAction(ActPlugIn actPlugin)
         {
             bool DoStartSession = false;
             bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, actPlugin.ServiceId);
@@ -3325,7 +3325,7 @@ namespace Ginger.Run
         }
 
 
-        // Make private !!!!!!!!!!!!!!!
+        // Make private !!!!!!!!!!!!!!! !!!
         public void CalculateBusinessFlowFinalStatus(BusinessFlow BF, bool considrePendingAsSkipped= false)
         {
             // A flow is blocked if some activity failed and all the activities after it failed
@@ -4110,7 +4110,7 @@ namespace Ginger.Run
 
         private void NotifyActionStart(Act action)
         {
-            uint eventTime = RunListenerBase.GetEventTime();
+            uint eventTime = RunListenerBase.GetEventTime();            
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActionStart(eventTime, action);
@@ -4250,21 +4250,23 @@ namespace Ginger.Run
                 runnerListener.EnvironmentChanged(eventTime, mProjEnvironment);
             }
         }
-        private void NotifyActivityGroupStart(ActivitiesGroup ActivityGroup)
+        private void NotifyActivityGroupStart(ActivitiesGroup activityGroup)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+            activityGroup.StartTimeStamp = eventTime; 
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.ActivityGroupStart(eventTime, ActivityGroup);
+                runnerListener.ActivityGroupStart(eventTime, activityGroup);
             }
         }
 
-        private void NotifyActivityGroupEnd(ActivitiesGroup ActivityGroup)
+        private void NotifyActivityGroupEnd(ActivitiesGroup activityGroup)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+            activityGroup.EndTimeStamp = eventTime;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.ActivityGroupEnd(eventTime, ActivityGroup);
+                runnerListener.ActivityGroupEnd(eventTime, activityGroup);
             }
         }
 

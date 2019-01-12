@@ -50,8 +50,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public static string CreateNodeConfigFile(string name, string serviceId)
         {
-            string txt = name + " | " + serviceId +  Environment.NewLine;
-            
+            string txt = name + " | " + serviceId + " | " +  SocketHelper.GetLocalHostIP() + " | " + WorkSpace.Instance.LocalGingerGrid.Port + Environment.NewLine;            
             string fileName = Path.GetTempFileName();
             File.WriteAllText(fileName, txt);
             return fileName;
