@@ -282,9 +282,9 @@ namespace GingerCore.Activities
             RunStatus = eActivitiesGroupRunStatus.Pending;
         }
 
-        double? mElapsed;
-        [IsSerializedForLocalRepository]
-        public double? Elapsed
+        uint? mElapsed;
+        [IsSerializedForLocalRepository]    // !!!!!!!!!!!!!!!!!!!!! Why serialized?
+        public uint? Elapsed
         {
             get { return mElapsed; }
             set
@@ -313,7 +313,7 @@ namespace GingerCore.Activities
             set
             {
 
-                Elapsed = value * 1000;
+                Elapsed = (uint)value * 1000;
             }
         }
 
@@ -326,14 +326,14 @@ namespace GingerCore.Activities
             }
         }
 
-        public Dictionary<Guid, DateTime> ExecutedActivities { get; set; } = new Dictionary<Guid, DateTime>();
+        public Dictionary<Guid, uint> ExecutedActivities { get; set; } = new Dictionary<Guid, uint>();
 
         public string TempReportFolder { get; set; }
 
         // Only for Run time, no need to serialize
-        public DateTime StartTimeStamp { get; set; }
+        public uint StartTimeStamp { get; set; }
 
-        public DateTime EndTimeStamp { get; set; }
+        public uint EndTimeStamp { get; set; }
 
         private eActivitiesGroupRunStatus mRunStatus;
         public eActivitiesGroupRunStatus RunStatus

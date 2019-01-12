@@ -1,5 +1,7 @@
 ﻿using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Activities;
+using GingerCore.Environments;
 using System;
 using System.Diagnostics;
 
@@ -18,9 +20,14 @@ namespace Amdocs.Ginger.Run
             mStartDateTime = DateTime.Now;
         }
 
-        public DateTime GetDateTime(uint eventTime)
+        public static DateTime GetDateTime(uint eventTime)
         {
             return mStartDateTime.AddMilliseconds(eventTime);
+        }
+
+        internal static uint GetEventTime()
+        {
+            return (uint)mStopwatch.ElapsedMilliseconds;
         }
 
 
@@ -120,9 +127,19 @@ namespace Amdocs.Ginger.Run
         }
 
 
-        internal static uint GetEventTime()
+        public virtual void EnvironmentChanged(uint eventTime, ProjEnvironment mProjEnvironment)
         {
-            return (uint)mStopwatch.ElapsedMilliseconds;
+            
+        }
+
+        public virtual void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)
+        {
+            
+        }
+
+        public virtual void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup)
+        {
+
         }
         #endregion Action
 

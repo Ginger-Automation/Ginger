@@ -83,7 +83,7 @@ namespace Ginger.Run
         }
 
         
-        public ObservableList<IGingerRunner> Runners
+        public ObservableList<GingerRunner> Runners
         {
             get
             {

@@ -106,7 +106,7 @@ namespace Ginger.Reports
         /// <summary>
         /// Should be deleted after switch will be fully done to serialized objects 
         /// </summary> 
-        public ReportInfo(ProjEnvironment Env, BusinessFlow BF,IGingerRunner GR=null) // to remove after discussion !!!
+        public ReportInfo(ProjEnvironment Env, BusinessFlow BF, GingerRunner GR=null) // to remove after discussion !!!
         {
             mProjEnvironment = Env;
             mBFESs=new ObservableList<BusinessFlowExecutionSummary>();

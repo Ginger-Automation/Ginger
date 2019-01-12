@@ -27,8 +27,7 @@ namespace Amdocs.Ginger.CoreNET.InterfacesLib
     }
     public interface IGingerRunner
     {
-        double? Elapsed { get;  }
-        ExecutionLogger ExecutionLogger { get; }
+        double? Elapsed { get;  }        
         ISolution CurrentSolution { get; set; }
         ObservableList<IAgent> SolutionAgents { get; set; }
         ObservableList<DataSourceBase> DSList { get; set; }
