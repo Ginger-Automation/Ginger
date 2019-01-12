@@ -58,6 +58,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             List<IPAddress> IPList = ipEntry.AddressList.ToList();
             Console.WriteLine("Number of IP Addresses Found:" + IPList.Count);
 
+            string selIPAddr = null;
+
             if (IPList.Count() == 1)
             {
                 // if we have only one return it
@@ -71,34 +73,38 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 {
                     Console.WriteLine("IP Address [" + itrCount++ + "] : " + ip.ToString());
 
+                    if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        selIPAddr = ip.ToString(); 
+                    }
                     //if (ip.ToString().StartsWith("192"))
                     //{
                     //    return ip.ToString();
                     //}
                 }
 
-                string selIPAddr = null;
+                
 
-                while (true)
-                {
-                    Console.WriteLine("Pick an IP address you like:");
-                    string ipList = Console.ReadLine();
-                    int ipListNum = System.Convert.ToInt32(ipList);
+                //while (true)
+                //{
+                //    Console.WriteLine("Pick an IP address you like:");
+                //    string ipList = Console.ReadLine();
+                //    int ipListNum = System.Convert.ToInt32(ipList);
 
-                    if (ipListNum < 0 || ipListNum > IPList.Count)
-                    {
-                        Console.WriteLine("Invalid Pick. Try again...");
-                    }
-                    else
-                    {
-                        IPAddress iPAddress = IPList[ipListNum + 1];
-                        Console.WriteLine("Selected IP Address:" + iPAddress);
+                //    if (ipListNum < 0 || ipListNum > IPList.Count)
+                //    {
+                //        Console.WriteLine("Invalid Pick. Try again...");
+                //    }
+                //    else
+                //    {
+                //        IPAddress iPAddress = IPList[ipListNum + 1];
+                //        Console.WriteLine("Selected IP Address:" + iPAddress);
 
-                        selIPAddr = iPAddress.ToString();
-                        break;
-                    }
+                //        selIPAddr = iPAddress.ToString();
+                //        break;
+                //    }
 
-                }
+                //}
 
                 // return the first in the list
                 return selIPAddr;
