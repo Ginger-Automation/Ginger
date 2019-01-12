@@ -20,8 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
@@ -43,10 +41,9 @@ using System.Text;
 
 namespace Ginger.Run
 {
-    // Each ExecutionLogger instance should be attach to one GingerRunner
+    // Each ExecutionLogger instance should be added to GingerRunner Listeneres
     // Create new ExecutionLogger for each run 
-
-    public enum eExecutionPahse { Start, End }
+    
     public class ExecutionLogger : RunListenerBase
     {
         public static string defaultAutomationTabLogName = "AutomationTab_LastExecution";
@@ -282,62 +279,38 @@ namespace Ginger.Run
         {
 
         }
-
         
-        public override void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)        
-        {
-            activityGroup.StartTimeStamp = eventTime; // DateTime.Now.ToUniversalTime();
-            if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
-            {
-                AddExecutionDetailsToLog(eExecutionPahse.Start, "Activity Group", activityGroup.Name, null);
-            }            
-        }
-
         public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup)
         {
             bool offlineMode = true;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
+           
+            ActivityGroupReport AGR = new ActivityGroupReport(activityGroup, mCurrentBusinessFlow);
+            AGR.Seq = mCurrentBusinessFlow.ActivitiesGroups.IndexOf(activityGroup) + 1;
+            AGR.ExecutionLogFolder = ExecutionLogfolder + mCurrentBusinessFlow.ExecutionLogFolder;
+            if (offlineMode && activityGroup.ExecutionLogFolder != null)
             {
-                if (activityGroup.ExecutedActivities.Count > 0)
+                SaveObjToJSonFile(AGR, activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", true);
+                File.AppendAllText(activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
+            }
+            else
+            {
+                if(offlineMode)
                 {
-                    activityGroup.EndTimeStamp = activityGroup.ExecutedActivities.Max(x => x.Value);
-                    activityGroup.Elapsed = (activityGroup.EndTimeStamp - activityGroup.StartTimeStamp);
-                }
-
-                ActivityGroupReport AGR = new ActivityGroupReport(activityGroup, mCurrentBusinessFlow);
-                AGR.Seq = mCurrentBusinessFlow.ActivitiesGroups.IndexOf(activityGroup) + 1;
-                AGR.ExecutionLogFolder = ExecutionLogfolder + mCurrentBusinessFlow.ExecutionLogFolder;
-                if (offlineMode && activityGroup.ExecutionLogFolder != null)
-                {
-                    SaveObjToJSonFile(AGR, activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", true);
-                    File.AppendAllText(activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
+                    SaveObjToJSonFile(AGR, mCurrentBusinessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", true);
+                    File.AppendAllText(mCurrentBusinessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
                 }
                 else
                 {
-                    if(offlineMode)
-                    {
-                        SaveObjToJSonFile(AGR, mCurrentBusinessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", true);
-                        File.AppendAllText(mCurrentBusinessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
-                    }
-                    else
-                    {
-                        SaveObjToJSonFile(AGR, ExecutionLogfolder + mCurrentBusinessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", true);
-                        File.AppendAllText(ExecutionLogfolder + mCurrentBusinessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
-                    }
-                }
-
-                if (!offlineMode)
-                {
-                    AddExecutionDetailsToLog(eExecutionPahse.End, "Activity Group", activityGroup.Name, AGR);
+                    SaveObjToJSonFile(AGR, ExecutionLogfolder + mCurrentBusinessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", true);
+                    File.AppendAllText(ExecutionLogfolder + mCurrentBusinessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
                 }
             }
+               
         }
 
-        public void GingerStart()
-        {
-            if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
-            {
+        public override void RunnerRunStart(uint eventTime)
+        {                        
                 gingerReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
                 gingerReport.Watch.Start();
                 gingerReport.LogFolder = string.Empty;
@@ -353,15 +326,13 @@ namespace Ginger.Run
                 }
 
                 System.IO.Directory.CreateDirectory(gingerReport.LogFolder);
-
-                AddExecutionDetailsToLog(eExecutionPahse.Start, "Ginger Runner", this.GingerData.GingerName.ToString(), null);
-            }
+                
         }
 
 
         public void GingerEnd(GingerRunner GR = null, string filename = null, int runnerCount = 0)
         {
-          
+           // !!!!!
             if (GR == null)
             {
                 if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
@@ -375,8 +346,7 @@ namespace Ginger.Run
                     gingerReport.Elapsed = (double)gingerReport.Watch.ElapsedMilliseconds / 1000;
                     SaveObjToJSonFile(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");
                     this.ExecutionLogBusinessFlowsCounter = 0;
-                    this.BFCounter = 0;
-                    AddExecutionDetailsToLog(eExecutionPahse.End, "Ginger Runner", gingerReport.Name, gingerReport);
+                    this.BFCounter = 0;                    
                 }
             }
 
@@ -393,7 +363,6 @@ namespace Ginger.Run
                 SaveObjToJSonFile(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");
                 this.ExecutionLogBusinessFlowsCounter = 0;
                 this.BFCounter = 0;
-                AddExecutionDetailsToLog(eExecutionPahse.End, "Ginger Runner", gingerReport.Name, gingerReport);
             }
         }
 
@@ -422,8 +391,7 @@ namespace Ginger.Run
 
                 DeleteFolderContentBySizeLimit DeleteFolderContentBySizeLimit = new DeleteFolderContentBySizeLimit(RunSetReport.LogFolder, maxFolderSize);
                 
-                CreateTempDirectory();
-                AddExecutionDetailsToLog(eExecutionPahse.Start, "Run Set", RunSetReport.Name, null);
+                CreateTempDirectory();                
             }
         }
 
@@ -434,19 +402,27 @@ namespace Ginger.Run
                 RunSetReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
                 RunSetReport.Elapsed = (double)RunSetReport.Watch.ElapsedMilliseconds / 1000;
                 RunSetReport.MachineName = Environment.MachineName.ToString();
-                RunSetReport.ExecutedbyUser = Environment.UserName.ToString();               
-                if (LogFolder==null)
-                 SaveObjToJSonFile(RunSetReport, RunSetReport.LogFolder + @"\RunSet.txt");
+                RunSetReport.ExecutedbyUser = Environment.UserName.ToString();
+
+                if (LogFolder == null)
+                {
+                    SaveObjToJSonFile(RunSetReport, RunSetReport.LogFolder + @"\RunSet.txt");
+                }
                 else
+                {
                     SaveObjToJSonFile(RunSetReport, LogFolder + @"\RunSet.txt");
-                AddExecutionDetailsToLog(eExecutionPahse.End, "Run Set", RunSetReport.Name, RunSetReport);
+                }
+                
+
                 if (WorkSpace.RunningFromConfigFile)
                 {
                     //Amdocs.Ginger.CoreNET.Execution.eRunStatus.TryParse(RunSetReport.RunSetExecutionStatus, out App.RunSetExecutionStatus);//saving the status for determin Ginger exit code
                     WorkSpace.RunSetExecutionStatus = RunSetReport.RunSetExecutionStatus;
                 }
-                if(WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null && WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder.Equals("-1"))
+                if (WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null && WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder.Equals("-1"))
+                {
                     WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = RunSetReport.LogFolder;
+                }
                 //App.RunPage.RunSetConfig.LastRunsetLoggerFolder = RunSetReport.LogFolder;
                 RunSetReport = null;
             }
@@ -483,9 +459,7 @@ namespace Ginger.Run
                 businessFlow.ExecutionLogFolder = BFFolder;
 
                 System.IO.Directory.CreateDirectory(ExecutionLogfolder + BFFolder);
-
-                // do on different listener !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                AddExecutionDetailsToLog(eExecutionPahse.Start, "Business Flow", businessFlow.Name, null);
+                
             }
         }
 
@@ -529,10 +503,7 @@ namespace Ginger.Run
                     this.ExecutionLogBusinessFlowsCounter = 0;
                     this.BFCounter = 0;
                 }
-                if (!offlineMode)
-                {
-                    AddExecutionDetailsToLog(eExecutionPahse.End, "Business Flow", businessFlow.Name, BFR);
-                }
+              
             }
         }
 
@@ -587,8 +558,7 @@ namespace Ginger.Run
                 activity.ExecutionLogFolder = ActivityFolder;
                 System.IO.Directory.CreateDirectory(ExecutionLogfolder + ActivityFolder);
                 activity.VariablesBeforeExec = activity.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
-
-                AddExecutionDetailsToLog(eExecutionPahse.Start, GingerDicser.GetTermResValue(eTermResKey.Activity), activity.ActivityName, null);
+                
             }
         }
 
@@ -621,9 +591,7 @@ namespace Ginger.Run
                 else
                     // use Path.combine !!!!
                     SaveObjToJSonFile(AR, ExecutionLogfolder + activity.ExecutionLogFolder + @"\Activity.txt");
-
-                if (!offlineMode)
-                    AddExecutionDetailsToLog(eExecutionPahse.End, GingerDicser.GetTermResValue(eTermResKey.Activity), activity.ActivityName, AR);
+             
             }
         }
 
@@ -673,8 +641,7 @@ namespace Ginger.Run
                 }
              action.ExecutionLogFolder = ActionFolder;
                 System.IO.Directory.CreateDirectory(ExecutionLogfolder + ActionFolder);
-
-                AddExecutionDetailsToLog(eExecutionPahse.Start, "Action", action.Description, null);
+                
             }
         }
 
@@ -754,9 +721,7 @@ namespace Ginger.Run
                                     screenShotCountPerAction--;
                                 }
                             }
-
-                            if (!offlineMode)
-                                AddExecutionDetailsToLog(eExecutionPahse.End, "Action", action.Description, AR);
+                            
                         }
                         else
                         {
@@ -836,71 +801,7 @@ namespace Ginger.Run
         }
 
 
-        // make different listener - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        private static void AddExecutionDetailsToLog(eExecutionPahse objExecutionPhase, string objType, string objName, object obj)
-{
-    /*  if (AppReporter.CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
-      {
-          string prefix = string.Empty;
-          switch (objExecutionPhase)
-          {
-              case eExecutionPahse.Start:
-                  prefix = "--> Execution Started for the " + objType + ": '" + objName + "'";
-                  break;
-              case eExecutionPahse.End:
-                  prefix = "<-- Execution Ended for the " + objType + ": '" + objName + "'";
-                  break;
-          }
-
-          //get the execution fields and their values
-          if (obj != null)
-          {
-              List<KeyValuePair<string, string>> fieldsAndValues = new List<KeyValuePair<string, string>>();
-              try
-              {
-                  PropertyInfo[] props = obj.GetType(.GetProperties();
-                  foreach (PropertyInfo prop in props)
-                  {
-                      try
-                      {
-                          FieldParamsFieldType attr = ((FieldParamsFieldType)prop.GetCustomAttribute(typeof(FieldParamsFieldType)));
-                          if (attr == null)
-                          {
-                              continue;
-                          }
-                          FieldsType ftype = attr.FieldType;
-                          if (ftype == FieldsType.Field)
-                          {
-                              string propName = prop.Name;
-                              string propFullName = ((FieldParamsNameCaption)prop.GetCustomAttribute(typeof(FieldParamsNameCaption)).NameCaption;
-                              string propValue = obj.GetType(.GetProperty(propName, BindingFlags.Public | BindingFlags.Instance.GetValue(obj.ToString();
-                              fieldsAndValues.Add(new KeyValuePair<string, string>(propFullName, propValue));
-                          }
-                      }
-                      catch (Exception)
-                      {
-                          //TODO: !!!!!!!!!!!!!!!!!! FIXME
-                      }
-                  }
-              }
-              catch (Exception)
-              {
-                  //TODO: !!!!!!!!!!!!!!!!!! FIXME
-              }
-
-              //add to Console
-              string details = string.Empty;
-              foreach (KeyValuePair<string, string> det in fieldsAndValues)
-                  details += det.Key + "= " + det.Value + System.Environment.NewLine;
-              Reporter.ToLog(eAppReporterLogLevel.INFO, prefix + System.Environment.NewLine + "Details:" + System.Environment.NewLine + details);
-          }
-          else
-          {
-              Reporter.ToLog(eAppReporterLogLevel.INFO, prefix + System.Environment.NewLine);
-          }
-      }
-     */
-}
+      
 
 
         public void VariableChanged(VariableBase VB, string OriginalValue)
