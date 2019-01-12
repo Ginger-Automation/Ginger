@@ -1103,7 +1103,8 @@ namespace Ginger.Run
                 {
                     string reportpath = logFolderPath + "\\" + counter.ToString() +" "+ folderNameNormalazing(bf.Name);
                     System.IO.Directory.CreateDirectory(reportpath);
-                    this.ExecutionLogBusinessFlowsCounter = counter;                    
+                    this.ExecutionLogBusinessFlowsCounter = counter;       
+                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
                     runner.CalculateBusinessFlowFinalStatus(bf, true);
                     if (bf.RunStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && bf.RunStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && bf.RunStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
                     {

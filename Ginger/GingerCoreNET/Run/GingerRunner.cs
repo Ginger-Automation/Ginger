@@ -3324,6 +3324,8 @@ namespace Ginger.Run
             }
         }
 
+
+        // Make private !!!!!!!!!!!!!!!
         public void CalculateBusinessFlowFinalStatus(BusinessFlow BF, bool considrePendingAsSkipped= false)
         {
             // A flow is blocked if some activity failed and all the activities after it failed
