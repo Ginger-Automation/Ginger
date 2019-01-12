@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());
             //List<IPAddress> IPList = (from x in ii.AddressList where x.AddressFamily == AddressFamily.InterNetwork select x).ToList();
             List<IPAddress> IPList = ipEntry.AddressList.ToList();
-            Console.WriteLine("Number of IP Addresses Found:" + IPList.Count);
+            Console.WriteLine("Number of IP Addresses Found: " + IPList.Count);
 
             string selIPAddr = null;
 
