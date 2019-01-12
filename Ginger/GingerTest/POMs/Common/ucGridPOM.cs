@@ -43,7 +43,8 @@ namespace GingerTest.POMs.Common
             {
                 if (item.GetType().GetProperty(property).GetValue(item).ToString() == value)
                 {
-                    mGrid.DataSourceList.CurrentItem = item;                             
+                    mGrid.DataSourceList.CurrentItem = item;
+                    return;
                 }
             }
             
