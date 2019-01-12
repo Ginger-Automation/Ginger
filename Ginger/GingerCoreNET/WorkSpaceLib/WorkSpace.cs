@@ -159,10 +159,8 @@ namespace amdocs.ginger.GingerCoreNET
             get
             {
                 if (mLocalGingerGrid == null)
-                {
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    // int freePort = SocketHelper.GetOpenPort();
-                    mLocalGingerGrid = new GingerGrid(15001);   //!!!!!!!!! TODO: config per user profile as many users can use the same machine
+                {                    
+                    mLocalGingerGrid = new GingerGrid();   
                     mLocalGingerGrid.Start();
                 }
                 return mLocalGingerGrid;

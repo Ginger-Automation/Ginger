@@ -28,9 +28,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 {
     public class SocketHelper
     {
+
+        static string LocalHostIP;
         public static string GetLocalHostIP()
         {
+            if (LocalHostIP!= null)
+            {
+                return LocalHostIP;
+            }
+            SetLocalHostIP();            
+            return LocalHostIP;
+        }
 
+        private static void SetLocalHostIP()
+        {
             Console.WriteLine("Geting Local Host IP....");
 
             //string newIpAddress = NetworkInterface
@@ -53,65 +64,31 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             //return newIpAddress;
 
 
-            IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());
-            //List<IPAddress> IPList = (from x in ii.AddressList where x.AddressFamily == AddressFamily.InterNetwork select x).ToList();
+            IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());            
             List<IPAddress> IPList = ipEntry.AddressList.ToList();
             Console.WriteLine("Number of IP Addresses Found: " + IPList.Count);
-
-            string selIPAddr = null;
 
             if (IPList.Count() == 1)
             {
                 // if we have only one return it
-                return IPList[0].ToString();
+                LocalHostIP = IPList[0].ToString();
             }
             else if (IPList.Count() > 1)
-            {
-                // prefer local router/hub first usually 192, we will add GG config later to select
-                int itrCount = 1;
+            {                
+                int i = 0;
                 foreach (IPAddress ip in IPList)
                 {
-                    Console.WriteLine("IP Address [" + itrCount++ + "] : " + ip.ToString());
-
+                    i++;
+                    Console.WriteLine("IP Address [" + i + "] : " + ip.ToString());
+                    
                     if (ip.AddressFamily == AddressFamily.InterNetwork)
                     {
-                        selIPAddr = ip.ToString(); 
-                    }
-                    //if (ip.ToString().StartsWith("192"))
-                    //{
-                    //    return ip.ToString();
-                    //}
+                        LocalHostIP = ip.ToString();
+                    }                    
                 }
-
-                
-
-                //while (true)
-                //{
-                //    Console.WriteLine("Pick an IP address you like:");
-                //    string ipList = Console.ReadLine();
-                //    int ipListNum = System.Convert.ToInt32(ipList);
-
-                //    if (ipListNum < 0 || ipListNum > IPList.Count)
-                //    {
-                //        Console.WriteLine("Invalid Pick. Try again...");
-                //    }
-                //    else
-                //    {
-                //        IPAddress iPAddress = IPList[ipListNum + 1];
-                //        Console.WriteLine("Selected IP Address:" + iPAddress);
-
-                //        selIPAddr = iPAddress.ToString();
-                //        break;
-                //    }
-
-                //}
-
-                // return the first in the list
-                return selIPAddr;
             }
 
-            //TODO: throw
-            return null;
+            Console.WriteLine("Selected '" + LocalHostIP + "' as Local Host IP");
         }
 
         //TODO: think if we want to have multiple display - enable set for this value

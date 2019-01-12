@@ -38,6 +38,14 @@ namespace GingerCoreNET.RunLib
             mPort = Port;
         }
 
+        /// <summary>
+        /// Create nwe GingerGrid and auto select free port
+        /// </summary>
+        public GingerGrid()
+        {            
+            mPort = SocketHelper.GetOpenPort();
+        }
+
         public void Start()
         {
             mGingerSocketServer = new GingerSocketServer2();
