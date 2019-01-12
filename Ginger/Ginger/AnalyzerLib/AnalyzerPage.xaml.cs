@@ -273,23 +273,26 @@ namespace Ginger.AnalyzerLib
             SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name);
             List<AnalyzerItemBase> issues = AnalyzeBusinessFlow.Analyze(mSolution, businessFlow);
             AddIssues(issues);
-            foreach (Activity activity in businessFlow.Activities)
+            Parallel.ForEach(businessFlow.Activities, activity =>
             {
                 issues = AnalyzeActivity.Analyze(businessFlow, activity);
                 AddIssues(issues);
-                foreach (Act action in activity.Acts)
+                Parallel.ForEach(activity.Acts, iaction =>
                 {
+                    Act action = (Act)iaction;
                     List<AnalyzerItemBase> actionissues = AnalyzeAction.Analyze(businessFlow, activity, action, DSList);
                     AddIssues(actionissues);
                     List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
                     usedVariablesInActivity.AddRange(tempList);
-                }
+                });
+
                 List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
                 usedVariablesInActivity.AddRange(activityVarList);
-                ReportUnusedVariables(activity, usedVariablesInActivity);               
+                ReportUnusedVariables(activity, usedVariablesInActivity);
                 usedVariablesInBF.AddRange(usedVariablesInActivity);
-                usedVariablesInActivity.Clear();    
-            }            
+                usedVariablesInActivity.Clear();
+            });
+
             ReportUnusedVariables(businessFlow, usedVariablesInBF);
 
             if (markCompletion)

@@ -1102,9 +1102,9 @@ namespace GingerCore
         public int ExecutionLogActivityGroupCounter { get; set; }
 
         // Only for Run time, no need to serialize
-        public DateTime StartTimeStamp { get; set; }
+        public uint StartTimeStamp { get; set; }
 
-        public DateTime EndTimeStamp { get; set; }
+        public uint EndTimeStamp { get; set; }
 
         [IsSerializedForLocalRepository]
         public ObservableList<Guid> Tags = new ObservableList<Guid>();
