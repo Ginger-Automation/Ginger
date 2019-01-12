@@ -359,7 +359,7 @@ namespace Ginger.Run
         }
 
 
-        public void GingerEnd(IGingerRunner GR = null, string filename = null, int runnerCount = 0)
+        public void GingerEnd(GingerRunner GR = null, string filename = null, int runnerCount = 0)
         {
           
             if (GR == null)
@@ -977,7 +977,7 @@ namespace Ginger.Run
                 WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = exec_folder;
                 int RunnerCount = 1;
 
-                foreach (IGingerRunner gingerrunner in WorkSpace.RunsetExecutor.RunSetConfig.GingerRunners)
+                foreach (GingerRunner gingerrunner in WorkSpace.RunsetExecutor.RunSetConfig.GingerRunners)
                 {
                     string folder = exec_folder + "\\" + RunnerCount.ToString() + " " + gingerrunner.Name + "\\";
                     if (System.IO.Directory.Exists(folder))
@@ -1092,7 +1092,7 @@ namespace Ginger.Run
             ExecutionLogger.OfflineBusinessFlowExecutionLog(BusinessFlow, exec_folder);
             return exec_folder;
         }
-        public bool OfflineRunnerExecutionLog(IGingerRunner runner, string logFolderPath, int runnerCount = 0)
+        public bool OfflineRunnerExecutionLog(GingerRunner runner, string logFolderPath, int runnerCount = 0)
         {
             try
             {
@@ -1137,7 +1137,7 @@ namespace Ginger.Run
             //        CleanDirectory(logFolderPath);
             //    else
             //        Directory.CreateDirectory(logFolderPath);
-            //    IGingerRunner Gr = Helper.RuntimeObjectFactory.CreateGingerRunner();
+            //    GingerRunner Gr = Helper.RuntimeObjectFactory.CreateGingerRunner();
 
             //    businessFlow.ExecutionLogFolder = logFolderPath;
             //    businessFlow.VariablesBeforeExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();

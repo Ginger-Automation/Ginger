@@ -90,7 +90,7 @@ namespace Ginger.Reports
         /// <summary>
         /// Should be deleted after switch will be fully done to serialized objects 
         /// </summary> 
-        public ReportInfo(ProjEnvironment Env, IGingerRunner GR, bool ReportOnlyExecuted = false) // to remove after discussion !!!
+        public ReportInfo(ProjEnvironment Env, GingerRunner GR, bool ReportOnlyExecuted = false) // to remove after discussion !!!
         {
             mProjEnvironment = Env;
             mBFESs = GR.GetAllBusinessFlowsExecutionSummary(ReportOnlyExecuted);

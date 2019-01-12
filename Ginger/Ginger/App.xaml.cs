@@ -402,7 +402,7 @@ namespace Ginger
 
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
 
-            Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
+            // Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
 
             AutomateTabGingerRunner = new GingerRunner(eExecutedFrom.Automation);
 

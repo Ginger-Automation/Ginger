@@ -55,8 +55,23 @@ using static GingerCoreNET.ALMLib.ALMIntegration;
 
 namespace Ginger.Run
 {
-    public class GingerRunner : RepositoryItemBase, IGingerRunner
+    public enum eContinueLevel
     {
+        StandalonBusinessFlow,
+        Runner
+    }
+    public enum eContinueFrom
+    {
+        LastStoppedAction,
+        SpecificAction,
+        SpecificActivity,
+        SpecificBusinessFlow
+    }
+
+    public class GingerRunner : RepositoryItemBase
+    {
+        
+
         public enum eActionExecutorType
         {
             RunWithoutDriver,
@@ -4068,17 +4083,17 @@ namespace Ginger.Run
         }
 
 
-        ObservableList<IAgent> IGingerRunner.SolutionAgents
-        {
-            get
-            {
-                return SolutionAgents;
-            }
-            set
-            {
-                SolutionAgents = value;
-            }
-        }
+        //ObservableList<IAgent> GingerRunner.SolutionAgents
+        //{
+        //    get
+        //    {
+        //        return SolutionAgents;
+        //    }
+        //    set
+        //    {
+        //        SolutionAgents = value;
+        //    }
+        //}
 
         
 

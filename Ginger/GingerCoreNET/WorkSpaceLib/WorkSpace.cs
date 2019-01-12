@@ -52,7 +52,7 @@ namespace amdocs.ginger.GingerCoreNET
         public SourceControlBase SourceControl;
         public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
         public static string AppVersion="0.0.0.0.0";
-        //public static IGingerRunner AutomateTabGingerRunner = new IGingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
+        //public static GingerRunner AutomateTabGingerRunner = new GingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
         public  ISolution mSolution { get; set; }
         public  ISolution Solution
         {
