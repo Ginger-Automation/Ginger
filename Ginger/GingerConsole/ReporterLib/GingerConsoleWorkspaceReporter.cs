@@ -35,8 +35,8 @@ namespace Amdocs.Ginger.GingerConsole.ReporterLib
         
 
         public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
-        {
-            throw new NotImplementedException();
+        {            
+            Console.WriteLine("[" + logLevel + "]" + messageToLog);
         }
         
         // TODO: override WriteToConsole with color and...
