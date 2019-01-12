@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
