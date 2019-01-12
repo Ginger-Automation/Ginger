@@ -30,31 +30,82 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
     {
         public static string GetLocalHostIP()
         {
-            IPHostEntry ii = Dns.GetHostEntry(Dns.GetHostName());
-            List<IPAddress> IPList = (from x in ii.AddressList where x.AddressFamily == AddressFamily.InterNetwork select x).ToList();
+
+            Console.WriteLine("Geting Local Host IP....");
+
+            //string newIpAddress = NetworkInterface
+            //    .GetAllNetworkInterfaces()
+            //    .FirstOrDefault(ni =>
+            //        ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet
+            //        && ni.OperationalStatus == OperationalStatus.Up
+            //        && ni.GetIPProperties().GatewayAddresses.FirstOrDefault() != null
+            //        && ni.GetIPProperties().UnicastAddresses.FirstOrDefault(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork) != null
+            //    )
+            //    ?.GetIPProperties()
+            //    .UnicastAddresses
+            //    .FirstOrDefault(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork)
+            //    ?.Address
+            //    ?.ToString()
+            //    ?? string.Empty;
+
+            //Console.WriteLine("IP Address:" + newIpAddress);
+
+            //return newIpAddress;
+
+
+            IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());
+            //List<IPAddress> IPList = (from x in ii.AddressList where x.AddressFamily == AddressFamily.InterNetwork select x).ToList();
+            List<IPAddress> IPList = ipEntry.AddressList.ToList();
+            Console.WriteLine("Number of IP Addresses Found:" + IPList.Count);
+
             if (IPList.Count() == 1)
             {
                 // if we have only one return it
-                return IPList[0].ToString(); ;
+                return IPList[0].ToString();
             }
-
-            if (IPList.Count() > 1)
+            else if (IPList.Count() > 1)
             {
                 // prefer local router/hub first usually 192, we will add GG config later to select
+                int itrCount = 1;
                 foreach (IPAddress ip in IPList)
                 {
-                    if (ip.ToString().StartsWith("192"))
+                    Console.WriteLine("IP Address [" + itrCount++ + "] : " + ip.ToString());
+
+                    //if (ip.ToString().StartsWith("192"))
+                    //{
+                    //    return ip.ToString();
+                    //}
+                }
+
+                string selIPAddr = null;
+
+                while (true)
+                {
+                    Console.WriteLine("Pick an IP address you like:");
+                    string ipList = Console.ReadLine();
+                    int ipListNum = System.Convert.ToInt32(ipList);
+
+                    if (ipListNum < 0 || ipListNum > IPList.Count)
                     {
-                        return ip.ToString();
+                        Console.WriteLine("Invalid Pick. Try again...");
                     }
+                    else
+                    {
+                        IPAddress iPAddress = IPList[ipListNum + 1];
+                        Console.WriteLine("Selected IP Address:" + iPAddress);
+
+                        selIPAddr = iPAddress.ToString();
+                        break;
+                    }
+
                 }
 
                 // return the first in the list
-                return IPList[0].ToString(); 
+                return selIPAddr;
             }
 
             //TODO: throw
-            return null; 
+            return null;
         }
 
         //TODO: think if we want to have multiple display - enable set for this value
