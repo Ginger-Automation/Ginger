@@ -44,22 +44,24 @@ namespace Ginger.WindowExplorer
         public Act mAction; // If we come here from EditAction page to update the locator
         public ObservableList<Act> mActions; // List of available actions to choose from
         public ObservableList<ElementLocator> mLocators;
-        private IWindowExplorer mWindowExplorerDriver;
-        ElementInfo mElementInfo = null;
+        private IWindowExplorer mWindowExplorerDriver;        
+        private ObservableList<ActInputValue> mActInputValues;
+        ElementInfo mElementInfo = null;        
         Page mDataPage = null;
         double mLastDataGridRowHeight = 50;
 
         // when launching from Window explore we get also available actions to choose so user can add
-        public ControlActionsPage(IWindowExplorer driver, ElementInfo ElementInfo, ObservableList<Act> Actions, Page DataPage)
+        public ControlActionsPage(IWindowExplorer driver, ElementInfo ElementInfo, ObservableList<Act> Actions, Page DataPage, ObservableList<ActInputValue> actInputValues)
         {
             InitializeComponent();
 
             mElementInfo = ElementInfo;
-            mWindowExplorerDriver = ElementInfo.WindowExplorer;
+            mWindowExplorerDriver = ElementInfo.WindowExplorer;         
+            mActInputValues = actInputValues;
             mActions = Actions;
             mLocators = mWindowExplorerDriver.GetElementLocators(mElementInfo);
-            mDataPage = DataPage;
-
+            mDataPage = DataPage;          
+            
             InitActionsGrid();
             InitLocatorsGrid();
             InitDataPage();
@@ -164,34 +166,8 @@ namespace Ginger.WindowExplorer
                 return;
             }
 
-            Act act = (Act)((Act)(mActions.CurrentItem)).CreateCopy();          
-            act.Active = true;
-            act.AddNewReturnParams = true;
-            ElementLocator EL = (ElementLocator)mLocators.CurrentItem;
-            if ((mActions.CurrentItem).GetType() == typeof(ActUIElement))
-            {
-                ActUIElement aaa = (ActUIElement)mActions.CurrentItem;
-                ActUIElement actUI = (ActUIElement)act;
-                actUI.ElementLocateBy = EL.LocateBy;
-                actUI.ElementLocateValue = EL.LocateValue;
-                actUI.Value = ValueTextBox.Text;
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.ControlActionValue, ValueTextBox.Text);
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.ElementType, aaa.GetInputParamValue(ActUIElement.Fields.ElementType));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, aaa.GetInputParamValue(ActUIElement.Fields.ControlAction));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.ElementAction, aaa.GetInputParamValue(ActUIElement.Fields.ElementAction));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, aaa.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnValue));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, aaa.GetInputParamValue(ActUIElement.Fields.WhereOperator));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, aaa.GetInputParamValue(ActUIElement.Fields.WhereProperty));
-                act = actUI;
-            }
-            else
-            {                
-                act.LocateBy = EL.LocateBy;
-                act.LocateValue = EL.LocateValue;
-                act.Value = ValueTextBox.Text;
-            }
+            Act act = (Act)((Act)(mActions.CurrentItem)).CreateCopy();
+            SetActionDetails(act);
             App.BusinessFlow.AddAct(act);
 
             int selectedActIndex = -1;
@@ -208,6 +184,39 @@ namespace Ginger.WindowExplorer
             AEP.ShowAsWindow();
         }
 
+        private Act SetActionDetails(Act act)
+        {           
+            act.Active = true;
+            act.AddNewReturnParams = true;
+            act.Value = ValueTextBox.Text;
+            //Set action unique input values
+            if (mActInputValues != null)
+            {
+                foreach (ActInputValue iv in mActInputValues)
+                {
+                    act.AddOrUpdateInputParamValue(iv.Param, iv.Value);
+                }
+            }
+
+            ElementLocator EL = (ElementLocator)mLocators.CurrentItem;
+
+            if ((mActions.CurrentItem).GetType() == typeof(ActUIElement))
+            {
+                //Set UIElement action locator
+                ActUIElement actUI = (ActUIElement)act;
+                actUI.ElementLocateBy = EL.LocateBy;
+                actUI.ElementLocateValue = EL.LocateValue;                                        
+                act = actUI;
+            }
+            else
+            {
+                //Set action locator
+                act.LocateBy = EL.LocateBy;
+                act.LocateValue = EL.LocateValue;                
+            }            
+            return act;
+        }
+
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
             TestStatusTextBlock.Text = "Executing";
@@ -222,36 +231,8 @@ namespace Ginger.WindowExplorer
             {
                 act = (Act)((Act)(mActions.CurrentItem)).CreateCopy();
             }
-            
-            // Copy from the selected Locator
-            ElementLocator EL = (ElementLocator)mLocators.CurrentItem;
-            act.AddNewReturnParams = true;
-            act.Active = true;
-            if ((mActions.CurrentItem).GetType() == typeof(ActUIElement))
-            {
-                ActUIElement aaa = (ActUIElement)mActions.CurrentItem;
-                ActUIElement actUI = (ActUIElement)act;
-                actUI.ElementLocateBy = EL.LocateBy;
-                actUI.ElementLocateValue = EL.LocateValue;
-                actUI.Value = ValueTextBox.Text;
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.ControlActionValue, ValueTextBox.Text);
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.ElementType, aaa.GetInputParamValue(ActUIElement.Fields.ElementType));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, aaa.GetInputParamValue(ActUIElement.Fields.ControlAction));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.ElementAction, aaa.GetInputParamValue(ActUIElement.Fields.ElementAction));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, aaa.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnValue));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, aaa.GetInputParamValue(ActUIElement.Fields.WhereOperator));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, aaa.GetInputParamValue(ActUIElement.Fields.WhereProperty));
-                act = actUI;
-            }
-            else
-            {
-                act.LocateBy = EL.LocateBy;
-                act.LocateValueCalculated = EL.LocateValue;
-                act.Value = ValueTextBox.Text;
-            }
 
+            SetActionDetails(act);
             App.AutomateTabGingerRunner.PrepActionValueExpression(act);
             ApplicationAgent ag =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
             if (ag != null)
