@@ -1,13 +1,7 @@
-using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.UserControls;
 using Ginger;
 using GingerWPFUnitTest.POMs;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
@@ -43,7 +37,8 @@ namespace GingerTest.POMs.Common
             {
                 if (item.GetType().GetProperty(property).GetValue(item).ToString() == value)
                 {
-                    mGrid.DataSourceList.CurrentItem = item;                             
+                    mGrid.DataSourceList.CurrentItem = item;
+                    return;
                 }
             }
             

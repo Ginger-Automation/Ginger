@@ -96,7 +96,7 @@ namespace GingerCore.GeneralLib
             p.ErrorDataReceived += (proc, outLine) => { AddError(outLine.Data); };
             p.Exited += Process_Exited;
             
-            p.StartInfo.Arguments = "\"" + fileName + "\" ";                
+            p.StartInfo.Arguments = "\"" + fileName + "\" /B /Nologo";                
             p.Start();
 
             p.BeginOutputReadLine();
@@ -104,8 +104,9 @@ namespace GingerCore.GeneralLib
             p.WaitForExit();
             while (!p.HasExited)
             {
-                Thread.Sleep(100);   // Waste !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                Thread.Sleep(50);
             }
+            p.Close();
 
             //catch (Exception e)
             //{

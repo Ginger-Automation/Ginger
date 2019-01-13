@@ -37,8 +37,6 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
     [Level1]
     public class GingerSocket2Test
     {
-        
-
         // --------------------------------------------------------------------------------------------
         // Sample Ginger Server class
         // --------------------------------------------------------------------------------------------
@@ -46,6 +44,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         {
             GingerSocketServer2 mGingerSocketServer;
             public int ServerPort { get; set; }
+            public bool IsReady { get { return mGingerSocketServer.isReady; } }
 
             public void Start()
             {
@@ -123,6 +122,8 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
             public Guid SessionID { get { return mGingerSocketClient2.SessionID; } }
 
+            public bool IsReady { get { return mGingerSocketClient2.IsConnected; } }
+
             public void Connect()
             {
                 mGingerSocketClient2 = new GingerSocketClient2();
@@ -182,7 +183,16 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             });
             task1.Start();
 
-            Thread.Sleep(100);
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            while ((mMyGingerServer == null || !mMyGingerServer.IsReady) && stopwatch.ElapsedMilliseconds < 5000)
+            {
+                Thread.Sleep(100);
+            }
+            if (!mMyGingerServer.IsReady)
+            {
+                throw new Exception("Error: mMyGingerServer.IsReady false");
+            }
+            
 
             Task task2 = new Task(() =>
             {
@@ -191,7 +201,15 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             });
             task2.Start();
 
-            Thread.Sleep(500);
+            Stopwatch stopwatch2 = Stopwatch.StartNew();
+            while ((mMyGingerClient == null || !mMyGingerClient.IsReady) && stopwatch2.ElapsedMilliseconds < 5000)
+            {
+                Thread.Sleep(100);
+            }
+            if (!mMyGingerClient.IsReady)
+            {
+                throw new Exception("Error: mMyGingerClient.IsReady false");
+            }
 
         }
 
@@ -296,7 +314,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             list.Add(sb.ToString().Substring(0, 1));
             list.Add(sb.ToString().Substring(0, 20000));
             list.Add(sb.ToString().Substring(0, 100));
-            // list.Add(sb.ToString().Substring(0, 1000000));           !!!!!!!!!!!!!!!FIXME
+            list.Add(sb.ToString().Substring(0, 1000000));      
             list.Add(sb.ToString().Substring(0, 400));
             list.Add(sb.ToString().Substring(0, 10000));
             list.Add(sb.ToString().Substring(0, 1024));
