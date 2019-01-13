@@ -79,7 +79,7 @@ namespace Ginger.GeneralLib
                 }
                 else if (log.Contains("#### Application version"))
                 {
-                    mTextBlockHelper.AddHeader1(log);
+                    mTextBlockHelper.AddFormattedText(log, Brushes.Black, true);
                 }
                 else if(log.Contains("| INFO  |"))
                 {
