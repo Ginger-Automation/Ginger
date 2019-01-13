@@ -24,6 +24,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.IO;
+using Amdocs.Ginger.Common.GeneralLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -42,6 +43,31 @@ namespace Amdocs.Ginger.Repository
         // public static IRepositorySerializer mRepositorySerializer;  //  = new RepositorySerializer2();   // We create one instance
 
         public const string cSolutionRootFolderSign = @"~\"; // + Path.DirectorySeparatorChar;
+
+
+        /// <summary>
+        /// List of files and folders to exclude from solution load and Source Control
+        /// </summary>
+        public static List<string> RepositoryItemsToAvoid = new List<string>()
+        {
+             "AutoSave",
+             "Recover",
+             "RecentlyUsed.dat",
+             "Backups",
+             "ExecutionResults",
+             "HTMLReports",
+
+             @"SharedRepository\Activities\PrevVersions",
+             @"SharedRepository\Actions\PrevVersions",
+             @"SharedRepository\Variables\PrevVersions",
+             @"SharedRepository\ActivitiesGroup\PrevVersions",
+
+             @"SharedRepository\Activities\PrevVerions",
+             @"SharedRepository\Actions\PrevVerions",
+             @"SharedRepository\Variables\PrevVerions",
+             @"SharedRepository\ActivitiesGroup\PrevVerions"
+        };
+
 
         private ISolution mSolution = null;
         public ISolution Solution
@@ -370,7 +396,7 @@ namespace Amdocs.Ginger.Repository
                             Parallel.ForEach(SubFolders, sf =>
                             {
                                 // Add all files of sub folder
-                                if (sf != "PrevVersions")  //TODO: use const
+                                if (!IsRepositoryItemToAvoid(sf))
                                 {
                                     AddFolderFiles(fileEntries, sf, folder.ItemFilePattern);
                                 }
@@ -390,6 +416,23 @@ namespace Amdocs.Ginger.Repository
                        .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
                        .ToUpperInvariant();
         }
+
+
+        public bool IsRepositoryItemToAvoid(string itemToCheck)
+        {
+            foreach (string item in RepositoryItemsToAvoid)
+            {
+                string itemFullPath = Path.Combine(SolutionFolder, item);
+
+                if (itemToCheck == itemFullPath)
+                {
+                    return true;
+                }                   
+            }
+
+            return false;
+        }
+
         #endregion Public Functions
 
         #region Private Functions        
@@ -629,11 +672,13 @@ namespace Amdocs.Ginger.Repository
             {
                 RepositoryFolderBase repostitoryFolder = GetItemRepositoryFolder(repositoryItem);
                 
-                string targetPath=Path.Combine(repostitoryFolder.FolderFullPath, "PrevVerions");
+                string targetPath=Path.Combine(repostitoryFolder.FolderFullPath, "PrevVersions");
                 if (!Directory.Exists(targetPath))
-                {      
+                {
+                    repostitoryFolder.PauseFileWatcher();
                     //We do not want to file watcher track PrevVersions Folder. So creating it explicity using Create directory
                     Directory.CreateDirectory(targetPath);
+                    repostitoryFolder.ResumeFileWatcher();
                 }
                             
                 string dts = DateTime.Now.ToString("yyyyMMddHHmm");
