@@ -80,8 +80,7 @@ namespace GingerTest.POMs
                 SleepWithDoEvents(100);
                 if (GenericWindow.CurrentWindow != null)
                 {
-                    addVaraiblePage = CurrentGenericWindow.LoadedPage();
-                    // return addVaraiblePage;
+                    addVaraiblePage = CurrentGenericWindow.LoadedPage();                    
 
                     Execute(() =>
                     {

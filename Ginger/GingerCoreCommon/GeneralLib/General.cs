@@ -27,7 +27,9 @@ using Amdocs.Ginger.Repository;
 namespace Amdocs.Ginger.Common.GeneralLib
 {
     public static class General
-    {
+    {      
+
+
         public static string LocalUserApplicationDataFolderPath
         {
             get
@@ -59,6 +61,8 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 return workingFolder;
             }
         }
+
+        
 
         /// <summary>
         /// Should use the function temporary till solution will be implemented for VE fields search

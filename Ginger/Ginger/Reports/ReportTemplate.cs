@@ -161,11 +161,7 @@ namespace Ginger.Reports
                 GenerateIndividualReport(mGR, Template, Env, GetReportOnlyForExecutedFlow);
             }
         }
-
-        private static void GenerateIndividualReport(IGingerRunner mGR, string template, ProjEnvironment env, bool getReportOnlyForExecutedFlow)
-        {
-            throw new NotImplementedException();
-        }
+      
 
         private static void ShowReport(GingerRunner GR, BusinessFlow BF, string Template, ProjEnvironment Env)
         {

@@ -408,16 +408,12 @@ namespace Ginger.SolutionGeneral
         }
 
         static void AddFolderFiles(ConcurrentBag<string> CB, string folder)
-        {
-            if (folder == "PrevVersions")//TODO: use const
-            {
-                return;
-            }
+        {            
 
             IEnumerable<string> files = Directory.EnumerateFiles(folder, "*Ginger.*.xml", SearchOption.AllDirectories).AsParallel().AsOrdered();
             Parallel.ForEach(files, file =>
-            {
-                CB.Add(file);
+            {               
+                    CB.Add(file);                
             });
         }
 

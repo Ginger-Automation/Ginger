@@ -536,26 +536,50 @@ namespace GingerCore
             }
         }
 
-        public void AddActivity(Activity a, bool setAfterCurrentActivity = false, Activity indexActivity = null)
+        public void AddActivity(Activity a, Activity indexActivity = null)
         {
             if (a == null)
                 return;
+
+            int selectedActivityIndex = 0;
             if(indexActivity == null)
             {
-                indexActivity = CurrentActivity;
+                if (CurrentActivity != null)
+                {
+                    String activityGroupName = CurrentActivity.ActivitiesGroupID;
+                    if (!string.IsNullOrEmpty(activityGroupName))
+                    {
+                        ActivitiesGroup activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == activityGroupName).FirstOrDefault();
+                        selectedActivityIndex = Activities.IndexOf(CurrentActivity);
+                        while (!string.IsNullOrEmpty(Activities[selectedActivityIndex].ActivitiesGroupID) && Activities[selectedActivityIndex].ActivitiesGroupID.Equals(activitiesGroup.Name) == true)
+                        {
+                            selectedActivityIndex++;
+                            if (selectedActivityIndex >= Activities.Count)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    CurrentActivity = a;
+                }
             }
-            if (indexActivity != null && setAfterCurrentActivity)
+            else
             {
-                int selectedActivityIndex = -1;
-                if (indexActivity != null)
-                {
-                    selectedActivityIndex = Activities.IndexOf(indexActivity);
-                }
+                selectedActivityIndex = Activities.IndexOf(indexActivity) + 1;
+            }
 
-                if (selectedActivityIndex >= 0)
-                {
-                    Activities.Insert(selectedActivityIndex + 1, a);
-                }
+            if (selectedActivityIndex > 0)
+            {
+                Activities.Insert(selectedActivityIndex, a);
+            }
+            else if (selectedActivityIndex == 0)
+            {
+                selectedActivityIndex = Activities.IndexOf(CurrentActivity) + 1;
+                Activities.Insert(selectedActivityIndex, a);
+
             }
             else
             {
@@ -660,8 +684,7 @@ namespace GingerCore
                 counter++;
             activitiesGroup.Name = activitiesGroup.Name + "_" + counter.ToString();
         }
-        public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup,
-                                                                        ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false, Activity indexActivity = null)
+        public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup,ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false, Activity indexActivity = null)
         {
             string missingActivities = string.Empty;
 
@@ -679,17 +702,17 @@ namespace GingerCore
                         repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
                     if (repoAct != null)
                     {
-                        Activity actInstance = (Activity)((Activity)repoAct).CreateInstance(true);
+                        Activity actInstance = (Activity)repoAct.CreateInstance(true);
                         actInstance.ActivitiesGroupID = activitiesGroup.Name;
                         if (keepOriginalTargetApplicationMapping == false)
                             SetActivityTargetApplication(actInstance);
                         if(indexActivity == null && ActivitiesGroups.Count > 1)
                         {
-                            this.AddActivity(actInstance, (CurrentActivity != null), CurrentActivity);
+                            this.AddActivity(actInstance);
                         }
                         else
                         {
-                            this.AddActivity(actInstance, (CurrentActivity != null), indexActivity);
+                            this.AddActivity(actInstance, indexActivity);
                         }
                         actIdent.IdentifiedActivity = actInstance;
                         indexActivity = actInstance;
@@ -1079,9 +1102,9 @@ namespace GingerCore
         public int ExecutionLogActivityGroupCounter { get; set; }
 
         // Only for Run time, no need to serialize
-        public DateTime StartTimeStamp { get; set; }
+        public uint StartTimeStamp { get; set; }
 
-        public DateTime EndTimeStamp { get; set; }
+        public uint EndTimeStamp { get; set; }
 
         [IsSerializedForLocalRepository]
         public ObservableList<Guid> Tags = new ObservableList<Guid>();

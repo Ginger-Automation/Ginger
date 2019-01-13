@@ -168,7 +168,7 @@ namespace Amdocs.Ginger.Common
          {            
             GingerHelperMsg messageToShow = null;
             string messageContent = string.Empty;
-            string orgMessageContent = string.Empty;
+            
             try
             {
                 // TODO: use TryGet
@@ -187,30 +187,30 @@ namespace Amdocs.Ginger.Common
                         mess += o.ToString() + " ";
                     }                    
                     ToUser(eUserMsgKeys.StaticErrorMessage, "Cannot find MessageKey: " + messageKey);
-                    ToLog(eLogLevel.WARN, "The Ginger Helper message with key: '" + messageKey + "' was not found! and won't show to the user!");
+                    ToLog(eLogLevel.WARN, "The Status message with key: '" + messageKey + "' was not found! and won't show to the user!");
                 }
-                orgMessageContent = messageToShow.MsgContent;
+                messageContent = messageToShow.MsgContent;
                 //enter message args if exist
                 if (messageArgs.Length > 0)
                 {
-                    messageToShow.MsgContent = string.Format(messageToShow.MsgContent, messageArgs);
+                    messageContent = string.Format(messageContent, messageArgs);
                 }
 
                 if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
                 {
-                    ToLog(eLogLevel.INFO, "Showing User Message (GingerHelper): " + messageContent);
+                    ToLog(eLogLevel.INFO, "Showing Status Message: " + messageContent);
                 }
                 else if (AddAllReportingToConsole)
                 {
-                    ToConsole(eLogLevel.DEBUG, "Showing User Message (GingerHelper): " + messageContent);
+                    ToConsole(eLogLevel.DEBUG, "Showing Status Message: " + messageContent);
                 }
 
                 mLastStatusTime.Start();
-                WorkSpaceReporter.ToStatus(messageToShow.MessageType, orgMessageContent);
+                WorkSpaceReporter.ToStatus(messageToShow.MessageType, messageContent);
             }
             catch (Exception ex)
             {
-                ToLog(eLogLevel.ERROR, "Failed to show the Ginger Helper message with the key: " + messageKey, ex);
+                ToLog(eLogLevel.ERROR, "Failed to show the Status message with the key: " + messageKey, ex);
             }
 
         }
@@ -268,50 +268,6 @@ namespace Amdocs.Ginger.Common
             StringBuilder sb = new StringBuilder();
             sb.Append(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss - "));
             return sb;
-        }
-
-
-        //???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public static void ToTrace(string action, string info)
-        {
-            StringBuilder sb = dt();
-            sb.Append(action);
-            sb.Append(info);
-            Trace.WriteLine(sb.ToString());
-        }
-
-
-        //???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public static Stopwatch ToTraceStart(string action, string info)
-        {
-            Trace.WriteLine("{");
-            Trace.Indent();            
-            StringBuilder sb = dt();
-            sb.Append(action);
-            sb.Append(", ");
-            sb.Append(info);
-            sb.Append("*** START ***");
-            Trace.WriteLine(sb.ToString());         
-            Stopwatch st = new Stopwatch();
-            st.Start();
-            return st;
-        }
-
-        //???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public static void ToTraceEnd(string action, string info, Stopwatch st)
-        {            
-            st.Stop();
-            
-            StringBuilder sb = dt();
-            sb.Append(action);
-            sb.Append(", ");
-            sb.Append(info);
-            sb.Append(", Elasped=");
-            sb.Append(st.ElapsedMilliseconds);
-            sb.Append(" *** END ***");
-            Trace.WriteLine(sb.ToString());                        
-            Trace.Unindent();
-            Trace.WriteLine("}");
         }
 
 

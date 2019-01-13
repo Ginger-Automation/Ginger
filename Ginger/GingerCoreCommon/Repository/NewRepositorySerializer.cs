@@ -27,7 +27,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Amdocs.Ginger.Common;
-using GingerCoreNET.ReporterLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -744,40 +743,6 @@ namespace Amdocs.Ginger.Repository
                     }
 
                 }
-
-                //if (conversion)
-                //{
-                //    //for converting old actions keep the ID
-                //    if (obj is DriverAction)
-                //    {
-                //        DriverAction DA = ((DriverAction)obj);
-                //        DA.OldClassName = OldClassName;
-
-
-                //        //temp moved from here to conversion class or function
-                //        if (DA.OldClassName == "GingerCore.Actions.ActGotoURL")
-                //        {
-                //            DA.ID = "GotoURL";
-                //            DA.InputValues[0].Param = "URL"; //convert param name 'Value' to 'URL'
-                //        }
-
-                //        if (DA.OldClassName == "GingerCore.Actions.ActTextBox")
-                //        {
-                //            DA.ID = "UIElementAction";
-                //            string LocateBy = "ByID";
-                //            string LocateValue = "UserName";  // temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                //            string Action = "SetValue";
-                //            string Value = (from x in DA.InputValues where x.Param == "Value" select x.Value).FirstOrDefault();
-                //            DA.InputValues.Clear();
-                //            DA.InputValues.Add(new ActInputValue() { Param = "LocateBy", Value = LocateBy });
-                //            DA.InputValues.Add(new ActInputValue() { Param = "LocateValue", Value = LocateValue });
-                //            DA.InputValues.Add(new ActInputValue() { Param = "Action", Value = Action });
-                //            DA.InputValues.Add(new ActInputValue() { Param = "Value", Value = Value });
-
-                //        }
-
-                //    }
-                //}
 
 
                 return obj;

@@ -6,12 +6,7 @@ namespace Amdocs.Ginger.Common
     // Reporter for running unit tests
     public class UnitTestWorkspaceReporter : WorkSpaceReporterBase
     {
-        public void ConsoleWriteLine(string message)
-        {
-            // !!!!!!! Create GingerUtils.WriteConsole(formatted)
 
-            Console.WriteLine("Toconsole: " + message);
-        }
 
         public override MessageBoxResult MessageBoxShow(string messageText, string caption, MessageBoxButton buttonsType, MessageBoxImage messageImage, MessageBoxResult defualtResault)
         {

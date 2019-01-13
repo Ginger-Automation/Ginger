@@ -16,15 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.IO;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.IO;
+using Amdocs.Ginger.Common.GeneralLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -43,6 +43,31 @@ namespace Amdocs.Ginger.Repository
         // public static IRepositorySerializer mRepositorySerializer;  //  = new RepositorySerializer2();   // We create one instance
 
         public const string cSolutionRootFolderSign = @"~\"; // + Path.DirectorySeparatorChar;
+
+
+        /// <summary>
+        /// List of files and folders to exclude from solution load and Source Control
+        /// </summary>
+        public static List<string> RepositoryItemsToAvoid = new List<string>()
+        {
+             "AutoSave",
+             "Recover",
+             "RecentlyUsed.dat",
+             "Backups",
+             "ExecutionResults",
+             "HTMLReports",
+
+             @"SharedRepository\Activities\PrevVersions",
+             @"SharedRepository\Actions\PrevVersions",
+             @"SharedRepository\Variables\PrevVersions",
+             @"SharedRepository\ActivitiesGroup\PrevVersions",
+
+             @"SharedRepository\Activities\PrevVerions",
+             @"SharedRepository\Actions\PrevVerions",
+             @"SharedRepository\Variables\PrevVerions",
+             @"SharedRepository\ActivitiesGroup\PrevVerions"
+        };
+
 
         private ISolution mSolution = null;
         public ISolution Solution
@@ -371,7 +396,7 @@ namespace Amdocs.Ginger.Repository
                             Parallel.ForEach(SubFolders, sf =>
                             {
                                 // Add all files of sub folder
-                                if (sf != "PrevVersions")  //TODO: use const
+                                if (!IsRepositoryItemToAvoid(sf))
                                 {
                                     AddFolderFiles(fileEntries, sf, folder.ItemFilePattern);
                                 }
@@ -391,6 +416,23 @@ namespace Amdocs.Ginger.Repository
                        .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
                        .ToUpperInvariant();
         }
+
+
+        public bool IsRepositoryItemToAvoid(string itemToCheck)
+        {
+            foreach (string item in RepositoryItemsToAvoid)
+            {
+                string itemFullPath = Path.Combine(SolutionFolder, item);
+
+                if (itemToCheck == itemFullPath)
+                {
+                    return true;
+                }                   
+            }
+
+            return false;
+        }
+
         #endregion Public Functions
 
         #region Private Functions        
@@ -499,8 +541,7 @@ namespace Amdocs.Ginger.Repository
                     fileFolderPath = containingFolder;
                 if (!fileFolderPath.StartsWith(cSolutionRootFolderSign) || !fileFolderPath.StartsWith(mSolutionFolderPath))
                 {
-                    // Fix me for Linux !!!	
-                    string A = mSolutionFolderPath; //.TrimEnd(Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar);	
+                    string A = mSolutionFolderPath; 
                     string B = fileFolderPath.Replace(cSolutionRootFolderSign, Path.DirectorySeparatorChar.ToString()).TrimStart(Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
                     if (!A.EndsWith(Path.DirectorySeparatorChar.ToString()))
                     {
@@ -523,9 +564,8 @@ namespace Amdocs.Ginger.Repository
 
                 string filefullPath = Path.Combine(fileFolderPath, fullName);
 
-                //TODO: remove max 255 once we swithc all to work with .Net core 2.0 no limit
+                //TODO: remove max 255 once we switch all to work with .Net core 2.0 no limit
                 //Validate Path length - MAX_PATH is 260
-                //if (filefullPath.Length > 255)
                 if (fileName.Length > 255)
                 {
                     //FIXME !!!!!!!!!!!!!!
@@ -632,11 +672,13 @@ namespace Amdocs.Ginger.Repository
             {
                 RepositoryFolderBase repostitoryFolder = GetItemRepositoryFolder(repositoryItem);
                 
-                string targetPath=Path.Combine(repostitoryFolder.FolderFullPath, "PrevVerions");
+                string targetPath=Path.Combine(repostitoryFolder.FolderFullPath, "PrevVersions");
                 if (!Directory.Exists(targetPath))
-                {      
+                {
+                    repostitoryFolder.PauseFileWatcher();
                     //We do not want to file watcher track PrevVersions Folder. So creating it explicity using Create directory
                     Directory.CreateDirectory(targetPath);
+                    repostitoryFolder.ResumeFileWatcher();
                 }
                             
                 string dts = DateTime.Now.ToString("yyyyMMddHHmm");
