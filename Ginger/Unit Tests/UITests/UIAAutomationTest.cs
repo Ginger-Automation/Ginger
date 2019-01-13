@@ -86,14 +86,14 @@
 //            { uiaForm.Close(); }
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_load()
 //        {
 
 //            Assert.AreEqual(uiaForm.IsHandleCreated, true);
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Find_Butto1_XPath_Using_Full_Absolutue_Path()
 //        {
 //            //Arrange
@@ -112,7 +112,7 @@
 //            Assert.AreEqual(button1, AEButton, "button1=AEButton");
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Find_Button1_ByName_Find_Anywhere()
 //        {
 //            //Arrange
@@ -136,7 +136,7 @@
 //            Assert.AreEqual(SmartXPath, "button1[AutomationId:button1][LocalizedControlType:button1]", "SmartXPath");  // We expect the smart XPath to find the name is unique
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
      
 //        public void Find_checkListBox_XPath_Using_Full_Absolutue_Path_andByAutoID()
 //        {
@@ -159,7 +159,7 @@
 //        }
 
 //       // Generic sample to use forward
-//       [TestMethod]
+//       [TestMethod]  [Timeout(60000)]
 //        public void Find_Nested_Checkbox1_XPath_Using_Element_Name()
 //        {
 //            //Arrange
@@ -182,7 +182,7 @@
 
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_label()
 //        {
 //            //Arrange
@@ -203,7 +203,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_linkLabel()
 //        {
 //            //Arrange
@@ -224,7 +224,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_listBox1()
 //        {
 //            //Arrange
@@ -245,7 +245,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_listView()
 //        {
 //            //Arrange
@@ -266,7 +266,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_maskedTextBox()
 //        {
 //            //Arrange
@@ -287,7 +287,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_menuStrip()
 //        {
 //            //Arrange
@@ -308,7 +308,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_numericUpDown()
 //        {
 //            //Arrange
@@ -329,7 +329,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_monthCalendar()
 //        {
 //            //Arrange
@@ -350,7 +350,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_treeView()
 //        {
 //            //Arrange
@@ -371,7 +371,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_tabControl()
 //        {
 //            //Arrange
@@ -392,7 +392,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_medXPathtextBox()
 //        {
 //            //Arrange
@@ -413,7 +413,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_medXPathradioButton()
 //        {
 //            //Arrange
@@ -434,7 +434,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_medXPathlabel()
 //        {
 //            //Arrange
@@ -455,7 +455,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_medXPathbutton()
 //        {
 //            //Arrange
@@ -476,7 +476,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_medXPathcheckBox()
 //        {
 //            //Arrange
@@ -497,7 +497,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_vScrollBar()
 //        {
 //            //Arrange
@@ -518,7 +518,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_richTextBox()
 //        {
 //            //Arrange
@@ -539,7 +539,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_deepXPathbutton()
 //        {
 //            //Arrange
@@ -560,7 +560,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_deepXPathcheckBox()
 //        {
 //            //Arrange
@@ -582,7 +582,7 @@
 
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_deepXPathradioButton()
 //        {
 //            //Arrange
@@ -603,7 +603,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_deepXPathlabel()
 //        {
 //            //Arrange
@@ -624,7 +624,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_deepXPathtextBox()
 //        {
 //            //Arrange
@@ -645,7 +645,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Button1_Xpath_Simple()
 //        {
 //            //Arrange
@@ -662,7 +662,7 @@
 //            Assert.AreEqual(button1, AEButton, "button1=AEButton");
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void VerifyHTMLFirstNameTextBox_XPath()
 //        {
 //            //Arrange
@@ -680,7 +680,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Browser_Xpath_Simple()
 //        {
 //            //Arrange
@@ -695,7 +695,7 @@
 //        }
 
   
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Browser_Xpath_()
 //        {
 //            //Arrange

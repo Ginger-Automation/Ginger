@@ -88,7 +88,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void RunGingersParallel_FFandChrome_X3()
 //        {
 //            Act
@@ -105,7 +105,7 @@
 //            }
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void SpeedTest_FFx2_Chrome_X1()
 //        {
 //            Arrange

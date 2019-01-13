@@ -138,10 +138,10 @@ namespace Ginger.SourceControl
             return true;
         }
 
-        public static ObservableList<SourceControlFileInfo> GetPathFilesStatus(SourceControlBase SourceControl, string Path, List<string> PathsToIgnore = null)
+        public static ObservableList<SourceControlFileInfo> GetPathFilesStatus(SourceControlBase SourceControl, string Path)
         {
             string error = string.Empty;
-            ObservableList<SourceControlFileInfo> OL =  SourceControl.GetPathFilesStatus(Path, ref error, PathsToIgnore, App.UserProfile.Solution.ShowIndicationkForLockedItems);
+            ObservableList<SourceControlFileInfo> OL =  SourceControl.GetPathFilesStatus(Path, ref error, App.UserProfile.Solution.ShowIndicationkForLockedItems);
             if (error != string.Empty)
             {
                 Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, error);
