@@ -24,7 +24,6 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
 using GingerCore;
@@ -303,10 +302,8 @@ namespace Ginger.Run
         public GingerRunner()
         {
             ExecutedFrom = eExecutedFrom.Run;
-
-            // !!!!!!!!!!!!!!!!!!!!!! temp
-            // ExecutionLogger = new ExecutionLogger(ProjEnvironment, eExecutedFrom.Run);            
-            mRunListeners.Add(new ExecutionLogger(ProjEnvironment, eExecutedFrom.Run));
+            
+            // mRunListeners.Add(new ExecutionLogger(ProjEnvironment, eExecutedFrom.Run));
         }
 
         public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
@@ -315,7 +312,7 @@ namespace Ginger.Run
 
             // !!!!!!!!!!!!!!!!!!!!!! temp
             // ExecutionLogger = new ExecutionLogger(ProjEnvironment, ExecutedFrom);
-            mRunListeners.Add(new ExecutionLogger(ProjEnvironment, ExecutedFrom));
+            // mRunListeners.Add(new ExecutionLogger(ProjEnvironment, ExecutedFrom));
         }
 
 
@@ -4132,10 +4129,19 @@ namespace Ginger.Run
         void NotifyRunnerRunstart()
         {
             uint evetTime = RunListenerBase.GetEventTime();
-            foreach (RunListenerBase runnerListener in mRunListeners)
+            Parallel.ForEach(mRunListeners, runnerListener =>
             {
-                runnerListener.RunnerRunStart(evetTime);
-            }
+                {
+                    try
+                    {
+                        runnerListener.RunnerRunStart(evetTime);
+                    }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "NotifyRunnerRunstart failed for RunListener " + runnerListener.GetType().Name, ex);
+                    }
+                }
+            });
         }
 
         void NotifyRunnerRunEnd()
