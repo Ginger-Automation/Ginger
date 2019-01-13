@@ -18,6 +18,7 @@ limitations under the License.
 
 
 using Amdocs.Ginger.Repository;
+using static Amdocs.Ginger.Common.UIElement.ElementInfo;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
@@ -29,5 +30,8 @@ namespace Amdocs.Ginger.Common.UIElement
         [IsSerializedForLocalRepository]
         public string Value { get; set; }
         public override string ItemName { get { return Name; } set { Name = value;  } }
+
+        public eDeltaStatus DeltaStatus { get; set; }
+        public eDeltaExtraDetails DeltaExtraDetails { get; set; }
     }
 }

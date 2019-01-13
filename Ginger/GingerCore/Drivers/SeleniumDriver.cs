@@ -3616,6 +3616,8 @@ namespace GingerCore.Drivers
                 {
                     try
                     {
+
+                     
                         if (mStopProcess)
                         {
                             return foundElementsList;
@@ -4467,15 +4469,13 @@ namespace GingerCore.Drivers
             }
 
             // Organize based on better locators at start
-            string id = e.GetAttribute("id");
-            if (!string.IsNullOrEmpty(id))
+            if (!string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).ID))
             {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByID, LocateValue = id, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
+                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByID, LocateValue = ((HTMLElementInfo)ElementInfo).ID, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
             }
-            string name = e.GetAttribute("name");
-            if (!string.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).Name))
             {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = name, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
+                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = ((HTMLElementInfo)ElementInfo).Name, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
             }
             list.Add(new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = ((HTMLElementInfo)ElementInfo).RelXpath , Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
             list.Add(new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = ElementInfo.XPath, Help = "Recommended (sensitive to page design changes)", Active = true, IsAutoLearned = true });
@@ -6301,29 +6301,27 @@ namespace GingerCore.Drivers
 
         }
 
-        void IWindowExplorer.UpdateElementInfoFields(ElementInfo ei)
+        void IWindowExplorer.UpdateElementInfoFields(ElementInfo EI)
         {
-            //TODO: remove from here and put in EI - do lazy loading if needed + why the switch frame?
-            if (ei == null)
+            //TODO: remove from here and put in EI - do lazy loading if needed.
+            if (EI == null)
             {
                 return;
             }
 
-            //Driver.SwitchTo().DefaultContent();
-            //SwitchFrame(ei.Path, ei.XPath, true);
-            if (string.IsNullOrEmpty(ei.XPath))
-                ei.XPath = GenerateXpathForIWebElement((IWebElement)ei.ElementObject, "");
+            if (string.IsNullOrEmpty(EI.XPath))
+                EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, "");
 
-            IWebElement e = (IWebElement)ei.ElementObject;
+            IWebElement e = (IWebElement)EI.ElementObject;
             if (e != null)
             {
-                ei.X = e.Location.X;
-                ei.Y = e.Location.Y;
-                ei.Width = e.Size.Width;
-                ei.Height = e.Size.Height;
+                EI.X = e.Location.X;
+                EI.Y = e.Location.Y;
+                EI.Width = e.Size.Width;
+                EI.Height = e.Size.Height;
             }
 
-            //Driver.SwitchTo().DefaultContent();
+            
         }
 
         private void InitXpathHelper()
@@ -6666,7 +6664,6 @@ namespace GingerCore.Drivers
 
                 foreach (ElementLocator el in elementLocators)
                     el.LocateStatus = ElementLocator.eLocateStatus.Pending;
-
                 List<ElementLocator> activesElementLocators = elementLocators.Where(x => x.Active == true).ToList();
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
                 foreach (ElementLocator el in activesElementLocators)

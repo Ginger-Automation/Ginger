@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.Enums;
+using System.Linq;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
@@ -65,7 +66,7 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public Boolean IsExpandable { get; set; }
 
-        public IWindowExplorer WindowExplorer { get; set; }        
+        public IWindowExplorer WindowExplorer { get; set; }
 
         private string mElementTitle = null;
         [IsSerializedForLocalRepository]
@@ -259,6 +260,33 @@ namespace Amdocs.Ginger.Common.UIElement
             return mValue;
         }
 
+        public bool Updated { get; set; }
+
+        public eElementGroup ElementGroup { get; set; }
+
+        public enum eElementGroup
+        {
+            Mapped,
+            Unmapped
+        }
+
+        public enum eDeltaStatus
+        {
+            Equal,
+            Deleted,
+            Modified,
+            New
+        }
+
+        public enum eDeltaExtraDetails
+        {
+            LocatorsChanged,
+            PropertiesChanged
+        }
+
+        public eDeltaStatus DeltaStatus { get; set; }
+        public eDeltaExtraDetails DeltaExtraDetails { get; set; }
+
         [IsSerializedForLocalRepository]
         public string Path { get; set; }
 
@@ -314,6 +342,28 @@ namespace Amdocs.Ginger.Common.UIElement
             return mData;
         }
 
+
+        public static bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
+        {
+            bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && (firstEI.Path == secondEI.Path || string.IsNullOrEmpty(firstEI.Path) && string.IsNullOrEmpty(secondEI.Path));
+
+            bool HasSimilarLocators = true;
+            foreach (ElementLocator EL in firstEI.Locators)
+            {
+                ElementLocator SimilarLocator = secondEI.Locators.Where(x => x.LocateBy == EL.LocateBy && x.LocateValue == EL.LocateValue).FirstOrDefault();
+                if (SimilarLocator == null)
+                    HasSimilarLocators = false;
+            }
+
+            if (HasSimilarXpath && HasSimilarLocators)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 
     public enum eLocateBy
@@ -431,5 +481,5 @@ namespace Amdocs.Ginger.Common.UIElement
     }
 
 
-   
+
 }

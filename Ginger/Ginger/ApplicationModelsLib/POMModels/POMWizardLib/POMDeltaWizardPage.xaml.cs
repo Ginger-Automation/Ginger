@@ -2,6 +2,7 @@
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Drivers;
+using GingerCore.Drivers.Common;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
@@ -143,16 +144,22 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             try
             {
-                ElementInfo EI = ((ObservableList<ElementInfo>)sender).Last();
+                HTMLElementInfo EI = (HTMLElementInfo)((ObservableList<ElementInfo>)sender).Last();
 
-                if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
+
+
+
+                //mWizard.IWindowExplorerDriver.IsElementExsist(EI, mElementsList));
+
+                ElementInfo ExistingEIDefinedByItsID = mExistingPOM.MappedUIElements.Where(x => ((HTMLElementInfo)x).ID == EI.ID).FirstOrDefault();
+
+                ElementInfo ExistingEIDefinedByItsName = mExistingPOM.MappedUIElements.Where(x => ((HTMLElementInfo)x).Name == EI.Name).FirstOrDefault();
+                ElementInfo ExistingEIDefinedByItsType = mExistingPOM.MappedUIElements.Where(x => x.ElementType == EI.ElementType).FirstOrDefault();
+                if (ExistingEIDefinedByItsID != null)
                 {
-                    mNewLearnedPOM.MappedUIElements.Add(EI);
+
                 }
-                else
-                {
-                    mNewLearnedPOM.UnMappedUIElements.Add(EI);
-                }
+
             }
             catch (Exception ex)
             {

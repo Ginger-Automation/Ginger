@@ -241,7 +241,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 ///*mWinExplorer.UpdateElementInfoFields(EI);/*//Not sure if needed
 
-                if (IsTheSameElement(EI, mSpyElement))
+                if (ElementInfo.IsTheSameElement(EI, mSpyElement))
                 {
                     xMappedElementsTab.Focus();
                     elementfocused = true;
@@ -255,7 +255,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 //mWinExplorer.UpdateElementInfoFields(EI);//Not sure if needed
 
-                if (IsTheSameElement(EI, mSpyElement))
+                if (ElementInfo.IsTheSameElement(EI, mSpyElement))
                 {
                     xUnmappedElementsTab.Focus();
                     elementfocused = true;
@@ -272,27 +272,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        private bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
-        {
-            bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && (firstEI.Path == secondEI.Path || string.IsNullOrEmpty(firstEI.Path) && string.IsNullOrEmpty(secondEI.Path)) ;
-
-            bool HasSimilarLocators = true;
-            foreach (ElementLocator EL in firstEI.Locators)
-            {
-                ElementLocator SimilarLocator = secondEI.Locators.Where(x => x.LocateBy == EL.LocateBy && x.LocateValue == EL.LocateValue).FirstOrDefault();
-                if (SimilarLocator == null)
-                    HasSimilarLocators = false;
-            }
-
-            if (HasSimilarXpath && HasSimilarLocators)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
 
         private void TestAllElementsClicked(object sender, RoutedEventArgs e)
         {
