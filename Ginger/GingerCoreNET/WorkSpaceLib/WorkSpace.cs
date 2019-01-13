@@ -42,8 +42,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         // public UserProfile UserProfile;
 
-        public SolutionRepository SolutionRepository;
-
+        public SolutionRepository SolutionRepository;        
 
         // Will be back when we moved GR to GingerCoreNET
         // public GingerRunner GingerRunner;
@@ -206,7 +205,9 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public static BusinessFlow Businessflow { get;  set; }
-        public static bool RunningFromConfigFile = false;
+
+        public static bool RunningInExecutionMode = false;
+
         public static ProjEnvironment AutomateTabEnvironment;
         public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 

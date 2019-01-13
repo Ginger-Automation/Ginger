@@ -136,7 +136,7 @@ namespace Ginger.Reports
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.ReportTemplateNotFound, ReportTemplateName);
+                Reporter.ToUser(eUserMsgKey.ReportTemplateNotFound, ReportTemplateName);
                 return null;
             }
         }

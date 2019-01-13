@@ -95,7 +95,7 @@ namespace Ginger.SourceControl
                 xProcessingIcon.Visibility = Visibility.Visible;
                 if (SourceControlIntegration.BusyInProcessWhileDownloading)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                     return;
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
@@ -180,22 +180,22 @@ namespace Ginger.SourceControl
                 xProcessingIcon.Visibility = Visibility.Visible;
                 if (SourceControlIntegration.BusyInProcessWhileDownloading)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                     return;
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
                 List<SourceControlFileInfo> SelectedFiles = mFiles.Where(x => x.Selected == true).ToList();
                 if (SelectedFiles == null || SelectedFiles.Count == 0)
                 {
-                    Reporter.ToUser(eUserMsgKeys.SourceControlMissingSelectionToCheckIn);
+                    Reporter.ToUser(eUserMsgKey.SourceControlMissingSelectionToCheckIn);
                     return;
                 }
                 if (CommentsTextBox.Text.Length == 0)
                 {
-                    Reporter.ToUser(eUserMsgKeys.AskToAddCheckInComment);
+                    Reporter.ToUser(eUserMsgKey.AskToAddCheckInComment);
                     return;
                 }
-                if (Reporter.ToUser(eUserMsgKeys.SourceControlChkInConfirmtion, SelectedFiles.Count) == Amdocs.Ginger.Common.MessageBoxResult.No)
+                if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtion, SelectedFiles.Count) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                     return;
                 string Comments = CommentsTextBox.Text.ToString();
                 // performing on the another thread 
@@ -218,12 +218,12 @@ namespace Ginger.SourceControl
                                 pathsToCommit.Add(fi.Path);
                                 break;
                             case SourceControlFileInfo.eRepositoryItemStatus.Modified:
-                                if (fi.Locked && fi.LockedOwner != App.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKeys.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                                if (fi.Locked && fi.LockedOwner != App.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                                 {
                                     SourceControlIntegration.UpdateFile(App.UserProfile.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
                                 }
-                                else if (fi.Locked && fi.LockedOwner == App.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKeys.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                                else if (fi.Locked && fi.LockedOwner == App.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                                 {
                                     SourceControlIntegration.UpdateFile(App.UserProfile.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
@@ -336,13 +336,13 @@ namespace Ginger.SourceControl
                 new Action(
                     delegate ()
                     {
-                        if (CommitSuccess && conflictHandled && Reporter.ToUser(eUserMsgKeys.SourceControlChkInConflictHandled) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                        if (CommitSuccess && conflictHandled && Reporter.ToUser(eUserMsgKey.SourceControlChkInConflictHandled) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         {
                             Init();
                             CommentsTextBox.Text = string.Empty;
                             mCheckInWasDone = true;
                         }
-                        else if (CommitSuccess && Reporter.ToUser(eUserMsgKeys.SourceControlChkInSucss) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                        else if (CommitSuccess && Reporter.ToUser(eUserMsgKey.SourceControlChkInSucss) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         {
                             Init();
                             CommentsTextBox.Text = string.Empty;
@@ -350,7 +350,7 @@ namespace Ginger.SourceControl
                         }
                         else if (!CommitSuccess)
                         {
-                            Reporter.ToUser(eUserMsgKeys.SourceControlChkInConflictHandledFailed);
+                            Reporter.ToUser(eUserMsgKey.SourceControlChkInConflictHandledFailed);
                             CloseWindow();
                         }
                         else
@@ -417,15 +417,15 @@ namespace Ginger.SourceControl
 
                 if (obj != null && ((RepositoryItemBase)obj).DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
                 {
-                    if (Reporter.ToUser(eUserMsgKeys.SourceControlCheckInUnsavedFileChecked, SCFI.Name) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKey.SourceControlCheckInUnsavedFileChecked, SCFI.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
-                        Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.UserProfile.Solution.GetNameForFileName(), "item");                        
+                        Reporter.ToStatus(eStatusMsgKey.SaveItem, null, App.UserProfile.Solution.GetNameForFileName(), "item");                        
                         WorkSpace.Instance.SolutionRepository.SaveRepositoryItem((RepositoryItemBase)obj);                        
-                        Reporter.CloseGingerHelper();
+                        Reporter.HideStatusMessage();
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, "Check in Aborted");
+                        Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, "Check in Aborted");
                         return;
                     }
                 }

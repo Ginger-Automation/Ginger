@@ -162,7 +162,7 @@ namespace Ginger.WindowExplorer
         {
             if (mActions.CurrentItem == null)
             {                
-                Reporter.ToUser(eUserMsgKeys.AskToSelectAction);
+                Reporter.ToUser(eUserMsgKey.AskToSelectAction);
                 return;
             }
 

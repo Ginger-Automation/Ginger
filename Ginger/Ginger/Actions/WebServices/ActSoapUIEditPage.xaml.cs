@@ -314,7 +314,7 @@ namespace Ginger.Actions.WebServices
                     }
                     if (!System.IO.File.Exists(XMLFiledValue))
                     {
-                        Reporter.ToUser(eUserMsgKeys.FileNotExist);
+                        Reporter.ToUser(eUserMsgKey.FileNotExist);
                         return;
                     }
                     doc.Load(XMLFiledValue);
@@ -353,7 +353,7 @@ namespace Ginger.Actions.WebServices
                 }
                 if (!System.IO.File.Exists(XMLFiledValue))
                 {
-                    Reporter.ToUser(eUserMsgKeys.FileNotExist);
+                    Reporter.ToUser(eUserMsgKey.FileNotExist);
                     return;
                 }
                 doc.Load(XMLFiledValue);
@@ -479,7 +479,7 @@ namespace Ginger.Actions.WebServices
                     }
                     if (!System.IO.File.Exists(XMLFiledValue))
                     {
-                        Reporter.ToUser(eUserMsgKeys.FileNotExist);
+                        Reporter.ToUser(eUserMsgKey.FileNotExist);
                         return;
                     }
                     doc.Load(XMLFiledValue);
@@ -517,7 +517,7 @@ namespace Ginger.Actions.WebServices
                     }
                     if (!System.IO.File.Exists(XMLFiledValue))
                     {
-                        Reporter.ToUser(eUserMsgKeys.FileNotExist);
+                        Reporter.ToUser(eUserMsgKey.FileNotExist);
                         return;
                     }
                     doc.Load(XMLFiledValue);
@@ -551,7 +551,7 @@ namespace Ginger.Actions.WebServices
                 }
                 if (!System.IO.File.Exists(XMLFiledValue))
                 {
-                    Reporter.ToUser(eUserMsgKeys.FileNotExist);
+                    Reporter.ToUser(eUserMsgKey.FileNotExist);
                     return;
                 }
                 doc.Load(XMLFiledValue);
@@ -587,7 +587,7 @@ namespace Ginger.Actions.WebServices
                 }
                 if (!System.IO.File.Exists(XMLFiledValue))
                 {
-                    Reporter.ToUser(eUserMsgKeys.FileNotExist);
+                    Reporter.ToUser(eUserMsgKey.FileNotExist);
                     return;
                 }
                 doc.Load(XMLFiledValue);

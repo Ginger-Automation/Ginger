@@ -53,7 +53,7 @@ namespace Ginger.UserControlsLib.TextEditor
                 return;
             if (System.IO.Path.GetExtension(FileName.FilePathTextBox.Text).ToUpper() != FileExtensionForBrowse.ToUpper())
             {
-                Reporter.ToUser(eUserMsgKeys.FileExtensionNotSupported, FileExtensionForBrowse);
+                Reporter.ToUser(eUserMsgKey.FileExtensionNotSupported, FileExtensionForBrowse);
                 FileName.FilePathTextBox.Text = string.Empty;
                 return;
             }
@@ -90,11 +90,11 @@ namespace Ginger.UserControlsLib.TextEditor
 
             if (targetFile == FileName.FilePathTextBox.Text)
             {
-                Reporter.ToUser(eUserMsgKeys.NotifyFileSelectedFromTheSolution, targetFile);
+                Reporter.ToUser(eUserMsgKey.NotifyFileSelectedFromTheSolution, targetFile);
                 return String.Empty;
             }
             File.Copy(FileName.FilePathTextBox.Text, targetFile);
-            Reporter.ToUser(eUserMsgKeys.FileImportedSuccessfully, targetFile);
+            Reporter.ToUser(eUserMsgKey.FileImportedSuccessfully, targetFile);
             if (genWin != null)
             {
                 genWin.Close();

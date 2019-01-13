@@ -206,7 +206,7 @@ namespace Ginger.Run
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
            
-                if (Reporter.ToUser(eUserMsgKeys.DeleteBusinessflow) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.DeleteBusinessflow) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     BusinessFlow bff = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
                     Runner.BusinessFlows.Remove(bff);
@@ -264,12 +264,12 @@ namespace Ginger.Run
 
                 if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
                 {
-                    Reporter.ToUser(eUserMsgKeys.ExecutionsResultsProdIsNotOn);
+                    Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                     return;
                 }
                 else if (reportsResultFolder == string.Empty)
                 {
-                    Reporter.ToUser(eUserMsgKeys.ExecutionsResultsNotExists);
+                    Reporter.ToUser(eUserMsgKey.ExecutionsResultsNotExists);
                     return;
                 }
                 else
@@ -326,7 +326,7 @@ namespace Ginger.Run
             {
                 if (Runner.Status == eRunStatus.Running)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Please wait for Runner to complete run.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please wait for Runner to complete run.");
                     return true;
                 }
             }
@@ -535,7 +535,7 @@ namespace Ginger.Run
         {
             if (mRunner.IsRunning)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Runner is already running.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Runner is already running.");
                 return;
             }
             App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
@@ -586,7 +586,7 @@ namespace Ginger.Run
         {
             if (!mRunner.IsRunning)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Runner is not running.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Runner is not running.");
                 return;
             }
             mRunner.StopRun();
@@ -608,7 +608,7 @@ namespace Ginger.Run
         {
             if (mRunner.Status != eRunStatus.Stopped)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Runner was not stopped.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Runner was not stopped.");
                 return;
             }
             App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
@@ -621,12 +621,12 @@ namespace Ginger.Run
 
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
-                Reporter.ToUser(eUserMsgKeys.ExecutionsResultsProdIsNotOn);
+                Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
             }
             else if (reportsResultFolder == string.Empty)
             {
-                Reporter.ToUser(eUserMsgKeys.AutomationTabExecResultsNotExists);
+                Reporter.ToUser(eUserMsgKey.AutomationTabExecResultsNotExists);
                 return;
             }
             else

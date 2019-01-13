@@ -238,7 +238,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.CreateTableError, ex.Message);
+                Reporter.ToUser(eUserMsgKey.CreateTableError, ex.Message);
                 Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return fileName;
@@ -271,9 +271,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             foreach (DataSourceTable dsTable in DSDetails.DSTableList)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportItem, null, dsTable.Name, "Data Source Table");
+                Reporter.ToStatus(eStatusMsgKey.ExportItem, null, dsTable.Name, "Data Source Table");
                 dsTable.DSC.ExporttoExcel(dsTable.Name, sExcelPath, dsTable.Name);                    
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
         }
 
@@ -304,7 +304,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 catch(Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.WARN, "Error while deleting Data Source File", ex);
-                    Reporter.ToUser(eUserMsgKeys.DeleteDSFileError, DSDetails.FileFullPath);                    
+                    Reporter.ToUser(eUserMsgKey.DeleteDSFileError, DSDetails.FileFullPath);                    
                 }
             }
                 
@@ -339,7 +339,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\"+ dsDetailsCopy.Name + ".mdb";
 
             if (File.Exists(dsDetailsCopy.FileFullPath))
-            { Reporter.ToUser(eUserMsgKeys.DuplicateDSDetails, dsDetailsCopy.FileFullPath); return; }
+            { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, dsDetailsCopy.FileFullPath); return; }
 
             File.Copy(DSDetails.FileFullPath, dsDetailsCopy.FileFullPath);            
 

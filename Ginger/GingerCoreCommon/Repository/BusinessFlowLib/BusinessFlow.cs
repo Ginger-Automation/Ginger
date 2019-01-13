@@ -727,7 +727,7 @@ namespace GingerCore
                 if (missingActivities != string.Empty && inSilentMode == false)
                 {
                     missingActivities = missingActivities.TrimEnd(new char[] { ',', ' ' });
-                    // AppReporter.ToUser(eUserMsgKeys.PartOfActivitiesGroupActsNotFound, missingActivities);
+                    // AppReporter.ToUser(eUserMsgKey.PartOfActivitiesGroupActsNotFound, missingActivities);
                     return false;
                 }
                 else
@@ -735,7 +735,7 @@ namespace GingerCore
             }
 
             //if (inSilentMode == false)
-            //    AppReporter.ToUser(eUserMsgKeys.ActivitiesGroupActivitiesNotFound);
+            //    AppReporter.ToUser(eUserMsgKey.ActivitiesGroupActivitiesNotFound);
             return false;
         }
 

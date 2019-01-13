@@ -50,9 +50,9 @@ namespace GingerWPF.TreeViewItemsLib
                 {
                     return false;//no need to Save because not Dirty
                 }
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, RI.ItemName, "item");
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, RI.ItemName, "item");
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(RI);
-                Reporter.CloseGingerHelper();               
+                Reporter.HideStatusMessage();               
 
                 //refresh node header                               
                 PostSaveTreeItemHandler();
@@ -61,7 +61,7 @@ namespace GingerWPF.TreeViewItemsLib
             else
             {
                 //implement for other item types
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Save operation for this item type was not implemented yet.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Save operation for this item type was not implemented yet.");
                 return false;
             }
         }
@@ -95,7 +95,7 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 if(!deleteWithoutAsking)
                 {
-                    if(Reporter.ToUser(eUserMsgKeys.DeleteItem, repoItem.GetNameForFileName()) == Amdocs.Ginger.Common.MessageBoxResult.No)
+                    if(Reporter.ToUser(eUserMsgKey.DeleteItem, repoItem.GetNameForFileName()) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                     {
                         return false;
                     }                        
@@ -145,7 +145,7 @@ namespace GingerWPF.TreeViewItemsLib
             else
             {
                 //implement for other item types
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Item type " + item.GetType().Name + " - operation for this item type was not implemented yet.");                
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Item type " + item.GetType().Name + " - operation for this item type was not implemented yet.");                
             }            
         }
 
@@ -165,7 +165,7 @@ namespace GingerWPF.TreeViewItemsLib
             else
             {
                 //implement for other item types
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "The " + mCurrentFolderNodePastOperations.ToString() + " operation for this item type was not implemented yet.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The " + mCurrentFolderNodePastOperations.ToString() + " operation for this item type was not implemented yet.");
                 return false;
             }
         }
@@ -192,7 +192,7 @@ namespace GingerWPF.TreeViewItemsLib
             else
             {
                 //implement for other item types
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "The " + mCurrentFolderNodePastOperations.ToString() + " operation for this item type was not implemented yet.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The " + mCurrentFolderNodePastOperations.ToString() + " operation for this item type was not implemented yet.");
                 return false;
             }
         }
@@ -233,7 +233,7 @@ namespace GingerWPF.TreeViewItemsLib
             }
             if (itemsSavedCount == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Nothing found to Save.");               
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Nothing found to Save.");               
             }            
         }
         
@@ -241,7 +241,7 @@ namespace GingerWPF.TreeViewItemsLib
         {
             try
             {
-                if (Reporter.ToUser(eUserMsgKeys.RefreshFolder) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.RefreshFolder) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     mBulkOperationIsInProcess = true;
                     //refresh cache
@@ -257,7 +257,7 @@ namespace GingerWPF.TreeViewItemsLib
             }
             catch (Exception ex)
             {                
-                Reporter.ToUser(eUserMsgKeys.RefreshFailed, "Failed to refresh the item type cache for the folder: " + path);
+                Reporter.ToUser(eUserMsgKey.RefreshFailed, "Failed to refresh the item type cache for the folder: " + path);
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 mBulkOperationIsInProcess = false;
             }
@@ -298,7 +298,7 @@ namespace GingerWPF.TreeViewItemsLib
         {
             try
             {
-                if (Reporter.ToUser(eUserMsgKeys.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     //delete root and refresh tree                    
                     WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)((ITreeViewItem)this).NodeObject());
@@ -313,7 +313,7 @@ namespace GingerWPF.TreeViewItemsLib
 
         public override void AddTreeItem()
         {            
-            Reporter.ToUser(eUserMsgKeys.MissingImplementation);
+            Reporter.ToUser(eUserMsgKey.MissingImplementation);
         }
 
         public virtual ITreeViewItem GetFolderTreeItem(RepositoryFolderBase folder)
@@ -410,7 +410,7 @@ namespace GingerWPF.TreeViewItemsLib
 
             if (RI != null && RI.SourceControlStatus != eImageType.SourceControlLockedByMe && RI.SourceControlStatus != eImageType.SourceControlLockedByAnotherUser)
             {
-                Reporter.ToUser(eUserMsgKeys.SoruceControlItemAlreadyUnlocked);
+                Reporter.ToUser(eUserMsgKey.SoruceControlItemAlreadyUnlocked);
                 return;
             }
             SourceControlIntegration.UnLock(App.UserProfile.Solution.SourceControl, this.NodePath());
@@ -423,7 +423,7 @@ namespace GingerWPF.TreeViewItemsLib
          
             if(RI != null && (RI.SourceControlStatus== eImageType.SourceControlLockedByMe || RI.SourceControlStatus == eImageType.SourceControlLockedByAnotherUser))
             {
-               Reporter.ToUser(eUserMsgKeys.SourceControlItemAlreadyLocked);
+               Reporter.ToUser(eUserMsgKey.SourceControlItemAlreadyLocked);
                return;
             }
             string lockComment = string.Empty;
@@ -442,27 +442,27 @@ namespace GingerWPF.TreeViewItemsLib
         
         public void SourceControlUndoChanges(object sender, System.Windows.RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.SureWantToDoRevert) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.SureWantToDoRevert) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.RevertChangesFromSourceControl);
+                Reporter.ToStatus(eStatusMsgKey.RevertChangesFromSourceControl);
                 SourceControlIntegration.Revert(App.UserProfile.Solution.SourceControl, this.NodePath());                
                 mTreeView.Tree.RefreshSelectedTreeNodeParent();
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
         }
 
         public void SourceControlGetLatestVersion(object sender, System.Windows.RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.LoseChangesWarn) == Amdocs.Ginger.Common.MessageBoxResult.No) return;
+            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
 
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.GetLatestFromSourceControl);
+            Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
             if (string.IsNullOrEmpty(this.NodePath()))
-                Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "Invalid Path provided");
+                Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
                 SourceControlIntegration.GetLatest(this.NodePath(), App.UserProfile.Solution.SourceControl);
             
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
         }
 
         

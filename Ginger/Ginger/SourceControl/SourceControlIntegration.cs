@@ -43,15 +43,15 @@ namespace Ginger.SourceControl
             if (res)
             {
                 if (!ignoreSuccessMessage)
-                    Reporter.ToUser(eUserMsgKeys.SourceControlConnSucss);
+                    Reporter.ToUser(eUserMsgKey.SourceControlConnSucss);
                 return true;
             }
             else
             {
                 if (error.Contains("remote has never connected"))
-                    Reporter.ToUser(eUserMsgKeys.SourceControlRemoteCannotBeAccessed, error);
+                    Reporter.ToUser(eUserMsgKey.SourceControlRemoteCannotBeAccessed, error);
                 else
-                    Reporter.ToUser(eUserMsgKeys.SourceControlConnFaild, error);
+                    Reporter.ToUser(eUserMsgKey.SourceControlConnFaild, error);
                 return false;
             }
         }
@@ -63,7 +63,7 @@ namespace Ginger.SourceControl
 
             if (!SourceControl.AddFile(path, ref error))
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, error);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
                 return false;
             }
             return true;
@@ -75,7 +75,7 @@ namespace Ginger.SourceControl
 
             if (!SourceControl.DeleteFile(path, ref error))
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, error);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
                 return false;
             }
             return true;
@@ -87,7 +87,7 @@ namespace Ginger.SourceControl
 
             if (!SourceControl.UpdateFile(path, ref error))
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, error);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
                 return false;
             }
             return true;
@@ -105,7 +105,7 @@ namespace Ginger.SourceControl
                     foreach (string cPath in conflictsPaths)
                     {
                         ResolveConflictPage resConfPage = new ResolveConflictPage(cPath);
-                        if(App.RunningFromConfigFile == true)
+                        if(WorkSpace.RunningInExecutionMode == true)
                             SourceControlIntegration.ResolveConflicts(App.UserProfile.Solution.SourceControl, cPath, eResolveConflictsSide.Server);
                         else
                             resConfPage.ShowAsWindow();
@@ -123,7 +123,7 @@ namespace Ginger.SourceControl
                     if (error.Contains("is locked in another working copy"))
                         error = "This file has been locked by other user. Please remove lock and then try to Check in.";
                     App.MainWindow.Dispatcher.Invoke(() => {
-                        Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, error);
+                        Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
                     });
                     return false;
                 }
@@ -144,7 +144,7 @@ namespace Ginger.SourceControl
             ObservableList<SourceControlFileInfo> OL =  SourceControl.GetPathFilesStatus(Path, ref error, App.UserProfile.Solution.ShowIndicationkForLockedItems);
             if (error != string.Empty)
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, error);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
             }
             return OL;
         }
@@ -183,7 +183,7 @@ namespace Ginger.SourceControl
             string error = string.Empty;
             if (!SourceControl.CreateConfigFile(ref error))
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, error);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
                 return false;
             }
             return true;
@@ -194,7 +194,7 @@ namespace Ginger.SourceControl
             string error = string.Empty;
             if (!SourceControl.GetProject(Path, URI, ref error))
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, error);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
                 return false;
             }
             return true;
@@ -212,7 +212,7 @@ namespace Ginger.SourceControl
                 foreach (string cPath in conflictsPaths)
                 {
                     ResolveConflictPage resConfPage = new ResolveConflictPage(cPath);
-                    if(App.RunningFromConfigFile == true)
+                    if(WorkSpace.RunningInExecutionMode == true)
                         SourceControlIntegration.ResolveConflicts(SourceControl, cPath, eResolveConflictsSide.Server);
                     else
                         resConfPage.ShowAsWindow();
@@ -220,14 +220,14 @@ namespace Ginger.SourceControl
 
                     if (!result)
                     {
-                        Reporter.ToUser(eUserMsgKeys.SourceControlGetLatestConflictHandledFailed);
+                        Reporter.ToUser(eUserMsgKey.SourceControlGetLatestConflictHandledFailed);
                         return false;
                     }
                     conflictHandled = true;
                 }
                 if (!conflictHandled)
                 {
-                    Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, error);
+                    Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, error);
                     return false;
                 }
             }
@@ -246,7 +246,7 @@ namespace Ginger.SourceControl
 
             if (!SourceControl.ResolveConflicts(path, side, ref error))
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, error);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
                 return false;
             }
 
@@ -258,11 +258,11 @@ namespace Ginger.SourceControl
             string error = string.Empty;
             if (!SourceControl.Lock(path, lockComment, ref error))
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, error);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.SourceControlLockSucss);
+                Reporter.ToUser(eUserMsgKey.SourceControlLockSucss);
             }
         }
 
@@ -272,11 +272,11 @@ namespace Ginger.SourceControl
             if (!SourceControl.UnLock(path, ref error))
             {
                 if (error != string.Empty)
-                    Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, error);
+                    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.SourceControlUnlockSucss);
+                Reporter.ToUser(eUserMsgKey.SourceControlUnlockSucss);
             }
         }
 
@@ -292,7 +292,7 @@ namespace Ginger.SourceControl
 
             if (!SourceControl.Revert(path, ref error))
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, error);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
                 return false;
             }
             return true;

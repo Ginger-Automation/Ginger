@@ -440,7 +440,7 @@ namespace Ginger.Run
                 else
                     SaveObjToJSonFile(RunSetReport, LogFolder + @"\RunSet.txt");
                 AddExecutionDetailsToLog(eExecutionPahse.End, "Run Set", RunSetReport.Name, RunSetReport);
-                if (WorkSpace.RunningFromConfigFile)
+                if (WorkSpace.RunningInExecutionMode)
                 {
                     //Amdocs.Ginger.CoreNET.Execution.eRunStatus.TryParse(RunSetReport.RunSetExecutionStatus, out App.RunSetExecutionStatus);//saving the status for determin Ginger exit code
                     WorkSpace.RunSetExecutionStatus = RunSetReport.RunSetExecutionStatus;
@@ -838,69 +838,69 @@ namespace Ginger.Run
 
         // make different listener - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         private static void AddExecutionDetailsToLog(eExecutionPahse objExecutionPhase, string objType, string objName, object obj)
-{
-    /*  if (AppReporter.CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
-      {
-          string prefix = string.Empty;
-          switch (objExecutionPhase)
-          {
-              case eExecutionPahse.Start:
-                  prefix = "--> Execution Started for the " + objType + ": '" + objName + "'";
-                  break;
-              case eExecutionPahse.End:
-                  prefix = "<-- Execution Ended for the " + objType + ": '" + objName + "'";
-                  break;
-          }
+        {
+            if (Reporter.RunningInExecutionMode || Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug)
+            {
+                string prefix = string.Empty;
+                switch (objExecutionPhase)
+                {
+                    case eExecutionPahse.Start:
+                        prefix = "--> Execution Started for the " + objType + ": '" + objName + "'";
+                        break;
+                    case eExecutionPahse.End:
+                        prefix = "<-- Execution Ended for the " + objType + ": '" + objName + "'";
+                        break;
+                }
 
-          //get the execution fields and their values
-          if (obj != null)
-          {
-              List<KeyValuePair<string, string>> fieldsAndValues = new List<KeyValuePair<string, string>>();
-              try
-              {
-                  PropertyInfo[] props = obj.GetType(.GetProperties();
-                  foreach (PropertyInfo prop in props)
-                  {
-                      try
-                      {
-                          FieldParamsFieldType attr = ((FieldParamsFieldType)prop.GetCustomAttribute(typeof(FieldParamsFieldType)));
-                          if (attr == null)
-                          {
-                              continue;
-                          }
-                          FieldsType ftype = attr.FieldType;
-                          if (ftype == FieldsType.Field)
-                          {
-                              string propName = prop.Name;
-                              string propFullName = ((FieldParamsNameCaption)prop.GetCustomAttribute(typeof(FieldParamsNameCaption)).NameCaption;
-                              string propValue = obj.GetType(.GetProperty(propName, BindingFlags.Public | BindingFlags.Instance.GetValue(obj.ToString();
-                              fieldsAndValues.Add(new KeyValuePair<string, string>(propFullName, propValue));
-                          }
-                      }
-                      catch (Exception)
-                      {
-                          //TODO: !!!!!!!!!!!!!!!!!! FIXME
-                      }
-                  }
-              }
-              catch (Exception)
-              {
-                  //TODO: !!!!!!!!!!!!!!!!!! FIXME
-              }
+                //get the execution fields and their values
+                if (obj != null)
+                {
+                    List<KeyValuePair<string, string>> fieldsAndValues = new List<KeyValuePair<string, string>>();
+                    try
+                    {
+                        PropertyInfo[] props = obj.GetType().GetProperties();
+                        foreach (PropertyInfo prop in props)
+                        {
+                            try
+                            {
+                                FieldParamsFieldType attr = ((FieldParamsFieldType)prop.GetCustomAttribute(typeof(FieldParamsFieldType)));
+                                if (attr == null)
+                                {
+                                    continue;
+                                }
+                                FieldsType ftype = attr.FieldType;
+                                if (ftype == FieldsType.Field)
+                                {
+                                    string propName = prop.Name;
+                                    string propFullName = ((FieldParamsNameCaption)prop.GetCustomAttribute(typeof(FieldParamsNameCaption))).NameCaption;
+                                    string propValue = obj.GetType().GetProperty(propName, BindingFlags.Public | BindingFlags.Instance).GetValue(obj).ToString();
+                                    fieldsAndValues.Add(new KeyValuePair<string, string>(propFullName, propValue));
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                //TODO: !!!!!!!!!!!!!!!!!! FIXME
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        //TODO: !!!!!!!!!!!!!!!!!! FIXME
+                    }
 
-              //add to Console
-              string details = string.Empty;
-              foreach (KeyValuePair<string, string> det in fieldsAndValues)
-                  details += det.Key + "= " + det.Value + System.Environment.NewLine;
-              Reporter.ToLog(eAppReporterLogLevel.INFO, prefix + System.Environment.NewLine + "Details:" + System.Environment.NewLine + details);
-          }
-          else
-          {
-              Reporter.ToLog(eAppReporterLogLevel.INFO, prefix + System.Environment.NewLine);
-          }
-      }
-     */
-}
+                    //add to Console
+                    string details = string.Empty;
+                    foreach (KeyValuePair<string, string> det in fieldsAndValues)
+                        details += det.Key + "= " + det.Value + System.Environment.NewLine;
+                    Reporter.ToLog(eLogLevel.DEBUG, prefix + System.Environment.NewLine + "Details:" + System.Environment.NewLine + details);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, prefix + System.Environment.NewLine);
+                }
+            }
+
+        }
 
 
         public void VariableChanged(VariableBase VB, string OriginalValue)
@@ -968,7 +968,7 @@ namespace Ginger.Run
 
                 if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
                 {
-                 //TODO   AppReporter.ToUser(eUserMsgKeys.ExecutionsResultsProdIsNotOn);
+                 //TODO   AppReporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                     return string.Empty;
                 }
 
@@ -1013,7 +1013,7 @@ namespace Ginger.Run
                 reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), false,null, null,false, currentConf.HTMLReportConfigurationMaximalFolderSize);
                 if (reportsResultFolder == string.Empty)
                 {
-               //TODO     AppReporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to generate the report for the '" + WorkSpace.Businessflow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
+               //TODO     AppReporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + WorkSpace.Businessflow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
                     return;
                 }
                 else
@@ -1042,14 +1042,14 @@ namespace Ginger.Run
             exec_folder = GenerateBusinessflowOfflineExecutionLogger(environment, BusinessFlow, RunsetName);
             if(string.IsNullOrEmpty(exec_folder))
             {
-                Reporter.ToUser(eUserMsgKeys.ExecutionsResultsProdIsNotOn);
+                Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
             }
             reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), false, null, reportsResultFolder,false,currentConf.HTMLReportConfigurationMaximalFolderSize);
 
             if (reportsResultFolder == string.Empty)
             {
-                Reporter.ToUser(eUserMsgKeys.AutomationTabExecResultsNotExists);
+                Reporter.ToUser(eUserMsgKey.AutomationTabExecResultsNotExists);
                 return;
             }
             else

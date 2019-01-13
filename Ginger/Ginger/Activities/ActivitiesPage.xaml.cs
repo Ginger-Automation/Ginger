@@ -330,7 +330,7 @@ namespace Ginger.BusinessFlowFolder
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 

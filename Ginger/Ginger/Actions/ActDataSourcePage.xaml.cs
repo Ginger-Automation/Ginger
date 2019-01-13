@@ -511,7 +511,7 @@ namespace Ginger.Actions
         {
             if (ErrorLabel.Content.ToString() != "")
             {
-                if (Reporter.ToUser(eUserMsgKeys.InvalidValueExpression, "Data Source") == Amdocs.Ginger.Common.MessageBoxResult.No)
+                if (Reporter.ToUser(eUserMsgKey.InvalidValueExpression, "Data Source") == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 {
                     return;
                 }

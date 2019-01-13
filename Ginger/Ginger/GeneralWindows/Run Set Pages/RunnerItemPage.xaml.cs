@@ -365,7 +365,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.ExportedExecDetailsToALMIsInProcess);
+                    Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALMIsInProcess);
                 }
             }
         }

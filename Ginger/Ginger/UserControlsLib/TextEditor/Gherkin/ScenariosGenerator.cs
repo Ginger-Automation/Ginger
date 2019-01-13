@@ -47,7 +47,7 @@ namespace Ginger.GherkinLib
             if (!System.IO.File.Exists(FileName))
             {
                 // General
-                Reporter.ToUser(eUserMsgKeys.GherkinFileNotFound, FileName);
+                Reporter.ToUser(eUserMsgKey.GherkinFileNotFound, FileName);
                 return;
             }
 
@@ -147,7 +147,7 @@ namespace Ginger.GherkinLib
             }
 
             if (!string.IsNullOrEmpty(NotFoundItems))
-                    Reporter.ToUser(eUserMsgKeys.GherkinColumnNotExist, NotFoundItems);
+                    Reporter.ToUser(eUserMsgKey.GherkinColumnNotExist, NotFoundItems);
         }
 
         private void CreateBusinessFlowVar(string varName, string varDescription, string varValue)
@@ -314,7 +314,7 @@ namespace Ginger.GherkinLib
                 {
 
                     //TODO: err activity not found...
-                    Reporter.ToUser(eUserMsgKeys.GherkinActivityNotFound, GN);
+                    Reporter.ToUser(eUserMsgKey.GherkinActivityNotFound, GN);
                 }
             }
             return AG;

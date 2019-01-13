@@ -147,7 +147,7 @@ namespace Ginger.GeneralLib
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Ginger log file was not found.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Ginger log file was not found.");
             }
         }
 
@@ -177,11 +177,11 @@ namespace Ginger.GeneralLib
                 mail.DisplayAsOutlookMail();
 
                 if (mail.Event != null && mail.Event.IndexOf("Failed") >= 0)
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to send the error mail." + System.Environment.NewLine + System.Environment.NewLine + "Details: " + mail.Event);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to send the error mail." + System.Environment.NewLine + System.Environment.NewLine + "Details: " + mail.Event);
             }
             catch(Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to send the error mail." + System.Environment.NewLine + System.Environment.NewLine + "Details: " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to send the error mail." + System.Environment.NewLine + System.Environment.NewLine + "Details: " + ex.Message);
             }
         }
 

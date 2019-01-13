@@ -110,7 +110,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.GetModelItemUsagesFailed, mModelItem.GetNameForFileName(), ex.Message);
+                Reporter.ToUser(eUserMsgKey.GetModelItemUsagesFailed, mModelItem.GetNameForFileName(), ex.Message);
             }
             finally
             {
@@ -139,7 +139,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 
@@ -290,7 +290,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                             catch (Exception ex)
                             {
                                 usage.Status = ModelItemUsage.eStatus.SaveFailed;
-                                Reporter.CloseGingerHelper();
+                                Reporter.HideStatusMessage();
                                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                             }
                         }

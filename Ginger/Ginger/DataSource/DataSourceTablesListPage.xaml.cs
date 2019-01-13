@@ -70,7 +70,7 @@ namespace Ginger.DataSource
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             //validate details
-            if (cmbDataSourceName.Text.Trim() == string.Empty || cmbDataSourceTableName.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKeys.InvalidDataSourceDetails); return; }            
+            if (cmbDataSourceName.Text.Trim() == string.Empty || cmbDataSourceTableName.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.InvalidDataSourceDetails); return; }            
 
             okClicked = true;
             _pageGenericWin.Close();

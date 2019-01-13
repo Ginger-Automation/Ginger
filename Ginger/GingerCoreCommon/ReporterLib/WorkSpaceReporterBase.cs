@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using GingerCoreNET.ReporterLib;
 
 namespace Amdocs.Ginger.Common
 {
@@ -12,9 +11,9 @@ namespace Amdocs.Ginger.Common
     /// </summary>
     public abstract class WorkSpaceReporterBase
     {
-        public abstract void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false);
+        public abstract void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null);
                 
-        public void ConsoleWriteLine(eLogLevel logLevel, string message)
+        public void ToConsole(eLogLevel logLevel, string message)
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("[").Append(logLevel).Append("]").Append(message).Append(Environment.NewLine);
@@ -41,10 +40,8 @@ namespace Amdocs.Ginger.Common
             Console.WriteLine(stringBuilder.ToString());
         }
 
-        public abstract MessageBoxResult MessageBoxShow(string messageText, string caption, MessageBoxButton buttonsType, MessageBoxImage messageImage, MessageBoxResult defualtResualt);
+        public abstract eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt);
 
-        public abstract void ToStatus(eStatusMessageType messageType, string statusText);
-
-        
+        public abstract void ToStatus(eStatusMsgType messageType, string statusText);        
     }
 }

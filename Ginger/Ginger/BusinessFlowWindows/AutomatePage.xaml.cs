@@ -816,26 +816,26 @@ namespace Ginger
             //warn in case dynamic shared repository Activities are included and going to be deleted
             if (App.BusinessFlow.Activities.Where(x => x.AddDynamicly == true).FirstOrDefault() != null)
             {
-                if (Reporter.ToUser(eUserMsgKeys.WarnOnDynamicActivities) == Amdocs.Ginger.Common.MessageBoxResult.No)
+                if (Reporter.ToUser(eUserMsgKey.WarnOnDynamicActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 {
                     return;
                 }
             }
 
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.BusinessFlow.Name,
+            Reporter.ToStatus(eStatusMsgKey.SaveItem, null, App.BusinessFlow.Name,
                                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(App.BusinessFlow);
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
         }
 
         private void UndoBizFlowChangesButton_Click(object sender, RoutedEventArgs e)
         {
-            if (App.BusinessFlow != null && Reporter.ToUser(eUserMsgKeys.AskIfSureWantToUndoChange) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (App.BusinessFlow != null && Reporter.ToUser(eUserMsgKey.AskIfSureWantToUndoChange) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.UndoChanges, null, App.BusinessFlow.Name);
+                Reporter.ToStatus(eStatusMsgKey.UndoChanges, null, App.BusinessFlow.Name);
                 App.BusinessFlow.RestoreFromBackup();
                 App.BusinessFlow.SaveBackup();
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
         }
 
@@ -933,7 +933,7 @@ namespace Ginger
                 {
                     cnt = cnt - optCount;
                 }
-                Reporter.ToUser(eUserMsgKeys.GherkinScenariosGenerated, cnt);
+                Reporter.ToUser(eUserMsgKey.GherkinScenariosGenerated, cnt);
                 Mouse.OverrideCursor = null;
             }
         }
@@ -1047,24 +1047,24 @@ namespace Ginger
             if (Analyz)
             {
                 //Run Analyzer check if not including any High or Critical issues before execution
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.AnalyzerIsAnalyzing, null, App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                 try
                 {
                     AnalyzerPage analyzerPage = new AnalyzerPage();
                     analyzerPage.Init(App.UserProfile.Solution, App.BusinessFlow);
                     await analyzerPage.AnalyzeWithoutUI();
 
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                     if (analyzerPage.TotalHighAndCriticalIssues > 0)
                     {
-                        Reporter.ToUser(eUserMsgKeys.AnalyzerFoundIssues);
+                        Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
                         analyzerPage.ShowAsWindow();
                         return;
                     }
                 }
                 finally
                 {
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                 }
             }
             try
@@ -1175,7 +1175,7 @@ namespace Ginger
 
             if (App.BusinessFlow.CurrentActivity.Acts.Count() == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "No Action to Run.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to Run.");
                 return;
             }
 
@@ -1286,13 +1286,13 @@ namespace Ginger
             AutoLogProxy.UserOperationStart("StartAgent_Click");
 
             string agentsNames = App.AutomateTabGingerRunner.GetAgentsNameToRun();
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgents, null, agentsNames);
+            Reporter.ToStatus(eStatusMsgKey.StartAgents, null, agentsNames);
 
             App.AutomateTabGingerRunner.StopAgents();
             SetAutomateTabRunnerForExecution();
             App.AutomateTabGingerRunner.StartAgents();
 
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
             AutoLogProxy.UserOperationEnd();
         }
 
@@ -1327,7 +1327,7 @@ namespace Ginger
             ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
-                Reporter.ToUser(eUserMsgKeys.ExecutionsResultsProdIsNotOn);
+                Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
             }
             HTMLReportsConfiguration currentConf = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
@@ -1338,7 +1338,7 @@ namespace Ginger
 
             if (reportsResultFolder == string.Empty)
             {
-                Reporter.ToUser(eUserMsgKeys.AutomationTabExecResultsNotExists);                
+                Reporter.ToUser(eUserMsgKey.AutomationTabExecResultsNotExists);                
             }
             else
             {
@@ -1359,7 +1359,7 @@ namespace Ginger
             ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
-                Reporter.ToUser(eUserMsgKeys.ExecutionsResultsProdIsNotOn);
+                Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
             }
             HTMLReportsConfiguration currentConf = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
@@ -1383,7 +1383,7 @@ namespace Ginger
                     string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), true, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
                     if (reportsResultFolder == string.Empty)
                     {
-                        Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to generate the report for the '" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
                         return;
                     }
                     else
@@ -1402,12 +1402,12 @@ namespace Ginger
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full business flow report", ex);
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to generate the report for the '" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
                 }
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to generate the report for the '" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
             }
         }
 
@@ -1415,11 +1415,11 @@ namespace Ginger
         {
             if (ALMIntegration.Instance.ExportBusinessFlowToALM(App.BusinessFlow))
             {
-                if (Reporter.ToUser(eUserMsgKeys.AskIfToSaveBFAfterExport, App.BusinessFlow.Name) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.AskIfToSaveBFAfterExport, App.BusinessFlow.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(App.BusinessFlow);
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                 }
             }
         }

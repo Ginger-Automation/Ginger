@@ -105,7 +105,7 @@ namespace Ginger.BusinessFlowWindows
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.BusinessFlowNeedTargetApplication);
+                Reporter.ToUser(eUserMsgKey.BusinessFlowNeedTargetApplication);
             }
         }
 
