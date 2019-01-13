@@ -29,6 +29,7 @@ using GingerCore.Drivers;
 using GingerCore.Drivers.ASCF;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Actions.Locators.ASCF
 {
@@ -116,6 +117,11 @@ namespace Ginger.Actions.Locators.ASCF
             {
                 return null;
             }
+        }
+
+        public ObservableList<ActInputValue> GetItemSpecificActionInputValues()
+        {
+            return null;
         }
     }
 }

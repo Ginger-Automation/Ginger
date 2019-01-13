@@ -2246,19 +2246,65 @@ namespace GingerCore.Drivers
                 switch (act.GenElementAction)
                 {
                     case ActGenElement.eGenElementAction.XYClick:
-                        OpenQA.Selenium.Interactions.Actions actionClick = new OpenQA.Selenium.Interactions.Actions(Driver);
-                        actionClick.MoveToElement(e, x, y).Click().Build().Perform();
+                        ClickXY(e, x, y);
                         break;
                     case ActGenElement.eGenElementAction.XYSendKeys:
-                        OpenQA.Selenium.Interactions.Actions actionSetValue = new OpenQA.Selenium.Interactions.Actions(Driver);
-                        actionSetValue.MoveToElement(e, x, y).SendKeys(GetKeyName(act.GetInputParamCalculatedValue("Value"))).Build().Perform();
+                        SendKeysXY(e, x, y, GetKeyName(act.GetInputParamCalculatedValue("Value")));
                         break;
                     case ActGenElement.eGenElementAction.XYDoubleClick:
-                        OpenQA.Selenium.Interactions.Actions actionDoubleClick = new OpenQA.Selenium.Interactions.Actions(Driver);
-                        actionDoubleClick.MoveToElement(e, x, y).DoubleClick().Build().Perform();
+                        DoubleClickXY(e, x, y);
+                        break;                  
+                }
+            }
+        }
+
+        private void MoveToElementActions(ActUIElement act)
+        {
+            IWebElement e = LocateElement(act, true);
+            int x = 0;
+            int y = 0;
+            if (!Int32.TryParse(act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver, out x) || !Int32.TryParse(act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver, out y))
+            {
+                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                act.ExInfo = "Cannot Click by XY with String Value, X Value: " + act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver + ", Y Value: " + act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver + "  ";
+            }
+            if (e == null)
+            {
+                act.ExInfo += "Element not found - " + act.LocateBy + " " + act.LocateValue;
+                act.AddOrUpdateReturnParamActual("Actual", "False");
+                return;
+            }
+            else
+            {
+                switch (act.ElementAction)
+                {
+                    case ActUIElement.eElementAction.ClickXY:
+                        ClickXY(e, x, y);
+                        break;
+                    case ActUIElement.eElementAction.SendKeysXY:
+                        SendKeysXY(e, x, y, GetKeyName(act.GetInputParamCalculatedValue("Value")));
+                        break;
+                    case ActUIElement.eElementAction.DoubleClickXY:
+                        DoubleClickXY(e, x, y);
                         break;
                 }
             }
+        }
+
+        private void ClickXY(IWebElement iwe, int x, int y)
+        {
+            OpenQA.Selenium.Interactions.Actions actionClick = new OpenQA.Selenium.Interactions.Actions(Driver);
+            actionClick.MoveToElement(iwe, x, y).Click().Build().Perform();
+        }
+        private void SendKeysXY(IWebElement iwe, int x, int y, string Value)
+        {
+            OpenQA.Selenium.Interactions.Actions actionSetValue = new OpenQA.Selenium.Interactions.Actions(Driver);
+            actionSetValue.MoveToElement(iwe, x, y).SendKeys(Value).Build().Perform();
+        }
+        private void DoubleClickXY(IWebElement iwe, int x, int y)
+        {
+            OpenQA.Selenium.Interactions.Actions actionDoubleClick = new OpenQA.Selenium.Interactions.Actions(Driver);
+            actionDoubleClick.MoveToElement(iwe, x, y).DoubleClick().Build().Perform();
         }
 
         private void ActCheckboxHandler(ActCheckbox actCheckbox)
@@ -5903,18 +5949,15 @@ namespace GingerCore.Drivers
                         }
                         break;
 
-                    case ActUIElement.eElementAction.ClickXY:
-                        int x = 0;
-                        int y = 0;
-                        if (!Int32.TryParse(act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver, out x) || !Int32.TryParse(act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver, out y))
-                        {
-                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                            act.ExInfo = "Cannot Click by XY with String Value, X Value: " + act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver + ", Y Value: " + act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver + "  ";
-                        }
-                        OpenQA.Selenium.Interactions.Actions actionClick = new OpenQA.Selenium.Interactions.Actions(Driver);
-                        actionClick.MoveToElement(e, x, y).Click().Build().Perform();
+                    case ActUIElement.eElementAction.ClickXY:                       
+                        MoveToElementActions(act);
                         break;
-
+                    case ActUIElement.eElementAction.DoubleClickXY:                      
+                        MoveToElementActions(act);
+                        break;
+                    case ActUIElement.eElementAction.SendKeysXY:
+                        MoveToElementActions(act);
+                        break;
                     case ActUIElement.eElementAction.IsEnabled:
                         act.AddOrUpdateReturnParamActual("Enabled", e.Enabled.ToString());
                         break;

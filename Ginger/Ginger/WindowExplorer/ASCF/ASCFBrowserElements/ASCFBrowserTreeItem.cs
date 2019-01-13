@@ -31,6 +31,7 @@ using GingerCore.Drivers.ASCF;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Actions.Locators.ASCF
 {
@@ -144,6 +145,11 @@ namespace Ginger.Actions.Locators.ASCF
             //TODO: temp solution fix me hard coded [0[]
                 ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
                 return list;
+        }
+
+        public ObservableList<ActInputValue> GetItemSpecificActionInputValues()
+        {
+            return null;
         }
     }
 }
