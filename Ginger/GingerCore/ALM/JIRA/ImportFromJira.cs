@@ -45,24 +45,33 @@ namespace GingerCore.ALM.JIRA
     {
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
-        internal static ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online)
+        internal static ObservableList<ExternalItemFieldBase> GetALMItemFields(ResourceType resourceType, BackgroundWorker bw, bool online)
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
             try
             {
                 JiraRepository.JiraRepository jiraRep = new JiraRepository.JiraRepository();
                 LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
-                AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList;
-                AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testSetFieldsList;
-                AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testExecutionFieldsList;
+                if (resourceType == ResourceType.DEFECT)
+                {
+                    AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testDefectFieldsList;
+                    testDefectFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMDomain, ALM_Common.DataContracts.ResourceType.DEFECT);
+                    fields.Append(SetALMItemsFields(testDefectFieldsList, ResourceType.DEFECT));
+                }
+                else
+                {
+                    AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList;
+                    AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testSetFieldsList;
+                    AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testExecutionFieldsList;
 
-                testSetFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMDomain, ALM_Common.DataContracts.ResourceType.TEST_SET);
-                testCaseFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMDomain, ALM_Common.DataContracts.ResourceType.TEST_CASE);
-                testExecutionFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMDomain, ALM_Common.DataContracts.ResourceType.TEST_CASE_EXECUTION_RECORDS);
-                
-                fields.Append(SetALMItemsFields(testSetFieldsList, ResourceType.TEST_SET));
-                fields.Append(SetALMItemsFields(testCaseFieldsList, ResourceType.TEST_CASE));
-                fields.Append(SetALMItemsFields(testExecutionFieldsList, ResourceType.TEST_CASE_EXECUTION_RECORDS));
+                    testSetFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMDomain, ALM_Common.DataContracts.ResourceType.TEST_SET);
+                    testCaseFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMDomain, ALM_Common.DataContracts.ResourceType.TEST_CASE);
+                    testExecutionFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMDomain, ALM_Common.DataContracts.ResourceType.TEST_CASE_EXECUTION_RECORDS);
+
+                    fields.Append(SetALMItemsFields(testSetFieldsList, ResourceType.TEST_SET));
+                    fields.Append(SetALMItemsFields(testCaseFieldsList, ResourceType.TEST_CASE));
+                    fields.Append(SetALMItemsFields(testExecutionFieldsList, ResourceType.TEST_CASE_EXECUTION_RECORDS));
+                }
             }
             catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
 
@@ -159,6 +168,7 @@ namespace GingerCore.ALM.JIRA
                         {
                             tcActivsGroup.ExternalID = tc.TestKey;
                             tcActivsGroup.ExternalID2 = tc.Labels;
+                            tcActivsGroup.Description = tc.Description;
                         }
                         else
                         {
