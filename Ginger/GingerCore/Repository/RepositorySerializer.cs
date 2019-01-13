@@ -679,20 +679,17 @@ namespace GingerCore.Repository
                         PropertyInfo propertyInfo = obj.GetType().GetProperty(xdr.Name);
                         if (propertyInfo == null)
                         {
-                            if (obj.GetType().Assembly == typeof(RepositoryItemBase).Assembly)
-                            {
-                                if (xdr.Name == "Version" || xdr.Name == "Created" || xdr.Name == "CreatedBy" || xdr.Name == "LastUpdate" || xdr.Name == "LastUpdateBy")
-                                {
-                                }
-                                else
-                                {
-                                    Reporter.ToLog(eLogLevel.DEBUG, "Property not Found: " + xdr.Name);
-                                }
-                            }
-                            else
+                            //if (obj.GetType().Assembly == typeof(RepositoryItemBase).Assembly)
+                            //{
+                            if (xdr.Name != "Created" && xdr.Name != "CreatedBy" && xdr.Name != "LastUpdate" && xdr.Name != "LastUpdateBy" && xdr.Name != "Version" && xdr.Name != "ExternalID")
                             {
                                 Reporter.ToLog(eLogLevel.DEBUG, "Property not Found: " + xdr.Name);
                             }
+                            //}
+                            //else
+                            //{
+                            //    Reporter.ToLog(eLogLevel.DEBUG, "Property not Found: " + xdr.Name);
+                            //}
 
                             xdr.MoveToNextAttribute();
                             continue;

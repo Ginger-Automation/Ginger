@@ -74,8 +74,25 @@ namespace Ginger.ReporterLib
                     xMessageImage.ImageForeground = Brushes.DarkBlue;
                     break;
             }
-
         }
+
+        //private LinearGradientBrush GetGradientBrush(Color color1, Color color2)
+        //{
+        //    LinearGradientBrush gradientBrush = new LinearGradientBrush();
+        //    gradientBrush.StartPoint = new Point(0, 0);
+        //    gradientBrush.EndPoint = new Point(0.99, 1);
+        //    gradientBrush.SpreadMethod = GradientSpreadMethod.Pad;
+        //    gradientBrush.ColorInterpolationMode = ColorInterpolationMode.ScRgbLinearInterpolation;
+        //    GradientStop gradientStop1 = new GradientStop();
+        //    gradientStop1.Color = color1;
+        //    gradientStop1.Offset = 0;
+        //    gradientBrush.GradientStops.Add(gradientStop1);
+        //    GradientStop gradientStop2 = new GradientStop();
+        //    gradientStop2.Color = color2;
+        //    gradientStop2.Offset = 1;
+        //    gradientBrush.GradientStops.Add(gradientStop2);
+        //    return gradientBrush;
+        //}
               
         private void xOKButton_Click(object sender, RoutedEventArgs e)
         {

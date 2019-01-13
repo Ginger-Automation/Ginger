@@ -85,7 +85,7 @@ namespace Ginger.GeneralLib
                 {
                     mTextBlockHelper.AddFormattedText(log, Brushes.Blue);
                 }
-                else if (log.Contains("| DEBUG  |"))
+                else if (log.Contains("| DEBUG |"))
                 {
                     mTextBlockHelper.AddFormattedText(log, Brushes.Purple);
                 }

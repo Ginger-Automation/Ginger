@@ -963,11 +963,7 @@ namespace Amdocs.Ginger.Repository
                         PropertyInfo propertyInfo = obj.GetType().GetProperty(xdr.Name);
                         if (propertyInfo == null)
                         {
-                            if (xdr.Name == "Created" || xdr.Name == "CreatedBy" || xdr.Name == "LastUpdate" || xdr.Name == "LastUpdateBy" || xdr.Name == "Version" || xdr.Name == "ExternalID")
-                            {
-                                // Ignore common attr on RI which were removed in GingerCoreNET
-                            }
-                            else
+                            if (xdr.Name != "Created" && xdr.Name != "CreatedBy" && xdr.Name != "LastUpdate" && xdr.Name != "LastUpdateBy" && xdr.Name != "Version" && xdr.Name != "ExternalID")
                             {
                                 Reporter.ToLog(eLogLevel.DEBUG, "Property not Found: " + xdr.Name);
                             }
