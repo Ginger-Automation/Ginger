@@ -953,14 +953,14 @@ namespace Ginger.Run
                         {
                             Parallel.ForEach(mRunSetConfig.GingerRunners, Runner =>
                             {
-                                //Parallel.ForEach((BusinessFlow)Runner.BusinessFlows, businessFlow =>
-                                //{
-                                //    BusinessFlow originalBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == businessFlow.Guid).FirstOrDefault();
-                                //    if (originalBF != null && System.IO.Path.GetFullPath(originalBF.FileName) == System.IO.Path.GetFullPath(e.FullPath))
-                                //    {
-                                //        mRunSetBusinessFlowWasChanged = true;
-                                //    }
-                                //});
+                                Parallel.ForEach(Runner.BusinessFlows, businessFlow =>
+                                {
+                                    BusinessFlow originalBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == businessFlow.Guid).FirstOrDefault();
+                                    if (originalBF != null && System.IO.Path.GetFullPath(originalBF.FileName) == System.IO.Path.GetFullPath(e.FullPath))
+                                    {
+                                        mRunSetBusinessFlowWasChanged = true;
+                                    }
+                                });
                             });
                         }
                     });
