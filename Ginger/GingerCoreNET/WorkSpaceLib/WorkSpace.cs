@@ -18,8 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
@@ -54,7 +53,7 @@ namespace amdocs.ginger.GingerCoreNET
         public SourceControlBase SourceControl;
         public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
         public static string AppVersion="0.0.0.0.0";
-        //public static IGingerRunner AutomateTabGingerRunner = new IGingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
+        //public static GingerRunner AutomateTabGingerRunner = new GingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
         public  ISolution mSolution { get; set; }
         public  ISolution Solution
         {
@@ -67,7 +66,7 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public static eRunStatus RunSetExecutionStatus = eRunStatus.Failed;
-
+        
         public static string TempFolder
         {
             get
@@ -161,7 +160,9 @@ namespace amdocs.ginger.GingerCoreNET
             {
                 if (mLocalGingerGrid == null)
                 {
-                    mLocalGingerGrid = new GingerGrid(15001);   // TODO: config per user profile as many users can use the same machine
+                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    int freePort = SocketHelper.GetOpenPort();
+                    mLocalGingerGrid = new GingerGrid(freePort);   // TODO: config per user profile as many users can use the same machine
                     mLocalGingerGrid.Start();
                 }
                 return mLocalGingerGrid;
@@ -245,18 +246,7 @@ namespace amdocs.ginger.GingerCoreNET
             //}
         }
 
-        //private void CheckAssignAgent(ApplicationAgent aA)
-        //{
-        //    if (aA.Agent == null)
-        //    {
-        //        //TODO: FIXME - temp we get the first agent from solution !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //        aA.Agent = SolutionRepository.GetAllRepositoryItems<NewAgent>()[0];
-        //    }
-        //}
-
-        //public void SetAppAgents()
-        //{
-        //}
+        
 
         public void LoadUserProfile()
         {

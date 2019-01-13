@@ -713,7 +713,6 @@ namespace Amdocs.Ginger.Repository
                 //delete the folder from folders cache  
                 if (mSubFoldersCache != null)
                 {
-                    //GetSubFolders().Remove(subfolder);
                     mSubFoldersCache.Remove(subfolder);
                 }
 

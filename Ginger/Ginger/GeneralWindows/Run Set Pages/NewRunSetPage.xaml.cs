@@ -667,10 +667,13 @@ namespace Ginger.Run
                 GRP.xRunnerNameTxtBlock.Foreground = FindResource("$SelectionColor_Pink") as Brush;
             }                
             mCurrentSelectedRunner = GRP;
-            mCurrentSelectedRunner.RunnerPageEvent -= RunnerPageEvent;
-            mCurrentSelectedRunner.RunnerPageEvent += RunnerPageEvent;
+            //!!!!!!!!!!!!!!!!!!!!
+            //mCurrentSelectedRunner.RunnerPageEvent -= RunnerPageEvent;
+            //mCurrentSelectedRunner.RunnerPageEvent += RunnerPageEvent;
             UpdateRunnerTime();
-            mCurrentSelectedRunner.Runner.GingerRunnerEvent += Runner_GingerRunnerEvent;
+
+            // mCurrentSelectedRunner.Runner.GingerRunnerEvent += Runner_GingerRunnerEvent;
+
             //set it as flow diagram current item
             List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
             foreach (FlowElement f in fe)
@@ -687,6 +690,7 @@ namespace Ginger.Run
             InitRunnerExecutionDebugSection();
         }
 
+        // !!!!!!!!!!!! zzz
         private void Runner_GingerRunnerEvent(GingerRunnerEventArgs EventArgs)
         {
             switch (EventArgs.EventType)
@@ -879,8 +883,10 @@ namespace Ginger.Run
 
                     GR.PropertyChanged -= Runner_PropertyChanged;
                     GR.PropertyChanged += Runner_PropertyChanged;
-                    runnerPage.RunnerPageEvent -= RunnerPageEvent;
-                    runnerPage.RunnerPageEvent += RunnerPageEvent;
+
+                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    //runnerPage.RunnerPageEvent -= RunnerPageEvent;
+                    //runnerPage.RunnerPageEvent += RunnerPageEvent;
                 });
             }
 
@@ -947,14 +953,14 @@ namespace Ginger.Run
                         {
                             Parallel.ForEach(mRunSetConfig.GingerRunners, Runner =>
                             {
-                                //Parallel.ForEach((BusinessFlow)Runner.BusinessFlows, businessFlow =>
-                                //{
-                                //    BusinessFlow originalBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == businessFlow.Guid).FirstOrDefault();
-                                //    if (originalBF != null && System.IO.Path.GetFullPath(originalBF.FileName) == System.IO.Path.GetFullPath(e.FullPath))
-                                //    {
-                                //        mRunSetBusinessFlowWasChanged = true;
-                                //    }
-                                //});
+                                Parallel.ForEach(Runner.BusinessFlows, businessFlow =>
+                                {
+                                    BusinessFlow originalBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == businessFlow.Guid).FirstOrDefault();
+                                    if (originalBF != null && System.IO.Path.GetFullPath(originalBF.FileName) == System.IO.Path.GetFullPath(e.FullPath))
+                                    {
+                                        mRunSetBusinessFlowWasChanged = true;
+                                    }
+                                });
                             });
                         }
                     });
