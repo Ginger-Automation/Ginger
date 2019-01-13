@@ -82,7 +82,7 @@ namespace Ginger.Run
         }
 
         
-        public ObservableList<IGingerRunner> Runners
+        public ObservableList<GingerRunner> Runners
         {
             get
             {
@@ -108,7 +108,7 @@ namespace Ginger.Run
 
         public void ConfigureAllRunnersForExecution()
         {
-            foreach (IGingerRunner runner in Runners)
+            foreach (GingerRunner runner in Runners)
                 ConfigureRunnerForExecution(runner);
         }
 
@@ -118,7 +118,7 @@ namespace Ginger.Run
             set { mDefectSuggestionsList = value; }
         }
 
-        public void ConfigureRunnerForExecution(IGingerRunner runner)
+        public void ConfigureRunnerForExecution(GingerRunner runner)
         {
 
 
@@ -132,7 +132,7 @@ namespace Ginger.Run
             runner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
         }
 
-        public void InitRunner(IGingerRunner runner)
+        public void InitRunner(GingerRunner runner)
         {
             //Configure Runner for execution
             runner.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
@@ -204,7 +204,7 @@ namespace Ginger.Run
         public ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false)
         {
             ObservableList<BusinessFlowExecutionSummary> BFESs = new ObservableList<BusinessFlowExecutionSummary>();
-            foreach (IGingerRunner ARC in Runners)
+            foreach (GingerRunner ARC in Runners)
             {
                 BFESs.Append(ARC.GetAllBusinessFlowsExecutionSummary(GetSummaryOnlyForExecutedFlow, ARC.Name));
             }
@@ -213,7 +213,7 @@ namespace Ginger.Run
 
         internal void CloseAllEnvironments()
         {
-            foreach (IGingerRunner gr in Runners)
+            foreach (GingerRunner gr in Runners)
             {
                 if (gr.UseSpecificEnvironment)
                 {
@@ -228,7 +228,7 @@ namespace Ginger.Run
 
         public void SetRunnersEnv(ProjEnvironment defualtEnv, ObservableList<ProjEnvironment> allEnvs)
         {
-            foreach (IGingerRunner GR in Runners)
+            foreach (GingerRunner GR in Runners)
             {
                 GR.SetExecutionEnvironment(defualtEnv, allEnvs);
             }
@@ -314,7 +314,7 @@ namespace Ginger.Run
             if (RunSetConfig.RunModeParallel)
             {
                 //running parallel 
-                foreach (IGingerRunner GR in Runners)
+                foreach (GingerRunner GR in Runners)
                 {
                     if (mStopRun) return;
 
@@ -341,7 +341,7 @@ namespace Ginger.Run
                 //running sequentially 
                 Task t = new Task(() =>
                 {
-                    foreach (IGingerRunner GR in Runners)
+                    foreach (GingerRunner GR in Runners)
                     {
                         if (mStopRun) return;
 
@@ -417,7 +417,7 @@ namespace Ginger.Run
 
         public void ResetRunnersExecutionDetails()
         {
-            foreach (IGingerRunner runner in Runners)
+            foreach (GingerRunner runner in Runners)
             {
                 runner.ResetRunnerExecutionDetails();                
                 runner.CloseAgents();
@@ -427,7 +427,7 @@ namespace Ginger.Run
         public void StopRun()
         {
             mStopRun = true;
-            foreach (IGingerRunner runner in Runners)
+            foreach (GingerRunner runner in Runners)
             {
                 if (runner.IsRunning)
                     runner.StopRun();

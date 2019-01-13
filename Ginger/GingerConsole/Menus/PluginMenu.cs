@@ -157,7 +157,12 @@ namespace Amdocs.Ginger.GingerConsole
             GingerNodeStarter gingerNodeStarter = new GingerNodeStarter();
             Console.WriteLine("Node name?");
             string nodeName = Console.ReadLine();
-            gingerNodeStarter.StartNode(nodeName, service);
+            Console.WriteLine("IP Address?");
+            string ipAddr = Console.ReadLine();
+            Console.WriteLine("Port Number?");
+            string portNumber = Console.ReadLine();
+
+            gingerNodeStarter.StartNode(nodeName, service, ipAddr, System.Convert.ToInt32(portNumber));
         }
 
         PluginPackage p;

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCoreNET.SourceControl;
 using SharpSvn;
@@ -147,7 +148,7 @@ namespace GingerCore.SourceControl
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path, ref string error, List<string> PathsToIgnore = null, bool includLockedFiles = false)
+        public override ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path, ref string error, bool includLockedFiles = false)
         {
             if (client == null) Init();
             ObservableList<SourceControlFileInfo> files = new ObservableList<SourceControlFileInfo>();
@@ -159,16 +160,9 @@ namespace GingerCore.SourceControl
 
                 foreach (SvnStatusEventArgs arg in statuses)
                 {
-                    if (PathsToIgnore != null)
+                    if (WorkSpace.Instance.SolutionRepository.IsRepositoryItemToAvoid(arg.FullPath))
                     {
-                        bool pathToIgnoreFound = false;
-                        foreach (string pathToIgnore in PathsToIgnore)
-                            if (System.IO.Path.GetFullPath(arg.FullPath).Contains(System.IO.Path.GetFullPath(pathToIgnore)) || arg.FullPath.Contains(pathToIgnore))
-                            {
-                                pathToIgnoreFound = true;
-                                break;
-                            }
-                        if (pathToIgnoreFound) continue;
+                        continue;
                     }
 
                     if (System.IO.Path.GetExtension(arg.FullPath) == ".ldb" || System.IO.Path.GetExtension(arg.FullPath) == ".ignore")

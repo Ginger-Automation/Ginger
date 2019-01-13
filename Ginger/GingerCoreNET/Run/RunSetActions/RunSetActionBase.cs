@@ -27,7 +27,7 @@ namespace Ginger.Run.RunSetActions
 
         public abstract bool SupportRunOnConfig { get; }
 
-        public abstract void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers);
+        public abstract void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers);
 
         public enum eRunSetActionStatus
         {

@@ -40,6 +40,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.Environments;
 using Amdocs.Ginger.CoreNET.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 
 namespace Ginger.Run
 {
@@ -48,17 +49,8 @@ namespace Ginger.Run
     /// </summary>
     public partial class RunnerPage : Page
     {
-        public event RunnerPageEventHandler RunnerPageEvent;
-        public delegate void RunnerPageEventHandler(RunnerPageEventArgs EventArgs);
-
-        public void OnGingerRunnerEvent(RunnerPageEventArgs.eEventType EvType, Object obj)
-        {
-            RunnerPageEventHandler handler = RunnerPageEvent;
-            if (handler != null)
-            {
-                handler(new RunnerPageEventArgs(EvType, obj));
-            }
-        }
+        RunnerPageListener mRunnerPageListener; 
+      
         public TextBlock bfStat()
         {            
             return xBusinessflowsStatistics;                                       
@@ -159,25 +151,13 @@ namespace Ginger.Run
             // mRunner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick += dispatcherTimerElapsedTick;
             UpdateExecutionStats();
 
-            mRunner.GingerRunnerEvent += MRunner_GingerRunnerEvent;
+            mRunnerPageListener = new RunnerPageListener();
+            mRunnerPageListener.UpdateStat = HandleUpdateStat;
         }
 
-        private void MRunner_GingerRunnerEvent(GingerRunnerEventArgs EventArgs)
+        private void HandleUpdateStat(object sender, EventArgs e)
         {
-            switch(EventArgs.EventType)
-            {
-                case GingerRunnerEventArgs.eEventType.RunnerRunStart:
-                case GingerRunnerEventArgs.eEventType.RunnerRunEnd:
-                case GingerRunnerEventArgs.eEventType.BusinessFlowStart:
-                case GingerRunnerEventArgs.eEventType.BusinessFlowEnd:
-                case GingerRunnerEventArgs.eEventType.ActivityStart:
-                case GingerRunnerEventArgs.eEventType.ActivityEnd:
-                case GingerRunnerEventArgs.eEventType.ActionStart:
-                case GingerRunnerEventArgs.eEventType.ActionEnd:                               
-                case GingerRunnerEventArgs.eEventType.DynamicActivityWasAddedToBusinessflow:
-                    UpdateExecutionStats();
-                    break;                
-            }
+            UpdateExecutionStats();
         }
 
         private RunnerItemPage CreateBusinessFlowRunnerItem(BusinessFlow bf, bool ViewMode=false)
@@ -692,12 +672,14 @@ namespace Ginger.Run
         private void xremoveRunner_Click(object sender, RoutedEventArgs e)
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
-            OnGingerRunnerEvent(RunnerPageEventArgs.eEventType.RemoveRunner, Runner);
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //OnGingerRunnerEvent(RunnerPageEventArgs.eEventType.RemoveRunner, Runner);
         }
 
         private void xDuplicateRunner_Click(object sender, RoutedEventArgs e)
         {
-            OnGingerRunnerEvent(RunnerPageEventArgs.eEventType.DuplicateRunner, Runner);
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //OnGingerRunnerEvent(RunnerPageEventArgs.eEventType.DuplicateRunner, Runner);
         }
 
         private void xResetRunSetStatus_Click(object sender, RoutedEventArgs e)
@@ -710,7 +692,8 @@ namespace Ginger.Run
             xruntime.Content = "00:00:00";
             Runner.RunnerExecutionWatch.runWatch.Reset();
 
-            OnGingerRunnerEvent(RunnerPageEventArgs.eEventType.ResetRunnerStatus, Runner);
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // OnGingerRunnerEvent(RunnerPageEventArgs.eEventType.ResetRunnerStatus, Runner);
         }
     }
     public class RunnerPageEventArgs
@@ -725,7 +708,7 @@ namespace Ginger.Run
         public eEventType EventType;
         public Object Object;
 
-
+        //!!!!!!!!!!!!!!!!!!
         //TODO: create event per type!????????????? so can listent to specific events
         public RunnerPageEventArgs(eEventType EventType, object Object)
         {

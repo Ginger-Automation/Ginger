@@ -483,9 +483,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
+            ElementInfo CurrentEI = (ElementInfo)MainElementsGrid.CurrentItem;
+
             if (mSelectedLocator != null)
             {
-                mWinExplorer.TestElementLocators(new ElementInfo() { Locators = new ObservableList<ElementLocator>() { mSelectedLocator } });
+                mWinExplorer.TestElementLocators(new ElementInfo() { Path = CurrentEI.Path, Locators = new ObservableList<ElementLocator>() { mSelectedLocator } });
             }
         }
 

@@ -91,7 +91,7 @@ namespace Ginger.Run.RunSetActions
                     {
                         ObservableList<BusinessFlow> BFs = new ObservableList<BusinessFlow>();
 
-                        foreach (IGingerRunner GR in WorkSpace.RunsetExecutor.Runners)
+                        foreach (GingerRunner GR in WorkSpace.RunsetExecutor.Runners)
                         {
                             foreach (BusinessFlow bf in GR.BusinessFlows)
                             {
@@ -99,6 +99,7 @@ namespace Ginger.Run.RunSetActions
                                 {
                                     if (bf.RunStatus.ToString() == nameof(eRunStatus.Passed) || bf.RunStatus.ToString() == nameof(eRunStatus.Failed) || bf.RunStatus.ToString() == nameof(eRunStatus.Stopped))
                                     {
+                                        // !!!!!!!!!!!!!!!!!!!
                                         ReportInfo BFRI = new ReportInfo(Helper.RuntimeObjectFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment, bf);
 
                                         string TempRepFileName = RepositoryItemHelper.RepositoryItemFactory.GenerateTemplate(TemplateName, BFRI);
@@ -170,7 +171,7 @@ namespace Ginger.Run.RunSetActions
         }
 
 
-        public override void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
         {
             throw new NotImplementedException();
         }

@@ -392,7 +392,7 @@ namespace Ginger.ALM.Repository
 
         public override eUserMsgKey GetDownloadPossibleValuesMessage()
         {
-            throw new NotImplementedException();
+            return eUserMsgKeys.AskIfToDownloadPossibleValuesShortProcesss;
         }
 
         public override bool LoadALMConfigurations()

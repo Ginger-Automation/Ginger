@@ -25,6 +25,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Run;
 using Ginger.BusinessFlowWindows;
 using Ginger.ReporterLib;
 using Ginger.Reports;
@@ -398,7 +399,7 @@ namespace Ginger
 
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
 
-            Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
+            // Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
 
             AutomateTabGingerRunner = new GingerRunner(eExecutedFrom.Automation);
 
@@ -471,8 +472,6 @@ namespace Ginger
             App.AppSplashWindow = null;
 
             AutoLogProxy.LogAppOpened();
-
-            AutomateTabGingerRunner.GiveUserFeedback = true;
 
             if ((App.UserProfile.Solution != null) && (App.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null))
             {
@@ -802,6 +801,8 @@ namespace Ginger
                         WorkSpace.Instance.SolutionRepository = CreateGingerSolutionRepository();
                         WorkSpace.Instance.SolutionRepository.Open(SolutionFolder);
 
+                        WorkSpace.Instance.PlugInsManager.SolutionChanged(WorkSpace.Instance.SolutionRepository);
+
                         HandleSolutionLoadSourceControl(sol);
                         HandleAutomateRunner(sol);
 
@@ -812,7 +813,7 @@ namespace Ginger
                         App.UserProfile.Solution.SetReportsConfigurations();
                         App.UserProfile.LoadRecentAppAgentMapping();
                         AutoLogProxy.SetAccount(sol.Account);
-
+                       
                         SetDefaultBusinessFlow();
 
                         if (!App.RunningFromConfigFile)

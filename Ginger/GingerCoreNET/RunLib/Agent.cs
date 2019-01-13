@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.DataSource;
@@ -40,12 +41,7 @@ using System.Threading.Tasks;
 
 namespace GingerCore
 {
-    //   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //
-    //   >>>>DO NOT put any reference to App.*  - Agent should not refer any UI element or App as we can have several agent running in paralel
-    //
-    //   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+   
     public class Agent : RepositoryItemBase, IAgent
     {
         
@@ -519,7 +515,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                act.Status = eRunStatus.Failed;
                 act.Error += ex.Message;                
             }
         }

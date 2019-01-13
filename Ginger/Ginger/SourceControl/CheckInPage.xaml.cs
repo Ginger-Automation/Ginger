@@ -102,20 +102,9 @@ namespace Ginger.SourceControl
                
                 await Task.Run(() =>
                 {
-                    
-                //set paths to ignore:
-                List<string> pathsToIgnore = new List<string>();
-                    pathsToIgnore.Add("PrevVersions");
-                    pathsToIgnore.Add("RecentlyUsed.dat");
-                    pathsToIgnore.Add("AutoSave");
-                    pathsToIgnore.Add("Recover");
-                    if (App.UserProfile.Solution != null && App.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null && App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
-                        pathsToIgnore.Add(Ginger.Run.ExecutionLogger.GetLoggerDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder));
-                HTMLReportsConfiguration reportConfig = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-                    if (reportConfig != null)
-                        pathsToIgnore.Add(Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(reportConfig.HTMLReportsFolder));
-
-                    mFiles = SourceControlIntegration.GetPathFilesStatus(App.UserProfile.Solution.SourceControl, mPath, pathsToIgnore);
+                   
+              
+                    mFiles = SourceControlIntegration.GetPathFilesStatus(App.UserProfile.Solution.SourceControl, mPath);
                 //set items name and type
                 Parallel.ForEach(mFiles, SCFI =>
                      {

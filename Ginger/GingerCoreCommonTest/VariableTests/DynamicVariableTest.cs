@@ -128,7 +128,7 @@ namespace GingerCoreCommonTest.VariableTests
             int num1 = Convert.ToInt32(variableDynamic.Value);
 
             //Assert            
-            Assert.IsTrue(num1 >= 0 && num1 <= 9999999999999, "num1 >= 0 && num1 <= 9999999999999");
+            Assert.IsTrue(num1 >= 0 && num1 <= int.MaxValue, "num1 >= 0 && num1 <= int.max");
         }
 
     }

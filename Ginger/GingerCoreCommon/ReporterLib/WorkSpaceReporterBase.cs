@@ -17,6 +17,26 @@ namespace Amdocs.Ginger.Common
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("[").Append(logLevel).Append("]").Append(message).Append(Environment.NewLine);
+
+            switch (logLevel)
+            {
+                case eLogLevel.ERROR:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+                case eLogLevel.FATAL:
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    break;
+                case eLogLevel.DEBUG:
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    break;
+                case eLogLevel.INFO:
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    break;
+                case eLogLevel.WARN:
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    break;
+               
+            }
             Console.WriteLine(stringBuilder.ToString());
         }
 
