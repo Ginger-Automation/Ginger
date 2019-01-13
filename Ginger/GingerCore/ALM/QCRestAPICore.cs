@@ -108,8 +108,6 @@ namespace GingerCore.ALM
             set { ImportFromQCRest.GingerActivitiesRepo = value; }
         }
 
-        public override ObservableList<ExternalItemFieldBase> almItemFields { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
             return ImportFromQCRest.GetALMItemFields(resourceType);

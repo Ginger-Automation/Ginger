@@ -51,7 +51,6 @@ namespace GingerCore.ALM
             get { return ImportFromJira.GingerActivitiesRepo; }
             set { ImportFromJira.GingerActivitiesRepo = value; }
         }
-        public override ObservableList<ExternalItemFieldBase> almItemFields { get ; set ; }
         public JiraCore()
         {
             jiraRepObj = new JiraRepository.JiraRepository();
@@ -102,11 +101,11 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)
         {
-            ObservableList<ExternalItemFieldBase> tempFieldsList = ImportFromJira.GetALMItemFields(bw, online);
-            almItemFields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> tempFieldsList = ImportFromJira.GetALMItemFields(resourceType, bw, online);
+            AlmItemFields = new ObservableList<ExternalItemFieldBase>();
             foreach (ExternalItemFieldBase item in tempFieldsList)
             {
-                almItemFields.Add((ExternalItemFieldBase)item.CreateCopy());
+                AlmItemFields.Add((ExternalItemFieldBase)item.CreateCopy());
             }
             return tempFieldsList;
         }
