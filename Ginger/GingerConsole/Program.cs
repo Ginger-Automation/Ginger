@@ -81,6 +81,8 @@ namespace Amdocs.Ginger.GingerConsole
                 {
                     InitWorkSpace();
 
+                    Console.WriteLine("Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);
+
                     InitMenu();
                     Keepalive = true;
                     while (Keepalive)

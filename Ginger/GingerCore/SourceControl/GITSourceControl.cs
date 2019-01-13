@@ -27,6 +27,7 @@ using LibGit2Sharp.Handlers;
 using System.IO;
 using GingerCoreNET.SourceControl;
 using GingerCoreNET.ReporterLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.SourceControl
 {
@@ -254,7 +255,7 @@ namespace GingerCore.SourceControl
             return true;
         }
 
-        public override ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path, ref string error, List<string> PathsToIgnore = null, bool includLockedFiles = false)
+        public override ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path, ref string error, bool includLockedFiles = false)
         {
             Console.WriteLine("GITHub - GetPathFilesStatus");
             ObservableList<SourceControlFileInfo> list = new ObservableList<SourceControlFileInfo>();
@@ -271,19 +272,10 @@ namespace GingerCore.SourceControl
                 {
                     foreach (var item in repo.RetrieveStatus())
                     {
-
-                        if (PathsToIgnore != null)
+                        if (WorkSpace.Instance.SolutionRepository.IsRepositoryItemToAvoid(System.IO.Path.Combine(RepositoryRootFolder, item.FilePath)))
                         {
-                            bool pathToIgnoreFound = false;
-                            foreach (string pathToIgnore in PathsToIgnore)
-                                if (System.IO.Path.GetFullPath(RepositoryRootFolder + @"\" + item.FilePath).Contains(System.IO.Path.GetFullPath(pathToIgnore)) ||
-                                    item.FilePath.Contains(pathToIgnore))
-                                {
-                                    pathToIgnoreFound = true;
-                                    break;
-                                }
-                            if (pathToIgnoreFound) continue;
-                        }
+                            continue;
+                        }                        
 
                         if (System.IO.Path.GetExtension(item.FilePath) == ".ldb" || System.IO.Path.GetExtension(item.FilePath) == ".ignore")
                             continue;

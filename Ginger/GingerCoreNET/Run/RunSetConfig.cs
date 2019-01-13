@@ -60,7 +60,7 @@ namespace Ginger.Run
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IGingerRunner> GingerRunners = new ObservableList<IGingerRunner>();
+        public ObservableList<GingerRunner> GingerRunners = new ObservableList<GingerRunner>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<RunSetActionBase> RunSetActions = new ObservableList<RunSetActionBase>();
