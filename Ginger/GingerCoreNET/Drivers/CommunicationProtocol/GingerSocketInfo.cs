@@ -84,7 +84,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             // get stuck when Ginger close
             while (mProcessingStatus != eProcessingStatus.Ready && mProcessingStatus != eProcessingStatus.ResponseCompleted)
             {
-                Thread.Sleep(1);  //TODO: add timeout!!! or??
+                Thread.Sleep(new TimeSpan(1));  //TODO: add timeout!!! or??
             }            
             
             OutgoingRequetsesCounter++;

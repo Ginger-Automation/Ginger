@@ -78,7 +78,7 @@ namespace Amdocs.Ginger.GingerConsole
             gingerRunner.RunBusinessFlow(businessFlow, true);
 
             Console.WriteLine("Execution completed");
-            Console.WriteLine("BF Status: " + businessFlow.Status);
+            Console.WriteLine("Business Flow Status: " + businessFlow.RunStatus);
             foreach (Activity activity in businessFlow.Activities)
             {
                 Console.WriteLine("Activity: " + activity.ActivityName + " Status: " + activity.Status);                

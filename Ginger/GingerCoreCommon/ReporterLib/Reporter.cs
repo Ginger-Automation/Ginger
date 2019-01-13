@@ -271,50 +271,6 @@ namespace Amdocs.Ginger.Common
         }
 
 
-        //???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public static void ToTrace(string action, string info)
-        {
-            StringBuilder sb = dt();
-            sb.Append(action);
-            sb.Append(info);
-            Trace.WriteLine(sb.ToString());
-        }
-
-
-        //???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public static Stopwatch ToTraceStart(string action, string info)
-        {
-            Trace.WriteLine("{");
-            Trace.Indent();            
-            StringBuilder sb = dt();
-            sb.Append(action);
-            sb.Append(", ");
-            sb.Append(info);
-            sb.Append("*** START ***");
-            Trace.WriteLine(sb.ToString());         
-            Stopwatch st = new Stopwatch();
-            st.Start();
-            return st;
-        }
-
-        //???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public static void ToTraceEnd(string action, string info, Stopwatch st)
-        {            
-            st.Stop();
-            
-            StringBuilder sb = dt();
-            sb.Append(action);
-            sb.Append(", ");
-            sb.Append(info);
-            sb.Append(", Elasped=");
-            sb.Append(st.ElapsedMilliseconds);
-            sb.Append(" *** END ***");
-            Trace.WriteLine(sb.ToString());                        
-            Trace.Unindent();
-            Trace.WriteLine("}");
-        }
-
-
         private static bool RunningFromConfigFile = false;
 
         

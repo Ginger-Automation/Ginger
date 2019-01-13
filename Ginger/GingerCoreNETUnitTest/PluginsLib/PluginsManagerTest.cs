@@ -51,10 +51,10 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         }
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void AddPluginPackage()
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void InstalledPluginPackageFromOnline()
         {
             //Arrange   
@@ -90,7 +90,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             Assert.AreEqual("PACT", pluginPackages[0].PluginId);            
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GenstalledPluginPackages()
         {
             //Arrange       

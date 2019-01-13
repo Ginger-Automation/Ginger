@@ -16,15 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.IO;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.IO;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -499,8 +498,7 @@ namespace Amdocs.Ginger.Repository
                     fileFolderPath = containingFolder;
                 if (!fileFolderPath.StartsWith(cSolutionRootFolderSign) || !fileFolderPath.StartsWith(mSolutionFolderPath))
                 {
-                    // Fix me for Linux !!!	
-                    string A = mSolutionFolderPath; //.TrimEnd(Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar);	
+                    string A = mSolutionFolderPath; 
                     string B = fileFolderPath.Replace(cSolutionRootFolderSign, Path.DirectorySeparatorChar.ToString()).TrimStart(Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
                     if (!A.EndsWith(Path.DirectorySeparatorChar.ToString()))
                     {
@@ -523,9 +521,8 @@ namespace Amdocs.Ginger.Repository
 
                 string filefullPath = Path.Combine(fileFolderPath, fullName);
 
-                //TODO: remove max 255 once we swithc all to work with .Net core 2.0 no limit
+                //TODO: remove max 255 once we switch all to work with .Net core 2.0 no limit
                 //Validate Path length - MAX_PATH is 260
-                //if (filefullPath.Length > 255)
                 if (fileName.Length > 255)
                 {
                     //FIXME !!!!!!!!!!!!!!
