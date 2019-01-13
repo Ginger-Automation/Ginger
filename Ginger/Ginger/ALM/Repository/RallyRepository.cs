@@ -63,7 +63,7 @@ namespace Ginger.ALM.Repository
         public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
         {
             bool isConnectSucc = false;
-            Reporter.ToLog(eLogLevel.INFO, "Connecting to Rally server");
+            Reporter.ToLog(eLogLevel.DEBUG, "Connecting to Rally server");
             try
             {
                 isConnectSucc = ALMIntegration.Instance.AlmCore.ConnectALMServer();
@@ -75,7 +75,7 @@ namespace Ginger.ALM.Repository
 
             if (!isConnectSucc)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Could not connect to Rally server");
+                Reporter.ToLog(eLogLevel.WARN, "Could not connect to Rally server");
                 if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailure);
                 else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)

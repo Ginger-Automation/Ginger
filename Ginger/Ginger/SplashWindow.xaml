@@ -6,7 +6,7 @@
     <Border BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
             <usercontrols:ImageMakerControl  ImageType="GingerSplash" Height="400" Width="650" HorizontalAlignment="Center" VerticalAlignment="Center" Canvas.Top="-5" Canvas.Left="-61"/>
-            <Label x:Name="lblAppVersion" Content="AppVersion" Style="{StaticResource $LabelStyle}" Foreground="{StaticResource $SelectionColor_Pink}"  FontWeight="Bold" Canvas.Left="404" Canvas.Top="270" Margin="0"/>
+            <Label x:Name="lblAppVersion" Content="Version x.x.x.x" Style="{StaticResource $LabelStyle}" Foreground="WhiteSmoke"  FontWeight="Bold" Canvas.Left="217" Canvas.Top="368" Margin="0"/>
             <!--<Label  x:Name="lblLoadingInfo" Content="Loading Info" FontFamily="open sans" FontSize="12" Foreground="{StaticResource $BackgroundColor_Gray}"  Canvas.Left="515" Canvas.Top="258"/>-->
             <!--<Label x:Name="lblLoading" Content="Loading..." FontFamily="open sans" FontSize="15" Foreground="{StaticResource $BackgroundColor_DarkBlue}"  Canvas.Left="515" Canvas.Top="243" />-->
         </Canvas>

@@ -105,7 +105,7 @@ namespace Ginger.SourceControl
                     foreach (string cPath in conflictsPaths)
                     {
                         ResolveConflictPage resConfPage = new ResolveConflictPage(cPath);
-                        if(App.RunningFromConfigFile == true)
+                        if(WorkSpace.RunningInExecutionMode == true)
                             SourceControlIntegration.ResolveConflicts(App.UserProfile.Solution.SourceControl, cPath, eResolveConflictsSide.Server);
                         else
                             resConfPage.ShowAsWindow();
@@ -212,7 +212,7 @@ namespace Ginger.SourceControl
                 foreach (string cPath in conflictsPaths)
                 {
                     ResolveConflictPage resConfPage = new ResolveConflictPage(cPath);
-                    if(App.RunningFromConfigFile == true)
+                    if(WorkSpace.RunningInExecutionMode == true)
                         SourceControlIntegration.ResolveConflicts(SourceControl, cPath, eResolveConflictsSide.Server);
                     else
                         resConfPage.ShowAsWindow();

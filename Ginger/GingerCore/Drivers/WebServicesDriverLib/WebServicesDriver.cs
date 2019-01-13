@@ -236,9 +236,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             else if (act is ActWebAPIModel)
             {
-                if (Reporter.AppLogLevel == eAppReporterLoggingLevel.Debug)
+                if (Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "Start Execution");
+                    Reporter.ToLog(eLogLevel.DEBUG, "Start Execution");
                 }
 
                 //pull pointed API Model
@@ -261,9 +261,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     actWebAPI = CreateActWebAPISOAP((ApplicationAPIModel)AAMB, (ActWebAPIModel)act);
                 }
 
-                if (Reporter.AppLogLevel == eAppReporterLoggingLevel.Debug)
+                if (Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "ActWebAPIBase created successfully");
+                    Reporter.ToLog(eLogLevel.DEBUG, "ActWebAPIBase created successfully");
                 }
 
                 //Execution

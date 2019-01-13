@@ -263,7 +263,7 @@ namespace GingerCore.Actions
                     }
                     catch(Exception e)
                     {
-                        Reporter.ToLog(eLogLevel.INFO, "", e);
+                        Reporter.ToLog(eLogLevel.DEBUG, "", e);
                     }
                 }
                 else

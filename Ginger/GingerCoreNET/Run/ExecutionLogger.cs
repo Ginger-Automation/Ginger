@@ -440,7 +440,7 @@ namespace Ginger.Run
                 else
                     SaveObjToJSonFile(RunSetReport, LogFolder + @"\RunSet.txt");
                 AddExecutionDetailsToLog(eExecutionPahse.End, "Run Set", RunSetReport.Name, RunSetReport);
-                if (WorkSpace.RunningFromConfigFile)
+                if (WorkSpace.RunningInExecutionMode)
                 {
                     //Amdocs.Ginger.CoreNET.Execution.eRunStatus.TryParse(RunSetReport.RunSetExecutionStatus, out App.RunSetExecutionStatus);//saving the status for determin Ginger exit code
                     WorkSpace.RunSetExecutionStatus = RunSetReport.RunSetExecutionStatus;
@@ -839,7 +839,7 @@ namespace Ginger.Run
         // make different listener - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         private static void AddExecutionDetailsToLog(eExecutionPahse objExecutionPhase, string objType, string objName, object obj)
         {
-            if (Reporter.RunningFromConfigFile || Reporter.AppLogLevel == eAppReporterLoggingLevel.Debug)
+            if (Reporter.RunningInExecutionMode || Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug)
             {
                 string prefix = string.Empty;
                 switch (objExecutionPhase)
@@ -872,12 +872,12 @@ namespace Ginger.Run
                                 if (ftype == FieldsType.Field)
                                 {
                                     string propName = prop.Name;
-                                    string propFullName = ((FieldParamsNameCaption)prop.GetCustomAttribute(typeof(FieldParamsNameCaption))).ToString();//.NameCaption();
+                                    string propFullName = ((FieldParamsNameCaption)prop.GetCustomAttribute(typeof(FieldParamsNameCaption))).NameCaption;
                                     string propValue = obj.GetType().GetProperty(propName, BindingFlags.Public | BindingFlags.Instance).GetValue(obj).ToString();
                                     fieldsAndValues.Add(new KeyValuePair<string, string>(propFullName, propValue));
                                 }
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
                                 //TODO: !!!!!!!!!!!!!!!!!! FIXME
                             }

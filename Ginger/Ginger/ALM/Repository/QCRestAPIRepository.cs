@@ -46,7 +46,7 @@ namespace Ginger.ALM.Repository
         {
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, "Connecting to QC server");
+                Reporter.ToLog(eLogLevel.DEBUG, "Connecting to QC server");
                 if(ALMIntegration.Instance.AlmCore.ConnectALMServer())
                     return true;
                 else
@@ -117,7 +117,7 @@ namespace Ginger.ALM.Repository
         #region Import From QC
         public override void ImportALMTests(string importDestinationFolderPath)
         {
-            Reporter.ToLog(eLogLevel.INFO, "Start importing from QC");
+            Reporter.ToLog(eLogLevel.DEBUG, "Start importing from QC");
             //set path to import to               
             if (importDestinationFolderPath == "")
                 importDestinationFolderPath = App.UserProfile.Solution.BusinessFlowsMainFolder;
@@ -210,7 +210,7 @@ namespace Ginger.ALM.Repository
 
                 Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
 
-                Reporter.ToLog(eLogLevel.INFO, "Imported from QC successfully");
+                Reporter.ToLog(eLogLevel.DEBUG, "Imported from QC successfully");
                 return true;
             }
             Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC");

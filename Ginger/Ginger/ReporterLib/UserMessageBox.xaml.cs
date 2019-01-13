@@ -31,10 +31,7 @@ namespace Ginger.ReporterLib
             xCancelButton.Visibility = Visibility.Collapsed;
 
             switch (buttonsType)
-            {
-                case Amdocs.Ginger.Common.eUserMsgOption.OK:
-                    xOKButton.Visibility = Visibility.Visible;                    
-                    break;
+            {                
                 case Amdocs.Ginger.Common.eUserMsgOption.OKCancel:
                     xOKButton.Visibility = Visibility.Visible;
                     xCancelButton.Visibility = Visibility.Visible;
@@ -44,10 +41,11 @@ namespace Ginger.ReporterLib
                     xNoButton.Visibility = Visibility.Visible;
                     break;
                 case Amdocs.Ginger.Common.eUserMsgOption.YesNoCancel:
-                    xYesButton.Visibility = Visibility.Visible; ;
+                    xYesButton.Visibility = Visibility.Visible; 
                     xNoButton.Visibility = Visibility.Visible;
                     xCancelButton.Visibility = Visibility.Visible;
                     break;
+                case Amdocs.Ginger.Common.eUserMsgOption.OK:
                 default:
                     xOKButton.Visibility = Visibility.Visible;
                     break;
@@ -59,10 +57,6 @@ namespace Ginger.ReporterLib
                     xMessageImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Error;
                     xMessageImage.ImageForeground = Brushes.DarkRed;
                     break;
-                case eUserMsgIcon.Information:
-                    xMessageImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Info;
-                    xMessageImage.ImageForeground = Brushes.DarkBlue;
-                    break;
                 case eUserMsgIcon.None:
                     xMessageImage.Visibility = Visibility.Collapsed;
                     break;
@@ -73,6 +67,11 @@ namespace Ginger.ReporterLib
                 case eUserMsgIcon.Warning:
                     xMessageImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Warn;
                     xMessageImage.ImageForeground = Brushes.DarkOrange;
+                    break;
+                case eUserMsgIcon.Information:
+                default:
+                    xMessageImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Info;
+                    xMessageImage.ImageForeground = Brushes.DarkBlue;
                     break;
             }
 

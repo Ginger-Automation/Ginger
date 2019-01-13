@@ -197,9 +197,13 @@ namespace GingerCore.GeneralFunctions
                         {
                             //ask user
                             if ((Reporter.ToUser(eUserMsgKey.AddRegistryValue, rootType + "\\" + keyPath)) == eUserMsgSelection.Yes)
+                            {
                                 addValue = true;
+                            }
                             else
+                            {
                                 return false;
+                            }
                         }
                     }
                     else

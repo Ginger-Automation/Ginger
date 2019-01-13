@@ -104,7 +104,7 @@ namespace Ginger
                 lblVersion.Content = "Version " + Ginger.App.AppVersion;
 
                 //Solution                                    
-                if (App.UserProfile.AutoLoadLastSolution && App.RunningFromConfigFile == false && App.RunningFromUnitTest == false)
+                if (App.UserProfile.AutoLoadLastSolution && WorkSpace.RunningInExecutionMode == false && App.RunningFromUnitTest == false)
                 {
                     AutoLoadLastSolution();
                 }
@@ -365,7 +365,7 @@ namespace Ginger
             App.AutomateTabGingerRunner.CloseAgents();
             GingerCore.General.CleanDirectory(GingerCore.Actions.Act.ScreenshotTempFolder, true);
             
-            if (!App.RunningFromConfigFile)
+            if (!WorkSpace.RunningInExecutionMode)
             {
                 App.UserProfile.GingerStatus = eGingerStatus.Closed;
                 App.UserProfile.SaveUserProfile();

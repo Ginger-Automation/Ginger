@@ -230,7 +230,7 @@ namespace GingerCore.SourceControl
                     {
                         if (supressMessage == true)
 
-                            Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully, Update status: " + result.Status + ", to Revision :"  + repo.Head.Tip.Sha);
+                            Reporter.ToLog(eLogLevel.DEBUG, "The solution was updated successfully, Update status: " + result.Status + ", to Revision :"  + repo.Head.Tip.Sha);
 
                         else
                             Reporter.ToUser(eUserMsgKey.GitUpdateState, result.Status, repo.Head.Tip.Sha);
@@ -239,7 +239,7 @@ namespace GingerCore.SourceControl
                 else
                 {
                     if (supressMessage == true)
-                        Reporter.ToLog(eLogLevel.INFO, "Failed to update the solution from source control.Error Details: 'The files are not connected to source control'");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Failed to update the solution from source control.Error Details: 'The files are not connected to source control'");
                     else
                         Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
                 }
@@ -271,7 +271,7 @@ namespace GingerCore.SourceControl
                 {
                     foreach (var item in repo.RetrieveStatus())
                     {
-                        if (WorkSpace.Instance.SolutionRepository.IsRepositoryItemToAvoid(System.IO.Path.Combine(RepositoryRootFolder, item.FilePath)))
+                        if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(System.IO.Path.Combine(RepositoryRootFolder, item.FilePath)))
                         {
                             continue;
                         }                        

@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.Repository
         /// <summary>
         /// List of files and folders to exclude from solution load and Source Control
         /// </summary>
-        public static List<string> RepositoryItemsToAvoid = new List<string>()
+        private static List<string> mSolutionPathsToAvoid = new List<string>()
         {
              "AutoSave",
              "Recover",
@@ -67,6 +67,9 @@ namespace Amdocs.Ginger.Repository
              @"SharedRepository\Variables\PrevVerions",
              @"SharedRepository\ActivitiesGroup\PrevVerions"
         };
+
+        private List<string> mCalculatedSolutionPathsToAvoid = null;
+
 
 
         private ISolution mSolution = null;
@@ -396,7 +399,7 @@ namespace Amdocs.Ginger.Repository
                             Parallel.ForEach(SubFolders, sf =>
                             {
                                 // Add all files of sub folder
-                                if (!IsRepositoryItemToAvoid(sf))
+                                if (!IsSolutionPathToAvoid(sf))
                                 {
                                     AddFolderFiles(fileEntries, sf, folder.ItemFilePattern);
                                 }
@@ -418,19 +421,18 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public bool IsRepositoryItemToAvoid(string itemToCheck)
+        public bool IsSolutionPathToAvoid(string pathToCheck)
         {
-            foreach (string item in RepositoryItemsToAvoid)
+            if (mCalculatedSolutionPathsToAvoid == null)
             {
-                string itemFullPath = Path.Combine(SolutionFolder, item);
-
-                if (itemToCheck == itemFullPath)
+                mCalculatedSolutionPathsToAvoid = new List<string>();
+                foreach (string path in mSolutionPathsToAvoid)
                 {
-                    return true;
-                }                   
+                    mCalculatedSolutionPathsToAvoid.Add(Path.GetFullPath(Path.Combine(SolutionFolder, path)));
+                }
             }
 
-            return false;
+            return mCalculatedSolutionPathsToAvoid.Contains(Path.GetFullPath(pathToCheck));
         }
 
         #endregion Public Functions

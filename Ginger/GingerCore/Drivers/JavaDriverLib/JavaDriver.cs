@@ -125,7 +125,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             if (JavaAgentHost == null || JavaAgentHost.Length ==0)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty");
+                Reporter.ToLog(eLogLevel.WARN, "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty");
                 ErrorMessageFromDriver= "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty";
                 return;
             }
@@ -175,7 +175,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else
             {
-                Reporter.ToLog(eLogLevel.INFO, "Failed to connect Java Agent");
+                Reporter.ToLog(eLogLevel.WARN, "Failed to connect Java Agent");
                 ErrorMessageFromDriver = "Failed to connect Java Agent";
             }
         }
@@ -227,7 +227,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         
         private Boolean Reconnect()
         {
-            Reporter.ToLog(eLogLevel.INFO, "Trying to reconnent Java Agent");
+            Reporter.ToLog(eLogLevel.DEBUG, "Trying to reconnent Java Agent");
             try
             {
                 clientSocket.Connect(serverAddress);

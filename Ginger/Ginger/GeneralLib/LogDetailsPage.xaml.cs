@@ -16,27 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore;
+using Amdocs.Ginger.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Amdocs.Ginger.Common;
-using System.Text.RegularExpressions;
 
 namespace Ginger.GeneralLib
 {
@@ -95,6 +84,10 @@ namespace Ginger.GeneralLib
                 else if(log.Contains("| INFO  |"))
                 {
                     mTextBlockHelper.AddFormattedText(log, Brushes.Blue);
+                }
+                else if (log.Contains("| DEBUG  |"))
+                {
+                    mTextBlockHelper.AddFormattedText(log, Brushes.Purple);
                 }
                 else if (log.Contains("| WARN  |"))
                 {

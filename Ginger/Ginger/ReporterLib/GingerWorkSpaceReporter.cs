@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using System;
 
 namespace Ginger.ReporterLib
@@ -11,7 +12,7 @@ namespace Ginger.ReporterLib
         {
             eUserMsgSelection result = defualtResault;  // if user just close the window we return the default defined result
 
-            if (!App.RunningFromConfigFile)
+            if (!WorkSpace.RunningInExecutionMode)
             {
                 App.MainWindow.Dispatcher.Invoke(() =>
                 {

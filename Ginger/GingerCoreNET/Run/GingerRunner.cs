@@ -229,8 +229,9 @@ namespace Ginger.Run
                 }
             }
         }
+
         private bool mActive= true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool Active
         {
             get { return mActive; }
@@ -1274,7 +1275,7 @@ namespace Ginger.Run
                 {
                     act.Wait = 0;
                     act.ExInfo = "Invalid value for Wait time : " + wait;
-                    Reporter.ToLog(eLogLevel.INFO, "", ex);
+                    Reporter.ToLog(eLogLevel.WARN, act.ExInfo, ex);
                 }
             }
             else

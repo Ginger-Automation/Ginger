@@ -31,19 +31,19 @@ namespace Amdocs.Ginger.Common
 
         public static ReporterData ReporterData = new ReporterData();
                 
-        public static bool RunningFromConfigFile = false;
+        public static bool RunningInExecutionMode { get; set; }
 
 
         #region ToLog
-        public static eAppReporterLoggingLevel AppLogLevel;
+        public static eAppReporterLoggingLevel AppLoggingLevel { get; set; }
         public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
-            if (RunningFromConfigFile)
+            if (RunningInExecutionMode) 
             {
                 ToConsole(logLevel, messageToLog, exceptionToLog);
             }
 
-            if (logLevel == eLogLevel.DEBUG && AppLogLevel != eAppReporterLoggingLevel.Debug)
+            if (logLevel == eLogLevel.DEBUG && AppLoggingLevel != eAppReporterLoggingLevel.Debug)
             {
                 return;
             }
@@ -122,25 +122,25 @@ namespace Amdocs.Ginger.Common
                     messageText = messageToShow.Message;
                 }
                                 
-                if (AppLogLevel == eAppReporterLoggingLevel.Debug)
+                if (AppLoggingLevel == eAppReporterLoggingLevel.Debug)
                 {
                     ToLog(eLogLevel.DEBUG, "Showing User Message: '" + messageText + "'");
                 }
-                if (RunningFromConfigFile)
+                if (RunningInExecutionMode)
                 {
-                    ToConsole(eLogLevel.INFO, "Showing User Message: '" + messageText + "'");
+                    ToConsole(eLogLevel.DEBUG, "Showing User Message: '" + messageText + "'");
                 }
 
                 //show the messege and return user selection
                 eUserMsgSelection userSelection = WorkSpaceReporter.ToUser(messageText, messageToShow.Caption, messageToShow.SelectionOptions, messageImage, messageToShow.DefualtSelectionOption);                
 
-                if (AppLogLevel == eAppReporterLoggingLevel.Debug)
+                if (AppLoggingLevel == eAppReporterLoggingLevel.Debug)
                 {
                     ToLog(eLogLevel.DEBUG, "User Message Option Selection: '" + userSelection.ToString() + "'");
                 }
-                else if (RunningFromConfigFile)
+                else if (RunningInExecutionMode)
                 {
-                    ToConsole(eLogLevel.INFO, "User Message Option Selection: '" + userSelection.ToString() + "'");
+                    ToConsole(eLogLevel.DEBUG, "User Message Option Selection: '" + userSelection.ToString() + "'");
                 }
 
                 return userSelection;
@@ -151,7 +151,7 @@ namespace Amdocs.Ginger.Common
 
                 ToLog(eLogLevel.ERROR, txt, ex);
 
-                if (RunningFromConfigFile)
+                if (RunningInExecutionMode)
                 {
                     ToConsole(eLogLevel.ERROR, txt, ex);
                 }
@@ -201,13 +201,13 @@ namespace Amdocs.Ginger.Common
                     messageContent = string.Format(messageContent, messageArgs);
                 }
 
-                if (AppLogLevel == eAppReporterLoggingLevel.Debug)
+                if (AppLoggingLevel == eAppReporterLoggingLevel.Debug)
                 {
                     ToLog(eLogLevel.DEBUG, "Showing Status Message: " + messageContent);
                 }
-                if (RunningFromConfigFile)
+                if (RunningInExecutionMode)
                 {
-                    ToConsole(eLogLevel.INFO, "Showing Status Message: " + messageContent);
+                    ToConsole(eLogLevel.DEBUG, "Showing Status Message: " + messageContent);
                 }
 
                 mLastStatusTime.Start();

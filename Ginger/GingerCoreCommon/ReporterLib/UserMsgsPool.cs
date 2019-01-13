@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.Common
         TestSetsImportedSuccessfully,
         TestCasesUpdatedSuccessfully,
         TestCasesUploadedSuccessfully,
-        PBNotConnected, ASCFNotConnected,
+        ASCFNotConnected,
         DeleteRepositoryItemAreYouSure,
         DeleteTreeFolderAreYouSure,
         RenameRepositoryItemAreYouSure,
@@ -73,8 +73,7 @@ namespace Amdocs.Ginger.Common
         ErrorReadingRepositoryItem,
         EnvNotFound, SelectItemToAdd, CannotAddGinger,
         ShortcutCreated,
-        SolutionFileNotFound, PlugInFileNotFound,
-        QcConnectError,
+        SolutionFileNotFound, PlugInFileNotFound,       
         MissingAddSolutionInputs, SolutionAlreadyExist, AddSolutionSucceed, AddSolutionFailed,
         MobileConnectionFailed, MobileRefreshScreenShotFailed, MobileShowElementDetailsFailed, MobileActionWasAdded,
         RefreshTreeGroupFailed, FailedToDeleteRepoItem, RunsetNoGingerPresentForBusinessFlow, ExcelNoWorksheetSelected, ExcelBadWhereClause,
@@ -678,6 +677,13 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FindAndReplaceViewRunSetNotSupported, new UserMsg(eUserMsgType.INFO, "View Run Set", "View RunSet is not supported.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.FileAlreadyExistWarn, new UserMsg(eUserMsgType.WARN, "File Already Exists", "File already exists, do you want to override?", eUserMsgOption.OKCancel, eUserMsgSelection.Cancel));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SuccessfulConversionDone, new UserMsg(eUserMsgType.INFO, "Obsolete actions converted successfully", "The obsolete actions have been converted successfully" + Environment.NewLine + "Do you want to convert more actions?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MissingTargetPlatformForConversion, new UserMsg(eUserMsgType.WARN,
+               "Missing Target Platform for Conversion", "For {0}, you need to add a Target Application of type {1}. Please add it to your Business Flow. " + Environment.NewLine +
+               "Do you want to continue with the conversion?",
+               eUserMsgOption.YesNo, eUserMsgSelection.No));
         }
     }
 }

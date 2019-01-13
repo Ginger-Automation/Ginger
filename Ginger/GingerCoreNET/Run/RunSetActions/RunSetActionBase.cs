@@ -199,7 +199,7 @@ namespace Ginger.Run.RunSetActions
                     Status = RunSetActionBase.eRunSetActionStatus.Completed;
                 }
 
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Execution Ended for the Run Set Operation from Type '{1}' and Name '{0}'", this.Name, this.Type));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Execution Ended for the Run Set Operation from Type '{1}' and Name '{0}'", this.Name, this.Type));
             }
             finally
             {

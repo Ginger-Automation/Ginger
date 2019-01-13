@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Failed to close window", ex);
+                Reporter.ToLog(eLogLevel.WARN, "Failed to close window", ex);
                
             }
         }

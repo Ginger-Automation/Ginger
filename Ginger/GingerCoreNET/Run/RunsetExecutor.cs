@@ -217,12 +217,18 @@ namespace Ginger.Run
             {
                 if (gr.UseSpecificEnvironment)
                 {
-                    if (gr.ProjEnvironment != null) { }
+                    if (gr.ProjEnvironment != null)
+                    {
                         gr.ProjEnvironment.CloseEnvironment();
+                    }
                 }
             }
-            if (Helper.RuntimeObjectFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment != null) { }
-                //RepositoryItemHelper.RepositoryItemFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment.CloseEnvironment();
+            //if (Helper.RuntimeObjectFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment != null) { }
+            //RepositoryItemHelper.RepositoryItemFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment.CloseEnvironment();
+            if (RunsetExecutionEnvironment != null)
+            {
+                RunsetExecutionEnvironment.CloseEnvironment();
+            }
         }
 
 
@@ -504,17 +510,17 @@ namespace Ginger.Run
 
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, "Processing Command Line Arguments");
+                Reporter.ToLog(eLogLevel.DEBUG, "Processing Command Line Arguments");
                 if (ProcessCommandLineArgs() == false)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "Processing Command Line Arguments failed");
+                    Reporter.ToLog(eLogLevel.DEBUG, "Processing Command Line Arguments failed");
                     return 1;
                 }
 
                 AutoLogProxy.UserOperationStart("AutoRunWindow", WorkSpace.RunsetExecutor.RunSetConfig.Name, WorkSpace.RunsetExecutor.RunsetExecutionEnvironment.Name);
-                Reporter.ToLog(eLogLevel.INFO, string.Format("########################## Starting {0} Automatic Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting {0} Automatic Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
 
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 try
                 {
                     RepositoryItemHelper.RepositoryItemFactory.RunRunSetFromCommandLine();
@@ -526,7 +532,7 @@ namespace Ginger.Run
                 }
 
                 //Running Runset Analyzer to look for issues
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 try
                 {
                     //run analyzer
@@ -590,7 +596,7 @@ namespace Ginger.Run
 
                 string AutoRunFileName = arg1[1];
 
-                Reporter.ToLog(eLogLevel.INFO, "Reading all arguments from the Config file placed at: '" + AutoRunFileName + "'");
+                Reporter.ToLog(eLogLevel.DEBUG, "Reading all arguments from the Config file placed at: '" + AutoRunFileName + "'");
                 string[] lines = System.IO.File.ReadAllLines(AutoRunFileName);
 
                 RepositoryItemHelper.RepositoryItemFactory.ProcessCommandLineArgs(lines);

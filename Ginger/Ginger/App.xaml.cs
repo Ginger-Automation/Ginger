@@ -318,17 +318,7 @@ namespace Ginger
         //    }
         //}
 
-        public static bool RunningFromConfigFile
-        {
-            get
-            {
-                return WorkSpace.RunningFromConfigFile;
-            }
-            set
-            {
-                WorkSpace.RunningFromConfigFile = value;
-            }
-        }
+
 
         public static bool RunningFromUnitTest = false;
 
@@ -389,8 +379,8 @@ namespace Ginger
                 else
                 {
                     // This Ginger is running with run set config will do the run and close Ginger
-                    RunningFromConfigFile = true;
-                    Reporter.RunningFromConfigFile = true; //needed so all reportering will be added to Consol
+                    WorkSpace.RunningInExecutionMode = true;
+                    Reporter.RunningInExecutionMode = true; //needed so all reportering will be added to Consol
                     //Reporter.AppLogLevel = eAppReporterLoggingLevel.Debug;//needed so all reportering will be added to Log file
                 }
             }
@@ -463,7 +453,7 @@ namespace Ginger
             MainWindow.Init();
 
             // If we have command line params process them and do not load MainWindow
-            if (RunningFromConfigFile == true)
+            if (WorkSpace.RunningInExecutionMode == true)
             {
                 HandleAutoRunMode();
             }
@@ -501,7 +491,7 @@ namespace Ginger
             Reporter.ToLog(eLogLevel.FATAL, ">>>>>>>>>>>>>> Error occurred on stand alone thread(non UI) - " + e.ExceptionObject);
             //Reporter.ToUser(eUserMsgKey.ThreadError, "Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
 
-            if (App.RunningFromConfigFile == false)
+            if (WorkSpace.RunningInExecutionMode == false)
             {
                 App.AppSolutionAutoSave.DoAutoSave();
             }
@@ -632,12 +622,12 @@ namespace Ginger
             //setting the exit code based on execution status
             if (result == 0)
             {
-                Reporter.ToLog(eLogLevel.INFO, ">> Run Set executed and passed, exit code: 0");
+                Reporter.ToLog(eLogLevel.DEBUG, ">> Run Set executed and passed, exit code: 0");
                 Environment.ExitCode = 0;//success                    
             }
             else
             {
-                Reporter.ToLog(eLogLevel.INFO, ">> No indication found for successful execution, exit code: 1");
+                Reporter.ToLog(eLogLevel.DEBUG, ">> No indication found for successful execution, exit code: 1");
                 Environment.ExitCode = 1;//failure
             }
 
@@ -758,7 +748,7 @@ namespace Ginger
                 }
 
 
-                if (!App.RunningFromConfigFile)
+                if (!WorkSpace.RunningInExecutionMode)
                 {
                     AppSolutionAutoSave.SolutionAutoSaveEnd();
                 }
@@ -780,7 +770,7 @@ namespace Ginger
                         ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
                         if (higherVersionFiles.Count > 0)
                         {
-                            if (App.RunningFromConfigFile == false && RunningFromUnitTest == false)
+                            if (WorkSpace.RunningInExecutionMode == false && RunningFromUnitTest == false)
                             {
                                 UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, SolutionFolder, string.Empty, higherVersionFiles.ToList());
                                 gingerUpgradePage.ShowAsWindow();
@@ -816,7 +806,7 @@ namespace Ginger
                        
                         SetDefaultBusinessFlow();
 
-                        if (!App.RunningFromConfigFile)
+                        if (!WorkSpace.RunningInExecutionMode)
                         {
                             DoSolutionAutoSaveAndRecover();
                         }
@@ -824,7 +814,7 @@ namespace Ginger
                         //Offer to upgrade Solution items to current version
                         try
                         {
-                            if (App.UserProfile.DoNotAskToUpgradeSolutions == false && App.RunningFromConfigFile == false && RunningFromUnitTest == false)
+                            if (App.UserProfile.DoNotAskToUpgradeSolutions == false && WorkSpace.RunningInExecutionMode == false && RunningFromUnitTest == false)
                             {
                                 ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
                                 if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)

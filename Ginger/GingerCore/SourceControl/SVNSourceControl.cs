@@ -160,7 +160,7 @@ namespace GingerCore.SourceControl
 
                 foreach (SvnStatusEventArgs arg in statuses)
                 {
-                    if (WorkSpace.Instance.SolutionRepository.IsRepositoryItemToAvoid(arg.FullPath))
+                    if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(arg.FullPath))
                     {
                         continue;
                     }
@@ -271,7 +271,7 @@ namespace GingerCore.SourceControl
                 if (result.Revision != -1)
                 {
                     if (supressMessage == true)
-                        Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully to revision:  " + result.Revision);
+                        Reporter.ToLog(eLogLevel.DEBUG, "The solution was updated successfully to revision:  " + result.Revision);
                     else
                         Reporter.ToUser(eUserMsgKey.UpdateToRevision, result.Revision);
                 }

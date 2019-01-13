@@ -116,7 +116,7 @@ namespace Amdocs.Ginger.Repository
             string[] folders = FileSystem.GetDirectorySubFolders(FullPath);                      
             foreach (string subFolder in folders)
             {
-                if (!SolutionRepository.IsRepositoryItemToAvoid(subFolder))
+                if (!SolutionRepository.IsSolutionPathToAvoid(subFolder))
                 {
                     //string DisplayName = Path.GetFileName(subFolder);
                     string relativePath = Path.Combine(FolderRelativePath, Path.GetFileName(PathHelper.GetLongPath(subFolder)));

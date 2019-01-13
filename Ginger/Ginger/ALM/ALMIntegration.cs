@@ -249,7 +249,7 @@ namespace Ginger.ALM
                         {
                             if (BizFlow.ExternalID != "0" && !String.IsNullOrEmpty(BizFlow.ExternalID))
                             {
-                                Reporter.ToLog(eLogLevel.INFO, "Executing RunSet Action Publish to ALM for Business flow: " + BizFlow.Name);
+                                Reporter.ToLog(eLogLevel.DEBUG, "Executing RunSet Action Publish to ALM for Business flow: " + BizFlow.Name);
                                 Reporter.ToStatus(eStatusMsgKey.ExportExecutionDetails, null, BizFlow.Name, "ALM");
 
                                 if (publishToALMConfig.ToAttachActivitiesGroupReport)
@@ -274,7 +274,7 @@ namespace Ginger.ALM
                             {
                                 BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
                                 result += GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " - " + BizFlow.Name + " - doesn't have ExternalID, cannot execute publish to ALM RunSet Action" + Environment.NewLine;
-                                Reporter.ToLog(eLogLevel.INFO, BizFlow.Name + " - doesn't have ExternalID, cannot execute publish to ALM RunSet Action");                               
+                                Reporter.ToLog(eLogLevel.WARN, BizFlow.Name + " - doesn't have ExternalID, cannot execute publish to ALM RunSet Action");                               
                             }
                         }
                         catch (Exception ex)
@@ -315,7 +315,7 @@ namespace Ginger.ALM
         public void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            Reporter.ToLog(eLogLevel.INFO, ("Update selected Activities Groups of business flow: " + businessFlow.Name + " from ALM"));
+            Reporter.ToLog(eLogLevel.DEBUG, ("Update selected Activities Groups of business flow: " + businessFlow.Name + " from ALM"));
 
             ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
             ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
@@ -331,7 +331,7 @@ namespace Ginger.ALM
         public void UpdateBusinessFlow(ref BusinessFlow businessFlow)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            Reporter.ToLog(eLogLevel.INFO, ("Update business flow: " + businessFlow.Name + " from ALM"));
+            Reporter.ToLog(eLogLevel.DEBUG, ("Update business flow: " + businessFlow.Name + " from ALM"));
 
             ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
             ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
@@ -347,7 +347,7 @@ namespace Ginger.ALM
         public void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            Reporter.ToLog(eLogLevel.INFO, ("Exporting Activity Groups of business flow: " + businessFlow.Name + " to ALM"));
+            Reporter.ToLog(eLogLevel.DEBUG, ("Exporting Activity Groups of business flow: " + businessFlow.Name + " to ALM"));
             ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
@@ -407,7 +407,7 @@ namespace Ginger.ALM
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-            Reporter.ToLog(eLogLevel.INFO, ("Exporting business flow: " + businessFlow.Name + " to ALM"));
+            Reporter.ToLog(eLogLevel.DEBUG, ("Exporting business flow: " + businessFlow.Name + " to ALM"));
             //Passing Solution Folder path to GingerCore
             ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
 
@@ -439,7 +439,7 @@ namespace Ginger.ALM
         public void ImportALMTests(string importDestinationFolderPath = null)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            Reporter.ToLog(eLogLevel.INFO, "Importing Business flow from ALM");
+            Reporter.ToLog(eLogLevel.DEBUG, "Importing Business flow from ALM");
             if (AutoALMProjectConnect(eALMConnectType.Auto, true, true))
             {
                 ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
@@ -451,7 +451,7 @@ namespace Ginger.ALM
 
         public void ImportALMTestsById(string importDestinationFolderPath = "")
         {
-            Reporter.ToLog(eLogLevel.INFO, "Importing Business flow from ALM By Id");
+            Reporter.ToLog(eLogLevel.DEBUG, "Importing Business flow from ALM By Id");
             if (AutoALMProjectConnect(eALMConnectType.Auto, true, true))
             {
                 ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
@@ -463,7 +463,7 @@ namespace Ginger.ALM
         public void RefreshAllGroupsFromALM(BusinessFlow businessFlow)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            Reporter.ToLog(eLogLevel.INFO, "Refreshing All Activities Groups From ALM");
+            Reporter.ToLog(eLogLevel.DEBUG, "Refreshing All Activities Groups From ALM");
             ALMIntegration.Instance.UpdateBusinessFlow(ref businessFlow);
             Mouse.OverrideCursor = null;
         }

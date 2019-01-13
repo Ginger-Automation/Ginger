@@ -4345,7 +4345,7 @@ namespace GingerCore.Drivers
             {
                 if (LastHighLightedElement != null)
                 {
-                    ElementInfo elementInfo = GetElementInfoWithIWebElement(LastHighLightedElement,null, string.Empty);
+                    ElementInfo elementInfo = GetElementInfoWithIWebElement(LastHighLightedElement, null, string.Empty);
                     List<string> attributesList = new List<string>() { "arguments[0].style.outline=''", "arguments[0].style.backgroundColor=''", "arguments[0].style.border=''" };
                     IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
                     foreach (string attribuet in attributesList)
@@ -4356,9 +4356,8 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-
-                Reporter.ToLog(eLogLevel.INFO, "failed to unhighlight object", ex);
-                    }
+                Reporter.ToLog(eLogLevel.WARN, "failed to unhighlight object", ex);
+            }
         }
 
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)

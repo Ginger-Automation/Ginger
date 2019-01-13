@@ -52,8 +52,8 @@ namespace GingerCore.Drivers.ScriptDriverLib
        
         protected void Process_Exited(object sender, EventArgs e)
         {            
-            Reporter.ToLog(eLogLevel.INFO, "Data=" + DataBuffer);
-            Reporter.ToLog(eLogLevel.INFO, "Error=" + ErrorBuffer);
+            Reporter.ToLog(eLogLevel.DEBUG, "Data=" + DataBuffer);
+            Reporter.ToLog(eLogLevel.DEBUG, "Error=" + ErrorBuffer);
         }
 
         protected void AddError(string outLine)

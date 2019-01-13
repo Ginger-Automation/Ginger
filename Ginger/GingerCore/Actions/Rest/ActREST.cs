@@ -537,10 +537,10 @@ namespace GingerCore.Actions.REST
                 {
                     //TODO: check if UTF8 is good for all
                     StreamReader reader = new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);
-                    Reporter.ToLog(eLogLevel.INFO, "Response");
+                    Reporter.ToLog(eLogLevel.DEBUG, "Response");
 
                     resp = reader.ReadToEnd();
-                    Reporter.ToLog(eLogLevel.INFO, resp);
+                    Reporter.ToLog(eLogLevel.DEBUG, resp);
                 }
                 else
                 {
