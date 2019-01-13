@@ -175,13 +175,25 @@ namespace GingerCore.ALM.JIRA
                                     case "Description":
                                         test.Description = fieldValue.First();
                                         break;
+                                    case "Labels":
+                                        test.Labels = fieldValue.First();
+                                        break;
                                     case "Test Steps":
                                         test.Steps = new List<JiraTestStep>();
                                         var stepAnonymousTypeDef = new { id = 0, index = 0, step = string.Empty, data = string.Empty };
                                         foreach (var val in fieldValue)
                                         {
                                             var stepAnonymous = Newtonsoft.Json.JsonConvert.DeserializeAnonymousType(val, stepAnonymousTypeDef);
-                                            test.Steps.Add(new JiraTestStep() { StepID = stepAnonymous.id.ToString(), StepName = stepAnonymous.step });
+                                            string[] stepDescription = new[] { "", ""};
+                                            if (stepAnonymous.data != string.Empty)
+                                            {
+                                                string[] getStepData = (stepAnonymous.data).Split(new[] { "=>" }, StringSplitOptions.None);
+                                                if(getStepData.Count() > 1 && getStepData[1].Contains("Description:"))
+                                                {
+                                                    stepDescription = getStepData[1].Split(new[] { "Description:" }, StringSplitOptions.None);
+                                                }
+                                            }
+                                            test.Steps.Add(new JiraTestStep() { StepID = stepAnonymous.id.ToString(), StepName = stepAnonymous.step, Description = stepDescription[1] });
                                         }
                                         break;
                                 }
@@ -262,6 +274,10 @@ namespace GingerCore.ALM.JIRA
                         }
                         break;
                     case "array":
+                        if (fields[0] != null)
+                        {
+                            valuesList.Add(fields[0].ToString());
+                        }
                         break;
                     case "option":
                         break;
