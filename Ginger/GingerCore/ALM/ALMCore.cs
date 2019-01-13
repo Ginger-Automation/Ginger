@@ -28,11 +28,12 @@ using System.ComponentModel;
 
 namespace GingerCore.ALM
 {
-    
+
     public abstract class ALMCore
-    {       
+    {
         public static ALMConfig AlmConfig = new ALMConfig();
         public static string SolutionFolder { get; set; }
+        public ObservableList<ExternalItemFieldBase> AlmItemFields { get; set; }
         public abstract bool ConnectALMServer();
         public abstract bool ConnectALMProject();
         public abstract Boolean IsServerConnected();
@@ -72,6 +73,16 @@ namespace GingerCore.ALM
         public abstract ObservableList<Activity> GingerActivitiesRepo
         {
             get; set;
+        }
+
+        internal ObservableList<ExternalItemFieldBase> UpdatedAlmFields(ObservableList<ExternalItemFieldBase> tempFieldsList)
+        {
+            AlmItemFields = new ObservableList<ExternalItemFieldBase>();
+            foreach (ExternalItemFieldBase item in tempFieldsList)
+            {
+                AlmItemFields.Add((ExternalItemFieldBase)item.CreateCopy());
+            }
+            return tempFieldsList;
         }
     }
 }
