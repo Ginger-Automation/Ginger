@@ -145,14 +145,11 @@ namespace Ginger.Run
         public string CurrentGingerLogFolder = string.Empty;
         public string CurrentHTMLReportFolder = string.Empty;
 
-        // remove from here !!!!!!!!!!!!!!!!
-        public int ExecutionLogBusinessFlowCounter { get; set; }
-        // public static bool UseExecutionLogger = false;//TODO:  temp flag so Beta users will not be impacted, removed when it is working and tested to be good 
+
+        
+        
         public string SolutionFolder { get; set; }
         public bool HighLightElement { get; set; }
-
-        // public delegate void GingerRunnerEventHandler(GingerRunnerEventArgs EventArgs);
-
 
 
         public bool IsRunning

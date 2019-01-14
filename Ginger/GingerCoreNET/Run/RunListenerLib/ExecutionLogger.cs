@@ -65,6 +65,8 @@ namespace Ginger.Run
 
         ProjEnvironment mExecutionEnvironment = null;
 
+        int mBusinessFlowCounter { get; set; }
+
         // TODO: remove me !!!!!!!!!!!!!!!!
         enum eExecutionPahse
         {
@@ -1067,7 +1069,7 @@ namespace Ginger.Run
         {
             try
             {
-                runner.ExecutionLogBusinessFlowCounter = 0;
+                mBusinessFlowCounter = 0;
                 ObservableList<BusinessFlow> listBF = runner.BusinessFlows;
                 int counter = 1;
                 foreach (BusinessFlow bf in listBF)
@@ -1082,8 +1084,8 @@ namespace Ginger.Run
                         continue;
                     }
                     OfflineBusinessFlowExecutionLog(bf, reportpath);
-                    runner.ExecutionLogBusinessFlowCounter++;
-                    runner.ExecutionLogFolder = runner.ExecutionLogFolder + @"\" + runner.ExecutionLogBusinessFlowCounter + " " + folderNameNormalazing(bf.Name);
+                    mBusinessFlowCounter++;
+                    runner.ExecutionLogFolder = runner.ExecutionLogFolder + @"\" + mBusinessFlowCounter + " " + folderNameNormalazing(bf.Name);
                     counter++;
                 }    
                 
