@@ -257,8 +257,8 @@ namespace Ginger.DataSource
                     dr[sColName] = "";
                 else if (sColName == "GINGER_ID")
                     dr[sColName] = "1";
-                //else 
-                //    dr[sColName] = "";
+                else
+                    dr[sColName] = "";
 
             mDSTableDetails.DataTable.Rows.Add(dr);             
         }
@@ -308,9 +308,17 @@ namespace Ginger.DataSource
                 DataRow dr = mDSTableDetails.DataTable.NewRow();
                 foreach (string sColName in mColumnNames)
                     if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
-                        dr[sColName] = row[sColName];                    
+                        dr[sColName] = row[sColName];
+                    else if (sColName == "GINGER_ID")
+                    {
+                        dr[sColName] = row[sColName];
+                        long aa = (long)dr[0];
+                         aa++;
+                        dr[0] = aa;
+                    }
                     else
-                        dr[sColName] = System.DBNull.Value;
+                        dr[sColName] = "";
+
                 mDSTableDetails.DataTable.Rows.Add(dr);              
             }                 
         }
