@@ -32,6 +32,7 @@ using GingerCore.Actions;
 using GingerCore.Environments;
 using GingerCore.Variables;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Reports.Designer
 {
@@ -132,7 +133,7 @@ namespace Ginger.Reports.Designer
             GingerRunner GR = new GingerRunner();
             GR.BusinessFlows.Add(BF1);
             GR.BusinessFlows.Add(BF2);
-            GR.CurrentSolution = App.UserProfile.Solution;
+            GR.CurrentSolution =  WorkSpace.UserProfile.Solution;
             GMR.Runners.Add(GR);
             ReportInfo RI = new ReportInfo(env, GMR);
             ReportPage RP = new ReportPage(RI, Xaml);

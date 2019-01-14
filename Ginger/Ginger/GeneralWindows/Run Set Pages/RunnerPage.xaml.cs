@@ -39,7 +39,7 @@ using Amdocs.Ginger.Common.Enums;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.Environments;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 
 namespace Ginger.Run
@@ -130,7 +130,7 @@ namespace Ginger.Run
         }
         public string totalCount { get; set; }
         bool UpdatingForLastTime { get; set; }
-        HTMLReportsConfiguration currentConf = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+        HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         ChartType SelectedChartType { get; set; }
         public bool ViewMode1 = false;
         public RunnerPage(GingerRunner runner, bool Viewmode=false)
@@ -251,8 +251,8 @@ namespace Ginger.Run
             if (CheckCurrentRunnerIsNotRuning()) return;
 
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            HTMLReportsConfiguration currentConf = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder!=null)
             {
                 string reportpath = ((BusinessFlow)((RunnerItemPage)sender).ItemObject).ExecutionFullLogFolder;
@@ -556,7 +556,7 @@ namespace Ginger.Run
             TextBlockHelper TBH = new TextBlockHelper(xRunnerInfoTextBlock);
             foreach (ApplicationAgent appAgent in mRunner.ApplicationAgents)
             {
-                if (App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == appAgent.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() != null)
+                if ( WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == appAgent.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() != null)
                     continue;
                 TBH.AddText(LimitstringLength(appAgent.AppName, 10));
                 TBH.AddText(" > ");
@@ -616,7 +616,7 @@ namespace Ginger.Run
         }
         private void ViewReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             string reportsResultFolder = "";
 
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
@@ -645,13 +645,13 @@ namespace Ginger.Run
 
         private void GenerateIndividualReport(object sender, RoutedEventArgs e)
         {
-            ReportTemplate.GenerateIndividualReport(mRunner, App.UserProfile.GetDefaultReport(), (ProjEnvironment)App.RunsetExecutor.RunsetExecutionEnvironment, true);
+            ReportTemplate.GenerateIndividualReport(mRunner,  WorkSpace.UserProfile.GetDefaultReport(), (ProjEnvironment)App.RunsetExecutor.RunsetExecutionEnvironment, true);
         }
 
         private void GenerateConsolidatedReport(object sender, RoutedEventArgs e)
         {
             var RI = new ReportInfo(App.RunsetExecutor.RunsetExecutionEnvironment, mRunner, true);
-            var repFileName = ReportTemplate.GenerateReport(App.UserProfile.GetDefaultReport(), RI);
+            var repFileName = ReportTemplate.GenerateReport( WorkSpace.UserProfile.GetDefaultReport(), RI);
             Process.Start(repFileName);
         }
 

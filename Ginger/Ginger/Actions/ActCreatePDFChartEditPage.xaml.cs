@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using System;
@@ -40,7 +41,7 @@ namespace Ginger.Actions
                 InitializeComponent();
                 mAct = act;
                 Bind();
-                mAct.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();                   
+                mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();                   
         }
                 
         public void Bind()
@@ -63,7 +64,7 @@ namespace Ginger.Actions
 
             dlg.DefaultExt = "*.csv";
             dlg.Filter = "csv Files (*.csv)|*.csv";
-            string SolutionFolder =App.UserProfile.Solution.Folder.ToUpper(); 
+            string SolutionFolder = WorkSpace.UserProfile.Solution.Folder.ToUpper(); 
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

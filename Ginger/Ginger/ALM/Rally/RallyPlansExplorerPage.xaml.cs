@@ -25,6 +25,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using GingerCore.ALM.Rally;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM.Rally
 {
@@ -67,7 +68,7 @@ namespace Ginger.ALM.Rally
         {
             Mouse.OverrideCursor = Cursors.Wait;
             ObservableList<RallyTestPlan> mRallyTestPlansListSortedByDate = new ObservableList<RallyTestPlan>();
-            foreach (RallyTestPlan testPlan in RallyConnect.Instance.GetRallyTestPlansByProject(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, App.UserProfile.Solution.Folder + @"Documents\ALM\RQM_Configs", App.UserProfile.Solution.ALMProject).OrderByDescending(item => item.CreationDate))
+            foreach (RallyTestPlan testPlan in RallyConnect.Instance.GetRallyTestPlansByProject( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,  WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject,  WorkSpace.UserProfile.Solution.Folder + @"Documents\ALM\RQM_Configs",  WorkSpace.UserProfile.Solution.ALMProject).OrderByDescending(item => item.CreationDate))
             {
                 mRallyTestPlansListSortedByDate.Add(testPlan);
             }

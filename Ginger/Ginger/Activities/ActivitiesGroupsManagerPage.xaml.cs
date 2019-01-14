@@ -221,7 +221,7 @@ namespace Ginger.Activities
             //    //        foreach (ActivityIdentifiers actIdent in group.ActivitiesIdentifiers)
             //    //        {
             //    //            //check that all used variables exist in the Activity (and not taken from the BF)
-            //    //            if (actIdent.IdentifiedActivity.WarnFromMissingVariablesUse(App.UserProfile.Solution.Variables,mBusinessFlow.Variables, false) == true) continue;
+            //    //            if (actIdent.IdentifiedActivity.WarnFromMissingVariablesUse( WorkSpace.UserProfile.Solution.Variables,mBusinessFlow.Variables, false) == true) continue;
 
             //    //            App.LocalRepository.AddItemToRepository(actIdent.IdentifiedActivity, false);
             //    //        }

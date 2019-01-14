@@ -78,20 +78,20 @@ namespace Ginger
 
                 //User Profile
                 App.PropertyChanged += App_PropertyChanged;
-                App.UserProfile.PropertyChanged += UserProfilePropertyChanged;
-                if (App.UserProfile.GingerStatus == eGingerStatus.Active)
+                 WorkSpace.UserProfile.PropertyChanged += UserProfilePropertyChanged;
+                if ( WorkSpace.UserProfile.GingerStatus == eGingerStatus.Active)
                 {
                     Reporter.ToStatus(eStatusMsgKey.ExitMode);
                 }
-                App.UserProfile.GingerStatus = eGingerStatus.Active;
-                App.UserProfile.SaveUserProfile();
-                App.UserProfile.RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
+                 WorkSpace.UserProfile.GingerStatus = eGingerStatus.Active;
+                 WorkSpace.UserProfile.SaveUserProfile();
+                 WorkSpace.UserProfile.RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
 
                 //Main Menu                            
                 xGingerIconImg.ToolTip = App.AppFullProductName + Environment.NewLine + "Version " + App.AppVersion;
                 SetSolutionDependedUIElements();
                 UpdateUserDetails();
-                if (App.UserProfile.RecentSolutionsAsObjects.Count > 0)
+                if ( WorkSpace.UserProfile.RecentSolutionsAsObjects.Count > 0)
                 {
                     xRecentSolutionsMenuItem.Visibility = Visibility.Visible;
                 }
@@ -104,16 +104,16 @@ namespace Ginger
                 lblVersion.Content = "Version " + Ginger.App.AppVersion;
 
                 //Solution                                    
-                if (App.UserProfile.AutoLoadLastSolution && WorkSpace.RunningInExecutionMode == false && App.RunningFromUnitTest == false)
+                if ( WorkSpace.UserProfile.AutoLoadLastSolution && WorkSpace.RunningInExecutionMode == false && App.RunningFromUnitTest == false)
                 {
                     AutoLoadLastSolution();
                 }
 
                 //Messages
-                if (App.UserProfile.NewHelpLibraryMessgeShown == false)
+                if ( WorkSpace.UserProfile.NewHelpLibraryMessgeShown == false)
                 {
                     Reporter.ToStatus(eStatusMsgKey.GingerHelpLibrary);
-                    App.UserProfile.NewHelpLibraryMessgeShown = true;
+                     WorkSpace.UserProfile.NewHelpLibraryMessgeShown = true;
                 }
 
 
@@ -204,11 +204,11 @@ namespace Ginger
             {
                 //Insert
                 int insertIndex = xSolutionSelectionMainMenuItem.Items.IndexOf(xRecentSolutionsMenuItem) + 1;
-                if (App.UserProfile.RecentSolutionsAsObjects.Count > 0)
+                if ( WorkSpace.UserProfile.RecentSolutionsAsObjects.Count > 0)
                 {
                     xRecentSolutionsMenuItem.Visibility = Visibility.Visible;
 
-                    foreach (Solution sol in App.UserProfile.RecentSolutionsAsObjects)
+                    foreach (Solution sol in  WorkSpace.UserProfile.RecentSolutionsAsObjects)
                     {
                         AddSubMenuItem(xSolutionSelectionMainMenuItem, sol.Name, sol, RecentSolutionSelection_Click, insertIndex++, sol.Folder, eImageType.Solution);
                     }
@@ -279,9 +279,9 @@ namespace Ginger
         {
             try
             {
-                if (App.UserProfile.RecentSolutionsAsObjects.Count > 0)
+                if ( WorkSpace.UserProfile.RecentSolutionsAsObjects.Count > 0)
                 {
-                    App.SetSolution(App.UserProfile.RecentSolutionsAsObjects[0].Folder);
+                    App.SetSolution( WorkSpace.UserProfile.RecentSolutionsAsObjects[0].Folder);
                     xSolutionTabsListView.SelectedItem = null;
                     xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
                 }
@@ -299,7 +299,7 @@ namespace Ginger
             if (e.PropertyName == nameof(UserProfile.Solution))
             {
                 SetSolutionDependedUIElements();
-                if (App.UserProfile.Solution == null)
+                if ( WorkSpace.UserProfile.Solution == null)
                 {
                     xSolutionTabsListView.SelectedItem = null;
                     xSolutionNameTextBlock.Text = "Please Load Solution";                    
@@ -308,8 +308,8 @@ namespace Ginger
                 {
                     xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
                     App.LastBusinessFlow = null;
-                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty, App.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
-                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty, App.UserProfile.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
+                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
+                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
                     xSolutionTabsListView.SelectedItem = null;
                     xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
                 }
@@ -367,8 +367,8 @@ namespace Ginger
             
             if (!WorkSpace.RunningInExecutionMode)
             {
-                App.UserProfile.GingerStatus = eGingerStatus.Closed;
-                App.UserProfile.SaveUserProfile();
+                 WorkSpace.UserProfile.GingerStatus = eGingerStatus.Closed;
+                 WorkSpace.UserProfile.SaveUserProfile();
                 App.AppSolutionAutoSave.SolutionAutoSaveEnd();
                 try
                 {
@@ -463,10 +463,10 @@ namespace Ginger
 
         public void SetSolutionDependedUIElements()
         {
-            if (App.UserProfile.Solution != null)
+            if ( WorkSpace.UserProfile.Solution != null)
             {
                 xLoadedSolutionMenusPnl.Visibility = Visibility.Visible;
-                if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
+                if ( WorkSpace.UserProfile.UserTypeHelper.IsSupportAutomate)
                 {
                     xRunListItem.Visibility = Visibility.Visible;
                 }
@@ -474,7 +474,7 @@ namespace Ginger
                 {
                     xRunListItem.Visibility = Visibility.Collapsed;
                 }
-                if (App.UserProfile.Solution.SourceControl != null)
+                if ( WorkSpace.UserProfile.Solution.SourceControl != null)
                 {
                     xSolutionSourceControlMenu.Visibility = Visibility.Visible;
                 }
@@ -543,8 +543,8 @@ namespace Ginger
         private void ViewSolutionFiles_Click(object sender, RoutedEventArgs e)
         {
             //show solution folder files
-            if (App.UserProfile.Solution != null)
-                Process.Start(App.UserProfile.Solution.Folder);
+            if ( WorkSpace.UserProfile.Solution != null)
+                Process.Start( WorkSpace.UserProfile.Solution.Folder);
         }
 
         private void btnSourceControlConnectionDetails_Click(object sender, RoutedEventArgs e)
@@ -565,7 +565,7 @@ namespace Ginger
 
             AutoLogProxy.UserOperationStart("btnSourceControlCheckIn_Click");
 
-            App.CheckIn(App.UserProfile.Solution.Folder);
+            App.CheckIn( WorkSpace.UserProfile.Solution.Folder);
 
             AutoLogProxy.UserOperationEnd();
         }
@@ -577,10 +577,10 @@ namespace Ginger
             AutoLogProxy.UserOperationStart("btnSourceControlGetLatest_Click");
 
             Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
-            if (string.IsNullOrEmpty(App.UserProfile.Solution.Folder))
+            if (string.IsNullOrEmpty( WorkSpace.UserProfile.Solution.Folder))
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
-                SourceControlIntegration.GetLatest(App.UserProfile.Solution.Folder, App.UserProfile.Solution.SourceControl);
+                SourceControlIntegration.GetLatest( WorkSpace.UserProfile.Solution.Folder,  WorkSpace.UserProfile.Solution.SourceControl);
 
             App.UpdateApplicationsAgentsMapping(false);
             Reporter.HideStatusMessage();
@@ -592,7 +592,7 @@ namespace Ginger
         {
             AutoLogProxy.UserOperationStart("MainWindow.AnalyzerButton_Click");
             AnalyzerPage AP = new AnalyzerPage();
-            AP.Init(App.UserProfile.Solution);
+            AP.Init( WorkSpace.UserProfile.Solution);
             AP.ShowAsWindow();
             AutoLogProxy.UserOperationEnd();
         }
@@ -602,7 +602,7 @@ namespace Ginger
             AutoLogProxy.UserOperationStart("ResolveConflictsBtn_Click");
 
             Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
-            SourceControlIntegration.ResolveConflicts(App.UserProfile.Solution.SourceControl, App.UserProfile.Solution.Folder, side);
+            SourceControlIntegration.ResolveConflicts( WorkSpace.UserProfile.Solution.SourceControl,  WorkSpace.UserProfile.Solution.Folder, side);
             Reporter.HideStatusMessage();
 
             AutoLogProxy.UserOperationEnd();
@@ -625,9 +625,9 @@ namespace Ginger
 
         private void btnUpgrade_Click(object sender, RoutedEventArgs e)
         {
-            if (App.UserProfile.Solution != null)
+            if ( WorkSpace.UserProfile.Solution != null)
             {
-                Solution sol = App.UserProfile.Solution;
+                Solution sol =  WorkSpace.UserProfile.Solution;
                 ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(Solution.SolutionFiles(sol.Folder), SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
                 if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
                 {
@@ -643,7 +643,7 @@ namespace Ginger
 
         private void btnRecover_Click(object sender, RoutedEventArgs e)
         {
-            if (App.UserProfile.Solution != null)
+            if ( WorkSpace.UserProfile.Solution != null)
             {
                 App.AppSolutionRecover.SolutionRecoverStart(true);
             }
@@ -676,7 +676,7 @@ namespace Ginger
         private void btnSourceControlRepositoryDetails_Click(object sender, RoutedEventArgs e)
         {
 
-            SourceControlItemInfoDetails SCIInfoDetails = SourceControlIntegration.GetRepositoryInfo(App.UserProfile.Solution.SourceControl);
+            SourceControlItemInfoDetails SCIInfoDetails = SourceControlIntegration.GetRepositoryInfo( WorkSpace.UserProfile.Solution.SourceControl);
             SourceControlItemInfoPage SCIIP = new SourceControlItemInfoPage(SCIInfoDetails);
             SCIIP.ShowAsWindow();
         }
@@ -750,10 +750,10 @@ namespace Ginger
 
         private void xSolutionEditBtn_Click(object sender, RoutedEventArgs e)
         {
-            string newName = App.UserProfile.Solution.Name;
+            string newName =  WorkSpace.UserProfile.Solution.Name;
             if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Solution Rename", "New Solution Name:", ref newName, System.IO.Path.GetInvalidPathChars()))
             {
-                App.UserProfile.Solution.Name = newName;
+                 WorkSpace.UserProfile.Solution.Name = newName;
             }
         }
 
@@ -826,22 +826,22 @@ namespace Ginger
 
         private void UpdateUserDetails()
         {
-            if (string.IsNullOrEmpty(App.UserProfile.ProfileImage))
+            if (string.IsNullOrEmpty( WorkSpace.UserProfile.ProfileImage))
             {
                 xProfileImageImgBrush.ImageSource = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User, foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_LightGray"), width: 50);
             }
             else
             {
-                xProfileImageImgBrush.ImageSource = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(App.UserProfile.ProfileImage));
+                xProfileImageImgBrush.ImageSource = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage( WorkSpace.UserProfile.ProfileImage));
             }
 
-            if (String.IsNullOrEmpty(App.UserProfile.UserFirstName))
+            if (String.IsNullOrEmpty( WorkSpace.UserProfile.UserFirstName))
             {
-                xUserNameLbl.Content = App.UserProfile.UserName;
+                xUserNameLbl.Content =  WorkSpace.UserProfile.UserName;
             }
             else
             {
-                xUserNameLbl.Content = App.UserProfile.UserFirstName;
+                xUserNameLbl.Content =  WorkSpace.UserProfile.UserFirstName;
             }
         }
 

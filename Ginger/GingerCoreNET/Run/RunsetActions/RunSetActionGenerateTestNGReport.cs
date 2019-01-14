@@ -7,7 +7,7 @@ using System.IO;
 using System.Text;
 using Ginger.Reports;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 
 namespace Ginger.Run.RunSetActions
 {

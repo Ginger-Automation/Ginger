@@ -228,17 +228,29 @@ namespace Ginger
             {
                 mAutomateTabEnvironment = value;
                 App.AutomateTabGingerRunner.ProjEnvironment = mAutomateTabEnvironment;
-                App.UserProfile.RecentEnvironment = mAutomateTabEnvironment.Guid;
+                WorkSpace.UserProfile.RecentEnvironment = mAutomateTabEnvironment.Guid;
+
             }
         }
 
 
-        public static GingerRunner AutomateTabGingerRunner;
+        public static GingerRunner AutomateTabGingerRunner
+        {
+            get
+            {
+               return WorkSpace.AutomateTabGingerRunner;
+            }
+
+            set
+            {
+                WorkSpace.AutomateTabGingerRunner = value;
+            }
+        }
 
 
         public static AppProgressBar AppProgressBar { get; set; }
 
-        public static UserProfile UserProfile { get; set; }
+        //public static UserProfile UserProfile { get; set; }
 
         public static event PropertyChangedEventHandler PropertyChanged;
         protected static void OnPropertyChanged(string name)
@@ -282,8 +294,8 @@ namespace Ginger
                     {
                         mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
                     }
-                    UserProfile.RecentBusinessFlow = App.BusinessFlow.Guid;
-                    UserProfile.Solution.LastBusinessFlowFileName = mBusinessFlow.FileName;
+                   WorkSpace.UserProfile.RecentBusinessFlow = App.BusinessFlow.Guid;
+                    WorkSpace.UserProfile.Solution.LastBusinessFlowFileName = mBusinessFlow.FileName;
                     AddLastUsedBusinessFlow(mBusinessFlow);
                 }
 
@@ -301,8 +313,8 @@ namespace Ginger
         {
             if (BF != null)
             {
-                App.UserProfile.Solution.RecentlyUsedBusinessFlows.AddItem(BF.FileName);
-                App.UserProfile.SaveUserProfile();
+                 WorkSpace.UserProfile.Solution.RecentlyUsedBusinessFlows.AddItem(BF.FileName);
+                 WorkSpace.UserProfile.SaveUserProfile();
             }
         }
 
@@ -389,7 +401,7 @@ namespace Ginger
 
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
 
-            // Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
+            //Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
 
             AutomateTabGingerRunner = new GingerRunner(eExecutedFrom.Automation);
 
@@ -419,19 +431,19 @@ namespace Ginger
             phase = "Loading User Profile";
             Reporter.ToLog(eLogLevel.DEBUG, phase);
             AppSplashWindow.LoadingInfo(phase);
-            App.UserProfile = UserProfile.LoadUserProfile();
+             WorkSpace.UserProfile = UserProfile.LoadUserProfile();
 
             phase = "Configuring User Type";
             Reporter.ToLog(eLogLevel.DEBUG, phase);
             AppSplashWindow.LoadingInfo(phase);
-            UserProfile.LoadUserTypeHelper();
+            WorkSpace.UserProfile.LoadUserTypeHelper();
 
 
             phase = "Loading User Selected Resource Dictionaries";
             Reporter.ToLog(eLogLevel.DEBUG, phase);
             AppSplashWindow.LoadingInfo(phase);
-            if (App.UserProfile != null)
-                LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, App.UserProfile.TerminologyDictionaryType);
+            if ( WorkSpace.UserProfile != null)
+                LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default,  WorkSpace.UserProfile.TerminologyDictionaryType);
             else
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
 
@@ -463,9 +475,9 @@ namespace Ginger
 
             AutoLogProxy.LogAppOpened();
 
-            if ((App.UserProfile.Solution != null) && (App.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null))
+            if (( WorkSpace.UserProfile.Solution != null) && ( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null))
             {
-                AutomateTabGingerRunner.ExecutionLogger.Configuration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                AutomateTabGingerRunner.ExecutionLogger.Configuration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             }
 
             // Register our own Ginger tool tip handler
@@ -568,6 +580,9 @@ namespace Ginger
             AddClass(list, typeof(ActSetVariableValue));
             AddClass(list, typeof(ActAgentManipulation));
 
+            AddClass(list, typeof(UserProfile));
+            AddClass(list, typeof(Solution));
+
 
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
@@ -643,30 +658,30 @@ namespace Ginger
         public static void DownloadSolution(string SolutionFolder)
         {
             SourceControlBase mSourceControl;
-            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
+            if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
                 mSourceControl = new GITSourceControl();
-            else if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            else if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 mSourceControl = new SVNSourceControl();
             else
                 mSourceControl = new SVNSourceControl();
 
             if (mSourceControl != null)
             {
-                App.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
-                mSourceControl.SourceControlURL = App.UserProfile.SourceControlURL;
-                mSourceControl.SourceControlUser = App.UserProfile.SourceControlUser;
-                mSourceControl.SourceControlPass = App.UserProfile.SourceControlPass;
-                mSourceControl.SourceControlLocalFolder = App.UserProfile.SourceControlLocalFolder;
+                 WorkSpace.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
+                mSourceControl.SourceControlURL =  WorkSpace.UserProfile.SourceControlURL;
+                mSourceControl.SourceControlUser =  WorkSpace.UserProfile.SourceControlUser;
+                mSourceControl.SourceControlPass =  WorkSpace.UserProfile.SourceControlPass;
+                mSourceControl.SourceControlLocalFolder =  WorkSpace.UserProfile.SourceControlLocalFolder;
                 mSourceControl.SolutionFolder = SolutionFolder;
 
-                mSourceControl.SourceControlConfigureProxy = App.UserProfile.SolutionSourceControlConfigureProxy;
-                mSourceControl.SourceControlProxyAddress = App.UserProfile.SolutionSourceControlProxyAddress;
-                mSourceControl.SourceControlProxyPort = App.UserProfile.SolutionSourceControlProxyPort;
-                mSourceControl.SourceControlTimeout = App.UserProfile.SolutionSourceControlTimeout;
+                mSourceControl.SourceControlConfigureProxy =  WorkSpace.UserProfile.SolutionSourceControlConfigureProxy;
+                mSourceControl.SourceControlProxyAddress =  WorkSpace.UserProfile.SolutionSourceControlProxyAddress;
+                mSourceControl.SourceControlProxyPort =  WorkSpace.UserProfile.SolutionSourceControlProxyPort;
+                mSourceControl.SourceControlTimeout =  WorkSpace.UserProfile.SolutionSourceControlTimeout;
                 mSourceControl.supressMessage = true;
             }
 
-            if (App.UserProfile.SourceControlLocalFolder == string.Empty)
+            if ( WorkSpace.UserProfile.SourceControlLocalFolder == string.Empty)
             {
                 Reporter.ToUser(eUserMsgKey.SourceControlConnMissingLocalFolderInput);
             }
@@ -674,9 +689,9 @@ namespace Ginger
                 SolutionFolder = SolutionFolder.Substring(0, SolutionFolder.Length - 1);
             SolutionInfo sol = new SolutionInfo();
             sol.LocalFolder = SolutionFolder;
-            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder)))
+            if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder)))
                 sol.ExistInLocaly = true;
-            else if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + @"\.git")))
+            else if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + @"\.git")))
                 sol.ExistInLocaly = true;
             else
                 sol.ExistInLocaly = false;
@@ -689,14 +704,14 @@ namespace Ginger
             }
 
             string ProjectURI = string.Empty;
-            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
             {
-                ProjectURI = App.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase) ?
-                sol.SourceControlLocation : App.UserProfile.SourceControlURL + sol.SourceControlLocation;
+                ProjectURI =  WorkSpace.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase) ?
+                sol.SourceControlLocation :  WorkSpace.UserProfile.SourceControlURL + sol.SourceControlLocation;
             }
             else
             {
-                ProjectURI = App.UserProfile.SourceControlURL;
+                ProjectURI =  WorkSpace.UserProfile.SourceControlURL;
             }
             bool getProjectResult = true;
             getProjectResult = SourceControlIntegration.CreateConfigFile(mSourceControl);
@@ -722,7 +737,7 @@ namespace Ginger
 
         private static void SolutionCleanup()
         {            
-            App.UserProfile.Solution = null;
+             WorkSpace.UserProfile.Solution = null;
             App.AutomateTabGingerRunner.ClearAgents();
             App.BusinessFlow = null;
             AutoLogProxy.SetAccount("");
@@ -799,9 +814,9 @@ namespace Ginger
                         ValueExpression.SolutionFolder = SolutionFolder;
                         BusinessFlow.SolutionVariables = sol.Variables;
 
-                        App.UserProfile.Solution = sol;
-                        App.UserProfile.Solution.SetReportsConfigurations();
-                        App.UserProfile.LoadRecentAppAgentMapping();
+                         WorkSpace.UserProfile.Solution = sol;
+                         WorkSpace.UserProfile.Solution.SetReportsConfigurations();
+                         WorkSpace.UserProfile.LoadRecentAppAgentMapping();
                         AutoLogProxy.SetAccount(sol.Account);
                        
                         SetDefaultBusinessFlow();
@@ -814,7 +829,7 @@ namespace Ginger
                         //Offer to upgrade Solution items to current version
                         try
                         {
-                            if (App.UserProfile.DoNotAskToUpgradeSolutions == false && WorkSpace.RunningInExecutionMode == false && RunningFromUnitTest == false)
+                            if ( WorkSpace.UserProfile.DoNotAskToUpgradeSolutions == false && WorkSpace.RunningInExecutionMode == false && RunningFromUnitTest == false)
                             {
                                 ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
                                 if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
@@ -829,7 +844,7 @@ namespace Ginger
                             Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution files should be Upgraded", ex);
                         }
 
-                        App.UserProfile.AddSolutionToRecent(sol);
+                         WorkSpace.UserProfile.AddSolutionToRecent(sol);
                     }
                     else
                     {
@@ -876,32 +891,32 @@ namespace Ginger
 
             if (solution.SourceControl != null)
             {
-                if (string.IsNullOrEmpty(App.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(App.UserProfile.SolutionSourceControlPass))
+                if (string.IsNullOrEmpty( WorkSpace.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty( WorkSpace.UserProfile.SolutionSourceControlPass))
                 {
-                    if (App.UserProfile.SourceControlUser != null && App.UserProfile.SourceControlPass != null)
+                    if ( WorkSpace.UserProfile.SourceControlUser != null &&  WorkSpace.UserProfile.SourceControlPass != null)
                     {
-                        solution.SourceControl.SourceControlUser = App.UserProfile.SourceControlUser;
-                        solution.SourceControl.SourceControlPass = App.UserProfile.SourceControlPass;
-                        solution.SourceControl.SolutionSourceControlAuthorEmail = App.UserProfile.SolutionSourceControlAuthorEmail;
-                        solution.SourceControl.SolutionSourceControlAuthorName = App.UserProfile.SolutionSourceControlAuthorName;
+                        solution.SourceControl.SourceControlUser =  WorkSpace.UserProfile.SourceControlUser;
+                        solution.SourceControl.SourceControlPass =  WorkSpace.UserProfile.SourceControlPass;
+                        solution.SourceControl.SolutionSourceControlAuthorEmail =  WorkSpace.UserProfile.SolutionSourceControlAuthorEmail;
+                        solution.SourceControl.SolutionSourceControlAuthorName =  WorkSpace.UserProfile.SolutionSourceControlAuthorName;
                     }
                 }
                 else
                 {
-                    solution.SourceControl.SourceControlUser = App.UserProfile.SolutionSourceControlUser;
-                    solution.SourceControl.SourceControlPass = App.UserProfile.SolutionSourceControlPass;
-                    solution.SourceControl.SolutionSourceControlAuthorEmail = App.UserProfile.SolutionSourceControlAuthorEmail;
-                    solution.SourceControl.SolutionSourceControlAuthorName = App.UserProfile.SolutionSourceControlAuthorName;
+                    solution.SourceControl.SourceControlUser =  WorkSpace.UserProfile.SolutionSourceControlUser;
+                    solution.SourceControl.SourceControlPass =  WorkSpace.UserProfile.SolutionSourceControlPass;
+                    solution.SourceControl.SolutionSourceControlAuthorEmail =  WorkSpace.UserProfile.SolutionSourceControlAuthorEmail;
+                    solution.SourceControl.SolutionSourceControlAuthorName =  WorkSpace.UserProfile.SolutionSourceControlAuthorName;
                 }
 
                 string error = string.Empty;
                 solution.SourceControl.SolutionFolder = solution.Folder;
                 solution.SourceControl.RepositoryRootFolder = RepositoryRootFolder;
                 solution.SourceControl.SourceControlURL = solution.SourceControl.GetRepositoryURL(ref error);
-                solution.SourceControl.SourceControlLocalFolder = App.UserProfile.SourceControlLocalFolder;
-                solution.SourceControl.SourceControlProxyAddress = App.UserProfile.SolutionSourceControlProxyAddress;
-                solution.SourceControl.SourceControlProxyPort = App.UserProfile.SolutionSourceControlProxyPort;
-                solution.SourceControl.SourceControlTimeout = App.UserProfile.SolutionSourceControlTimeout;
+                solution.SourceControl.SourceControlLocalFolder =  WorkSpace.UserProfile.SourceControlLocalFolder;
+                solution.SourceControl.SourceControlProxyAddress =  WorkSpace.UserProfile.SolutionSourceControlProxyAddress;
+                solution.SourceControl.SourceControlProxyPort =  WorkSpace.UserProfile.SolutionSourceControlProxyPort;
+                solution.SourceControl.SourceControlTimeout =  WorkSpace.UserProfile.SolutionSourceControlTimeout;
 
                 WorkSpace.Instance.SourceControl = solution.SourceControl;
                 RepositoryItemBase.SetSourceControl(solution.SourceControl);
@@ -924,14 +939,14 @@ namespace Ginger
         private static void DoSolutionAutoSaveAndRecover()
         {
             //Init
-            AppSolutionAutoSave.SolutionInit(App.UserProfile.Solution.Folder);
-            AppSolutionRecover.SolutionInit(App.UserProfile.Solution.Folder);
+            AppSolutionAutoSave.SolutionInit( WorkSpace.UserProfile.Solution.Folder);
+            AppSolutionRecover.SolutionInit( WorkSpace.UserProfile.Solution.Folder);
 
             //start Auto Save
             AppSolutionAutoSave.SolutionAutoSaveStart();
 
             //check if Recover is needed
-            if (!App.UserProfile.DoNotAskToRecoverSolutions)
+            if (! WorkSpace.UserProfile.DoNotAskToRecoverSolutions)
                 AppSolutionRecover.SolutionRecoverStart();
         }
 
@@ -1029,9 +1044,9 @@ namespace Ginger
             biz.Activities = new ObservableList<Activity>();
             biz.Variables = new ObservableList<VariableBase>();
             // Set the new BF to be same like main app
-            if (App.UserProfile.Solution.MainApplication != null)
+            if ( WorkSpace.UserProfile.Solution.MainApplication != null)
             {
-                biz.TargetApplications.Add(new TargetApplication() { AppName = App.UserProfile.Solution.MainApplication });
+                biz.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.UserProfile.Solution.MainApplication });
             }
 
             Activity a = new Activity() { Active = true };
@@ -1069,12 +1084,12 @@ namespace Ginger
 
         public static void UpdateApplicationsAgentsMapping(bool useAgentsCache = true)
         {
-            if (App.UserProfile.Solution != null && App.BusinessFlow != null)
+            if ( WorkSpace.UserProfile.Solution != null && App.BusinessFlow != null)
             {
                 //First we check if biz flow have target apps if not add one based on solution, fast convert for old or deleted
                 if (App.BusinessFlow.TargetApplications.Count() == 0)
                 {
-                    if (string.IsNullOrEmpty(App.UserProfile.Solution.MainApplication))
+                    if (string.IsNullOrEmpty( WorkSpace.UserProfile.Solution.MainApplication))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You must have at least one Target Application configured, please set it up.");
                         return;
@@ -1085,12 +1100,12 @@ namespace Ginger
                         if (App.BusinessFlow.TargetApplications == null)
                             App.BusinessFlow.TargetApplications = new ObservableList<TargetBase>();
 
-                        App.BusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = App.UserProfile.Solution.MainApplication });
+                        App.BusinessFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.UserProfile.Solution.MainApplication });
                     }
                 }
             }
 
-            if (App.UserProfile.Solution != null)
+            if ( WorkSpace.UserProfile.Solution != null)
                 App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<IAgent>( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x=>(IAgent)x).ToList());
             else
                 App.AutomateTabGingerRunner.SolutionAgents = null;
@@ -1158,7 +1173,7 @@ namespace Ginger
 
         public static void CloseSolution()
         {
-            App.UserProfile.Solution = null;
+             WorkSpace.UserProfile.Solution = null;
         }
 
 

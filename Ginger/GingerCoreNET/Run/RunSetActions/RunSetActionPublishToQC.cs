@@ -21,18 +21,13 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
-using Ginger.ALM.QC;
 using Ginger.Reports;
 using GingerCore;
-using GingerCore.Repository;
-using GingerCore.ALM.QC;
-using Ginger.ALM;
 using GingerCore.ALM;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 
 namespace Ginger.Run.RunSetActions
 {
@@ -47,7 +42,7 @@ namespace Ginger.Run.RunSetActions
             public static string toAttachActivitiesGroupReport = "toAttachActivitiesGroupReport";
         }
         PublishToALMConfig PublishToALMConfig = new PublishToALMConfig();
-        readonly ValueExpression mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);                
+        readonly ValueExpression mVE = new ValueExpression(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, RepositoryItemHelper.RepositoryItemFactory.GetVariaables());                
 
         private string mVariableForTCRunName;
         [IsSerializedForLocalRepository]
@@ -85,7 +80,7 @@ namespace Ginger.Run.RunSetActions
         {
             //Set flag for each BF to execute runset when BF execute finish
             SetExportToALMConfig();
-            foreach (GingerRunner GR in App.RunsetExecutor.Runners)
+            foreach (GingerRunner GR in WorkSpace.RunsetExecutor.Runners)
             {
                 GR.PublishToALMConfig = PublishToALMConfig;
             }               
@@ -108,7 +103,7 @@ namespace Ginger.Run.RunSetActions
                 bfs.Add((BusinessFlow)BFR.GetBusinessFlow());
             }
             
-            if (!ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, ALMIntegration.eALMConnectType.Auto, false))
+            if (!RepositoryItemHelper.RepositoryItemFactory.ExportBusinessFlowsResultToALM(bfs, result, PublishToALMConfig))
             {
                 Errors= result;
                 Status = eRunSetActionStatus.Failed;

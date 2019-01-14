@@ -29,7 +29,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-
+using amdocs.ginger.GingerCoreNET;
 namespace Ginger.SourceControl
 {
     /// <summary>
@@ -64,18 +64,18 @@ namespace Ginger.SourceControl
         private void Init()
         {
             //ConnecitonDetailsPage Binding
-            if (App.UserProfile.SourceControlURL == null)
+            if ( WorkSpace.UserProfile.SourceControlURL == null)
             {
 
-                App.UserProfile.SourceControlURL = "";
+                 WorkSpace.UserProfile.SourceControlURL = "";
             }
 
-            SourceControlClassComboBox.Init(App.UserProfile, nameof(UserProfile.SourceControlType), typeof(SourceControlBase.eSourceControlType), false, SourceControlClassComboBox_SelectionChanged);
+            SourceControlClassComboBox.Init( WorkSpace.UserProfile, nameof(UserProfile.SourceControlType), typeof(SourceControlBase.eSourceControlType), false, SourceControlClassComboBox_SelectionChanged);
             SourceControlClassComboBox.ComboBox.Items.RemoveAt(0);//removing the NONE option from user selection
 
             //ProjectPage Binding.
             App.ObjFieldBinding(SourceControlLocalFolderTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlLocalFolder));
-            if (String.IsNullOrEmpty(App.UserProfile.SourceControlLocalFolder))
+            if (String.IsNullOrEmpty( WorkSpace.UserProfile.SourceControlLocalFolder))
             {
                 // Default local solutions folder
                 mSourceControl.SourceControlLocalFolder = @"C:\GingerSourceControl\Solutions\";
@@ -84,11 +84,11 @@ namespace Ginger.SourceControl
             App.ObjFieldBinding(ConfigureProxyCheckBox, CheckBox.IsCheckedProperty, mSourceControl, nameof(SourceControlBase.SourceControlConfigureProxy));
 
             App.ObjFieldBinding(ProxyAddressTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlProxyAddress));
-            if (String.IsNullOrEmpty(App.UserProfile.SolutionSourceControlProxyAddress))
+            if (String.IsNullOrEmpty( WorkSpace.UserProfile.SolutionSourceControlProxyAddress))
                 mSourceControl.SourceControlProxyAddress = @"http://genproxy.amdocs.com";
 
             App.ObjFieldBinding(ProxyPortTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlProxyPort));
-            if (String.IsNullOrEmpty(App.UserProfile.SolutionSourceControlProxyPort))
+            if (String.IsNullOrEmpty( WorkSpace.UserProfile.SolutionSourceControlProxyPort))
                 mSourceControl.SourceControlProxyPort = @"8080";
 
             App.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlTimeout));
@@ -97,11 +97,11 @@ namespace Ginger.SourceControl
         }
         private void UpdateTimeoutVisibility()
         {
-            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
+            if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
             {
                 xTimeoutPanel.Visibility = Visibility.Hidden;
             }
-            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
             {
                 xTimeoutPanel.Visibility = Visibility.Visible;
             }
@@ -127,7 +127,7 @@ namespace Ginger.SourceControl
         private void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             mSourceControl.SourceControlPass = ((PasswordBox)sender).Password;
-            App.UserProfile.SaveUserProfile();//todo: check if needed
+             WorkSpace.UserProfile.SaveUserProfile();//todo: check if needed
             SourceControlIntegration.Init(mSourceControl);
         }
 
@@ -220,7 +220,7 @@ namespace Ginger.SourceControl
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
 
-                if (App.UserProfile.SourceControlLocalFolder == string.Empty)
+                if ( WorkSpace.UserProfile.SourceControlLocalFolder == string.Empty)
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlConnMissingLocalFolderInput);
                 }
@@ -233,14 +233,14 @@ namespace Ginger.SourceControl
                 }
 
                 string ProjectURI = string.Empty;
-                if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+                if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 {
-                    ProjectURI = App.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase) ?
-                    sol.SourceControlLocation : App.UserProfile.SourceControlURL + sol.SourceControlLocation;
+                    ProjectURI =  WorkSpace.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase) ?
+                    sol.SourceControlLocation :  WorkSpace.UserProfile.SourceControlURL + sol.SourceControlLocation;
                 }
                 else
                 {
-                    ProjectURI = App.UserProfile.SourceControlURL;
+                    ProjectURI =  WorkSpace.UserProfile.SourceControlURL;
                 }
 
                 bool getProjectResult = await Task.Run(() => SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI));
@@ -253,13 +253,13 @@ namespace Ginger.SourceControl
                 {
                     OpenSolution(sol.LocalFolder, ProjectURI);
 
-                    if (App.UserProfile.Solution != null && App.UserProfile.Solution.SourceControl != null)
+                    if ( WorkSpace.UserProfile.Solution != null &&  WorkSpace.UserProfile.Solution.SourceControl != null)
                     {
-                        if (App.UserProfile.Solution.SourceControl.SourceControlUser != App.UserProfile.SourceControlUser || App.UserProfile.Solution.SourceControl.SourceControlPass != App.UserProfile.SourceControlPass)
+                        if ( WorkSpace.UserProfile.Solution.SourceControl.SourceControlUser !=  WorkSpace.UserProfile.SourceControlUser ||  WorkSpace.UserProfile.Solution.SourceControl.SourceControlPass !=  WorkSpace.UserProfile.SourceControlPass)
                         {
-                            App.UserProfile.Solution.SourceControl.SourceControlUser = App.UserProfile.SourceControlUser;
-                            App.UserProfile.Solution.SourceControl.SourceControlPass = App.UserProfile.SourceControlPass;
-                            App.UserProfile.Solution.SourceControl.Disconnect();
+                             WorkSpace.UserProfile.Solution.SourceControl.SourceControlUser =  WorkSpace.UserProfile.SourceControlUser;
+                             WorkSpace.UserProfile.Solution.SourceControl.SourceControlPass =  WorkSpace.UserProfile.SourceControlPass;
+                             WorkSpace.UserProfile.Solution.SourceControl.Disconnect();
                         }
                     }
                     genWin.Close();
@@ -336,31 +336,31 @@ namespace Ginger.SourceControl
 
         public static void SourceControlInit()
         {
-            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
+            if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
                 mSourceControl = new GITSourceControl();
-            else if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            else if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 mSourceControl = new SVNSourceControl();
-            else if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.None)
+            else if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.None)
                 mSourceControl = new SVNSourceControl();
 
             if (mSourceControl != null)
             {
-                App.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
-                mSourceControl.SourceControlURL = App.UserProfile.SourceControlURL;
-                mSourceControl.SourceControlUser = App.UserProfile.SourceControlUser;
-                mSourceControl.SourceControlPass = App.UserProfile.SourceControlPass;
-                mSourceControl.SourceControlLocalFolder = App.UserProfile.SourceControlLocalFolder;
+                 WorkSpace.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
+                mSourceControl.SourceControlURL =  WorkSpace.UserProfile.SourceControlURL;
+                mSourceControl.SourceControlUser =  WorkSpace.UserProfile.SourceControlUser;
+                mSourceControl.SourceControlPass =  WorkSpace.UserProfile.SourceControlPass;
+                mSourceControl.SourceControlLocalFolder =  WorkSpace.UserProfile.SourceControlLocalFolder;
 
-                mSourceControl.SourceControlConfigureProxy = App.UserProfile.SolutionSourceControlConfigureProxy;
-                mSourceControl.SourceControlProxyAddress = App.UserProfile.SolutionSourceControlProxyAddress;
-                mSourceControl.SourceControlProxyPort = App.UserProfile.SolutionSourceControlProxyPort;
+                mSourceControl.SourceControlConfigureProxy =  WorkSpace.UserProfile.SolutionSourceControlConfigureProxy;
+                mSourceControl.SourceControlProxyAddress =  WorkSpace.UserProfile.SolutionSourceControlProxyAddress;
+                mSourceControl.SourceControlProxyPort =  WorkSpace.UserProfile.SolutionSourceControlProxyPort;
 
                 // If the UserProfile has been deleted or been created for the first time
-                if (App.UserProfile.SolutionSourceControlTimeout == 0)
+                if ( WorkSpace.UserProfile.SolutionSourceControlTimeout == 0)
                 {
-                    App.UserProfile.SolutionSourceControlTimeout = 80;
+                     WorkSpace.UserProfile.SolutionSourceControlTimeout = 80;
                 }
-                mSourceControl.SourceControlTimeout = App.UserProfile.SolutionSourceControlTimeout;
+                mSourceControl.SourceControlTimeout =  WorkSpace.UserProfile.SolutionSourceControlTimeout;
 
                 mSourceControl.PropertyChanged += SourceControl_PropertyChanged;
             }
@@ -368,16 +368,16 @@ namespace Ginger.SourceControl
 
         private static void SourceControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            App.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
-            App.UserProfile.SourceControlURL = mSourceControl.SourceControlURL;
-            App.UserProfile.SourceControlUser = mSourceControl.SourceControlUser;
-            App.UserProfile.SourceControlPass = mSourceControl.SourceControlPass;
-            App.UserProfile.SourceControlLocalFolder = mSourceControl.SourceControlLocalFolder;
+             WorkSpace.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
+             WorkSpace.UserProfile.SourceControlURL = mSourceControl.SourceControlURL;
+             WorkSpace.UserProfile.SourceControlUser = mSourceControl.SourceControlUser;
+             WorkSpace.UserProfile.SourceControlPass = mSourceControl.SourceControlPass;
+             WorkSpace.UserProfile.SourceControlLocalFolder = mSourceControl.SourceControlLocalFolder;
 
-            App.UserProfile.SolutionSourceControlConfigureProxy = mSourceControl.SourceControlConfigureProxy;
-            App.UserProfile.SolutionSourceControlProxyAddress = mSourceControl.SourceControlProxyAddress;
-            App.UserProfile.SolutionSourceControlProxyPort = mSourceControl.SourceControlProxyPort;
-            App.UserProfile.SolutionSourceControlTimeout = mSourceControl.SourceControlTimeout;
+             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = mSourceControl.SourceControlConfigureProxy;
+             WorkSpace.UserProfile.SolutionSourceControlProxyAddress = mSourceControl.SourceControlProxyAddress;
+             WorkSpace.UserProfile.SolutionSourceControlProxyPort = mSourceControl.SourceControlProxyPort;
+             WorkSpace.UserProfile.SolutionSourceControlTimeout = mSourceControl.SourceControlTimeout;
         }
 
 
