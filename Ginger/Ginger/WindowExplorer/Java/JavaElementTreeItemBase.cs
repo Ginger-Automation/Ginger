@@ -50,7 +50,7 @@ namespace Ginger.WindowExplorer.Java
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Not able to get children node", ex, true);
+                Reporter.ToLog(eLogLevel.ERROR, "Not able to get children node", ex);
             }
             return Childrens;
 
