@@ -34,8 +34,6 @@ namespace GingerCore.DataSource
             // Access
             [EnumValueDescription("MS Access")]
             MSAccess,
-            [EnumValueDescription("LiteDB")]
-            LiteDB,
             [EnumValueDescription("SQLite")]
             SQLite,
         }

@@ -256,7 +256,10 @@ namespace Ginger.DataSource
                 if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
                     dr[sColName] = "";
                 else if (sColName == "GINGER_ID")
-                    dr[sColName] = System.DBNull.Value;                        
+                    dr[sColName] = "1";
+                //else 
+                //    dr[sColName] = "";
+
             mDSTableDetails.DataTable.Rows.Add(dr);             
         }
 
