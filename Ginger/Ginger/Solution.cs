@@ -307,8 +307,11 @@ namespace Ginger.SolutionGeneral
 
             Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
             ExecutionLoggerConfiguration executionLoggerConfiguration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            ExecutionLogger executionLogger = App.AutomateTabGingerRunner.ExecutionLogger;
-            executionLogger.Configuration = executionLoggerConfiguration;
+
+
+            // !!!!!!!!!!!!! FIXME
+            // ExecutionLogger executionLogger = App.AutomateTabGingerRunner.ExecutionLogger;
+            // executionLogger.Configuration = executionLoggerConfiguration;
         }
 
         [IsSerializedForLocalRepository]
