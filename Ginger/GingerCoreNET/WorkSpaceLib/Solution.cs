@@ -419,7 +419,7 @@ namespace Ginger.SolutionGeneral
             });
         }
 
-        public object CreateNewReportTemplate(string path = "")
+        public object CreateNewReportTemplate()
         {
             //ReportTemplate NewReportTemplate = new ReportTemplate() { Name = "New Report Template", Status = ReportTemplate.eReportStatus.Development };
 
@@ -441,7 +441,7 @@ namespace Ginger.SolutionGeneral
             //    return NewReportTemplate;
             //}
             //return null;
-            object report = RepositoryItemHelper.RepositoryItemFactory.CreateNewReportTemplate(path);
+            object report = RepositoryItemHelper.RepositoryItemFactory.CreateNewReportTemplate();
             return report;
         }
 

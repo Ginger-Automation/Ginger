@@ -84,7 +84,7 @@ namespace Amdocs.Ginger.Common
 
         void HTMLReportAttachment(string report, string reportsResultFolder, string reportresultfolder, string runsetfolder, object Attachment, object conf);
 
-        object CreateNewReportTemplate(string path = "");
+        object CreateNewReportTemplate();
 
         void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder);
         bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, string refe, PublishToALMConfig PublishToALMConfig);

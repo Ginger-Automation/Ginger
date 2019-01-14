@@ -803,7 +803,7 @@ namespace Ginger.Repository
             }
         }
 
-        public object CreateNewReportTemplate(string path = "")
+        public object CreateNewReportTemplate()
         {
             ReportTemplate NewReportTemplate = new ReportTemplate() { Name = "New Report Template", Status = ReportTemplate.eReportStatus.Development };
 

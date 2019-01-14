@@ -102,7 +102,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void AddNewReport(object sender, System.Windows.RoutedEventArgs e)
         {
             ReportTemplateTreeItem r = new ReportTemplateTreeItem();
-            r.ReportTemplate = (Ginger.Reports.ReportTemplate)App.UserProfile.Solution.CreateNewReportTemplate("");
+            r.ReportTemplate = (Ginger.Reports.ReportTemplate)App.UserProfile.Solution.CreateNewReportTemplate();
             if (r.ReportTemplate!= null)                       
                 mTV.Tree.AddChildItemAndSelect(this, r);            
         }
