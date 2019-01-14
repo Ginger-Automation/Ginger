@@ -73,6 +73,7 @@ namespace Ginger.Run
                 // !!!!!!!!!!!!! called many time ??
                 if (mExecutionEnvironment == null)//not supposed to be null but in case it is
                 {
+                    // !!!!!!!!!!!!!!!!! remove logger should get the env from GR
                     if (this.ExecutedFrom == eExecutedFrom.Automation)
                     {
                         mExecutionEnvironment = WorkSpace.AutomateTabEnvironment;
@@ -436,7 +437,7 @@ namespace Ginger.Run
                 this.BFCounter++;
 
                 // Move to do in GR
-                businessFlow.StartTimeStamp = eventTime;
+                // businessFlow.StartTimeStamp = eventTime;
                 string BFFolder = string.Empty;
                 this.ExecutionLogBusinessFlowsCounter++;
                 switch (this.ExecutedFrom)
@@ -525,7 +526,7 @@ namespace Ginger.Run
         {
             mCurrentActivity = activity;
             // move to Ginger Runner not here !!!!!!!!!!!!!!!!!!  do not change attr 
-            activity.StartTimeStamp = DateTime.Now.ToUniversalTime();
+            // activity.StartTimeStamp = DateTime.Now.ToUniversalTime();
 
 
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
@@ -616,7 +617,7 @@ namespace Ginger.Run
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
                 string ActionFolder = string.Empty;
-                action.StartTimeStamp = DateTime.Now.ToUniversalTime();
+                // action.StartTimeStamp = DateTime.Now.ToUniversalTime();
 
                 if ((this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation) && (Configuration.ExecutionLoggerAutomationTabContext == ExecutionLoggerConfiguration.AutomationTabContext.ActionRun))
                 {

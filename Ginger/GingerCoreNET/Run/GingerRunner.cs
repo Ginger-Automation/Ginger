@@ -50,6 +50,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.ALMLib.ALMIntegration;
 
 namespace Ginger.Run
@@ -66,6 +67,7 @@ namespace Ginger.Run
         SpecificActivity,
         SpecificBusinessFlow
     }
+
 
     public class GingerRunner : RepositoryItemBase
     {
@@ -87,7 +89,12 @@ namespace Ginger.Run
             StopAllBusinessFlows = 1,
         }
 
-        
+      
+
+        // !!! change name to runContext - and remove the ExecutionLogConfiguration
+        // public AutomationTabContext ExecutionLoggerAutomationTabContext { get; set; }
+
+
         public PublishToALMConfig PublishToALMConfig = null;
         
         public enum eResetStatus
@@ -129,6 +136,7 @@ namespace Ginger.Run
 
         Activity mLastExecutedActivity;
 
+        //!!! remove from here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public string ExecutionLogFolder { get; set; }
         public BusinessFlow CurrentBusinessFlow { get; set; }        
         public bool AgentsRunning = false;
@@ -136,12 +144,14 @@ namespace Ginger.Run
         public eExecutedFrom ExecutedFrom;        
         public string CurrentGingerLogFolder = string.Empty;
         public string CurrentHTMLReportFolder = string.Empty;
+
+        // remove from here !!!!!!!!!!!!!!!!
         public int ExecutionLogBusinessFlowCounter { get; set; }
         // public static bool UseExecutionLogger = false;//TODO:  temp flag so Beta users will not be impacted, removed when it is working and tested to be good 
         public string SolutionFolder { get; set; }
         public bool HighLightElement { get; set; }
 
-        public delegate void GingerRunnerEventHandler(GingerRunnerEventArgs EventArgs);
+        // public delegate void GingerRunnerEventHandler(GingerRunnerEventArgs EventArgs);
 
 
 
@@ -4213,6 +4223,7 @@ namespace Ginger.Run
         private void NotifyActivityEnd(Activity activity)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+            // activity.StartTimeStamp = EventTypeFilter
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivityEnd(evetTime, activity);
@@ -4233,6 +4244,7 @@ namespace Ginger.Run
         private void NotifyBusinessFlowStart(BusinessFlow businessFlow)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+            // businessFlow.StartTimeStamp = eventTime;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.BusinessFlowStart(evetTime, CurrentBusinessFlow);
@@ -4273,6 +4285,17 @@ namespace Ginger.Run
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivityGroupEnd(eventTime, activityGroup);
+            }
+        }
+
+
+        // TODO: call this method based on when the run started from
+        private void NotifyExecutionContext(AutomationTabContext automationTabContext)
+        {
+            uint eventTime = RunListenerBase.GetEventTime();            
+            foreach (RunListenerBase runnerListener in mRunListeners)
+            {
+                runnerListener.ExecutionContext(eventTime, automationTabContext);
             }
         }
 

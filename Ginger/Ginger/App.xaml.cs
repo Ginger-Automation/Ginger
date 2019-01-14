@@ -405,7 +405,7 @@ namespace Ginger
             // Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
 
             AutomateTabGingerRunner = new GingerRunner(eExecutedFrom.Automation);
-
+           
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
 
@@ -478,11 +478,7 @@ namespace Ginger
 
             AutoLogProxy.LogAppOpened();
 
-            if ((App.UserProfile.Solution != null) && (App.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null))
-            {
-                AutomateTabGingerRunner.ExecutionLogger.Configuration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            }
-
+          
             // Register our own Ginger tool tip handler
             //--Canceling customize tooltip for now due to many issues and no real added value            
 

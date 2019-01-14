@@ -1,9 +1,11 @@
-﻿using GingerCore;
+﻿using Ginger.Run;
+using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
 using System;
 using System.Diagnostics;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.Run
 {
@@ -140,6 +142,16 @@ namespace Amdocs.Ginger.Run
         public virtual void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup)
         {
 
+        }
+
+        /// <summary>
+        /// Notify the context of execution: Business Flow, Activity, Action
+        /// </summary>
+        /// <param name="eventTime"></param>
+        /// <param name="automationTabContext"></param>
+        internal void ExecutionContext(uint eventTime, AutomationTabContext automationTabContext)
+        {
+            
         }
         #endregion Action
 

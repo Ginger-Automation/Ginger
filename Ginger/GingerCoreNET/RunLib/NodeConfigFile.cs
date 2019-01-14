@@ -19,9 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
