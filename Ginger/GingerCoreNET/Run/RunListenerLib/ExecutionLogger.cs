@@ -441,10 +441,7 @@ namespace Ginger.Run
             mCurrentBusinessFlow = businessFlow;
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
-                this.BFCounter++;
-
-                // Move to do in GR
-                // businessFlow.StartTimeStamp = eventTime;
+                this.BFCounter++;                
                 string BFFolder = string.Empty;
                 this.ExecutionLogBusinessFlowsCounter++;
                 switch (this.ExecutedFrom)
@@ -475,12 +472,7 @@ namespace Ginger.Run
         {
             bool offlineMode = false; // !!!!!!!!!!!!!!!!!!!!        
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
-            {
-                if (!offlineMode)
-                {
-                    businessFlow.EndTimeStamp = eventTime;
-                }
-
+            {                
                 BusinessFlowReport BFR = new BusinessFlowReport(businessFlow);
                 BFR.VariablesBeforeExec = businessFlow.VariablesBeforeExec; 
                 BFR.SolutionVariablesBeforeExec = businessFlow.SolutionVariablesBeforeExec;
@@ -576,9 +568,7 @@ namespace Ginger.Run
             bool offlineMode = false; // !!!!!!!!!!!!!!!!!!!
 
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
-            {
-                if (!offlineMode)
-                    activity.EndTimeStamp = DateTime.Now.ToUniversalTime();
+            {                
                 ActivityReport AR = new ActivityReport(activity);
                 AR.Seq = mCurrentBusinessFlow.ExecutionLogActivityCounter;
                 AR.VariablesBeforeExec = activity.VariablesBeforeExec;
@@ -677,64 +667,61 @@ namespace Ginger.Run
                 {
                     if (System.IO.Directory.Exists(executionLogFolder + action.ExecutionLogFolder))
                     {
-                        if (!offlineMode)
+                                    
+                        ProjEnvironment environment = null;
+
+                        if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
                         {
-                            action.EndTimeStamp = DateTime.Now.ToUniversalTime();
-                        }                            
-                            ProjEnvironment environment = null;
-
-                            if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
-                            {
-                                environment = WorkSpace.AutomateTabEnvironment;
-                            }
-                            else
-                            {
-                                environment = WorkSpace.RunsetExecutor.RunsetExecutionEnvironment;
-                            }
-
-                            ActionReport AR = new ActionReport(action, ExecutionEnvironment);
-                            AR.Seq = mCurrentActivity.ExecutionLogActionCounter;
-                            if ((action.RunDescription != null) && (action.RunDescription != string.Empty))
-                            {
-                                if (mVE == null)
-                                {
-                                    mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
-                                }
-                                mVE.Value = action.RunDescription;
-                                AR.RunDescription = mVE.ValueCalculated;
-                            }
-
-                            SaveObjToJSonFile(AR, executionLogFolder + action.ExecutionLogFolder + @"\Action.txt");
-
-                            // Save screenShots
-                            int screenShotCountPerAction = 0;
-                            for (var s = 0; s < action.ScreenShots.Count; s++)
-                            {
-                                try
-                                {
-                                    screenShotCountPerAction++;
-                                    if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
-                                    {
-                                        System.IO.File.Copy(action.ScreenShots[s], executionLogFolder + action.ExecutionLogFolder + @"\ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png", true);
-                                    }
-                                    else
-                                    {
-                                        System.IO.File.Move(action.ScreenShots[s], executionLogFolder + action.ExecutionLogFolder + @"\ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png");
-                                        action.ScreenShots[s] = executionLogFolder + action.ExecutionLogFolder + @"\ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png";
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to move screen shot of the action:'" + action.Description + "' to the Execution Logger folder", ex);
-                                    screenShotCountPerAction--;
-                                }
-                            }
-                            
+                            environment = WorkSpace.AutomateTabEnvironment;
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to create ExecutionLogger JSON file for the Action :" + action.Description + " because directory not exists :" + executionLogFolder + action.ExecutionLogFolder);
-                        }                    
+                            environment = WorkSpace.RunsetExecutor.RunsetExecutionEnvironment;
+                        }
+
+                        ActionReport AR = new ActionReport(action, ExecutionEnvironment);
+                        AR.Seq = mCurrentActivity.ExecutionLogActionCounter;
+                        if ((action.RunDescription != null) && (action.RunDescription != string.Empty))
+                        {
+                            if (mVE == null)
+                            {
+                                mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
+                            }
+                            mVE.Value = action.RunDescription;
+                            AR.RunDescription = mVE.ValueCalculated;
+                        }
+
+                        SaveObjToJSonFile(AR, executionLogFolder + action.ExecutionLogFolder + @"\Action.txt");
+
+                        // Save screenShots
+                        int screenShotCountPerAction = 0;
+                        for (var s = 0; s < action.ScreenShots.Count; s++)
+                        {
+                            try
+                            {
+                                screenShotCountPerAction++;
+                                if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
+                                {
+                                    System.IO.File.Copy(action.ScreenShots[s], executionLogFolder + action.ExecutionLogFolder + @"\ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png", true);
+                                }
+                                else
+                                {
+                                    System.IO.File.Move(action.ScreenShots[s], executionLogFolder + action.ExecutionLogFolder + @"\ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png");
+                                    action.ScreenShots[s] = executionLogFolder + action.ExecutionLogFolder + @"\ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png";
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to move screen shot of the action:'" + action.Description + "' to the Execution Logger folder", ex);
+                                screenShotCountPerAction--;
+                            }
+                        }
+                            
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to create ExecutionLogger JSON file for the Action :" + action.Description + " because directory not exists :" + executionLogFolder + action.ExecutionLogFolder);
+                    }                    
 
                     //
                     // Defects Suggestion section (to be considered to remove to separate function)

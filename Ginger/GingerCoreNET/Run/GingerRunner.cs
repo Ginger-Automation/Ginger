@@ -4115,7 +4115,8 @@ namespace Ginger.Run
 
         private void NotifyActionStart(Act action)
         {
-            uint eventTime = RunListenerBase.GetEventTime();            
+            uint eventTime = RunListenerBase.GetEventTime();
+            action.StartTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActionStart(eventTime, action);
@@ -4126,6 +4127,7 @@ namespace Ginger.Run
         private void NotifyPrepActionEnd(Act action)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+            action.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.PrepActionEnd(evetTime, action);
@@ -4209,9 +4211,10 @@ namespace Ginger.Run
         }
 
 
-        private void NotifyActivityStart(Activity currentActivity)
+        private void NotifyActivityStart(Activity activity)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+            activity.StartTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivityStart(evetTime, CurrentBusinessFlow.CurrentActivity);
@@ -4221,7 +4224,7 @@ namespace Ginger.Run
         private void NotifyActivityEnd(Activity activity)
         {
             uint evetTime = RunListenerBase.GetEventTime();
-            // activity.StartTimeStamp = EventTypeFilter
+            activity.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivityEnd(evetTime, activity);
@@ -4233,6 +4236,7 @@ namespace Ginger.Run
         private void NotifyBusinessFlowEnd(BusinessFlow businessFlow)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+            businessFlow.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.BusinessFlowEnd(eventTime, CurrentBusinessFlow);
@@ -4242,7 +4246,7 @@ namespace Ginger.Run
         private void NotifyBusinessFlowStart(BusinessFlow businessFlow)
         {
             uint evetTime = RunListenerBase.GetEventTime();
-            // businessFlow.StartTimeStamp = eventTime;
+            businessFlow.StartTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.BusinessFlowStart(evetTime, CurrentBusinessFlow);

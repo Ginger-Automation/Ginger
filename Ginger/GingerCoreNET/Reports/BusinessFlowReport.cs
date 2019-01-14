@@ -163,10 +163,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public DateTime StartTimeStamp { get
-            {
-                return RunListenerBase.GetDateTime(mBusinessFlow.StartTimeStamp); }
-            // set { mBusinessFlow.StartTimeStamp = value; }
+        public DateTime StartTimeStamp { get{ return mBusinessFlow.StartTimeStamp; }  set { mBusinessFlow.StartTimeStamp = value; }
         }
         
         [JsonProperty]
@@ -175,9 +172,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public DateTime EndTimeStamp { get { return RunListenerBase.GetDateTime(mBusinessFlow.EndTimeStamp); }
-            // set { mBusinessFlow.EndTimeStamp = value; }
-        }
+        public DateTime EndTimeStamp { get { return mBusinessFlow.EndTimeStamp; } set { mBusinessFlow.EndTimeStamp = value; }}
 
         [JsonProperty]
         [FieldParams]
