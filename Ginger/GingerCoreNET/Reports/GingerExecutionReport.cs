@@ -2631,6 +2631,7 @@ namespace Ginger.Reports.GingerExecutionReport
         public static string CreateGingerExecutionReport(ReportInfo RI, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null, bool isHTMLReportPermanentFolderNameUsed = false, long maxFolderSize = 0)
         {
             Ginger.Reports.GingerExecutionReport.GingerExecutionReport l = new Ginger.Reports.GingerExecutionReport.GingerExecutionReport();
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!! use path combine
             l.TemplatesFolder = (ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
 
             if (SelectedHTMLReportConfiguration != null)
@@ -2648,7 +2649,8 @@ namespace Ginger.Reports.GingerExecutionReport
                 }
                 else
                 {
-                    l.currentTemplate = null;//not supposed to happen
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Missing report template configuration");
+                    return null;                    
                 }
             }
 
