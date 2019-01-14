@@ -166,7 +166,7 @@ namespace Ginger
             App.AutomateTabGingerRunner.RunListeners.Add(mAutomatePageRunnerListener);
 
             // TODO: do only if flag on !!!!!!!!!!!!!
-            App.AutomateTabGingerRunner.RunListeners.Add(new GingerRunnerTimeLine());
+            //App.AutomateTabGingerRunner.RunListeners.Add(new GingerRunnerTimeLine());
             RunListenerBase.Start();
 
         }
