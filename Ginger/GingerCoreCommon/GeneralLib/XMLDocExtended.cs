@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
-using GingerCoreNET.ReporterLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -227,7 +226,7 @@ namespace Amdocs.Ginger.Common
 
             catch(Exception ee)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Failed to Prettify XML", ee);
+                Reporter.ToLog(eLogLevel.WARN, "Failed to Prettify XML", ee);
                 return xml;
             }
         }

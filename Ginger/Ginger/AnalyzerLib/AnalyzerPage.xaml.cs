@@ -125,7 +125,7 @@ namespace Ginger.AnalyzerLib
         {
             if (BusyInProcess)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                 return;
             }
 
@@ -273,23 +273,26 @@ namespace Ginger.AnalyzerLib
             SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name);
             List<AnalyzerItemBase> issues = AnalyzeBusinessFlow.Analyze(mSolution, businessFlow);
             AddIssues(issues);
-            foreach (Activity activity in businessFlow.Activities)
+            Parallel.ForEach(businessFlow.Activities, activity =>
             {
                 issues = AnalyzeActivity.Analyze(businessFlow, activity);
                 AddIssues(issues);
-                foreach (Act action in activity.Acts)
+                Parallel.ForEach(activity.Acts, iaction =>
                 {
+                    Act action = (Act)iaction;
                     List<AnalyzerItemBase> actionissues = AnalyzeAction.Analyze(businessFlow, activity, action, DSList);
                     AddIssues(actionissues);
                     List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
                     usedVariablesInActivity.AddRange(tempList);
-                }
+                });
+
                 List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
                 usedVariablesInActivity.AddRange(activityVarList);
-                ReportUnusedVariables(activity, usedVariablesInActivity);               
+                ReportUnusedVariables(activity, usedVariablesInActivity);
                 usedVariablesInBF.AddRange(usedVariablesInActivity);
-                usedVariablesInActivity.Clear();    
-            }            
+                usedVariablesInActivity.Clear();
+            });
+
             ReportUnusedVariables(businessFlow, usedVariablesInBF);
 
             if (markCompletion)
@@ -579,13 +582,13 @@ namespace Ginger.AnalyzerLib
             {
                 if (mIssues.Where(x=> x.Selected==true).ToList().Count == 0)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Please select issue to fix.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select issue to fix.");
                     return;
                 }
 
                 if (BusyInProcess)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                     return;
                 }
                 BusyInProcess = true;
@@ -633,12 +636,12 @@ namespace Ginger.AnalyzerLib
         {
             if (BusyInProcess)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                 return;
             }
             // TODO: click/use the same code on solution which will save all changed items...
             // Meanwhile the below is good start 
-            if (Reporter.ToUser(eUserMsgKeys.SaveAllItemsParentWarning) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.SaveAllItemsParentWarning) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 BusyInProcess = true;
                 SetStatus("Starting to Save Fixed Items...");
@@ -712,7 +715,7 @@ namespace Ginger.AnalyzerLib
                 {
                     if (AI.FixItHandler != null)
                     {
-                        //Reporter.ToGingerHelper(eGingerHelperMsgKey.AnalyzerFixingIssues, null, AI.ItemName);
+                        //Reporter.ToGingerHelper(eStatusMsgKey.AnalyzerFixingIssues, null, AI.ItemName);
                         SetStatus("Fixing: " + AI.ItemName);                      
                         AI.FixItHandler.Invoke(AI, null);
                         //Reporter.CloseGingerHelper();                        

@@ -18,11 +18,34 @@ limitations under the License.
 
 namespace Amdocs.Ginger.Common
 {
-    public enum MessageBoxButton
+    public enum eUserMsgType
+    {
+        INFO, WARN, ERROR, QUESTION
+    }
+
+    public enum eUserMsgOption
     {
         YesNo,
         OK,
         YesNoCancel,
         OKCancel
+    }
+
+    public enum eUserMsgSelection
+    {
+        None,
+        Yes,
+        No,
+        Cancel,
+        OK
+    }
+
+    public enum eUserMsgIcon
+    {
+        None,
+        Error,
+        Information,
+        Question,
+        Warning
     }
 }

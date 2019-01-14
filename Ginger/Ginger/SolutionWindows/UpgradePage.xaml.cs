@@ -177,12 +177,12 @@ namespace Ginger.SolutionWindows
 
                 if (mFailedFiles.Count == 0)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Upgrade ended successfully.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Upgrade ended successfully.");
                     _pageGenericWin.Close();
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Upgrade failed for some of the files.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Upgrade failed for some of the files.");
                     mViewMode = SolutionUpgradePageViewMode.FailedUpgradeSolution;
                     SetControls();
                 }
@@ -190,7 +190,7 @@ namespace Ginger.SolutionWindows
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to upgrade the solution files", ex);
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error occurred during upgrade, details: " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error occurred during upgrade, details: " + ex.Message);
                 _pageGenericWin.Close();
             }
             finally

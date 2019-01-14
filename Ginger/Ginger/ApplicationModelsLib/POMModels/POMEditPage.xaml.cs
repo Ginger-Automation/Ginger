@@ -132,7 +132,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
                 else
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.MissingTargetApplication, "The mapped" + mPOM.Key.ItemName + "Target Application was not found, please select new Target Application");
+                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped" + mPOM.Key.ItemName + "Target Application was not found, please select new Target Application");
 
                 }
             }
@@ -179,7 +179,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mWinExplorer == null)
             {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
                 return;
             }
 
@@ -216,7 +216,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKeys.ImageSize, "500");
+                        Reporter.ToUser(eUserMsgKey.ImageSize, "500");
                     }
                 }
             }
@@ -232,7 +232,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if (mWinExplorer == null)
             {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
                 return;
             }
 

@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
@@ -258,7 +257,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch (Exception ex)
             {
-                    Reporter.ToUser(eUserMsgKeys.MobileConnectionFailed, ex.Message);
+                    Reporter.ToUser(eUserMsgKey.MobileConnectionFailed, ex.Message);
                 return false;
             }      
         }
@@ -1072,7 +1071,7 @@ namespace GingerCore.Drivers.Appium
                     Driver.Navigate().Back();
                     break;
                 case eSeleniumPlatformType.iOS:
-                    Reporter.ToUser(eUserMsgKeys.MissingImplementation2);
+                    Reporter.ToUser(eUserMsgKey.MissingImplementation2);
                     break;
             }
         }
@@ -1086,7 +1085,7 @@ namespace GingerCore.Drivers.Appium
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(3);
                     break;
                 case eSeleniumPlatformType.iOS:
-                    Reporter.ToUser(eUserMsgKeys.MissingImplementation2);
+                    Reporter.ToUser(eUserMsgKey.MissingImplementation2);
                     break;
             }
         }
@@ -1099,7 +1098,7 @@ namespace GingerCore.Drivers.Appium
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Menu);
                     break;
                 case eSeleniumPlatformType.iOS:
-                    Reporter.ToUser(eUserMsgKeys.MissingImplementation2);
+                    Reporter.ToUser(eUserMsgKey.MissingImplementation2);
                     break;
             }
         }

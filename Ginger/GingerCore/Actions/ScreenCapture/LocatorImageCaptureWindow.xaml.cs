@@ -265,7 +265,7 @@ namespace GingerCore.Actions.ScreenCapture
             }
             catch (Exception e)
             {                
-                Reporter.ToUser(eUserMsgKeys.FolderOperationError, e.Message);
+                Reporter.ToUser(eUserMsgKey.FolderOperationError, e.Message);
             }
             //return f.SolutionFolder + @"Documents\ExpectedImages\"+Guid.NewGuid().ToString()+".png";
             return @"~\Documents\ExpectedImages\" + Guid.NewGuid().ToString() + ".png"; 
