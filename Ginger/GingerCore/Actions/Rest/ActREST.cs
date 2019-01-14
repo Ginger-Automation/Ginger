@@ -30,7 +30,7 @@ using System.Net.Security;
 using System.Text;
 using System.Web;
 using System.Xml;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.Actions.REST
 {
@@ -234,7 +234,7 @@ namespace GingerCore.Actions.REST
         public override string ActionDescription { get { return "REST Action"; } }
         public override string ActionUserDescription { get { return "Performs REST action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform any REST actions.");
             TBH.AddLineBreak();

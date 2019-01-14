@@ -29,7 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     // TODO: rename to DBAction
@@ -38,7 +38,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "DataBase Action"; } }
         public override string ActionUserDescription { get { return "Run Select/Update SQL on Database"; } }
         
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to pull/validate/update/etc. data from/on a database system.");
             TBH.AddLineBreak();

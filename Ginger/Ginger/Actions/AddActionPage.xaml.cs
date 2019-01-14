@@ -138,13 +138,22 @@ namespace Ginger.Actions
         {
             ObservableList<Act> Acts = new ObservableList<Act>();
             AppDomain.CurrentDomain.Load("GingerCore");
-
-       Assembly GC=AppDomain.CurrentDomain.GetAssemblies().
-          SingleOrDefault(assembly => assembly.GetName().Name == "GingerCore");
-
-            var ActTypes =
-                from type in GC.GetTypes() where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) select type;
+            AppDomain.CurrentDomain.Load("GingerCoreCommon");
+            AppDomain.CurrentDomain.Load("GingerCoreNET");
             
+
+            var ActTypes = new List<Type>();
+            foreach (Assembly GC in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name.Contains("GingerCore")))
+               
+            {
+
+                var types = from type in GC.GetTypes() where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) select type;
+                ActTypes.AddRange(types);
+            }
+ 
+                  
+
+
             foreach (Type t in ActTypes)
             {
                 Act a = (Act)Activator.CreateInstance(t);

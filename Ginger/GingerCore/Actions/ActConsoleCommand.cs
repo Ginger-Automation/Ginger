@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActConsoleCommand : Act
@@ -30,7 +30,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Console Command Action"; } }
         public override string ActionUserDescription { get { return "Run commands on Dos/Unix system"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to run command/s on a Dos/Unix system." + Environment.NewLine
                 + Environment.NewLine + "1. This action contains list of options which will allow you to run simple or " +

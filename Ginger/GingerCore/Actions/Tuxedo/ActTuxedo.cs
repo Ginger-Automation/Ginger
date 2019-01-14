@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Text.RegularExpressions;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.Tuxedo
 {
     public class ActTuxedo : ActWithoutDriver
@@ -48,7 +48,7 @@ namespace GingerCore.Actions.Tuxedo
         public override string ActionDescription { get { return "Tuxedo UD File Action"; } }
         public override string ActionUserDescription { get { return "Performs Tuxedo UD File action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform any Tuxedo UD File.");
             TBH.AddLineBreak();

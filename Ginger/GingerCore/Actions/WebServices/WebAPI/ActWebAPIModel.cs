@@ -23,7 +23,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.WebServices.WebAPI
 {
     public class ActWebAPIModel : Act
@@ -60,7 +60,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
 
         public override string ActionUserDescription { get { return "Uses Application API Model template to performs SOAP/REST action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to use Application API Model template to perform a SOAP/REST Action.");
             TBH.AddLineBreak();

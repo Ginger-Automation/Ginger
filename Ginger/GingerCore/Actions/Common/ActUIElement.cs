@@ -27,7 +27,7 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.ComponentModel;
 using System.Linq;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.Common
 {
     public class ActUIElement : Act
@@ -52,7 +52,7 @@ namespace GingerCore.Actions.Common
         public override string ActionDescription { get { return "UIElement Action"; } }
         public override string ActionUserDescription { get { return "UIElement Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("UI Element Action");
         }
