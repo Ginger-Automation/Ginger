@@ -50,9 +50,9 @@ namespace Ginger.DataSource
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             //validate details
-            if (TableName.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKeys.MissingNewTableDetails, "name"); return; }
-            else if (TableName.Text.IndexOf(" ") > 0) { Reporter.ToUser(eUserMsgKeys.InvalidTableDetails); return; }
-            else if (DSTableTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKeys.MissingNewTableDetails, "Type"); return; }
+            if (TableName.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.MissingNewTableDetails, "name"); return; }
+            else if (TableName.Text.IndexOf(" ") > 0) { Reporter.ToUser(eUserMsgKey.InvalidTableDetails); return; }
+            else if (DSTableTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKey.MissingNewTableDetails, "Type"); return; }
 
             okClicked = true;
             _pageGenericWin.Close();

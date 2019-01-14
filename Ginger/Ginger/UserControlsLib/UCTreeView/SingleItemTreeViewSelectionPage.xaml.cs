@@ -154,7 +154,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 {
                     if (mItemSelectionType == eItemSelectionType.Single)
                     {                        
-                        Reporter.ToUser(eUserMsgKeys.ItemSelection, "Please select single node item (not a folder).");
+                        Reporter.ToUser(eUserMsgKey.ItemSelection, "Please select single node item (not a folder).");
                         return false;
                     }                      
                     
@@ -172,7 +172,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             if (mSelectedItems == null || mSelectedItems.Count == 0)
             {                
-                Reporter.ToUser(eUserMsgKeys.ItemSelection, "No item was selected.");
+                Reporter.ToUser(eUserMsgKey.ItemSelection, "No item was selected.");
                 return false;
             }
 

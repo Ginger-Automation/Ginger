@@ -463,7 +463,7 @@ namespace GingerCore.Drivers.Common
             catch (Exception e)
             {
                 relxpath = xpath;
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in GetElementRelXPath ::", e, true, true);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetElementRelXPath ::", e);
             }
             if (relxpath == "")
             {

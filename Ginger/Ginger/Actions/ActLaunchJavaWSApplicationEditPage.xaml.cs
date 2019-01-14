@@ -216,7 +216,7 @@ namespace Ginger.Actions
                 if (LaunchWithAgent.IsChecked == true)
                 {
                     
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Wait for Java application window must be done if Attach Ginger Agent operation is selected.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Wait for Java application window must be done if Attach Ginger Agent operation is selected.");
                     e.Handled = true;
                     JavaApplicationLaunchWaitForWinTitleChckBox.IsChecked = true;
                 }

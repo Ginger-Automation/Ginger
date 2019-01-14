@@ -62,7 +62,7 @@ namespace Ginger.SolutionWindows
                             || MainPlatformComboBox.SelectedItem == null || MainPlatformComboBox.SelectedItem.ToString() == "Null")
                 {
                     Mouse.OverrideCursor = null;
-                    Reporter.ToUser(eUserMsgKeys.MissingAddSolutionInputs);
+                    Reporter.ToUser(eUserMsgKey.MissingAddSolutionInputs);
                     return;
                 }
                 
@@ -100,7 +100,7 @@ namespace Ginger.SolutionWindows
                 {
                     //solution already exist
                     Mouse.OverrideCursor = null;
-                    Reporter.ToUser(eUserMsgKeys.SolutionAlreadyExist);
+                    Reporter.ToUser(eUserMsgKey.SolutionAlreadyExist);
                     return;
                 }
                 
@@ -115,13 +115,13 @@ namespace Ginger.SolutionWindows
 
                 //show success message to user
                 Mouse.OverrideCursor = null;
-                Reporter.ToUser(eUserMsgKeys.AddSolutionSucceed);
+                Reporter.ToUser(eUserMsgKey.AddSolutionSucceed);
                 _pageGenericWin.Close();
             }
             catch (Exception ex)
             {
                 Mouse.OverrideCursor = null;
-                Reporter.ToUser(eUserMsgKeys.AddSolutionFailed, ex.Message);
+                Reporter.ToUser(eUserMsgKey.AddSolutionFailed, ex.Message);
             }
         }
 
@@ -169,7 +169,7 @@ namespace Ginger.SolutionWindows
                     agent.DriverType = Agent.eDriverType.JavaDriver;
                     break;
                 default:                    
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "No default driver set for first agent");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No default driver set for first agent");
                     break;
             }
 

@@ -22,18 +22,23 @@ jobs:
 
 
 - job: Windows
-  pool:
-    vmImage: 'VS2017-Win2016'
+
   variables:  
     solution: '**/*.sln'
     buildPlatform: 'Any CPU'
     buildConfiguration: 'Release'
+    agentname:  'VS2017-Win2016'
+
+  
+  pool: 'VS2017-Win2016'
+
 
   steps:
   - task: NuGetToolInstaller@0
   - task: NuGetCommand@2
     inputs:
       restoreSolution: '$(solution)'
+    condition: succeededOrFailed()
 
   - task: VSBuild@1
     inputs:
@@ -46,4 +51,5 @@ jobs:
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
       pathtoCustomTestAdapters:  'Ginger\packages\MSTest.TestAdapter.1.4.0\build\_common'
+      uiTests: true
       testResultsFiles: '**/*.trx'

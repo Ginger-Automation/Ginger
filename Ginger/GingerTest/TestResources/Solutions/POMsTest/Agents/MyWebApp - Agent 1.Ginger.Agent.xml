@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="937f0b6f-4576-4ec8-8ec6-5cbabcc18cc4" ItemType="Agent" CreatedBy="ELIRANBA" Created="201812130910" GingerVersion="3.1.0.0" Version="3" LastUpdateBy="ELIRANBA" LastUpdate="201812161039" />
+<Agent DriverType="SeleniumChrome" Guid="937f0b6f-4576-4ec8-8ec6-5cbabcc18cc4" Name="ChromeAgent" ParentGuid="00000000-0000-0000-0000-000000000000">
+<DriverConfiguration>
+<DriverConfigParam Description="Proxy Server:Port" Guid="8499c538-be51-4d6e-835a-5e44c75fb93e" Parameter="Proxy" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<DriverConfigParam Description="Proxy Auto Config Url" Guid="3f6405e1-e5ac-4f7c-9617-41d241d95152" Parameter="ProxyAutoConfigUrl" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<DriverConfigParam Description="EnableNativeEvents(true) so as to perform native events smoothly on IE " Guid="81b314d4-8b92-4d2e-9fe5-eb8ef8782c64" Parameter="EnableNativeEvents" ParentGuid="00000000-0000-0000-0000-000000000000" Value="false" />
+<DriverConfigParam Description="Auto Detect Proxy Setting?" Guid="183c58bc-ef7a-4186-80de-c3b47216be0f" Parameter="AutoDetect" ParentGuid="00000000-0000-0000-0000-000000000000" Value="true" />
+<DriverConfigParam Description="Path to extension to be enabled" Guid="33b7dbb4-4ee7-4f5c-9a7d-3df6e3aadb9e" Parameter="ExtensionPath" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<DriverConfigParam Description="Disable Chrome Extension. This feature is not available anymore" Guid="5635aa61-e8cc-4201-b2cb-208eb744f92d" Parameter="DisableExtension" ParentGuid="00000000-0000-0000-0000-000000000000" Value="true" />
+<DriverConfigParam Description="Ignore Internet Explorer protected mode" Guid="50ff5aac-e758-484b-8db1-6f59ddf897e0" Parameter="IgnoreIEProtectedMode" ParentGuid="00000000-0000-0000-0000-000000000000" Value="false" />
+<DriverConfigParam Description="Use 64Bit Browser" Guid="6e138b03-639a-43b6-8075-b9539d31fff0" Parameter="Use64Bitbrowser" ParentGuid="00000000-0000-0000-0000-000000000000" Value="false" />
+<DriverConfigParam Description="Use Browser In Private/Incognito Mode (Please use 64bit Browse with Internet Explorer " Guid="15bfbb9a-8023-46b5-9e9e-bf5c912d1919" Parameter="BrowserPrivateMode" ParentGuid="00000000-0000-0000-0000-000000000000" Value="false" />
+<DriverConfigParam Description="Only for Chrome &amp; Firefox | Full path for the User Profile folder" Guid="f97a27e7-d265-4c63-8fea-726b7600739a" Parameter="UserProfileFolderPath" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<DriverConfigParam Description="Only for Chrome | Define Download Folder path" Guid="4e291da6-5762-43c0-bca3-7f9b62da3467" Parameter="DownloadFolderPath" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<DriverConfigParam Description="Implicit Wait for Web Action Completion" Guid="0b4d7b58-f02b-4886-86a4-4deecef32f21" Parameter="ImplicitWait" ParentGuid="00000000-0000-0000-0000-000000000000" Value="30" />
+<DriverConfigParam Description="HttpServer Timeout for Web Action Completion. Default/Recommended is minimum 60 secs" Guid="c5b84f24-e8e3-4074-9f9b-3bcc4363930f" Parameter="HttpServerTimeOut" ParentGuid="00000000-0000-0000-0000-000000000000" Value="60" />
+<DriverConfigParam Description="PageLoad Timeout for Web Action Completion" Guid="7c8bc8fd-0141-4231-82e3-2672909d128c" Parameter="PageLoadTimeOut" ParentGuid="00000000-0000-0000-0000-000000000000" Value="60" />
+<DriverConfigParam Description="Start BMP - Browser Mob Proxy (true/false)" Guid="edeb881a-e912-41fe-a0fe-15a206fc1bf6" Parameter="StartBMP" ParentGuid="00000000-0000-0000-0000-000000000000" Value="false" />
+<DriverConfigParam Description="Start BMP .BAT File - full path to BMP BAT file" Guid="dd25986a-53f5-4242-ba30-f4393a35dff3" Parameter="StartBMPBATFile" ParentGuid="00000000-0000-0000-0000-000000000000" Value="C:\...\browsermob\bin\browsermob-proxy.bat" />
+<DriverConfigParam Description="Start BMP Port" Guid="7df483f0-f417-4338-be49-129c51643664" Parameter="StartBMPPort" ParentGuid="00000000-0000-0000-0000-000000000000" Value="9090" />
+<DriverConfigParam Description="Take Only Active Frame Or Window Screen Shot In Case Of Failure" Guid="4f347fda-c735-4375-948b-2b7629a87187" Parameter="TakeOnlyActiveFrameOrWindowScreenShotInCaseOfFailure" ParentGuid="00000000-0000-0000-0000-000000000000" Value="false" />
+<DriverConfigParam Description="Selenium line arguments || Set Selenium arguments seperated with ; sign" Guid="9f1dcbc8-a9fa-431b-92f8-6ae77f5642fe" Parameter="SeleniumUserArguments" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<DriverConfigParam Description="Applitool - Set to true if you want to use Applitools for visual testing" Guid="1796a8f9-0cf1-4506-babc-37235db4725c" Parameter="UseApplitools" ParentGuid="00000000-0000-0000-0000-000000000000" Value="False" />
+<DriverConfigParam Description="Applitool View Key number" Guid="81761b13-4721-415e-980c-274b8b735d12" Parameter="ApplitoolsViewKey" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<DriverConfigParam Description="Change to Iframe automatically in case of POM Element execution " Guid="324c8b9b-d2e4-4eee-9a29-34d1b00d6b47" Parameter="HandelIFramShiftAutomaticallyForPomElement" ParentGuid="00000000-0000-0000-0000-000000000000" Value="true" />
+<DriverConfigParam Description="The amount of maximum time (in seconds) to wait for the driver to load/connect" Guid="8ae42746-1ed9-4946-be3c-e4881d2c4a69" Parameter="DriverLoadWaitingTime" ParentGuid="00000000-0000-0000-0000-000000000000" Value="30" />
+</DriverConfiguration>
+</Agent></GingerRepositoryItem>

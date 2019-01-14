@@ -77,28 +77,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
             }
         }
 
-        public static string GetRepoFileVersion(string FileName)
-        {
-            string line1, line2;
-
-            using (StreamReader reader = new StreamReader(FileName))
-            {
-                line1 = reader.ReadLine();
-                line2 = reader.ReadLine();
-
-                //Expensive!!!
-                Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
-                Match match = regex.Match(line2);
-                if (match.Success)
-                {
-                    return match.Value;
-                }
-                else
-                {
-                    return "0.0.0.0";
-                }
-            }
-        }
+       
 
         public static long GetXMLVersionAsLong(string xml)
         {

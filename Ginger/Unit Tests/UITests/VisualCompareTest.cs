@@ -79,7 +79,7 @@ namespace UnitTests.NonUITests
             mBF.RunStatus = eRunStatus.Pending;
         }
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void CreateBaselineAndCompare()
         //{
           

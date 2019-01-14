@@ -59,7 +59,7 @@ namespace Ginger.GeneralLib
         private void CopyToClipboardButton_Click(object sender, RoutedEventArgs e)
         {
             Clipboard.SetText(FullInfoTextBox.Text);            
-            Reporter.ToUser(eUserMsgKeys.CopiedErrorInfo);
+            Reporter.ToUser(eUserMsgKey.CopiedErrorInfo);
         }
     }
 }

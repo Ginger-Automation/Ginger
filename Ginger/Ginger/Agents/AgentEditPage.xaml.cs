@@ -117,7 +117,7 @@ namespace Ginger.Agents
             //notify user that all driver configurations will be reset
             if (xDriverTypeComboBox.SelectedItem.ToString() != mOriginalDriverType)
             {
-                if (Reporter.ToUser(eUserMsgKeys.ChangingAgentDriverAlert) == Amdocs.Ginger.Common.MessageBoxResult.No)
+                if (Reporter.ToUser(eUserMsgKey.ChangingAgentDriverAlert) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 {
                     foreach (object item in xDriverTypeComboBox.Items)
                         if (item.ToString() == mOriginalDriverType)
