@@ -182,9 +182,10 @@ namespace Ginger.BusinessFlowWindows
         private void ReportButton_Click(object sender, RoutedEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.CreatingReport);
+            Reporter.ToStatus(eStatusMsgKey.CreatingReport);
+            GingerCore.General.DoEvents();
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.GenerateLastExecutedItemReport, null);
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
             Mouse.OverrideCursor = null;
         }
 

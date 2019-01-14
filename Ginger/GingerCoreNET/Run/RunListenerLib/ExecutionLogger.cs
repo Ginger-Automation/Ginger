@@ -65,6 +65,12 @@ namespace Ginger.Run
 
         ProjEnvironment mExecutionEnvironment = null;
 
+        // TODO: remove me !!!!!!!!!!!!!!!!
+        enum eExecutionPahse
+        {
+            Start,
+            End            
+        }
 
         public ProjEnvironment ExecutionEnvironment
         {
@@ -412,6 +418,7 @@ namespace Ginger.Run
                 else
                 {
                     SaveObjToJSonFile(RunSetReport, LogFolder + @"\RunSet.txt");
+                }
                 AddExecutionDetailsToLog(eExecutionPahse.End, "Run Set", RunSetReport.Name, RunSetReport);
                 if (WorkSpace.RunningInExecutionMode)
                 {
