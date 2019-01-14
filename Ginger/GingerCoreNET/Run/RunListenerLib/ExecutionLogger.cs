@@ -68,10 +68,10 @@ namespace Ginger.Run
         int mBusinessFlowCounter { get; set; }
 
         // TODO: remove me !!!!!!!!!!!!!!!!
-        enum eExecutionPahse
+        enum eExecutionPhase
         {
             Start,
-            End            
+            End
         }
 
         public ProjEnvironment ExecutionEnvironment
@@ -421,7 +421,7 @@ namespace Ginger.Run
                 {
                     SaveObjToJSonFile(RunSetReport, LogFolder + @"\RunSet.txt");
                 }
-                AddExecutionDetailsToLog(eExecutionPahse.End, "Run Set", RunSetReport.Name, RunSetReport);
+                AddExecutionDetailsToLog(eExecutionPhase.End, "Run Set", RunSetReport.Name, RunSetReport);
                 if (WorkSpace.RunningInExecutionMode)
                 {
                     //Amdocs.Ginger.CoreNET.Execution.eRunStatus.TryParse(RunSetReport.RunSetExecutionStatus, out App.RunSetExecutionStatus);//saving the status for determin Ginger exit code
@@ -810,17 +810,17 @@ namespace Ginger.Run
 
 
         // make different listener - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        private static void AddExecutionDetailsToLog(eExecutionPahse objExecutionPhase, string objType, string objName, object obj)
+        private static void AddExecutionDetailsToLog(eExecutionPhase objExecutionPhase, string objType, string objName, object obj)
         {
             if (Reporter.RunningInExecutionMode || Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug)
             {
                 string prefix = string.Empty;
                 switch (objExecutionPhase)
                 {
-                    case eExecutionPahse.Start:
+                    case eExecutionPhase.Start:
                         prefix = "--> Execution Started for the " + objType + ": '" + objName + "'";
                         break;
-                    case eExecutionPahse.End:
+                    case eExecutionPhase.End:
                         prefix = "<-- Execution Ended for the " + objType + ": '" + objName + "'";
                         break;
                 }
