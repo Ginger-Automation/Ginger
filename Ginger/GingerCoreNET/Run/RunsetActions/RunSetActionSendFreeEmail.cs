@@ -10,7 +10,6 @@ using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
-using GingerCoreNET.ReporterLib;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -95,7 +94,7 @@ namespace Ginger.Run.RunSetActions
             if (isSuccess == false)
             {
                 Errors = Email.Event;
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
                 Status = RunSetActionBase.eRunSetActionStatus.Failed;
             }
         }
@@ -116,7 +115,7 @@ namespace Ginger.Run.RunSetActions
             return text;
         }
 
-        public override void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
         {
             throw new NotImplementedException();
         }

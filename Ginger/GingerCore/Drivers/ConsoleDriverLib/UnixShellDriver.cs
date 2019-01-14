@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Renci.SshNet;
 using System;
@@ -114,7 +113,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 if (string.IsNullOrEmpty(Host) || string.IsNullOrEmpty(Port.ToString()) || string.IsNullOrEmpty(UserName))
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "One of Settings of Agent is Empty ");
+                    Reporter.ToLog(eLogLevel.WARN, "One of Settings of Agent is Empty ");
                     throw new Exception("One of Settings of Agent is Empty ");    
                 }
                 if (Password == null)
@@ -125,7 +124,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 }
                 catch (Exception)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "Error Connecting to Host: " + Host + " with Port: " + Port);
+                    Reporter.ToLog(eLogLevel.WARN, "Error Connecting to Host: " + Host + " with Port: " + Port);
                     throw new Exception("Error Connecting to Host: " + Host + " with Port: " + Port);
                 }
 
@@ -170,7 +169,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "Error connecting to UnixServer - " + Host);
+                    Reporter.ToLog(eLogLevel.WARN, "Error connecting to UnixServer - " + Host);
                     throw new Exception("Error connecting to UnixServer - " + Host);
                 }
             }
@@ -306,7 +305,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         return "dos2unix " + UnixScriptFilePath + "; " + UnixScriptFilePath + cmd;
                
                 default:
-                    Reporter.ToLog(eLogLevel.INFO, "Error - unknown command");
+                    Reporter.ToLog(eLogLevel.WARN, "Error - unknown command");
                     ErrorMessageFromDriver += "Error - unknown command";
                     return "Error - unknown command";
             }

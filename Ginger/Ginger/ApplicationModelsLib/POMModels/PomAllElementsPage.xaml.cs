@@ -158,13 +158,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if (mWinExplorer == null)
             {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
                 return;
             }
 
             if (mAgent.Driver.IsDriverBusy)
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
                 return;
             }
 
@@ -294,13 +294,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if (mWinExplorer == null)
             {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
                 return;
             }
 
             if (mAgent != null && mAgent.Driver.IsDriverBusy)
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
                 return;
             }
 
@@ -367,7 +367,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 if (!WarnErrorOccured && ((double)TotalFails / TotalElements) > 0.2)
                 {
                     WarnErrorOccured = true;
-                    if (Reporter.ToUser(eUserMsgKeys.POMNotOnThePageWarn, TotalFails, TotalElements) == Amdocs.Ginger.Common.MessageBoxResult.No)
+                    if (Reporter.ToUser(eUserMsgKey.POMNotOnThePageWarn, TotalFails, TotalElements) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                     {
                         return;
                     }

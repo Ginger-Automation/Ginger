@@ -97,26 +97,26 @@ namespace Ginger.Reports
             {
                 if ((extraInformationCalculated == null) || (extraInformationCalculated.Length < 3))
                 {
-                    Reporter.ToUser(eUserMsgKeys.FolderNameTextBoxIsEmpty);
+                    Reporter.ToUser(eUserMsgKey.FolderNameTextBoxIsEmpty);
                     return;
                 }
                 else if(extraInformationCalculated.Length > 100)
                 {
-                    Reporter.ToUser(eUserMsgKeys.FolderNamesAreTooLong);
+                    Reporter.ToUser(eUserMsgKey.FolderNamesAreTooLong);
                     return;
                 }                
                 else
                 {
                     if (!Directory.Exists(extraInformationCalculated))
                     {
-                        Reporter.ToUser(eUserMsgKeys.FolderNotExistOrNotAvailible);
+                        Reporter.ToUser(eUserMsgKey.FolderNotExistOrNotAvailible);
                         return;
                     }
                     else
                     {
                         if (!HasWritePermission(extraInformationCalculated))
                         {
-                            Reporter.ToUser(eUserMsgKeys.UserHaveNoWritePermission);
+                            Reporter.ToUser(eUserMsgKey.UserHaveNoWritePermission);
                             // return;
                         }
                     }
