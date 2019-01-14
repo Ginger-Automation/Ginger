@@ -741,6 +741,7 @@ namespace Ginger.Functionalities
 
             AppDomain.CurrentDomain.Load("GingerCore");
 
+            //!!!!!!!!!!!! FIXME see add action page
             var ActTypes =
                 // from assembly in AppDomain.CurrentDomain.GetAssemblies()
                 from type in typeof(Act).Assembly.GetTypes()
@@ -768,7 +769,7 @@ namespace Ginger.Functionalities
             ObservableList<ApplicationModelBase> ApplicationModels = new ObservableList<ApplicationModelBase>();
             List<FindItemType> APMsSubItemList = new List<FindItemType>();
 
-
+            // !!! remove hard coded and use typeof
             AppDomain.CurrentDomain.Load("GingerCoreCommon");
 
             var ApplicationModelTypes =
@@ -798,6 +799,7 @@ namespace Ginger.Functionalities
             ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
             List<FindItemType> VariablesSubItemList = new List<FindItemType>();
 
+            // !!!! remove hard code and use typeof
             AppDomain.CurrentDomain.Load("GingerCoreCommon");
 
             var ApplicationModelTypes =
