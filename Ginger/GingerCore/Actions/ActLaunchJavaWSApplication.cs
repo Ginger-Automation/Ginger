@@ -30,7 +30,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Automation;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActLaunchJavaWSApplication : ActWithoutDriver
@@ -38,7 +38,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Launch Java Application"; } }
         public override string ActionUserDescription { get { return "Launch Java Application"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action to launch Java Applications jnlps/jars like CRM/OMS or any other java app");
             TBH.AddLineBreak();
