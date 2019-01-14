@@ -1,96 +1,145 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Run;
+using Ginger.Reports;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Activities;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
     public class ProgressReportRunListener :  RunListenerBase
     {
 
-        
-        // private static void AddExecutionDetailsToLog(eExecutionPahse objExecutionPhase, string objType, string objName, object obj)
-        //{
-        /*  if (AppReporter.CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
-          {
-              string prefix = string.Empty;
-              switch (objExecutionPhase)
-              {
-                  case eExecutionPahse.Start:
-                      prefix = "--> Execution Started for the " + objType + ": '" + objName + "'";
-                      break;
-                  case eExecutionPahse.End:
-                      prefix = "<-- Execution Ended for the " + objType + ": '" + objName + "'";
-                      break;
-              }
+         /// <summary>
+         ///  udpate in BF start !!!!!!!!!!!!!!!!!!!!!!!
+         /// </summary>
+        BusinessFlow mBusinessFlow;
 
-              //get the execution fields and their values
-              if (obj != null)
-              {
-                  List<KeyValuePair<string, string>> fieldsAndValues = new List<KeyValuePair<string, string>>();
-                  try
-                  {
-                      PropertyInfo[] props = obj.GetType(.GetProperties();
-                      foreach (PropertyInfo prop in props)
-                      {
-                          try
-                          {
-                              FieldParamsFieldType attr = ((FieldParamsFieldType)prop.GetCustomAttribute(typeof(FieldParamsFieldType)));
-                              if (attr == null)
-                              {
-                                  continue;
-                              }
-                              FieldsType ftype = attr.FieldType;
-                              if (ftype == FieldsType.Field)
-                              {
-                                  string propName = prop.Name;
-                                  string propFullName = ((FieldParamsNameCaption)prop.GetCustomAttribute(typeof(FieldParamsNameCaption)).NameCaption;
-                                  string propValue = obj.GetType(.GetProperty(propName, BindingFlags.Public | BindingFlags.Instance.GetValue(obj.ToString();
-                                  fieldsAndValues.Add(new KeyValuePair<string, string>(propFullName, propValue));
-                              }
-                          }
-                          catch (Exception)
-                          {
-                              //TODO: !!!!!!!!!!!!!!!!!! FIXME
-                          }
-                      }
-                  }
-                  catch (Exception)
-                  {
-                      //TODO: !!!!!!!!!!!!!!!!!! FIXME
-                  }
+        enum eExecutionPhase
+        {
+            Start,
+            End
+        }
 
-                  //add to Console
-                  string details = string.Empty;
-                  foreach (KeyValuePair<string, string> det in fieldsAndValues)
-                      details += det.Key + "= " + det.Value + System.Environment.NewLine;
-                  Reporter.ToLog(eAppReporterLogLevel.INFO, prefix + System.Environment.NewLine + "Details:" + System.Environment.NewLine + details);
-              }
-              else
-              {
-                  Reporter.ToLog(eAppReporterLogLevel.INFO, prefix + System.Environment.NewLine);
-              }
-          }
-         */
-        //}
+        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow)
+        {
+            mBusinessFlow = businessFlow;
+            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, new BusinessFlowReport(businessFlow));
+        }
+
+        public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow)
+        {
+            AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, new BusinessFlowReport(businessFlow));
+        }
+
         public override void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)
         {
-            Reporter.ToLog(eLogLevel.INFO, "ActivityGroup Started: " + activityGroup.Name);
+            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activityGroup.Name, new ActivityGroupReport(activityGroup, mBusinessFlow));            
         }
 
         public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup)
         {
-            Reporter.ToLog(eLogLevel.INFO, "ActivityGroup End: " + activityGroup.Name);
+            AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activityGroup.Name, new ActivityGroupReport(activityGroup, mBusinessFlow));
         }
 
         public override void ActivityStart(uint eventTime, Activity activity)
-        {            
-            Reporter.ToLog(eLogLevel.INFO, GingerDicser.GetTermResValue(eTermResKey.Activity) + " Started: " + activity.ActivityName);
+        {                        
+            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.Activity), activity.ActivityName, new ActivityReport(activity));
         }
 
         public override void ActivityEnd(uint eventTime, Activity activity)
         {
-            Reporter.ToLog(eLogLevel.INFO, GingerDicser.GetTermResValue(eTermResKey.Activity) + " End: " + activity.ActivityName);
+            AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.Activity), activity.ActivityName, new ActivityReport(activity));
         }
+
+        public override void ActionStart(uint eventTime, Act action)
+        {
+            AddExecutionDetailsToLog(eExecutionPhase.Start, "Action", action.Description, new ActionReport(action));
+        }
+
+        public override void ActionEnd(uint eventTime, Act action)
+        {
+            AddExecutionDetailsToLog(eExecutionPhase.End, "Action", action.Description, new ActionReport(action));
+        }
+
+        void AddExecutionDetailsToLog(eExecutionPhase objExecutionPhase, string objType, string objName, object obj)
+        {
+            if (Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug)
+            {
+                StringBuilder stringBuilder = new StringBuilder("--> ");
+                string prefix = string.Empty;
+                switch (objExecutionPhase)
+                {
+                    case eExecutionPhase.Start:
+                        stringBuilder.Append("Execution Started for the ");                        
+                        break;
+                    case eExecutionPhase.End:
+                        stringBuilder.Append("Execution Ended for the ");                        
+                        break;
+                }
+                stringBuilder.Append(objType).Append(": '").Append(objName).Append("'").AppendLine();
+
+
+                //get the execution fields and their values
+                if (obj != null)
+                {
+                    // List<KeyValuePair<string, string>> fieldsAndValues = new List<KeyValuePair<string, string>>();
+                    try
+                    {
+                        PropertyInfo[] props = obj.GetType().GetProperties();
+                        foreach (PropertyInfo prop in props)
+                        {
+                            try
+                            {
+                                FieldParamsFieldType attr = ((FieldParamsFieldType)prop.GetCustomAttribute(typeof(FieldParamsFieldType)));
+                                if (attr == null)
+                                {
+                                    continue;
+                                }
+                                FieldsType ftype = attr.FieldType;
+                                if (ftype == FieldsType.Field)
+                                {
+                                    string propName = prop.Name;
+                                    string propFullName = ((FieldParamsNameCaption)prop.GetCustomAttribute(typeof(FieldParamsNameCaption))).NameCaption;
+                                    object propVal = prop.GetValue(obj);
+                                    string propValue;
+                                    if (propVal != null)
+                                    {
+                                        propValue = propVal.ToString();
+                                    }
+                                    else
+                                    {
+                                        propValue = "";
+                                    }
+                                    
+                                    stringBuilder.Append(propName).Append("= ").Append(propValue).AppendLine();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                //TODO: !!!!!!!!!!!!!!!!!! FIXME
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        //TODO: !!!!!!!!!!!!!!!!!! FIXME
+                    }
+
+
+                    Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.INFO, prefix + System.Environment.NewLine);
+                }
+            }
+
+        }
+
     }
 }
