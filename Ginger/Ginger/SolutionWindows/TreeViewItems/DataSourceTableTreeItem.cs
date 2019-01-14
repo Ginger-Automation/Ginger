@@ -27,6 +27,7 @@ using System.Windows.Controls;
 using Amdocs.Ginger.Common.Enums;
 using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Common;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -136,7 +137,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Ginger.DataSource.DataSourceExportToExcel DSEE = new Ginger.DataSource.DataSourceExportToExcel(DSTableDetails.Name);
             DSEE.ShowAsWindow();
 
-            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
             string sExcelPath = DSEE.ExcelPath;
             string sSheetName = DSEE.SheetName;
             

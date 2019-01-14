@@ -35,7 +35,7 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger;
 using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 using Amdocs.Ginger.CoreNET;
 using GingerCore.Environments;
 using Ginger.Reports.GingerExecutionReport;
@@ -101,7 +101,7 @@ namespace Ginger.Run
             {
                 mRunsetExecutionEnvironment = value;
                 if (mRunsetExecutionEnvironment != null)
-                    //App.UserProfile.RecentEnvironment = mRunsetExecutionEnvironment.Guid;
+                   WorkSpace.UserProfile.RecentEnvironment = mRunsetExecutionEnvironment.Guid;
                 OnPropertyChanged(nameof(this.RunsetExecutionEnvironment));
             }
         }
