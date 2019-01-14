@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Amdocs.Ginger.Common
 {
-    public class GingerHelperMsg
+    public class StatusMsg
     {
-        public GingerHelperMsg(eStatusMessageType MessageType, string MsgHeader, string MsgContent, bool ShowBtn = false, string BtnContent = "")
+        public StatusMsg(eStatusMsgType MessageType, string MsgHeader, string MsgContent, bool ShowBtn = false, string BtnContent = "")
         {
             this.MessageType = MessageType;
             this.MsgHeader = MsgHeader;
@@ -15,9 +15,7 @@ namespace Amdocs.Ginger.Common
             this.BtnContent = BtnContent;
         }
 
-
-
-        public eStatusMessageType MessageType { get; set; }
+        public eStatusMsgType MessageType { get; set; }
         public string MsgHeader { get; set; }
         public string MsgContent { get; set; }
         public bool ShowBtn { get; set; }

@@ -167,7 +167,7 @@ namespace GingerCore.ALM.QC
             }
             catch (Exception e)
             {
-                Reporter.ToUser(eUserMsgKeys.ALMOperationFailed, "disconnect from project", e.Message);
+                Reporter.ToUser(eUserMsgKey.ALMOperationFailed, "disconnect from project", e.Message);
                 return false;
             }
         }
@@ -185,7 +185,7 @@ namespace GingerCore.ALM.QC
             }
             catch (Exception e)
             {
-                Reporter.ToUser(eUserMsgKeys.ALMOperationFailed, "disconnect from project", e.Message);
+                Reporter.ToUser(eUserMsgKey.ALMOperationFailed, "disconnect from project", e.Message);
                 return false;
             }
         }

@@ -31,6 +31,7 @@ using GingerCore.Drivers.Common;
 using Ginger.Drivers.UIA;
 using GingerCore.Actions.UIAutomation;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Drivers.Windows
 {
@@ -106,6 +107,11 @@ namespace Ginger.Drivers.Windows
         ObservableList<ControlProperty> IWindowExplorerTreeItem.GetElementProperties()
         {
            return ((UIAutomationDriverBase) (UIAElementInfo.WindowExplorer)).mUIAutomationHelper.GetElementProperties(UIAElementInfo.ElementObject);
+        }
+
+        public ObservableList<ActInputValue> GetItemSpecificActionInputValues()
+        {
+            return null;
         }
     }
 }

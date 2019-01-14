@@ -166,12 +166,12 @@ namespace Ginger.Reports
         {            
             if (HTMLReportFolderTextBox.Text.Length > 100)
             {
-                Reporter.ToUser(eUserMsgKeys.FolderNamesAreTooLong);
+                Reporter.ToUser(eUserMsgKey.FolderNamesAreTooLong);
                 return;
             }
             if (Convert.ToInt16(SizeTextBox.Text.ToString()) < 50)
             {
-                Reporter.ToUser(eUserMsgKeys.FolderSizeTooSmall);
+                Reporter.ToUser(eUserMsgKey.FolderSizeTooSmall);
                 return;
             }
 

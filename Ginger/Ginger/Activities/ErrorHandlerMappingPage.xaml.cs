@@ -62,7 +62,7 @@ namespace Ginger.Activities
                 }
                 if (mActivity.MappedErrorHandlers.Count != counter)
                 {
-                    Reporter.ToUser(eUserMsgKeys.MissingErrorHandler);
+                    Reporter.ToUser(eUserMsgKey.MissingErrorHandler);
                     grdErrorHandler.DataSourceList = lstCurrentBusinessFlowErrorHandler;
                     return;
                 }

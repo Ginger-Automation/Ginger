@@ -104,7 +104,7 @@ namespace GingerCoreCommonTest.VariableTests
 
             //Act
             variableTimer.StartTimer();
-            Thread.Sleep(50); //wait for 5ms 
+            Thread.Sleep(150); //wait for 150ms 
 
             //Assert
             string restVal = variableTimer.Value;

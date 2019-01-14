@@ -46,7 +46,7 @@ namespace Ginger.Environments
         private void TestUnixConnection(object sender, RoutedEventArgs e)
         {
             //TODO:             
-            Reporter.ToUser(eUserMsgKeys.MissingImplementation);
+            Reporter.ToUser(eUserMsgKey.MissingImplementation);
         }
 
         private void AddUnixSvr(object sender, RoutedEventArgs e)

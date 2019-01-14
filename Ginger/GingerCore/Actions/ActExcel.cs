@@ -21,7 +21,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCore.Variables;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -415,7 +414,7 @@ namespace GingerCore.Actions
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLogAndConsole(eLogLevel.FATAL, ex.Message);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get Excel Sheets", ex);
                     return new List<string>();
                 }
             }
@@ -772,10 +771,10 @@ namespace GingerCore.Actions
                         case "Syntax error in FROM clause.":
                             break;
                         case "No value given for one or more required parameters.":
-                            Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
+                            Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
                             break;
                         default:                            
-                            Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, ex.Message);
+                            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
                             break;
                     }
                     return null;
