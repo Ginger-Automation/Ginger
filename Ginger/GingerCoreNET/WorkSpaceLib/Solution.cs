@@ -305,7 +305,7 @@ namespace Ginger.SolutionGeneral
                 HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
             }
             Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
-            Helper.RuntimeObjectFactory.RunExecutioFrom(eExecutedFrom.Automation).ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            WorkSpace.AutomateTabGingerRunner.ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
 
         [IsSerializedForLocalRepository]

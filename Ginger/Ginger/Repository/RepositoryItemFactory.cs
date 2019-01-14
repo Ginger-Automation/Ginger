@@ -344,7 +344,7 @@ namespace Ginger.Repository
 
         public ObservableList<VariableBase> GetVariaables()
         {
-            return App.UserProfile.Solution.Variables;
+            return  WorkSpace.UserProfile.Solution.Variables;
         }
 
         public Type GetPage(string a)
@@ -360,7 +360,7 @@ namespace Ginger.Repository
                 Dispatcher.CurrentDispatcher.Invoke(() => 
                 {
                     RunSetConfig runSetConfig = (RunSetConfig)a;
-                    analyzerPage.Init(App.UserProfile.mSolution, runSetConfig);
+                    analyzerPage.Init( WorkSpace.UserProfile.mSolution, runSetConfig);
                 });
                 await analyzerPage.AnalyzeWithoutUI();
 
@@ -632,68 +632,68 @@ namespace Ginger.Repository
                     case "SourceControlType":
                         Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlType: '" + value + "'");
                         if (value.Equals("GIT"))
-                            App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
+                             WorkSpace.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
                         else if (value.Equals("SVN"))
-                            App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
+                             WorkSpace.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
                         else
-                            App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
+                             WorkSpace.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
                         break;
 
                     case "SourceControlUrl":
                         Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUrl: '" + value + "'");
-                        if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+                        if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                         {
                             if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
                                 value = value + "svn/";
                             if (!value.ToUpper().EndsWith("/"))
                                 value = value + "/";
                         }
-                        App.UserProfile.SourceControlURL = value;
+                         WorkSpace.UserProfile.SourceControlURL = value;
                         scURL = value;
                         break;
 
                     case "SourceControlUser":
                         Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUser: '" + value + "'");
-                        if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
+                        if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
                             value = "Test";
-                        App.UserProfile.SourceControlUser = value;
+                         WorkSpace.UserProfile.SourceControlUser = value;
                         scUser = value;
                         break;
 
                     case "SourceControlPassword":
                         Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");
-                        App.UserProfile.SourceControlPass = value;
+                         WorkSpace.UserProfile.SourceControlPass = value;
                         scPswd = value;
                         break;
 
                     case "PasswordEncrypted":
                         Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
-                        string pswd = App.UserProfile.SourceControlPass;
+                        string pswd =  WorkSpace.UserProfile.SourceControlPass;
                         if (value == "Y")
-                            pswd = EncryptionHandler.DecryptwithKey(App.UserProfile.SourceControlPass, App.ENCRYPTION_KEY);
-                        if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
+                            pswd = EncryptionHandler.DecryptwithKey( WorkSpace.UserProfile.SourceControlPass, App.ENCRYPTION_KEY);
+                        if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
                             pswd = "Test";
-                        App.UserProfile.SourceControlPass = pswd;
+                         WorkSpace.UserProfile.SourceControlPass = pswd;
                         break;
 
                     case "SourceControlProxyServer":
                         Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyServer: '" + value + "'");
                         if (value == "")
-                            App.UserProfile.SolutionSourceControlConfigureProxy = false;
+                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = false;
                         else
-                            App.UserProfile.SolutionSourceControlConfigureProxy = true;
+                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = true;
                         if (value != "" && !value.ToUpper().StartsWith("HTTP://"))
                             value = "http://" + value;
-                        App.UserProfile.SolutionSourceControlProxyAddress = value;
+                         WorkSpace.UserProfile.SolutionSourceControlProxyAddress = value;
                         break;
 
                     case "SourceControlProxyPort":
                         if (value == "")
-                            App.UserProfile.SolutionSourceControlConfigureProxy = false;
+                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = false;
                         else
-                            App.UserProfile.SolutionSourceControlConfigureProxy = true;
+                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = true;
                         Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
-                        App.UserProfile.SolutionSourceControlProxyPort = value;
+                         WorkSpace.UserProfile.SolutionSourceControlProxyPort = value;
                         break;
 
                     case "Solution":

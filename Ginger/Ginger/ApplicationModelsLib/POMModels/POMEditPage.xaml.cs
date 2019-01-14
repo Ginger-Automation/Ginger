@@ -99,7 +99,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTargetApplicationComboBox.Init(mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
             xTagsViewer.Init(mPOM.TagsKeys);
 
-            ePlatformType mAppPlatform = App.UserProfile.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
+            ePlatformType mAppPlatform =  WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
             ObservableList<Agent>  optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
             xAgentControlUC.Init(optionalAgentsList);
             App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
@@ -125,7 +125,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             //get key object 
             if (mPOM.TargetApplicationKey != null)
             {
-                RepositoryItemKey key = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == mPOM.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
+                RepositoryItemKey key =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == mPOM.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
                 if (key != null)
                 {
                     mPOM.TargetApplicationKey = key;
@@ -136,16 +136,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                 }
             }
-            xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms.Where(x=> ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
+            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x=> ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
             xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
 
-            App.UserProfile.Solution.ApplicationPlatforms.CollectionChanged += ApplicationPlatforms_CollectionChanged;
+             WorkSpace.UserProfile.Solution.ApplicationPlatforms.CollectionChanged += ApplicationPlatforms_CollectionChanged;
         }
 
         private void ApplicationPlatforms_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
+            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
         }
 
         public static Bitmap BitmapFromSource(BitmapSource bitmapsource)

@@ -219,10 +219,10 @@ namespace Ginger.Functionalities
                 xReplaceRadioButton.Visibility = Visibility.Hidden;
             }
 
-            App.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+             WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
 
 
-            FoundItem.SolutionFolder = App.UserProfile.Solution.Folder;
+            FoundItem.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
             mSearchConfig = new SearchConfig() { MatchCase = false, MatchAllWord = false };
             App.ObjFieldBinding(xMatchCaseCheckBox, CheckBox.IsCheckedProperty, mSearchConfig, nameof(SearchConfig.MatchCase));
             App.ObjFieldBinding(xMatchWholeWordCheckBox, CheckBox.IsCheckedProperty, mSearchConfig, nameof(SearchConfig.MatchAllWord));
@@ -614,12 +614,12 @@ namespace Ginger.Functionalities
             {
                 case eContext.SolutionPage:
                     //Pull variables from solution global variables
-                    foreach (VariableBase VB in App.UserProfile.Solution.Variables)
+                    foreach (VariableBase VB in  WorkSpace.UserProfile.Solution.Variables)
                     {
                         if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
-                        string VariablePath = App.UserProfile.Solution.Name+"\\Global Variables";
+                        string VariablePath =  WorkSpace.UserProfile.Solution.Name+"\\Global Variables";
                         if (mSubItemType == null || VB.GetType() == mSubItemType)
-                            mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, App.UserProfile.Solution, VariablePath, string.Empty));
+                            mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB,  WorkSpace.UserProfile.Solution, VariablePath, string.Empty));
                     }
 
                     //pull variables from all repository BF's

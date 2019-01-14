@@ -60,7 +60,7 @@ namespace Ginger.Reports
             DefaultTemplatePickerCbx.ItemsSource = null;
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            if (App.UserProfile.Solution != null  && HTMLReportConfigurations.Count > 0)
+            if ( WorkSpace.UserProfile.Solution != null  && HTMLReportConfigurations.Count > 0)
             {
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;
@@ -89,7 +89,7 @@ namespace Ginger.Reports
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpression mVE=new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
+            ValueExpression mVE=new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false,  WorkSpace.UserProfile.Solution.Variables);
             string extraInformationCalculated = string.Empty;
             mVE.Value = mEmailAttachment.ExtraInformation;
             extraInformationCalculated = mVE.ValueCalculated;

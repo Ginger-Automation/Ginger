@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Linq;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.TagsLib
 {
@@ -42,7 +43,7 @@ namespace Ginger.TagsLib
         private void ShowTags()
         {
             TagsListBox.Items.Clear();
-            IEnumerable<RepositoryItemTag> ttg = App.UserProfile.Solution.Tags.ItemsAsEnumerable();
+            IEnumerable<RepositoryItemTag> ttg =  WorkSpace.UserProfile.Solution.Tags.ItemsAsEnumerable();
             foreach (Guid g in mTags)
             {
                 // Get the Name for solution tags                

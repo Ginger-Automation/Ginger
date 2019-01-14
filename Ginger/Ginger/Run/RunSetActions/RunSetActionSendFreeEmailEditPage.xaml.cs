@@ -20,6 +20,7 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerCore;
 using GingerCore.GeneralLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -51,7 +52,7 @@ namespace Ginger.Run.RunSetActions
             //App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, Email.Fields.ConfigureCredential);
             if (string.IsNullOrEmpty(runSetActionSendFreeEmail.MailTo))
             {
-                runSetActionSendFreeEmail.MailFrom = App.UserProfile.UserEmail;
+                runSetActionSendFreeEmail.MailFrom =  WorkSpace.UserProfile.UserEmail;
             }
         }
 

@@ -17,7 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCore.Properties;

@@ -27,7 +27,7 @@ using GingerCore.ALM;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 
 namespace Ginger.Run.RunSetActions
 {

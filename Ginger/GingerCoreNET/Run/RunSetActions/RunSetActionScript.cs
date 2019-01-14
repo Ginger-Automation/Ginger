@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using Ginger.Reports;
 using GingerCore.Actions;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 
 namespace Ginger.Run.RunSetActions
 {

@@ -30,7 +30,7 @@ using GingerCore.Environments;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 
 namespace Ginger.Reports
 {

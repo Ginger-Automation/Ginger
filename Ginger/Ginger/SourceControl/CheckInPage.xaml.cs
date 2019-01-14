@@ -80,7 +80,7 @@ namespace Ginger.SourceControl
             viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.Name), Header = "Item Name", WidthWeight = 20, AllowSorting = true });
             viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.FileType), Header = "Item Type", WidthWeight = 20, AllowSorting = true });
             viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.SolutionPath), Header="Item Path", WidthWeight = 40, ReadOnly=true, AllowSorting = true });
-            if (App.UserProfile.Solution.ShowIndicationkForLockedItems)
+            if ( WorkSpace.UserProfile.Solution.ShowIndicationkForLockedItems)
             {
                 viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.Locked), Header = "Locked", WidthWeight = 10,  StyleType=GridColView.eGridColStyleType.Text });
             }
@@ -104,7 +104,7 @@ namespace Ginger.SourceControl
                 {
                    
               
-                    mFiles = SourceControlIntegration.GetPathFilesStatus(App.UserProfile.Solution.SourceControl, mPath);
+                    mFiles = SourceControlIntegration.GetPathFilesStatus( WorkSpace.UserProfile.Solution.SourceControl, mPath);
                 //set items name and type
                 Parallel.ForEach(mFiles, SCFI =>
                      {
@@ -206,7 +206,7 @@ namespace Ginger.SourceControl
                         SaveAllDirtyFiles(SelectedFiles);
                     });
                 //performing cleanup for the solution folder to clean old locks left by faild check ins
-                SourceControlIntegration.CleanUp(App.UserProfile.Solution.SourceControl, App.UserProfile.Solution.Folder);
+                SourceControlIntegration.CleanUp( WorkSpace.UserProfile.Solution.SourceControl,  WorkSpace.UserProfile.Solution.Folder);
                     List<string> pathsToCommit = new List<string>();
                     foreach (SourceControlFileInfo fi in SelectedFiles)
                     {
@@ -214,32 +214,32 @@ namespace Ginger.SourceControl
                     switch (fi.Status)
                         {
                             case SourceControlFileInfo.eRepositoryItemStatus.New:
-                                SourceControlIntegration.AddFile(App.UserProfile.Solution.SourceControl, fi.Path);
+                                SourceControlIntegration.AddFile( WorkSpace.UserProfile.Solution.SourceControl, fi.Path);
                                 pathsToCommit.Add(fi.Path);
                                 break;
                             case SourceControlFileInfo.eRepositoryItemStatus.Modified:
-                                if (fi.Locked && fi.LockedOwner != App.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                                if (fi.Locked && fi.LockedOwner !=  WorkSpace.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                                 {
-                                    SourceControlIntegration.UpdateFile(App.UserProfile.Solution.SourceControl, fi.Path);
+                                    SourceControlIntegration.UpdateFile( WorkSpace.UserProfile.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
                                 }
-                                else if (fi.Locked && fi.LockedOwner == App.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                                else if (fi.Locked && fi.LockedOwner ==  WorkSpace.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                                 {
-                                    SourceControlIntegration.UpdateFile(App.UserProfile.Solution.SourceControl, fi.Path);
+                                    SourceControlIntegration.UpdateFile( WorkSpace.UserProfile.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
                                 }
                                 else if (!fi.Locked)
                                 {
-                                    SourceControlIntegration.UpdateFile(App.UserProfile.Solution.SourceControl, fi.Path);
+                                    SourceControlIntegration.UpdateFile( WorkSpace.UserProfile.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
                                 }
                                 break;
                             case SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved:
                                 pathsToCommit.Add(fi.Path);
-                                SourceControlIntegration.UpdateFile(App.UserProfile.Solution.SourceControl, fi.Path);
+                                SourceControlIntegration.UpdateFile( WorkSpace.UserProfile.Solution.SourceControl, fi.Path);
                                 break;
                             case SourceControlFileInfo.eRepositoryItemStatus.Deleted:
-                                SourceControlIntegration.DeleteFile( App.UserProfile.Solution.SourceControl, fi.Path);
+                                SourceControlIntegration.DeleteFile(  WorkSpace.UserProfile.Solution.SourceControl, fi.Path);
                                 pathsToCommit.Add(fi.Path);
                                 break;
                             default:
@@ -250,7 +250,7 @@ namespace Ginger.SourceControl
                     bool conflictHandled = false;
                     bool CommitSuccess = false;
 
-                    CommitSuccess = SourceControlIntegration.CommitChanges(App.UserProfile.Solution.SourceControl, pathsToCommit, Comments, App.UserProfile.Solution.ShowIndicationkForLockedItems, ref conflictHandled);
+                    CommitSuccess = SourceControlIntegration.CommitChanges( WorkSpace.UserProfile.Solution.SourceControl, pathsToCommit, Comments,  WorkSpace.UserProfile.Solution.ShowIndicationkForLockedItems, ref conflictHandled);
 
                     AfterCommitProcess(CommitSuccess, conflictHandled);
 
@@ -419,7 +419,7 @@ namespace Ginger.SourceControl
                 {
                     if (Reporter.ToUser(eUserMsgKey.SourceControlCheckInUnsavedFileChecked, SCFI.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
-                        Reporter.ToStatus(eStatusMsgKey.SaveItem, null, App.UserProfile.Solution.GetNameForFileName(), "item");                        
+                        Reporter.ToStatus(eStatusMsgKey.SaveItem, null,  WorkSpace.UserProfile.Solution.GetNameForFileName(), "item");                        
                         WorkSpace.Instance.SolutionRepository.SaveRepositoryItem((RepositoryItemBase)obj);                        
                         Reporter.HideStatusMessage();
                     }
