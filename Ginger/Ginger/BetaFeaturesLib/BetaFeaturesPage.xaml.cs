@@ -107,7 +107,7 @@ namespace Ginger
 
             // TODO: save all other items
 
-            MessageBox.Show("Done");
+           Reporter.ToUser(eUserMsgKey.StaticInfoMessage,"Done");
         }
 
         private void XMessageTestWindow_Click(object sender, RoutedEventArgs e)

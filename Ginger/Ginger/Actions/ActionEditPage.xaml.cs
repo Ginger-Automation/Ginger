@@ -559,7 +559,7 @@ namespace Ginger.Actions
 
             if (ap == null)
             {
-                Reporter.ToUser(eUserMsgKeys.CurrentActionNotSaved);
+                Reporter.ToUser(eUserMsgKey.CurrentActionNotSaved);
             }
             else if (ap.grdActions.grdMain.Items.CurrentPosition < ap.grdActions.grdMain.Items.Count - 1)
             {
@@ -577,7 +577,7 @@ namespace Ginger.Actions
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "No Action to move to.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to move to.");
             }
 
             Mouse.OverrideCursor = null;
@@ -588,7 +588,7 @@ namespace Ginger.Actions
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             if (ap == null)
             {
-                Reporter.ToUser(eUserMsgKeys.CurrentActionNotSaved);
+                Reporter.ToUser(eUserMsgKey.CurrentActionNotSaved);
             }
             else if (ap.grdActions.grdMain.Items.CurrentPosition >= 1)
             {
@@ -605,7 +605,7 @@ namespace Ginger.Actions
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "No Action to move to.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to move to.");
             }
 
             Mouse.OverrideCursor = null;
@@ -866,7 +866,7 @@ namespace Ginger.Actions
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
             }
@@ -902,8 +902,8 @@ namespace Ginger.Actions
 
         private void ParentSaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if ((mActParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow),mActParentBusinessFlow.Name) == Amdocs.Ginger.Common.MessageBoxResult.Yes) 
-                || (mActParentActivity != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.Activity), mActParentActivity.ActivityName) == Amdocs.Ginger.Common.MessageBoxResult.Yes))
+            if ((mActParentBusinessFlow != null && Reporter.ToUser(eUserMsgKey.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow),mActParentBusinessFlow.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes) 
+                || (mActParentActivity != null && Reporter.ToUser(eUserMsgKey.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.Activity), mActParentActivity.ActivityName) == Amdocs.Ginger.Common.eUserMsgSelection.Yes))
             {
                 if(mActParentBusinessFlow != null)                    
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActParentBusinessFlow);
@@ -1114,7 +1114,7 @@ namespace Ginger.Actions
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.MissingImplementation2);
+                Reporter.ToUser(eUserMsgKey.MissingImplementation2);
             }
         }
 
@@ -1137,7 +1137,7 @@ namespace Ginger.Actions
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Control selection is not available yet for driver - " + driver.GetType().ToString());
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Control selection is not available yet for driver - " + driver.GetType().ToString());
                 }
             }
         }

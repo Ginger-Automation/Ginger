@@ -49,7 +49,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "MID Expression Test");
         }
 
@@ -63,7 +63,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "MID Expression Test");
         }
 
@@ -77,24 +77,51 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "MID Expression Test");
         }
 
 
         [TestMethod]  [Timeout(60000)]
-        [Ignore]
         public void SplitExpressionTest()
         {
             //Arrange
-            string evalExpr = "Split(\"My-TeslaTest\",\"-\")";
+            string evalExpr = "Split(\"My-Tesla-Test\",\"-\")(1)";
+            string expectedResult = "Tesla";
+
+            //Act
+            string result = VBS.ExecuteVBSEval(evalExpr);
+
+            //Assert
+            Assert.AreEqual(expectedResult, result, "Split Expression Test");
+        }
+
+        [TestMethod]
+        public void SplitExpressionTest_V2()
+        {
+            //Arrange
+            string evalExpr = "Split(\"My-Tesla-Test\",\"-\")(0)";
             string expectedResult = "My";
 
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
-            Assert.AreEqual(expectedResult, result, "MID Expression Test");
+            //Assert
+            Assert.AreEqual(expectedResult, result, "Split Expression Test");
+        }
+
+        [TestMethod]
+        public void SplitExpressionTest_ReturnsEmpty()
+        {
+            //Arrange
+            string evalExpr = "Split(\"My-Tesla-Test\",\"-\")(3)";
+            string expectedResult = "";
+
+            //Act
+            string result = VBS.ExecuteVBSEval(evalExpr);
+
+            //Assert
+            Assert.AreEqual(expectedResult, result, "Split Expression Test");
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -107,7 +134,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Replace Expression Test");
         }
 
@@ -121,7 +148,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Replace Expression Test");
         }
 
@@ -135,7 +162,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Replace Expression Test");
         }
 
@@ -149,7 +176,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "InStr Expression Test");
         }
 
@@ -163,7 +190,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "InStr Expression Test");
         }
 
@@ -177,7 +204,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "InStr Expression Test");
         }
 
@@ -191,7 +218,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "InStrRev Expression Test");
         }
 
@@ -209,7 +236,7 @@ namespace GingerCoreNETUnitTest.Script
             string result = VBS.ExecuteVBSEval(evalExpr);
             string result1 = VBS.ExecuteVBSEval(evalExpr1);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "InStrRev Expression Test");
             Assert.AreEqual(expectedResult1, result1, "InStrRev Expression Test");
         }
@@ -224,7 +251,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Left Expression Test");
         }
 
@@ -238,7 +265,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Right Expression Test");
         }
 
@@ -253,7 +280,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "LTrim Expression Test");
         }
 
@@ -267,7 +294,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Trim Expression Test");
         }
 
@@ -283,7 +310,7 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
 
-            //Assert            
+            //Assert
             Assert.AreEqual(expectedResult, result, "Trim Expression Test");
         }
 

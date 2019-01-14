@@ -113,15 +113,18 @@ namespace Amdocs.Ginger.Repository
         {
             ObservableList<RepositoryFolder<T>> list = new ObservableList<RepositoryFolder<T>>();
             string FullPath = SolutionRepository.GetFolderFullPath(Folder.FolderRelativePath);
-            string[] folders = FileSystem.GetDirectorySubFolders(FullPath);
+            string[] folders = FileSystem.GetDirectorySubFolders(FullPath);                      
             foreach (string subFolder in folders)
             {
-                //string DisplayName = Path.GetFileName(subFolder);
-                string relativePath = Path.Combine(FolderRelativePath, Path.GetFileName(PathHelper.GetLongPath(subFolder)));
-                RepositoryFolder<T> sf = new RepositoryFolder<T>(SolutionRepository, mSolutionRepositoryItemInfo, Folder.ItemFilePattern, relativePath, ContainsRepositoryItems); // Each sub folder is like it's parent type                                
-                sf.StartFileWatcher();
-                //sf.FolderFullPath = Path.Combine(FullPath, subFolder);
-                list.Add(sf);
+                if (!SolutionRepository.IsSolutionPathToAvoid(subFolder))
+                {
+                    //string DisplayName = Path.GetFileName(subFolder);
+                    string relativePath = Path.Combine(FolderRelativePath, Path.GetFileName(PathHelper.GetLongPath(subFolder)));
+                    RepositoryFolder<T> sf = new RepositoryFolder<T>(SolutionRepository, mSolutionRepositoryItemInfo, Folder.ItemFilePattern, relativePath, ContainsRepositoryItems); // Each sub folder is like it's parent type                                
+                    sf.StartFileWatcher();
+                    //sf.FolderFullPath = Path.Combine(FullPath, subFolder);
+                    list.Add(sf);
+                }
             }
             return list;
         }
@@ -252,16 +255,16 @@ namespace Amdocs.Ginger.Repository
             Parallel.ForEach(fileEntries, FileName =>
             {
                 try
-                {
-                    // Check if item exist in cache if yes use it, no need to load from file, yay!
-                    T item = (T)mFolderItemsCache[FileName];
-                    if (item == null)
-                    {
-                        item = LoadItemfromFile<T>(FileName, ContainingFolder);
-                        AddItemtoCache(FileName, item);
-                    }
-                    list.Add(item);
-                }
+                {                    
+                        // Check if item exist in cache if yes use it, no need to load from file, yay!
+                        T item = (T)mFolderItemsCache[FileName];
+                        if (item == null)
+                        {
+                            item = LoadItemfromFile<T>(FileName, ContainingFolder);
+                            AddItemtoCache(FileName, item);
+                        }
+                        list.Add(item);
+                    }   
                 catch(Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("RepositoryFolder/LoadFolderFiles- Failed to load the Repository Item XML which in file: '{0}'.", FileName), ex);
@@ -392,7 +395,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex);
             }
 
         }
@@ -444,7 +447,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "FileWatcher_Changed - Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
+                Reporter.ToLog(eLogLevel.ERROR, "FileWatcher_Changed - Exception thrown from ReposiotryFolder/FileWatcher", ex);
             }
 
             finally
@@ -710,7 +713,6 @@ namespace Amdocs.Ginger.Repository
                 //delete the folder from folders cache  
                 if (mSubFoldersCache != null)
                 {
-                    //GetSubFolders().Remove(subfolder);
                     mSubFoldersCache.Remove(subfolder);
                 }
 

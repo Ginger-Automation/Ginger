@@ -272,7 +272,7 @@ namespace Ginger.Actions
                 
                 if (WindowTitle == null)
                     WindowTitle = "";
-                Reporter.ToLog(eLogLevel.INFO, $"Method - {MethodBase.GetCurrentMethod().Name}, WindowTitle - {WindowTitle}");
+                Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, WindowTitle - {WindowTitle}");
                 switch (LocateBy)
                 {
                        

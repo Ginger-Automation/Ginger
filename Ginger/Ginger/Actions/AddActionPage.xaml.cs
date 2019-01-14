@@ -171,7 +171,7 @@ namespace Ginger.Actions
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKeys.MissingActivityAppMapping);
+                        Reporter.ToUser(eUserMsgKey.MissingActivityAppMapping);
                         return null;
                     }
                 }
@@ -256,7 +256,7 @@ namespace Ginger.Actions
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                        Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                         return;
                     }
                     aNew.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();

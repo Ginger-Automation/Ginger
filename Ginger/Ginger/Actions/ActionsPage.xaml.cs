@@ -236,7 +236,7 @@ namespace Ginger.Actions
         {
             if (mCurrentActivity == null)
             {
-                Reporter.ToUser(eUserMsgKeys.SelectItemToAdd);
+                Reporter.ToUser(eUserMsgKey.SelectItemToAdd);
             }
             else
             {
@@ -301,7 +301,7 @@ namespace Ginger.Actions
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
         

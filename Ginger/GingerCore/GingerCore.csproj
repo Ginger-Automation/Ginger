@@ -789,7 +789,6 @@
     <Compile Include="GeneralLib\InputBoxWindow.xaml.cs">
       <DependentUpon>InputBoxWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reporter\Reporter.cs" />
     <Compile Include="Reporter\BotDialog.xaml.cs">
       <DependentUpon>BotDialog.xaml</DependentUpon>
     </Compile>

@@ -54,7 +54,7 @@ namespace Ginger.ALM.Repository
         public abstract bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false);
         public abstract void ImportALMTests(string importDestinationFolderPath);
         public abstract void ImportALMTestsById(string importDestinationFolderPath);
-        public abstract eUserMsgKeys GetDownloadPossibleValuesMessage();
+        public abstract eUserMsgKey GetDownloadPossibleValuesMessage();
         public abstract IEnumerable<Object> SelectALMTestSets();
         public abstract bool ImportSelectedTests(string importDestinationPath, IEnumerable<Object> selectedTests);
         public abstract List<string> GetTestLabExplorer(string path);

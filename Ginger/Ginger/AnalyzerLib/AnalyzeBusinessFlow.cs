@@ -92,7 +92,7 @@ namespace Ginger.AnalyzerLib
             {
                 if (ABF.mSolution.ApplicationPlatforms.Count == 0)
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.MissingTargetApplication, "The default Application Platform Info is missing, please go to Solution level to add at least one Target Application.");
+                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The default Application Platform Info is missing, please go to Solution level to add at least one Target Application.");
                     return;
                 }
                 string SAN = ABF.mSolution.ApplicationPlatforms[0].AppName;

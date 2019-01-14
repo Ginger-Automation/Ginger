@@ -87,13 +87,13 @@ namespace Ginger
                     App.SetSolution(selectedSol.Folder);                    
                 }
                 else
-                    Reporter.ToUser(eUserMsgKeys.SolutionLoadError, "Selected Solution was not found");
+                    Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Selected Solution was not found");
 
                 e.Handled = true;
             }
             catch(Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.SolutionLoadError, ex);
+                Reporter.ToUser(eUserMsgKey.SolutionLoadError, ex);
             }
         }
 

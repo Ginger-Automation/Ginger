@@ -23,7 +23,6 @@ using GingerCore.Environments;
 using GingerCore.Helpers;
 using GingerCore.NoSqlBase;
 using GingerCore.Properties;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;

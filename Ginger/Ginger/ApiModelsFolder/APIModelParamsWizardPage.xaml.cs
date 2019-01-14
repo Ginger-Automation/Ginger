@@ -195,7 +195,7 @@ namespace Ginger.ApiModelsFolder
         {
             try
             {
-                if (Reporter.ToUser(eUserMsgKeys.ParamExportMessage) == Amdocs.Ginger.Common.MessageBoxResult.No)
+                if (Reporter.ToUser(eUserMsgKey.ParamExportMessage) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                     return;
 
                 DataSourceTablesListPage dataSourceTablesListPage = new DataSourceTablesListPage();
@@ -203,7 +203,7 @@ namespace Ginger.ApiModelsFolder
 
                 if (dataSourceTablesListPage.DSName == "" || dataSourceTablesListPage.DSTableName == "")
                 {
-                    Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
+                    Reporter.ToUser(eUserMsgKey.MappedtoDataSourceError);
                     return;
                 }                
 
@@ -217,7 +217,7 @@ namespace Ginger.ApiModelsFolder
             catch (System.Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the API Model params to Data Source", ex);
-                Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
+                Reporter.ToUser(eUserMsgKey.MappedtoDataSourceError);
             }
         }
 

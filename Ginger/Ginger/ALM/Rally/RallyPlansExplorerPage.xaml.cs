@@ -94,7 +94,7 @@ namespace Ginger.ALM.Rally
         {
             if (grdRallyTestPlanes.CurrentItem == null)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
 

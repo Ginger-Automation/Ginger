@@ -228,7 +228,7 @@
       <HintPath>..\packages\SharpAdbClient.2.0.274\lib\net45\SharpAdbClient.dll</HintPath>
     </Reference>
     <Reference Include="System">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll</HintPath>
     </Reference>
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.3.0\lib\net46\System.AppContext.dll</HintPath>
@@ -502,6 +502,9 @@
     <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByModelEditPage.xaml.cs">
       <DependentUpon>LocateByModelEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\_Common\ActUIElementLib\UIElementXYCoordinatePage.xaml.cs">
+      <DependentUpon>UIElementXYCoordinatePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Activities\ErrorHandlerMappingPage.xaml.cs">
       <DependentUpon>ErrorHandlerMappingPage.xaml</DependentUpon>
     </Compile>
@@ -592,8 +595,8 @@
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ReporterLib\GingerWorkSpaceReporter.cs" />
-    <Compile Include="ReporterLib\MessageBoxWindow.xaml.cs">
-      <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
+    <Compile Include="ReporterLib\UserMessageBox.xaml.cs">
+      <DependentUpon>UserMessageBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="ReporterLib\MessageInfo.cs" />
     <Compile Include="ReporterLib\ReporterTestWindow.xaml.cs">
@@ -601,8 +604,10 @@
     </Compile>
     <Compile Include="Reports\ReportTemplate.cs" />
     <Compile Include="Repository\RepositoryItemFactory.cs" />
-    <Compile Include="Run\RuntimeObjectFactory.cs" />
     <Compile Include="Solution.cs" />
+    <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
+      <DependentUpon>TimeLinePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>
@@ -2609,6 +2614,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Actions\_Common\ActUIElementLib\UIElementXYCoordinatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AdornerLib\HighlightAdornerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2869,7 +2878,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ReporterLib\MessageBoxWindow.xaml">
+    <Page Include="ReporterLib\UserMessageBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2896,6 +2905,10 @@
     <Page Include="DataSource\ImportExcelWizardLib\ImportDataSourceBrowseFile.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TimeLineLib\TimeLinePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml">
       <SubType>Designer</SubType>
@@ -4417,6 +4430,10 @@
     <ProjectReference Include="..\GingerPlugIns\GingerPlugIns.csproj">
       <Project>{d5329d81-7ff0-4af1-b186-a2fd65ef0583}</Project>
       <Name>GingerPlugIns</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GingerrControls\GingerrControls.csproj">
+      <Project>{959e026a-240e-47fb-9815-5ee219ee8039}</Project>
+      <Name>GingerrControls</Name>
     </ProjectReference>
     <ProjectReference Include="..\GingerUtils\GingerUtils.csproj">
       <Project>{80a06c2b-7da2-4f78-bf2a-5c0234f2349e}</Project>
