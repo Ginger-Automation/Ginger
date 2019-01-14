@@ -24,7 +24,6 @@ using GingerCore.Actions.UIAutomation;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Actions.Windows;
 using GingerCore.Drivers.Common;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using mshtml;
 using System;
@@ -945,7 +944,7 @@ namespace GingerCore.Drivers.WindowsLib
             throw new NotImplementedException();
         }
 
-        public bool TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
+        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
         {
             throw new NotImplementedException();
         }

@@ -445,7 +445,7 @@ namespace GingerCore.Drivers.AndroidADB
         //    //catch (Exception ex)
         //    //{
         //    //    Mouse.OverrideCursor = null;
-        //    //    Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, ex.Message);
+        //    //    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
         //    //}
         //}
 
@@ -481,7 +481,7 @@ namespace GingerCore.Drivers.AndroidADB
         //        //                AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.ePlatformType.iOSBrowser)
         //        //    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get mobile page source or convert it to XML format", ex);
         //        //else
-        //        //    Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, ex.Message);
+        //        //    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
 
         //        if (step == 1)
         //        {
@@ -596,7 +596,7 @@ namespace GingerCore.Drivers.AndroidADB
             //            elemntAct.GenElementAction = actionType;
             //            elemntAct.Description = "Clicking on " + elemntAct.LocateValue;
             //            BF.CurrentActivity.Acts.Add(elemntAct);
-            //            if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKeys.MobileActionWasAdded);
+            //            if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
             //            break;
 
             //        case ActGenElement.eGenElementAction.SetValue:
@@ -607,7 +607,7 @@ namespace GingerCore.Drivers.AndroidADB
             //            {
             //                elemntAct.AddOrUpdateInputParam("Value", value);
             //                BF.CurrentActivity.Acts.Add(elemntAct);
-            //                if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKeys.MobileActionWasAdded);
+            //                if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
             //            }
             //            break;
 
@@ -619,7 +619,7 @@ namespace GingerCore.Drivers.AndroidADB
             //            {
             //                elemntAct.AddOrUpdateInputParam("Value", Attribute);
             //                BF.CurrentActivity.Acts.Add(elemntAct);
-            //                if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKeys.MobileActionWasAdded);
+            //                if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
             //            }
             //            break;
 
@@ -627,7 +627,7 @@ namespace GingerCore.Drivers.AndroidADB
             //            elemntAct.GenElementAction = actionType;
             //            elemntAct.Description = "Validate visibility of " + elemntAct.LocateValue;
             //            BF.CurrentActivity.Acts.Add(elemntAct);
-            //            if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKeys.MobileActionWasAdded);
+            //            if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
             //            break;
             //    }
             //}
@@ -641,7 +641,7 @@ namespace GingerCore.Drivers.AndroidADB
         //{
         //    if (InspectBtn.IsChecked == true)
         //    {
-        //     if((Reporter.ToUser(eUserMsgKeys.MobileActionWasAdded)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+        //     if((Reporter.ToUser(eUserMsgKey.MobileActionWasAdded)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
         //     { }
         //    }
         //}
@@ -681,7 +681,7 @@ namespace GingerCore.Drivers.AndroidADB
             //}
             //catch(Exception ex)
             //{
-            //    Reporter.ToUser(eUserMsgKeys.MobileShowElementDetailsFailed, ex.Message);
+            //    Reporter.ToUser(eUserMsgKey.MobileShowElementDetailsFailed, ex.Message);
             //}
         }
 
@@ -732,7 +732,7 @@ namespace GingerCore.Drivers.AndroidADB
             //}
             //catch (Exception ex)
             //{
-            //    Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, ex.Message);
+            //    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
             //}
         }
 
@@ -757,7 +757,7 @@ namespace GingerCore.Drivers.AndroidADB
             //}
             //catch (Exception ex)
             //{
-            //    Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, ex.Message);
+            //    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
             //}
         }
 
@@ -1094,7 +1094,7 @@ namespace GingerCore.Drivers.AndroidADB
 
         internal void LostConenction()
         {            
-            Reporter.ToUser(eUserMsgKeys.LostConnection, "Lost connection with the device");
+            Reporter.ToUser(eUserMsgKey.LostConnection, "Lost connection with the device");
             CloseWindow();
         }
     }

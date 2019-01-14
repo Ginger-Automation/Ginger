@@ -23,7 +23,7 @@ using GingerWPF.ApplicationModelsLib.APIModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 
-namespace GingerWPFUnitTest.APIModelLib
+namespace GingerTest
 {
     [TestClass]
     public class WSDLParserTest
@@ -53,7 +53,7 @@ namespace GingerWPFUnitTest.APIModelLib
 
         [Ignore] // TODO: FIXME
         [Level2]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GenerateAPIfromWSDL()
         {
             // Arrange

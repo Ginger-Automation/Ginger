@@ -128,7 +128,7 @@ namespace Ginger.Actions.VisualTesting
         {
             string url = mAct.GetReturnParam("ResultsURL");
             if (string.IsNullOrEmpty(url))
-                Reporter.ToUser(eUserMsgKeys.ApplitoolsLastExecutionResultsNotExists);
+                Reporter.ToUser(eUserMsgKey.ApplitoolsLastExecutionResultsNotExists);
             else
             {
                 try
@@ -147,7 +147,7 @@ namespace Ginger.Actions.VisualTesting
                     catch (Exception ee)
                     {
                         //Show message that Applitools can't be open with Explorer Browser
-                        Reporter.ToUser(eUserMsgKeys.ApplitoolsMissingChromeOrFirefoxBrowser);
+                        Reporter.ToUser(eUserMsgKey.ApplitoolsMissingChromeOrFirefoxBrowser);
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ee.Message}", ee);
                     }
                 }

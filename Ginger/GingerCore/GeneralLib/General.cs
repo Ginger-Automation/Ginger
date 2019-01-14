@@ -40,7 +40,6 @@ using System.Xml;
 using GingerCore.DataSource;
 using System.Reflection;
 using amdocs.ginger.GingerCoreNET;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore
 {
@@ -481,7 +480,7 @@ namespace GingerCore
             return false;
         }
 
-        public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed, bool isMultiline = false)
+        public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed = null, bool isMultiline = false)
         {
             bool returnWindow = GingerCore.GeneralLib.InputBoxWindow.OpenDialog(header, label, ref resultValue, isMultiline);
 
@@ -490,10 +489,10 @@ namespace GingerCore
                 resultValue = resultValue.Trim();
                 if (string.IsNullOrEmpty(resultValue.Trim()))
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Value cannot be empty.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot be empty.");
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
-                if (!(resultValue.IndexOfAny(CharsNotAllowed) < 0))
+                if (CharsNotAllowed != null && !(resultValue.IndexOfAny(CharsNotAllowed) < 0))
                 {
                     System.Text.StringBuilder builder = new System.Text.StringBuilder();
                     foreach (char value in CharsNotAllowed)
@@ -501,7 +500,7 @@ namespace GingerCore
                         builder.Append(value);
                         builder.Append(" ");
                     }
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Value cannot contain charaters like:" + "\n" + builder.ToString());
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot contain charaters like:" + "\n" + builder.ToString());
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
             }
@@ -517,12 +516,12 @@ namespace GingerCore
                 resultValue = resultValue.Trim();
                 if (string.IsNullOrEmpty(resultValue.Trim()))
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Value cannot be empty.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot be empty.");
                     return SelectInputWithValidation(header, label, ref resultValue, mValues);
                 }
                 if (!(mValues.Contains(resultValue)))
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Value must be form the list");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value must be form the list");
                     return SelectInputWithValidation(header, label, ref resultValue, mValues);
                 }
             }
@@ -1046,7 +1045,7 @@ namespace GingerCore
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to complete the registry values check", ex);
-                Reporter.ToUser(eUserMsgKeys.RegistryValuesCheckFailed);
+                Reporter.ToUser(eUserMsgKey.RegistryValuesCheckFailed);
             }
         }
 

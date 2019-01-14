@@ -200,7 +200,7 @@ namespace Ginger.Run
         {
             if (!App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationIsEnabled)
             {
-                Reporter.ToUser(eUserMsgKeys.ExecutionsResultsProdIsNotOn);
+                Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
             }
 
@@ -215,13 +215,13 @@ namespace Ginger.Run
         {
             if (!App.UserProfile.Solution.UseRest)
             {
-                Reporter.ToUser(eUserMsgKeys.ALMDefectsUserInOtaAPI);
+                Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI);
                 return;
             }
             ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
             if ((ALMDefectProfiles == null) || (ALMDefectProfiles.Count < 1))
             {
-                Reporter.ToUser(eUserMsgKeys.NoDefectProfileCreated);
+                Reporter.ToUser(eUserMsgKey.NoDefectProfileCreated);
                 return;
             }
 

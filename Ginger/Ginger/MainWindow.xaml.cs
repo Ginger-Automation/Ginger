@@ -81,7 +81,7 @@ namespace Ginger
                 App.UserProfile.PropertyChanged += UserProfilePropertyChanged;
                 if (App.UserProfile.GingerStatus == eGingerStatus.Active)
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.ExitMode);
+                    Reporter.ToStatus(eStatusMsgKey.ExitMode);
                 }
                 App.UserProfile.GingerStatus = eGingerStatus.Active;
                 App.UserProfile.SaveUserProfile();
@@ -104,7 +104,7 @@ namespace Ginger
                 lblVersion.Content = "Version " + Ginger.App.AppVersion;
 
                 //Solution                                    
-                if (App.UserProfile.AutoLoadLastSolution && App.RunningFromConfigFile == false && App.RunningFromUnitTest == false)
+                if (App.UserProfile.AutoLoadLastSolution && WorkSpace.RunningInExecutionMode == false && App.RunningFromUnitTest == false)
                 {
                     AutoLoadLastSolution();
                 }
@@ -112,7 +112,7 @@ namespace Ginger
                 //Messages
                 if (App.UserProfile.NewHelpLibraryMessgeShown == false)
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.GingerHelpLibrary);
+                    Reporter.ToStatus(eStatusMsgKey.GingerHelpLibrary);
                     App.UserProfile.NewHelpLibraryMessgeShown = true;
                 }
 
@@ -123,7 +123,7 @@ namespace Ginger
             catch (Exception ex)
             {
                 App.AppSplashWindow.Close();
-                Reporter.ToUser(eUserMsgKeys.ApplicationInitError, ex.Message);
+                Reporter.ToUser(eUserMsgKey.ApplicationInitError, ex.Message);
                 Reporter.ToLog(eLogLevel.ERROR, "Error in Init Main Window", ex);                
             }
         }
@@ -244,7 +244,7 @@ namespace Ginger
 
 
         // New method to set staus bar text and icon
-        internal void ShowStatus(eStatusMessageType messageType, string statusText)
+        internal void ShowStatus(eStatusMsgType messageType, string statusText)
         {
             this.Dispatcher.Invoke(() => {
                 if (!string.IsNullOrEmpty(statusText))
@@ -255,11 +255,11 @@ namespace Ginger
 
                     switch(messageType)
                     {
-                        case eStatusMessageType.PROCESS:
+                        case eStatusMsgType.PROCESS:
                             xProcessMsgIcon.ImageType = eImageType.Processing;
                             break;
 
-                        case eStatusMessageType.INFO:
+                        case eStatusMsgType.INFO:
                             xProcessMsgIcon.ImageType = eImageType.Info;
                             break;                                                
                     }
@@ -288,7 +288,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.SolutionLoadError, ex);
+                Reporter.ToUser(eUserMsgKey.SolutionLoadError, ex);
             }
         }
 
@@ -347,7 +347,7 @@ namespace Ginger
                     Reporter.ToLog(eLogLevel.WARN, "Failed to delete Recover folder", ex);
                 }
             }
-            if (mAskUserIfToClose == false || Reporter.ToUser(eUserMsgKeys.AskIfSureWantToClose) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (mAskUserIfToClose == false || Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 AppCleanUp();
             }
@@ -365,7 +365,7 @@ namespace Ginger
             App.AutomateTabGingerRunner.CloseAgents();
             GingerCore.General.CleanDirectory(GingerCore.Actions.Act.ScreenshotTempFolder, true);
             
-            if (!App.RunningFromConfigFile)
+            if (!WorkSpace.RunningInExecutionMode)
             {
                 App.UserProfile.GingerStatus = eGingerStatus.Closed;
                 App.UserProfile.SaveUserProfile();
@@ -449,7 +449,7 @@ namespace Ginger
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.SolutionFileNotFound, solutionFileName);
+                    Reporter.ToUser(eUserMsgKey.SolutionFileNotFound, solutionFileName);
                 }
             }
         }
@@ -519,7 +519,7 @@ namespace Ginger
         {
             if(!ALMIntegration.Instance.AlmConfigurations.UseRest)
             {
-                Reporter.ToUser(eUserMsgKeys.ALMDefectsUserInOtaAPI, "");
+                Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
                 return;
             }
             ALMIntegration.Instance.ALMDefectsProfilesPage();
@@ -561,7 +561,7 @@ namespace Ginger
 
         private void btnSourceControlCheckIn_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.LoseChangesWarn) == Amdocs.Ginger.Common.MessageBoxResult.No) return;
+            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
 
             AutoLogProxy.UserOperationStart("btnSourceControlCheckIn_Click");
 
@@ -572,18 +572,18 @@ namespace Ginger
 
         private void btnSourceControlGetLatest_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.LoseChangesWarn) == Amdocs.Ginger.Common.MessageBoxResult.No) return;
+            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
 
             AutoLogProxy.UserOperationStart("btnSourceControlGetLatest_Click");
 
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.GetLatestFromSourceControl);
+            Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
             if (string.IsNullOrEmpty(App.UserProfile.Solution.Folder))
-                Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "Invalid Path provided");
+                Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
                 SourceControlIntegration.GetLatest(App.UserProfile.Solution.Folder, App.UserProfile.Solution.SourceControl);
 
             App.UpdateApplicationsAgentsMapping(false);
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
 
             AutoLogProxy.UserOperationEnd();
         }
@@ -601,9 +601,9 @@ namespace Ginger
         {
             AutoLogProxy.UserOperationStart("ResolveConflictsBtn_Click");
 
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ResolveSourceControlConflicts);
+            Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
             SourceControlIntegration.ResolveConflicts(App.UserProfile.Solution.SourceControl, App.UserProfile.Solution.Folder, side);
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
 
             AutoLogProxy.UserOperationEnd();
         }
@@ -636,7 +636,7 @@ namespace Ginger
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Upgrade is not needed, all solution items were created with latest version.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Upgrade is not needed, all solution items were created with latest version.");
                 }
             }
         }
@@ -669,7 +669,7 @@ namespace Ginger
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Ginger log file was not found in the Path:'" + mLogFilePath + "'");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Ginger log file was not found in the Path:'" + mLogFilePath + "'");
             }
         }
 
@@ -691,7 +691,7 @@ namespace Ginger
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Ginger log file folder was not found in the path: '" + folder + "'");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Ginger log file folder was not found in the path: '" + folder + "'");
             }
         }
 
@@ -745,7 +745,6 @@ namespace Ginger
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-
             Application.Current.Shutdown();
         }
 
@@ -797,7 +796,7 @@ namespace Ginger
                 App.SetSolution(selectedSol.Folder);
             }
             else
-                Reporter.ToUser(eUserMsgKeys.SolutionLoadError, "Selected Solution was not found");
+                Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Selected Solution was not found");
 
             e.Handled = true;
         }

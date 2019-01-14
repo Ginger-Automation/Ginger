@@ -18,14 +18,13 @@ limitations under the License.
 
 using GingerCore.Environments;
 using GingerTestHelper;
-using GingerWPFUnitTest.GeneralLib;
 using GingerWPFUnitTest.POMs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace GingerWPFUnitTest
+namespace GingerTest
 {
     [TestClass]
     [Level3]
@@ -78,7 +77,7 @@ namespace GingerWPFUnitTest
 
         
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VerifyEnvsShowinTree()
         {
             //Arrange            
@@ -94,7 +93,7 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddEnvUsingWizard()
         {
             //Arrange            
@@ -110,7 +109,7 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddEnvToFileSystemWillShowinEnvsTree()
         {
             // Arrange                                                
@@ -133,7 +132,7 @@ namespace GingerWPFUnitTest
 
 
         [Ignore]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void DeleteEnvFromFileSystem()
         {
             // Arrange            
@@ -156,7 +155,7 @@ namespace GingerWPFUnitTest
         }
 
         [Ignore] // TODO: FIXME not shwoing in tree b is false
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
         {
             //Arrange
@@ -179,7 +178,7 @@ namespace GingerWPFUnitTest
 
         [Ignore]
         [Level3]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddEnvFolderShowinTree()
         {
             //Arrange
@@ -199,7 +198,7 @@ namespace GingerWPFUnitTest
 
         [Ignore]
         [Level3]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void DeleteEnvFolderRemovedfromTree()
         {
             //Arrange
@@ -221,7 +220,7 @@ namespace GingerWPFUnitTest
         }
 
         [Ignore] //TODO: FIXME
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RenameEnvFolderSyncWithTree()
         {
             //Arrange

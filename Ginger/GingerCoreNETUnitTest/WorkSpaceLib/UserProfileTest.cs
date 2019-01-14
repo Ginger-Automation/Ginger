@@ -41,7 +41,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void NewProfileSaveLoad()
 //        {
 //            //Arrange                        
@@ -62,7 +62,7 @@
 //            Assert.AreEqual(LastSolutionFolder, UP2.RecentSolutions[0]);
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void CreateUserProfileFileName()
 //        {
 //            // Arrange            

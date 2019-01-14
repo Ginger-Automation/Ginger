@@ -36,7 +36,7 @@ namespace GingerCoreNETUnitTest.Script
         }
         #endregion
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void NowExpressionTest()
         {
             //Arrange
@@ -45,10 +45,113 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
             //12/31/2018 7:38:56 PM
-            DateTime localDate = DateTime.Now;
+            DateTime localDate = DateTime.Parse(result);
 
             //Assert            
-            Assert.AreEqual(localDate.ToString(), result, "Simple Expression Test");
+            Assert.IsTrue(!string.IsNullOrEmpty(result), "result not empty");
+            Assert.AreEqual(localDate.ToString(), result, "Now Expression Test");
         }
+
+        [TestMethod]  [Timeout(60000)]
+        public void WeekdayExpressionTest()
+        {
+            //Arrange
+            string evalExpr = "Weekday(Now)";
+
+            //Act
+            int result = int.Parse(VBS.ExecuteVBSEval(evalExpr)); 
+            int weekDay = (int)DateTime.Now.DayOfWeek + 1;
+
+            //Assert            
+            Assert.AreEqual(weekDay , result, "Weekday Expression Test");
+        }
+
+        [TestMethod]  [Timeout(60000)]
+        public void MonthExpressionTest()
+        {
+            //Arrange
+            string evalExpr = "Month(Now)";
+
+            //Act
+            string result = VBS.ExecuteVBSEval(evalExpr);
+            string monthNum = DateTime.Now.Month.ToString();
+
+            //Assert            
+            Assert.AreEqual(monthNum, result, "Month Expression Test");
+        }
+
+        [TestMethod]  [Timeout(60000)]
+        public void YearExpressionTest()
+        {
+            //Arrange
+            string evalExpr = "Year(Now)";
+
+            //Act
+            string result = VBS.ExecuteVBSEval(evalExpr);
+            string year = DateTime.Now.Year.ToString();
+
+            //Assert            
+            Assert.AreEqual(year, result, "Year Expression Test");
+        }
+
+        [TestMethod]  [Timeout(60000)]
+        public void HourExpressionTest()
+        {
+            //Arrange
+            string evalExpr = "Hour(Now)";
+
+            //Act
+            string result = VBS.ExecuteVBSEval(evalExpr);
+            string hour = DateTime.Now.Hour.ToString();
+
+            //Assert            
+            Assert.AreEqual(hour, result, "Hour Expression Test");
+        }
+
+        [TestMethod]  [Timeout(60000)]
+        public void MinuteExpressionTest()
+        {
+            //Arrange
+            string evalExpr = "Minute(Now)";
+
+            //Act
+            string result = VBS.ExecuteVBSEval(evalExpr);
+            string minute = DateTime.Now.Minute.ToString();
+
+            //Assert            
+            Assert.AreEqual(minute, result, "Minute Expression Test");
+        }
+
+        [TestMethod]  [Timeout(60000)]
+        public void DatePartExpressionTest_Year()
+        {
+            //Arrange
+            string evalExpr = "DatePart(\"yyyy\", Now)";
+
+            //Act
+            string result = VBS.ExecuteVBSEval(evalExpr);
+            string year = DateTime.Now.Year.ToString();
+
+            //Assert            
+            Assert.AreEqual(year, result, "DatePart Expression Test");
+        }
+
+        [TestMethod]  [Timeout(60000)]
+        public void DatePartExpressionTest_Month()
+        {
+            //Arrange
+            string evalExpr = "DatePart(\"m\", Now)";
+
+            //Act
+            string result = VBS.ExecuteVBSEval(evalExpr);
+            string month = DateTime.Now.Month.ToString();
+
+            //Assert            
+            Assert.AreEqual(month, result, "DatePart Expression Test");
+        }
+
     }
 }
+
+
+

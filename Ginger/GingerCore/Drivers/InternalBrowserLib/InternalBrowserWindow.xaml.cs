@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Drivers.InternalBrowserLib;
 using GingerCore.GeneralLib;
-using GingerCoreNET.ReporterLib;
 using mshtml;
 using System;
 using System.Collections;
@@ -181,7 +180,7 @@ namespace GingerCore.Drivers
             {
                 //TODO: show Bad URL...
                 //Replacing msgbox with Reporter.ToUser
-                Reporter.ToUser(eUserMsgKeys.GoToUrlFailure, txtURL.Text, ex.Message);
+                Reporter.ToUser(eUserMsgKey.GoToUrlFailure, txtURL.Text, ex.Message);
                 //End
             }
         }
@@ -1510,7 +1509,7 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception e1)
                     {
-                        Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, e1.Message);
+                        Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, e1.Message);
                     }
                     return null;
                     //TODO:
@@ -2047,7 +2046,7 @@ namespace GingerCore.Drivers
         {
             if(String.IsNullOrEmpty(SavedMHTFilePath))
             {                
-                Reporter.ToUser(eUserMsgKeys.MissingFileLocation);
+                Reporter.ToUser(eUserMsgKey.MissingFileLocation);
             }
             else
                 {
@@ -2141,7 +2140,7 @@ namespace GingerCore.Drivers
             else
             {
                 //TODO: reporter                
-                Reporter.ToUser(eUserMsgKeys.ElementNotFound);
+                Reporter.ToUser(eUserMsgKey.ElementNotFound);
             }
         }
 
@@ -2261,7 +2260,7 @@ namespace GingerCore.Drivers
                 int Searchposition = temp.IndexOf(search);
                 if (Searchposition == -1)
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.TextNotFound);
+                    Reporter.ToUser(eUserMsgKey.TextNotFound);
                     return;
                 }
                 frmHTML.SelectionStart = Searchposition;
@@ -2271,7 +2270,7 @@ namespace GingerCore.Drivers
                 btnPrevSearchSource.IsEnabled = false;
             }
             else
-                Reporter.ToUser(eUserMsgKeys.ProvideSearchString);         
+                Reporter.ToUser(eUserMsgKey.ProvideSearchString);         
         }
 
         private void btnSearchSourceNext_Clik(object sender, RoutedEventArgs e)
@@ -2283,7 +2282,7 @@ namespace GingerCore.Drivers
                 int Searchposition = temp.IndexOf(search, (CurrentSearchPosition+search.Length));
                 if (Searchposition == -1)
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.NoTextOccurrence);
+                    Reporter.ToUser(eUserMsgKey.NoTextOccurrence);
                     return;
                 }
                 frmHTML.SelectionStart = Searchposition;
@@ -2293,7 +2292,7 @@ namespace GingerCore.Drivers
                 btnPrevSearchSource.IsEnabled = true;
             }
             else
-                Reporter.ToUser(eUserMsgKeys.ProvideSearchString);            
+                Reporter.ToUser(eUserMsgKey.ProvideSearchString);            
         }
 
         private void btnSearchSourcePrevious_Click(object sender, RoutedEventArgs e)
@@ -2305,7 +2304,7 @@ namespace GingerCore.Drivers
                 int Searchposition = temp.LastIndexOf(search,CurrentSearchPosition);
                 if (Searchposition == -1)
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.NoTextOccurrence);
+                    Reporter.ToUser(eUserMsgKey.NoTextOccurrence);
                     return;
                 }
                 frmHTML.SelectionStart = Searchposition;
@@ -2315,7 +2314,7 @@ namespace GingerCore.Drivers
                 btnPrevSearchSource.IsEnabled = true;
             }
             else                
-                Reporter.ToUser(eUserMsgKeys.ProvideSearchString);
+                Reporter.ToUser(eUserMsgKey.ProvideSearchString);
         }
     }
 

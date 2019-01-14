@@ -35,7 +35,7 @@ namespace GingerCoreNETUnitTest.Script
         }
         #endregion
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SimpleExpressionTest()
         {
             //Arrange
@@ -48,7 +48,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual("2", result, "Simple Expression Test");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RoundExpressionTest()
         {
             //Arrange
@@ -70,6 +70,24 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult_3, result_3, "Round Expression Test");
         }
 
+
+        [TestMethod]  [Timeout(60000)]
+        public void IntExpressionTest()
+        {
+            //Arrange
+            string evalExpr_1 = "Int(-6.13443)";
+            string expectedResult_1 = "-7";
+            string evalExpr_2 = "Int(6.83227)";
+            string expectedResult_2 = "6";
+
+            //Act
+            string result_1 = VBS.ExecuteVBSEval(evalExpr_1);
+            string result_2 = VBS.ExecuteVBSEval(evalExpr_2);
+
+            //Assert            
+            Assert.AreEqual(expectedResult_1, result_1, "Int Expression Test");
+            Assert.AreEqual(expectedResult_2, result_2, "Int Expression Test");
+        }
 
 
     }

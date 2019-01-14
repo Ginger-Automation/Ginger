@@ -29,7 +29,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
 
-namespace GingerCoreCommonTest.Repository
+namespace GingerTest
 {
     [TestClass]
     [Level1]
@@ -79,7 +79,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestBusinessFlowVariableSyncWithRepo()
         {
             string variableName = "BFV1";
@@ -117,7 +117,7 @@ namespace GingerCoreCommonTest.Repository
             Assert.AreEqual(updatedValue, V2.InitialStringValue);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestActivityVariablesSyncWithRepo()
         {
             string variableName = "ACTVAR1";
@@ -160,7 +160,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestActivityVariablesSyncWithRepo_v2()
         {
             string variableName = "ACTVAR2";
@@ -205,7 +205,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void TestSolutionVariablesSyncWithRepo()
         //{
         //    string variableName = "SOLVAR1";

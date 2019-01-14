@@ -235,7 +235,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Failed to copy and load the selected " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " file." + System.Environment.NewLine + "Error: " + System.Environment.NewLine + ex.Message);
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to copy and load the selected " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " file." + System.Environment.NewLine + "Error: " + System.Environment.NewLine + ex.Message);
                     return;
                 }
             }
@@ -245,7 +245,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             //TODO: change to wizard
             string BizFlowName = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name:", ref BizFlowName, System.IO.Path.GetInvalidFileNameChars()))
+            if (GingerCore.General.GetInputWithValidation("Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name:", ref BizFlowName))
             {
                 BusinessFlow BizFlow = App.CreateNewBizFlow(BizFlowName);
 
@@ -284,8 +284,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 else
                 {
                     if (ALMIntegration.Instance.ExportAllBusinessFlowsToALM(bfToExport, true, ALMIntegration.eALMConnectType.Auto))
-                        Reporter.ToUser(eUserMsgKeys.ExportAllItemsToALMSucceed);
-                    else Reporter.ToUser(eUserMsgKeys.ExportAllItemsToALMFailed);
+                        Reporter.ToUser(eUserMsgKey.ExportAllItemsToALMSucceed);
+                    else Reporter.ToUser(eUserMsgKey.ExportAllItemsToALMFailed);
                 }
             }
         }

@@ -55,6 +55,7 @@ using GingerCore.Platforms.PlatformsInfo;
 using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer
 {
@@ -102,7 +103,7 @@ namespace Ginger.WindowExplorer
             //Instead of check make it disabled ?
             if ((((Agent)ApplicationAgent.Agent).Driver is IWindowExplorer) == false)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Control selection is not available yet for driver - " + ((Agent)ApplicationAgent.Agent).Driver.GetType().ToString());
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Control selection is not available yet for driver - " + ((Agent)ApplicationAgent.Agent).Driver.GetType().ToString());
                 _GenWin.Close();
                 return;                
             }
@@ -185,7 +186,7 @@ namespace Ginger.WindowExplorer
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,ex.ToString(), writeOnlyInDebugMode: true);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured while performing Update Window Explorer List", ex);
             }
             
         }
@@ -274,7 +275,7 @@ namespace Ginger.WindowExplorer
             else
             {
                 LiveSpyButton.IsChecked = false;
-                Reporter.ToUser(eUserMsgKeys.TargetWindowNotSelected);                
+                Reporter.ToUser(eUserMsgKey.TargetWindowNotSelected);                
             }   
         }
 
@@ -489,7 +490,7 @@ namespace Ginger.WindowExplorer
                 else
                 {
                     //TODO:If item not found in a tree and user confirms add it to control tree                        
-                    if ((Reporter.ToUser(eUserMsgKeys.ConfirmToAddTreeItem)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                    if ((Reporter.ToUser(eUserMsgKey.ConfirmToAddTreeItem)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
                         //TODO: Need to move this to IWindowExplorer and each driver will implement this and return matching ITreeViewItem for Element.
                         if(mSpyElement is UIAElementInfo)
@@ -521,11 +522,11 @@ namespace Ginger.WindowExplorer
                         else if(mSpyElement is JavaElementInfo)
                         {
                             //TODO: Fix me to add if spy element is not present on tree.
-                            Reporter.ToUser(eUserMsgKeys.FailedToAddTreeItem, "", "Adding spy element dynamically is not yet supported for this driver");
+                            Reporter.ToUser(eUserMsgKey.FailedToAddTreeItem, "", "Adding spy element dynamically is not yet supported for this driver");
                         }
                         else
                         {
-                            Reporter.ToUser(eUserMsgKeys.FailedToAddTreeItem, "Adding spy element dynamically is not yet supported  for this driver");
+                            Reporter.ToUser(eUserMsgKey.FailedToAddTreeItem, "Adding spy element dynamically is not yet supported  for this driver");
                         }
                     }
                 }
@@ -602,13 +603,13 @@ namespace Ginger.WindowExplorer
                 }
                 else
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.ObjectUnavailable);
+                    Reporter.ToUser(eUserMsgKey.ObjectUnavailable);
                 }
             }
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in ShowCurrentControlInfo", ex);                
-                Reporter.ToUser(eUserMsgKeys.ObjectLoad);
+                Reporter.ToUser(eUserMsgKey.ObjectLoad);
             }
         }        
 
@@ -628,6 +629,7 @@ namespace Ginger.WindowExplorer
                     else
                     {
                         ObservableList<Act> list = new ObservableList<Act>();
+                        ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
                         if (mPlatform.PlatformType() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
                         {
                             list = mPlatform.GetPlatformElementActions(EI);
@@ -646,7 +648,8 @@ namespace Ginger.WindowExplorer
                         else                        
                         {
                             Page DataPage = mCurrentControlTreeViewItem.EditPage();
-                            CAP = new ControlActionsPage(mWindowExplorerDriver, EI, list, DataPage);
+                            actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
+                            CAP = new ControlActionsPage(mWindowExplorerDriver, EI, list, DataPage, actInputValuelist);
                         }
                     }
                     ControlActionsFrame.Content = CAP;
@@ -752,7 +755,7 @@ namespace Ginger.WindowExplorer
                     InitTree (MFTI);
                     break;
                 default:                    
-                    Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Unknown Window type:" + AW.WindowType);
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unknown Window type:" + AW.WindowType);
                     break;
             }            
       
@@ -936,7 +939,7 @@ namespace Ginger.WindowExplorer
             else
             {
                 RecordingButton.IsChecked = false;
-                Reporter.ToUser(eUserMsgKeys.TargetWindowNotSelected);                
+                Reporter.ToUser(eUserMsgKey.TargetWindowNotSelected);                
             }
         }
 
@@ -997,8 +1000,8 @@ namespace Ginger.WindowExplorer
             {
                 if (CheckedFilteringCreteriaList.Count == 0)
                 {
-                    Amdocs.Ginger.Common.MessageBoxResult result = Reporter.ToUser(eUserMsgKeys.FilterNotBeenSet);
-                    if (result == Amdocs.Ginger.Common.MessageBoxResult.OK)
+                    Amdocs.Ginger.Common.eUserMsgSelection result = Reporter.ToUser(eUserMsgKey.FilterNotBeenSet);
+                    if (result == Amdocs.Ginger.Common.eUserMsgSelection.OK)
                     {
                         RefreshControlsGrid();
                         return true;
@@ -1016,8 +1019,8 @@ namespace Ginger.WindowExplorer
             }
             else
             {
-                Amdocs.Ginger.Common.MessageBoxResult result = Reporter.ToUser(eUserMsgKeys.RetreivingAllElements);
-                if (result == Amdocs.Ginger.Common.MessageBoxResult.OK)
+                Amdocs.Ginger.Common.eUserMsgSelection result = Reporter.ToUser(eUserMsgKey.RetreivingAllElements);
+                if (result == Amdocs.Ginger.Common.eUserMsgSelection.OK)
                 {
                     RefreshControlsGrid();
                     return true;

@@ -138,7 +138,7 @@ namespace Ginger.Reports
         {
             if (FolderTextBox.Text.Length > 100)
             {
-                Reporter.ToUser(eUserMsgKeys.FolderNamesAreTooLong);
+                Reporter.ToUser(eUserMsgKey.FolderNamesAreTooLong);
                 return;
             }
 
@@ -146,7 +146,7 @@ namespace Ginger.Reports
             {
                 if (Convert.ToInt16(SizeTextBox.Text.ToString()) < 50)
                 {
-                    Reporter.ToUser(eUserMsgKeys.FolderSizeTooSmall);
+                    Reporter.ToUser(eUserMsgKey.FolderSizeTooSmall);
                     return;
                 }
             }

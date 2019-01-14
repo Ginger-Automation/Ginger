@@ -34,7 +34,6 @@ namespace Amdocs.Ginger.Repository
         private ObservableList<PluginPackage> mPluginPackages;
         SolutionRepository mSolutionRepository;
 
-
         ObservableList<PluginProcessWrapper> mProcesses = new ObservableList<PluginProcessWrapper>();
 
         public ObservableList<PluginProcessWrapper> PluginProcesses
@@ -49,7 +48,13 @@ namespace Amdocs.Ginger.Repository
         public PluginsManager(SolutionRepository solutionRepository)
         {
             mSolutionRepository = solutionRepository;
-            mPluginPackages = solutionRepository.GetAllRepositoryItems<PluginPackage>();
+            GetPackages();
+        }
+
+        private void GetPackages()
+        {
+            mPluginPackages = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
+
         }
 
         public class DriverInfo
@@ -233,5 +238,11 @@ namespace Amdocs.Ginger.Repository
             PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
             return pluginServiceInfo.IsSession;
         }
+
+        public void SolutionChanged(SolutionRepository solutionRepository)
+        {        
+            mSolutionRepository = solutionRepository;
+            GetPackages();
+         }
     }
 }

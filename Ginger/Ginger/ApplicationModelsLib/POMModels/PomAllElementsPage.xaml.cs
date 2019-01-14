@@ -158,13 +158,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if (mWinExplorer == null)
             {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
                 return;
             }
 
             if (mAgent.Driver.IsDriverBusy)
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
                 return;
             }
 
@@ -294,13 +294,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if (mWinExplorer == null)
             {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
                 return;
             }
 
             if (mAgent != null && mAgent.Driver.IsDriverBusy)
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
                 return;
             }
 
@@ -322,6 +322,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTestAllElements.Visibility = Visibility.Collapsed;
             xStopTestAllElements.Visibility = Visibility.Visible;
             mStopProcess = false;
+
             if (xMappedElementsTab.IsSelected)
             {
                 await Task.Run(() => TestAllElements(mPOM.MappedUIElements));
@@ -339,7 +340,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             int TotalElements = Elements.Count;
             int TotalFails = 0;
-
+            
             bool WarnErrorOccured = false;
             foreach (ElementInfo EI in Elements)
             {
@@ -353,7 +354,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     return;
                 }
 
-                if (mWinExplorer.TestElementLocators(EI.Locators,true))
+                if (mWinExplorer.TestElementLocators(EI,true))
                 {
                     EI.ElementStatus = ElementInfo.eElementStatus.Passed;
                 }
@@ -366,7 +367,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 if (!WarnErrorOccured && ((double)TotalFails / TotalElements) > 0.2)
                 {
                     WarnErrorOccured = true;
-                    if (Reporter.ToUser(eUserMsgKeys.POMNotOnThePageWarn, TotalFails, TotalElements) == Amdocs.Ginger.Common.MessageBoxResult.No)
+                    if (Reporter.ToUser(eUserMsgKey.POMNotOnThePageWarn, TotalFails, TotalElements) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                     {
                         return;
                     }

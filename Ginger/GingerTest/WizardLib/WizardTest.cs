@@ -20,13 +20,13 @@ limitations under the License.
 
 using GingerTestHelper;
 using GingerWPF.WizardLib;
-using GingerWPFUnitTest;
 using GingerWPFUnitTest.POMs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 using System.Threading.Tasks;
+using GingerTest.WizardLib;
 
-namespace GingerTest.WizardLib
+namespace GingerTest
 {
     [TestClass]
     public class WizardTest
@@ -78,7 +78,7 @@ namespace GingerTest.WizardLib
         }
 
         [Level3]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VerifyButtonsOnStartThenCancel()
         {
             //Arrange            
@@ -100,7 +100,7 @@ namespace GingerTest.WizardLib
         }
 
         [Level3]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CreateMyWizardItem()
         {
             //Arrange            
@@ -122,7 +122,7 @@ namespace GingerTest.WizardLib
 
         [Level3]
         [Ignore] //TODO FIXME
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void WizardWithWindowWidth()
         {
             //Arrange            
@@ -140,7 +140,7 @@ namespace GingerTest.WizardLib
         }
 
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void WizardIntro()
         //{
         //    //Arrange                        
