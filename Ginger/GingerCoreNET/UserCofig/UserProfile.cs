@@ -383,7 +383,7 @@ namespace Ginger
         public eAppReporterLoggingLevel AppLogLevel
         {
             get { return mAppLogLevel; }
-            set { mAppLogLevel = value; Reporter.CurrentAppLogLevel = mAppLogLevel; OnPropertyChanged(nameof(AppLogLevel)); }
+            set { mAppLogLevel = value; Reporter.AppLoggingLevel = mAppLogLevel; OnPropertyChanged(nameof(AppLogLevel)); }
         }
 
         eUserType mUserType;

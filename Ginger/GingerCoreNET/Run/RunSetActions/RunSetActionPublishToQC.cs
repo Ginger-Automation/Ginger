@@ -76,7 +76,7 @@ namespace Ginger.Run.RunSetActions
             get { return false; }
         }
 
-        public override void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
         {
             //Set flag for each BF to execute runset when BF execute finish
             SetExportToALMConfig();

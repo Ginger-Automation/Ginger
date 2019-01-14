@@ -45,8 +45,6 @@ using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Drivers.WindowsLib;
 using GingerCore.Environments;
 using GingerCore.Variables;
-
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
@@ -237,7 +235,7 @@ namespace Ginger.Repository
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, zAgent.Name, e.Message);
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, zAgent.Name, e.Message);
                 }
 
                 if (zAgent.AgentType == eAgentType.Service)
@@ -371,7 +369,7 @@ namespace Ginger.Repository
                 {
                     if (!runInSilentMode)
                     {
-                        Reporter.ToUser(eUserMsgKeys.AnalyzerFoundIssues);
+                        Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
                         analyzerPage.ShowAsWindow();
                     }
                     return 1;
@@ -379,7 +377,7 @@ namespace Ginger.Repository
             }
             finally
             {
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
             return 0;
         }
@@ -606,11 +604,6 @@ namespace Ginger.Repository
             ALM.ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, ALM.ALMIntegration.eALMConnectType.Silence);
         }
 
-        public void MessageBoxShow(string message)
-        {
-            System.Windows.Forms.MessageBox.Show(message);
-        }
-
         public ITextBoxFormatter CreateTextBoxFormatter(object Textblock)
         {
             return new TextBoxFormatter(Textblock);
@@ -637,7 +630,7 @@ namespace Ginger.Repository
                 switch (param)
                 {
                     case "SourceControlType":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlType: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlType: '" + value + "'");
                         if (value.Equals("GIT"))
                             App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
                         else if (value.Equals("SVN"))
@@ -647,7 +640,7 @@ namespace Ginger.Repository
                         break;
 
                     case "SourceControlUrl":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlUrl: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUrl: '" + value + "'");
                         if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                         {
                             if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
@@ -660,7 +653,7 @@ namespace Ginger.Repository
                         break;
 
                     case "SourceControlUser":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlUser: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUser: '" + value + "'");
                         if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
                             value = "Test";
                         App.UserProfile.SourceControlUser = value;
@@ -668,13 +661,13 @@ namespace Ginger.Repository
                         break;
 
                     case "SourceControlPassword":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlPassword: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");
                         App.UserProfile.SourceControlPass = value;
                         scPswd = value;
                         break;
 
                     case "PasswordEncrypted":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "PasswordEncrypted: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
                         string pswd = App.UserProfile.SourceControlPass;
                         if (value == "Y")
                             pswd = EncryptionHandler.DecryptwithKey(App.UserProfile.SourceControlPass, App.ENCRYPTION_KEY);
@@ -684,7 +677,7 @@ namespace Ginger.Repository
                         break;
 
                     case "SourceControlProxyServer":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlProxyServer: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyServer: '" + value + "'");
                         if (value == "")
                             App.UserProfile.SolutionSourceControlConfigureProxy = false;
                         else
@@ -699,20 +692,20 @@ namespace Ginger.Repository
                             App.UserProfile.SolutionSourceControlConfigureProxy = false;
                         else
                             App.UserProfile.SolutionSourceControlConfigureProxy = true;
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
                         App.UserProfile.SolutionSourceControlProxyPort = value;
                         break;
 
                     case "Solution":
                         if (scURL != null && scUser != "" && scPswd != null)
                         {
-                            Reporter.ToLogAndConsole(eLogLevel.INFO, "Downloading Solution from source control");
+                            Reporter.ToLog(eLogLevel.DEBUG, "Downloading Solution from source control");
                             if (value.IndexOf(".git") != -1)
                                 App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
                             else
                                 App.DownloadSolution(value);
                         }
-                        Reporter.ToLog(eLogLevel.INFO, "Loading the Solution: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Loading the Solution: '" + value + "'");
                         try
                         {
                             if (App.SetSolution(value) == false)
@@ -730,7 +723,7 @@ namespace Ginger.Repository
                         break;
 
                     case "Env":
-                        Reporter.ToLog(eLogLevel.INFO, "Selected Environment: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Selected Environment: '" + value + "'");
                         ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
                         if (env != null)
                         {
@@ -744,7 +737,7 @@ namespace Ginger.Repository
                         break;
 
                     case "RunSet":
-                        Reporter.ToLog(eLogLevel.INFO, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), value));
+                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), value));
                         ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
                         RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
                         if (runSetConfig != null)

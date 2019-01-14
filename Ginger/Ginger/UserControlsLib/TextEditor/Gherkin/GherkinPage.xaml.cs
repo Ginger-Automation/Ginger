@@ -496,19 +496,19 @@ namespace Ginger.GherkinLib
             string txt = GherkinTextEditor.GetText();
             if (fileSize != txt.Length && fileSize != 0)
             {
-                fileSize = txt.Length; //TODO Reporter.ToUser(eUserMsgKeys.AskIfSureWantToClose);
-                Amdocs.Ginger.Common.MessageBoxResult result = Reporter.ToUser(eUserMsgKeys.GherkinAskToSaveFeatureFile);
-                if (result == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                fileSize = txt.Length; //TODO Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose);
+                Amdocs.Ginger.Common.eUserMsgSelection result = Reporter.ToUser(eUserMsgKey.GherkinAskToSaveFeatureFile);
+                if (result == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     Save();
                     return true;
                 }
-                else if (result == Amdocs.Ginger.Common.MessageBoxResult.No)
+                else if (result == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 {
                     //Do nothing? this will still create optmized activities and even update BF without saving the feature file... not advised
                     return true;
                 }
-                else if (result == Amdocs.Ginger.Common.MessageBoxResult.Cancel)
+                else if (result == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
                 {
                     //stop optimize so user can fix unwanted changes.
                     return false;
@@ -541,12 +541,12 @@ namespace Ginger.GherkinLib
                 }
                 UpdateBFButton.Content = "Update " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                 isBFexists = true;
-                Reporter.ToUser(eUserMsgKeys.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\", "") + "\\" + mBizFlow.Name, "Created");
+                Reporter.ToUser(eUserMsgKey.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\", "") + "\\" + mBizFlow.Name, "Created");
             }
             else
             {
                 UpdateBFButton_Click();
-                Reporter.ToUser(eUserMsgKeys.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\","") + "\\" + mBizFlow.Name, "Updated");
+                Reporter.ToUser(eUserMsgKey.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\","") + "\\" + mBizFlow.Name, "Updated");
             }
 
             if(App.BusinessFlow == mBizFlow)

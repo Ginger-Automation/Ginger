@@ -87,7 +87,7 @@ namespace Ginger.Imports.UFT
                 }
                 catch (Exception ex)
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.ExcelProcessingError, ex.Message);
+                    Reporter.ToUser(eUserMsgKey.ExcelProcessingError, ex.Message);
                     return null;
                 }
             }  
@@ -176,7 +176,7 @@ namespace Ginger.Imports.UFT
                 }
                 catch (Exception ex)
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.ExcelProcessingError, ex.Message);
+                    Reporter.ToUser(eUserMsgKey.ExcelProcessingError, ex.Message);
                     return null;
                 }
             }  

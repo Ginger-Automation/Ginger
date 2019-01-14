@@ -2901,7 +2901,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
         public static void SetTemplateAsDefault(HTMLReportConfiguration templateToSetAsDefualt)
         {
-//            if (Reporter.ToUser(eUserMsgKeys.ReportsTemplatesSaveWarn) != MessageBoxResult.Yes) return;
+//            if (Reporter.ToUser(eUserMsgKey.ReportsTemplatesSaveWarn) != MessageBoxResult.Yes) return;
 
             templateToSetAsDefualt.IsDefault = true;
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(templateToSetAsDefualt);

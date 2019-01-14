@@ -152,7 +152,7 @@ namespace Ginger.Import
             }
             catch (Exception)
             {
-                Reporter.ToUser(eUserMsgKeys.ImportSeleniumScriptError);
+                Reporter.ToUser(eUserMsgKey.ImportSeleniumScriptError);
             }
             return null;
         }

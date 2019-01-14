@@ -101,7 +101,7 @@ namespace Ginger.Run
             }
 
             if (optionalAgents.Count == 0)
-                Reporter.ToUser(eUserMsgKeys.NoOptionalAgent);
+                Reporter.ToUser(eUserMsgKey.NoOptionalAgent);
 
             grdPossibleAgents.DataSourceList = optionalAgents;
 
@@ -139,7 +139,7 @@ namespace Ginger.Run
         {
             if (grdPossibleAgents.Grid.SelectedItem == null)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
             else

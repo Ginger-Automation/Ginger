@@ -169,7 +169,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 bool overrideFile = true;
                 if (File.Exists(fileName))
                 {
-                    if (MessageBox.Show("File already exists, do you want to override?", "File Exists", System.Windows.MessageBoxButton.OKCancel) == System.Windows.MessageBoxResult.Cancel)
+                    if (Reporter.ToUser(eUserMsgKey.FileAlreadyExistWarn) == eUserMsgSelection.Cancel)
                     {
                         overrideFile = false;
                     }
@@ -251,7 +251,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             {
                 if (GAMDP != globalAppModelParameter && GAMDP.PlaceHolder == CurrentAMDP.PlaceHolder)
                 {                   
-                    Reporter.ToUser(eUserMsgKeys.ParameterAlreadyExists, "Global Model Parameters already contains a parameter Place Holder with the same value");
+                    Reporter.ToUser(eUserMsgKey.ParameterAlreadyExists, "Global Model Parameters already contains a parameter Place Holder with the same value");
                     return;
                 }
             }
@@ -285,28 +285,28 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void DeleteParams(bool ClearAllParams)
         {
-            Amdocs.Ginger.Common.MessageBoxResult messageResult = Amdocs.Ginger.Common.MessageBoxResult.No;
+            Amdocs.Ginger.Common.eUserMsgSelection messageResult = Amdocs.Ginger.Common.eUserMsgSelection.No;
             if (mApplicationModel is ApplicationAPIModel && (((ApplicationAPIModel)mApplicationModel).ContentType == ApplicationAPIUtils.eContentType.XML || ((ApplicationAPIModel)mApplicationModel).ContentType == ApplicationAPIUtils.eContentType.JSon))
             {                
-                messageResult = Reporter.ToUser(eUserMsgKeys.DeleteNodesFromRequest);
+                messageResult = Reporter.ToUser(eUserMsgKey.DeleteNodesFromRequest);
             }
 
-            if (messageResult == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (messageResult == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 if (ClearAllParams)
                     SyncParamsPendingDeleteWithBodyNodes(new List<AppModelParameter>(ParamsList));
                 else
                     SyncParamsPendingDeleteWithBodyNodes(new List<AppModelParameter>(ModelParametersGrid.Grid.SelectedItems.Cast<AppModelParameter>().ToList()));
             }
-            else if (messageResult == Amdocs.Ginger.Common.MessageBoxResult.No)
+            else if (messageResult == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 if (ModelParametersGrid.Grid.Items.Count == 0)
                 {
-                    Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
+                    Reporter.ToUser(eUserMsgKey.NoItemToDelete);
                     return;
                 }
 
-                if (ClearAllParams && (Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                if (ClearAllParams && (Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     ModelParametersGrid.DataSourceList.SaveUndoData();
                     ParamsList.ClearAll();
@@ -391,7 +391,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 ModelParametersGrid.DataSourceList.Move(ModelParametersGrid.DataSourceList.Count - 1, selctedIndex);
 
                 //Update all places with new placeholder merged param name                            
-                if(Reporter.ToUser(eUserMsgKeys.ParameterMerge) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                if(Reporter.ToUser(eUserMsgKey.ParameterMerge) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     mApplicationModel.UpdateParamsPlaceholder(mApplicationModel, placeHoldersToReplace, newParamName);
                 }
@@ -460,7 +460,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 CurrentGAMDP = (GlobalAppModelParameter)xGlobalModelParametersGrid.CurrentItem;
                 if (CurrentGAMDP != null && !CurrentGAMDP.PlaceHolder.Equals(GlobalParamOldValueBeforeEdit))
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.ParameterEdit);
+                    Reporter.ToUser(eUserMsgKey.ParameterEdit);
                     CurrentGAMDP.PlaceHolder = GlobalParamOldValueBeforeEdit;
                 }
             }
@@ -473,7 +473,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 if (AMDP != CurrentAMDP && AMDP.PlaceHolder == CurrentAMDP.PlaceHolder)
                 {
                     CurrentAMDP.PlaceHolder = LocalParamValueBeforeEdit;                    
-                    Reporter.ToUser(eUserMsgKeys.SpecifyUniqueValue);
+                    Reporter.ToUser(eUserMsgKey.SpecifyUniqueValue);
                     return true;
                 }
             }
@@ -482,7 +482,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 if (GAMDP != CurrentAMDP && GAMDP.PlaceHolder == CurrentAMDP.PlaceHolder)
                 {
                     CurrentAMDP.PlaceHolder = LocalParamValueBeforeEdit;                    
-                    Reporter.ToUser(eUserMsgKeys.SpecifyUniqueValue);
+                    Reporter.ToUser(eUserMsgKey.SpecifyUniqueValue);
                     return true;
                 }
             }

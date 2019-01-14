@@ -27,7 +27,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Amdocs.Ginger.Common;
-using GingerCoreNET.ReporterLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -745,40 +744,6 @@ namespace Amdocs.Ginger.Repository
 
                 }
 
-                //if (conversion)
-                //{
-                //    //for converting old actions keep the ID
-                //    if (obj is DriverAction)
-                //    {
-                //        DriverAction DA = ((DriverAction)obj);
-                //        DA.OldClassName = OldClassName;
-
-
-                //        //temp moved from here to conversion class or function
-                //        if (DA.OldClassName == "GingerCore.Actions.ActGotoURL")
-                //        {
-                //            DA.ID = "GotoURL";
-                //            DA.InputValues[0].Param = "URL"; //convert param name 'Value' to 'URL'
-                //        }
-
-                //        if (DA.OldClassName == "GingerCore.Actions.ActTextBox")
-                //        {
-                //            DA.ID = "UIElementAction";
-                //            string LocateBy = "ByID";
-                //            string LocateValue = "UserName";  // temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                //            string Action = "SetValue";
-                //            string Value = (from x in DA.InputValues where x.Param == "Value" select x.Value).FirstOrDefault();
-                //            DA.InputValues.Clear();
-                //            DA.InputValues.Add(new ActInputValue() { Param = "LocateBy", Value = LocateBy });
-                //            DA.InputValues.Add(new ActInputValue() { Param = "LocateValue", Value = LocateValue });
-                //            DA.InputValues.Add(new ActInputValue() { Param = "Action", Value = Action });
-                //            DA.InputValues.Add(new ActInputValue() { Param = "Value", Value = Value });
-
-                //        }
-
-                //    }
-                //}
-
 
                 return obj;
             }
@@ -998,13 +963,9 @@ namespace Amdocs.Ginger.Repository
                         PropertyInfo propertyInfo = obj.GetType().GetProperty(xdr.Name);
                         if (propertyInfo == null)
                         {
-                            if (xdr.Name == "Created" || xdr.Name == "CreatedBy" || xdr.Name == "LastUpdate" || xdr.Name == "LastUpdateBy" || xdr.Name == "Version" || xdr.Name == "ExternalID")
+                            if (xdr.Name != "Created" && xdr.Name != "CreatedBy" && xdr.Name != "LastUpdate" && xdr.Name != "LastUpdateBy" && xdr.Name != "Version" && xdr.Name != "ExternalID")
                             {
-                                // Ignore common attr on RI which were removed in GingerCoreNET
-                            }
-                            else
-                            {
-                                Reporter.ToLog(eLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode:true);
+                                Reporter.ToLog(eLogLevel.DEBUG, "Property not Found: " + xdr.Name);
                             }
                             xdr.MoveToNextAttribute();
                             continue;

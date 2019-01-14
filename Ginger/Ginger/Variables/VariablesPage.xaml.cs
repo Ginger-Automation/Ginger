@@ -364,7 +364,7 @@ namespace Ginger.Variables
         {
             if (grdVariables == null) return;
             if (grdVariables.Grid.SelectedItems.Count == 0)
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             else
                 foreach (object var in grdVariables.Grid.SelectedItems)
                     ((VariableBase)var).ResetValue();
@@ -375,7 +375,7 @@ namespace Ginger.Variables
             if (grdVariables == null) return;
 
             if (grdVariables.Grid.SelectedItems.Count == 0)
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             else
                 foreach (object var in grdVariables.Grid.SelectedItems)
                     ((VariableBase)var).GenerateAutoValue();
@@ -409,7 +409,7 @@ namespace Ginger.Variables
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectVariable);
+                Reporter.ToUser(eUserMsgKey.AskToSelectVariable);
             }
         }
 

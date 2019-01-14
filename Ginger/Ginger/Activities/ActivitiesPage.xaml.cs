@@ -330,7 +330,7 @@ namespace Ginger.BusinessFlowFolder
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 
@@ -340,14 +340,7 @@ namespace Ginger.BusinessFlowFolder
             a.Active = true;
             a.TargetApplication = mBusinessFlow.MainApplication;
             a.ActivityName = "New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-
-            //adding the Activity directly to the Grid without opening it for Edit            
-            int selectedActIndex = -1;
-            if (mBusinessFlow.Activities.CurrentItem != null)            
-                selectedActIndex = mBusinessFlow.Activities.IndexOf((Activity)mBusinessFlow.Activities.CurrentItem);            
-            mBusinessFlow.Activities.Add(a);
-            if (selectedActIndex >= 0)
-                mBusinessFlow.Activities.Move(mBusinessFlow.Activities.Count - 1, selectedActIndex + 1);
+            mBusinessFlow.AddActivity(a);
             mBusinessFlow.Activities.CurrentItem = a;
             mBusinessFlow.CurrentActivity = a;
         }

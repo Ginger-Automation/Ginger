@@ -21,7 +21,6 @@ using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCore.Properties;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -300,7 +299,7 @@ namespace GingerCore.Actions
                         return cmd;
                     }
                 default:
-                    Reporter.ToUser(eUserMsgKeys.UnknownConsoleCommand, act.ScriptCommand);
+                    Reporter.ToUser(eUserMsgKey.UnknownConsoleCommand, act.ScriptCommand);
                     return "Error - unknown command";
             }
         }

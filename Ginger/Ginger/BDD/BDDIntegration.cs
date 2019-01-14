@@ -51,7 +51,7 @@ namespace Ginger.BDD
                     System.IO.File.WriteAllText(FullFilePath, FileContent);
                 }
                 else
-                    Reporter.ToUser(eUserMsgKeys.GherkinNotifyFeatureFileExists, FullFilePath);
+                    Reporter.ToUser(eUserMsgKey.GherkinNotifyFeatureFileExists, FullFilePath);
             }
         }
 
