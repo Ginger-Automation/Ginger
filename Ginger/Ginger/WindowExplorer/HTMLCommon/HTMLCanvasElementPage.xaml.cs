@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Drivers;
@@ -33,17 +34,27 @@ namespace Ginger.WindowExplorer.HTMLCommon
     /// </summary>
     public partial class HTMLCanvasElementPage : Page
     {
-        ElementInfo ElementInfo;
-        ObservableList<Act> actList;
-
-        public HTMLCanvasElementPage(ObservableList<Act> list, ElementInfo elementInfo)
+        ElementInfo ElementInfo;  
+        Act mAct;
+        
+        public HTMLCanvasElementPage(ElementInfo elementInfo)
         {
             InitializeComponent();
             ElementInfo = elementInfo;
-            InjectScriptAndStartEvent();
-            actList = list;
+            InjectScriptAndStartEvent();            
         }
 
+        public ObservableList<ActInputValue> GetTableRelatedInputValues()
+        {
+            if(mAct!=null)
+            {
+                return mAct.InputValues;
+            }  
+            else
+            {
+                return null;
+            }
+        }
         private void InjectScriptAndStartEvent()
         {
             ((SeleniumDriver)ElementInfo.WindowExplorer).InjectGingerLiveSpyAndStartClickEvent(ElementInfo);
@@ -65,27 +76,21 @@ namespace Ginger.WindowExplorer.HTMLCommon
             catch
             {
                 ((SeleniumDriver)ElementInfo.WindowExplorer).InjectGingerLiveSpyAndStartClickEvent(ElementInfo);
-                Reporter.ToUser(eUserMsgKeys.ClickElementAgain);
+                Reporter.ToUser(eUserMsgKey.ClickElementAgain);
             }
 
             if (x == "undefined" || x == "undefined")
             {
                 ((SeleniumDriver)ElementInfo.WindowExplorer).StartClickEvent(ElementInfo);
-                Reporter.ToUser(eUserMsgKeys.ClickElementAgain);
+                Reporter.ToUser(eUserMsgKey.ClickElementAgain);
             }
             else
             {
                 XOffset.Text = x;
-                YOffset.Text = y;
-
-                foreach (Act act in actList)
-                {
-
-                    ((ActGenElement)act).Xoffset = x;
-                    ((ActGenElement)act).Yoffset = y;
-                }
-            }
-            //TODO list actions
+                YOffset.Text = y;                
+                mAct.AddOrUpdateInputParamValue("XCoordinate", x);
+                mAct.AddOrUpdateInputParamValue("YCoordinate", y);
+            }            
         }
     }
 }

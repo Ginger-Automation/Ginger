@@ -1438,7 +1438,7 @@ namespace GingerCore.ALM.QC
                     string newDefectID = qcClientREST.CreateNewDefectQCTest(defectForOpening.Value);
                     if (newDefectID == "0")
                     {
-                        Reporter.ToUser(eUserMsgKeys.IssuesInSelectedDefectProfile);
+                        Reporter.ToUser(eUserMsgKey.IssuesInSelectedDefectProfile);
                         break;
                     }
                     defectsOpeningResults.Add(defectForOpening.Key, newDefectID);
@@ -1446,7 +1446,7 @@ namespace GingerCore.ALM.QC
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.ALMConnectFailure);
+                Reporter.ToUser(eUserMsgKey.ALMConnectFailure);
             }
 
             return defectsOpeningResults;

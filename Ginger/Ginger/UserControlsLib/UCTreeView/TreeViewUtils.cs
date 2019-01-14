@@ -182,7 +182,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
             catch
             {               
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Missing Header Image");
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Missing Header Image");
             }
 
             //Image 2 i.e.: Source Control Image

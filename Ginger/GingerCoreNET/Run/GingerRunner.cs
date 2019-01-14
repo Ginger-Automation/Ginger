@@ -238,8 +238,9 @@ namespace Ginger.Run
                 }
             }
         }
+
         private bool mActive= true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool Active
         {
             get { return mActive; }
@@ -854,12 +855,12 @@ namespace Ginger.Run
 
         private void RunActionWithRetryMechanism(Act act, bool checkIfActionAllowedToRun = true)
         {
-            //Not suppose to happen but just in case        
-            if (act == null)
-            {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectAction);
-                return;
-            }
+                //Not suppose to happen but just in case        
+                if (act == null)
+                {
+                    Reporter.ToUser(eUserMsgKey.AskToSelectAction);
+                    return;
+                }
 
             if (checkIfActionAllowedToRun)//to avoid duplicate checks in case the RunAction function is called from RunActvity
             {
@@ -1281,7 +1282,7 @@ namespace Ginger.Run
                 {
                     act.Wait = 0;
                     act.ExInfo = "Invalid value for Wait time : " + wait;
-                    Reporter.ToLog(eLogLevel.INFO, "", ex);
+                    Reporter.ToLog(eLogLevel.WARN, act.ExInfo, ex);
                 }
             }
             else
@@ -1803,7 +1804,7 @@ namespace Ginger.Run
 
             if (string.IsNullOrEmpty(AppName))
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Please select Target Application for the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " and " + GingerDicser.GetTermResValue(eTermResKey.Activity));
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select Target Application for the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " and " + GingerDicser.GetTermResValue(eTermResKey.Activity));
                 CurrentBusinessFlow.CurrentActivity.CurrentAgent = null;
                 return;
             }
@@ -1812,7 +1813,7 @@ namespace Ginger.Run
             if (AA == null || ((Agent)AA.Agent) == null)
             {
 
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "The current target application, " + AppName + ", doesn't have a mapped agent assigned to it");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The current target application, " + AppName + ", doesn't have a mapped agent assigned to it");
                 CurrentBusinessFlow.CurrentActivity.CurrentAgent = null;
                 return;
             }
@@ -2183,7 +2184,7 @@ namespace Ginger.Run
                         {
                             case eFlowControlAction.MessageBox:
                                 string txt = act.ValueExpression.Calculate(FC.Value);                                
-                                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, txt);
+                                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, txt);
                                 break;
                             case eFlowControlAction.GoToAction:
                                 if (GotoAction(FC, act))
@@ -2455,7 +2456,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + fc.GetNameFromValue() + "' was not found in Shared Repository");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + fc.GetNameFromValue() + "' was not found in Shared Repository");
                 return false;
             }
         }

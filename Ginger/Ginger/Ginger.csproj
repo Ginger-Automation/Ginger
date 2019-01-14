@@ -228,7 +228,7 @@
       <HintPath>..\packages\SharpAdbClient.2.0.274\lib\net45\SharpAdbClient.dll</HintPath>
     </Reference>
     <Reference Include="System">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll</HintPath>
     </Reference>
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.3.0\lib\net46\System.AppContext.dll</HintPath>
@@ -499,6 +499,9 @@
     <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByModelEditPage.xaml.cs">
       <DependentUpon>LocateByModelEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\_Common\ActUIElementLib\UIElementXYCoordinatePage.xaml.cs">
+      <DependentUpon>UIElementXYCoordinatePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Activities\ErrorHandlerMappingPage.xaml.cs">
       <DependentUpon>ErrorHandlerMappingPage.xaml</DependentUpon>
     </Compile>
@@ -589,8 +592,8 @@
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ReporterLib\GingerWorkSpaceReporter.cs" />
-    <Compile Include="ReporterLib\MessageBoxWindow.xaml.cs">
-      <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
+    <Compile Include="ReporterLib\UserMessageBox.xaml.cs">
+      <DependentUpon>UserMessageBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="ReporterLib\MessageInfo.cs" />
     <Compile Include="ReporterLib\ReporterTestWindow.xaml.cs">
@@ -2608,6 +2611,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Actions\_Common\ActUIElementLib\UIElementXYCoordinatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AdornerLib\HighlightAdornerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2868,7 +2875,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ReporterLib\MessageBoxWindow.xaml">
+    <Page Include="ReporterLib\UserMessageBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

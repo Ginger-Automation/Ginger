@@ -162,7 +162,7 @@ namespace Ginger.Run.RunSetActions
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
         private void HTMLReportsConfigurationConfigWindow(object sender, EventArgs e)

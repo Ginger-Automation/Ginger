@@ -335,13 +335,13 @@ namespace Ginger.Functionalities
         {
             if (string.IsNullOrEmpty(mValueToReplace))
             {
-                Reporter.ToUser(eUserMsgKeys.FindAndRepalceFieldIsEmpty, xReplaceLabel.Content);
+                Reporter.ToUser(eUserMsgKey.FindAndRepalceFieldIsEmpty, xReplaceLabel.Content);
                 return;
             }
 
             if (mFoundItemsList.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.FindAndReplaceListIsEmpty);
+                Reporter.ToUser(eUserMsgKey.FindAndReplaceListIsEmpty);
                 return;
             }
 
@@ -359,7 +359,7 @@ namespace Ginger.Functionalities
                 List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected == true && (x.Status == FoundItem.eStatus.PendingReplace || x.Status == FoundItem.eStatus.ReplaceFailed)).ToList();
                 if (FIList.Count == 0)
                 {
-                    Reporter.ToUser(eUserMsgKeys.FindAndReplaceNoItemsToRepalce);
+                    Reporter.ToUser(eUserMsgKey.FindAndReplaceNoItemsToRepalce);
                     EnableDisableButtons(true);
                     return;
                 }
@@ -400,12 +400,12 @@ namespace Ginger.Functionalities
         {
             if (xMainItemTypeComboBox.SelectedItem == null)
             {
-                Reporter.ToUser(eUserMsgKeys.FindAndRepalceFieldIsEmpty, xMainItemTypeLabel.Content);
+                Reporter.ToUser(eUserMsgKey.FindAndRepalceFieldIsEmpty, xMainItemTypeLabel.Content);
                 return;
             }
             if (string.IsNullOrEmpty(xFindWhatTextBox.Text))
             {
-                Reporter.ToUser(eUserMsgKeys.FindAndRepalceFieldIsEmpty, xFindWhatLabel.Content);
+                Reporter.ToUser(eUserMsgKey.FindAndRepalceFieldIsEmpty, xFindWhatLabel.Content);
                 return;
             }
             FindItemsAsync();
@@ -939,7 +939,7 @@ namespace Ginger.Functionalities
 
         private void ViewRunSet(FoundItem runSetToViewFoundItem)
         {
-            Reporter.ToUser(eUserMsgKeys.FindAndReplaceViewRunSetNotSupported, xReplaceLabel.Content);
+            Reporter.ToUser(eUserMsgKey.FindAndReplaceViewRunSetNotSupported, xReplaceLabel.Content);
             //MessageBox.Show()
             //RunSetConfig runSetConfig = (RunSetConfig)runSetToViewFoundItem.OriginObject;
             //NewRunSetPage w = new NewRunSetPage(runSetConfig, NewRunSetPage.eEditMode.View);

@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using GingerCoreNET.ReporterLib;
 using System;
 using System.Collections.Generic;
 using System.IO;

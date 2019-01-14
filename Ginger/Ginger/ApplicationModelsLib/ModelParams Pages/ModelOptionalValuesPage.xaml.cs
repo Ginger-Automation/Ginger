@@ -153,7 +153,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                         if (OP != CurrentOP && OP.Value == CurrentOP.Value)
                         {
                             CurrentOP.Value = OldValue;                            
-                            Reporter.ToUser(eUserMsgKeys.SpecifyUniqueValue);
+                            Reporter.ToUser(eUserMsgKey.SpecifyUniqueValue);
                             break;
                         }
                     }

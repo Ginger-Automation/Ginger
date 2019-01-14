@@ -27,7 +27,6 @@ using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
 using GingerCore.Environments;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -432,7 +431,7 @@ namespace GingerCore
                             //TODO: Handle enums later...
                             throw new Exception("Driver Config - Enum not supported yet");
                         default:                            
-                            Reporter.ToUser(eUserMsgKeys.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
+                            Reporter.ToUser(eUserMsgKey.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
                             break;
                     }
                 }
@@ -847,17 +846,17 @@ namespace GingerCore
 
                 if (Status == Agent.eStatus.Running)
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.SuccessfullyConnectedToAgent);
+                    Reporter.ToUser(eUserMsgKey.SuccessfullyConnectedToAgent);
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, "Invalid Agent Configuration");
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Name, "Invalid Agent Configuration");
                 }
             }
 
             catch (Exception AgentStartException)
             {                
-                Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, "Agent Launch failed due to " + AgentStartException.Message);
+                Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Name, "Agent Launch failed due to " + AgentStartException.Message);
             }
             finally
             {

@@ -31,6 +31,7 @@ using GingerCore.Activities;
 using GingerCore.Variables;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using System.IO;
 
 namespace Ginger.Repository
 {
@@ -89,7 +90,7 @@ namespace Ginger.Repository
                                 else
                                     type = RepositoryItemUsage.eUsageTypes.Instance;
 
-                                RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = BF.ContainingFolder + BF.Name, UsageItem = a, UsageItemName = a.ActivityName, UsageExtraDetails = "Number of Actions: " + a.Acts.Count().ToString(), UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated};
+                                RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, BF.Name), UsageItem = a, UsageItemName = a.ActivityName, UsageExtraDetails = "Number of Actions: " + a.Acts.Count().ToString(), UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated};
                                 itemUsage.SetItemPartesFromEnum(typeof(eItemParts));
                                 RepoItemUsages.Add(itemUsage);
                             }
@@ -112,7 +113,7 @@ namespace Ginger.Repository
                                 else
                                     type = RepositoryItemUsage.eUsageTypes.Instance;
 
-                                RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = BF.ContainingFolder + BF.Name, UsageItem = a, UsageItemName = a.Name, UsageExtraDetails = "Number of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": " + a.ActivitiesIdentifiers.Count().ToString(), UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
+                                RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, BF.Name), UsageItem = a, UsageItemName = a.Name, UsageExtraDetails = "Number of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": " + a.ActivitiesIdentifiers.Count().ToString(), UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
                                 itemUsage.SetItemPartesFromEnum(typeof(ActivitiesGroup.eItemParts));
                                 RepoItemUsages.Add(itemUsage);
                             }
@@ -137,7 +138,7 @@ namespace Ginger.Repository
                                     else
                                         type = RepositoryItemUsage.eUsageTypes.Instance;
 
-                                    RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = BF.ContainingFolder + BF.Name, HostActivity = activity, HostActivityName = activity.ActivityName, UsageItem = a, UsageItemName = a.Description, UsageExtraDetails = "", UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
+                                    RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, BF.Name), HostActivity = activity, HostActivityName = activity.ActivityName, UsageItem = a, UsageItemName = a.Description, UsageExtraDetails = "", UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
                                     itemUsage.SetItemPartesFromEnum(typeof(Act.eItemParts));
                                     RepoItemUsages.Add(itemUsage);
                                 }
@@ -162,7 +163,7 @@ namespace Ginger.Repository
                                 else
                                     type = RepositoryItemUsage.eUsageTypes.Instance;
 
-                                RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = BF.ContainingFolder + BF.Name, UsageItem = a, UsageItemName = a.Name, UsageExtraDetails = "Current Value: " + a.Value, UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
+                                RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, BF.Name), UsageItem = a, UsageItemName = a.Name, UsageExtraDetails = "Current Value: " + a.Value, UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
                                 itemUsage.SetItemPartesFromEnum(typeof(VariableBase.eItemParts));
                                 RepoItemUsages.Add(itemUsage);
                             }
@@ -185,7 +186,7 @@ namespace Ginger.Repository
                                     else
                                         type = RepositoryItemUsage.eUsageTypes.Instance;
 
-                                    RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = BF.ContainingFolder + BF.Name, HostActivity = activity, HostActivityName = activity.ActivityName, UsageItem = a, UsageItemName = a.Name, UsageExtraDetails = "Current Value: " + a.Value, UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
+                                    RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, BF.Name), HostActivity = activity, HostActivityName = activity.ActivityName, UsageItem = a, UsageItemName = a.Name, UsageExtraDetails = "Current Value: " + a.Value, UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
                                     itemUsage.SetItemPartesFromEnum(typeof(VariableBase.eItemParts));
                                     RepoItemUsages.Add(itemUsage);
                                 }
@@ -196,7 +197,7 @@ namespace Ginger.Repository
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.GetRepositoryItemUsagesFailed, mRepoItem.GetNameForFileName(), ex.Message);
+                Reporter.ToUser(eUserMsgKey.GetRepositoryItemUsagesFailed, mRepoItem.GetNameForFileName(), ex.Message);
             }
         }        
 
@@ -240,7 +241,7 @@ namespace Ginger.Repository
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 
@@ -308,7 +309,7 @@ namespace Ginger.Repository
                     }
                 }
 
-                Reporter.ToUser(eUserMsgKeys.UpdateRepositoryItemUsagesSuccess);
+                Reporter.ToUser(eUserMsgKey.UpdateRepositoryItemUsagesSuccess);
             });
         }
 
@@ -323,15 +324,15 @@ namespace Ginger.Repository
                    {
                        try
                        {
-                           Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, usage.HostBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                           Reporter.ToStatus(eStatusMsgKey.SaveItem, null, usage.HostBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(usage.HostBusinessFlow);
                            usage.Status = RepositoryItemUsage.eStatus.UpdatedAndSaved;
-                           Reporter.CloseGingerHelper();
+                           Reporter.HideStatusMessage();
                        }
                        catch (Exception ex)
                        {
                            usage.Status = RepositoryItemUsage.eStatus.SaveFailed;
-                           Reporter.CloseGingerHelper();
+                           Reporter.HideStatusMessage();
                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                        }
                    }
