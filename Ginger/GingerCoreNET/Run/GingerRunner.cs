@@ -24,7 +24,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
 using GingerCore;
@@ -51,6 +51,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.ALMLib.ALMIntegration;
 
 namespace Ginger.Run
@@ -67,6 +68,7 @@ namespace Ginger.Run
         SpecificActivity,
         SpecificBusinessFlow
     }
+
 
     public class GingerRunner : RepositoryItemBase
     {
@@ -88,7 +90,12 @@ namespace Ginger.Run
             StopAllBusinessFlows = 1,
         }
 
-        
+      
+
+        // !!! change name to runContext - and remove the ExecutionLogConfiguration
+        // public AutomationTabContext ExecutionLoggerAutomationTabContext { get; set; }
+
+
         public PublishToALMConfig PublishToALMConfig = null;
         
         public enum eResetStatus
@@ -130,6 +137,7 @@ namespace Ginger.Run
 
         Activity mLastExecutedActivity;
 
+        //!!! remove from here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public string ExecutionLogFolder { get; set; }
         public BusinessFlow CurrentBusinessFlow { get; set; }        
         public bool AgentsRunning = false;
@@ -137,13 +145,12 @@ namespace Ginger.Run
         public eExecutedFrom ExecutedFrom;        
         public string CurrentGingerLogFolder = string.Empty;
         public string CurrentHTMLReportFolder = string.Empty;
-        public int ExecutionLogBusinessFlowCounter { get; set; }
-        // public static bool UseExecutionLogger = false;//TODO:  temp flag so Beta users will not be impacted, removed when it is working and tested to be good 
+
+
+        
+        
         public string SolutionFolder { get; set; }
         public bool HighLightElement { get; set; }
-
-        public delegate void GingerRunnerEventHandler(GingerRunnerEventArgs EventArgs);
-
 
 
         public bool IsRunning
@@ -305,18 +312,16 @@ namespace Ginger.Run
         {
             ExecutedFrom = eExecutedFrom.Run;
 
-            // !!!!!!!!!!!!!!!!!!!!!! temp
-            // ExecutionLogger = new ExecutionLogger(ProjEnvironment, eExecutedFrom.Run);            
-            mRunListeners.Add(new ExecutionLogger(ProjEnvironment, eExecutedFrom.Run));
+            // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
+            RunListeners.Add(new ProgressReportRunListener());            
         }
 
         public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             ExecutedFrom = executedFrom;
 
-            // !!!!!!!!!!!!!!!!!!!!!! temp
-            // ExecutionLogger = new ExecutionLogger(ProjEnvironment, ExecutedFrom);
-            mRunListeners.Add(new ExecutionLogger(ProjEnvironment, ExecutedFrom));
+            // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
+            RunListeners.Add(new ProgressReportRunListener());
         }
 
 
@@ -1631,7 +1636,7 @@ namespace Ginger.Run
                             GingerNodeInfo GNI = null;
                             try
                             {
-                                GNI = GetGNIFor((ActPlugIn)act);
+                                GNI = GetGingerNodeInfoForPluginAction((ActPlugIn)act);
                                 if (GNI != null)
                                 {
                                     ExecutePlugInAction((ActPlugIn)act, GNI);
@@ -1902,7 +1907,7 @@ namespace Ginger.Run
        // keep list of GNI for Plugin which are session
         Dictionary<string, GingerNodeInfo> dic = new Dictionary<string, GingerNodeInfo>();
 
-        private GingerNodeInfo GetGNIFor(ActPlugIn actPlugin)
+        private GingerNodeInfo GetGingerNodeInfoForPluginAction(ActPlugIn actPlugin)
         {
             bool DoStartSession = false;
             bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, actPlugin.ServiceId);
@@ -3326,7 +3331,7 @@ namespace Ginger.Run
         }
 
 
-        // Make private !!!!!!!!!!!!!!!
+        // Make private !!!!!!!!!!!!!!! !!!
         public void CalculateBusinessFlowFinalStatus(BusinessFlow BF, bool considrePendingAsSkipped= false)
         {
             // A flow is blocked if some activity failed and all the activities after it failed
@@ -4112,6 +4117,7 @@ namespace Ginger.Run
         private void NotifyActionStart(Act action)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+            action.StartTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActionStart(eventTime, action);
@@ -4122,6 +4128,7 @@ namespace Ginger.Run
         private void NotifyPrepActionEnd(Act action)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+            action.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.PrepActionEnd(evetTime, action);
@@ -4133,10 +4140,19 @@ namespace Ginger.Run
         void NotifyRunnerRunstart()
         {
             uint evetTime = RunListenerBase.GetEventTime();
-            foreach (RunListenerBase runnerListener in mRunListeners)
+            Parallel.ForEach(mRunListeners, runnerListener =>
             {
-                runnerListener.RunnerRunStart(evetTime);
-            }
+                {
+                    try
+                    {
+                        runnerListener.RunnerRunStart(evetTime);
+                    }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "NotifyRunnerRunstart failed for RunListener " + runnerListener.GetType().Name, ex);
+                    }
+                }
+            });
         }
 
         void NotifyRunnerRunEnd()
@@ -4196,9 +4212,10 @@ namespace Ginger.Run
         }
 
 
-        private void NotifyActivityStart(Activity currentActivity)
+        private void NotifyActivityStart(Activity activity)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+            activity.StartTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivityStart(evetTime, CurrentBusinessFlow.CurrentActivity);
@@ -4208,6 +4225,7 @@ namespace Ginger.Run
         private void NotifyActivityEnd(Activity activity)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+            activity.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivityEnd(evetTime, activity);
@@ -4219,6 +4237,7 @@ namespace Ginger.Run
         private void NotifyBusinessFlowEnd(BusinessFlow businessFlow)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+            businessFlow.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.BusinessFlowEnd(eventTime, CurrentBusinessFlow);
@@ -4228,6 +4247,7 @@ namespace Ginger.Run
         private void NotifyBusinessFlowStart(BusinessFlow businessFlow)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+            businessFlow.StartTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.BusinessFlowStart(evetTime, CurrentBusinessFlow);
@@ -4251,21 +4271,34 @@ namespace Ginger.Run
                 runnerListener.EnvironmentChanged(eventTime, mProjEnvironment);
             }
         }
-        private void NotifyActivityGroupStart(ActivitiesGroup ActivityGroup)
+        private void NotifyActivityGroupStart(ActivitiesGroup activityGroup)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+            activityGroup.StartTimeStamp = eventTime; 
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.ActivityGroupStart(eventTime, ActivityGroup);
+                runnerListener.ActivityGroupStart(eventTime, activityGroup);
             }
         }
 
-        private void NotifyActivityGroupEnd(ActivitiesGroup ActivityGroup)
+        private void NotifyActivityGroupEnd(ActivitiesGroup activityGroup)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+            activityGroup.EndTimeStamp = eventTime;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.ActivityGroupEnd(eventTime, ActivityGroup);
+                runnerListener.ActivityGroupEnd(eventTime, activityGroup);
+            }
+        }
+
+
+        // TODO: call this method based on when the run started from
+        private void NotifyExecutionContext(AutomationTabContext automationTabContext)
+        {
+            uint eventTime = RunListenerBase.GetEventTime();            
+            foreach (RunListenerBase runnerListener in mRunListeners)
+            {
+                runnerListener.ExecutionContext(eventTime, automationTabContext);
             }
         }
 
