@@ -164,11 +164,15 @@ namespace Ginger
             mAutomatePageRunnerListener = new AutomatePageRunnerListener();
             mAutomatePageRunnerListener.AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback;
             App.AutomateTabGingerRunner.RunListeners.Add(mAutomatePageRunnerListener);
-
-            // Add execution Listener
             mExecutionLogger = new ExecutionLogger(App.AutomateTabEnvironment, eExecutedFrom.Automation);
-            mExecutionLogger.Configuration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();            
+            mExecutionLogger.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             App.AutomateTabGingerRunner.RunListeners.Add(mExecutionLogger);
+            // Add execution Listener
+           
+
+            WorkSpace.AutomateTabGingerRunner.ExecutionLogger.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+         
+
 
             // TODO: do only if flag on !!!!!!!!!!!!!
             // App.AutomateTabGingerRunner.RunListeners.Add(new GingerRunnerTimeLine());

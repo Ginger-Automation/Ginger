@@ -477,8 +477,7 @@ namespace Ginger
 
             if (( WorkSpace.UserProfile.Solution != null) && ( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null))
             {
-                AutomateTabGingerRunner.ExecutionLogger.Configuration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            }
+                }
 
             // Register our own Ginger tool tip handler
             //--Canceling customize tooltip for now due to many issues and no real added value            
@@ -750,6 +749,7 @@ namespace Ginger
             //clear existing solution data
             try
             {
+                
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", SolutionFolder));
                 mLoadingSolution = true;
                 OnPropertyChanged(nameof(LoadingSolution));
@@ -815,7 +815,9 @@ namespace Ginger
                         BusinessFlow.SolutionVariables = sol.Variables;
 
                          WorkSpace.UserProfile.Solution = sol;
-                         WorkSpace.UserProfile.Solution.SetReportsConfigurations();
+
+       
+                        WorkSpace.UserProfile.Solution.SetReportsConfigurations();
                          WorkSpace.UserProfile.LoadRecentAppAgentMapping();
                         AutoLogProxy.SetAccount(sol.Account);
                        
