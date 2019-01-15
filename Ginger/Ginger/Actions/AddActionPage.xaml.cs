@@ -400,5 +400,35 @@ namespace Ginger.Actions
                 }
             }
         }
+
+        static List<Type> AllActionType = null;
+        List<Type> GetAllActionType()
+        {
+            if (AllActionType == null)
+            {
+                AllActionType = new List<Type>();
+                List<Assembly> assemblies = new List<Assembly>();  
+                assemblies.Add(typeof(Act).Assembly); // add assembly of GingerCoreCommon
+                assemblies.Add(typeof(RepositoryItem).Assembly); // add assembly of GingerCore
+                // assemblies.Add(typeof(ActAgentManipulation).Assembly); // add assembly of GingerCoreNET  -- Getting laod exception
+                
+                var subclasses = from assembly in assemblies // not using AppDomain.CurrentDomain.GetAssemblies() because it checks in all assemblies and have load exception
+                                 from type in assembly.GetTypes()
+                                 where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) && type != typeof(ActPlugIn)
+                                 select type;
+                foreach(Type t in subclasses)
+                {
+                    AllActionType.Add(t);
+                }
+
+                // Adding manually from GingerCoreNET
+                AllActionType.Add(typeof(ActAgentManipulation));
+                AllActionType.Add(typeof(ActSetVariableValue));
+
+                AllActionType = subclasses.ToList();
+            }
+            return AllActionType;
+        }
+
     }
 }

@@ -53,6 +53,8 @@ namespace amdocs.ginger.GingerCoreNET
         public SourceControlBase SourceControl;
         public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
         public static string AppVersion="0.0.0.0.0";
+
+        // move from App to here
         //public static GingerRunner AutomateTabGingerRunner = new GingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
         public  ISolution mSolution { get; set; }
         public  ISolution Solution
@@ -159,10 +161,8 @@ namespace amdocs.ginger.GingerCoreNET
             get
             {
                 if (mLocalGingerGrid == null)
-                {
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    int freePort = SocketHelper.GetOpenPort();
-                    mLocalGingerGrid = new GingerGrid(freePort);   // TODO: config per user profile as many users can use the same machine
+                {                    
+                    mLocalGingerGrid = new GingerGrid();   
                     mLocalGingerGrid.Start();
                 }
                 return mLocalGingerGrid;
