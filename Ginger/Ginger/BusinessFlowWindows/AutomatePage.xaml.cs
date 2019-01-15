@@ -146,7 +146,7 @@ namespace Ginger
             App.PropertyChanged += AppPropertychanged;
              WorkSpace.UserProfile.PropertyChanged += UserProfilePropertyChanged;
 
-          
+
             
             App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEvent;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
@@ -166,9 +166,7 @@ namespace Ginger
             App.AutomateTabGingerRunner.RunListeners.Add(mAutomatePageRunnerListener);
             mExecutionLogger = new ExecutionLogger(App.AutomateTabEnvironment, eExecutedFrom.Automation);
             mExecutionLogger.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-      
-            // Add execution Listener
-           
+
 
             WorkSpace.AutomateTabGingerRunner.ExecutionLogger.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
          
