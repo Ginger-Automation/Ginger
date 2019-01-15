@@ -53,6 +53,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.ALMLib.ALMIntegration;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 
 namespace Ginger.Run
 {
@@ -313,7 +314,9 @@ namespace Ginger.Run
             ExecutedFrom = eExecutedFrom.Run;
 
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
-            RunListeners.Add(new ProgressReportRunListener());            
+            RunListeners.Add(new ProgressReportRunListener());
+
+            RunListeners.Add(new ExecutionLogger(this.ProjEnvironment, ExecutedFrom));
         }
 
         public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
@@ -322,6 +325,7 @@ namespace Ginger.Run
 
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             RunListeners.Add(new ProgressReportRunListener());
+            RunListeners.Add(new ExecutionLogger(this.ProjEnvironment, ExecutedFrom));
         }
 
 

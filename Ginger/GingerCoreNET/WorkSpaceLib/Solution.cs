@@ -30,6 +30,7 @@ using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.SourceControl;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -285,37 +286,43 @@ namespace Ginger.SolutionGeneral
 
         public void SetReportsConfigurations()
         {
-            if ((this.ExecutionLoggerConfigurationSetList == null) || (this.ExecutionLoggerConfigurationSetList.Count == 0))
-            {
-                this.ExecutionLoggerConfigurationSetList = new ObservableList<ExecutionLoggerConfiguration>();
-                ExecutionLoggerConfiguration ExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
-                ExecutionLoggerConfiguration.IsSelected = true;
-                ExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled = true;
-                ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize = 250;
-                ExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
-                ExecutionLoggerConfigurationSetList.Add(ExecutionLoggerConfiguration);
+            try {
+                if ((this.ExecutionLoggerConfigurationSetList == null) || (this.ExecutionLoggerConfigurationSetList.Count == 0))
+                {
+                    this.ExecutionLoggerConfigurationSetList = new ObservableList<ExecutionLoggerConfiguration>();
+                    ExecutionLoggerConfiguration ExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
+                    ExecutionLoggerConfiguration.IsSelected = true;
+                    ExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled = true;
+                    ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize = 250;
+                    ExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                    ExecutionLoggerConfigurationSetList.Add(ExecutionLoggerConfiguration);
+                }
+
+                if ((this.HTMLReportsConfigurationSetList == null) || (this.HTMLReportsConfigurationSetList.Count == 0))
+                {
+                    this.HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
+                    HTMLReportsConfiguration HTMLReportsConfiguration = new HTMLReportsConfiguration();
+                    HTMLReportsConfiguration.IsSelected = true;
+                    HTMLReportsConfiguration.HTMLReportsFolder = @"~\HTMLReports\";
+                    HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
+                    HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
+                }
+
+
+                Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
+                ExecutionLoggerConfiguration executionLoggerConfiguration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+
+
+                // !!!!!!!!!!!!! FIXME
+                // ExecutionLogger executionLogger = App.AutomateTabGingerRunner.ExecutionLogger;
+                // executionLogger.Configuration = executionLoggerConfiguration;
+              
             }
-
-            if ((this.HTMLReportsConfigurationSetList == null) || (this.HTMLReportsConfigurationSetList.Count == 0))
+            catch(Exception e)
             {
-                this.HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
-                HTMLReportsConfiguration HTMLReportsConfiguration = new HTMLReportsConfiguration();
-                HTMLReportsConfiguration.IsSelected = true;
-                HTMLReportsConfiguration.HTMLReportsFolder = @"~\HTMLReports\";
-                HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
-                HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
+
             }
-
-
-            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
-            ExecutionLoggerConfiguration executionLoggerConfiguration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-
-
-            // !!!!!!!!!!!!! FIXME
-            // ExecutionLogger executionLogger = App.AutomateTabGingerRunner.ExecutionLogger;
-            // executionLogger.Configuration = executionLoggerConfiguration;
-            WorkSpace.AutomateTabGingerRunner.ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-        }
+            }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
