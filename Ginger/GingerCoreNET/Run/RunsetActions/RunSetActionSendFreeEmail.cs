@@ -14,19 +14,7 @@ using GingerCore.GeneralLib;
 namespace Ginger.Run.RunSetActions
 {
     public class RunSetActionSendFreeEmail : RunSetActionBase
-    {
-        public new static class Fields
-        {
-            public static string HTMLReportTemplate = "HTMLReportTemplate";
-            public static string Bodytext = "Bodytext";
-            public static string MailFrom = "MailFrom";
-            public static string MailTo = "MailTo";
-            public static string MailCC = "MailCC";
-            public static string Subject = "Subject";
-            public static string MailUser = "MailUser";
-            public static string MailHost = "MailHost";
-        }
-
+    {   
         public override bool SupportRunOnConfig
         {
             get { return true; }
@@ -58,31 +46,53 @@ namespace Ginger.Run.RunSetActions
 
         private string mBodytext;
         [IsSerializedForLocalRepository]
-        public string Bodytext { get { return mBodytext; } set { if (mBodytext != value) { mBodytext = value; OnPropertyChanged(Fields.Bodytext); } } }
+        public string Bodytext { get { return mBodytext; } set { if (mBodytext != value) { mBodytext = value; OnPropertyChanged(nameof(Bodytext)); } } }
 
         private string mMailFrom;
         [IsSerializedForLocalRepository]
-        public string MailFrom { get { return mMailFrom; } set { if (mMailFrom != value) { mMailFrom = value; OnPropertyChanged(Fields.MailFrom); } } }
+        public string MailFrom { get { return mMailFrom; } set { if (mMailFrom != value) { mMailFrom = value; OnPropertyChanged(nameof(MailFrom)); } } }
 
         private string mMailCC;
         [IsSerializedForLocalRepository]
-        public string MailCC { get { return mMailCC; } set { if (mMailCC != value) { mMailCC = value; OnPropertyChanged(Fields.MailCC); } } }
+        public string MailCC { get { return mMailCC; } set { if (mMailCC != value) { mMailCC = value; OnPropertyChanged(nameof(MailCC)); } } }
 
         private string mSubject;
         [IsSerializedForLocalRepository]
-        public string Subject { get { return mSubject; } set { if (mSubject != value) { mSubject = value; OnPropertyChanged(Fields.Subject); } } }
+        public string Subject { get { return mSubject; } set { if (mSubject != value) { mSubject = value; OnPropertyChanged(nameof(Subject)); } } }
 
         private string mMailTo;
         [IsSerializedForLocalRepository]
-        public string MailTo { get { return mMailTo; } set { if (mMailTo != value) { mMailTo = value; OnPropertyChanged(Fields.MailTo); } } }
-
-        private string mMailHost;
-        [IsSerializedForLocalRepository]
-        public string MailHost { get { return mMailHost; } set { if (mMailHost != value) { mMailHost = value; OnPropertyChanged(Fields.MailHost); } } }
-
-        private string mMailUser;
-        [IsSerializedForLocalRepository]
-        public string MailUser { get { return mMailUser; } set { if (mMailUser != value) { mMailUser = value; OnPropertyChanged(Fields.MailUser); } } }
+        public string MailTo { get { return mMailTo; } set { if (mMailTo != value) { mMailTo = value; OnPropertyChanged(nameof(MailTo)); } } }
+       
+        public string MailHost
+        {
+            get
+            {
+                return Email.SMTPMailHost;
+            }
+            set
+            {
+                if (Email.SMTPMailHost != value)
+                {
+                    Email.SMTPMailHost = value;                    
+                }
+            }
+        }
+       
+        public string MailUser
+        {
+            get
+            {
+                return Email.SMTPUser;
+            }
+            set
+            {
+                if (Email.SMTPUser != value)
+                {
+                    Email.SMTPUser = value;                   
+                }
+            }
+        }
 
         public override void Execute(ReportInfo RI)
         {

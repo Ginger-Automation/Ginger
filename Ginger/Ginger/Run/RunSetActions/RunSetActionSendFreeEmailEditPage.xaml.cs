@@ -36,20 +36,20 @@ namespace Ginger.Run.RunSetActions
             {
                 runSetActionSendFreeEmail.Email = new Email();
             }
-            MailFromTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailFrom);
-            MailToTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailTo);
-            MailCCTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailCC);
-            SubjectTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.Subject);
-            BodyTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.Bodytext);
+            MailFromTextBox.Init(runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFrom));
+            MailToTextBox.Init(runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailTo));
+            MailCCTextBox.Init(runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailCC));
+            SubjectTextBox.Init(runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Subject));
+            BodyTextBox.Init(runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Bodytext));
             BodyTextBox.AdjustHight(100);
-            App.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, Email.Fields.SMTPPort);
-            App.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, Email.Fields.SMTPPass);
+            App.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, nameof(Email.SMTPPort));
+            App.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, nameof(Email.SMTPPass));
             App.FillComboFromEnumVal(xEmailMethodComboBox, runSetActionSendFreeEmail.Email.EmailMethod);
-            xSMTPMailHostTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailHost);
-            xSMTPUserTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailUser);
-            App.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendFreeEmail.Email, Email.Fields.EmailMethod);
-            App.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, Email.Fields.EnableSSL);
-            App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, Email.Fields.ConfigureCredential);
+            xSMTPMailHostTextBox.Init(runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailHost));
+            xSMTPUserTextBox.Init(runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailUser));
+            App.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendFreeEmail.Email, nameof(Email.EmailMethod));
+            App.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, nameof(Email.EnableSSL));
+            App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, nameof(Email.ConfigureCredential));
             if (string.IsNullOrEmpty(runSetActionSendFreeEmail.MailTo))
             {
                 runSetActionSendFreeEmail.MailFrom =  WorkSpace.UserProfile.UserEmail;

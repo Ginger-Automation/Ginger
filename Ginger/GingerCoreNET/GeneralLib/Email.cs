@@ -10,23 +10,7 @@ namespace GingerCore.GeneralLib
 {
     public class Email : RepositoryItemBase
     {
-        //OutLook.MailItem mOutlookMail;
-
-        public  static class Fields
-        {
-            public static string SMTPMailHost = "SMTPMailHost";
-            public static string SMTPPort = "SMTPPort";
-            public static string SMTPUser = "SMTPUser";
-            public static string SMTPPass = "SMTPPass";
-            public static string MailFrom = "MailFrom";
-            public static string MailTo = "MailTo";
-            public static string MailCC = "MailCC";
-            public static string Subject = "Subject";
-            public static string Body = "Body";
-            public static string EmailMethod = "EmailMethod";
-            public static string EnableSSL = "EnableSSL";
-            public static string ConfigureCredential = "ConfigureCredential";
-        }
+        //OutLook.MailItem mOutlookMail;        
 
         public enum eEmailMethod
         {
@@ -69,7 +53,7 @@ namespace GingerCore.GeneralLib
                 if (mSMTPMailHost != value)
                 {
                     mSMTPMailHost = value;
-                    OnPropertyChanged(Fields.SMTPMailHost);
+                    OnPropertyChanged(nameof(SMTPMailHost));
                 }
             }
         }
@@ -84,18 +68,18 @@ namespace GingerCore.GeneralLib
                 if (mSMTPPort != value)
                 {
                     mSMTPPort = (int)value;
-                    OnPropertyChanged(Fields.SMTPPort);
+                    OnPropertyChanged(nameof(SMTPPort));
                 }
             }
         }
 
         private string mSMTPUser;
         [IsSerializedForLocalRepository]
-        public string SMTPUser { get { return mSMTPUser; } set { if (mSMTPUser != value) { mSMTPUser = value; OnPropertyChanged(Fields.SMTPUser); } } }
+        public string SMTPUser { get { return mSMTPUser; } set { if (mSMTPUser != value) { mSMTPUser = value; OnPropertyChanged(nameof(SMTPUser)); } } }
 
         private string mSMTPPass;
         [IsSerializedForLocalRepository]
-        public string SMTPPass { get { return mSMTPPass; } set { if (mSMTPPass != value) { mSMTPPass = value; OnPropertyChanged(Fields.SMTPPass); } } }
+        public string SMTPPass { get { return mSMTPPass; } set { if (mSMTPPass != value) { mSMTPPass = value; OnPropertyChanged(nameof(SMTPPass)); } } }
 
         [IsSerializedForLocalRepository]
         public string Event { get; set; }
@@ -201,14 +185,14 @@ namespace GingerCore.GeneralLib
                     Port = (int)this.SMTPPort,
                     EnableSsl = EnableSSL,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = ConfigureCredential
+                    UseDefaultCredentials = !ConfigureCredential
                 };
 
                 if (ConfigureCredential)
                 {
                     bool checkValueDecrypt;
                     checkValueDecrypt = true;
-                    string DecryptPass = "";//EncryptionHandler.DecryptString(SMTPPass, ref checkValueDecrypt);
+                    string DecryptPass = EncryptionHandler.DecryptString(SMTPPass, ref checkValueDecrypt);
                     if (checkValueDecrypt)
                     {
                         smtp.Credentials = new NetworkCredential(SMTPUser, DecryptPass);
