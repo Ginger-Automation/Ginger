@@ -91,7 +91,7 @@ namespace Ginger.Run
         }
 
       
-
+        
         // !!! change name to runContext - and remove the ExecutionLogConfiguration
         // public AutomationTabContext ExecutionLoggerAutomationTabContext { get; set; }
 
@@ -758,6 +758,7 @@ namespace Ginger.Run
 
         public async Task<int> RunActionAsync(Act act, bool checkIfActionAllowedToRun = true, bool standaloneExecution = false)
         {
+            NotifyExecutionContext(AutomationTabContext.ActionRun);
             var result = await Task.Run(() => {
                 RunAction(act, checkIfActionAllowedToRun, standaloneExecution);
                 return 1;   
@@ -2701,6 +2702,7 @@ namespace Ginger.Run
 
         public async Task<int> RunActivityAsync(Activity activity, bool Continue=false )
         {
+            NotifyExecutionContext(AutomationTabContext.ActivityRun);
             var result = await Task.Run(() => {
                 RunActivity(activity, false);
                 return 1;  
@@ -3123,6 +3125,7 @@ namespace Ginger.Run
         
         public async Task<int> RunBusinessFlowAsync(BusinessFlow businessFlow, bool standaloneBfExecution = false, bool doContinueRun = false)
         {
+            NotifyExecutionContext(AutomationTabContext.BussinessFlowRun);
             var result = await Task.Run(() =>
             {
                 RunBusinessFlow(businessFlow, standaloneBfExecution, doContinueRun);
@@ -3132,7 +3135,7 @@ namespace Ginger.Run
         }
    
         public void RunBusinessFlow(BusinessFlow businessFlow, bool standaloneExecution = false, bool doContinueRun = false)
-        {
+        {            
             // !!
             // !!!!!!!!!! remove SW
             Stopwatch st = new Stopwatch();
@@ -4145,7 +4148,7 @@ namespace Ginger.Run
                 {
                     try
                     {
-                        runnerListener.RunnerRunStart(evetTime);
+                        runnerListener.RunnerRunStart(evetTime, this);
                     }
                     catch(Exception ex)
                     {
@@ -4161,7 +4164,7 @@ namespace Ginger.Run
             uint evetTime = RunListenerBase.GetEventTime();
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.RunnerRunEnd(evetTime);
+                runnerListener.RunnerRunEnd(evetTime, this);
             }
         }
 
@@ -4291,14 +4294,13 @@ namespace Ginger.Run
             }
         }
 
-
-        // TODO: call this method based on when the run started from
+        // Called per user click on Run BF/Activity/Action
         private void NotifyExecutionContext(AutomationTabContext automationTabContext)
         {
             uint eventTime = RunListenerBase.GetEventTime();            
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.ExecutionContext(eventTime, automationTabContext);
+                runnerListener.ExecutionContext(eventTime, automationTabContext, CurrentBusinessFlow);
             }
         }
 
