@@ -14,6 +14,7 @@ using GingerCore.ALM;
 using GingerCore.ALM.JIRA;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Platforms;
+using System.IO;
 
 
 namespace Ginger.ALM.Repository
@@ -178,56 +179,77 @@ namespace Ginger.ALM.Repository
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTests)
         {
-            foreach (GingerCore.ALM.JIRA.JiraTestSet selectedTS in selectedTests)
+            if (selectedTests != null && selectedTests.Count() > 0)
             {
-                SetImportedTS(((JiraCore)this.AlmCore).GetJiraTestSetData(selectedTS));
+                ObservableList<JiraTestSet> testSetsItemsToImport = new ObservableList<JiraTestSet>();
+                foreach (GingerCore.ALM.JIRA.JiraTestSet selectedTS in selectedTests)
+                {
+                    try
+                    {
+                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == selectedTS.Key).FirstOrDefault();
+                        if (existedBF != null)
+                        {
+                            MessageBoxResult userSelection = Reporter.ToUser(eUserMsgKeys.TestSetExists, selectedTS.Name);
+                            if (userSelection == MessageBoxResult.Yes)
+                            {
+                                File.Delete(existedBF.FileName);
+                            }
+                        }
+                        Reporter.ToGingerHelper(eGingerHelperMsgKey.ALMTestSetImport, null, selectedTS.Name);
+                        JiraTestSet jiraImportedTSData = ((JiraCore)this.AlmCore).GetJiraTestSetData(selectedTS);
+                        
+                        SetImportedTS(jiraImportedTSData);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToUser(eUserMsgKeys.ErrorInTestsetImport, selectedTS.Name, ex.Message);
+                    }
+                }
+                Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
+                return true;
             }
-            return true; 
+            return false;
         }
 
-        private void SetImportedTS(ObservableList<JiraTestSet> importedTS)
+        private void SetImportedTS(JiraTestSet importedTS)
         {
-            //TODO TS null or 0,already imported.
             ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
             ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-            foreach (JiraTestSet testSet in importedTS)
+            try
             {
-
-                try
+                //import test set data
+                Reporter.ToGingerHelper(eGingerHelperMsgKey.ALMTestSetImport, null, importedTS.Name);
+                BusinessFlow tsBusFlow = ((JiraCore)ALMIntegration.Instance.AlmCore).ConvertJiraTestSetToBF(importedTS);
+                if (App.UserProfile.Solution.MainApplication != null)
                 {
-                    //import test set data
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.ALMTestSetImport, null, testSet.Name);
-                    BusinessFlow tsBusFlow = ((JiraCore)ALMIntegration.Instance.AlmCore).ConvertJiraTestSetToBF(testSet);
-                    if (App.UserProfile.Solution.MainApplication != null)
-                    {
-                        //add the applications mapped to the Activities
-                        foreach (Activity activ in tsBusFlow.Activities)
-                            if (string.IsNullOrEmpty(activ.TargetApplication) == false)
-                                if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
-                                {
-                                    ApplicationPlatform appAgent = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
-                                    if (appAgent != null)
-                                        tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
-                                }
-                        //handle non mapped Activities
-                        if (tsBusFlow.TargetApplications.Count == 0)
-                            tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = App.UserProfile.Solution.MainApplication });
-                        foreach (Activity activ in tsBusFlow.Activities)
-                            if (string.IsNullOrEmpty(activ.TargetApplication))
-                                activ.TargetApplication = tsBusFlow.MainApplication;
-                    }
-                    else
-                    {
-                        foreach (Activity activ in tsBusFlow.Activities)
-                            activ.TargetApplication = null; // no app configured on solution level
-                    }
-
-                    //save bf
-                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);
-                    Reporter.CloseGingerHelper();
+                    //add the applications mapped to the Activities
+                    foreach (Activity activ in tsBusFlow.Activities)
+                        if (string.IsNullOrEmpty(activ.TargetApplication) == false)
+                            if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
+                            {
+                                ApplicationPlatform appAgent = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                if (appAgent != null)
+                                    tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
+                            }
+                    //handle non mapped Activities
+                    if (tsBusFlow.TargetApplications.Count == 0)
+                        tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = App.UserProfile.Solution.MainApplication });
+                    foreach (Activity activ in tsBusFlow.Activities)
+                        if (string.IsNullOrEmpty(activ.TargetApplication))
+                            activ.TargetApplication = tsBusFlow.MainApplication;
                 }
-                catch { }
+                else
+                {
+                    foreach (Activity activ in tsBusFlow.Activities)
+                        activ.TargetApplication = null; // no app configured on solution level
+                }
+
+                //save bf
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);
+                Reporter.CloseGingerHelper();
             }
+            catch { }
+            
         }
 
         public override bool LoadALMConfigurations()

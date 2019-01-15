@@ -26,7 +26,6 @@ using GingerCore.Variables;
 using Newtonsoft.Json;
 using ALM_Common.Data_Contracts;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -35,17 +34,23 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
-using System.Xml;
-using TDAPIOLELib;
 using JiraRepository;
+using JiraRepository.Data_Contracts;
 
 namespace GingerCore.ALM.JIRA
 {
-    class ImportFromJira
+    public class JiraImportManager
     {
+        private JiraRepository.JiraRepository jiraRepObj;
+
+        public JiraImportManager(JiraRepository.JiraRepository jiraRepObj)
+        {
+            this.jiraRepObj = jiraRepObj;
+        }
+
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
-        internal static ObservableList<ExternalItemFieldBase> GetALMItemFields(ResourceType resourceType, BackgroundWorker bw, bool online)
+        internal ObservableList<ExternalItemFieldBase> GetALMItemFields(ResourceType resourceType, BackgroundWorker bw, bool online)
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
             try
@@ -78,7 +83,7 @@ namespace GingerCore.ALM.JIRA
             return fields;
         }
 
-        private static ObservableList<ExternalItemFieldBase> SetALMItemsFields( AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList, ResourceType fieldResourceType)
+        private ObservableList<ExternalItemFieldBase> SetALMItemsFields( AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList, ResourceType fieldResourceType)
         {
             ObservableList<ExternalItemFieldBase> resourceFields = new ObservableList<ExternalItemFieldBase>();
             string fieldResourceTypeToString = fieldResourceType.ToString();
@@ -113,7 +118,7 @@ namespace GingerCore.ALM.JIRA
             return resourceFields;
         }
 
-        internal static BusinessFlow ConvertQCTestSetToBF(JiraTestSet testSet)
+        internal static BusinessFlow ConvertJiraTestSetToBF(JiraTestSet testSet)
         {
             try
             {
@@ -126,7 +131,6 @@ namespace GingerCore.ALM.JIRA
                 busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
                 busFlow.Activities = new ObservableList<Activity>();
                 busFlow.Variables = new ObservableList<VariableBase>();
-                Dictionary<string, string> busVariables = new Dictionary<string, string>();//will store linked variables
 
                 //Create Activities Group + Activities for each TC
                 foreach (JiraTest tc in testSet.Tests)
@@ -134,8 +138,6 @@ namespace GingerCore.ALM.JIRA
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
                     ActivitiesGroup repoActivsGroup = null;
-                    if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
-                        repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
                     if (repoActivsGroup == null)
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.TestKey).FirstOrDefault();
                     if (repoActivsGroup != null)
@@ -146,12 +148,11 @@ namespace GingerCore.ALM.JIRA
                         tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance(true);
 
                         var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID));
-                        for (int indx = 0; indx < tcActivsGroup.ActivitiesIdentifiers.Count; indx++)
+                        for (int indx = tcActivsGroup.ActivitiesIdentifiers.Count - 1; indx >= 0; indx--)
                         {
                             if ((indx < tcActivsGroup.ActivitiesIdentifiers.Count) && (ActivitySIdentifiersToRemove.Contains(tcActivsGroup.ActivitiesIdentifiers[indx])))
                             {
                                 tcActivsGroup.ActivitiesIdentifiers.Remove(tcActivsGroup.ActivitiesIdentifiers[indx]);
-                                indx--;
                             }
                         }
 
@@ -253,11 +254,6 @@ namespace GingerCore.ALM.JIRA
                                 {
                                     linkedVariable = valueParts[1];
                                     paramSelectedValue = "$$_" + valueParts[2];//so it still will be considered as non-flow control
-
-                                    if (busVariables.Keys.Contains(linkedVariable) == false)
-                                    {
-                                        busVariables.Add(linkedVariable, valueParts[2]);
-                                    }
                                 }
                             }
 
@@ -406,20 +402,6 @@ namespace GingerCore.ALM.JIRA
                         //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
                     }
                 }
-
-                //Add the BF variables (linked variables)
-                if (busVariables.Keys.Count > 0)
-                {
-                    foreach (KeyValuePair<string, string> var in busVariables)
-                    {
-                        //add as String param
-                        VariableString busVar = new VariableString();
-                        busVar.Name = var.Key;
-                        ((VariableString)busVar).InitialStringValue = var.Value;
-                        busFlow.AddVariable(busVar);
-                    }
-                }
-
                 return busFlow;
             }
             catch (Exception ex)
@@ -466,6 +448,217 @@ namespace GingerCore.ALM.JIRA
             {
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while pulling the parameters names from Jira TC Step Description/Expected", ex);
             }
+        }
+        public JiraTestSet GetTestSetData(JiraTestSet currentTS)
+        {
+            WhereDataList filterData = new WhereDataList();
+            JiraTestSet issue = new JiraTestSet();
+            filterData.Add(new WhereData() { Name = "id", Values = new List<string>() { currentTS.Key }, Operator = WhereOperator.And });
+            AlmResponseWithData<List<JiraIssue>> getTestsSet = jiraRepObj.GetJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET, filterData);
+            List<FieldSchema> templates = JiraRepository.Settings.ExportSettings.Instance.GetSchemaByProject(ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET);
+            foreach (var item in getTestsSet.DataResult)
+            {
+                issue.ID = item.id.ToString();
+                issue.URLPath = item.self;
+                issue.Key = item.key;
+
+                foreach (var tsKey in templates)
+                {
+                    if (item.fields.ContainsKey(tsKey.key))
+                    {
+                        List<string> fieldValue = getSelectedFieldValue(item.fields[tsKey.key], tsKey.name, ResourceType.TEST_SET);
+                        if (fieldValue != null && fieldValue.Count > 0)
+                        {
+                            switch (tsKey.key)
+                            {
+                                case "created":
+                                    issue.DateCreated = fieldValue.First();
+                                    break;
+                                case "summary":
+                                    issue.Name = fieldValue.First();
+                                    break;
+                                case "reporter":
+                                    issue.CreatedBy = fieldValue.First();
+                                    break;
+                                case "project":
+                                    issue.Project = fieldValue.First();
+                                    break;
+                                case "description":
+                                    issue.Description = fieldValue.First();
+                                    break;
+                                case "customfield_15611":
+                                    issue.Tests = new List<JiraTest>();
+                                    foreach (var val in fieldValue)
+                                    {
+                                        issue.Tests.Add(new JiraTest() { TestID = val });
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+                if (issue.Tests != null && issue.Tests.Count > 0)
+                {
+                    GetTestData(issue.Tests);
+                }
+            }
+            return issue;
+        }
+        private void GetTestData(List<JiraTest> tests)
+        {
+            WhereDataList filterData = new WhereDataList();
+            foreach (JiraTest test in tests)
+            {
+                filterData.Clear();
+                filterData.Add(new WhereData() { Name = "id", Values = new List<string>() { test.TestID }, Operator = WhereOperator.And });
+                AlmResponseWithData<List<JiraIssue>> getTest = jiraRepObj.GetJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_CASE, filterData);
+                ObservableList<JiraTest> jiratests = new ObservableList<JiraTest>();
+                List<FieldSchema> templates = JiraRepository.Settings.ExportSettings.Instance.GetSchemaByProject(ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_CASE);
+                foreach (var item in getTest.DataResult)
+                {
+                    test.TestID = item.id.ToString();
+                    test.TestKey = item.key;
+                    test.TestPath = item.self;
+
+                    foreach (var tsKey in templates)
+                    {
+                        if (item.fields.ContainsKey(tsKey.key))
+                        {
+                            List<string> fieldValue = getSelectedFieldValue(item.fields[tsKey.key], tsKey.name, ResourceType.TEST_CASE);
+                            if (fieldValue != null && fieldValue.Count > 0)
+                            {
+                                switch (tsKey.name)
+                                {
+                                    case "Summary":
+                                        test.TestName = fieldValue.First();
+                                        break;
+                                    case "Reporter":
+                                        test.CreatedBy = fieldValue.First();
+                                        break;
+                                    case "Project":
+                                        test.Project = fieldValue.First();
+                                        break;
+                                    case "Description":
+                                        test.Description = fieldValue.First();
+                                        break;
+                                    case "Labels":
+                                        test.Labels = fieldValue.First();
+                                        break;
+                                    case "Test Steps":
+                                        test.Steps = new List<JiraTestStep>();
+                                        var stepAnonymousTypeDef = new { id = 0, index = 0, step = string.Empty, data = string.Empty };
+                                        foreach (var val in fieldValue)
+                                        {
+                                            var stepAnonymous = Newtonsoft.Json.JsonConvert.DeserializeAnonymousType(val, stepAnonymousTypeDef);
+                                            string[] stepDescription = new[] { "", "" };
+                                            if (stepAnonymous.data != string.Empty)
+                                            {
+                                                string[] getStepData = (stepAnonymous.data).Split(new[] { "=>" }, StringSplitOptions.None);
+                                                if (getStepData.Count() > 1 && getStepData[1].Contains("Description:"))
+                                                {
+                                                    stepDescription = getStepData[1].Split(new[] { "Description:" }, StringSplitOptions.None);
+                                                }
+                                            }
+                                            test.Steps.Add(new JiraTestStep() { StepID = stepAnonymous.id.ToString(), StepName = stepAnonymous.step, Description = stepDescription[1] });
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        public ObservableList<JiraTestSet> GetJiraTestSets()
+        {
+            AlmResponseWithData<List<JiraIssue>> getTestsSet = jiraRepObj.GetJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET, null);
+
+            ObservableList<JiraTestSet> jiratestset = new ObservableList<JiraTestSet>();
+            List<string> testSetKeys = new List<string> { "reporter", "created", "summary", "project" };
+            List<FieldSchema> templates = JiraRepository.Settings.ExportSettings.Instance.GetSchemaByProject(ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET);
+            foreach (var item in getTestsSet.DataResult)
+            {
+                JiraTestSet issue = new JiraTestSet();
+                issue.ID = item.id.ToString();
+                issue.URLPath = item.self;
+                issue.Key = item.key;
+
+                foreach (string tsKey in testSetKeys)
+                {
+                    if (item.fields.ContainsKey(tsKey))
+                    {
+                        string templateFieldName = templates.Where(fld => fld.key.Equals(tsKey)).Select(n => n.name).FirstOrDefault();
+                        List<string> fieldValue = getSelectedFieldValue(item.fields[tsKey], templateFieldName, ResourceType.TEST_SET);
+                        if (fieldValue != null && fieldValue.Count > 0)
+                        {
+                            switch (tsKey)
+                            {
+                                case "created":
+                                    issue.DateCreated = fieldValue.First();
+                                    break;
+                                case "summary":
+                                    issue.Name = fieldValue.First();
+                                    break;
+                                case "reporter":
+                                    issue.CreatedBy = fieldValue.First();
+                                    break;
+                                case "project":
+                                    issue.Project = fieldValue.First();
+                                    break;
+                            }
+                        }
+                    }
+                }
+                jiratestset.Add(issue);
+            }
+            return jiratestset;
+        }
+        private List<string> getSelectedFieldValue(dynamic fields, string fieldName, ResourceType resourceType)
+        {
+            List<string> valuesList = new List<string>();
+            try
+            {
+                FieldSchema temp = jiraRepObj.GetFieldFromTemplateByName(resourceType, "DE", fieldName);
+                if (temp == null)
+                {
+                    return null;
+                }
+                switch (temp.type)
+                {
+                    case "string":
+                        valuesList.Add(fields.Value.ToString());
+                        break;
+                    case "object":
+                        var jsonTemplateObj = Newtonsoft.Json.Linq.JObject.Parse(temp.data);
+                        valuesList.Add((fields[((Newtonsoft.Json.Linq.JProperty)jsonTemplateObj.First).Name]).ToString());
+                        break;
+                    case "strings_array":
+                        foreach (var fieldIssue in fields)
+                        {
+                            valuesList.Add(fieldIssue.Value);
+                        }
+                        break;
+                    case "array":
+                        if (fields[0] != null)
+                        {
+                            valuesList.Add(fields[0].ToString());
+                        }
+                        break;
+                    case "option":
+                        break;
+                    case "steps":
+                        foreach (var step in fields["steps"])
+                        {
+                            valuesList.Add(step.ToString());
+                        }
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return valuesList;
         }
     }
 }

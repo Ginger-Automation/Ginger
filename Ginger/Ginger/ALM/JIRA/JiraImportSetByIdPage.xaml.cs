@@ -79,11 +79,16 @@ namespace Ginger.ALM.JIRA
                 {
                     _pageGenericWin.Close();
                 }
+                else
+                {
+                    importStatus = false;
+                    UpdateStatus("Incorrect Test Set Id");
+                }
             }
             else
             {
                 importStatus = false;
-                UpdateStatus("Test Plan Id cannot be empty");
+                UpdateStatus("Test Set Id cannot be empty");
             }
             Mouse.OverrideCursor = null;
         }

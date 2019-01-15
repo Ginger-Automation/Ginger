@@ -92,6 +92,7 @@ namespace Ginger.ALM
                 RestAPICheckBox.IsEnabled = false;
                 RQMRadioButton.IsEnabled = false;
                 RallyRadioButton.IsEnabled = false;
+                JiraRadioButton.IsEnabled = false;
                 RQMLoadConfigPackageButton.IsEnabled = false;
                 ServerURLTextBox.IsEnabled = false;
                 UserNameTextBox.IsEnabled = false;

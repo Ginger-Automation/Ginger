@@ -548,7 +548,7 @@
     <Compile Include="ALM\JiraCore.cs" />
     <Compile Include="ALM\JIRA\Bll\JiraExportManager.cs" />
     <Compile Include="ALM\JIRA\Data Contracts\TestRunData.cs" />
-    <Compile Include="ALM\JIRA\ImportFromJira.cs" />
+    <Compile Include="ALM\JIRA\Bll\JiraImportManager.cs" />
     <Compile Include="ALM\JIRA\JiraTestSet.cs" />
     <Compile Include="ALM\JIRA\JiraTest.cs" />
     <Compile Include="ALM\JIRA\JiraTestParameter.cs" />
@@ -589,7 +589,7 @@
     <Compile Include="ALM\RQM\RQMFieldsMappingConfig.cs" />
     <Compile Include="ALM\RQM\RQMTestPlan.cs" />
     <Compile Include="ALM\RQM\RQMConnect.cs" />
-    <Compile Include="ALM\JIRA\JiraConnect.cs" />
+    <Compile Include="ALM\JIRA\Bll\JiraConnectManager.cs" />
     <Compile Include="DataSource\ActDSTableElement.cs" />
     <Compile Include="DataSource\ActDSConditon.cs" />
     <Compile Include="DataSource\DataSourceBase.cs" />
