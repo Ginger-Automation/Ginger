@@ -41,12 +41,12 @@ namespace Amdocs.Ginger.Run
         #endregion General
 
         #region Runner
-        public virtual void RunnerRunStart(uint eventTime)
+        public virtual void RunnerRunStart(uint eventTime, GingerRunner gingerRunner)
         {
 
         }
 
-        public virtual void RunnerRunEnd(uint eventTime)
+        public virtual void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner)
         {
 
         }
@@ -149,7 +149,7 @@ namespace Amdocs.Ginger.Run
         /// </summary>
         /// <param name="eventTime"></param>
         /// <param name="automationTabContext"></param>
-        internal void ExecutionContext(uint eventTime, AutomationTabContext automationTabContext)
+        public virtual void ExecutionContext(uint eventTime, AutomationTabContext automationTabContext, BusinessFlow businessFlow)
         {
             
         }
