@@ -21,7 +21,6 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
-
 using Amdocs.Ginger.Run;
 using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
@@ -94,6 +93,7 @@ namespace Ginger
         readonly GridLength mMinColsExpanderSize = new GridLength(35);
 
         AutomatePageRunnerListener mAutomatePageRunnerListener;
+        ExecutionLogger mExecutionLogger;
 
         public void GoToBusFlowsListHandler(RoutedEventHandler clickHandler)
         {           
@@ -126,7 +126,7 @@ namespace Ginger
             App.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, App.AutomateTabGingerRunner, Ginger.Run.GingerRunner.Fields.RunInSimulationMode);
             AppAgentsMappingExpander2Frame.Content = new ApplicationAgentsMapPage(App.AutomateTabGingerRunner);
 
-            BindEnvsCombo();
+            
 
             SetExpanders();
 
@@ -154,20 +154,25 @@ namespace Ginger
             SetGridsView(eAutomatePageViewStyles.Design.ToString());
             SetGherkinOptions();
 
+            BindEnvsCombo();
         }
 
         private void AddRunnerListeners()
         {
             
-            // Add Listener so we can do GiveUserFeedback
-            
+            // Add Listener so we can do GiveUserFeedback            
             mAutomatePageRunnerListener = new AutomatePageRunnerListener();
             mAutomatePageRunnerListener.AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback;
             App.AutomateTabGingerRunner.RunListeners.Add(mAutomatePageRunnerListener);
 
+            // Add execution Listener
+            mExecutionLogger = new ExecutionLogger(App.AutomateTabEnvironment, eExecutedFrom.Automation);
+            mExecutionLogger.Configuration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();            
+            App.AutomateTabGingerRunner.RunListeners.Add(mExecutionLogger);
+
             // TODO: do only if flag on !!!!!!!!!!!!!
-            //App.AutomateTabGingerRunner.RunListeners.Add(new GingerRunnerTimeLine());
-            RunListenerBase.Start();
+            // App.AutomateTabGingerRunner.RunListeners.Add(new GingerRunnerTimeLine());
+            // RunListenerBase.Start();
 
         }
 
@@ -971,7 +976,7 @@ namespace Ginger
 
                 SetAutomateTabRunnerForExecution();
 
-                App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
+                mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
                 RunActivity();
                 AutoLogProxy.UserOperationEnd();
             }
@@ -1118,7 +1123,7 @@ namespace Ginger
             //execute preparations
             SetAutomateTabRunnerForExecution();
             App.AutomateTabGingerRunner.ResetRunnerExecutionDetails(true);
-            App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
+            mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
         }
 
         private void EnableDisableAutomateTabGrids(bool enableGrids)
@@ -1200,7 +1205,7 @@ namespace Ginger
                 App.AutomateTabGingerRunner.SetCurrentActivityAgent(); 
             }
 
-            App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+            mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
             var result = await App.AutomateTabGingerRunner.RunActionAsync((Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem, checkIfActionAllowedToRun, true).ConfigureAwait(false);
 
             if (App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
@@ -1444,7 +1449,8 @@ namespace Ginger
         {
             if (lstEnvs != null && lstEnvs.SelectedItem != null)
             {
-                App.AutomateTabEnvironment = (ProjEnvironment)lstEnvs.SelectedItem;
+                App.AutomateTabEnvironment = (ProjEnvironment)lstEnvs.SelectedItem;                
+                mExecutionLogger.ExecutionEnvironment = (ProjEnvironment)lstEnvs.SelectedItem;
             }
                 
         }

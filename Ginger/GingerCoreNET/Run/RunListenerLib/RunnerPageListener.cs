@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Run;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using System;
@@ -41,12 +42,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             UpdateStat.Invoke(this, null);
         }
 
-        public override void RunnerRunStart(uint eventTime)
+        public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner)
         {
             UpdateStat.Invoke(this, null);
         }
 
-        public override void RunnerRunEnd(uint eventTime)
+        public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner)
         {
             UpdateStat.Invoke(this, null);
         }
