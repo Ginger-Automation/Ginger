@@ -24,7 +24,7 @@ using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.Java
 {
     public class ActJavaElement : Act
@@ -32,7 +32,7 @@ namespace GingerCore.Actions.Java
         public override string ActionDescription { get { return "Java Element Action"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
         }
 

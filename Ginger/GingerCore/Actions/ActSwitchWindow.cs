@@ -27,7 +27,7 @@ using GingerCore.Repository;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActSwitchWindow : Act, IObsoleteAction
@@ -35,7 +35,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Switch Window Action"; } }
         public override string ActionUserDescription { get { return "Performs Switch Window Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform any Switch Window actions.");
             TBH.AddLineBreak();

@@ -24,6 +24,7 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.Common.Devices;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Drivers.Common
 {
@@ -64,7 +65,7 @@ namespace Ginger.Drivers.Common
 
         private void InitDeviceList()
         {
-            string DevicesFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Devices\");
+            string DevicesFolder = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\Devices\");
             string[] devices = Directory.GetDirectories(DevicesFolder);
             foreach (string s in devices)
             {
@@ -100,7 +101,7 @@ namespace Ginger.Drivers.Common
         private void DeviceListBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
 
-            mDeviceConfigFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Devices", DeviceListBox.SelectedValue + @"\");
+            mDeviceConfigFolder = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\Devices", DeviceListBox.SelectedValue + @"\");
 
             mDeviceViewPage = new DeviceViewPage(mDeviceConfigFolder);
             mDeviceConfig = mDeviceViewPage.AndroidDeviceConfig;

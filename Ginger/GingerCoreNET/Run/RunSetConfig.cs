@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using GingerCore.GeneralLib;

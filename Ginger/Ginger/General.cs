@@ -32,6 +32,7 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using System.Drawing;
 using Amdocs.Ginger.Common;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger
 {
@@ -60,7 +61,7 @@ namespace Ginger
         public static string ConvertSolutionRelativePath(string fileName)
         {
             string s = fileName;
-            s= s.ToUpper().Replace(App.UserProfile.Solution.Folder.ToUpper(), @"~\");
+            s= s.ToUpper().Replace( WorkSpace.UserProfile.Solution.Folder.ToUpper(), @"~\");
             return s;          
         }
 
@@ -69,7 +70,7 @@ namespace Ginger
             string s = filename;
             if (s.StartsWith(@"~\"))
             {
-                s = s.Replace(@"~\", App.UserProfile.Solution.Folder);
+                s = s.Replace(@"~\",  WorkSpace.UserProfile.Solution.Folder);
             }
             return s;            
         }

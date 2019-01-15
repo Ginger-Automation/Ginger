@@ -32,7 +32,7 @@ using GingerCore.Helpers;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace Ginger.Actions
 {
 
@@ -42,7 +42,7 @@ namespace Ginger.Actions
         public override string ActionDescription { get { return "Send Keys Action"; } }
         public override string ActionUserDescription { get { return "Send Keys to specific window"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {            
             TBH.AddText("Use this action in case you need to send keys to specific window");            
             TBH.AddLineBreak();

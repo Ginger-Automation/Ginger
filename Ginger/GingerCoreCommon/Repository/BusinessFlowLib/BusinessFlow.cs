@@ -16,6 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -27,9 +30,6 @@ using GingerCore.FlowControlLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.GeneralLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GingerCore
 {
@@ -1101,10 +1101,10 @@ namespace GingerCore
 
         public int ExecutionLogActivityGroupCounter { get; set; }
 
-        // Only for Run time, no need to serialize
-        public uint StartTimeStamp { get; set; }
+        // Only for Run time, no need to serialize        
+        public DateTime StartTimeStamp { get; set; }
 
-        public uint EndTimeStamp { get; set; }
+        public DateTime EndTimeStamp { get; set; }
 
         [IsSerializedForLocalRepository]
         public ObservableList<Guid> Tags = new ObservableList<Guid>();

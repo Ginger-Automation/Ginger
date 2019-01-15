@@ -27,11 +27,12 @@ namespace Amdocs.Ginger.GingerConsole.ReporterLib
         public override void ToStatus(eStatusMsgType messageType, string statusText)
         {
             Console.WriteLine(statusText);
-        }        
+        }
+        
 
         public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("[" + logLevel + "]" + messageToLog);
         }
         
         // TODO: override WriteToConsole with color and...        

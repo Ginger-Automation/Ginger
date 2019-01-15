@@ -27,6 +27,7 @@ using System.Text;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.Actions
 {
@@ -36,7 +37,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Text Speech Action"; } }
         public override string ActionUserDescription { get { return "Performs Text Speech Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform any Text Speech actions.");
             TBH.AddLineBreak();

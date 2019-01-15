@@ -19,14 +19,18 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Utils;
-using Ginger.ALM;
+
 using Ginger.Reports;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Variables;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.SourceControl;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -282,29 +286,43 @@ namespace Ginger.SolutionGeneral
 
         public void SetReportsConfigurations()
         {
-            if ((this.ExecutionLoggerConfigurationSetList == null) || (this.ExecutionLoggerConfigurationSetList.Count == 0))
-            {
-                this.ExecutionLoggerConfigurationSetList = new ObservableList<ExecutionLoggerConfiguration>();
-                ExecutionLoggerConfiguration ExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
-                ExecutionLoggerConfiguration.IsSelected = true;
-                ExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled = true;
-                ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize = 250;
-                ExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
-                ExecutionLoggerConfigurationSetList.Add(ExecutionLoggerConfiguration);
-            }
+            try {
+                if ((this.ExecutionLoggerConfigurationSetList == null) || (this.ExecutionLoggerConfigurationSetList.Count == 0))
+                {
+                    this.ExecutionLoggerConfigurationSetList = new ObservableList<ExecutionLoggerConfiguration>();
+                    ExecutionLoggerConfiguration ExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
+                    ExecutionLoggerConfiguration.IsSelected = true;
+                    ExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled = true;
+                    ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize = 250;
+                    ExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                    ExecutionLoggerConfigurationSetList.Add(ExecutionLoggerConfiguration);
+                }
 
-            if ((this.HTMLReportsConfigurationSetList == null) || (this.HTMLReportsConfigurationSetList.Count == 0))
-            {
-                this.HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
-                HTMLReportsConfiguration HTMLReportsConfiguration = new HTMLReportsConfiguration();
-                HTMLReportsConfiguration.IsSelected = true;
-                HTMLReportsConfiguration.HTMLReportsFolder = @"~\HTMLReports\";
-                HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
-                HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
+                if ((this.HTMLReportsConfigurationSetList == null) || (this.HTMLReportsConfigurationSetList.Count == 0))
+                {
+                    this.HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
+                    HTMLReportsConfiguration HTMLReportsConfiguration = new HTMLReportsConfiguration();
+                    HTMLReportsConfiguration.IsSelected = true;
+                    HTMLReportsConfiguration.HTMLReportsFolder = @"~\HTMLReports\";
+                    HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
+                    HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
+                }
+
+
+                Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
+                ExecutionLoggerConfiguration executionLoggerConfiguration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+
+
+                // !!!!!!!!!!!!! FIXME
+                // ExecutionLogger executionLogger = App.AutomateTabGingerRunner.ExecutionLogger;
+                // executionLogger.Configuration = executionLoggerConfiguration;
+              
             }
-            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
-            App.AutomateTabGingerRunner.ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-        }
+            catch(Exception e)
+            {
+
+            }
+            }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
@@ -417,28 +435,30 @@ namespace Ginger.SolutionGeneral
             });
         }
 
-        internal ReportTemplate CreateNewReportTemplate(string path = "")
+        public object CreateNewReportTemplate()
         {
-            ReportTemplate NewReportTemplate = new ReportTemplate() { Name = "New Report Template", Status = ReportTemplate.eReportStatus.Development };
-            
-            ReportTemplateSelector RTS = new ReportTemplateSelector();
-            RTS.ShowAsWindow();
+            //ReportTemplate NewReportTemplate = new ReportTemplate() { Name = "New Report Template", Status = ReportTemplate.eReportStatus.Development };
 
-            if (RTS.SelectedReportTemplate != null)
-            {
+            //ReportTemplateSelector RTS = new ReportTemplateSelector();
+            //RTS.ShowAsWindow();
 
-                NewReportTemplate.Xaml = RTS.SelectedReportTemplate.Xaml;
+            //if (RTS.SelectedReportTemplate != null)
+            //{
 
-                //Make it Generic or Const string for names used for File
-                string NewReportName = string.Empty;
-                if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName))
-                {
-                    NewReportTemplate.Name = NewReportName;                    
-                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);
-                }
-                return NewReportTemplate;
-            }
-            return null;
+            //    NewReportTemplate.Xaml = RTS.SelectedReportTemplate.Xaml;
+
+            //    //Make it Generic or Const string for names used for File
+            //    string NewReportName = string.Empty;
+            //    if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
+            //    {
+            //        NewReportTemplate.Name = NewReportName;                    
+            //        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);
+            //    }
+            //    return NewReportTemplate;
+            //}
+            //return null;
+            object report = RepositoryItemHelper.RepositoryItemFactory.CreateNewReportTemplate();
+            return report;
         }
 
 
