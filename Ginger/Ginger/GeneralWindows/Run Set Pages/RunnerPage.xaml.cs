@@ -153,11 +153,17 @@ namespace Ginger.Run
 
             mRunnerPageListener = new RunnerPageListener();
             mRunnerPageListener.UpdateStat = HandleUpdateStat;
+            runner.RunListeners.Add(mRunnerPageListener);
         }
 
         private void HandleUpdateStat(object sender, EventArgs e)
         {
             UpdateExecutionStats();
+
+            
+
+            UpdatingForLastTime = true;
+
         }
 
         private RunnerItemPage CreateBusinessFlowRunnerItem(BusinessFlow bf, bool ViewMode=false)
@@ -416,8 +422,14 @@ namespace Ginger.Run
                     allItems = bizsList.Concat(activitiesList.Concat(actionsList)).GroupBy(n => n.Description)
                      .Select(n => n.First())
                      .ToList();
-                    CreateStatistics(allItems, eObjectType.Legend);                    
+                    CreateStatistics(allItems, eObjectType.Legend);
+                    if (mRunner.IsRunning)
+                    {
+                        xruntime.Content = mRunner.RunnerExecutionWatch.runWatch.Elapsed.ToString(@"hh\:mm\:ss");
+                    }
                 });
+
+                
             }
             catch (InvalidOperationException e)
             {
