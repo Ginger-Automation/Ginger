@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
+using Ginger;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
@@ -90,7 +91,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         // Here we will have knwon GingerGrids - !!!!!!!!!!!!!!!!!!! Design, think..........
         // public IObservable<GingerGrid> GingerGrids;
-
+        public static GingerRunner AutomateTabGingerRunner { get; set; }
         public void OpenSolution(string SolutionFolder)
         {
             mPluginsManager = null;
@@ -144,7 +145,7 @@ namespace amdocs.ginger.GingerCoreNET
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
         }
-
+        public static UserProfile UserProfile { get; set; }
         public static WorkSpace Instance { get { return mWorkSpace; } }
 
         public IWorkSpaceEventHandler EventHandler { get; set; }

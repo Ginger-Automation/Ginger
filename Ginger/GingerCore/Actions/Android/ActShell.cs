@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.Android
 {
     public class ActShell : Act
@@ -29,7 +29,7 @@ namespace GingerCore.Actions.Android
         public override string ActionDescription { get { return "Shell Action"; } }
         public override string ActionUserDescription { get { return "Run Shell Command"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to run Shell action like: ps, ls etc.");                                        
         }       

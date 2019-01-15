@@ -29,7 +29,7 @@ using GingerCore.Repository;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.Java
 {
     public class ActJavaEXE : ActWithoutDriver
@@ -37,7 +37,7 @@ namespace GingerCore.Actions.Java
         public override string ActionDescription { get { return "Java Execution Action"; } }
         public override string ActionUserDescription { get { return "Execute Java Program with set of input params and process it output to be integrated with the entire flow."; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to execute java program (jar file using java.exe) and parse it results.");
             TBH.AddLineBreak();

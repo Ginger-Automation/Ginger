@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+
 using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCore.Properties;
@@ -28,7 +29,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActScript : ActWithoutDriver
@@ -36,7 +37,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Script Action"; } }
         public override string ActionUserDescription { get { return "Performs Script Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform any script actions on web page.");
             TBH.AddLineBreak();

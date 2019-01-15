@@ -435,7 +435,7 @@ namespace GingerCore.Actions
         //Action HL description which will be shown in the Add/Edit action window to help the user understand what he can do with the action
         // TBH enable to format the text, headers images etc.
         [DoNotBackup]
-        public abstract void ActionUserRecommendedUseCase(TextBlockHelper TBH);
+        public abstract void ActionUserRecommendedUseCase(ITextBoxFormatter TBH);
 
         // No need to serialize
         public int RetryMechanismCount { get; set; }
@@ -1184,27 +1184,29 @@ namespace GingerCore.Actions
         }
 
 
-        //public void ActionDescriptionTextBlock(TextBlock ActionRecUseCaseTextBlock)
-        //{
-        //    TextBlockHelper TBH = new TextBlockHelper(ActionRecUseCaseTextBlock);
-        //    TBH.AddHeader1("Description:");
-        //    TBH.AddLineBreak();
-        //    TBH.AddText(ActionUserDescription);
-        //    TBH.AddLineBreak();
-        //    TBH.AddLineBreak();
+        public void ActionDescriptionTextBlock(object ActionRecUseCaseTextBlock)
+        {
 
-        //    TBH.AddHeader1("Supported Platforms:");
-        //    TBH.AddLineBreak();
-        //    TBH.AddText(SupportedPlatforms);
-        //    TBH.AddLineBreak();
-        //    TBH.AddLineBreak();
+            ITextBoxFormatter TBH= RepositoryItemHelper.RepositoryItemFactory.CreateTextBoxFormatter(ActionRecUseCaseTextBlock);
+  
+            TBH.AddHeader1("Description:");
+            TBH.AddLineBreak();
+            TBH.AddText(ActionUserDescription);
+            TBH.AddLineBreak();
+            TBH.AddLineBreak();
 
-        //    TBH.AddHeader1("Recommended Use Case/s and Guidelines:");
-        //    TBH.AddLineBreak();
-        //    // Let the action return the full help info which can be formatted using TBH
-        //    // Free text from here 
-        //    ActionUserRecommendedUseCase(TBH);
-        //}
+            TBH.AddHeader1("Supported Platforms:");
+            TBH.AddLineBreak();
+            TBH.AddText(SupportedPlatforms);
+            TBH.AddLineBreak();
+            TBH.AddLineBreak();
+
+            TBH.AddHeader1("Recommended Use Case/s and Guidelines:");
+            TBH.AddLineBreak();
+            // Let the action return the full help info which can be formatted using TBH
+            // Free text from here 
+            ActionUserRecommendedUseCase(TBH);
+        }
 
 
 

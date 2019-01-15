@@ -54,25 +54,25 @@ namespace Ginger.Run.RunSetActions
             {
                 runSetActionHTMLReportSendEmail.Email = new Email();
             }
-            MailFromTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.MailFrom);
-            MailToTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.MailTo);
-            MailCCTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.MailCC);
-            SubjectTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.Subject);
+            MailFromTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailFrom));
+            MailToTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailTo));
+            MailCCTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailCC));
+            SubjectTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Subject));
 
-            BodyTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.Bodytext);
-            CommentTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.Comments);
+            BodyTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Bodytext));
+            CommentTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Comments));
             BodyTextBox.AdjustHight(100);
-            App.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.SMTPPort);
-            App.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.SMTPPass);
+            App.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.SMTPPort));
+            App.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.SMTPPass));
             App.FillComboFromEnumVal(xEmailMethodComboBox, runSetActionHTMLReportSendEmail.Email.EmailMethod);
-            //xSMTPMailHostTextBox.Init(runSetActionHTMLReportSendEmail, nameof (RunSetActionHTMLReportSendEmail.MailHost));
-            //xSMTPUserTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.MailUser);
-            App.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.EmailMethod);
-            App.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.EnableSSL);
-            //App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.ConfigureCredential);
+            xSMTPMailHostTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailHost));
+            xSMTPUserTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailUser));
+            App.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.EmailMethod));
+            App.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.EnableSSL));
+            App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.ConfigureCredential));
             if (string.IsNullOrEmpty(runSetActionHTMLReportSendEmail.MailTo))
             {
-                runSetActionHTMLReportSendEmail.MailFrom = App.UserProfile.UserEmail;
+                runSetActionHTMLReportSendEmail.MailFrom =  WorkSpace.UserProfile.UserEmail;
             }
             InitAttachmentsGrid();
             RadioButtonInit();
@@ -208,7 +208,7 @@ namespace Ginger.Run.RunSetActions
             DefaultTemplatePickerCbx.ItemsSource = null;
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            if ((App.UserProfile.Solution != null) &&  (HTMLReportConfigurations.Count > 0))
+            if (( WorkSpace.UserProfile.Solution != null) &&  (HTMLReportConfigurations.Count > 0))
             {
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;

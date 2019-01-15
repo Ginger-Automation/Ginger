@@ -29,7 +29,7 @@ using System.Data.OleDb;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 //TODO: add and use below with ReadCellDataNew - need to be tested
 // using DocumentFormat.OpenXml.Packaging;
 // using DocumentFormat.OpenXml.Spreadsheet;
@@ -41,7 +41,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Excel Action"; } }
         public override string ActionUserDescription { get { return "Read/Write Excel"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to Read/Write/etc. excel sheet from/on a system drives.");
             TBH.AddLineBreak();

@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
 using GingerCore;
@@ -52,6 +53,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.ALMLib.ALMIntegration;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 
 namespace Ginger.Run
 {
@@ -90,7 +92,7 @@ namespace Ginger.Run
         }
 
       
-
+        
         // !!! change name to runContext - and remove the ExecutionLogConfiguration
         // public AutomationTabContext ExecutionLoggerAutomationTabContext { get; set; }
 
@@ -145,14 +147,11 @@ namespace Ginger.Run
         public string CurrentGingerLogFolder = string.Empty;
         public string CurrentHTMLReportFolder = string.Empty;
 
-        // remove from here !!!!!!!!!!!!!!!!
-        public int ExecutionLogBusinessFlowCounter { get; set; }
-        // public static bool UseExecutionLogger = false;//TODO:  temp flag so Beta users will not be impacted, removed when it is working and tested to be good 
+
+        
+        
         public string SolutionFolder { get; set; }
         public bool HighLightElement { get; set; }
-
-        // public delegate void GingerRunnerEventHandler(GingerRunnerEventArgs EventArgs);
-
 
 
         public bool IsRunning
@@ -313,17 +312,20 @@ namespace Ginger.Run
         public GingerRunner()
         {
             ExecutedFrom = eExecutedFrom.Run;
-            
-            // mRunListeners.Add(new ExecutionLogger(ProjEnvironment, eExecutedFrom.Run));
+
+            // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
+            RunListeners.Add(new ProgressReportRunListener());
+
+            RunListeners.Add(new ExecutionLogger(this.ProjEnvironment, ExecutedFrom));
         }
 
         public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             ExecutedFrom = executedFrom;
 
-            // !!!!!!!!!!!!!!!!!!!!!! temp
-            // ExecutionLogger = new ExecutionLogger(ProjEnvironment, ExecutedFrom);
-            // mRunListeners.Add(new ExecutionLogger(ProjEnvironment, ExecutedFrom));
+            // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
+            RunListeners.Add(new ProgressReportRunListener());
+            RunListeners.Add(new ExecutionLogger(this.ProjEnvironment, ExecutedFrom));
         }
 
 
@@ -760,6 +762,7 @@ namespace Ginger.Run
 
         public async Task<int> RunActionAsync(Act act, bool checkIfActionAllowedToRun = true, bool standaloneExecution = false)
         {
+            NotifyExecutionContext(AutomationTabContext.ActionRun);
             var result = await Task.Run(() => {
                 RunAction(act, checkIfActionAllowedToRun, standaloneExecution);
                 return 1;   
@@ -2703,6 +2706,7 @@ namespace Ginger.Run
 
         public async Task<int> RunActivityAsync(Activity activity, bool Continue=false )
         {
+            NotifyExecutionContext(AutomationTabContext.ActivityRun);
             var result = await Task.Run(() => {
                 RunActivity(activity, false);
                 return 1;  
@@ -3125,6 +3129,7 @@ namespace Ginger.Run
         
         public async Task<int> RunBusinessFlowAsync(BusinessFlow businessFlow, bool standaloneBfExecution = false, bool doContinueRun = false)
         {
+            NotifyExecutionContext(AutomationTabContext.BussinessFlowRun);
             var result = await Task.Run(() =>
             {
                 RunBusinessFlow(businessFlow, standaloneBfExecution, doContinueRun);
@@ -3134,7 +3139,7 @@ namespace Ginger.Run
         }
    
         public void RunBusinessFlow(BusinessFlow businessFlow, bool standaloneExecution = false, bool doContinueRun = false)
-        {
+        {            
             // !!
             // !!!!!!!!!! remove SW
             Stopwatch st = new Stopwatch();
@@ -3837,6 +3842,7 @@ namespace Ginger.Run
             this.OnPropertyChanged(nameof(ApplicationAgents));//to notify who shows this list
         }
 
+        // move from here !!!!!!!!!!!!!!!!!!
         public ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false,string GingerRunnerName = "")
         {
             var BFESs = new ObservableList<BusinessFlowExecutionSummary>();
@@ -4118,7 +4124,8 @@ namespace Ginger.Run
 
         private void NotifyActionStart(Act action)
         {
-            uint eventTime = RunListenerBase.GetEventTime();            
+            uint eventTime = RunListenerBase.GetEventTime();
+            action.StartTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActionStart(eventTime, action);
@@ -4129,6 +4136,7 @@ namespace Ginger.Run
         private void NotifyPrepActionEnd(Act action)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+            action.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.PrepActionEnd(evetTime, action);
@@ -4145,7 +4153,7 @@ namespace Ginger.Run
                 {
                     try
                     {
-                        runnerListener.RunnerRunStart(evetTime);
+                        runnerListener.RunnerRunStart(evetTime, this);
                     }
                     catch(Exception ex)
                     {
@@ -4161,7 +4169,7 @@ namespace Ginger.Run
             uint evetTime = RunListenerBase.GetEventTime();
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.RunnerRunEnd(evetTime);
+                runnerListener.RunnerRunEnd(evetTime, this);
             }
         }
 
@@ -4212,9 +4220,10 @@ namespace Ginger.Run
         }
 
 
-        private void NotifyActivityStart(Activity currentActivity)
+        private void NotifyActivityStart(Activity activity)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+            activity.StartTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivityStart(evetTime, CurrentBusinessFlow.CurrentActivity);
@@ -4224,7 +4233,7 @@ namespace Ginger.Run
         private void NotifyActivityEnd(Activity activity)
         {
             uint evetTime = RunListenerBase.GetEventTime();
-            // activity.StartTimeStamp = EventTypeFilter
+            activity.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivityEnd(evetTime, activity);
@@ -4236,6 +4245,7 @@ namespace Ginger.Run
         private void NotifyBusinessFlowEnd(BusinessFlow businessFlow)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+            businessFlow.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.BusinessFlowEnd(eventTime, CurrentBusinessFlow);
@@ -4245,7 +4255,7 @@ namespace Ginger.Run
         private void NotifyBusinessFlowStart(BusinessFlow businessFlow)
         {
             uint evetTime = RunListenerBase.GetEventTime();
-            // businessFlow.StartTimeStamp = eventTime;
+            businessFlow.StartTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.BusinessFlowStart(evetTime, CurrentBusinessFlow);
@@ -4289,14 +4299,13 @@ namespace Ginger.Run
             }
         }
 
-
-        // TODO: call this method based on when the run started from
+        // Called per user click on Run BF/Activity/Action
         private void NotifyExecutionContext(AutomationTabContext automationTabContext)
         {
             uint eventTime = RunListenerBase.GetEventTime();            
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.ExecutionContext(eventTime, automationTabContext);
+                runnerListener.ExecutionContext(eventTime, automationTabContext, CurrentBusinessFlow);
             }
         }
 

@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
 using GingerCore.Actions;
 
 namespace Ginger.Actions
@@ -46,7 +47,7 @@ namespace Ginger.Actions
             {
                 String Name = folderDlg.SelectedPath;
                 Environment.SpecialFolder root = folderDlg.RootFolder;
-                string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+                string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
                 string FileName = Name.ToUpper();
                 if (FileName.Contains(SolutionFolder))
                 {
