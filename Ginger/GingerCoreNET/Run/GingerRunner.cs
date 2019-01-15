@@ -1995,8 +1995,15 @@ namespace Ginger.Run
             NewPayLoad p = CreateActionPayload(actPlugin);
             NewPayLoad RC = GNP.RunAction(p);
 
-            // After we send it we parse the driver response
+            // release the node as soon as the result came in
+            bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, actPlugin.ServiceId);
+            if (!IsSessionService)
+            {
+                // standalone plugin action release the node
+                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
+            }
 
+            // After we send it we parse the driver response
             if (RC.Name == "ActionResult")
             {
                 // We read the ExInfo, Err and output params
@@ -2043,13 +2050,7 @@ namespace Ginger.Run
             }
 
             gingerNodeInfo.IncreaseActionCount();
-
-            bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, actPlugin.ServiceId);
-            if (!IsSessionService) 
-            {
-                // standalone plugin action release the node
-                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
-            }
+            
             st.Stop();
             long millis = st.ElapsedMilliseconds;
             actPlugin.ExInfo += Environment.NewLine + "Elapsed: " +  millis + "ms";
