@@ -113,7 +113,7 @@ namespace Ginger
             {
                 App.SetDefaultBusinessFlow();
             }
-
+            AddRunnerListeners();
             //Ribbon
             btnRunActivity.Label = "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity);
             ContinuteRunActiviy.Header = "Continue Run from Current " + GingerDicser.GetTermResValue(eTermResKey.Activity);
@@ -146,7 +146,7 @@ namespace Ginger
             App.PropertyChanged += AppPropertychanged;
              WorkSpace.UserProfile.PropertyChanged += UserProfilePropertyChanged;
 
-            AddRunnerListeners();
+
             
             App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEvent;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
@@ -166,7 +166,7 @@ namespace Ginger
             App.AutomateTabGingerRunner.RunListeners.Add(mAutomatePageRunnerListener);
             mExecutionLogger = new ExecutionLogger(App.AutomateTabEnvironment, eExecutedFrom.Automation);
             mExecutionLogger.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            App.AutomateTabGingerRunner.RunListeners.Add(mExecutionLogger);
+
             // Add execution Listener
            
 
