@@ -27,6 +27,7 @@ using GingerCore;
 using Ginger.Environments;
 using System.Diagnostics;
 using Ginger.SolutionGeneral;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger
 {
@@ -42,7 +43,7 @@ namespace Ginger
             //TODO: load from external - so easier to update
             lblAppVersion.Content = "Version " + Ginger.App.AppVersion;
                                   
-            App.ObjFieldBinding(autoLoadLastSolCheckBox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
+            App.ObjFieldBinding(autoLoadLastSolCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
             SetRecentSolutions();
         }
 
@@ -51,7 +52,7 @@ namespace Ginger
             try
             {
                 ObservableList<Hyperlink> recentSolutionsLinksList = new ObservableList<Hyperlink>();
-                foreach (Solution sol in App.UserProfile.RecentSolutionsAsObjects)
+                foreach (Solution sol in  WorkSpace.UserProfile.RecentSolutionsAsObjects)
                 {
                     Hyperlink solLink = new Hyperlink();
                     solLink.Tag = sol.Name;
@@ -80,7 +81,7 @@ namespace Ginger
             try
             {
                 string selectedSolFolder = ((Hyperlink)sender).ToolTip.ToString().ToUpper();
-                Solution selectedSol = App.UserProfile.RecentSolutionsAsObjects.Where(x=>x.Folder.ToUpper() == selectedSolFolder).FirstOrDefault();
+                Solution selectedSol =  WorkSpace.UserProfile.RecentSolutionsAsObjects.Where(x=>x.Folder.ToUpper() == selectedSolFolder).FirstOrDefault();
 
                 if (selectedSol != null)
                 {

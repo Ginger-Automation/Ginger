@@ -22,7 +22,7 @@ using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     //This class is for submit
@@ -32,7 +32,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Submit Action"; } }
         public override string ActionUserDescription { get { return "Performs Submit Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform any Submit actions.");
             TBH.AddLineBreak();

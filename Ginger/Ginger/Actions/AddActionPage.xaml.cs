@@ -111,7 +111,7 @@ namespace Ginger.Actions
                 IEnumerable<Act> OrderedActions = allActions.OrderBy(x => x.Description);
                 foreach (Act cA in OrderedActions)
                 {
-                    if (cA.LegacyActionPlatformsList.Intersect(App.UserProfile.Solution.ApplicationPlatforms
+                    if (cA.LegacyActionPlatformsList.Intersect( WorkSpace.UserProfile.Solution.ApplicationPlatforms
                                                                     .Where(x => App.BusinessFlow.CurrentActivity.TargetApplication == x.AppName)
                                                                     .Select(x => x.Platform).ToList()).Any())
                     {
@@ -137,8 +137,24 @@ namespace Ginger.Actions
         private ObservableList<Act> GetPlatformsActions(bool ShowAll = false)
         {
             ObservableList<Act> Acts = new ObservableList<Act>();
-                       
-            foreach (Type t in GetAllActionType())
+            AppDomain.CurrentDomain.Load("GingerCore");
+            AppDomain.CurrentDomain.Load("GingerCoreCommon");
+            AppDomain.CurrentDomain.Load("GingerCoreNET");
+            
+
+            var ActTypes = new List<Type>();
+            foreach (Assembly GC in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name.Contains("GingerCore")))
+               
+            {
+
+                var types = from type in GC.GetTypes() where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) select type;
+                ActTypes.AddRange(types);
+            }
+ 
+                  
+
+
+            foreach (Type t in ActTypes)
             {
                 Act a = (Act)Activator.CreateInstance(t);
 
@@ -159,7 +175,7 @@ namespace Ginger.Actions
                         return null;
                     }
                 }
-                ApplicationPlatform AP = (from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == TA.AppName select x).FirstOrDefault();
+                ApplicationPlatform AP = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == TA.AppName select x).FirstOrDefault();
                 if (AP != null)
                 {
                     if (a.Platforms.Contains(AP.Platform))
@@ -243,7 +259,7 @@ namespace Ginger.Actions
                         Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                         return;
                     }
-                    aNew.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+                    aNew.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
                     
                     //adding the new act after the selected action in the grid  
                     //TODO: Add should be after the last, Insert should be in the middle...
