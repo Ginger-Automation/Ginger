@@ -65,11 +65,11 @@ namespace Ginger.Run.RunSetActions
             App.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.SMTPPort);
             App.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.SMTPPass);
             App.FillComboFromEnumVal(xEmailMethodComboBox, runSetActionHTMLReportSendEmail.Email.EmailMethod);
-            //xSMTPMailHostTextBox.Init(runSetActionHTMLReportSendEmail, nameof (RunSetActionHTMLReportSendEmail.MailHost));
-            //xSMTPUserTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.MailUser);
+            xSMTPMailHostTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.MailHost);
+            xSMTPUserTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.MailUser);
             App.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.EmailMethod);
             App.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.EnableSSL);
-            //App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.ConfigureCredential);
+            App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.ConfigureCredential);
             if (string.IsNullOrEmpty(runSetActionHTMLReportSendEmail.MailTo))
             {
                 runSetActionHTMLReportSendEmail.MailFrom = App.UserProfile.UserEmail;

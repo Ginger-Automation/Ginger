@@ -23,6 +23,8 @@ namespace Ginger.Run.RunSetActions
             public static string MailTo = "MailTo";
             public static string MailCC = "MailCC";
             public static string Subject = "Subject";
+            public static string MailUser = "MailUser";
+            public static string MailHost = "MailHost";
         }
 
         public override bool SupportRunOnConfig
@@ -74,6 +76,14 @@ namespace Ginger.Run.RunSetActions
         [IsSerializedForLocalRepository]
         public string MailTo { get { return mMailTo; } set { if (mMailTo != value) { mMailTo = value; OnPropertyChanged(Fields.MailTo); } } }
 
+        private string mMailHost;
+        [IsSerializedForLocalRepository]
+        public string MailHost { get { return mMailHost; } set { if (mMailHost != value) { mMailHost = value; OnPropertyChanged(Fields.MailHost); } } }
+
+        private string mMailUser;
+        [IsSerializedForLocalRepository]
+        public string MailUser { get { return mMailUser; } set { if (mMailUser != value) { mMailUser = value; OnPropertyChanged(Fields.MailUser); } } }
+
         public override void Execute(ReportInfo RI)
         {
             Email.Attachments.Clear();
@@ -89,6 +99,10 @@ namespace Ginger.Run.RunSetActions
             Email.Subject = mVE.ValueCalculated;
             mVE.Value = Bodytext;
             Email.Body = mVE.ValueCalculated;
+            mVE.Value = MailHost;
+            Email.SMTPMailHost = mVE.ValueCalculated;
+            mVE.Value = MailUser;
+            Email.SMTPUser = mVE.ValueCalculated;
             bool isSuccess;
             isSuccess = Email.Send();
             if (isSuccess == false)
