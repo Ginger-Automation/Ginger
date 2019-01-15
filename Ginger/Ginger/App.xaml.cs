@@ -404,7 +404,7 @@ namespace Ginger
             //Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
 
             AutomateTabGingerRunner = new GingerRunner(eExecutedFrom.Automation);
-
+           
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
 

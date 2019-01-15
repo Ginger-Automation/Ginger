@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Utils;
 
 using Ginger.Reports;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
@@ -304,7 +305,15 @@ namespace Ginger.SolutionGeneral
                 HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
                 HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
             }
+
+
             Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
+            ExecutionLoggerConfiguration executionLoggerConfiguration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+
+
+            // !!!!!!!!!!!!! FIXME
+            // ExecutionLogger executionLogger = App.AutomateTabGingerRunner.ExecutionLogger;
+            // executionLogger.Configuration = executionLoggerConfiguration;
             WorkSpace.AutomateTabGingerRunner.ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
 

@@ -109,7 +109,9 @@ namespace Ginger.Run
         public void ConfigureAllRunnersForExecution()
         {
             foreach (GingerRunner runner in Runners)
+            {
                 ConfigureRunnerForExecution(runner);
+            }
         }
 
         public ObservableList<DefectSuggestion> DefectSuggestionsList
@@ -120,16 +122,14 @@ namespace Ginger.Run
 
         public void ConfigureRunnerForExecution(GingerRunner runner)
         {
-
-
             runner.SetExecutionEnvironment(RunsetExecutionEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
-
             runner.CurrentSolution = WorkSpace.Instance.Solution;
-            runner.SolutionAgents = RepositoryItemHelper.RepositoryItemFactory.GetAllIAgents();
-            // runner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
+            runner.SolutionAgents = RepositoryItemHelper.RepositoryItemFactory.GetAllIAgents();            
             runner.DSList = new ObservableList<GingerCore.DataSource.DataSourceBase>();
             runner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             runner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
+
+            // runner.RunListeners.Add(new ExecutionLogger(RunsetExecutionEnvironment));
         }
 
         public void InitRunner(GingerRunner runner)
