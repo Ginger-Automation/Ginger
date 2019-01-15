@@ -12,6 +12,21 @@ namespace GingerUtils
 
         public static string GetFirstLocalHostIPAddress()
         {
+            string networkIP = string.Empty;
+            if (OperatingSystem.IsWindows())
+            {
+                networkIP = GetFirstLocalHostIPAddress_Windows();
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                networkIP = GetFirstLocalHostIPAddress_Linux();
+            }
+            return networkIP;
+        }
+
+
+        public static string GetFirstLocalHostIPAddress_Linux()
+        {
             List<UnicastIPAddressInformation> unicastIPAddressInformationList = GetIPAddressCollectionList().ToList();
 
             string network = unicastIPAddressInformationList.FirstOrDefault(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork)
@@ -57,7 +72,7 @@ namespace GingerUtils
         }
 
 
-        public static string GetLocalIPAddress_V1()
+        public static string GetFirstLocalHostIPAddress_Windows()
         {
             string LocalHostIP = string.Empty;
             IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());
@@ -83,8 +98,6 @@ namespace GingerUtils
                     }
                 }
             }
-
-            Console.WriteLine("Selected '" + LocalHostIP + "' as Local Host IP");
 
             return LocalHostIP;
         }
