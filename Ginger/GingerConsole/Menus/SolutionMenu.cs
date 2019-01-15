@@ -104,8 +104,23 @@ namespace Amdocs.Ginger.GingerConsole
             Console.WriteLine("Business Flow Status: " + businessFlow.RunStatus);
             foreach (Activity activity in businessFlow.Activities)
             {
-                Console.WriteLine("Activity: " + activity.ActivityName + " Status: " + activity.Status);                
+                Console.WriteLine("Activity: " + activity.ActivityName + " Status: " + activity.Status);
+
+                Console.WriteLine("Actions Found:" + activity.Acts.Count);
+                foreach (Act act in activity.Acts )
+                {
+                    Console.WriteLine("--");
+                    Console.WriteLine("Action:" + act.Description);
+                    Console.WriteLine("Description:" + act.ActionDescription);
+                    Console.WriteLine("Type:" + act.ActionType);
+                    Console.WriteLine("Class:" + act.ActClass );
+                    Console.WriteLine("Status:" + act.Status );
+                    Console.WriteLine("Error:" + act.Error);
+                    Console.WriteLine("ExInfo:" + act.ExInfo);
+                }
             }
+
+
         }
 
         public static void InitClassTypesDictionary()
