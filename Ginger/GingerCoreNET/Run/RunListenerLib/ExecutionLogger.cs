@@ -172,6 +172,7 @@ namespace Ginger.Run
         };
         public ParentGingerData GingerData = new ParentGingerData();
 
+        // TODO: remove the need for env - get it from notify event !!!!!!
         public ExecutionLogger(ProjEnvironment environment, eExecutedFrom executedFrom = eExecutedFrom.Run)
         {
             mJsonSerializer = new JsonSerializer();
