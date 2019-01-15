@@ -161,7 +161,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void OpenHTMLReportsFolder(object sender, RoutedEventArgs e)
         {
-            HTMLReportsConfiguration _selectedHTMLReportConfiguration = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration _selectedHTMLReportConfiguration =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (_selectedHTMLReportConfiguration != null)
             {
                 string path = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(_selectedHTMLReportConfiguration.HTMLReportsFolder);

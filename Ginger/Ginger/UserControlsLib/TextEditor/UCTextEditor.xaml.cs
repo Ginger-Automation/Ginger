@@ -35,6 +35,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using amdocs.ginger.GingerCoreNET;
 using System.Windows.Threading;
 
 namespace Ginger.UserControlsLib.TextEditor
@@ -176,7 +177,7 @@ namespace Ginger.UserControlsLib.TextEditor
             }
 
             //TODO: put it in general func
-            string SolutionPath = FileName.Replace(App.UserProfile.Solution.Folder, "~");
+            string SolutionPath = FileName.Replace( WorkSpace.UserProfile.Solution.Folder, "~");
             lblTitle.Content = SolutionPath;
 
             if (EnableWrite)

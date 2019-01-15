@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActClearAllVariables : ActWithoutDriver
@@ -29,7 +29,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Clear All " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Action"; } }
         public override string ActionUserDescription { get { return "Resets all variables value"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to reset all Business Flow variables values.");
             TBH.AddLineBreak();

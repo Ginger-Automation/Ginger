@@ -380,15 +380,15 @@ namespace GingerWPF.TreeViewItemsLib
 
         public override void AddSourceControlOptions(ContextMenu CM, bool addDetailsOption = true, bool addLocksOption = true)
         {
-            if (App.UserProfile.Solution != null && App.UserProfile.Solution.SourceControl != null)
+            if ( WorkSpace.UserProfile.Solution != null &&  WorkSpace.UserProfile.Solution.SourceControl != null)
             {
                 MenuItem sourceControlMenu = TreeViewUtils.CreateSubMenu(CM, "Source Control");
                 if (addDetailsOption)
                     TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Get Info", SourceControlGetInfo, null, "@Info_16x16.png");
                 TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Check-In Changes", SourceControlCheckIn, null, "@CheckIn2_16x16.png");
-                if (App.UserProfile.Solution.SourceControl.IsSupportingGetLatestForIndividualFiles)
+                if ( WorkSpace.UserProfile.Solution.SourceControl.IsSupportingGetLatestForIndividualFiles)
                     TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Get Latest Version", SourceControlGetLatestVersion, null, "@GetLatest2_16x16.png");
-                if (App.UserProfile.Solution.ShowIndicationkForLockedItems && App.UserProfile.Solution.SourceControl.IsSupportingLocks && addLocksOption)
+                if ( WorkSpace.UserProfile.Solution.ShowIndicationkForLockedItems &&  WorkSpace.UserProfile.Solution.SourceControl.IsSupportingLocks && addLocksOption)
                 {
                     TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Lock Item", SourceControlLock, null, "@Lock_16x16.png");
                     TreeViewUtils.AddSubMenuItem(sourceControlMenu, "UnLock Item", SourceControlUnlock, null, "@Unlock_16x16.png");                    
@@ -399,7 +399,7 @@ namespace GingerWPF.TreeViewItemsLib
 
         private void SourceControlGetInfo(object sender, RoutedEventArgs e)
         {
-            SourceControlItemInfoDetails SCIID = SourceControlIntegration.GetInfo(App.UserProfile.Solution.SourceControl, this.NodePath());
+            SourceControlItemInfoDetails SCIID = SourceControlIntegration.GetInfo( WorkSpace.UserProfile.Solution.SourceControl, this.NodePath());
             SourceControlItemInfoPage SCIIP = new SourceControlItemInfoPage(SCIID);
             SCIIP.ShowAsWindow();
         }
@@ -413,7 +413,7 @@ namespace GingerWPF.TreeViewItemsLib
                 Reporter.ToUser(eUserMsgKey.SoruceControlItemAlreadyUnlocked);
                 return;
             }
-            SourceControlIntegration.UnLock(App.UserProfile.Solution.SourceControl, this.NodePath());
+            SourceControlIntegration.UnLock( WorkSpace.UserProfile.Solution.SourceControl, this.NodePath());
             mTreeView.Tree.RefreshHeader((ITreeViewItem)this);
         }
 
@@ -429,7 +429,7 @@ namespace GingerWPF.TreeViewItemsLib
             string lockComment = string.Empty;
             if (GingerCore.General.GetInputWithValidation("Lock", "Lock Comment:", ref lockComment))
             {
-                SourceControlIntegration.Lock(App.UserProfile.Solution.SourceControl, this.NodePath(), lockComment);
+                SourceControlIntegration.Lock( WorkSpace.UserProfile.Solution.SourceControl, this.NodePath(), lockComment);
                 mTreeView.Tree.RefreshHeader((ITreeViewItem)this);
             }
         }
@@ -445,7 +445,7 @@ namespace GingerWPF.TreeViewItemsLib
             if (Reporter.ToUser(eUserMsgKey.SureWantToDoRevert) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 Reporter.ToStatus(eStatusMsgKey.RevertChangesFromSourceControl);
-                SourceControlIntegration.Revert(App.UserProfile.Solution.SourceControl, this.NodePath());                
+                SourceControlIntegration.Revert( WorkSpace.UserProfile.Solution.SourceControl, this.NodePath());                
                 mTreeView.Tree.RefreshSelectedTreeNodeParent();
                 Reporter.HideStatusMessage();
             }
@@ -459,7 +459,7 @@ namespace GingerWPF.TreeViewItemsLib
             if (string.IsNullOrEmpty(this.NodePath()))
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
-                SourceControlIntegration.GetLatest(this.NodePath(), App.UserProfile.Solution.SourceControl);
+                SourceControlIntegration.GetLatest(this.NodePath(),  WorkSpace.UserProfile.Solution.SourceControl);
             
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
             Reporter.HideStatusMessage();

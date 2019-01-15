@@ -25,6 +25,7 @@ using GingerCore;
 using Ginger.UserControls;
 using System.ComponentModel;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM
 {
@@ -45,7 +46,7 @@ namespace Ginger.ALM
         {
             InitializeComponent();
 
-            mItemsFields = App.UserProfile.Solution.ExternalItemsFields;
+            mItemsFields =  WorkSpace.UserProfile.Solution.ExternalItemsFields;
             ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, false, null);
             if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
@@ -90,9 +91,9 @@ namespace Ginger.ALM
         {
             // TODO Rearrange save function to keep old fields value.
             ObservableList<ExternalItemFieldBase> tempItemList = new ObservableList<ExternalItemFieldBase>();
-            App.UserProfile.Solution.ExternalItemsFields = ALMIntegration.Instance.GetUpdatedFields(mItemsFields, false);
-            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
-            App.UserProfile.Solution.ExternalItemsFields = mItemsFields;
+             WorkSpace.UserProfile.Solution.ExternalItemsFields = ALMIntegration.Instance.GetUpdatedFields(mItemsFields, false);
+             WorkSpace.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
+             WorkSpace.UserProfile.Solution.ExternalItemsFields = mItemsFields;
             genWin.Close();
 
         }

@@ -835,7 +835,7 @@ namespace GingerCore
 
             //ProjEnvironment = App.AutomateTabEnvironment;
             //BusinessFlow = App.BusinessFlow; ;
-            //SolutionFolder = App.UserProfile.Solution.Folder;
+            //SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
             //DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             SolutionFolder =WorkSpace.Instance.SolutionRepository.SolutionFolder;
             try

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Actions;
@@ -36,7 +37,7 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = Act;
             Bind();
-            mAct.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
         }
 
         public void Bind()
