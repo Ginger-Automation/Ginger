@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
@@ -35,6 +36,7 @@ using GingerCore.Actions.Common;
 using GingerCore.Actions.Java;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
+using GingerCore.Environments;
 using GingerCore.Platforms;
 using System;
 using System.Collections.Generic;
@@ -99,7 +101,7 @@ namespace Ginger.Actions
             if (actParentActivity != null)
                 mActParentActivity = actParentActivity;
             else
-                mActParentActivity = App.BusinessFlow.CurrentActivity;
+                mActParentActivity = (Activity)App.BusinessFlow.CurrentActivity;
 
             EditMode = editMode;
             mAction.PropertyChanged += ActionPropertyChanged;
@@ -222,6 +224,7 @@ namespace Ginger.Actions
                 xRunStatusExpander.IsExpanded = false;
 
             InitActionLog();
+            App.AutomateTabGingerRunner.PrepActionValueExpression(mAction, actParentBusinessFlow);
         }
 
         private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -534,8 +537,8 @@ namespace Ginger.Actions
                     // For no driver actions we give the BF and env - used for example in set var value.
                     if (typeof(ActWithoutDriver).IsAssignableFrom(a.GetType()))
                     {
-                        ((ActWithoutDriver)a).RunOnBusinessFlow = App.AutomateTabGingerRunner.CurrentBusinessFlow;
-                        ((ActWithoutDriver)a).RunOnEnvironment = App.AutomateTabGingerRunner.ProjEnvironment;
+                        ((ActWithoutDriver)a).RunOnBusinessFlow = (BusinessFlow)App.AutomateTabGingerRunner.CurrentBusinessFlow;
+                        ((ActWithoutDriver)a).RunOnEnvironment =(ProjEnvironment) App.AutomateTabGingerRunner.ProjEnvironment;
                         ((ActWithoutDriver)a).DSList = App.AutomateTabGingerRunner.DSList;
                     }
 
@@ -556,7 +559,7 @@ namespace Ginger.Actions
 
             if (ap == null)
             {
-                Reporter.ToUser(eUserMsgKeys.CurrentActionNotSaved);
+                Reporter.ToUser(eUserMsgKey.CurrentActionNotSaved);
             }
             else if (ap.grdActions.grdMain.Items.CurrentPosition < ap.grdActions.grdMain.Items.Count - 1)
             {
@@ -574,7 +577,7 @@ namespace Ginger.Actions
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "No Action to move to.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to move to.");
             }
 
             Mouse.OverrideCursor = null;
@@ -585,7 +588,7 @@ namespace Ginger.Actions
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             if (ap == null)
             {
-                Reporter.ToUser(eUserMsgKeys.CurrentActionNotSaved);
+                Reporter.ToUser(eUserMsgKey.CurrentActionNotSaved);
             }
             else if (ap.grdActions.grdMain.Items.CurrentPosition >= 1)
             {
@@ -602,7 +605,7 @@ namespace Ginger.Actions
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "No Action to move to.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to move to.");
             }
 
             Mouse.OverrideCursor = null;
@@ -863,7 +866,7 @@ namespace Ginger.Actions
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
             }
@@ -899,8 +902,8 @@ namespace Ginger.Actions
 
         private void ParentSaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if ((mActParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow),mActParentBusinessFlow.Name) == MessageBoxResult.Yes) 
-                || (mActParentActivity != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.Activity), mActParentActivity.ActivityName) == MessageBoxResult.Yes))
+            if ((mActParentBusinessFlow != null && Reporter.ToUser(eUserMsgKey.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow),mActParentBusinessFlow.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes) 
+                || (mActParentActivity != null && Reporter.ToUser(eUserMsgKey.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.Activity), mActParentActivity.ActivityName) == Amdocs.Ginger.Common.eUserMsgSelection.Yes))
             {
                 if(mActParentBusinessFlow != null)                    
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActParentBusinessFlow);
@@ -998,7 +1001,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
             if (ActionTab.SelectedItem == ScreenShotTab)
@@ -1099,11 +1102,11 @@ namespace Ginger.Actions
         private void HighLightElementButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: fixme - Currently working with first agent
-            ApplicationAgent aa = App.AutomateTabGingerRunner.ApplicationAgents[0];
+            ApplicationAgent aa =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents[0];
             if (aa != null)
             {
-                DriverBase driver = aa.Agent.Driver;
-                App.AutomateTabGingerRunner.PrepActionVE(mAction);
+                DriverBase driver =((Agent) aa.Agent).Driver;
+                App.AutomateTabGingerRunner.PrepActionValueExpression(mAction);
                 if (driver != null)
                 {
                     driver.HighlightActElement(mAction);
@@ -1111,21 +1114,21 @@ namespace Ginger.Actions
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.MissingImplementation2);
+                Reporter.ToUser(eUserMsgKey.MissingImplementation2);
             }
         }
 
         private void ControlSelectorButton_Click(object sender, RoutedEventArgs e)
         {
-            ApplicationAgent aa = App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent aa =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
             if (aa != null)
             {
-                if (aa.Agent.Driver == null)
+                if (((Agent)aa.Agent).Driver == null)
                 {
-                    aa.Agent.DSList = mDSList;
-                    aa.Agent.StartDriver();
+                    ((Agent)aa.Agent).DSList = mDSList;
+                    ((Agent)aa.Agent).StartDriver();
                 }
-                DriverBase driver = aa.Agent.Driver;
+                DriverBase driver = ((Agent)aa.Agent).Driver;
                 //Instead of check make it disabled ?
                 if (driver is IWindowExplorer)
                 {
@@ -1134,7 +1137,7 @@ namespace Ginger.Actions
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Control selection is not available yet for driver - " + driver.GetType().ToString());
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Control selection is not available yet for driver - " + driver.GetType().ToString());
                 }
             }
         }
@@ -1297,7 +1300,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
         }
 

@@ -76,13 +76,13 @@ namespace Ginger.DataSource
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             //validate details
-            if (FilePathTextBox.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKeys.MissingNewDSDetails, "File Path"); return; }
-            else if (DSTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKeys.MissingNewDSDetails, "DB type"); return; }
+            if (FilePathTextBox.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "File Path"); return; }
+            else if (DSTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "DB type"); return; }
 
             mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~", App.UserProfile.Solution.Folder);
 
             if (!Directory.Exists(Path.GetDirectoryName(mDSDetails.FileFullPath)))
-            { Reporter.ToUser(eUserMsgKeys.InvalidDSPath, Path.GetDirectoryName(mDSDetails.FileFullPath)); return; }
+            { Reporter.ToUser(eUserMsgKey.InvalidDSPath, Path.GetDirectoryName(mDSDetails.FileFullPath)); return; }
 
             mDSDetails.FilePath = mDSDetails.FilePath.Replace(App.UserProfile.Solution.Folder, "~");//Pending                       
             
@@ -91,7 +91,7 @@ namespace Ginger.DataSource
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             foreach(DataSourceBase ds in DSList)
                 if(ds.FilePath == mDSDetails.FilePath)
-                { Reporter.ToUser(eUserMsgKeys.DuplicateDSDetails, FilePathTextBox.Text.Trim()); return; }
+                { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, FilePathTextBox.Text.Trim()); return; }
             
             okClicked = true;           
             

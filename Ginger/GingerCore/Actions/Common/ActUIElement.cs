@@ -436,6 +436,10 @@ namespace GingerCore.Actions.Common
             IsDisabled,
             [EnumValueDescription("Switch")]
             Switch,
+            [EnumValueDescription("Double Click using XY")]
+            DoubleClickXY,
+            [EnumValueDescription("Send Keys using XY")]
+            SendKeysXY,
             #endregion Generic Action Types
 
             #region TextBox Action Types
@@ -524,7 +528,11 @@ namespace GingerCore.Actions.Common
         }
 
         [IsSerializedForLocalRepository]
-        public eElementAction ElementAction { get; set; }
+        public eElementAction ElementAction
+        {
+            get;
+            set;
+        }
 
         [IsSerializedForLocalRepository]
         public eLocateBy ElementLocateBy { get; set; }

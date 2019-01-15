@@ -104,7 +104,7 @@ namespace Ginger.GherkinLib
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.GherkinBusinessFlowNotCreated);
+                    Reporter.ToUser(eUserMsgKey.GherkinBusinessFlowNotCreated);
                 }
             }
             if (genWin != null)

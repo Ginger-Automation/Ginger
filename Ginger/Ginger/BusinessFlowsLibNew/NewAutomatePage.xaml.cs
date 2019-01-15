@@ -73,7 +73,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             App.PropertyChanged += App_PropertyChanged;
 
-            CurrentActivityFrame.Content = new ActivityPage(BusinessFlow.Activities[0]);  // TODO: use binding? or keep each activity page
+            CurrentActivityFrame.Content = new ActivityPage((Activity)BusinessFlow.Activities[0]);  // TODO: use binding? or keep each activity page
 
             InitGingerRunnerControls();
         }

@@ -31,6 +31,7 @@ using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -98,7 +99,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if(HTMLReportConfiguration.IsDefault==true)
             {
-                Reporter.ToUser(eUserMsgKeys.DefaultTemplateCantBeDeleted);
+                Reporter.ToUser(eUserMsgKey.DefaultTemplateCantBeDeleted);
                 return false;
             }
             else
@@ -112,7 +113,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (HTMLReportConfiguration.IsDefault == true)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Template is already default");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Template is already default");
                 return;
             }
 

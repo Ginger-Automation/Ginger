@@ -23,15 +23,8 @@ using Amdocs.Ginger.Repository;
 using Ginger.WizardLib;
 using GingerCore;
 using GingerWPF.WizardLib;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -129,7 +122,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 foreach (Agent agent in OptionalAgentsList)
                     if (agent != null && agent.Status == Agent.eStatus.Running && agent.Tag != null && agent.Tag.ToString() == "Started with Agent Control" && !agent.Driver.IsDriverBusy)
                     {
-                        if (Reporter.ToUser(eUserMsgKeys.AskIfToCloseAgent, agent.Name) == System.Windows.MessageBoxResult.Yes)
+                        if (Reporter.ToUser(eUserMsgKey.AskIfToCloseAgent, agent.Name) == eUserMsgSelection.Yes)
                         {
                             agent.Close();
                         }

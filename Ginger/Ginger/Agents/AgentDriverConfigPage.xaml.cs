@@ -97,7 +97,7 @@ namespace Ginger.Agents
             {
                 mAgent.InitDriverConfigs();
                 if (mAgent.DriverConfiguration == null)
-                    Reporter.ToUser(eUserMsgKeys.DriverConfigUnknownDriverType, mAgent.DriverType);
+                    Reporter.ToUser(eUserMsgKey.DriverConfigUnknownDriverType, mAgent.DriverType);
             }
             DriverConfigurationGrid.DataSourceList = mAgent.DriverConfiguration;
         }

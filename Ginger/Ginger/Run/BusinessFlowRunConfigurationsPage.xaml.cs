@@ -175,7 +175,7 @@ namespace Ginger.Run
         {
             if (grdVariables.CurrentItem != null)
             {
-                if (Reporter.ToUser(eUserMsgKeys.AskIfShareVaribalesInRunner) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.AskIfShareVaribalesInRunner) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     int countMatchingBfs = 0;
                     
@@ -204,7 +204,7 @@ namespace Ginger.Run
                                     }
                                     if (selectedVar.ParentType == "Activity")
                                     {
-                                        Activity a = bf.GetActivity(selectedVar.ParentGuid);
+                                        Activity a =(Activity) bf.GetActivity(selectedVar.ParentGuid);
                                         int indexSelected = a.Variables.IndexOf(matchingVar);
                                         a.Variables.Remove(matchingVar);
                                         a.Variables.Insert(indexSelected, copiedVar);
@@ -218,12 +218,12 @@ namespace Ginger.Run
                             }
                         }
                     }
-                    Reporter.ToUser(eUserMsgKeys.CopiedVariableSuccessfully, countMatchingBfs - 1);
+                    Reporter.ToUser(eUserMsgKey.CopiedVariableSuccessfully, countMatchingBfs - 1);
                 }
 
             }
             else
-                Reporter.ToUser(eUserMsgKeys.ShareVariableNotSelected);
+                Reporter.ToUser(eUserMsgKey.ShareVariableNotSelected);
         }
         private void ResetBusFlowVariables(object sender, RoutedEventArgs e)
         {
@@ -234,7 +234,7 @@ namespace Ginger.Run
                     originalBF = (from bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where bf.Name == mBusinessFlow.Name select bf).FirstOrDefault();             
                 if (originalBF == null)
                 {
-                    Reporter.ToUser(eUserMsgKeys.ResetBusinessFlowRunVariablesFailed, "Original " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " was not found");
+                    Reporter.ToUser(eUserMsgKey.ResetBusinessFlowRunVariablesFailed, "Original " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " was not found");
                     return;
                 }
                 else
@@ -247,7 +247,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.ResetBusinessFlowRunVariablesFailed, ex.Message);
+                Reporter.ToUser(eUserMsgKey.ResetBusinessFlowRunVariablesFailed, ex.Message);
             }
         }
 
@@ -266,7 +266,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectVariable);
+                Reporter.ToUser(eUserMsgKey.AskToSelectVariable);
             }
         }
 
@@ -325,7 +325,7 @@ namespace Ginger.Run
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
             }
@@ -406,7 +406,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
             
@@ -477,7 +477,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Business Flow Configuration Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Business Flow Configuration Page tabs style", ex);
             }
         }
     }

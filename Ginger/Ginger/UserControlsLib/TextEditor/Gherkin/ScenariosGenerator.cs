@@ -47,7 +47,7 @@ namespace Ginger.GherkinLib
             if (!System.IO.File.Exists(FileName))
             {
                 // General
-                Reporter.ToUser(eUserMsgKeys.GherkinFileNotFound, FileName);
+                Reporter.ToUser(eUserMsgKey.GherkinFileNotFound, FileName);
                 return;
             }
 
@@ -147,7 +147,7 @@ namespace Ginger.GherkinLib
             }
 
             if (!string.IsNullOrEmpty(NotFoundItems))
-                    Reporter.ToUser(eUserMsgKeys.GherkinColumnNotExist, NotFoundItems);
+                    Reporter.ToUser(eUserMsgKey.GherkinColumnNotExist, NotFoundItems);
         }
 
         private void CreateBusinessFlowVar(string varName, string varDescription, string varValue)
@@ -207,7 +207,7 @@ namespace Ginger.GherkinLib
 
             for (int indx = 0; indx < BF.ActivitiesGroups.Count; indx++)
             {
-                if (BF.ActivitiesGroups[indx].ItemName != "Optimized Activities" && BF.ActivitiesGroups[indx].ItemName != "Optimized Activities - Not in Use")
+                if (((ActivitiesGroup)BF.ActivitiesGroups[indx]).ItemName != "Optimized Activities" && ((ActivitiesGroup)BF.ActivitiesGroups[indx]).ItemName != "Optimized Activities - Not in Use")
                 {
                     BF.ActivitiesGroups.RemoveAt(indx);
                     indx--;
@@ -280,7 +280,7 @@ namespace Ginger.GherkinLib
             {
                 // Find the Activity from the template BF with All activity, create a copy and add to BF
                 string GN = GherkinGeneral.GetActivityGherkinName(step.Text);
-                Activity a = SearchActivityByName(GN);
+                Activity a = (Activity)SearchActivityByName(GN);
                 if (a != null)
                 {                    
                     Activity a1 = (Activity)a.CreateCopy(false);
@@ -314,7 +314,7 @@ namespace Ginger.GherkinLib
                 {
 
                     //TODO: err activity not found...
-                    Reporter.ToUser(eUserMsgKeys.GherkinActivityNotFound, GN);
+                    Reporter.ToUser(eUserMsgKey.GherkinActivityNotFound, GN);
                 }
             }
             return AG;

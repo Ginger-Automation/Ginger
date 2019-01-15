@@ -44,6 +44,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.GherkinLib
 {
@@ -365,10 +366,10 @@ namespace Ginger.GherkinLib
             if (mBizFlow == null)
                 return "Pending BF Creation";
 
-            Activity a1 = (from x in mBizFlow.Activities where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
+            Activity a1 = (Activity)(from x in mBizFlow.Activities where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
             if (a1 != null)
             {
-                if (a1.AutomationStatus == Activity.eActivityAutomationStatus.Automated)
+                if (a1.AutomationStatus == eActivityAutomationStatus.Automated)
                 {
                     return "Automated in BF";
                 }
@@ -495,19 +496,19 @@ namespace Ginger.GherkinLib
             string txt = GherkinTextEditor.GetText();
             if (fileSize != txt.Length && fileSize != 0)
             {
-                fileSize = txt.Length; //TODO Reporter.ToUser(eUserMsgKeys.AskIfSureWantToClose);
-                MessageBoxResult result = Reporter.ToUser(eUserMsgKeys.GherkinAskToSaveFeatureFile);
-                if (result == MessageBoxResult.Yes)
+                fileSize = txt.Length; //TODO Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose);
+                Amdocs.Ginger.Common.eUserMsgSelection result = Reporter.ToUser(eUserMsgKey.GherkinAskToSaveFeatureFile);
+                if (result == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     Save();
                     return true;
                 }
-                else if (result == MessageBoxResult.No)
+                else if (result == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 {
                     //Do nothing? this will still create optmized activities and even update BF without saving the feature file... not advised
                     return true;
                 }
-                else if (result == MessageBoxResult.Cancel)
+                else if (result == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
                 {
                     //stop optimize so user can fix unwanted changes.
                     return false;
@@ -540,12 +541,12 @@ namespace Ginger.GherkinLib
                 }
                 UpdateBFButton.Content = "Update " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                 isBFexists = true;
-                Reporter.ToUser(eUserMsgKeys.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\", "") + "\\" + mBizFlow.Name, "Created");
+                Reporter.ToUser(eUserMsgKey.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\", "") + "\\" + mBizFlow.Name, "Created");
             }
             else
             {
                 UpdateBFButton_Click();
-                Reporter.ToUser(eUserMsgKeys.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\","") + "\\" + mBizFlow.Name, "Updated");
+                Reporter.ToUser(eUserMsgKey.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\","") + "\\" + mBizFlow.Name, "Updated");
             }
 
             if(App.BusinessFlow == mBizFlow)
@@ -560,7 +561,7 @@ namespace Ginger.GherkinLib
         {
             // We put all template optimized activity in Activities Group 
 
-            ActivitiesGroup AG = (from x in mBizFlow.ActivitiesGroups where x.Name == "Optimized Activities" select x).FirstOrDefault();
+            ActivitiesGroup AG = (ActivitiesGroup)(from x in mBizFlow.ActivitiesGroups where x.Name == "Optimized Activities" select x).FirstOrDefault();
 
             if (AG == null)
             {
@@ -568,7 +569,7 @@ namespace Ginger.GherkinLib
                 AG.Name = "Optimized Activities";
                 mBizFlow.ActivitiesGroups.Add(AG);
             }
-            ActivitiesGroup AG1 = (from x in mBizFlow.ActivitiesGroups where x.Name == "Optimized Activities - Not in Use" select x).FirstOrDefault();
+            ActivitiesGroup AG1 =(ActivitiesGroup)(from x in mBizFlow.ActivitiesGroups where x.Name == "Optimized Activities - Not in Use" select x).FirstOrDefault();
             if (AG1 == null)
             {
                 AG1 = new ActivitiesGroup();
@@ -578,7 +579,7 @@ namespace Ginger.GherkinLib
 
             foreach(ActivityIdentifiers ia in AG.ActivitiesIdentifiers)
             {
-                Activity a1 = (from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
+                Activity a1 = (Activity)(from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
                 if (!AG1.CheckActivityInGroup(a1))
                     AG1.AddActivityToGroup(a1);
             }
@@ -586,13 +587,14 @@ namespace Ginger.GherkinLib
             // Search each activity if not found create new
             foreach (GherkinStep GH in mOptimizedSteps)
             {                
-                Activity a1 = (from x in mBizFlow.Activities where x.ActivityName == GH.Text select x).FirstOrDefault();
+                Activity a1 = (Activity)(from x in mBizFlow.Activities where x.ActivityName == GH.Text select x).FirstOrDefault();
                 if (a1 == null)
                 {
                     if (GH.AutomationStatus == "Automated in Shared Repo - ")
                     {
                         ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                        Activity a2 = (from x in activities where x.ActivityName == GH.Text select x).FirstOrDefault();
+                        Activity a2 =(Activity) 
+                            (from x in activities where x.ActivityName == GH.Text select x).FirstOrDefault();
                         //FIXME
                         if (a2 != null)
                         {
@@ -607,7 +609,7 @@ namespace Ginger.GherkinLib
                         a.ActivityName = GH.Text;                        
                         a.Active = false;
                         a.TargetApplication = App.UserProfile.Solution.MainApplication;
-                        a.ActionRunOption = Activity.eActionRunOption.ContinueActionsRunOnFailure;
+                        a.ActionRunOption = eActionRunOption.ContinueActionsRunOnFailure;
                         CreateActivityVariables(a);
                         CreateActivitySelectionVariables(a);                        
                         mBizFlow.AddActivity(a);
@@ -623,7 +625,8 @@ namespace Ginger.GherkinLib
             }
             foreach (ActivityIdentifiers ia in AG1.ActivitiesIdentifiers)
             {
-                Activity a1 = (from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
+                Activity a1 =(Activity)
+                    (from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
                 if (AG.CheckActivityInGroup(a1))
                     AG.RemoveActivityFromGroup(a1);
             }

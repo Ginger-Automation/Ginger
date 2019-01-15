@@ -77,7 +77,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
             if (SelectedFiles == null || SelectedFiles.Count == 0)
             {
                 //TODO: please select valid Recover items to delete
-                Reporter.ToUser(eUserMsgKeys.RecoverItemsMissingSelectionToRecover, "delete");
+                Reporter.ToUser(eUserMsgKey.RecoverItemsMissingSelectionToRecover, "delete");
                 return;
             }
             
@@ -102,7 +102,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
 
             if (SelectedFiles == null || SelectedFiles.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.RecoverItemsMissingSelectionToRecover, "recover");
+                Reporter.ToUser(eUserMsgKey.RecoverItemsMissingSelectionToRecover, "recover");
                 return;
             }
 
@@ -138,7 +138,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
                 catch(Exception ex)
                 {
                     ri.Status = eRecoveredItemStatus.RecoveredFailed;
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to recover the original file '{0}' with the recovered file '{1}'", originalItem.FileName, ri.RecoveredItemObject.FileName), ex);
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to recover the original file '{0}' with the recovered file '{1}'", originalItem.FileName, ri.RecoveredItemObject.FileName), ex);
                 }
             }
 

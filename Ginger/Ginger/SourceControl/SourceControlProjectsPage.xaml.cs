@@ -149,7 +149,7 @@ namespace Ginger.SourceControl
                 xProcessingIcon.Visibility = Visibility.Visible;
                 if (SourceControlIntegration.BusyInProcessWhileDownloading)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                     return;
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
@@ -176,7 +176,7 @@ namespace Ginger.SourceControl
             catch (Exception e)
             {
                 Mouse.OverrideCursor = null;
-                Reporter.ToUser(eUserMsgKeys.FailedToGetProjectsListFromSVN, e.Message);
+                Reporter.ToUser(eUserMsgKey.FailedToGetProjectsListFromSVN, e.Message);
             }
             finally
             {
@@ -215,20 +215,20 @@ namespace Ginger.SourceControl
                 xProcessingIcon.Visibility = Visibility.Visible;
                 if (SourceControlIntegration.BusyInProcessWhileDownloading)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                     return;
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
 
                 if (App.UserProfile.SourceControlLocalFolder == string.Empty)
                 {
-                    Reporter.ToUser(eUserMsgKeys.SourceControlConnMissingLocalFolderInput);
+                    Reporter.ToUser(eUserMsgKey.SourceControlConnMissingLocalFolderInput);
                 }
 
                 SolutionInfo sol = (SolutionInfo)SolutionsGrid.grdMain.SelectedItem;
                 if (sol == null)
                 {
-                    Reporter.ToUser(eUserMsgKeys.AskToSelectSolution);
+                    Reporter.ToUser(eUserMsgKey.AskToSelectSolution);
                     return;
                 }
 
@@ -249,7 +249,7 @@ namespace Ginger.SourceControl
                 GetProjetList();
                 Mouse.OverrideCursor = null;
 
-                if (getProjectResult && (Reporter.ToUser(eUserMsgKeys.DownloadedSolutionFromSourceControl, sol.LocalFolder) == MessageBoxResult.Yes))
+                if (getProjectResult && (Reporter.ToUser(eUserMsgKey.DownloadedSolutionFromSourceControl, sol.LocalFolder) == Amdocs.Ginger.Common.eUserMsgSelection.Yes))
                 {
                     OpenSolution(sol.LocalFolder, ProjectURI);
 
@@ -281,7 +281,7 @@ namespace Ginger.SourceControl
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.SolutionFileNotFound, SoFileName);
+                Reporter.ToUser(eUserMsgKey.SolutionFileNotFound, SoFileName);
             }
         }
 
@@ -387,7 +387,7 @@ namespace Ginger.SourceControl
             {
                 if (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
                 {
-                    Reporter.ToUser(eUserMsgKeys.SourceControlConnMissingConnInputs);
+                    Reporter.ToUser(eUserMsgKey.SourceControlConnMissingConnInputs);
                     return;
                 }
                 xConnectButton.Visibility = Visibility.Visible;
@@ -405,7 +405,7 @@ namespace Ginger.SourceControl
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error Occured :", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error Occured :", ex);
             }
             finally
             {

@@ -99,7 +99,7 @@ namespace Ginger.ALM.RQM
         {
             if (grdRQMTestPlanes.CurrentItem == null)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
 

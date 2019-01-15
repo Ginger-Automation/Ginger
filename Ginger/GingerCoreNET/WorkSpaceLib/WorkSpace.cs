@@ -18,7 +18,12 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
+using Ginger.Run;
+using GingerCore;
+using GingerCore.Environments;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SourceControl;
 using System;
@@ -31,21 +36,45 @@ namespace amdocs.ginger.GingerCoreNET
     // WorkSpace is one object per user accessible from anywhere and hold the current status of the user selection
     // For GingerWPF it is one per running app
     // For Web it can be one per user connected
-    public class WorkSpace
+    public class WorkSpace : RepositoryItemBase
     {
         private static WorkSpace mWorkSpace;
 
         // public UserProfile UserProfile;
 
-        public SolutionRepository SolutionRepository;
+        public SolutionRepository SolutionRepository;        
 
         // Will be back when we moved GR to GingerCoreNET
         // public GingerRunner GingerRunner;
 
         // public ProjEnvironment CurrentEnvironment;
-
+  
         public SourceControlBase SourceControl;
+        public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
+        public static string AppVersion="0.0.0.0.0";
 
+        // move from App to here
+        //public static GingerRunner AutomateTabGingerRunner = new GingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
+        public  ISolution mSolution { get; set; }
+        public  ISolution Solution
+        {
+            get { return mSolution; }
+            set
+            {
+                mSolution = value;
+                OnPropertyChanged(nameof(Solution));
+            }
+        }
+
+        public static eRunStatus RunSetExecutionStatus = eRunStatus.Failed;
+        
+        public static string TempFolder
+        {
+            get
+            {
+                return System.IO.Path.GetDirectoryName(System.IO.Path.GetTempFileName()) + "\\Ginger_Email_Reports";
+            }
+        }
         PluginsManager mPluginsManager = null;
         public PluginsManager PlugInsManager
         {
@@ -64,9 +93,10 @@ namespace amdocs.ginger.GingerCoreNET
 
         public void OpenSolution(string SolutionFolder)
         {
+            mPluginsManager = null;
             //TODO: remove later since below init only RS2
             SolutionRepository.Open(SolutionFolder);
-
+            
             // AutoLogProxy.Init("Ginger Test");  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             // ValueExpression.Solutionfolder = SolutionFolder;
@@ -130,8 +160,8 @@ namespace amdocs.ginger.GingerCoreNET
             get
             {
                 if (mLocalGingerGrid == null)
-                {
-                    mLocalGingerGrid = new GingerGrid(15001);   // TODO: config per user profile as many users can use the same machine
+                {                    
+                    mLocalGingerGrid = new GingerGrid();   
                     mLocalGingerGrid.Start();
                 }
                 return mLocalGingerGrid;
@@ -146,6 +176,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+
         public string DefualtUserLocalWorkingFolder
         {
             get
@@ -155,6 +186,7 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public BetaFeatures mBetaFeatures;
+
         public BetaFeatures BetaFeatures
         {
             get
@@ -171,6 +203,14 @@ namespace amdocs.ginger.GingerCoreNET
                 mBetaFeatures = value;
             }
         }
+
+        public static BusinessFlow Businessflow { get;  set; }
+
+        public static bool RunningInExecutionMode = false;
+
+        public static ProjEnvironment AutomateTabEnvironment;
+        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
 
         //TODO: move to GingerRunner - pass the obj needed
         private void HookAgents()
@@ -207,18 +247,7 @@ namespace amdocs.ginger.GingerCoreNET
             //}
         }
 
-        //private void CheckAssignAgent(ApplicationAgent aA)
-        //{
-        //    if (aA.Agent == null)
-        //    {
-        //        //TODO: FIXME - temp we get the first agent from solution !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //        aA.Agent = SolutionRepository.GetAllRepositoryItems<NewAgent>()[0];
-        //    }
-        //}
-
-        //public void SetAppAgents()
-        //{
-        //}
+        
 
         public void LoadUserProfile()
         {
@@ -309,6 +338,10 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+
+    }
+    public interface IUserprofile
+    {
 
     }
 }

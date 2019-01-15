@@ -33,6 +33,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Actions
 {
@@ -159,7 +160,7 @@ namespace Ginger.Actions
             mCurrentActivity.Acts.Add(instance);
             
             int selectedActIndex = -1;
-            ObservableList<Act> actsList = App.BusinessFlow.CurrentActivity.Acts;
+            ObservableList<IAct> actsList = App.BusinessFlow.CurrentActivity.Acts;
             if (actsList.CurrentItem != null)
             {
                 selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
@@ -192,7 +193,7 @@ namespace Ginger.Actions
             bool takeValue = false;
             if (mCurrentActivity.Acts.Count > 0)
             {
-                takeValue = !mCurrentActivity.Acts[0].TakeScreenShot;//decide if to take or not
+                takeValue = !((Act)mCurrentActivity.Acts[0]).TakeScreenShot;//decide if to take or not
                 foreach (Act a in mCurrentActivity.Acts)
                     a.TakeScreenShot = takeValue;
             }
@@ -219,14 +220,14 @@ namespace Ginger.Actions
             // Move the actions to the new activity
             for (int j = i; j < mCurrentActivity.Acts.Count; j++)
             {
-                Act a1 = mCurrentActivity.Acts[j];
+                IAct a1 = mCurrentActivity.Acts[j];
                 activity.Acts.Add(a1);                
             }
 
             // remove the actions to from current activity - need to happen in 2 steps so the array count will not change while looping backwards
             for (int j = mCurrentActivity.Acts.Count - 1; j >= i; j--)
             {
-                Act a1 = mCurrentActivity.Acts[j];
+                IAct a1 = mCurrentActivity.Acts[j];
                mCurrentActivity.Acts.Remove(a1);
             }            
         }
@@ -235,7 +236,7 @@ namespace Ginger.Actions
         {
             if (mCurrentActivity == null)
             {
-                Reporter.ToUser(eUserMsgKeys.SelectItemToAdd);
+                Reporter.ToUser(eUserMsgKey.SelectItemToAdd);
             }
             else
             {
@@ -300,7 +301,7 @@ namespace Ginger.Actions
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
         
@@ -386,7 +387,7 @@ namespace Ginger.Actions
             {
                 if (mCurrentActivity != App.BusinessFlow.CurrentActivity)
                 {
-                    mCurrentActivity = App.BusinessFlow.CurrentActivity;
+                    mCurrentActivity = (Activity)App.BusinessFlow.CurrentActivity;
                     mCurrentActivity.PropertyChanged += Activity_PropertyChanged;
                     mCurrentActivity.Acts.PropertyChanged += ActsPropChanged;                    
                 }

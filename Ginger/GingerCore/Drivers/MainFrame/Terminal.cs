@@ -176,7 +176,7 @@ namespace GingerCore.Drivers.MainFrame
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -282,7 +282,7 @@ namespace GingerCore.Drivers.MainFrame
             }
             catch (Exception ex)
             {
-                Reporter.ToLog (eAppReporterLogLevel.ERROR, "Failed to connect to Mainframe source : Terminal.cs->ConnectToHost() ",ex);
+                Reporter.ToLog (eLogLevel.ERROR, "Failed to connect to Mainframe source : Terminal.cs->ConnectToHost() ",ex);
                 return false;
             }           
         }
@@ -308,7 +308,7 @@ namespace GingerCore.Drivers.MainFrame
             catch (Exception e)
             {
                 status = false;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
             return status;
         }

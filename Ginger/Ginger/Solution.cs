@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Utils;
 using Ginger.ALM;
 using Ginger.Reports;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -36,7 +37,7 @@ using System.Threading.Tasks;
 
 namespace Ginger.SolutionGeneral
 {
-    public class Solution : RepositoryItemBase
+    public class Solution : RepositoryItemBase,ISolution
     {
         public SourceControlBase SourceControl { get; set; }
 
@@ -191,7 +192,7 @@ namespace Ginger.SolutionGeneral
                 {
                     extraChangedItems= extraChangedItems.TrimEnd();
                     extraChangedItems= extraChangedItems.TrimEnd(new char[] { ',' });                    
-                    if (Reporter.ToUser(eUserMsgKeys.SolutionSaveWarning, extraChangedItems) == System.Windows.MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKey.SolutionSaveWarning, extraChangedItems) == eUserMsgSelection.Yes)
                     {
                         doSave = true;
                     }
@@ -200,10 +201,10 @@ namespace Ginger.SolutionGeneral
 
             if (doSave)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, "Solution Configurations", "item");
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, "Solution Configurations", "item");
                 RepositorySerializer.SaveToFile(this, FilePath);
                 this.SetDirtyStatusToNoChange();
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
         }
                 
@@ -303,12 +304,19 @@ namespace Ginger.SolutionGeneral
                 HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
                 HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
             }
+
+
             Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
-            App.AutomateTabGingerRunner.ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            ExecutionLoggerConfiguration executionLoggerConfiguration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+
+
+            // !!!!!!!!!!!!! FIXME
+            // ExecutionLogger executionLogger = App.AutomateTabGingerRunner.ExecutionLogger;
+            // executionLogger.Configuration = executionLoggerConfiguration;
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ApplicationPlatform> ApplicationPlatforms;
+        public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
 
         public string MainApplication
         {
@@ -409,16 +417,12 @@ namespace Ginger.SolutionGeneral
         }
 
         static void AddFolderFiles(ConcurrentBag<string> CB, string folder)
-        {
-            if (folder == "PrevVersions")//TODO: use const
-            {
-                return;
-            }
+        {            
 
             IEnumerable<string> files = Directory.EnumerateFiles(folder, "*Ginger.*.xml", SearchOption.AllDirectories).AsParallel().AsOrdered();
             Parallel.ForEach(files, file =>
-            {
-                CB.Add(file);
+            {               
+                    CB.Add(file);                
             });
         }
 
@@ -436,7 +440,7 @@ namespace Ginger.SolutionGeneral
 
                 //Make it Generic or Const string for names used for File
                 string NewReportName = string.Empty;
-                if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
+                if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName))
                 {
                     NewReportTemplate.Name = NewReportName;                    
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);
@@ -448,13 +452,13 @@ namespace Ginger.SolutionGeneral
 
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList = new ObservableList<ExecutionLoggerConfiguration>();
+        public ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList { get; set; } = new ObservableList<ExecutionLoggerConfiguration>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
+        public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList { get; set; } = new ObservableList<HTMLReportsConfiguration>();
 
         //public string VariablesNames
         //{

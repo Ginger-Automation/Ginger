@@ -161,7 +161,7 @@ namespace Ginger.Actions
             catch (Exception e)
             {
                 Error = "Failed to get the window Locate By/Value";
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}", e);
                 return;
             }
 
@@ -272,7 +272,7 @@ namespace Ginger.Actions
                 
                 if (WindowTitle == null)
                     WindowTitle = "";
-                Reporter.ToLog(eAppReporterLogLevel.INFO, $"Method - {MethodBase.GetCurrentMethod().Name}, WindowTitle - {WindowTitle}");
+                Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, WindowTitle - {WindowTitle}");
                 switch (LocateBy)
                 {
                        

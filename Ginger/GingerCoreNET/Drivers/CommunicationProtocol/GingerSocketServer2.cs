@@ -40,7 +40,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         public int ClientsCounter { get { return Clients.Count(); } }
         public string IPInfo;
         Task mTask;
-        bool isReady = false;
+        public bool isReady = false;
 
         public void StartServer(int port)
         {

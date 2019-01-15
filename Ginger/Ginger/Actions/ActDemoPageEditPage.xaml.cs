@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Actions;
 using System.Collections.Generic;
@@ -115,13 +116,13 @@ namespace Ginger.Actions
         private void BrowseButtonExample_Click(object sender, RoutedEventArgs e)
         {
             //Extra functionality on the top of the dialog and setting the field.            
-            Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Browse Button Extra functionality handler has been triggered");
+            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Browse Button Extra functionality handler has been triggered");
         }
 
         private void RadioButtonExample_Click(object sender, RoutedEventArgs e)
         {
             //Extra functionality on the top of the dialog and setting the field.            
-            Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Radio Button Extra functionality handler has been triggered");
+            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Radio Button Extra functionality handler has been triggered");
         }
     }
 }

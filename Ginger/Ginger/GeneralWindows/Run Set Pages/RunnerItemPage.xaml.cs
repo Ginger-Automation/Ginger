@@ -33,6 +33,7 @@ using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Common.Enums;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Run
 {
@@ -364,7 +365,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.ExportedExecDetailsToALMIsInProcess);
+                    Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALMIsInProcess);
                 }
             }
         }

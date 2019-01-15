@@ -39,8 +39,7 @@ namespace GingerCoreCommonTest.Repository
     // Test Multi thread getting the same data - repository folder
     // Test Big solution
 
-    [TestClass]
-    [Ignore]
+    [TestClass]    
     [Level1]
     public class SolutionRepositoryTest
     {
@@ -50,8 +49,8 @@ namespace GingerCoreCommonTest.Repository
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
-        {
-            TempRepositoryFolder = TestResources.getGingerUnitTesterTempFolder("Solutions", "SRTestTemp");
+        {            
+            TempRepositoryFolder = TestResources.GetTestTempFolder("Solutions", "SRTestTemp");
             Console.WriteLine("SolutionRepositoryTest folder: " + TempRepositoryFolder);
 
             Console.WriteLine("===> Creating test solution");
@@ -509,34 +508,7 @@ namespace GingerCoreCommonTest.Repository
             Assert.AreEqual(mri.RepositoryItemHeader.Version, 2);
         }
 
-        //[Ignore]
-        //[TestMethod]
-        //public void ValidatelongFileName200_300()
-        //{
-        //    // Since MAX_PATH is 260 we cover all the range to verify the automatic file name shrinker works well
-        //    // Also test the we can the end of file name not the start
-
-        //    // FIXME !!!!!!!!!!!!!!!!!!!!!!!
-
-
-        //    //Arrange
-        //    MyRepositoryItem MRI = new MyRepositoryItem("MRI Long Name Test");
-        //    while (MRI.Name.Length < 200)
-        //    {
-        //        MRI.Name += "Z";
-        //    }
-        //    string MRIPath = mSolutionRepository.GetRepositoryItemRootFolder<MyRepositoryItem>().FolderFullPath;
-
-        //    while (MRI.Name.Length < 300)
-        //    {
-        //        //Act
-        //        mSolutionRepository.AddRepositoryItem(MRI);
-        //        mSolutionRepository.SaveRepositoryItem(MRI);
-        //        //Assert            
-        //        Assert.AreEqual(MRIPath + MRI.FileName, MRI.FilePath);
-        //    }
-
-        //}
+       
 
         [TestMethod]
         public void ValidateInvlidCharsinFilename()

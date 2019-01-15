@@ -1,33 +1,55 @@
-# .NET Desktop
-# Build and run tests for .NET Desktop or Windows classic desktop solutions.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
+# .NET
 
-pool:
-  vmImage: 'VS2017-Win2016'
+jobs:
+- job: Linux
+  pool:
+    vmImage: 'Ubuntu 16.04'
+  variables:  
+    buildConfiguration: 'Release'
+    solutionDIrectory:  'Ginger-Automation/Ginger'
+  steps:
+  - script: dotnet build Ginger/GingerCoreNETUnitTest/GingerCoreNETUnitTest.csproj 
+  - script: dotnet build Ginger/GingerCoreCommonTest/GingerCoreCommonTest.csproj
+  - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testRunner: VSTest
+      testResultsFiles: '**/*.trx'
 
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  - task: PublishBuildArtifacts@1
 
-steps:
-- task: NuGetToolInstaller@0
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+- job: Windows
 
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    TestAdapterPath:  'Ginger\packages\MSTest.TestAdapter.1.3.2\build\_common'
-    testResultsFiles: '**/*.trx'
-    
+  variables:  
+    solution: '**/*.sln'
+    buildPlatform: 'Any CPU'
+    buildConfiguration: 'Release'
+    agentname:  'VS2017-Win2016'
+
+  
+  pool: 'VS2017-Win2016'
+
+
+  steps:
+  - task: NuGetToolInstaller@0
+  - task: NuGetCommand@2
+    inputs:
+      restoreSolution: '$(solution)'
+    condition: succeededOrFailed()
+
+  - task: VSBuild@1
+    inputs:
+      solution: '$(solution)'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+
+  - task: VSTest@2
+    inputs:
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+      pathtoCustomTestAdapters:  'Ginger\packages\MSTest.TestAdapter.1.4.0\build\_common'
+      uiTests: true
+      testResultsFiles: '**/*.trx'

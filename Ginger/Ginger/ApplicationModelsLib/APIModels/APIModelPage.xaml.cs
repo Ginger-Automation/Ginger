@@ -138,7 +138,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 }
                 else
                 {                                        
-                    Reporter.ToUser(eUserMsgKeys.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
+                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
                 }
             }
             xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms;
@@ -642,7 +642,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
         }
 
@@ -765,7 +765,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.ToSaveChanges) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 UndoChangesAndClose();
             }

@@ -47,7 +47,7 @@ namespace Ginger.ALM
 
             mItemsFields = App.UserProfile.Solution.ExternalItemsFields;
             ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, false, null);
-            if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == MessageBoxResult.Yes)
+            if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 RunWorker(true);
             }
@@ -63,8 +63,7 @@ namespace Ginger.ALM
             view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.Name, Header = "Field Name", WidthWeight = 20, ReadOnly = true, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.Mandatory, WidthWeight = 15, ReadOnly = true, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.SelectedValue, Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ExternalItemFieldBase.Fields.PossibleValues, ExternalItemFieldBase.Fields.SelectedValue, true), WidthWeight = 20 });
-            view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.ItemType , WidthWeight = 15, ReadOnly = true, AllowSorting = true });
-
+            view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.ItemType, Header = "Field Type", WidthWeight = 15, ReadOnly = true, AllowSorting = true });
             grdQCFields.SetAllColumnsDefaultView(view);
             grdQCFields.InitViewItems();
 
@@ -73,7 +72,7 @@ namespace Ginger.ALM
 
         private void Refresh(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 RunWorker(true);
         }
 
@@ -89,11 +88,13 @@ namespace Ginger.ALM
 
         private void Save(object sender, RoutedEventArgs e)
         {
+            // TODO Rearrange save function to keep old fields value.
             ObservableList<ExternalItemFieldBase> tempItemList = new ObservableList<ExternalItemFieldBase>();
             App.UserProfile.Solution.ExternalItemsFields = ALMIntegration.Instance.GetUpdatedFields(mItemsFields, false);
             App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
             App.UserProfile.Solution.ExternalItemsFields = mItemsFields;
             genWin.Close();
+
         }
 
         #region BackgroundWorker Thread
@@ -137,7 +138,7 @@ namespace Ginger.ALM
             LoadFieldsStatusLbl.Visibility = Visibility.Collapsed;
             grdQCFields.Visibility = Visibility.Visible;
             grdQCFields.DataSourceList = mItemsFields;
-            Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "ALM Item Fields population is complete");
+            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "ALM Item Fields population is complete");
         }
         #endregion
     }

@@ -47,7 +47,7 @@ namespace GingerCore.Drivers.ScriptDriverLib
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
             }
             p.Start();
 
@@ -77,7 +77,7 @@ namespace GingerCore.Drivers.ScriptDriverLib
                      return cmd; 
                     }
                 default:
-                    Reporter.ToUser(eUserMsgKeys.UnknownConsoleCommand, act.ScriptCommand);
+                    Reporter.ToUser(eUserMsgKey.UnknownConsoleCommand, act.ScriptCommand);
                     return "Error - unknown command";
             }
         }

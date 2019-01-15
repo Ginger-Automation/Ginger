@@ -131,7 +131,7 @@ namespace Ginger.Variables
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to load the variable type configurations page", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the variable type configurations page", ex);
             }
         }
 
@@ -223,7 +223,7 @@ namespace Ginger.Variables
                 }
                 catch
                 {
-                    Reporter.ToUser(eUserMsgKeys.Failedtosaveitems);
+                    Reporter.ToUser(eUserMsgKey.Failedtosaveitems);
                 }
                 _pageGenericWin.Close();
             }
@@ -240,7 +240,7 @@ namespace Ginger.Variables
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
             }
@@ -332,17 +332,17 @@ namespace Ginger.Variables
 
                     if (string.IsNullOrEmpty(setValueAct.Error) == false)
                     {
-                        Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Failed to publish the value to linked variable.." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + setValueAct.Error);
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked variable.." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + setValueAct.Error);
                     }
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Failed to publish the value to linked variable." + System.Environment.NewLine + System.Environment.NewLine+ "Error: " + ex.Message );
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked variable." + System.Environment.NewLine + System.Environment.NewLine+ "Error: " + ex.Message );
                 }
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Missing linked variable, please configure.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Missing linked variable, please configure.");
             }
         }
 

@@ -29,6 +29,7 @@ using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCore.Drivers.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -51,23 +52,25 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ActEditPage
         }
 
-        List<GingerCore.General.ComboItem> operationTypeList;
-       
+        List<GingerCore.General.ComboItem> operationTypeList;        
+
         public UIElementTableConfigPage(ActUIElement Act, PlatformInfoBase Platform)
         {
             eBaseWindow = BaseWindow.ActEditPage;
-            mAct = Act;                   
+            mAct = Act;
+            mAct.Description = "UI Element Table";
             mPlatform = Platform;
           
 
             InitializeComponent();
             ShowTableControlActionConfigPage(mPlatform);           
         }
-
+      
         public UIElementTableConfigPage(ElementInfo ElementInfo, ObservableList<Act> Actions, ActUIElement Act = null)
         {
             eBaseWindow = BaseWindow.WindowExplorer;
             mAct = new ActUIElement();
+            mAct.Description = "UI Element Table";
             string targetApp = App.BusinessFlow.CurrentActivity.TargetApplication;
             mPlatform = PlatformInfoBase.GetPlatformImpl((from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetApp select x.Platform).FirstOrDefault());
 
@@ -95,10 +98,15 @@ namespace Ginger.Actions._Common.ActUIElementLib
             SetDescriptionDetails();
         }
 
+        public ObservableList<ActInputValue> GetTableRelatedInputValues()
+        {
+            return mAct.InputValues;
+        }
+
         public void TableActionFieldBinding()
         {
             RowSelectorPanelInit();
-            WhereColumn.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector,mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector)), typeof(ActUIElement.eTableElementRunColSelectorValue), isVENeeded: false, UCselectionChange: WhereColumn_SelectionChanged);
+            WhereColumn.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector,mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector)), typeof(ActUIElement.eTableElementRunColSelectorValue), isVENeeded: false, UCselectionChange: WhereColumn_SelectionChanged);    
             WhereColumnTitle.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle)), isVENeeded: true, UCselectionChange: WhereColumnTitle_SelectionChanged);
             WhereProperty.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, mAct.GetInputParamValue(ActUIElement.Fields.WhereProperty)), typeof(ActUIElement.eTableElementRunColPropertyValue), isVENeeded: false, UCselectionChange: WhereProperty_SelectionChanged);
             WhereOperator.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, mAct.GetInputParamValue(ActUIElement.Fields.WhereOperator)), typeof(ActUIElement.eTableElementRunColOperator), isVENeeded: false, UCselectionChange: WhereOperator_SelectionChanged);
@@ -251,7 +259,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 WhereColumnValue.Visibility = Visibility.Visible;
                 ColumnLabelPanel.Visibility = Visibility.Visible;
                 cmbColSelectorValuePanel.Visibility = Visibility.Visible;
-                cmbColumnValuePanel.Visibility = Visibility.Visible;
+                cmbColumnValuePanel.Visibility = Visibility.Visible;                
                 cmbColSelectorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue), typeof(ActUIElement.eTableElementRunColSelectorValue), isVENeeded: false, UCselectionChange: ColSelectorValue_SelectionChanged);
                 cmbColumnValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle), isVENeeded: true, UCselectionChange: ColumnValue_SelectionChanged);
                 TableActionFieldBinding();
@@ -305,7 +313,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed", ex);
             }
         }
 
@@ -442,7 +450,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void RowSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {            
-            mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, RowSelectorValue.ComboBox.Text);
+            mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, RowSelectorValue.ComboBox.SelectedValue.ToString());
             App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
             SetDescriptionDetails();
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
@@ -512,10 +520,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 mOriginalActions.Add(a);
             }
         }
-
+       
         private void UpdateRelatedActions()
         {
            string previousSelectedControlAction = null;
+           
             if (mActions != null)
             {
                 if (mActions.CurrentItem != null)
@@ -564,7 +573,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (cmbColumnValue != null)
             {
                 if (cmbColumnValue.ComboBox.SelectedIndex != -1)
-                    colVal = cmbColumnValue.ComboBox.SelectedItem.ToString();
+                    colVal = cmbColumnValue.ComboBox.SelectedValue.ToString();
                 else
                     colVal = cmbColumnValue.ComboBox.Text;
                 description = description + " and Column:" + colVal;
@@ -572,7 +581,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer) && cmbColSelectorValue.ComboBox.SelectedIndex != -1 && WhereColumn != null && WhereColumn.ComboBox.SelectedIndex != -1 && RowSelectorValue != null
                 && WhereProperty != null && WhereProperty.ComboBox.SelectedIndex != -1 && WhereOperator != null && WhereOperator.ComboBox.SelectedIndex != -1)
-            {
+            {               
                 List<string> descriptionString = new List<string>();
                 descriptionString.Add("Get Value of Cell: ");
                 descriptionString.Add("Set Value of Cell: ");
@@ -581,7 +590,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 descriptionString.Add("WinClick Cell: ");
                 descriptionString.Add("Get Selected Cell from Column: ");
                 
-                ActUIElement actObj = (ActUIElement)mAct.CreateCopy();
+                ActUIElement actObj = (ActUIElement)mAct.CreateCopy();                
                 actObj.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eElementAction.SetValue.ToString());
                 actObj.Description = "Set Value of Cell: " + description;
                 actObj.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
@@ -592,7 +601,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 mActions.Add(actObj);
 
 
-                ActUIElement actObj1 = (ActUIElement)mAct.CreateCopy(); ;
+                ActUIElement actObj1 = (ActUIElement)mAct.CreateCopy();                
                 actObj1.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eElementAction.GetValue.ToString());
                 actObj1.Description = "Get Value of Cell: " + description;
                 actObj1.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
@@ -603,7 +612,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 mActions.Add(actObj1);
 
 
-                ActUIElement actObj2 = (ActUIElement)mAct.CreateCopy(); ;
+                ActUIElement actObj2 = (ActUIElement)mAct.CreateCopy();                
                 actObj2.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eElementAction.Click.ToString());
                 actObj2.Description = "Click Cell: " + description;
                 actObj2.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
