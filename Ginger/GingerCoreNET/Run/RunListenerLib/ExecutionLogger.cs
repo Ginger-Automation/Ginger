@@ -285,7 +285,7 @@ namespace Ginger.Run
         
         public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup)
         {
-            bool offlineMode = true;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!
+            bool offlineMode = false;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!
 
            
             ActivityGroupReport AGR = new ActivityGroupReport(activityGroup, mCurrentBusinessFlow);
