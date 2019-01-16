@@ -55,8 +55,16 @@ namespace Ginger.Run.RunSetActions
         }
 
         public Page GetEditPage(string R)
-        { 
-                string classname = "Ginger.Run.RunSetActions." + R.ToString();
+        {
+            string classname = null;
+            if (R.ToString() == "ExportResultsToALMConfigPage")
+            {
+                classname = "Ginger.Run." + R.ToString();
+            }
+            else
+            {
+                 classname = "Ginger.Run.RunSetActions." + R.ToString();
+            }
                 Type t = Assembly.GetExecutingAssembly().GetType(classname);
                 if (t == null)
                 {
