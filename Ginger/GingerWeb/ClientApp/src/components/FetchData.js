@@ -19,18 +19,20 @@ export class FetchData extends Component {
       <table className='table table-striped'>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>filename</th>
-            <th>Status</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>filename</th>
+                <th>Status</th>
+                <th>run</th>
           </tr>
         </thead>
         <tbody>
           {forecasts.map(forecast =>
             <tr key={forecast.name}>
-              <td>{forecast.name}</td>
-              <td>{forecast.description}</td>
-                        <td>{forecast.fielName}</td>
+                <td>{forecast.name}</td>
+                <td>{forecast.description}</td>
+                <td>{forecast.status}</td>
+                <td>{forecast.fileName}</td>
                         <td>
                             <input type="button" value="Run"/>
                         </td>
