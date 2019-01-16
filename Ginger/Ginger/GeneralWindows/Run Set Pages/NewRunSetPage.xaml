@@ -434,7 +434,7 @@
             </TabItem.Header>
             <Frame x:Name="mExecutionSummary" Content="Execution" Grid.Column="0" HorizontalAlignment="Stretch"  Margin="0,15,0,0" Grid.Row="1" Grid.ColumnSpan="3" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
         </TabItem>
-        <TabItem x:Name="xALMDefectsOpening" Style="{StaticResource $CoolTab}" TabIndex="4" IsEnabled="False">
+        <TabItem x:Name="xALMDefectsOpening" Style="{StaticResource $CoolTab}" TabIndex="4" IsEnabled="true">
             <TabItem.Header>
                 <Border BorderThickness="0 0 0 4" Margin="0" x:Name="ALMDefectsBorder">
                     <Border.Style>
