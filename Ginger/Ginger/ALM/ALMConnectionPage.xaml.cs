@@ -92,6 +92,7 @@ namespace Ginger.ALM
                 RestAPICheckBox.IsEnabled = false;
                 RQMRadioButton.IsEnabled = false;
                 RallyRadioButton.IsEnabled = false;
+                JiraRadioButton.IsEnabled = false;
                 RQMLoadConfigPackageButton.IsEnabled = false;
                 ServerURLTextBox.IsEnabled = false;
                 UserNameTextBox.IsEnabled = false;
@@ -266,8 +267,6 @@ namespace Ginger.ALM
                 ProjectComboBox.Items.Clear();
                 foreach (KeyValuePair<string,string> project in lstProjects)
                 {
-                    ProjectComboBox.SelectedValuePath = "Key";
-                    ProjectComboBox.DisplayMemberPath = "Value";
                     ProjectComboBox.Items.Add(new KeyValuePair<string, string>(project.Key, project.Value));
                 }
 

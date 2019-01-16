@@ -125,13 +125,13 @@ namespace GingerCore.ALM.RQM
             IProjectData rqmProjectsData = RQMRep.GetVisibleProjects(loginData);
             rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
 
-            Dictionary<string, string> RQMProjects = new Dictionary<string, string>();
+            List<string> RQMProjects = new List<string>();
             foreach (var proj in rqmProjectsDataList)
             {
-                RQMProjects.Add(proj.Prefix, proj.ProjectName);
+                RQMProjects.Add(proj.ProjectName);
             }
 
-            return RQMProjects;
+            return RQMProjects.ToDictionary(x=>x,x=>x);
         }
 
         public bool SetRQMProjectFullDetails()

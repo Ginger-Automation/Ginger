@@ -37,18 +37,27 @@ namespace GingerCore.ALM
     public class JiraCore : ALMCore
     {
         private JiraExportManager exportMananger;
-        private JiraConnect jiraConnectObj;
+        private JiraConnectManager jiraConnectObj;
+        private JiraImportManager jiraImportObj;
         private JiraRepository.JiraRepository jiraRepObj;
         public static string ALMProjectGroupName { get; set; }
         public static string ALMProjectGuid { get; set; }
-        public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override ObservableList<Activity> GingerActivitiesRepo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override ObservableList<ExternalItemFieldBase> almItemFields { get ; set ; }
+        public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
+        {
+            get { return JiraImportManager.GingerActivitiesGroupsRepo; }
+            set { JiraImportManager.GingerActivitiesGroupsRepo = value; }
+        }
+        public override ObservableList<Activity> GingerActivitiesRepo
+        {
+            get { return JiraImportManager.GingerActivitiesRepo; }
+            set { JiraImportManager.GingerActivitiesRepo = value; }
+        }
         public JiraCore()
         {
             jiraRepObj = new JiraRepository.JiraRepository();
             exportMananger = new JiraExportManager(jiraRepObj);
-            jiraConnectObj = new JiraConnect(jiraRepObj);
+            jiraConnectObj = new JiraConnectManager(jiraRepObj);
+            jiraImportObj = new JiraImportManager(jiraRepObj);
         }
         public override bool ConnectALMProject()
         {
@@ -94,11 +103,11 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)
         {
-            ObservableList<ExternalItemFieldBase> tempFieldsList = ImportFromJira.GetALMItemFields(bw, online);
-            almItemFields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> tempFieldsList = jiraImportObj.GetALMItemFields(resourceType, bw, online);
+            AlmItemFields = new ObservableList<ExternalItemFieldBase>();
             foreach (ExternalItemFieldBase item in tempFieldsList)
             {
-                almItemFields.Add((ExternalItemFieldBase)item.CreateCopy());
+                AlmItemFields.Add((ExternalItemFieldBase)item.CreateCopy());
             }
             return tempFieldsList;
         }
@@ -119,7 +128,16 @@ namespace GingerCore.ALM
         }
         public ObservableList<JiraTestSet> GetJiraTestSets()
         {
-            return jiraConnectObj.GetJiraTestSets();
+            return jiraImportObj.GetJiraTestSets();
+        }
+        public JiraTestSet GetJiraTestSetData(JiraTestSet selectedTS)
+        {
+            return jiraImportObj.GetTestSetData(selectedTS);
+        }
+
+        public BusinessFlow ConvertJiraTestSetToBF(JiraTestSet testSet)
+        {
+            return JiraImportManager.ConvertJiraTestSetToBF(testSet);
         }
     }
 }

@@ -525,7 +525,7 @@ namespace Ginger
 
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
         {
-            if(!ALMIntegration.Instance.AlmConfigurations.UseRest)
+            if(!ALMIntegration.Instance.AlmConfigurations.UseRest && ALMIntegration.Instance.GetALMType() != ALMIntegration.eALMType.Jira)
             {
                 Reporter.ToUser(eUserMsgKeys.ALMDefectsUserInOtaAPI, "");
                 return;

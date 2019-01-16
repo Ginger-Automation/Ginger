@@ -83,7 +83,7 @@
 
                             <StackPanel Grid.Row="1">
                                 <Label Style="{StaticResource @InputFieldLabelStyle}">Project:</Label>
-                                <ComboBox x:Name="ProjectComboBox" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="ProjectComboBox_SelectionChanged"></ComboBox>
+                                <ComboBox x:Name="ProjectComboBox" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="ProjectComboBox_SelectionChanged" SelectedValuePath = "Key" DisplayMemberPath = "Value"></ComboBox>
                             </StackPanel>
                         </Grid>
 

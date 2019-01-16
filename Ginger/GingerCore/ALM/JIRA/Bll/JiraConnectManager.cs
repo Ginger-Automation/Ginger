@@ -33,7 +33,7 @@ using System.Xml.Serialization;
 
 namespace GingerCore.ALM.JIRA
 {
-    public class JiraConnect
+    public class JiraConnectManager
     {
         const string BTS_ACTIVITY_ID = "bts_activity_data";
         const string BTS_ACTIVITY_STEPS_ID = "bts_step_data";
@@ -42,15 +42,11 @@ namespace GingerCore.ALM.JIRA
         bool connectedToProject;
         IProjectDefinitions connectedProjectDefenition;
         AlmDomainColl jiraDomainsProjectsDataList;
+        private JiraRepository.JiraRepository jiraRepositoryObj;
 
-        public JiraConnect(JiraRepository.JiraRepository jiraRep)
+        public JiraConnectManager(JiraRepository.JiraRepository jiraRep)
         {
             this.jiraRepositoryObj = jiraRep;
-        }
-
-        public void CreateJiraRepository()
-        {
-            
         }
 
         public bool SetJiraProjectFullDetails()
@@ -70,8 +66,6 @@ namespace GingerCore.ALM.JIRA
             }
             return false;
         }
-
-        private JiraRepository.JiraRepository jiraRepositoryObj;
         public bool ConnectJiraServer()
         {
             if (JiraConnectionTest())
@@ -81,66 +75,7 @@ namespace GingerCore.ALM.JIRA
             }
             return false;
         }
-
-        public ObservableList<JiraTestSet> GetJiraTestSets()
-        {
-            AlmResponseWithData<List<JiraIssue>> getTestsSet = jiraRepositoryObj.GetJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET, null);
-            
-            ObservableList<JiraTestSet> jiratestset = new ObservableList<JiraTestSet>();
-            List<string> testSetKeys = new List<string> { "reporter", "created", "summary", "project" };
-            foreach (var item in getTestsSet.DataResult)
-            {
-                JiraTestSet issue = new JiraTestSet();
-                issue.ID = item.id.ToString();
-                issue.URLPath = item.self;
-                issue.Key = item.key;
-                
-                foreach (string tsKey in testSetKeys)
-                {
-                    if (item.fields.ContainsKey(tsKey))
-                    {
-                        string fieldValue = getSelectedFieldValue(item.fields[tsKey], tsKey);
-                        switch (tsKey)
-                        {
-                            case "created":
-                                issue.DateCreated = fieldValue;
-                                break;
-                            case "summary":
-                                issue.Name = fieldValue;
-                                break;
-                            case "reporter":
-                                issue.CreatedBy = fieldValue;
-                                break;
-                            case "project":
-                                issue.Project = fieldValue;
-                                break;
-                        }
-                    }
-                }
-                jiratestset.Add(issue);
-            }
-            return jiratestset;
-        }
-
-        private string getSelectedFieldValue(dynamic fields, string fieldName)
-        {
-            Dictionary<string, object> array = new Dictionary<string, object>();
-            FieldSchema temp = jiraRepositoryObj.GetFieldFromTemplateByName(ALM_Common.DataContracts.ResourceType.TEST_SET, "DE", fieldName);
-            if(temp == null)
-            {
-                return "";
-            }
-            switch(temp.type)
-            {
-                case "string":
-                    return fields.Value;
-                case "object":
-                    var jsonTemplateObj = Newtonsoft.Json.Linq.JObject.Parse(temp.data);
-                    return fields[((Newtonsoft.Json.Linq.JProperty)jsonTemplateObj.First).Name];
-            }
-            return "";
-        }
-
+        
         private string getFieldName(dynamic d)
         {
             string itemValue;
@@ -152,7 +87,6 @@ namespace GingerCore.ALM.JIRA
             switch (d.GetType().Name)
             {
                 case "JObject":
-                    //dynamic json = Newtonsoft.Json.Linq.JValue.Parse(d);
                     itemValue = d.name;
                     break;
                 case "JValue":
@@ -188,10 +122,7 @@ namespace GingerCore.ALM.JIRA
             if (jiraDomainsProjectsDataList.Count > 0)
             {
                 currentDomainProject = jiraDomainsProjectsDataList.Where(dom => dom.DomainName.Equals(ALMCore.AlmConfig.ALMDomain)).Select(prj => prj.Projects).FirstOrDefault();
-                foreach (var proj in currentDomainProject)
-                {
-                    jiraProjects.Add(proj.Prefix,proj.ProjectName);
-                }
+                jiraProjects = currentDomainProject.ToDictionary(x => x.Prefix, x => x.ProjectName);
             }
             return jiraProjects;
         }
