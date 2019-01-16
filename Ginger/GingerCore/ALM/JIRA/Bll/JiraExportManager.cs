@@ -321,7 +321,7 @@ namespace GingerCore.ALM.JIRA.Bll
             JiraIssueExport jiraIssue = new JiraIssueExport();
             jiraIssue.ProjectKey = ALMCore.AlmConfig.ALMProjectKey;
             jiraIssue.key = activtiesGroup.ExternalID;
-            fields.ToList().ForEach(x => jiraIssue.ExportFields.Add(x.Key, x.Value);
+            fields.ToList().ForEach(x => jiraIssue.ExportFields.Add(x.Key, x.Value));
             return jiraIssue;
         }
 
