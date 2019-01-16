@@ -40,6 +40,7 @@ using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.Environments;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Repository;
 using GingerCore.Repository.UpgradeLib;
@@ -582,8 +583,7 @@ namespace Ginger
 
             AddClass(list, typeof(UserProfile));
             AddClass(list, typeof(Solution));
-
-
+            AddClass(list, typeof(Email));            
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
 
