@@ -21,7 +21,7 @@ jobs:
 
 - job: Windows
   pool:
-    vmImage: 'Hosted VS2017'
+    vmImage: 'vs2017-win2017'
   variables:  
     buildConfiguration: 'Release'
     solutionDIrectory:  'Ginger-Automation/Ginger'
