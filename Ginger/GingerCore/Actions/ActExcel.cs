@@ -413,8 +413,9 @@ namespace GingerCore.Actions
                     return returnList; 
 
                 }
-                catch 
+                catch (Exception ex)
                 {
+                    Reporter.ToLogAndConsole(eLogLevel.FATAL, ex.Message);
                     return new List<string>();
                 }
             }

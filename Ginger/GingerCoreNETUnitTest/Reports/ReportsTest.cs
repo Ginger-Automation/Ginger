@@ -11,7 +11,7 @@ namespace Ginger.Reports.Tests
     [TestClass]
     public class ReportsTest
     {
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ActivityReportTest()
         {
 
@@ -31,7 +31,7 @@ namespace Ginger.Reports.Tests
             }
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void BusinessflowReportTest()
         {
 

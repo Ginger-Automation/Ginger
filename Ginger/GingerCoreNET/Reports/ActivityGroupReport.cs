@@ -16,14 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Run;
 using GingerCore;
 using GingerCore.Activities;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 namespace Ginger.Reports
 {
     //This is special class for report generation
@@ -132,7 +132,10 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public DateTime StartTimeStamp { get { return mActivitiesGroup.StartTimeStamp; } set { mActivitiesGroup.StartTimeStamp = value; } }
+        public DateTime StartTimeStamp { get { return RunListenerBase.GetDateTime(mActivitiesGroup.StartTimeStamp); }
+             // !!!!!!!!!!!!!!!!!!!!!!!!!!FIXME for load
+            // set { mActivitiesGroup.StartTimeStamp = value; }
+             }
 
         [JsonProperty]
         [FieldParams]
@@ -140,7 +143,10 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public DateTime EndTimeStamp { get { return mActivitiesGroup.EndTimeStamp; } set { mActivitiesGroup.EndTimeStamp = value; } }
+        public DateTime EndTimeStamp { get { return RunListenerBase.GetDateTime(mActivitiesGroup.EndTimeStamp); }
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!FIXME for load
+            //    set { mActivitiesGroup.EndTimeStamp = value; }
+        }
 
         [JsonProperty]
         [FieldParams]

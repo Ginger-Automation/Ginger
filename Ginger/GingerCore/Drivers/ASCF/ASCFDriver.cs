@@ -1418,7 +1418,7 @@ namespace GingerCore.Drivers.ASCF
         }
 
 
-        bool IWindowExplorer.TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
+        bool IWindowExplorer.TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
         {
             throw new NotImplementedException();
         }

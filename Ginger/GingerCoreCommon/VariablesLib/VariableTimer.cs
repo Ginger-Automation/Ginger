@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -57,6 +57,44 @@ namespace GingerCore.Variables
             return "Timer unit="+ TimerUnit.ToString();
         }
 
+        private string mValue;
+
+        public override string Value
+        {
+            get
+            {
+                if (RunWatch.IsRunning)
+                {
+                    switch (TimerUnit)
+                    {
+                        case eTimerUnit.MilliSeconds:
+                            mValue = Math.Round(RunWatch.Elapsed.TotalMilliseconds, 2).ToString();
+                            break;
+
+                        case eTimerUnit.Seconds:
+                            mValue =  Math.Round(RunWatch.Elapsed.TotalSeconds, 2).ToString();
+                            break;
+
+                        case eTimerUnit.Minutes:
+                            mValue = Math.Round(RunWatch.Elapsed.TotalMinutes, 2).ToString();
+                            break;
+
+                        case eTimerUnit.Hours:
+                            mValue =  Math.Round(RunWatch.Elapsed.TotalHours, 2).ToString();
+                            break;
+                    }
+                }
+                
+                return mValue;
+                
+            }
+            set
+            {
+                mValue = value;
+                OnPropertyChanged("Value");
+            }
+        }
+
         public void StartTimer(bool isContinue=false)
         { 
             if (timer == null)
@@ -104,8 +142,7 @@ namespace GingerCore.Variables
             {                
                 RunWatch.Reset();
                 timer.Stop();
-                timer.Elapsed -= dispatcherTimerElapsedTick;
-                UpdateTimervalue();
+                timer.Elapsed -= dispatcherTimerElapsedTick;                
             }
             else
             {
@@ -117,32 +154,11 @@ namespace GingerCore.Variables
         {
             if (RunWatch.IsRunning)
             {
-                UpdateTimervalue();
+                OnPropertyChanged(nameof(Value));
             }
         }
 
-        private void UpdateTimervalue()
-        {
-            switch (TimerUnit)
-            {
-                case eTimerUnit.MilliSeconds:
-                    Value = "" + Math.Round(RunWatch.Elapsed.TotalMilliseconds, 2);
-                    break;
-
-                case eTimerUnit.Seconds:
-                    Value = "" + Math.Round(RunWatch.Elapsed.TotalSeconds, 2);
-                    break;
-
-                case eTimerUnit.Minutes:
-                    Value = "" + Math.Round(RunWatch.Elapsed.TotalMinutes, 2);
-                    break;
-
-                case eTimerUnit.Hours:
-                    Value = "" + Math.Round(RunWatch.Elapsed.TotalHours, 2);
-                    break;
-            }
-        }
-
+       
         public override void GenerateAutoValue()
         {
             //NA
