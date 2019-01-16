@@ -18,38 +18,24 @@ jobs:
       testResultsFiles: '**/*.trx'
 
   - task: PublishBuildArtifacts@1
+# .NET
 
-
-
-- job: Windows
-
+jobs:
+- job: Linux
+  pool:
+    vmImage: 'Hosted VS2017'
   variables:  
-    solution: '**/*.sln'
-    buildPlatform: 'Any CPU'
     buildConfiguration: 'Release'
-    agentname:  'VS2017-Win2016'
-
-  
-  pool: 'VS2017-Win2016'
-
-
+    solutionDIrectory:  'Ginger-Automation/Ginger'
   steps:
-  - task: NuGetToolInstaller@0
-  - task: NuGetCommand@2
-    inputs:
-      restoreSolution: '$(solution)'
+  - script: dotnet build Ginger/GingerCoreNETUnitTest/GingerCoreNETUnitTest.csproj 
+  - script: dotnet build Ginger/GingerCoreCommonTest/GingerCoreCommonTest.csproj
+  - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
+  - task: PublishTestResults@2
     condition: succeededOrFailed()
-
-  - task: VSBuild@1
     inputs:
-      solution: '$(solution)'
-      platform: '$(buildPlatform)'
-      configuration: '$(buildConfiguration)'
-
-  - task: VSTest@2
-    inputs:
-      platform: '$(buildPlatform)'
-      configuration: '$(buildConfiguration)'
-      pathtoCustomTestAdapters:  'Ginger\packages\MSTest.TestAdapter.1.4.0\build\_common'
-      uiTests: true
+      testRunner: VSTest
       testResultsFiles: '**/*.trx'
+
+  - task: PublishBuildArtifacts@1
+
