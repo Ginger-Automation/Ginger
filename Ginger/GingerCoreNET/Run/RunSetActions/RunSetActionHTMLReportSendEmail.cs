@@ -41,7 +41,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.GeneralLib;
 using Ginger.Reports;
 using Amdocs.Ginger;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 using GingerCore.DataSource;
 using Ginger.Reports.GingerExecutionReport;
 
@@ -54,18 +54,7 @@ namespace Ginger.Run.RunSetActions
             HTMLReport,
             [EnumValueDescription("Free Text")]
             FreeText
-        }
-
-        public new static class Fields
-        {
-            public static string HTMLReportTemplate = "HTMLReportTemplate";
-            public static string Bodytext = "Bodytext";
-            public static string Comments = "Comments";
-            public static string MailFrom = "MailFrom";
-            public static string MailTo = "MailTo";
-            public static string MailCC = "MailCC";
-            public static string Subject = "Subject";
-        }
+        }       
 
         public override bool SupportRunOnConfig
         {
@@ -104,35 +93,66 @@ namespace Ginger.Run.RunSetActions
 
         private eHTMLReportTemplate mHTMLReportTemplate;
         [IsSerializedForLocalRepository]
-        public eHTMLReportTemplate HTMLReportTemplate { get { return mHTMLReportTemplate; } set { if (mHTMLReportTemplate != value) { mHTMLReportTemplate = value; OnPropertyChanged(Fields.HTMLReportTemplate); } } }
+        public eHTMLReportTemplate HTMLReportTemplate { get { return mHTMLReportTemplate; } set { if (mHTMLReportTemplate != value) { mHTMLReportTemplate = value; OnPropertyChanged(nameof(HTMLReportTemplate)); } } }
 
         [IsSerializedForLocalRepository]
         public int selectedHTMLReportTemplateID { get; set; }
 
         private string mComments;
         [IsSerializedForLocalRepository]
-        public string Comments { get { return mComments; } set { if (mComments != value) { mComments = value; OnPropertyChanged(Fields.Comments); } } }
+        public string Comments { get { return mComments; } set { if (mComments != value) { mComments = value; OnPropertyChanged(nameof(Comments)); } } }
 
         private string mBodytext;
         [IsSerializedForLocalRepository]
-        public string Bodytext { get { return mBodytext; } set { if (mBodytext != value) { mBodytext = value; OnPropertyChanged(Fields.Bodytext); } } }
+        public string Bodytext { get { return mBodytext; } set { if (mBodytext != value) { mBodytext = value; OnPropertyChanged(nameof(Bodytext)); } } }
 
         //
         private string mMailFrom;
         [IsSerializedForLocalRepository]
-        public string MailFrom { get { return mMailFrom; } set { if (mMailFrom != value) { mMailFrom = value; OnPropertyChanged(Fields.MailFrom); } } }
+        public string MailFrom { get { return mMailFrom; } set { if (mMailFrom != value) { mMailFrom = value; OnPropertyChanged(nameof(MailFrom)); } } }
 
         private string mMailCC;
         [IsSerializedForLocalRepository]
-        public string MailCC { get { return mMailCC; } set { if (mMailCC != value) { mMailCC = value; OnPropertyChanged(Fields.MailCC); } } }
+        public string MailCC { get { return mMailCC; } set { if (mMailCC != value) { mMailCC = value; OnPropertyChanged(nameof(MailCC)); } } }
 
         private string mSubject;
         [IsSerializedForLocalRepository]
-        public string Subject { get { return mSubject; } set { if (mSubject != value) { mSubject = value; OnPropertyChanged(Fields.Subject); } } }
+        public string Subject { get { return mSubject; } set { if (mSubject != value) { mSubject = value; OnPropertyChanged(nameof(Subject)); } } }
 
         private string mMailTo;
         [IsSerializedForLocalRepository]
-        public string MailTo { get { return mMailTo; } set { if (mMailTo != value) { mMailTo = value; OnPropertyChanged(Fields.MailTo); } } }
+        public string MailTo { get { return mMailTo; } set { if (mMailTo != value) { mMailTo = value; OnPropertyChanged(nameof(MailTo)); } } }
+       
+        public string MailHost
+        {
+            get
+            {
+                return Email.SMTPMailHost;
+            }
+            set
+            {
+                if (Email.SMTPMailHost != value)
+                {
+                    Email.SMTPMailHost = value;                  
+                }
+            }
+        }
+       
+        public string MailUser
+        {
+            get
+            {
+                return Email.SMTPUser;
+            }
+            set
+            {
+                if (Email.SMTPUser != value)
+                {
+                    Email.SMTPUser = value;                   
+                }
+            }
+        }
+
 
         private string emailReadyHtml = string.Empty;
 
@@ -362,7 +382,10 @@ namespace Ginger.Run.RunSetActions
             Email.MailCC = mVE.ValueCalculated;
             mVE.Value = Subject;
             Email.Subject = mVE.ValueCalculated;
-
+            mVE.Value = MailHost;
+            Email.SMTPMailHost = mVE.ValueCalculated;
+            mVE.Value = MailUser;
+            Email.SMTPUser = mVE.ValueCalculated;
             Email.Body = emailReadyHtml;
             emailReadyHtml = string.Empty;
             bool isSuccess;

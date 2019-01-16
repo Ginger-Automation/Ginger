@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using GingerCore.ALM.QC;
 using Amdocs.Ginger.Common.InterfacesLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM.Repository
 {
@@ -33,17 +34,17 @@ namespace Ginger.ALM.Repository
 
         public string ALMPassword()
         {
-            return App.UserProfile.ALMPassword;
+            return  WorkSpace.UserProfile.ALMPassword;
         }
 
         public void SetALMPassword(string newPassword)
         {
-            App.UserProfile.ALMPassword = newPassword;
+             WorkSpace.UserProfile.ALMPassword = newPassword;
         }
 
         public void SetALMProject(string project)
         {
-            App.UserProfile.Solution.ALMProject = project;
+             WorkSpace.UserProfile.Solution.ALMProject = project;
         }
 
         public abstract bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle);

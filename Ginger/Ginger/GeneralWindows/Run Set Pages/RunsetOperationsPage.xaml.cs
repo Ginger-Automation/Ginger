@@ -198,7 +198,7 @@ namespace Ginger.Run
         }
         private void AddHTMLReport(object sender, RoutedEventArgs e)
         {
-            if (!App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationIsEnabled)
+            if (! WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationIsEnabled)
             {
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
@@ -213,7 +213,7 @@ namespace Ginger.Run
 
         private void AddAutomatedALMDefectsOperation(object sender, RoutedEventArgs e)
         {
-            if (!App.UserProfile.Solution.UseRest)
+            if (! WorkSpace.UserProfile.Solution.UseRest)
             {
                 Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI);
                 return;

@@ -282,9 +282,9 @@ namespace GingerCore.Activities
             RunStatus = eActivitiesGroupRunStatus.Pending;
         }
 
-        uint? mElapsed;
+        double? mElapsed;
         [IsSerializedForLocalRepository]    // !!!!!!!!!!!!!!!!!!!!! Why serialized?
-        public uint? Elapsed
+        public double? Elapsed
         {
             get { return mElapsed; }
             set

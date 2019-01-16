@@ -125,8 +125,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
             HTMLReportConfiguration copiedItem = (HTMLReportConfiguration)CopyTreeItemWithNewName((RepositoryItemBase)item);
             
             //TODO: why below is needed??
-            copiedItem.ID = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
-            App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
+            copiedItem.ID =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
+             WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
             copiedItem.IsDefault = false;
             if (copiedItem != null)
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(copiedItem);

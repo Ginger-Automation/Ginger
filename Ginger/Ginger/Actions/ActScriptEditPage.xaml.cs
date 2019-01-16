@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
 using GingerCore.Actions;
 
 namespace Ginger.Actions
@@ -33,7 +34,7 @@ namespace Ginger.Actions
         public ActionEditPage actp;
         private GingerCore.Actions.ActScript f;
 
-        string SHFilesPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Scripts\");
+        string SHFilesPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\Scripts\");
 
 
         public ActScriptEditPage(GingerCore.Actions.ActScript Act)

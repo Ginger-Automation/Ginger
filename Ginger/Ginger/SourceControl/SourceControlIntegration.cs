@@ -106,7 +106,7 @@ namespace Ginger.SourceControl
                     {
                         ResolveConflictPage resConfPage = new ResolveConflictPage(cPath);
                         if(WorkSpace.RunningInExecutionMode == true)
-                            SourceControlIntegration.ResolveConflicts(App.UserProfile.Solution.SourceControl, cPath, eResolveConflictsSide.Server);
+                            SourceControlIntegration.ResolveConflicts( WorkSpace.UserProfile.Solution.SourceControl, cPath, eResolveConflictsSide.Server);
                         else
                             resConfPage.ShowAsWindow();
                         result = resConfPage.IsResolved;
@@ -141,7 +141,7 @@ namespace Ginger.SourceControl
         public static ObservableList<SourceControlFileInfo> GetPathFilesStatus(SourceControlBase SourceControl, string Path)
         {
             string error = string.Empty;
-            ObservableList<SourceControlFileInfo> OL =  SourceControl.GetPathFilesStatus(Path, ref error, App.UserProfile.Solution.ShowIndicationkForLockedItems);
+            ObservableList<SourceControlFileInfo> OL =  SourceControl.GetPathFilesStatus(Path, ref error,  WorkSpace.UserProfile.Solution.ShowIndicationkForLockedItems);
             if (error != string.Empty)
             {
                 Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
@@ -157,7 +157,7 @@ namespace Ginger.SourceControl
         public static string GetRepositoryURL(SourceControlBase SourceControl)
         {
             string error = string.Empty;
-            return App.UserProfile.Solution.SourceControl.GetRepositoryURL(ref error);
+            return  WorkSpace.UserProfile.Solution.SourceControl.GetRepositoryURL(ref error);
         }
 
 
@@ -313,12 +313,12 @@ namespace Ginger.SourceControl
         internal static BitmapImage GetItemSourceControlImage(string FileName,ref SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus)
         {
 
-            if (App.UserProfile.Solution.SourceControl == null || FileName == null)
+            if ( WorkSpace.UserProfile.Solution.SourceControl == null || FileName == null)
             {
                 return null;
             }
 
-            SourceControlFileInfo.eRepositoryItemStatus RIS = SourceControlIntegration.GetFileStatus(App.UserProfile.Solution.SourceControl, FileName, App.UserProfile.Solution.ShowIndicationkForLockedItems);
+            SourceControlFileInfo.eRepositoryItemStatus RIS = SourceControlIntegration.GetFileStatus( WorkSpace.UserProfile.Solution.SourceControl, FileName,  WorkSpace.UserProfile.Solution.ShowIndicationkForLockedItems);
             ItemSourceControlStatus = RIS;
             BitmapImage img = null;
             switch (RIS)

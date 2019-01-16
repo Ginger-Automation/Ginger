@@ -23,12 +23,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="NewFolder\**" />
-    <EmbeddedResource Remove="NewFolder\**" />
-    <None Remove="NewFolder\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Ginger.Plugin.Core" Version="3.0.5" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="2.10.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.2">
