@@ -99,7 +99,7 @@ namespace Ginger.ALM.JIRA
         {
             if (grdJiraTestSets.CurrentItem == null)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
 
@@ -125,7 +125,7 @@ namespace Ginger.ALM.JIRA
             ObservableList<JiraTestSet> jiraTestSetList = new ObservableList<JiraTestSet>();
             if (grdJiraTestSets.CurrentItem == null)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
             jiraTestSetList.Add(grdJiraTestSets.CurrentItem as JiraTestSet);

@@ -574,40 +574,6 @@ namespace Ginger.ALM
             }
             return updatedFields;
         }
-        internal ObservableList<ExternalItemFieldBase> GetUpdatedFields(ObservableList<ExternalItemFieldBase> mItemsFields, bool online, BackgroundWorker bw = null)
-        {
-            ObservableList<ExternalItemFieldBase> updatedFields = new ObservableList<ExternalItemFieldBase>();
-            if (AlmCore.AlmItemFields != null)
-            {
-                foreach (ExternalItemFieldBase defaultField in AlmCore.AlmItemFields)
-                {
-                    ExternalItemFieldBase currentField = mItemsFields.Where(x => x.ID == defaultField.ID && x.ItemType == defaultField.ItemType).FirstOrDefault();
-                    if (currentField != null)
-                    {
-                        currentField.ToUpdate = false;
-                        if (string.IsNullOrEmpty(currentField.SelectedValue) == false)
-                        {
-                            if ((defaultField.PossibleValues.Count == 0 && currentField.SelectedValue != defaultField.SelectedValue) || (defaultField.PossibleValues.Count > 0 && defaultField.PossibleValues.Contains(currentField.SelectedValue) && currentField.SelectedValue != defaultField.PossibleValues[0]))
-                            {
-                                currentField.ToUpdate = true;
-                                updatedFields.Add(currentField);
-                            }
-                            else
-                            {
-                                currentField.SelectedValue = defaultField.SelectedValue;
-                                currentField.ToUpdate = false;
-                            }
-                        }
-                        else
-                        {
-                            currentField.SelectedValue = defaultField.SelectedValue;
-                            currentField.ToUpdate = false;
-                        }
-                    }
-                }
-            }
-            return updatedFields;
-        }
         public bool ShowImportReviewPage(string importDestinationPath, object selectedTestPlan = null)
         {
             return AlmRepo.ShowImportReviewPage(importDestinationPath, selectedTestPlan);
