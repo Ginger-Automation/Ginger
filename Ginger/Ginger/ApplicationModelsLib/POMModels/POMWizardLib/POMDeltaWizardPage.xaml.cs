@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,8 +35,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         PomRelearnWizard mWizard;
         private ePlatformType mAppPlatform;
         ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();
-        ApplicationPOMModel mNewLearnedPOM;
-        ApplicationPOMModel mExistingPOM;
+        ObservableList<ElementInfo> mOriginalList = new ObservableList<ElementInfo>();
+        ApplicationPOMModel mPOM;
         PomElementsPage mPomElementsPage = null;
         List<eElementType> mSelectedElementTypesList = new List<eElementType>();
 
@@ -50,17 +51,27 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             {
                 case EventType.Init:
                     mWizard = (PomRelearnWizard)WizardEventArgs.Wizard;
-                    mExistingPOM = mWizard.mPOM;
+                    mPOM = mWizard.mPOM;
                     mElementsList.CollectionChanged += ElementsListCollectionChanged;
                     InitilizePomElementsMappingPage();
-                    mAppPlatform = App.UserProfile.Solution.GetTargetApplicationPlatform(mExistingPOM.TargetApplicationKey);
+                    mAppPlatform = App.UserProfile.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
                     SetAutoMapElementTypes();
                     mPomElementsPage.SetAgent(mWizard.Agent);
+                    mPOM.SetElementsGroup();
+                    mOriginalList = mPOM.GetDuplicatedUnienedElementsList();
+                    CollectOriginalElementsData();
+
                     xReLearnButton.Visibility = Visibility.Visible;
                     Learn();
                     break;
             }
         }
+
+        private async void CollectOriginalElementsData()
+        {
+            await Task.Run(() => mWizard.IWindowExplorerDriver.CollectOriginalElementsDataForDeltaCheck(mOriginalList));
+        }
+
 
         private async void Learn()
         {
@@ -77,8 +88,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
                     mWizard.IWindowExplorerDriver.UnHighLightElements();
 
+                    await Task.Run(() => WaitUntilDriverWillBeFree());
+
+                    //await Task.Run(() => CollectOriginalElementsData());
+
+                    xPreperingDataLable.Content = "Learning";
+
                     await Task.Run(() => mWizard.IWindowExplorerDriver.GetVisibleControls(null, mElementsList, true));
 
+                    xPreperingDataLable.Content = "Learning Finished";
                     mWizard.IsLearningWasDone = true;
                 }
                 catch (Exception ex)
@@ -93,6 +111,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     mWizard.ProcessEnded();
                 }
 
+            }
+        }
+
+        private void WaitUntilDriverWillBeFree()
+        {
+            while (mWizard.Agent.Driver.IsDriverBusy)
+            {
+                Thread.Sleep(2000);
             }
         }
 
@@ -117,8 +143,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             if (mPomElementsPage == null)
             {
-                mNewLearnedPOM = new ApplicationPOMModel();
-                mPomElementsPage = new PomElementsPage(mExistingPOM,eElementsContext.AllDeltaElements);
+                mPomElementsPage = new PomElementsPage(mPOM,eElementsContext.AllDeltaElements);
                 xPomElementsMappingPageFrame.Content = mPomElementsPage;
             }
         }
@@ -140,30 +165,47 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
         }
 
+        ObservableList<ElementInfo> mDeltaNewElementsList = new ObservableList<ElementInfo>();
+
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             try
             {
-                HTMLElementInfo EI = (HTMLElementInfo)((ObservableList<ElementInfo>)sender).Last();
+                
 
+                ElementInfo latestElementInfo = ((ObservableList<ElementInfo>)sender).Last();
+                ElementInfo originalElementInfo = mWizard.IWindowExplorerDriver.GetMatchingElement(latestElementInfo, mOriginalList);
 
-
-
-                //mWizard.IWindowExplorerDriver.IsElementExsist(EI, mElementsList));
-
-                ElementInfo ExistingEIDefinedByItsID = mExistingPOM.MappedUIElements.Where(x => ((HTMLElementInfo)x).ID == EI.ID).FirstOrDefault();
-
-                ElementInfo ExistingEIDefinedByItsName = mExistingPOM.MappedUIElements.Where(x => ((HTMLElementInfo)x).Name == EI.Name).FirstOrDefault();
-                ElementInfo ExistingEIDefinedByItsType = mExistingPOM.MappedUIElements.Where(x => x.ElementType == EI.ElementType).FirstOrDefault();
-                if (ExistingEIDefinedByItsID != null)
+                if (originalElementInfo == null)
                 {
-
+                    mDeltaNewElementsList.Add(latestElementInfo);
+                }
+                else
+                {
+                    SetElementDelta(originalElementInfo, latestElementInfo);
                 }
 
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "POM: Learned Element Info from type was failed to be added to Page Elements", ex);
+            }
+
+        }
+
+        private void SetElementDelta(ElementInfo originalElelemnt, ElementInfo latestElement)
+        {
+            foreach (ElementLocator originalEL in originalElelemnt.Locators)
+            {
+                ElementLocator latestEL = latestElement.Locators.Where(x => x.LocateBy == originalEL.LocateBy && x.LocateValue == originalEL.LocateValue).FirstOrDefault();
+                if (latestEL == null)
+                {
+                    originalEL.DeltaStatus = ElementInfo.eDeltaStatus.New;
+                }
+                else
+                {
+                    originalEL.DeltaStatus = ElementInfo.eDeltaStatus.Equal;
+                }
             }
 
         }

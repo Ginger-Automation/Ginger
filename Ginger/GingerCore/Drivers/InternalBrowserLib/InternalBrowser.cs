@@ -1327,5 +1327,15 @@ namespace GingerCore.Drivers.InternalBrowserLib
         {
             throw new NotImplementedException();
         }
+
+        public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

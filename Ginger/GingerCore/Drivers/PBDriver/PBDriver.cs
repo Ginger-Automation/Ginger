@@ -1083,5 +1083,15 @@ namespace GingerCore.Drivers.PBDriver
                 Thread.Sleep(1000);
             }
         }
+
+        public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

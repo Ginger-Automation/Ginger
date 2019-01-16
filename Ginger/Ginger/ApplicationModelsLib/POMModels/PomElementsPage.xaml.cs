@@ -115,9 +115,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             else if (mContext == PomAllElementsPage.eElementsContext.AllDeltaElements)
             {
-                SetElementsGroup();
-                SetElementsFields();
-                mElements = GingerCore.General.ConvertListToObservableList<ElementInfo>(mPOM.MappedUIElements.Union(mPOM.UnMappedUIElements).ToList());
+                //SetElementsGroup();
+                //SetElementsFields();
+                mElements = mPOM.mCopiedUnienedList;
+                    /*GingerCore.General.ConvertListToObservableList<ElementInfo>(mPOM.MappedUIElements.Union(mPOM.UnMappedUIElements).ToList());*/
             }
 
 
@@ -140,73 +141,73 @@ namespace Ginger.ApplicationModelsLib.POMModels
             
         }
 
-        private void SetElementsFields()
-        {
-            foreach (ElementInfo EI in mPOM.MappedUIElements)
-            {
-                SetElementsFields(EI);
-            }
+        //private void SetElementsFields()
+        //{
+        //    foreach (ElementInfo EI in mPOM.MappedUIElements)
+        //    {
+        //        SetElementsFields(EI);
+        //    }
 
-            foreach (ElementInfo EI in mPOM.UnMappedUIElements)
-            {
-                SetElementsFields(EI);
-            }
-        }
+        //    foreach (ElementInfo EI in mPOM.UnMappedUIElements)
+        //    {
+        //        SetElementsFields(EI);
+        //    }
+        //}
 
-        private void SetElementsFields(ElementInfo EI)
-        {
+        //private void SetElementsFields(ElementInfo EI)
+        //{
 
-            //if (((HTMLElementInfo)EI).TagName == null)
-            //{
-            //    int dotIndex = EI.ElementType.IndexOf(".");
-            //    if (dotIndex != -1)
-            //    {
-            //        ((HTMLElementInfo)EI).TagName = EI.ElementType.Substring(dotIndex).ToLower();
-            //    }
-            //    else if (EI.ElementType == "link")
-            //    {
-            //       //DoNothing
-            //    }
-            //    else
-            //    {
-            //        ((HTMLElementInfo)EI).TagName = EI.ElementType;
-            //    }
-            //}
-
-
+        //    //if (((HTMLElementInfo)EI).TagName == null)
+        //    //{
+        //    //    int dotIndex = EI.ElementType.IndexOf(".");
+        //    //    if (dotIndex != -1)
+        //    //    {
+        //    //        ((HTMLElementInfo)EI).TagName = EI.ElementType.Substring(dotIndex).ToLower();
+        //    //    }
+        //    //    else if (EI.ElementType == "link")
+        //    //    {
+        //    //       //DoNothing
+        //    //    }
+        //    //    else
+        //    //    {
+        //    //        ((HTMLElementInfo)EI).TagName = EI.ElementType;
+        //    //    }
+        //    //}
 
 
-            if (((HTMLElementInfo)EI).ID == null)
-            {
-                ElementLocator EL = EI.Locators.Where(x => x.LocateBy == eLocateBy.ByID).FirstOrDefault();
-                if (EL != null)
-                {
-                    ((HTMLElementInfo)EI).ID = EL.LocateValue;
-                }
-            }
 
-            //if (EI.Name == null)
-            //{
-            //    ElementLocator EL = EI.Locators.Where(x => x.LocateBy == eLocateBy.ByName).FirstOrDefault();
-            //    if (EL != null)
-            //    {
-            //        EI.Name = EL.LocateValue;
-            //    }
-            //}
-        }
 
-        private void SetElementsGroup()
-        {
-            foreach (ElementInfo EI in mPOM.MappedUIElements)
-            {
-                EI.ElementGroup = ElementInfo.eElementGroup.Mapped;
-            }
+        //    if (((HTMLElementInfo)EI).ID == null)
+        //    {
+        //        ElementLocator EL = EI.Locators.Where(x => x.LocateBy == eLocateBy.ByID).FirstOrDefault();
+        //        if (EL != null)
+        //        {
+        //            ((HTMLElementInfo)EI).ID = EL.LocateValue;
+        //        }
+        //    }
 
-            foreach (ElementInfo EI in mPOM.UnMappedUIElements)
-            {
-                EI.ElementGroup = ElementInfo.eElementGroup.Unmapped;
-            }
-        }
+        //    //if (EI.Name == null)
+        //    //{
+        //    //    ElementLocator EL = EI.Locators.Where(x => x.LocateBy == eLocateBy.ByName).FirstOrDefault();
+        //    //    if (EL != null)
+        //    //    {
+        //    //        EI.Name = EL.LocateValue;
+        //    //    }
+        //    //}
+        //}
+
+        //private void SetElementsGroup()
+        //{
+        //    foreach (ElementInfo EI in mPOM.MappedUIElements)
+        //    {
+        //        EI.ElementGroup = ElementInfo.eElementGroup.Mapped;
+        //    }
+
+        //    foreach (ElementInfo EI in mPOM.UnMappedUIElements)
+        //    {
+        //        EI.ElementGroup = ElementInfo.eElementGroup.Unmapped;
+        //    }
+        //}
 
         private void PasteElementEvent(PasteItemEventArgs EventArgs)
         {

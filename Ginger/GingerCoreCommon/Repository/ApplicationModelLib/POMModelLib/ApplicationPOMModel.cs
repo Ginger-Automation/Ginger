@@ -58,6 +58,36 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> MappedUIElements = new ObservableList<ElementInfo>();
 
+        public ObservableList<ElementInfo> mCopiedUnienedList = new ObservableList<ElementInfo>();
+
+        public ObservableList<ElementInfo> GetDuplicatedUnienedElementsList()
+        {
+            foreach (ElementInfo EI in MappedUIElements)
+            {
+                mCopiedUnienedList.Add((ElementInfo)EI.CreateCopy(false));
+            }
+            foreach (ElementInfo EI in UnMappedUIElements)
+            {
+                mCopiedUnienedList.Add((ElementInfo)EI.CreateCopy(false));
+            }
+
+            return mCopiedUnienedList;
+        }
+
+        public void SetElementsGroup()
+        {
+            foreach (ElementInfo EI in MappedUIElements)
+            {
+                EI.ElementGroup = ElementInfo.eElementGroup.Mapped;
+            }
+
+            foreach (ElementInfo EI in UnMappedUIElements)
+            {
+                EI.ElementGroup = ElementInfo.eElementGroup.Unmapped;
+            }
+        }
+
+
         string mScreenShotImage;
         [IsSerializedForLocalRepository]
         public string ScreenShotImage { get { return mScreenShotImage; } set { if (mScreenShotImage != value) { mScreenShotImage = value; OnPropertyChanged(nameof(ScreenShotImage)); } } }

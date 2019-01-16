@@ -1604,6 +1604,16 @@ namespace GingerCore.Drivers.AndroidADB
             throw new NotImplementedException();
         }
 
+        public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        {
+            throw new NotImplementedException();
+        }
+
         //TODO: Phone state
         // Wait for incoming call
         // http://stackoverflow.com/questions/15563921/how-to-detect-incoming-calls-in-an-android-device
