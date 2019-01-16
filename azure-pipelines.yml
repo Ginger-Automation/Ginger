@@ -18,10 +18,8 @@ jobs:
       testResultsFiles: '**/*.trx'
 
   - task: PublishBuildArtifacts@1
-# .NET
 
-jobs:
-- job: Linux
+- job: Windows
   pool:
     vmImage: 'Hosted VS2017'
   variables:  
