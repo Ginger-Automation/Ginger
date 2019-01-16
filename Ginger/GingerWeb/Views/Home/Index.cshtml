@@ -1,0 +1,40 @@
+﻿@model IEnumerable<GingerCore.BusinessFlow>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to Ginger Web</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    <label>Solution folder</label>
+    
+    <input type="text"/>
+
+    <table class="clients-table">
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>file Name</th>
+            <th>Run</th>
+        </tr>
+
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var businessFlow in Model)
+            {                
+        <tr>
+            <td>@businessFlow.Name</td>
+            <td>@businessFlow.Description</td>
+            <td>@businessFlow.FileName</td>
+            <td><input type="button"/>Run</td>
+            @*<td>
+            <a href="~/Client/Update/@client.ID">Update</a>
+            <a href="~/Client/Delete/@client.ID">Delete</a>
+        </td>*@
+        </tr>
+            }
+        }
+    </table>
+</div>
