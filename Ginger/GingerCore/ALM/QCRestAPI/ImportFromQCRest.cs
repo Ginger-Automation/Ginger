@@ -615,12 +615,19 @@ namespace GingerCore.ALM.QCRestAPI
             string runfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_RUN);
             List<QCField> runfieldsCollection = QCRestAPIConnect.GetFields(runfieldInRestSyntax);
 
-            fields.Append(AddFieldsValues(testSetfieldsCollection, testSetfieldInRestSyntax));
-            fields.Append(AddFieldsValues(testCasefieldsCollection, testCasefieldInRestSyntax));
-            fields.Append(AddFieldsValues(designStepfieldsCollection, designStepfieldInRestSyntax));
-            fields.Append(AddFieldsValues(testInstancefieldsCollection, testInstancefieldInRestSyntax));
-            fields.Append(AddFieldsValues(designStepParamsfieldsCollection, designStepParamsfieldInRestSyntax));
-            fields.Append(AddFieldsValues(runfieldsCollection, runfieldInRestSyntax));
+            if (testSetfieldsCollection != null || testCasefieldsCollection != null || designStepfieldsCollection != null || testInstancefieldsCollection != null || designStepParamsfieldsCollection != null || runfieldsCollection != null)
+            {
+                fields.Append(AddFieldsValues(testSetfieldsCollection, testSetfieldInRestSyntax));
+                fields.Append(AddFieldsValues(testCasefieldsCollection, testCasefieldInRestSyntax));
+                fields.Append(AddFieldsValues(designStepfieldsCollection, designStepfieldInRestSyntax));
+                fields.Append(AddFieldsValues(testInstancefieldsCollection, testInstancefieldInRestSyntax));
+                fields.Append(AddFieldsValues(designStepParamsfieldsCollection, designStepParamsfieldInRestSyntax));
+                fields.Append(AddFieldsValues(runfieldsCollection, runfieldInRestSyntax));
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.QcCheckRestApi, "ALM Connection Message.");
+            }
 
             return fields;
         }

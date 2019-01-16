@@ -41,6 +41,7 @@ namespace Amdocs.Ginger.Common
         TestCompleted, CantFindObject,
         QcConnectSuccess,
         QcConnectFailure,
+        QcCheckRestApi,
         ALMConnectFailureWithCurrSettings,
         ALMOperationFailed,
         QcLoginSuccess,
@@ -396,6 +397,7 @@ namespace Amdocs.Ginger.Common
             #region ALM
             Reporter.UserMsgsPool.Add(eUserMsgKey.QcConnectSuccess, new UserMsg(eUserMsgType.INFO, "QC/ALM Connection", "QC/ALM connection successful!", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.QcConnectFailure, new UserMsg(eUserMsgType.WARN, "QC/ALM Connection Failed", "QC/ALM connection failed." + System.Environment.NewLine + "Please make sure that the credentials you use are correct and that QC/ALM Client is registered on your machine." + System.Environment.NewLine + System.Environment.NewLine + "For registering QC/ALM Client- please follow below steps:" + System.Environment.NewLine + "1. Launch Internet Explorer as Administrator" + System.Environment.NewLine + "2. Go to http://<QCURL>/qcbin" + System.Environment.NewLine + "3. Click on 'Add-Ins Page' link" + System.Environment.NewLine + "4. In next page, click on 'HP ALM Client Registration'" + System.Environment.NewLine + "5. In next page click on 'Register HP ALM Client'" + System.Environment.NewLine + "6. Restart Ginger and try to reconnect", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.QcCheckRestApi, new UserMsg(eUserMsgType.WARN, "QC/ALM Check RestApi", "CheckBox Use RestAPI Should be 'Unchecked for ALM 11' and 'Checked for ALM 12 & above'", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ALMConnectFailureWithCurrSettings, new UserMsg(eUserMsgType.WARN, "ALM Connection Failed", "ALM Connection Failed, Please make sure credentials are correct.", eUserMsgOption.OK, eUserMsgSelection.None));
 
