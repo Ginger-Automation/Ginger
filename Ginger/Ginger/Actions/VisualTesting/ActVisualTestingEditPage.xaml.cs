@@ -365,7 +365,7 @@ namespace Ginger.Actions.VisualTesting
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.VisualTestingFailedToDeleteOldBaselineImage);
+                Reporter.ToUser(eUserMsgKey.VisualTestingFailedToDeleteOldBaselineImage);
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
 

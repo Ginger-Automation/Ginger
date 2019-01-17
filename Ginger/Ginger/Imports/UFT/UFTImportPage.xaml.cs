@@ -97,7 +97,7 @@ namespace Ginger.Imports.UFT
             InitCommonFunctionMappingUCGrid();
 
             TargetApplication sTarget = new TargetApplication();
-            sTarget.AppName = App.UserProfile.Solution.MainApplication.ToString();
+            sTarget.AppName =  WorkSpace.UserProfile.Solution.MainApplication.ToString();
             sTarget.Selected = true;
             TargetApplicationsList.Add(sTarget);
             mBusinessFlow.TargetApplications = TargetApplicationsList;
@@ -183,7 +183,7 @@ namespace Ginger.Imports.UFT
             at.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + "1";
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
-            mBusinessFlow.CurrentActivity.TargetApplication = App.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
+            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
             App.BusinessFlow = mBusinessFlow;
            
             AddActionPage addAction = new AddActionPage();
@@ -287,7 +287,7 @@ namespace Ginger.Imports.UFT
             }
             else
             {                
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Please Enter a Valid Calendar path !!");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please Enter a Valid Calendar path !!");
             }
         }
 
@@ -327,7 +327,7 @@ namespace Ginger.Imports.UFT
         {
             if (mCCL.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
+                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
                 return;
             }
             else
@@ -420,12 +420,12 @@ namespace Ginger.Imports.UFT
                 }
                 else
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "No GUI functions fetched, Click CONVERT, to convert other actions in BUS function");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No GUI functions fetched, Click CONVERT, to convert other actions in BUS function");
                 }
             }
             else
             {                
-                Reporter.ToUser(eUserMsgKeys.EnterValidBusinessflow);
+                Reporter.ToUser(eUserMsgKey.EnterValidBusinessflow);
             }
         }
 
@@ -436,7 +436,7 @@ namespace Ginger.Imports.UFT
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);            
 
             //TODO: open the new BF in Automate tab + make sure it is added to the tree
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ScriptImported_RefreshSolution);
+            Reporter.ToStatus(eStatusMsgKey.ScriptImported_RefreshSolution);
             _pageGenericWin.Close();
         }
 
@@ -1193,7 +1193,7 @@ namespace Ginger.Imports.UFT
         {
             if (mCommonFunctionConvertor.CommonFunctionMappingList.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
+                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
                 return;
             }
             else

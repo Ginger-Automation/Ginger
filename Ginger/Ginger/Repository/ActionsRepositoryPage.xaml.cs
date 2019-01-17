@@ -135,7 +135,7 @@ namespace Ginger.Repository
                 }
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);                      
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);                      
         }
         
         private void EditAction(object sender, RoutedEventArgs e)
@@ -148,7 +148,7 @@ namespace Ginger.Repository
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 
@@ -160,7 +160,7 @@ namespace Ginger.Repository
                 usagePage.ShowAsWindow();
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);             
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);             
         }
         
         private void grdActions_grdMain_MouseDoubleClick(object sender, EventArgs e)

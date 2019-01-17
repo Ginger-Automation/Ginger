@@ -20,6 +20,7 @@ using Ginger.UserControlsLib.TextEditor.Common;
 using GingerCore.Variables;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -39,7 +40,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             List<string> lst = new List<string>();
 
             // Add the variables from solution, current BF and current activity
-            foreach (VariableBase v in App.UserProfile.Solution.Variables)
+            foreach (VariableBase v in  WorkSpace.UserProfile.Solution.Variables)
             {
                 lst.Add(v.Name);
             }

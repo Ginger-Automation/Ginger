@@ -25,7 +25,7 @@ using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     // This class is for UI link element
@@ -266,7 +266,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Generic Element"; } }
         public override string ActionUserDescription { get { return "Click on a generic control object"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate a click on an object from type generic control.");
             TBH.AddLineBreak();

@@ -127,7 +127,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 

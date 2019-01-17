@@ -341,7 +341,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             ElementInfo ei = (ElementInfo)xMainElementsGrid.CurrentItem;
             if (ei.IsAutoLearned)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "You can not edit this field of an Element which was auto learned, please duplicate it and create customized Element.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You can not edit this field of an Element which was auto learned, please duplicate it and create customized Element.");
                 e.EditingElement.IsEnabled = false;
             }
         }
@@ -356,7 +356,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     if (!msgShowen)
                     {
-                        Reporter.ToUser(eUserMsgKeys.POMCannotDeleteAutoLearnedElement);
+                        Reporter.ToUser(eUserMsgKey.POMCannotDeleteAutoLearnedElement);
                         msgShowen = true;
                     }
                 }
@@ -429,7 +429,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     if (!msgShowen)
                     {
-                        Reporter.ToUser(eUserMsgKeys.POMCannotDeleteAutoLearnedElement);
+                        Reporter.ToUser(eUserMsgKey.POMCannotDeleteAutoLearnedElement);
                         msgShowen = true;
                     }
                 }
@@ -458,7 +458,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 if (!disabeledLocatorsMsgShown)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "You can not edit Locator which was auto learned, please duplicate it and create customized Locator.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You can not edit Locator which was auto learned, please duplicate it and create customized Locator.");
                     disabeledLocatorsMsgShown = true;
                 }
                 e.EditingElement.IsEnabled = false;
@@ -567,9 +567,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
+            ElementInfo CurrentEI = (ElementInfo)MainElementsGrid.CurrentItem;
+
             if (mSelectedLocator != null)
             {
-                mWinExplorer.TestElementLocators(new ElementInfo() { Locators = new ObservableList<ElementLocator>() { mSelectedLocator } });
+                mWinExplorer.TestElementLocators(new ElementInfo() { Path = CurrentEI.Path, Locators = new ObservableList<ElementLocator>() { mSelectedLocator } });
             }
         }
 
@@ -590,13 +592,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if (mWinExplorer == null)
             {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
                 return false;
             }
 
             if (IsDriverBusy())
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
                 return false;
             }
 

@@ -511,7 +511,7 @@ namespace Ginger.Actions
         {
             if (ErrorLabel.Content.ToString() != "")
             {
-                if (Reporter.ToUser(eUserMsgKeys.InvalidValueExpression, "Data Source") == Amdocs.Ginger.Common.MessageBoxResult.No)
+                if (Reporter.ToUser(eUserMsgKey.InvalidValueExpression, "Data Source") == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 {
                     return;
                 }
@@ -1257,7 +1257,7 @@ namespace Ginger.Actions
                     if (ds.FilePath.StartsWith("~"))
                     {
                         ds.FileFullPath = ds.FilePath.Replace(@"~\","").Replace("~", "");
-                        ds.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, ds.FileFullPath);
+                        ds.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, ds.FileFullPath);
                     }
                     ds.Init(ds.FileFullPath);
                     //ds.Init(ds.FilePath);

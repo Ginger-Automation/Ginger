@@ -26,7 +26,7 @@ using GingerCore.Properties;
 using GingerCore.Repository;
 using Amdocs.Ginger.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.ASCF
 {
     public class ActASCFBrowserElement : Act
@@ -39,7 +39,7 @@ namespace GingerCore.Actions.ASCF
             public override string ActionDescription { get { return "ASCF Browser Control Action"; } }
             public override string ActionUserDescription { get { return string.Empty; } }
 
-            public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+            public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
             {
                 TBH.AddText("Action to handle ASCF Widgets");
                 TBH.AddLineBreak();

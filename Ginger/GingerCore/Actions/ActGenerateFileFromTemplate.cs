@@ -27,7 +27,7 @@ using System.Data;
 using System.Data.OleDb;
 using System.IO;
 using System.Text;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActGenerateFileFromTemplate : ActWithoutDriver
@@ -35,7 +35,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Generate File From Template Action"; } }
         public override string ActionUserDescription { get { return "Generates File From Template Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action when you want to generate file from template action.");
             TBH.AddLineBreak();

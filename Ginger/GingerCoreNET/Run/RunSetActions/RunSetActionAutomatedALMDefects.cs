@@ -25,7 +25,7 @@ using Ginger.Reports;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCoreNET.ALMLib;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 
 namespace Ginger.Run.RunSetActions
 {
@@ -124,7 +124,7 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-        public override void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
         {
             throw new NotImplementedException();
         }

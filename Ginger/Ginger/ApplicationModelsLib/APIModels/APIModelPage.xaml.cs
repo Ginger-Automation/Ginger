@@ -131,17 +131,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             //get key object 
             if (mApplicationAPIModel.TargetApplicationKey != null)
             {
-                RepositoryItemKey key = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == mApplicationAPIModel.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
+                RepositoryItemKey key =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == mApplicationAPIModel.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
                 if (key != null)
                 {
                     mApplicationAPIModel.TargetApplicationKey = key;
                 }
                 else
                 {                                        
-                    Reporter.ToUser(eUserMsgKeys.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
+                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
                 }
             }
-            xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms;
+            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.UserProfile.Solution.ApplicationPlatforms;
             xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
         }
@@ -765,7 +765,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == Amdocs.Ginger.Common.MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.ToSaveChanges) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 UndoChangesAndClose();
             }

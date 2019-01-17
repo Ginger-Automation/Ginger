@@ -27,6 +27,7 @@ using GingerCore.Drivers;
 using GingerCore.Drivers.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer.HTMLCommon
 {
@@ -59,7 +60,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
             }
             return list;          
         }
-
+        
         bool ITreeViewItem.IsExpandable()
         {
             return true;
@@ -104,6 +105,11 @@ namespace Ginger.WindowExplorer.HTMLCommon
                 GenElementAction = ActGenElement.eGenElementAction.Visible,
                 Value = ""
             });
+        }
+
+        public ObservableList<ActInputValue> GetItemSpecificActionInputValues()
+        {
+            return null;
         }
     }
 }
