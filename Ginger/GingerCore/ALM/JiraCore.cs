@@ -71,7 +71,7 @@ namespace GingerCore.ALM
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST = false)
         {
-            throw new NotImplementedException();
+            return exportMananger.CreateNewALMDefects(defectsForOpening);
         }
 
         public override bool DisconnectALMProjectStayLoggedIn()
@@ -119,7 +119,7 @@ namespace GingerCore.ALM
 
         public bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, IEnumerable<ExternalItemFieldBase> testCaseFields, ref string errorResult)
         {
-            return exportMananger.ExportActivitesToJira(activtiesGroup, testCaseFields,ref errorResult);
+            return exportMananger.ExportActivitesGrToJira(activtiesGroup, testCaseFields,ref errorResult);
         }
 
         public bool ExportBfToAlm(BusinessFlow businessFlow,IEnumerable<ExternalItemFieldBase>testCaseFields, IEnumerable<ExternalItemFieldBase> testSetFields, IEnumerable<ExternalItemFieldBase> testExecutionFields, ref string responseStr)
