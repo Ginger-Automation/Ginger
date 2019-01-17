@@ -16,31 +16,31 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.UserControls;
-using Ginger.UserControlsLib.PieChart;
 using Ginger.MoveToGingerWPF.Run_Set_Pages;
 using Ginger.Reports;
+using Ginger.UserControlsLib.PieChart;
 using GingerCore;
+using GingerCore.Environments;
 using GingerCore.Helpers;
 using GingerCore.Platforms;
-using GingerCoreNET.RunLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Amdocs.Ginger.Common.Enums;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.Environments;
-
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
+using System.Windows.Threading;
 
 namespace Ginger.Run
 {
@@ -49,8 +49,9 @@ namespace Ginger.Run
     /// </summary>
     public partial class RunnerPage : Page
     {
-        RunnerPageListener mRunnerPageListener; 
-      
+        RunnerPageListener mRunnerPageListener;
+        DispatcherTimer mDispatcherTimer;
+
         public TextBlock bfStat()
         {            
             return xBusinessflowsStatistics;                                       
@@ -129,7 +130,7 @@ namespace Ginger.Run
             Action
         }
         public string totalCount { get; set; }
-        bool UpdatingForLastTime { get; set; }
+        bool mGiveUserFeedback { get; set; }
         HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         ChartType SelectedChartType { get; set; }
         public bool ViewMode1 = false;
@@ -137,7 +138,7 @@ namespace Ginger.Run
         {
             InitializeComponent();
             mRunner = runner;
-            ViewMode1 = Viewmode;
+            ViewMode1 = Viewmode;            
             GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xBusinessflowsTotalCount, Label.ContentProperty, mRunner, nameof(GingerRunner.TotalBusinessflow));
             GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mRunner, nameof(GingerRunner.Status), BindingMode.OneWay);
             GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xStatusLabel, ImageMakerControl.ImageTypeProperty, mRunner, nameof(GingerRunner.Status), BindingMode.OneWay, bindingConvertor: new StatusIconConverter());
@@ -147,17 +148,21 @@ namespace Ginger.Run
             {
                 pageGrid.IsEnabled = false;
             }
-            // FIXME !!!!!!!!!!!!!!!!!!!!!!!
-            // mRunner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick += dispatcherTimerElapsedTick;
+
+            mDispatcherTimer = new DispatcherTimer();
+            mDispatcherTimer.Interval = new TimeSpan(0, 0, 1); // one second
+            mDispatcherTimer.Tick += dispatcherTimerElapsedTick;
+            mDispatcherTimer.Start();
             UpdateExecutionStats();
 
             mRunnerPageListener = new RunnerPageListener();
             mRunnerPageListener.UpdateStat = HandleUpdateStat;
+            runner.RunListeners.Add(mRunnerPageListener);
         }
 
         private void HandleUpdateStat(object sender, EventArgs e)
-        {
-            UpdateExecutionStats();
+        {            
+            mGiveUserFeedback = true;
         }
 
         private RunnerItemPage CreateBusinessFlowRunnerItem(BusinessFlow bf, bool ViewMode=false)
@@ -314,9 +319,19 @@ namespace Ginger.Run
         }
         private void dispatcherTimerElapsedTick(object sender, EventArgs e)
         {
+            if (mGiveUserFeedback)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    UpdateExecutionStats();
+
+                });
+                mGiveUserFeedback = false;
+            }
+
             if (mRunner.IsRunning)
             {
-                xruntime.Content = mRunner.RunnerExecutionWatch.runWatch.Elapsed.ToString(@"hh\:mm\:ss");
+                xruntime.Content = mRunner.RunnerExecutionWatch.runWatch.Elapsed.ToString(@"hh\:mm\:ss");                
             }
         }
 
@@ -416,8 +431,14 @@ namespace Ginger.Run
                     allItems = bizsList.Concat(activitiesList.Concat(actionsList)).GroupBy(n => n.Description)
                      .Select(n => n.First())
                      .ToList();
-                    CreateStatistics(allItems, eObjectType.Legend);                    
+                    CreateStatistics(allItems, eObjectType.Legend);
+                    if (mRunner.IsRunning)
+                    {
+                        xruntime.Content = mRunner.RunnerExecutionWatch.runWatch.Elapsed.ToString(@"hh\:mm\:ss");
+                    }
                 });
+
+                
             }
             catch (InvalidOperationException e)
             {
@@ -501,20 +522,7 @@ namespace Ginger.Run
             runText.Foreground = ColorSelector != null ? ColorSelector.SelectBrush(status, 0) : Brushes.Black;
             return runText;
         }
-        
-        private void DispatcherTimerTick(object sender, EventArgs e)
-        {
-            if (mRunner != null && mRunner.IsRunning == true)//only if during execution
-            {
-                UpdateExecutionStats();
-                UpdatingForLastTime = true;
-            }
-            else if (mRunner.IsRunning == false && UpdatingForLastTime == true)
-            {
-                UpdateExecutionStats();
-                UpdatingForLastTime = false;
-            }
-        }
+               
 
         private void MarkUnMarkInActive(bool status)
         {
@@ -532,7 +540,7 @@ namespace Ginger.Run
             RunRunner();
         }
         public async void RunRunner()
-        {
+        {            
             if (mRunner.IsRunning)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Runner is already running.");
@@ -543,7 +551,7 @@ namespace Ginger.Run
             App.RunsetExecutor.ConfigureRunnerForExecution(mRunner);
             await mRunner.RunRunnerAsync();
 
-            GingerCore.General.DoEvents();   //needed?     
+            GingerCore.General.DoEvents();   //needed?                 
         }
         public void UpdateRunnerInfo()
         {
