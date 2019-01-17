@@ -59,7 +59,7 @@ namespace Ginger.ALM.Repository
             string responseStr=string.Empty;
             if (activtiesGroup != null)
             {
-            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(App.UserProfile.Solution.ExternalItemsFields);
+            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.UserProfile.Solution.ExternalItemsFields);
                 var testCaseFields = allFields.Where(a => a.ItemType == ResourceType.TEST_CASE.ToString());
                 bool exportRes = ((JiraCore)this.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, testCaseFields, ref responseStr);
 
@@ -114,7 +114,7 @@ namespace Ginger.ALM.Repository
                 }
                 else
                 {
-                    ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(App.UserProfile.Solution.ExternalItemsFields);
+                    ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.UserProfile.Solution.ExternalItemsFields);
                     ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
                     var testCaseFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_CASE.ToString())&&(a.ToUpdate || a.Mandatory));
                     var testSetFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_SET.ToString()) && (a.ToUpdate || a.Mandatory));
@@ -220,20 +220,20 @@ namespace Ginger.ALM.Repository
                 //import test set data
                 Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, importedTS.Name);
                 BusinessFlow tsBusFlow = ((JiraCore)ALMIntegration.Instance.AlmCore).ConvertJiraTestSetToBF(importedTS);
-                if (App.UserProfile.Solution.MainApplication != null)
+                if (WorkSpace.UserProfile.Solution.MainApplication != null)
                 {
                     //add the applications mapped to the Activities
                     foreach (Activity activ in tsBusFlow.Activities)
                         if (string.IsNullOrEmpty(activ.TargetApplication) == false)
                             if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                             {
-                                ApplicationPlatform appAgent = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                ApplicationPlatform appAgent = WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                                 if (appAgent != null)
                                     tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
                             }
                     //handle non mapped Activities
                     if (tsBusFlow.TargetApplications.Count == 0)
-                        tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = App.UserProfile.Solution.MainApplication });
+                        tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.UserProfile.Solution.MainApplication });
                     foreach (Activity activ in tsBusFlow.Activities)
                         if (string.IsNullOrEmpty(activ.TargetApplication))
                             activ.TargetApplication = tsBusFlow.MainApplication;

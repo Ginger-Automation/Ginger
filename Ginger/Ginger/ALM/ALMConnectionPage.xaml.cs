@@ -264,7 +264,7 @@ namespace Ginger.ALM
 
                 Dictionary<string,string> lstProjects = ALMIntegration.Instance.GetALMDomainProjects(currSelectedDomain, almConectStyle);
 
-                KeyValuePair<string, string> currSavedProj = new KeyValuePair<string, string>(App.UserProfile.Solution.ALMProjectKey, App.UserProfile.Solution.ALMProject);
+                KeyValuePair<string, string> currSavedProj = new KeyValuePair<string, string>(WorkSpace.UserProfile.Solution.ALMProjectKey, WorkSpace.UserProfile.Solution.ALMProject);
                 ProjectComboBox.Items.Clear();
                 foreach (KeyValuePair<string,string> project in lstProjects)
                 {
@@ -278,15 +278,15 @@ namespace Ginger.ALM
                         if (ProjectComboBox.Items.Contains(currSavedProj))
                         {
                             ProjectComboBox.SelectedIndex = ProjectComboBox.Items.IndexOf(currSavedProj);
-                            App.UserProfile.Solution.ALMProject = currSavedProj.Value;
-                            App.UserProfile.Solution.ALMProjectKey = currSavedProj.Key;
+                            WorkSpace.UserProfile.Solution.ALMProject = currSavedProj.Value;
+                            WorkSpace.UserProfile.Solution.ALMProjectKey = currSavedProj.Key;
                         }
                     }
                     if (ProjectComboBox.SelectedIndex == -1)
                     {
                         ProjectComboBox.SelectedIndex = 0;
-                        App.UserProfile.Solution.ALMProject = ProjectComboBox.Text;
-                        App.UserProfile.Solution.ALMProjectKey = ProjectComboBox.SelectedValuePath;
+                        WorkSpace.UserProfile.Solution.ALMProject = ProjectComboBox.Text;
+                        WorkSpace.UserProfile.Solution.ALMProjectKey = ProjectComboBox.SelectedValuePath;
                     }
 
                 }
@@ -502,16 +502,16 @@ namespace Ginger.ALM
                         }
                         break;
                     case "RallyRadioButton":
-                        if (App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.RALLY)
+                        if ((ALMIntegration.eALMType)WorkSpace.UserProfile.Solution.AlmType != ALMIntegration.eALMType.RALLY)
                         {
-                            App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.RALLY;
+                            WorkSpace.UserProfile.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY;
                             ClearALMConfigs();
                         }
                         break;
                     case "JiraRadioButton":
-                        if (App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.Jira)
+                        if ((ALMIntegration.eALMType)WorkSpace.UserProfile.Solution.AlmType != ALMIntegration.eALMType.Jira)
                         {
-                            App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.Jira;
+                            WorkSpace.UserProfile.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira;
                             ClearALMConfigs();
                         }
                         break;

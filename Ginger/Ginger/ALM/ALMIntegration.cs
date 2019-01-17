@@ -85,20 +85,20 @@ namespace Ginger.ALM
 
         public void SetALMCoreConfigurations()
         {
-            ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
-            AlmCore.SetALMConfigurations(App.UserProfile.Solution.ALMServerURL, App.UserProfile.Solution.UseRest,  App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMDomain, App.UserProfile.Solution.ALMProject, App.UserProfile.Solution.ALMProjectKey);
+            ALMCore.SolutionFolder = WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            AlmCore.SetALMConfigurations(WorkSpace.UserProfile.Solution.ALMServerURL, WorkSpace.UserProfile.Solution.UseRest, WorkSpace.UserProfile.ALMUserName, WorkSpace.UserProfile.ALMPassword, WorkSpace.UserProfile.Solution.ALMDomain, WorkSpace.UserProfile.Solution.ALMProject, WorkSpace.UserProfile.Solution.ALMProjectKey);
             SyncConfigurations();
         }
 
         public void SyncConfigurations()
         {
-            App.UserProfile.Solution.ALMServerURL = ALMCore.AlmConfig.ALMServerURL;
-            App.UserProfile.Solution.UseRest = ALMCore.AlmConfig.UseRest;
-            App.UserProfile.ALMUserName = ALMCore.AlmConfig.ALMUserName;
-            App.UserProfile.ALMPassword = ALMCore.AlmConfig.ALMPassword;
-            App.UserProfile.Solution.ALMDomain = ALMCore.AlmConfig.ALMDomain;
-            App.UserProfile.Solution.ALMProject = ALMCore.AlmConfig.ALMProjectName;
-            App.UserProfile.Solution.ALMProjectKey = ALMCore.AlmConfig.ALMProjectKey;
+            WorkSpace.UserProfile.Solution.ALMServerURL = ALMCore.AlmConfig.ALMServerURL;
+            WorkSpace.UserProfile.Solution.UseRest = ALMCore.AlmConfig.UseRest;
+            WorkSpace.UserProfile.ALMUserName = ALMCore.AlmConfig.ALMUserName;
+            WorkSpace.UserProfile.ALMPassword = ALMCore.AlmConfig.ALMPassword;
+            WorkSpace.UserProfile.Solution.ALMDomain = ALMCore.AlmConfig.ALMDomain;
+            WorkSpace.UserProfile.Solution.ALMProject = ALMCore.AlmConfig.ALMProjectName;
+            WorkSpace.UserProfile.Solution.ALMProjectKey = ALMCore.AlmConfig.ALMProjectKey;
         }
 
         public ALMConfig AlmConfigurations
@@ -656,7 +656,7 @@ namespace Ginger.ALM
         }
         public eALMType GetALMType()
         {
-            return App.UserProfile.Solution.AlmType;
+            return (eALMType)WorkSpace.UserProfile.Solution.AlmType;
         }
     }
 }
