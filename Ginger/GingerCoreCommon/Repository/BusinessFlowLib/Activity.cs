@@ -592,7 +592,7 @@ namespace GingerCore
         //        missingVars = missingVars.TrimEnd(new char[] { ',' });
 
         //        if (!silentMode)
-        //            if (AppReporter.ToUser(eUserMsgKeys.WarnRegradingMissingVariablesUse, ActivityName, missingVars) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+        //            if (AppReporter.ToUser(eUserMsgKey.WarnRegradingMissingVariablesUse, ActivityName, missingVars) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
         //                autoAddMissingVars = true;
         //            else
         //                autoAddMissingVars = false;
@@ -617,7 +617,7 @@ namespace GingerCore
         //            {
         //                //not all vars were found and added automatically
         //                if (!silentMode)
-        //                    AppReporter.ToUser(eUserMsgKeys.NotAllMissingVariablesWereAdded, missingVars);
+        //                    AppReporter.ToUser(eUserMsgKey.NotAllMissingVariablesWereAdded, missingVars);
         //                return true;//not all missing vars were added automatically
         //            }
         //            else

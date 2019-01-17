@@ -21,7 +21,6 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerCore.Actions;
 using Ginger;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -73,7 +72,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
             else
             {                
-                Reporter.ToUser(eUserMsgKeys.AskToSelectBusinessflow);
+                Reporter.ToUser(eUserMsgKey.AskToSelectBusinessflow);
             }
         }
 

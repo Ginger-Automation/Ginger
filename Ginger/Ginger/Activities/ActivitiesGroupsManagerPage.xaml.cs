@@ -174,7 +174,7 @@ namespace Ginger.Activities
         {
             ActivitiesGroup selectedGroup = (ActivitiesGroup)grdGroups.Grid.SelectedItem;
             if (selectedGroup == null)
-                Reporter.ToUser(eUserMsgKeys.NoActivitiesGroupWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoActivitiesGroupWasSelected);
             else
             {
                 ActivitiesGroupsActivitiesSelectionPage actsSlecPage = new ActivitiesGroupsActivitiesSelectionPage(mBusinessFlow, selectedGroup);
@@ -221,7 +221,7 @@ namespace Ginger.Activities
             //    //        foreach (ActivityIdentifiers actIdent in group.ActivitiesIdentifiers)
             //    //        {
             //    //            //check that all used variables exist in the Activity (and not taken from the BF)
-            //    //            if (actIdent.IdentifiedActivity.WarnFromMissingVariablesUse(App.UserProfile.Solution.Variables,mBusinessFlow.Variables, false) == true) continue;
+            //    //            if (actIdent.IdentifiedActivity.WarnFromMissingVariablesUse( WorkSpace.UserProfile.Solution.Variables,mBusinessFlow.Variables, false) == true) continue;
 
             //    //            App.LocalRepository.AddItemToRepository(actIdent.IdentifiedActivity, false);
             //    //        }
@@ -239,7 +239,7 @@ namespace Ginger.Activities
                 ALMIntegration.Instance.ExportBfActivitiesGroupsToALM(App.BusinessFlow, selectedAGs);
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
 
         private void grdGroups_PreviewDragItem(object sender, EventArgs e)
@@ -282,7 +282,7 @@ namespace Ginger.Activities
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
             }

@@ -42,12 +42,12 @@ namespace Ginger.GherkinLib
             string FileName = string.Empty;
             
             if (BF.ExternalID != null)
-                    FileName = BF.ExternalID.Replace(@"~", App.UserProfile.Solution.Folder);
+                    FileName = BF.ExternalID.Replace(@"~",  WorkSpace.UserProfile.Solution.Folder);
 
             if (!System.IO.File.Exists(FileName))
             {
                 // General
-                Reporter.ToUser(eUserMsgKeys.GherkinFileNotFound, FileName);
+                Reporter.ToUser(eUserMsgKey.GherkinFileNotFound, FileName);
                 return;
             }
 
@@ -147,7 +147,7 @@ namespace Ginger.GherkinLib
             }
 
             if (!string.IsNullOrEmpty(NotFoundItems))
-                    Reporter.ToUser(eUserMsgKeys.GherkinColumnNotExist, NotFoundItems);
+                    Reporter.ToUser(eUserMsgKey.GherkinColumnNotExist, NotFoundItems);
         }
 
         private void CreateBusinessFlowVar(string varName, string varDescription, string varValue)
@@ -314,7 +314,7 @@ namespace Ginger.GherkinLib
                 {
 
                     //TODO: err activity not found...
-                    Reporter.ToUser(eUserMsgKeys.GherkinActivityNotFound, GN);
+                    Reporter.ToUser(eUserMsgKey.GherkinActivityNotFound, GN);
                 }
             }
             return AG;
@@ -323,13 +323,13 @@ namespace Ginger.GherkinLib
         private Guid GetOrCreateTagInSolution(string TagName)
         {
             if (TagName.StartsWith("@")) TagName = TagName.Substring(1);
-            Guid TagGuid = (from x in App.UserProfile.Solution.Tags where x.Name == TagName select x.Guid).FirstOrDefault();
+            Guid TagGuid = (from x in  WorkSpace.UserProfile.Solution.Tags where x.Name == TagName select x.Guid).FirstOrDefault();
             if (TagGuid == Guid.Empty)
             {
                 //TODO: notify the user that tags are added to solution and he needs to save it                    
                 RepositoryItemTag RIT = new RepositoryItemTag() { Name = TagName };
                 TagGuid = RIT.Guid;
-                App.UserProfile.Solution.Tags.Add(RIT);
+                 WorkSpace.UserProfile.Solution.Tags.Add(RIT);
             }
             return TagGuid;
         }

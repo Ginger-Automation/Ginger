@@ -21,7 +21,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCore.Variables;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -30,7 +29,7 @@ using System.Data.OleDb;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 //TODO: add and use below with ReadCellDataNew - need to be tested
 // using DocumentFormat.OpenXml.Packaging;
 // using DocumentFormat.OpenXml.Spreadsheet;
@@ -42,7 +41,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Excel Action"; } }
         public override string ActionUserDescription { get { return "Read/Write Excel"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to Read/Write/etc. excel sheet from/on a system drives.");
             TBH.AddLineBreak();
@@ -415,7 +414,7 @@ namespace GingerCore.Actions
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLogAndConsole(eLogLevel.FATAL, ex.Message);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get Excel Sheets", ex);
                     return new List<string>();
                 }
             }
@@ -772,10 +771,10 @@ namespace GingerCore.Actions
                         case "Syntax error in FROM clause.":
                             break;
                         case "No value given for one or more required parameters.":
-                            Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
+                            Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
                             break;
                         default:                            
-                            Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, ex.Message);
+                            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
                             break;
                     }
                     return null;

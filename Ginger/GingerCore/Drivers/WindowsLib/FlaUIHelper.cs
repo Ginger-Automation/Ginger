@@ -37,7 +37,6 @@ using FlaUI.UIA3.Identifiers;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.WindowsLib
 {
@@ -131,7 +130,7 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
 
                 default:                    
-                    Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
+                    Reporter.ToUser(eUserMsgKey.ActionNotImplemented, controlType);
                     break;
 
             }

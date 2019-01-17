@@ -36,7 +36,7 @@ namespace GingerCoreNETUnitTest.Script
         }
         #endregion
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void NowExpressionTest()
         {
             //Arrange
@@ -45,13 +45,14 @@ namespace GingerCoreNETUnitTest.Script
             //Act
             string result = VBS.ExecuteVBSEval(evalExpr);
             //12/31/2018 7:38:56 PM
-            DateTime localDate = DateTime.Now;
+            DateTime localDate = DateTime.Parse(result);
 
             //Assert            
+            Assert.IsTrue(!string.IsNullOrEmpty(result), "result not empty");
             Assert.AreEqual(localDate.ToString(), result, "Now Expression Test");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void WeekdayExpressionTest()
         {
             //Arrange
@@ -65,7 +66,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(weekDay , result, "Weekday Expression Test");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void MonthExpressionTest()
         {
             //Arrange
@@ -79,7 +80,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(monthNum, result, "Month Expression Test");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void YearExpressionTest()
         {
             //Arrange
@@ -93,7 +94,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(year, result, "Year Expression Test");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void HourExpressionTest()
         {
             //Arrange
@@ -107,7 +108,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(hour, result, "Hour Expression Test");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void MinuteExpressionTest()
         {
             //Arrange
@@ -121,7 +122,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(minute, result, "Minute Expression Test");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void DatePartExpressionTest_Year()
         {
             //Arrange
@@ -135,7 +136,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(year, result, "DatePart Expression Test");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void DatePartExpressionTest_Month()
         {
             //Arrange

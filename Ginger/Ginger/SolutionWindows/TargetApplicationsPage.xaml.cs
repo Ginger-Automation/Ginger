@@ -41,8 +41,8 @@ namespace Ginger.SolutionWindows
         {
             InitializeComponent();
 
-            mSolution = App.UserProfile.Solution;
-            App.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+            mSolution =  WorkSpace.UserProfile.Solution;
+             WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
 
             LoadGridData();
             SetAppsGrid();
@@ -52,7 +52,7 @@ namespace Ginger.SolutionWindows
         {
             if(e.PropertyName == nameof(UserProfile.Solution))
             {
-                mSolution = App.UserProfile.Solution;
+                mSolution =  WorkSpace.UserProfile.Solution;
                 LoadGridData();
             }
         }
@@ -98,7 +98,7 @@ namespace Ginger.SolutionWindows
 
         private void AddApplication(object sender, RoutedEventArgs e)
         {
-            AddApplicationPage AAP = new AddApplicationPage(App.UserProfile.Solution);
+            AddApplicationPage AAP = new AddApplicationPage( WorkSpace.UserProfile.Solution);
             AAP.ShowAsWindow();
         }
 
@@ -129,7 +129,7 @@ namespace Ginger.SolutionWindows
         private void UpdateApplicationNameChangeInSolution(ApplicationPlatform app)
         {
             int numOfAfectedBFs = 0;
-            if (Reporter.ToUser(eUserMsgKeys.UpdateApplicationNameChangeInSolution) == Amdocs.Ginger.Common.MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.UpdateApplicationNameChangeInSolution) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 return;
             }
@@ -157,7 +157,7 @@ namespace Ginger.SolutionWindows
                     }
                 }
             }
-            Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, string.Format("{0} {1} were updated successfully, please remember to Save All change.", numOfAfectedBFs, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));
+            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, string.Format("{0} {1} were updated successfully, please remember to Save All change.", numOfAfectedBFs, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));
         }
 
     }

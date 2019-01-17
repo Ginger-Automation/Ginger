@@ -18,7 +18,6 @@ limitations under the License.
 
 
 using Amdocs.Ginger.Common;
-using GingerCoreNET.ReporterLib;
 using mshtml;
 using System;
 using System.Collections;
@@ -218,7 +217,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception ex)
             {                
-                Reporter.ToUser(eUserMsgKeys.JSExecutionFailed, ex.Message);
+                Reporter.ToUser(eUserMsgKey.JSExecutionFailed, ex.Message);
                 return null;
             }
         }

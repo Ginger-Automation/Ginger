@@ -77,7 +77,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
             if (SelectedFiles == null || SelectedFiles.Count == 0)
             {
                 //TODO: please select valid Recover items to delete
-                Reporter.ToUser(eUserMsgKeys.RecoverItemsMissingSelectionToRecover, "delete");
+                Reporter.ToUser(eUserMsgKey.RecoverItemsMissingSelectionToRecover, "delete");
                 return;
             }
             
@@ -102,7 +102,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
 
             if (SelectedFiles == null || SelectedFiles.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.RecoverItemsMissingSelectionToRecover, "recover");
+                Reporter.ToUser(eUserMsgKey.RecoverItemsMissingSelectionToRecover, "recover");
                 return;
             }
 
@@ -158,7 +158,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
             view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.Status), Header = "Status", WidthWeight = 15, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = "View Details", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.RecoveredItems.Resources["ViewDetailsButton"] });
 
-            App.ObjFieldBinding(xDoNotAskAgainChkbox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));
+            App.ObjFieldBinding(xDoNotAskAgainChkbox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));
 
             xRecoveredItemsGrid.SetAllColumnsDefaultView(view);
             xRecoveredItemsGrid.InitViewItems();

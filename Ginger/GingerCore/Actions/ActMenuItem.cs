@@ -23,7 +23,7 @@ using GingerCore.Helpers;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActMenuItem : Act, IObsoleteAction
@@ -31,7 +31,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Menu Item Action"; } }
         public override string ActionUserDescription { get { return "Menu Item"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate menu items.");
         }        

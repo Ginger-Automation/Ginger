@@ -24,7 +24,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Xml;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.JSON
 {
     public class ActJSONTagValidation : ActWithoutDriver
@@ -39,7 +39,7 @@ namespace GingerCore.Actions.JSON
         public override string ActionDescription { get { return "JSON Tag Validation Action"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
         }
 

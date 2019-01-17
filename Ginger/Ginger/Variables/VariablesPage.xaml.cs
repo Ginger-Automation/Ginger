@@ -133,9 +133,9 @@ namespace Ginger.Variables
                 case eVariablesLevel.Solution:
                     if (mVariablesParentObjIsStatic == false)
                     {
-                        if (App.UserProfile.Solution != null)
+                        if ( WorkSpace.UserProfile.Solution != null)
                         {
-                            mVariablesParentObj = App.UserProfile.Solution;
+                            mVariablesParentObj =  WorkSpace.UserProfile.Solution;
                             ((Solution)mVariablesParentObj).PropertyChanged += Solution_PropertyChanged;//Hook to catch Solution Variables changes
                         }
                         else
@@ -306,7 +306,7 @@ namespace Ginger.Variables
         {
             if (e.PropertyName == nameof(Solution.Variables) && mVariablesLevel == eVariablesLevel.Solution)
             {
-                if ((Solution)mVariablesParentObj == App.UserProfile.Solution)
+                if ((Solution)mVariablesParentObj ==  WorkSpace.UserProfile.Solution)
                 {
                     LoadGridData();
                 }
@@ -364,7 +364,7 @@ namespace Ginger.Variables
         {
             if (grdVariables == null) return;
             if (grdVariables.Grid.SelectedItems.Count == 0)
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             else
                 foreach (object var in grdVariables.Grid.SelectedItems)
                     ((VariableBase)var).ResetValue();
@@ -375,7 +375,7 @@ namespace Ginger.Variables
             if (grdVariables == null) return;
 
             if (grdVariables.Grid.SelectedItems.Count == 0)
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             else
                 foreach (object var in grdVariables.Grid.SelectedItems)
                     ((VariableBase)var).GenerateAutoValue();
@@ -409,7 +409,7 @@ namespace Ginger.Variables
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectVariable);
+                Reporter.ToUser(eUserMsgKey.AskToSelectVariable);
             }
         }
 

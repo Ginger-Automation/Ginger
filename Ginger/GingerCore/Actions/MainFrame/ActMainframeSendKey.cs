@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using Open3270;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.MainFrame
 {
    public class ActMainframeSendKey : Act
@@ -30,7 +30,7 @@ namespace GingerCore.Actions.MainFrame
         public override string ActionDescription { get { return "Send Key to MainFrame"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this to Send Keys to Mainframe");
         }

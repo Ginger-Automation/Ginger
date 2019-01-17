@@ -29,6 +29,7 @@ using GingerCore.Actions.WebServices;
 using Ginger.UserControls;
 using System.Linq;
 using Amdocs.Ginger.Common;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Actions.WebServices
 {
@@ -48,7 +49,7 @@ namespace Ginger.Actions.WebServices
             mAct = Act;
 
             Bind();
-            mAct.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
         }
 
         public void Bind()
@@ -265,7 +266,7 @@ namespace Ginger.Actions.WebServices
                 return;
             }
 
-            string SolutionFolder = App.UserProfile.Solution.Folder;
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
             string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\WebServices\SoapUI\ProjectXMLs");
             if (!System.IO.Directory.Exists(targetPath))
             {
@@ -309,12 +310,12 @@ namespace Ginger.Actions.WebServices
                 {
                     if (XMLFiledValue.Substring(0, 1).Equals("~"))
                     {
-                        string SolutionFolder = App.UserProfile.Solution.Folder;
+                        string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
                         XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue.Substring(2));
                     }
                     if (!System.IO.File.Exists(XMLFiledValue))
                     {
-                        Reporter.ToUser(eUserMsgKeys.FileNotExist);
+                        Reporter.ToUser(eUserMsgKey.FileNotExist);
                         return;
                     }
                     doc.Load(XMLFiledValue);
@@ -348,12 +349,12 @@ namespace Ginger.Actions.WebServices
             {
                 if (XMLFiledValue.Substring(0, 1).Equals("~"))
                 {
-                    string SolutionFolder = App.UserProfile.Solution.Folder;
+                    string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
                     XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue.Substring(2));
                 }
                 if (!System.IO.File.Exists(XMLFiledValue))
                 {
-                    Reporter.ToUser(eUserMsgKeys.FileNotExist);
+                    Reporter.ToUser(eUserMsgKey.FileNotExist);
                     return;
                 }
                 doc.Load(XMLFiledValue);
@@ -479,7 +480,7 @@ namespace Ginger.Actions.WebServices
                     }
                     if (!System.IO.File.Exists(XMLFiledValue))
                     {
-                        Reporter.ToUser(eUserMsgKeys.FileNotExist);
+                        Reporter.ToUser(eUserMsgKey.FileNotExist);
                         return;
                     }
                     doc.Load(XMLFiledValue);
@@ -517,7 +518,7 @@ namespace Ginger.Actions.WebServices
                     }
                     if (!System.IO.File.Exists(XMLFiledValue))
                     {
-                        Reporter.ToUser(eUserMsgKeys.FileNotExist);
+                        Reporter.ToUser(eUserMsgKey.FileNotExist);
                         return;
                     }
                     doc.Load(XMLFiledValue);
@@ -551,7 +552,7 @@ namespace Ginger.Actions.WebServices
                 }
                 if (!System.IO.File.Exists(XMLFiledValue))
                 {
-                    Reporter.ToUser(eUserMsgKeys.FileNotExist);
+                    Reporter.ToUser(eUserMsgKey.FileNotExist);
                     return;
                 }
                 doc.Load(XMLFiledValue);
@@ -587,7 +588,7 @@ namespace Ginger.Actions.WebServices
                 }
                 if (!System.IO.File.Exists(XMLFiledValue))
                 {
-                    Reporter.ToUser(eUserMsgKeys.FileNotExist);
+                    Reporter.ToUser(eUserMsgKey.FileNotExist);
                     return;
                 }
                 doc.Load(XMLFiledValue);

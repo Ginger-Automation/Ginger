@@ -27,6 +27,7 @@ using GingerCore.Drivers.AndroidADB;
 using GingerCore.Drivers.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer.Android
 {
@@ -110,6 +111,11 @@ namespace Ginger.WindowExplorer.Android
         ObservableList<ControlProperty> IWindowExplorerTreeItem.GetElementProperties()
         {
             return AndroidElementInfo.WindowExplorer.GetElementProperties(AndroidElementInfo);
+        }
+
+        public ObservableList<ActInputValue> GetItemSpecificActionInputValues()
+        {
+            return null;
         }
     }
 }

@@ -17,7 +17,7 @@ limitations under the License.
 #endregion
 
 using GingerCore.Helpers;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.WebServices
 {
     public class ActWebAPIRest : ActWebAPIBase
@@ -29,7 +29,7 @@ namespace GingerCore.Actions.WebServices
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool IsSelectableAction { get { return true; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform a Rest Action.");
             TBH.AddLineBreak();

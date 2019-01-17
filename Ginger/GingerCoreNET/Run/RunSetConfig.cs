@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using GingerCore.GeneralLib;
@@ -60,7 +59,7 @@ namespace Ginger.Run
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IGingerRunner> GingerRunners = new ObservableList<IGingerRunner>();
+        public ObservableList<GingerRunner> GingerRunners = new ObservableList<GingerRunner>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<RunSetActionBase> RunSetActions = new ObservableList<RunSetActionBase>();

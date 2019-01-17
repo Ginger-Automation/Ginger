@@ -21,12 +21,12 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
 using GingerCore.Environments;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -41,12 +41,7 @@ using System.Threading.Tasks;
 
 namespace GingerCore
 {
-    //   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //
-    //   >>>>DO NOT put any reference to App.*  - Agent should not refer any UI element or App as we can have several agent running in paralel
-    //
-    //   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+   
     public class Agent : RepositoryItemBase, IAgent
     {
         
@@ -436,7 +431,7 @@ namespace GingerCore
                             //TODO: Handle enums later...
                             throw new Exception("Driver Config - Enum not supported yet");
                         default:                            
-                            Reporter.ToUser(eUserMsgKeys.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
+                            Reporter.ToUser(eUserMsgKey.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
                             break;
                     }
                 }
@@ -520,7 +515,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                act.Status = eRunStatus.Failed;
                 act.Error += ex.Message;                
             }
         }
@@ -840,7 +835,7 @@ namespace GingerCore
 
             //ProjEnvironment = App.AutomateTabEnvironment;
             //BusinessFlow = App.BusinessFlow; ;
-            //SolutionFolder = App.UserProfile.Solution.Folder;
+            //SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
             //DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             SolutionFolder =WorkSpace.Instance.SolutionRepository.SolutionFolder;
             try
@@ -851,17 +846,17 @@ namespace GingerCore
 
                 if (Status == Agent.eStatus.Running)
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.SuccessfullyConnectedToAgent);
+                    Reporter.ToUser(eUserMsgKey.SuccessfullyConnectedToAgent);
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, "Invalid Agent Configuration");
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Name, "Invalid Agent Configuration");
                 }
             }
 
             catch (Exception AgentStartException)
             {                
-                Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, "Agent Launch failed due to " + AgentStartException.Message);
+                Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Name, "Agent Launch failed due to " + AgentStartException.Message);
             }
             finally
             {

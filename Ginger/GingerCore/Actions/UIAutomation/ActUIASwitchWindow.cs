@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActUIASwitchWindow : Act
@@ -56,7 +56,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "UI Switch Windows Action"; } }
         public override string ActionUserDescription { get { return "Allow to switch window by using title of window. "; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("1. Please select Locate ByTitle, please provide Window Title in Locate value.");
             TBH.AddLineBreak();

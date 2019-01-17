@@ -16,23 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using De.TorstenMandelkow.MetroChart;
+using Ginger.Run;
 using GingerCore;
-using GingerCore.Actions;
-using Ginger.Reports;
+using GingerCore.DataSource;
+using GingerCoreNET.GeneralLib;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.ALM.QC;
-using GingerCore.ALM.QC;
-using Ginger.ALM;
-using De.TorstenMandelkow.MetroChart;
-using Ginger.Run;
-using GingerCoreNET.GeneralLib;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.DataSource;
-using Amdocs.Ginger.Common.InterfacesLib;
+using System.Windows.Input;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -186,7 +181,12 @@ namespace Ginger.BusinessFlowWindows
 
         private void ReportButton_Click(object sender, RoutedEventArgs e)
         {
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.GenerateLastExecutedItemReport, null);          
+            Mouse.OverrideCursor = Cursors.Wait;
+            Reporter.ToStatus(eStatusMsgKey.CreatingReport);
+            GingerCore.General.DoEvents();
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.GenerateLastExecutedItemReport, null);
+            Reporter.HideStatusMessage();
+            Mouse.OverrideCursor = null;
         }
 
         private void ExportExecutionDetails(object sender, RoutedEventArgs e)
@@ -195,12 +195,12 @@ namespace Ginger.BusinessFlowWindows
             bfs.Add(mBusinessFlow);           
             if(!ExportResultsToALMConfigPage.Instance.IsProcessing)
             {
-                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables));
+                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false,  WorkSpace.UserProfile.Solution.Variables));
                 ExportResultsToALMConfigPage.Instance.ShowAsWindow();
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.ExportedExecDetailsToALMIsInProcess);
+                Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALMIsInProcess);
             }
         }
     }

@@ -23,6 +23,7 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerCore;
 using Ginger.UserControls;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Reports
 {
@@ -55,7 +56,7 @@ namespace Ginger.Reports
 
         private void Init()
         {
-            _selectedExecutionLoggerConfiguration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            _selectedExecutionLoggerConfiguration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             _selectedExecutionLoggerConfiguration.StartDirtyTracking();
             SetControls();
         }
@@ -138,7 +139,7 @@ namespace Ginger.Reports
         {
             if (FolderTextBox.Text.Length > 100)
             {
-                Reporter.ToUser(eUserMsgKeys.FolderNamesAreTooLong);
+                Reporter.ToUser(eUserMsgKey.FolderNamesAreTooLong);
                 return;
             }
 
@@ -146,7 +147,7 @@ namespace Ginger.Reports
             {
                 if (Convert.ToInt16(SizeTextBox.Text.ToString()) < 50)
                 {
-                    Reporter.ToUser(eUserMsgKeys.FolderSizeTooSmall);
+                    Reporter.ToUser(eUserMsgKey.FolderSizeTooSmall);
                     return;
                 }
             }
@@ -155,13 +156,13 @@ namespace Ginger.Reports
                 return;
             }
 
-            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
+             WorkSpace.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
 
             // validate the paths of inserted folders
-            Ginger.Run.ExecutionLogger.GetLoggerDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
-            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder);
+            Ginger.Run.ExecutionLogger.GetLoggerDirectory( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
+            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder);
 
-            App.AutomateTabGingerRunner.ExecutionLogger.Configuration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            App.AutomateTabGingerRunner.ExecutionLogger.Configuration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
     }
 }

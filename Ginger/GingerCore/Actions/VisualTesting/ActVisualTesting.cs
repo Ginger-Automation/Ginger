@@ -25,7 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActVisualTesting : Act {
@@ -34,7 +34,7 @@ namespace GingerCore.Actions
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return false; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH) {
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH) {
             TBH.AddText("Use this action to add Visual Testing which can compare bitmap or screen shots");
             TBH.AddLineBreak();
             TBH.AddLineBreak();

@@ -135,12 +135,12 @@ namespace Ginger.Repository
                             Activity instance = (Activity)selectedItem.CreateInstance(true);
                             instance.Active = true;
                             mBusinessFlow.SetActivityTargetApplication(instance);
-                            mBusinessFlow.AddActivity(instance, true);
+                            mBusinessFlow.AddActivity(instance);
                         }
                     }
                 }
                 else
-                    Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                    Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
 
@@ -154,7 +154,7 @@ namespace Ginger.Repository
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 
@@ -167,7 +167,7 @@ namespace Ginger.Repository
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
 

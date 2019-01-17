@@ -33,6 +33,7 @@ using System.Windows.Media.Imaging;
 using GingerPlugIns.TextEditorLib;
 using Ginger.TagsLib;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
@@ -182,7 +183,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     }
 
                 }                
-                foreach (RepositoryItemTag tag in App.UserProfile.Solution.Tags )
+                foreach (RepositoryItemTag tag in  WorkSpace.UserProfile.Solution.Tags )
                 {
                     string tagname = "@" + tag.Name;
                     if (!CurrentLine.ToUpper().Contains(tagname.ToUpper()))

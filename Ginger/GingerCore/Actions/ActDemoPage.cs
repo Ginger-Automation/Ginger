@@ -22,7 +22,7 @@ using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActDemoPage : ActWithoutDriver
@@ -31,7 +31,7 @@ namespace GingerCore.Actions
         
        public override string ActionUserDescription { get { return "Code Example for Data structure and binding"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to create new Action with the common data and binding method.");
         }
