@@ -23,6 +23,8 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.FlowControlLib;
 using Ginger.Run;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Actions.UserControls
 {
@@ -113,7 +115,7 @@ namespace Ginger.Actions.UserControls
 
         private void ActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            FC.FlowControlAction = (FlowControl.eFlowControlAction)ActionComboBox.SelectedValue;
+            FC.FlowControlAction = (eFlowControlAction)ActionComboBox.SelectedValue;
             SetActionValueComboData();
         }
 
@@ -143,7 +145,7 @@ namespace Ginger.Actions.UserControls
             {
                 switch (FC.BusinessFlowControlAction)
                 {
-                    case FlowControl.eBusinessFlowControlAction.GoToBusinessFlow:
+                    case eBusinessFlowControlAction.GoToBusinessFlow:
                         {
                             foreach (BusinessFlow bf in mBfParentRunner.BusinessFlows)
                             {
@@ -173,12 +175,12 @@ namespace Ginger.Actions.UserControls
 
                             if (FC.Value != null && ActionValueComboBox.SelectedItem == null)
                             {
-                                Reporter.ToUser(eUserMsgKeys.ActivityIDNotFound, FC.Value);
+                                Reporter.ToUser(eUserMsgKey.ActivityIDNotFound, FC.Value);
                             }
                             break;
                         }
 
-                    case FlowControl.eBusinessFlowControlAction.SetVariableValue:
+                    case eBusinessFlowControlAction.SetVariableValue:
                         {
                             ActionValueTextBox.Visibility = System.Windows.Visibility.Visible;
                             ActionValueComboBox.Visibility = System.Windows.Visibility.Hidden;
@@ -191,7 +193,7 @@ namespace Ginger.Actions.UserControls
                 switch (FC.FlowControlAction)
                 {
 
-                    case FlowControl.eFlowControlAction.GoToAction:
+                    case eFlowControlAction.GoToAction:
                         {
                             foreach (Act a in mActParentActivity.Acts)
                             {
@@ -224,12 +226,12 @@ namespace Ginger.Actions.UserControls
 
                             if (FC.Value != null && ActionValueComboBox.SelectedItem == null)
                             {
-                                Reporter.ToUser(eUserMsgKeys.ActionIDNotFound, FC.Value);
+                                Reporter.ToUser(eUserMsgKey.ActionIDNotFound, FC.Value);
                             }
                         }
                         break;
 
-                    case FlowControl.eFlowControlAction.GoToActivity:
+                    case eFlowControlAction.GoToActivity:
                         {
                             foreach (Activity a in mActParentBusinessFlow.Activities)
                             {
@@ -262,26 +264,26 @@ namespace Ginger.Actions.UserControls
 
                             if (FC.Value != null && ActionValueComboBox.SelectedItem == null)
                             {
-                                Reporter.ToUser(eUserMsgKeys.ActivityIDNotFound, FC.Value);
+                                Reporter.ToUser(eUserMsgKey.ActivityIDNotFound, FC.Value);
                             }
                             break;
                         }
 
-                    case FlowControl.eFlowControlAction.MessageBox:
+                    case eFlowControlAction.MessageBox:
                         {
                             ActionValueTextBox.Visibility = System.Windows.Visibility.Visible;
                             ActionValueComboBox.Visibility = System.Windows.Visibility.Hidden;
                             break;
                         }
 
-                    case FlowControl.eFlowControlAction.SetVariableValue:
+                    case eFlowControlAction.SetVariableValue:
                         {
                             ActionValueTextBox.Visibility = System.Windows.Visibility.Visible;
                             ActionValueComboBox.Visibility = System.Windows.Visibility.Hidden;
                             break;
                         }
-                    case FlowControl.eFlowControlAction.RunSharedRepositoryActivity:
-                    case FlowControl.eFlowControlAction.GoToActivityByName:
+                    case eFlowControlAction.RunSharedRepositoryActivity:
+                    case eFlowControlAction.GoToActivityByName:
                         {
                             ActionValueTextBox.Visibility = System.Windows.Visibility.Visible;
                             ActionValueComboBox.Visibility = System.Windows.Visibility.Hidden;

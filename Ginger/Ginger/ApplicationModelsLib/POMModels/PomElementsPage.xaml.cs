@@ -257,7 +257,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             ElementInfo ei = (ElementInfo)xMainElementsGrid.CurrentItem;
             if (ei.IsAutoLearned)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "You can not edit this field of an Element which was auto learned, please duplicate it and create customized Element.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You can not edit this field of an Element which was auto learned, please duplicate it and create customized Element.");
                 e.EditingElement.IsEnabled = false;
             }
         }
@@ -272,7 +272,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     if (!msgShowen)
                     {
-                        Reporter.ToUser(eUserMsgKeys.POMCannotDeleteAutoLearnedElement);
+                        Reporter.ToUser(eUserMsgKey.POMCannotDeleteAutoLearnedElement);
                         msgShowen = true;
                     }
                 }
@@ -311,6 +311,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
             List<GingerCore.General.ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
+
+
+            GingerCore.General.ComboEnumItem comboItem = locateByList.Where(x => ((eLocateBy)x.Value) == eLocateBy.POMElement).FirstOrDefault();
+            if (comboItem != null)
+               locateByList.Remove(comboItem);
+
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65 });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25, ReadOnly = true });
@@ -339,7 +345,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     if (!msgShowen)
                     {
-                        Reporter.ToUser(eUserMsgKeys.POMCannotDeleteAutoLearnedElement);
+                        Reporter.ToUser(eUserMsgKey.POMCannotDeleteAutoLearnedElement);
                         msgShowen = true;
                     }
                 }
@@ -368,7 +374,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 if (!disabeledLocatorsMsgShown)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "You can not edit Locator which was auto learned, please duplicate it and create customized Locator.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You can not edit Locator which was auto learned, please duplicate it and create customized Locator.");
                     disabeledLocatorsMsgShown = true;
                 }
                 e.EditingElement.IsEnabled = false;
@@ -477,9 +483,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
+            ElementInfo CurrentEI = (ElementInfo)MainElementsGrid.CurrentItem;
+
             if (mSelectedLocator != null)
             {
-                mWinExplorer.TestElementLocators(new ObservableList<ElementLocator>() { mSelectedLocator });
+                mWinExplorer.TestElementLocators(new ElementInfo() { Path = CurrentEI.Path, Locators = new ObservableList<ElementLocator>() { mSelectedLocator } });
             }
         }
 
@@ -492,7 +500,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.TestElementLocators(mSelectedElement.Locators);
+                mWinExplorer.TestElementLocators(mSelectedElement);
             }
         }
 
@@ -500,13 +508,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if (mWinExplorer == null)
             {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
                 return false;
             }
 
             if (IsDriverBusy())
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
                 return false;
             }
 
@@ -557,7 +565,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in POM Edit Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in POM Edit Page tabs style", ex);
             }
         }
 

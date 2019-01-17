@@ -19,9 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
@@ -48,11 +46,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             return line.Substring(line.IndexOf("=") + 1);
         }
 
-        public static string CreateNodeConfigFile(string name)
+        public static string CreateNodeConfigFile(string name, string serviceId)
         {
-            string txt = "Name=" + name + Environment.NewLine;
-            txt += "GingerGridHost=" + SocketHelper.GetLocalHostIP() + Environment.NewLine;
-            txt += "GingerGridPort=" + WorkSpace.Instance.LocalGingerGrid.Port + Environment.NewLine;
+            string txt = name + " | " + serviceId + " | " +  SocketHelper.GetLocalHostIP() + " | " + WorkSpace.Instance.LocalGingerGrid.Port + Environment.NewLine;            
             string fileName = Path.GetTempFileName();
             File.WriteAllText(fileName, txt);
             return fileName;

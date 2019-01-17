@@ -32,6 +32,7 @@ using System.IO.Compression;
 using Newtonsoft.Json;
 using GingerCore.External;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.ALM
 {
@@ -93,7 +94,7 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
-            return ImportFromRQM.GetALMItemFields(bw, online);
+            return UpdatedAlmFields(ImportFromRQM.GetALMItemFields(bw, online));
         }
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST)
@@ -148,7 +149,7 @@ namespace GingerCore.ALM
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error reading ALM RQMConfigPackage at: " + Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml"), e);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error reading ALM RQMConfigPackage at: " + Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml"), e);
                 }
             }
             return new Dictionary<string, object>();
@@ -169,13 +170,13 @@ namespace GingerCore.ALM
                 else
                 {
                     //Missing RQMSettings.xml file
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "RQM Configuration package not exist in solution, RqmSettings.xml not exist at: " + Path.Combine(CurrRQMConfigPath, "RQMSettings.xml"));
+                    Reporter.ToLog(eLogLevel.WARN, "RQM Configuration package not exist in solution, RqmSettings.xml not exist at: " + Path.Combine(CurrRQMConfigPath, "RQMSettings.xml"));
                 }
             }
             else
             {
                 //Missing RQM Configurations Folder
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "RQMServerConfigurationsPackage folder not exist at: " + CurrRQMConfigPath);
+                Reporter.ToLog(eLogLevel.WARN, "RQMServerConfigurationsPackage folder not exist at: " + CurrRQMConfigPath);
             }
 
             return false;

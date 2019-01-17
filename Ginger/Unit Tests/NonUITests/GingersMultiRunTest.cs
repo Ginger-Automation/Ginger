@@ -75,7 +75,7 @@
 //            a.Driver = new InternalBrowser(mBF);
 //            a2.DriverType = DriverType;
 //            p22.Agent = a2;
-//            mGR2.SolutionAgents = new ObservableList<Agent>();
+//            mGR2.SolutionAgents = new ObservableList<IAgent>();
 //            mGR2.SolutionAgents.Add(a2);
 //            mGR2.Platforms.Add(p22);
 //            for (int i = 1; i < 3; i++)
@@ -88,7 +88,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void RunGingersParallel_FFandChrome_X3()
 //        {
 //            Act
@@ -105,7 +105,7 @@
 //            }
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void SpeedTest_FFx2_Chrome_X1()
 //        {
 //            Arrange

@@ -44,7 +44,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             DummyWorkSpace ws = new DummyWorkSpace();
             WorkSpace.Init(ws);
 
-            string folder = TestResources.getGingerUnitTesterTempFolder("Solutions", "PluginTest");
+            string folder = TestResources.GetTestTempFolder("Solutions", "PluginTest");
 
             if (Directory.Exists(folder))
             {
@@ -92,7 +92,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetPlugins()
         {
             //Arrange            
@@ -106,11 +106,11 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         }
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void GetPluginServices()        
 
         [Ignore]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetPluginTextEditor()
         {
             //Arrange            
@@ -124,7 +124,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             Assert.AreEqual(1, list.Count, "There are one text editor");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GingerOfficePluginTestAction()
         {
             ////Arrange            
@@ -146,7 +146,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GingerOfficePluginTestActionx3()
         {
             ////Arrange            
@@ -174,7 +174,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetOnlinePlugins()
         {
             //Arrange       
@@ -187,7 +187,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             Assert.IsTrue(list.Count > 0, "list.Count > 0");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetOnlinePluginReleases()
         {
             //Arrange       
@@ -202,7 +202,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             Assert.IsTrue(releases.Count > 0, "list.Count > 0");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void InstallSeleniumPlugin_1_0()
         {
             //Arrange       

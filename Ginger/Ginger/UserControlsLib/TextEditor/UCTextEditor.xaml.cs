@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Plugin.Core;
 using Ginger.UserControlsLib.TextEditor.Common;
 using GingerCore;
@@ -34,6 +35,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using amdocs.ginger.GingerCoreNET;
 using System.Windows.Threading;
 
 namespace Ginger.UserControlsLib.TextEditor
@@ -154,9 +156,9 @@ namespace Ginger.UserControlsLib.TextEditor
 
         public void Save()
         {            
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, Path.GetFileName(FileName), "file");
+            Reporter.ToStatus(eStatusMsgKey.SaveItem, null, Path.GetFileName(FileName), "file");
             textEditor.Save(FileName);
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
         }
 
         /// <summary>
@@ -175,7 +177,7 @@ namespace Ginger.UserControlsLib.TextEditor
             }
 
             //TODO: put it in general func
-            string SolutionPath = FileName.Replace(App.UserProfile.Solution.Folder, "~");
+            string SolutionPath = FileName.Replace( WorkSpace.UserProfile.Solution.Folder, "~");
             lblTitle.Content = SolutionPath;
 
             if (EnableWrite)
@@ -422,18 +424,18 @@ namespace Ginger.UserControlsLib.TextEditor
             BackgroundRenderer.Segments.Clear();
             if (!string.IsNullOrEmpty(args.ErrorMessage))
             {
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, args.ErrorMessage);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, args.ErrorMessage);
 
                 if (args.ErrorLines != null)
                     AddSegments(args.ErrorLines);               
             }
            else if (!string.IsNullOrEmpty(args.SuccessMessage))//succ
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, args.SuccessMessage);
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, args.SuccessMessage);
             }
             else if (!string.IsNullOrEmpty(args.WarnMessage))//warn
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, args.WarnMessage);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, args.WarnMessage);
             }
         }
 

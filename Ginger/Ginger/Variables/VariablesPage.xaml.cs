@@ -133,9 +133,9 @@ namespace Ginger.Variables
                 case eVariablesLevel.Solution:
                     if (mVariablesParentObjIsStatic == false)
                     {
-                        if (App.UserProfile.Solution != null)
+                        if ( WorkSpace.UserProfile.Solution != null)
                         {
-                            mVariablesParentObj = App.UserProfile.Solution;
+                            mVariablesParentObj =  WorkSpace.UserProfile.Solution;
                             ((Solution)mVariablesParentObj).PropertyChanged += Solution_PropertyChanged;//Hook to catch Solution Variables changes
                         }
                         else
@@ -217,28 +217,28 @@ namespace Ginger.Variables
             {
                 GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
                 view.GridColsView = new ObservableList<GridColView>();
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Image), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
                 view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.SharedRepoInstanceImage), Header = "S.R.", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Name, WidthWeight = 20, AllowSorting = true });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Description, WidthWeight = 15 });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.VariableUIType, Header = "Type", WidthWeight = 10, BindingMode = BindingMode.OneWay });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Formula, WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.SetAsInputValue, Header = "Set as Input Value", WidthWeight = 10, MaxWidth = 200, StyleType = GridColView.eGridColStyleType.CheckBox });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.SetAsOutputValue, Header = "Set as Output Value", WidthWeight = 10, MaxWidth = 200, StyleType = GridColView.eGridColStyleType.CheckBox });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.LinkedVariableName, Header = "Linked Variable", WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Value, Header = "Current Value", WidthWeight = 20, BindingMode = BindingMode.TwoWay, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Name), WidthWeight = 20, AllowSorting = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Description), WidthWeight = 15 });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.VariableUIType), Header = "Type", WidthWeight = 10, BindingMode = BindingMode.OneWay });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Formula), WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.SetAsInputValue), Header = "Set as Input Value", WidthWeight = 10, MaxWidth = 200, StyleType = GridColView.eGridColStyleType.CheckBox });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.SetAsOutputValue), Header = "Set as Output Value", WidthWeight = 10, MaxWidth = 200, StyleType = GridColView.eGridColStyleType.CheckBox });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.LinkedVariableName), Header = "Linked Variable", WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Value), Header = "Current Value", WidthWeight = 20, BindingMode = BindingMode.TwoWay, ReadOnly = true });
                 grdVariables.SetAllColumnsDefaultView(view);
             }
             else//Solution Global Variables 
             {
                 GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
                 view.GridColsView = new ObservableList<GridColView>();
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Name, WidthWeight = 20, AllowSorting = true });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Description, WidthWeight = 20 });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Formula, WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.LinkedVariableName, Header = "Linked Variable", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Value, Header = "Current Value", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Image), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Name), WidthWeight = 20, AllowSorting = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Description), WidthWeight = 20 });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Formula), WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.LinkedVariableName), Header = "Linked Variable", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Value), Header = "Current Value", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
                 grdVariables.SetAllColumnsDefaultView(view);
 
                 grdVariables.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Variable, GingerDicser.GetTermResValue(eTermResKey.Variables, "Global "), saveAllHandler: SaveSolutionConfigurations, addHandler: AddVar);
@@ -306,7 +306,7 @@ namespace Ginger.Variables
         {
             if (e.PropertyName == nameof(Solution.Variables) && mVariablesLevel == eVariablesLevel.Solution)
             {
-                if ((Solution)mVariablesParentObj == App.UserProfile.Solution)
+                if ((Solution)mVariablesParentObj ==  WorkSpace.UserProfile.Solution)
                 {
                     LoadGridData();
                 }
@@ -364,7 +364,7 @@ namespace Ginger.Variables
         {
             if (grdVariables == null) return;
             if (grdVariables.Grid.SelectedItems.Count == 0)
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             else
                 foreach (object var in grdVariables.Grid.SelectedItems)
                     ((VariableBase)var).ResetValue();
@@ -375,7 +375,7 @@ namespace Ginger.Variables
             if (grdVariables == null) return;
 
             if (grdVariables.Grid.SelectedItems.Count == 0)
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             else
                 foreach (object var in grdVariables.Grid.SelectedItems)
                     ((VariableBase)var).GenerateAutoValue();
@@ -409,7 +409,7 @@ namespace Ginger.Variables
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectVariable);
+                Reporter.ToUser(eUserMsgKey.AskToSelectVariable);
             }
         }
 
@@ -463,7 +463,7 @@ namespace Ginger.Variables
 
         private void grdMain_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
-            if (e.Column.Header.ToString() == VariableBase.Fields.Name)
+            if (e.Column.Header.ToString() == nameof(VariableBase.Name))
             {
                 VariableBase selectedVarb = (VariableBase)grdVariables.CurrentItem;
                 selectedVarb.NameBeforeEdit = selectedVarb.Name;
@@ -472,7 +472,7 @@ namespace Ginger.Variables
 
         private void grdMain_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            if (e.Column.Header.ToString() == VariableBase.Fields.Name)
+            if (e.Column.Header.ToString() == nameof(VariableBase.Name))
             {
                 VariableBase selectedVarb = (VariableBase)grdVariables.CurrentItem;
                 if (selectedVarb.Name != selectedVarb.NameBeforeEdit)

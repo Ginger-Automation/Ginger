@@ -156,6 +156,9 @@ namespace Amdocs.Ginger.Common.Enums
         ImportFile,
         Upgrade,
         Recover,
+        Approve,
+        Reject,
+        Warn,
         #endregion
         
         #region Items Images
@@ -212,6 +215,7 @@ namespace Amdocs.Ginger.Common.Enums
         Elements,
         LocationPointer,
         GitHub,
+        Ping,
         #endregion
 
         #region Other Images

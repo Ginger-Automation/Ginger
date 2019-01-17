@@ -28,7 +28,7 @@ using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Xml;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.RobotFramework
 {
     public class ActRobot : ActWithoutDriver
@@ -66,7 +66,7 @@ namespace GingerCore.Actions.RobotFramework
             }
         }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action to call Robot script from Ginger");
             TBH.AddLineBreak();

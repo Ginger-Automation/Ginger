@@ -434,9 +434,10 @@ namespace Amdocs.Ginger.Repository
         }
         
 
+        //TODO: Not using t why is it needed?
         public RepositoryItemBase DeserializeFromFile(Type t, string FileName)
         {
-            AppReporter.ToConsole("DeserializeFromFile the file: " + FileName);
+            Reporter.ToConsole(eLogLevel.DEBUG, "DeserializeFromFile the file: " + FileName);
             
             if (FileName.Length > 0 && File.Exists(FileName))
             {
@@ -657,6 +658,7 @@ namespace Amdocs.Ginger.Repository
 
         private static object xmlReadObject(Object Parent, XmlReader xdr, RepositoryItemBase targetObj = null)
         {
+            //TODO: check order of creation and removed unused
             string className = xdr.Name;            
 
             try
@@ -690,7 +692,7 @@ namespace Amdocs.Ginger.Repository
 
                     if (mi==null)
                     {                        
-                        throw new MissingFieldException("Error: Cannot find attribute. Class: " + className + ", Attribute: " + xdr.Name);
+                        throw new MissingFieldException("Error: Cannot find attribute. Class: '" + className + "' , Attribute: '" + xdr.Name + "'");
                     }
 
                     
@@ -741,40 +743,6 @@ namespace Amdocs.Ginger.Repository
                     }
 
                 }
-
-                //if (conversion)
-                //{
-                //    //for converting old actions keep the ID
-                //    if (obj is DriverAction)
-                //    {
-                //        DriverAction DA = ((DriverAction)obj);
-                //        DA.OldClassName = OldClassName;
-
-
-                //        //temp moved from here to conversion class or function
-                //        if (DA.OldClassName == "GingerCore.Actions.ActGotoURL")
-                //        {
-                //            DA.ID = "GotoURL";
-                //            DA.InputValues[0].Param = "URL"; //convert param name 'Value' to 'URL'
-                //        }
-
-                //        if (DA.OldClassName == "GingerCore.Actions.ActTextBox")
-                //        {
-                //            DA.ID = "UIElementAction";
-                //            string LocateBy = "ByID";
-                //            string LocateValue = "UserName";  // temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                //            string Action = "SetValue";
-                //            string Value = (from x in DA.InputValues where x.Param == "Value" select x.Value).FirstOrDefault();
-                //            DA.InputValues.Clear();
-                //            DA.InputValues.Add(new ActInputValue() { Param = "LocateBy", Value = LocateBy });
-                //            DA.InputValues.Add(new ActInputValue() { Param = "LocateValue", Value = LocateValue });
-                //            DA.InputValues.Add(new ActInputValue() { Param = "Action", Value = Action });
-                //            DA.InputValues.Add(new ActInputValue() { Param = "Value", Value = Value });
-
-                //        }
-
-                //    }
-                //}
 
 
                 return obj;
@@ -995,13 +963,9 @@ namespace Amdocs.Ginger.Repository
                         PropertyInfo propertyInfo = obj.GetType().GetProperty(xdr.Name);
                         if (propertyInfo == null)
                         {
-                            if (xdr.Name == "Created" || xdr.Name == "CreatedBy" || xdr.Name == "LastUpdate" || xdr.Name == "LastUpdateBy" || xdr.Name == "Version" || xdr.Name == "ExternalID")
+                            if (xdr.Name != "Created" && xdr.Name != "CreatedBy" && xdr.Name != "LastUpdate" && xdr.Name != "LastUpdateBy" && xdr.Name != "Version" && xdr.Name != "ExternalID")
                             {
-                                // Ignore common attr on RI which were removed in GingerCoreNET
-                            }
-                            else
-                            {
-                                AppReporter.ToLog(eAppReporterLogLevel.WARN, "Property not Found: " + xdr.Name, logOnlyOnDebugMode:true);
+                                Reporter.ToLog(eLogLevel.DEBUG, "Property not Found: " + xdr.Name);
                             }
                             xdr.MoveToNextAttribute();
                             continue;
@@ -1028,7 +992,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch (Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "NewRepositorySerilizer- Error when setting Property: " + xdr.Name, ex);
+                Reporter.ToLog(eLogLevel.ERROR, "NewRepositorySerilizer- Error when setting Property: " + xdr.Name, ex);
                 throw ex;
             }
         }

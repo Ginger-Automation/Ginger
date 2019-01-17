@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using GingerCoreNET.ReporterLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -1115,23 +1114,24 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 if (!string.IsNullOrEmpty(URLTuple.Item1))
                 {
                     string CompleteURL = GetCompleteURL(URLTuple.Item1, URLTuple.Item2);
-                    XmlTextReader reader = new XmlTextReader(CompleteURL);
-                    XmlSchema schema = XmlSchema.Read(reader, null);
-
-                    if (!string.IsNullOrEmpty(schema.TargetNamespace) && !AllNameSpaces.ContainsKey(schema.TargetNamespace))
+                    using (XmlReader reader = XmlReader.Create(CompleteURL))
                     {
-                        List<string> AllNameSpaceURLs = new List<string>();
-                        AllNameSpaceURLs.Add(CompleteURL);
-                        AllNameSpaces.Add(schema.TargetNamespace, AllNameSpaceURLs);
-                        AllSourcesNameSpaces.Add(AllNameSpaceURLs, schema.TargetNamespace);
+                        XmlSchema schema = XmlSchema.Read(reader, null);
+                        if (!string.IsNullOrEmpty(schema.TargetNamespace) && !AllNameSpaces.ContainsKey(schema.TargetNamespace))
+                        {
+                            List<string> AllNameSpaceURLs = new List<string>();
+                            AllNameSpaceURLs.Add(CompleteURL);
+                            AllNameSpaces.Add(schema.TargetNamespace, AllNameSpaceURLs);
+                            AllSourcesNameSpaces.Add(AllNameSpaceURLs, schema.TargetNamespace);
+                        }
+                        else if (schema.TargetNamespace != null && AllNameSpaces.ContainsKey(schema.TargetNamespace))
+                        {
+                            AllNameSpaces[schema.TargetNamespace].Add(CompleteURL);
+                            KeyValuePair<List<string>, string> KeyValue = AllSourcesNameSpaces.Where(x => x.Value == schema.TargetNamespace).FirstOrDefault();
+                            KeyValue.Key.Add(CompleteURL);
+                        }
+                        GetAllElementsAndComplexTypesFromImportedSchema(schema);
                     }
-                    else if (schema.TargetNamespace != null && AllNameSpaces.ContainsKey(schema.TargetNamespace))
-                    {
-                        AllNameSpaces[schema.TargetNamespace].Add(CompleteURL);
-                        KeyValuePair<List<string>, string> KeyValue = AllSourcesNameSpaces.Where(x => x.Value == schema.TargetNamespace).FirstOrDefault();
-                        KeyValue.Key.Add(CompleteURL);
-                    }
-                    GetAllElementsAndComplexTypesFromImportedSchema(schema);
                 }
             }
         }
@@ -1993,7 +1993,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             if (directory != containigFolder)
             {
                 int ContainingFolderLeanth = containigFolder.Length;
-                if (ContainingFolderLeanth < directory.Length)
+                if (ContainingFolderLeanth < directory.Length && !directory.StartsWith("http"))
                     relativeDirectories = directory.Substring(ContainingFolderLeanth).TrimStart('\\');
             }
             GetAllURLsFFromSchemaItems(Items, relativeDirectories, containigFolder);

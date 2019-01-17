@@ -23,6 +23,7 @@ using System.Windows.Input;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Actions.ScreenCapture
 {
@@ -263,7 +264,7 @@ namespace GingerCore.Actions.ScreenCapture
             }
             catch (Exception e)
             {                
-                Reporter.ToUser(eUserMsgKeys.FolderOperationError, e.Message);
+                Reporter.ToUser(eUserMsgKey.FolderOperationError, e.Message);
             }
             //return f.SolutionFolder + @"Documents\ExpectedImages\"+Guid.NewGuid().ToString()+".png";
             return @"~\Documents\ExpectedImages\" + Guid.NewGuid().ToString() + ".png";
@@ -287,7 +288,7 @@ namespace GingerCore.Actions.ScreenCapture
             }
             catch (Exception e)
             {                
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, e.Message);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, e.Message);
             }
             
             return (f.StartX + ", " + f.StartY + ", " + f.EndX + ", " + f.EndY); 

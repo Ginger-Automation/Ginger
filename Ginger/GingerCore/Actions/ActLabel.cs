@@ -24,7 +24,7 @@ using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActLabel : Act, IObsoleteAction
@@ -32,7 +32,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Label Action"; } }
         public override string ActionUserDescription { get { return "Set a label object"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate a set property on an object from type label.");
             TBH.AddLineBreak();

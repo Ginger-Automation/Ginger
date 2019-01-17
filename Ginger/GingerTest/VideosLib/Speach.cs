@@ -23,7 +23,7 @@ using System.Speech.Synthesis;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GingerTest.VideosLib
+namespace GingerTest
 {
     public class Speach
     {

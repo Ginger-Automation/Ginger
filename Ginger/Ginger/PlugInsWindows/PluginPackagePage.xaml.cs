@@ -17,9 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
-using GingerCore.Helpers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -79,28 +79,18 @@ namespace Ginger.PlugInsWindows
 
         private void SetActionsGrid()
         {
-            //PlugInsActionsGrid.ShowEdit = Visibility.Collapsed;
-            //PlugInsActionsGrid.ShowUpDown = Visibility.Collapsed;
-            //PlugInsActionsGrid.ShowTitle = Visibility.Collapsed;
+            xServiceActionGrid.ShowEdit = Visibility.Collapsed;
+            xServiceActionGrid.ShowUpDown = Visibility.Collapsed;
+            // xServiceActionGrid.ShowTitle = Visibility.Collapsed;
 
-            ////if (mPluginPackage.TextEditors().Count() == 0)
-            ////{
-            ////    TextEditorTab.Visibility = Visibility.Hidden;
-            ////    ActionsTab.Visibility = Visibility.Collapsed;
-            ////    PlugInsActionsGrid.ShowTitle = Visibility.Visible;
-            ////    PlugInsActionsGrid.SetTitleLightStyle = true;
-            ////}
-
-            //GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            //view.GridColsView = new ObservableList<GridColView>();
-            //view.GridColsView.Add(new GridColView() { Field = nameof(StandAloneAction.ServiceId), Header = "Service Id", AllowSorting = true, WidthWeight = 200, BindingMode = BindingMode.OneWay });
-            //view.GridColsView.Add(new GridColView() { Field = nameof(StandAloneAction.ActionId), Header = "Action Id", AllowSorting = true, WidthWeight = 200, BindingMode = BindingMode.OneWay });
-            //view.GridColsView.Add(new GridColView() { Field = nameof(StandAloneAction.Description), Header = "Description", AllowSorting = true, WidthWeight = 400, BindingMode = BindingMode.OneWay });            
-
-            //PlugInsActionsGrid.SetAllColumnsDefaultView(view);
-            //PlugInsActionsGrid.InitViewItems();          
-            //PlugInsActionsGrid.DataSourceList = mPluginPackage.Services; 
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
             
+            view.GridColsView.Add(new GridColView() { Field = nameof(PluginServiceActionInfo.ActionId), Header = "Action Id", AllowSorting = true, WidthWeight = 200, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(PluginServiceActionInfo.Description), Header = "Description", AllowSorting = true, WidthWeight = 400, BindingMode = BindingMode.OneWay });
+
+            xServiceActionGrid.SetAllColumnsDefaultView(view);
+            xServiceActionGrid.InitViewItems();            
         }
 
         private void SetTextEditorGrid()
@@ -153,8 +143,14 @@ namespace Ginger.PlugInsWindows
             //}
             //catch (Exception ex)
             //{
-            //    Reporter.ToLog(eLogLevel.ERROR, "Error in PlugIn tabs style", ex);
+            //    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in PlugIn tabs style", ex);
             //}
+        }
+
+        private void XServicesGrid_RowChangedEvent(object sender, System.EventArgs e)
+        {
+            PluginServiceInfo pluginServiceInfo = (PluginServiceInfo)xServicesGrid.CurrentItem;
+            xServiceActionGrid.DataSourceList = new ObservableList<PluginServiceActionInfo>(pluginServiceInfo.Actions);
         }
     }
 }

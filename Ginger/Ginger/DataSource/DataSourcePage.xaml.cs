@@ -103,14 +103,14 @@ namespace Ginger.DataSource
         {
             if (grdTableList.Grid.SelectedItems.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.SelectItemToDelete);
+                Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
                 return;
             }
             List<object> SelectedItemsList = grdTableList.Grid.SelectedItems.Cast<object>().ToList();
 
             foreach (object o in SelectedItemsList)
             {
-                if (Reporter.ToUser(eUserMsgKeys.DeleteRepositoryItemAreYouSure, ((DataSourceTable)o).GetNameForFileName()) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.DeleteRepositoryItemAreYouSure, ((DataSourceTable)o).GetNameForFileName()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     ((DataSourceTable)o).DSC.DeleteTable(((DataSourceTable)o).Name);
                 }
@@ -121,10 +121,10 @@ namespace Ginger.DataSource
         {
             if (grdTableList.Grid.Items.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
+                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
                 return;
             }
-            if ((Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == MessageBoxResult.Yes)
+            if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 mDSTableList = mDSDetails.DSC.GetTablesList();
                 foreach (DataSourceTable dsTable in mDSTableList)
@@ -153,14 +153,14 @@ namespace Ginger.DataSource
         {
             if (grdTableList.Grid.SelectedItems.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
                 return;
             }
             List<object> SelectedItemsList = grdTableList.Grid.SelectedItems.Cast<object>().ToList();
 
             foreach (object o in SelectedItemsList)
             {
-                if (Reporter.ToUser(eUserMsgKeys.RenameRepositoryItemAreYouSure, ((DataSourceTable)o).GetNameForFileName()) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.RenameRepositoryItemAreYouSure, ((DataSourceTable)o).GetNameForFileName()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     string oldName = ((DataSourceTable)o).Name;
                     InputBoxWindow.OpenDialog("Rename", "Table Name:", ((DataSourceTable)o), DataSourceBase.Fields.Name);

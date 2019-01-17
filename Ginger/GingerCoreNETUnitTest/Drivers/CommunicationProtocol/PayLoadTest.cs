@@ -45,7 +45,7 @@
 //        }
 
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void SimpleString()
 //        {
 //            //Arrange
@@ -67,7 +67,7 @@
 //           Assert.AreEqual(pl.Name, pl2.Name);
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void PayloadOnSameSide()
 //        {
 //            //Arrange
@@ -86,7 +86,7 @@
 //            Assert.AreEqual(pl.Name, pl2.Name);
 //        }
 
-//        [TestMethod]        
+//        [TestMethod]  [Timeout(60000)]        
 //        public void UTF16String()
 //        {
 //            //Arrange
@@ -107,7 +107,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void LongString5000()
 //        {
 //            //Arrange
@@ -134,7 +134,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void VeryLongString500000()
 //        {
 //            //Arrange
@@ -160,7 +160,7 @@
 //           Assert.AreEqual(s0, s1);
 //        }
 
-//        [TestMethod]        
+//        [TestMethod]  [Timeout(60000)]        
 //        public void StringWithSpecialCharsUTF8()
 //        {
 //            //Arrange            
@@ -182,7 +182,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void SimpleInt()
 //        {
 //            //Arrange
@@ -202,7 +202,7 @@
 //           Assert.AreEqual(val, val2);
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void NegativeInt()
 //        {
 //            //Arrange
@@ -222,7 +222,7 @@
 //           Assert.AreEqual(val, val2);
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void IntMaxValue()
 //        {
 //            //Arrange
@@ -245,7 +245,7 @@
 
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void ComplexStringWith2Ints()
 //        {
 //            //Arrange
@@ -273,7 +273,7 @@
 //           Assert.AreEqual(vals, vals2);
 //        }
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void ComplexEnumStringsInts()
 //        {
 //            //Arrange
@@ -310,7 +310,7 @@
 //        }
 
 
-//        //[TestMethod]
+//        //[TestMethod]  [Timeout(60000)]
 //        //public void DumpTest()
 //        //{
 //        //    //Arrange
@@ -330,7 +330,7 @@
 //        //    //Assert
 //        //}
 
-//        //[TestMethod]
+//        //[TestMethod]  [Timeout(60000)]
 //        //public void ActJavaElementAction()
 //        //{
 //        //    //Arrange
@@ -362,7 +362,7 @@
 
 //        //}
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void SpeedTestSimpleStringX100()
 //        {
 //            //Arrange
@@ -390,7 +390,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void NullTest()
 //        {
 //            //Arrange
@@ -412,7 +412,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void PayLoadList()
 //        {
 
@@ -452,7 +452,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void Guid()
 //        {
 //            //Arrange

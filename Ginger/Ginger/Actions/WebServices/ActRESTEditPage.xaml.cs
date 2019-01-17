@@ -24,6 +24,7 @@ using System.Windows.Data;
 using GingerCore.Actions.REST;
 using Ginger.UserControls;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Actions.WebServices
 {
@@ -233,7 +234,7 @@ namespace Ginger.Actions.WebServices
         private void BrowseTemplateFileButton_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
             if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

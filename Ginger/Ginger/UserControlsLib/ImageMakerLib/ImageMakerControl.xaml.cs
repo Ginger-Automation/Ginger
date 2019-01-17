@@ -176,7 +176,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsStaticImage("GingerByAmdocsLogoGray.png");
                     break;
                 case eImageType.GingerSplash:
-                    SetAsStaticImage("GingerSplashImage.png");
+                    SetAsStaticImage("GingerSplashImageNew.png");
                     break;
                 #endregion
 
@@ -478,6 +478,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Recover:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Recycle);
                     break;
+                case eImageType.Approve:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbsOutlineUp);
+                    break;
+                case eImageType.Reject:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbsOutlineDown);
+                    break;
+                case eImageType.Warn:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle);
+                    break;
                 #endregion
 
 
@@ -650,6 +659,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.GitHub:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Github);
+                    break;
+                case eImageType.Ping:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
                     break;
                 #endregion
 

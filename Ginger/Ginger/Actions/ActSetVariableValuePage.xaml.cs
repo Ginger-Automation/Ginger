@@ -44,7 +44,7 @@ namespace Ginger.Actions
         {            
             mVars = App.BusinessFlow.GetAllHierarchyVariables();
          
-            foreach (VariableBase v in mVars.OrderBy(VariableBase.Fields.Name))
+            foreach (VariableBase v in mVars.OrderBy(nameof(VariableBase.Name)))
             {
                 if ((v.GetType() != typeof(VariablePasswordString))&& (v.GetType() != typeof(VariableDynamic)))
                 {

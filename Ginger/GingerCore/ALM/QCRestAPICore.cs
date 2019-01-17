@@ -22,6 +22,7 @@ using System.ComponentModel;
 using System.IO.Compression;
 using System.Linq;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
@@ -110,7 +111,7 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
-            return ImportFromQCRest.GetALMItemFields(resourceType);
+            return UpdatedAlmFields(ImportFromQCRest.GetALMItemFields(resourceType));
         }
 
         public override bool IsServerConnected()

@@ -89,6 +89,7 @@
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
@@ -122,8 +123,8 @@
       <HintPath>..\packages\Gherkin.4.0.0\lib\net45\Gherkin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="GingerPluginCore, Version=3.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ginger.Plugin.Core.3.0.3\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
+    <Reference Include="GingerPluginCore, Version=3.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ginger.Plugin.Core.3.0.5\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.6.13.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.6.13\lib\Net45\HtmlAgilityPack.dll</HintPath>
@@ -145,10 +146,30 @@
     <Reference Include="Magick.NET-Q16-AnyCPU, Version=7.2.1.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
       <HintPath>..\packages\Magick.NET-Q16-AnyCPU.7.3.0\lib\net40\Magick.NET-Q16-AnyCPU.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CodeAnalysis, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.2.10.0\lib\netstandard1.3\Microsoft.CodeAnalysis.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.2.10.0\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Scripting, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Scripting.2.10.0\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.Scripting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Scripting, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.2.10.0\lib\netstandard1.3\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Expression.Interactions">
       <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Outlook, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Outlook.15.0.4797.1003\lib\net20\Microsoft.Office.Interop.Outlook.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
@@ -172,17 +193,20 @@
     <Reference Include="Mono.Posix">
       <HintPath>..\packages\Mono.Posix.4.0.0.0\lib\net40\Mono.Posix.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NJsonSchema, Version=9.11.1.0, Culture=neutral, PublicKeyToken=c2f9c3bdfae56102, processorArchitecture=MSIL">
-      <HintPath>..\packages\NJsonSchema.9.11.1\lib\net45\NJsonSchema.dll</HintPath>
+    <Reference Include="NJsonSchema, Version=9.13.10.0, Culture=neutral, PublicKeyToken=c2f9c3bdfae56102, processorArchitecture=MSIL">
+      <HintPath>..\packages\NJsonSchema.9.13.10\lib\net45\NJsonSchema.dll</HintPath>
     </Reference>
-    <Reference Include="NSwag.Core, Version=11.20.1.0, Culture=neutral, PublicKeyToken=c2d88086e098d109, processorArchitecture=MSIL">
-      <HintPath>..\packages\NSwag.Core.11.20.1\lib\net45\NSwag.Core.dll</HintPath>
+    <Reference Include="NJsonSchema.Yaml, Version=9.13.10.0, Culture=neutral, PublicKeyToken=c2f9c3bdfae56102, processorArchitecture=MSIL">
+      <HintPath>..\packages\NJsonSchema.Yaml.9.13.10\lib\net45\NJsonSchema.Yaml.dll</HintPath>
     </Reference>
-    <Reference Include="NSwag.Core.Yaml, Version=11.17.19.0, Culture=neutral, PublicKeyToken=c2d88086e098d109, processorArchitecture=MSIL">
-      <HintPath>..\packages\NSwag.Core.Yaml.11.17.19\lib\net45\NSwag.Core.Yaml.dll</HintPath>
+    <Reference Include="NSwag.Core, Version=12.0.9.0, Culture=neutral, PublicKeyToken=c2d88086e098d109, processorArchitecture=MSIL">
+      <HintPath>..\packages\NSwag.Core.12.0.9\lib\net45\NSwag.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="NSwag.Core.Yaml, Version=12.0.9.0, Culture=neutral, PublicKeyToken=c2d88086e098d109, processorArchitecture=MSIL">
+      <HintPath>..\packages\NSwag.Core.Yaml.12.0.9\lib\net45\NSwag.Core.Yaml.dll</HintPath>
     </Reference>
     <Reference Include="Open3270, Version=1.5.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -204,25 +228,38 @@
       <HintPath>..\packages\SharpAdbClient.2.0.274\lib\net45\SharpAdbClient.dll</HintPath>
     </Reference>
     <Reference Include="System">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll</HintPath>
     </Reference>
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.3.0\lib\net46\System.AppContext.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.5.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Console, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Console.4.3.0\lib\net46\System.Console.dll</HintPath>
+    <Reference Include="System.Console, Version=4.0.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Console.4.3.1\lib\net46\System.Console.dll</HintPath>
+      <Private>True</Private>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
-    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.3.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.3.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.5.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.FileVersionInfo, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.FileVersionInfo.4.3.0\lib\net46\System.Diagnostics.FileVersionInfo.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Diagnostics.StackTrace, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.StackTrace.4.3.0\lib\net46\System.Diagnostics.StackTrace.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Drawing.Common.4.5.0\lib\net461\System.Drawing.Common.dll</HintPath>
+    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Drawing.Common.4.5.1\lib\net461\System.Drawing.Common.dll</HintPath>
     </Reference>
     <Reference Include="System.Globalization.Calendars, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Globalization.Calendars.4.3.0\lib\net46\System.Globalization.Calendars.dll</HintPath>
@@ -245,13 +282,13 @@
       <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.IO.Packaging, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.Packaging.4.4.0\lib\net46\System.IO.Packaging.dll</HintPath>
+    <Reference Include="System.IO.Packaging, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Packaging.4.5.0\lib\net46\System.IO.Packaging.dll</HintPath>
     </Reference>
     <Reference Include="System.Management" />
     <Reference Include="System.Net" />
-    <Reference Include="System.Net.Http, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Net.Http.4.3.1\lib\net46\System.Net.Http.dll</HintPath>
+    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
@@ -261,13 +298,21 @@
     </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Printing" />
+    <Reference Include="System.Reflection.DispatchProxy, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reflection.DispatchProxy.4.5.1\lib\net461\System.Reflection.DispatchProxy.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reflection.Metadata, Version=1.4.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reflection.Metadata.1.6.0\lib\netstandard2.0\System.Reflection.Metadata.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
+      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
+      <Private>True</Private>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -278,8 +323,25 @@
       <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.2\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Text.Encoding.CodePages, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encoding.CodePages.4.3.0\lib\net46\System.Text.Encoding.CodePages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.3.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Threading.Thread, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Thread.4.3.0\lib\net46\System.Threading.Thread.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web" />
@@ -303,7 +365,20 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
+      <HintPath>..\packages\System.Xml.ReaderWriter.4.3.1\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.XmlDocument, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Xml.XmlDocument.4.3.0\lib\net46\System.Xml.XmlDocument.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.XPath, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Xml.XPath.4.3.0\lib\net46\System.Xml.XPath.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.XPath.XDocument, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Xml.XPath.XDocument.4.3.0\lib\net46\System.Xml.XPath.XDocument.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="UIAComWrapper, Version=1.1.0.14, Culture=neutral, PublicKeyToken=78cbcf77433a85e5, processorArchitecture=MSIL">
@@ -427,6 +502,9 @@
     <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByModelEditPage.xaml.cs">
       <DependentUpon>LocateByModelEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\_Common\ActUIElementLib\UIElementXYCoordinatePage.xaml.cs">
+      <DependentUpon>UIElementXYCoordinatePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Activities\ErrorHandlerMappingPage.xaml.cs">
       <DependentUpon>ErrorHandlerMappingPage.xaml</DependentUpon>
     </Compile>
@@ -509,13 +587,25 @@
     <Compile Include="GeneralLib\LogDetailsPage.xaml.cs">
       <DependentUpon>LogDetailsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GeneralLib\TextBoxFormatter.cs" />
     <Compile Include="PluginsLibNew\LocalPluginsPage.xaml.cs">
       <DependentUpon>LocalPluginsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="PluginsLibNew\PluginsIndexPage.xaml.cs">
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ReporterLib\GingerWorkSpaceReporter.cs" />
+    <Compile Include="ReporterLib\UserMessageBox.xaml.cs">
+      <DependentUpon>UserMessageBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ReporterLib\MessageInfo.cs" />
+    <Compile Include="ReporterLib\ReporterTestWindow.xaml.cs">
+      <DependentUpon>ReporterTestWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Repository\RepositoryItemFactory.cs" />
+    <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
+      <DependentUpon>TimeLinePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>
@@ -652,15 +742,12 @@
     <Compile Include="MenusLib\ResourcesMenu.cs" />
     <Compile Include="MenusLib\RunMenu.cs" />
     <Compile Include="RunSetLib\RunSetOperations.cs" />
-    <Compile Include="Run\RunSetConfig.cs" />
     <Compile Include="SolutionWindows\TargetApplicationsPage.xaml.cs">
       <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\GingerRunnerLogger.cs" />
     <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceBrowseFile.xaml.cs">
       <DependentUpon>ImportDataSourceBrowseFile.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TelemertryLib\AutoLogProxy.cs" />
     <Compile Include="TestLib\WizardLib\MyWizard.cs" />
     <Compile Include="TestLib\WizardLib\MyWizardDetailsPage.xaml.cs">
       <DependentUpon>MyWizardDetailsPage.xaml</DependentUpon>
@@ -780,13 +867,9 @@
       <DependentUpon>DebugConsoleWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="GeneralLib\Dummy.cs" />
-    <Compile Include="GeneralLib\ExecutionWatch.cs" />
     <Compile Include="GeneralLib\ListItemIndexConverter.cs" />
     <Compile Include="GeneralLib\TestWindow.xaml.cs">
       <DependentUpon>TestWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="GeneralWindows\NewMainWindow.xaml.cs">
-      <DependentUpon>NewMainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="GeneralWindows\NewStartPage.xaml.cs">
       <DependentUpon>NewStartPage.xaml</DependentUpon>
@@ -853,8 +936,6 @@
     <Compile Include="GeneralWindows\Run Set Pages\NewRunSetPage.xaml.cs">
       <DependentUpon>NewRunSetPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ActivityGroupReport.cs" />
-    <Compile Include="Repository\AddItemToRepositoryWizard\UploadSelectionItem.cs" />
     <Compile Include="Repository\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml.cs">
       <DependentUpon>UploadItemsSelectionPage.xaml</DependentUpon>
     </Compile>
@@ -874,16 +955,13 @@
     <Compile Include="Run\FailedActionsScreenshotsPage.xaml.cs">
       <DependentUpon>FailedActionsScreenshotsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\DefectSuggestion.cs" />
     <Compile Include="Run\BusinessFlowRunFlowControlPage.xaml.cs">
       <DependentUpon>BusinessFlowRunFlowControlPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionAutomatedALMDefects.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionAutomatedALMDefectsEditPage.xaml.cs">
       <DependentUpon>RunSetActionAutomatedALMDefectsEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\RunSetActions\ExportResultsToALMConfigPage.xaml.cs" />
-    <Compile Include="Run\RunSetActions\RunSetActionSendFreeEmail.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionSendFreeEmailEditPage.xaml.cs">
       <DependentUpon>RunSetActionSendFreeEmailEditPage.xaml</DependentUpon>
     </Compile>
@@ -944,7 +1022,6 @@
     <Compile Include="UserControlsLib\TwoLevelMenuLib\SubMenuItem.cs" />
     <Compile Include="UserControlsLib\TwoLevelMenuLib\TopMenuItem.cs" />
     <Compile Include="UserControlsLib\TwoLevelMenuLib\TwoLevelMenu.cs" />
-    <Compile Include="UserConfig\UserTypeHelper.cs" />
     <Compile Include="UserControlsLib\ActionInputValueUserControlLib\ActionInputValueUserControl.xaml.cs">
       <DependentUpon>ActionInputValueUserControl.xaml</DependentUpon>
     </Compile>
@@ -1066,7 +1143,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\EmailHtmlReportAttachment.cs" />
     <Compile Include="SourceControl\SourceControlIntegration.cs" />
     <Compile Include="SourceControl\SourceControlItemInfoPage.xaml.cs">
       <DependentUpon>SourceControlItemInfoPage.xaml</DependentUpon>
@@ -1080,7 +1156,6 @@
     <Compile Include="Reports\HTMLReportAttachmentConfigurationPage.xaml.cs">
       <DependentUpon>HTMLReportAttachmentConfigurationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionHTMLReportSendEmail.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionHTMLReportSendEmailEditPage.xaml.cs">
       <DependentUpon>RunSetActionHTMLReportSendEmailEditPage.xaml</DependentUpon>
     </Compile>
@@ -1105,7 +1180,6 @@
     <Compile Include="DataSource\DataSourcesPage.xaml.cs">
       <DependentUpon>DataSourcesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\HTMLReportsConfiguration.cs" />
     <Compile Include="Reports\HTMLReportsConfigurationPage.xaml.cs">
       <DependentUpon>HTMLReportsConfigurationPage.xaml</DependentUpon>
     </Compile>
@@ -1118,7 +1192,6 @@
     <Compile Include="Run\RunSetActions\RunSetActionHTMLReportEditPage.xaml.cs">
       <DependentUpon>RunSetActionHTMLReportEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionHTMLReport.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\DataSourceTableTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\HTMLGingerReportsTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\HTMLGingerReportTreeItem.cs" />
@@ -1409,39 +1482,21 @@
     <Compile Include="Help\TreeViewItems\HelpDocumentsFolderTreeItem.cs" />
     <Compile Include="Help\TreeViewItems\VideoHelpFileTreeItem.cs" />
     <Compile Include="Help\TreeViewItems\MHTHelpFileTreeItem.cs" />
-    <Compile Include="Reports\ActionReport.cs" />
-    <Compile Include="Reports\ActivityReport.cs" />
-    <Compile Include="Reports\BusinessFlowReport.cs" />
-    <Compile Include="Reports\ReportInfoAttribute.cs" />
-    <Compile Include="Reports\HTMLReportConfiguration.cs" />
-    <Compile Include="Reports\RunSetReport.cs" />
-    <Compile Include="Reports\GingerReport.cs" />
     <Compile Include="Reports\Designer\HTMLReportTemplateDesignerPage .xaml.cs">
       <DependentUpon>HTMLReportTemplateDesignerPage .xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\Designer\ReportTemplateDesignerPage.xaml.cs">
       <DependentUpon>ReportTemplateDesignerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\EnvironmentReport.cs" />
-    <Compile Include="Reports\FlowControlReport.cs" />
-    <Compile Include="Reports\HTMLReports\HTMLPlainReport.cs" />
-    <Compile Include="Reports\HTMLReports\HTMLSummaryReport.cs" />
     <Compile Include="Reports\HTMLReportPage .xaml.cs">
       <DependentUpon>HTMLReportPage .xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\GingerExecutionReport\GingerExecutionReport.cs" />
     <Compile Include="Reports\ExecutionResultsConfiguration.xaml.cs">
       <DependentUpon>ExecutionResultsConfiguration.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ExecutionLoggerConfiguration.cs" />
-    <Compile Include="Run\ExecutionLogger.cs" />
     <Compile Include="Reports\ReportPage.xaml.cs">
       <DependentUpon>ReportPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\HTMLReportTemplate.cs" />
-    <Compile Include="Reports\ReportTemplate.cs" />
-    <Compile Include="Reports\ReportInfo.cs" />
-    <Compile Include="Reports\ReportList.cs" />
     <Compile Include="Reports\HTMLReportTemplateSelector.xaml.cs">
       <DependentUpon>HTMLReportTemplateSelector.xaml</DependentUpon>
     </Compile>
@@ -1454,37 +1509,27 @@
     <Compile Include="Reports\ReportTemplatesPage.xaml.cs">
       <DependentUpon>ReportTemplatesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReturnValueReport.cs" />
     <Compile Include="Reports\RTFtoPDF.cs" />
     <Compile Include="Reports\SpecialReports\XMLReportBase.cs" />
     <Compile Include="Reports\SpecialReports\TestNGResultReport.cs" />
-    <Compile Include="Reports\VariableReport.cs" />
-    <Compile Include="Run\RunSetActions\EmailAttachment.cs" />
-    <Compile Include="Run\RunSetActions\RunSetActionBase.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionEditPage.xaml.cs">
       <DependentUpon>RunSetActionEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionPublishToQC.cs" />
-    <Compile Include="Run\RunSetActions\RunSetActionSaveResults.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionSaveResultsEditPage.xaml.cs">
       <DependentUpon>RunSetActionSaveResultsEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionGenerateTestNGReport.cs" />
-    <Compile Include="Run\RunSetActions\RunSetActionScript.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionGenerateTestNGReportEditPage.xaml.cs">
       <DependentUpon>RunSetActionGenerateTestNGReportEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\RunSetActions\RunSetActionScriptEditPage.xaml.cs">
       <DependentUpon>RunSetActionScriptEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionSendEmail.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionSendSMSditPage.xaml.cs">
       <DependentUpon>RunSetActionSendSMSditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\RunSetActions\RunSetActionSendEmailEditPage.xaml.cs">
       <DependentUpon>RunSetActionSendEmailEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionSendSMS.cs" />
     <Compile Include="Run\RunSetsExecutionsHistoryPage.xaml.cs">
       <DependentUpon>RunSetsExecutionsHistoryPage.xaml</DependentUpon>
     </Compile>
@@ -1693,8 +1738,6 @@
     <Compile Include="Imports\QTP\QTPImportPage.xaml.cs">
       <DependentUpon>QTPImportPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Imports\UFT\CommonFunctionConvertor.cs" />
-    <Compile Include="Imports\UFT\CommonFunctionMapping.cs" />
     <Compile Include="RingBuffer.cs" />
     <Compile Include="Run\ApplicationAgentSelectionPage.xaml.cs">
       <DependentUpon>ApplicationAgentSelectionPage.xaml</DependentUpon>
@@ -1756,7 +1799,6 @@
     <Compile Include="Environments\EnvsListPage.xaml.cs">
       <DependentUpon>EnvsListPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Solution.cs" />
     <Compile Include="GeneralLib\GeneralErrorWindow.xaml.cs">
       <DependentUpon>GeneralErrorWindow.xaml</DependentUpon>
     </Compile>
@@ -1777,7 +1819,6 @@
     <Compile Include="Repository\RepositoryItemUsagePage.xaml.cs">
       <DependentUpon>RepositoryItemUsagePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\HTMLReports\HTMLDetailedReport.cs" />
     <Compile Include="SolutionWindows\AddApplicationPage.xaml.cs">
       <DependentUpon>AddApplicationPage.xaml</DependentUpon>
     </Compile>
@@ -1832,7 +1873,6 @@
     <Compile Include="GeneralLib\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GeneralLib\MRUManager.cs" />
     <Compile Include="Imports\SeleniumToGinger.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -1849,13 +1889,9 @@
     <Compile Include="Run\AutoRunWindow.xaml.cs">
       <DependentUpon>AutoRunWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\BusinessFlowExecutionSummary.cs" />
-    <Compile Include="Run\BusinessFlowRun.cs" />
     <Compile Include="Run\BusinessFlowRunConfigurationsPage.xaml.cs">
       <DependentUpon>BusinessFlowRunConfigurationsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunsetExecutor.cs" />
-    <Compile Include="Reports\HTMLReports\HTMLReportBase.cs" />
     <Compile Include="SolutionWindows\AddSolutionPage.xaml.cs">
       <DependentUpon>AddSolutionPage.xaml</DependentUpon>
     </Compile>
@@ -1881,7 +1917,6 @@
     <Compile Include="Repository\RepositoryPage.xaml.cs">
       <DependentUpon>RepositoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\GingerRunner.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\AgentsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\AgentTreeItem.cs" />
     <Compile Include="ALM\QC\TreeViewItems\QCTestSetTreeItem.cs" />
@@ -1916,7 +1951,6 @@
     <Compile Include="StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Support\SupportFile.cs" />
     <Compile Include="Support\WebSupportPage.xaml.cs">
       <DependentUpon>WebSupportPage.xaml</DependentUpon>
     </Compile>
@@ -1938,7 +1972,6 @@
       <DependentUpon>ucGrid.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\UIHelpers.cs" />
-    <Compile Include="User\UserProfile.cs" />
     <Compile Include="Variables\AddVariablePage.xaml.cs">
       <DependentUpon>AddVariablePage.xaml</DependentUpon>
     </Compile>
@@ -2574,6 +2607,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Actions\_Common\ActUIElementLib\UIElementXYCoordinatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AdornerLib\HighlightAdornerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2834,6 +2871,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ReporterLib\UserMessageBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ReporterLib\ReporterTestWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SolutionWindows\TargetApplicationsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2854,6 +2899,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="TimeLineLib\TimeLinePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2869,10 +2918,6 @@
     <Page Include="UserControlsLib\TwoLevelMenuLib\TwoLevelMenuPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="GeneralWindows\NewMainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="GeneralWindows\NewStartPage.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -3054,7 +3099,7 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconInGrayNoBackground.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerSplashImage.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerSplashImageNew.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -4333,7 +4378,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Help\Developer Guide to Create Ginger Help Items.docx" />
-    <None Include="NextGenWPF_TemporaryKey.pfx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -4364,6 +4408,10 @@
       <Project>{651e20ac-3f67-4173-811b-ac1df4d92fcd}</Project>
       <Name>GingerAutoPilot</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GingerControls\GingerControls.csproj">
+      <Project>{959e026a-240e-47fb-9815-5ee219ee8039}</Project>
+      <Name>GingerControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj">
       <Project>{a2e3c260-7447-472d-9dce-39b7c80f12f7}</Project>
       <Name>GingerCoreCommon</Name>
@@ -4379,6 +4427,10 @@
     <ProjectReference Include="..\GingerPlugIns\GingerPlugIns.csproj">
       <Project>{d5329d81-7ff0-4af1-b186-a2fd65ef0583}</Project>
       <Name>GingerPlugIns</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GingerUtils\GingerUtils.csproj">
+      <Project>{80a06c2b-7da2-4f78-bf2a-5c0234f2349e}</Project>
+      <Name>GingerUtils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -4403,11 +4455,12 @@
     <Resource Include="SourceControlItemNew.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Actions\Files\" />
     <Folder Include="Dictionaries\Languages\" />
     <Folder Include="Help\Library\" />
-    <Folder Include="LicenseControl\" />
+    <Folder Include="Reports\HTMLReports\" />
     <Folder Include="Settings\TreeViewItems\" />
+    <Folder Include="TelemertryLib\" />
+    <Folder Include="UserConfig\" />
     <Folder Include="UserControlsLib\TextEditor\Java\" />
     <Folder Include="WindowExplorer\InternalBrowser\" />
   </ItemGroup>
@@ -4477,8 +4530,6 @@
     <Resource Include="GingerAgentStarter.xml" />
     <Content Include="CI\increasebuildNum.vbs" />
     <Resource Include="Reports\Designer\ScreenShot1.png" />
-    <EmbeddedResource Include="Reports\HTMLTemplates\SummaryHTMLReport.html" />
-    <EmbeddedResource Include="Reports\HTMLTemplates\SkeletonHTMLReport.html" />
     <Content Include="Reports\GingerExecutionReport\ActionReport.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -4510,7 +4561,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\GingerExecutionReport.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\RunSetReport.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -4523,6 +4574,10 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.6.1\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.6.1\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -4532,13 +4587,15 @@
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
     <Error Condition="!Exists('..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.17134\build\Selenium.WebDriver.MicrosoftWebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.17134\build\Selenium.WebDriver.MicrosoftWebDriver.targets'))" />
     <Error Condition="!Exists('..\packages\Selenium.Firefox.WebDriver.0.22.0\build\Selenium.Firefox.WebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.Firefox.WebDriver.0.22.0\build\Selenium.Firefox.WebDriver.targets'))" />
-    <Error Condition="!Exists('..\packages\Selenium.WebDriver.ChromeDriver.2.43.0\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.ChromeDriver.2.43.0\build\Selenium.WebDriver.ChromeDriver.targets'))" />
     <Error Condition="!Exists('..\packages\Selenium.WebDriver.IEDriver.3.141.0\build\Selenium.WebDriver.IEDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.IEDriver.3.141.0\build\Selenium.WebDriver.IEDriver.targets'))" />
+    <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
+    <Error Condition="!Exists('..\packages\Selenium.WebDriver.ChromeDriver.2.45.0\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.ChromeDriver.2.45.0\build\Selenium.WebDriver.ChromeDriver.targets'))" />
   </Target>
   <Import Project="..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.17134\build\Selenium.WebDriver.MicrosoftWebDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.17134\build\Selenium.WebDriver.MicrosoftWebDriver.targets')" />
   <Import Project="..\packages\Selenium.Firefox.WebDriver.0.22.0\build\Selenium.Firefox.WebDriver.targets" Condition="Exists('..\packages\Selenium.Firefox.WebDriver.0.22.0\build\Selenium.Firefox.WebDriver.targets')" />
-  <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.2.43.0\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.2.43.0\build\Selenium.WebDriver.ChromeDriver.targets')" />
   <Import Project="..\packages\Selenium.WebDriver.IEDriver.3.141.0\build\Selenium.WebDriver.IEDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.IEDriver.3.141.0\build\Selenium.WebDriver.IEDriver.targets')" />
+  <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
+  <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.2.45.0\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.2.45.0\build\Selenium.WebDriver.ChromeDriver.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

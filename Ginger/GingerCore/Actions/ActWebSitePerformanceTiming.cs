@@ -25,7 +25,7 @@ using GingerCore.Properties;
 using GingerCore.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActWebSitePerformanceTiming :  Act
@@ -39,7 +39,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "WebSite Performance Timing"; } }
         public override string ActionUserDescription { get { return "The Navigation Timing Action provides data that can be used to measure the performance of a website."; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {            
             TBH.AddText("Use this action to log end-to-end latency of web site to CSV file later on you can analyze trend and much more of each parameter");
             TBH.AddLineBreak();

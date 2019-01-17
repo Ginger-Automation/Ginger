@@ -21,11 +21,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Ginger.GingerCoreNETTestLib;
+using Ginger.ReporterLib;
 using GingerCore;
 using GingerCore.Actions;
-using GingerWPF;
-using GingerWPF.BusinessFlowsLib;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -109,7 +107,14 @@ namespace Ginger
 
             // TODO: save all other items
 
-            MessageBox.Show("Done");
+           Reporter.ToUser(eUserMsgKey.StaticInfoMessage,"Done");
+        }
+
+        private void XMessageTestWindow_Click(object sender, RoutedEventArgs e)
+        {
+            ReporterTestWindow reporterTestWindow = new ReporterTestWindow();
+            reporterTestWindow.Show();
+
         }
     }
 }
