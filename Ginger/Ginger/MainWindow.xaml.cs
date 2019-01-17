@@ -128,27 +128,32 @@ namespace Ginger
             }
         }
 
-        private void ReporterDataChanged(object sender, PropertyChangedEventArgs e)
+      private void ReporterDataChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ReporterData.ErrorCounter))
                 {
-                this.Dispatcher.Invoke(() => {
-                    if (Reporter.ReporterData.ErrorCounter == 0)
-                    {
-                        xLogErrorsPnl.Visibility = Visibility.Collapsed;
+                this.Dispatcher.BeginInvoke(
+                System.Windows.Threading.DispatcherPriority.Normal,
+                new Action(
+                 delegate ()
+                 {
+                     if (Reporter.ReporterData.ErrorCounter == 0)
+                     {
+                         xLogErrorsPnl.Visibility = Visibility.Collapsed;
 
-                    }
-                    else
-                    {
-                        xLogErrorsPnl.Visibility = Visibility.Visible;
-                        xLogErrorsLbl.Content = "[" + Reporter.ReporterData.ErrorCounter + "]";
-                        xLogErrorsPnl.ToolTip = Reporter.ReporterData.ErrorCounter + " Errors were logged to Ginger log, click to view log file";
-                    }
-                });
+                     }
+                     else
+                     {
+                         xLogErrorsPnl.Visibility = Visibility.Visible;
+                         xLogErrorsLbl.Content = "[" + Reporter.ReporterData.ErrorCounter + "]";
+                         xLogErrorsPnl.ToolTip = Reporter.ReporterData.ErrorCounter + " Errors were logged to Ginger log, click to view log file";
+                     }
+                 }
+              ));               
             }
         }
-
-       
+      
+     
         private void BetaFeatures_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(WorkSpace.Instance.BetaFeatures.IsUsingBetaFeatures))

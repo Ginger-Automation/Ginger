@@ -1739,14 +1739,14 @@ namespace Ginger.Run
         public void viewActivity(Activity activitytoView)
         {
             Activity ac = activitytoView;
-            BusinessFlowWindows.ActivityEditPage w = new BusinessFlowWindows.ActivityEditPage(ac, General.RepositoryItemPageViewMode.View);
+            BusinessFlowWindows.ActivityEditPage w = new BusinessFlowWindows.ActivityEditPage(ac, General.RepositoryItemPageViewMode.View,mCurrentBusinessFlowRunnerItemObject);
             w.ShowAsWindow();
         }
 
         public void viewAction(Act actiontoView)
         {
             Act act = actiontoView;
-            ActionEditPage w = new ActionEditPage(act, General.RepositoryItemPageViewMode.View);
+            ActionEditPage w = new ActionEditPage(act, General.RepositoryItemPageViewMode.View,mCurrentBusinessFlowRunnerItemObject,mCurrentActivityRunnerItemObject);
             w.ShowAsWindow();
         }
 
