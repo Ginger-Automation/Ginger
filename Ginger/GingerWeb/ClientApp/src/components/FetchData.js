@@ -14,6 +14,21 @@ export class FetchData extends Component {
       });
   }
 
+    static runFlowClick(flowName) {
+        // alert(flowName);
+        // "String Service List Concat"
+
+        fetch('api/SampleData/RunBusinessFlow', {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: "aaa"
+    
+            //body: JSON.stringify({ name: "Some text here" })
+        });        
+    }
+
+   
+
   static renderForecastsTable (forecasts) {
     return (
       <table className='table table-striped'>
@@ -27,19 +42,20 @@ export class FetchData extends Component {
           </tr>
         </thead>
         <tbody>
-          {forecasts.map(forecast =>
-            <tr key={forecast.name}>
-                <td>{forecast.name}</td>
-                <td>{forecast.description}</td>
-                <td>{forecast.status}</td>
-                <td>{forecast.fileName}</td>
+                {forecasts.map(forecast =>
+                    <tr key={forecast.name}>
+                    <td>{forecast.name}</td>
+                    <td>{forecast.description}</td>
+                    <td>{forecast.fileName}</td>
+                    <td>{forecast.status}</td>
+                
                         <td>
-                            <input type="button" value="Run"/>
+                            <button className="btn btn-primary" onClick={() => this.runFlowClick("zzz")}>Run</button>
                         </td>
             </tr>
           )}
         </tbody>
-      </table>
+    </table>
     );
   }
 
@@ -57,7 +73,7 @@ export class FetchData extends Component {
 
         <h1>Business Flows</h1>
         <p>Showing all business flows found in solution</p>
-        {contents}
+              {contents}              
       </div>
     );
   }

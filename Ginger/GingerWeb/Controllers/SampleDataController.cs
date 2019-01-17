@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
+using Ginger.Run;
 using GingerCore;
+using GingerCore.Actions;
 using GingerWeb.RepositoryLib;
 using GingerWeb.UsersLib;
 using Microsoft.AspNetCore.Mvc;
@@ -13,23 +15,7 @@ namespace GingerWeb.Controllers
     [Route("api/[controller]")]
     public class SampleDataController : Controller
     {
-        private static string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
-        //[HttpGet("[action]")]
-        //public IEnumerable<WeatherForecast> WeatherForecasts()
-        //{
-        //    var rng = new Random();
-        //    return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        //    {
-        //        DateFormatted = DateTime.Now.AddDays(index).ToString("d"),
-        //        TemperatureC = rng.Next(-20, 55),
-        //        Summary = Summaries[rng.Next(Summaries.Length)]
-        //    });
-        //}
-
+        // temp remove from here !!!!!!!!!!!
         static bool bDone;
 
         [HttpGet("[action]")]
@@ -52,20 +38,47 @@ namespace GingerWeb.Controllers
             return list;
         }
 
+        [HttpPost("[action]")]
+        public BusinessFlowWrapper RunBusinessFlow(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                name = "String Service List Concat";
+                //return null;
+            }
 
-        //public class WeatherForecast
-        //{
-        //    public string DateFormatted { get; set; }
-        //    public int TemperatureC { get; set; }
-        //    public string Summary { get; set; }
+            BusinessFlow BF = (from x in General.SR.GetAllRepositoryItems<BusinessFlow>() where x.Name == name select x).SingleOrDefault();
+            RunFlow(BF);
+            BusinessFlowWrapper businessFlowWrapper = new BusinessFlowWrapper(BF);
+            return businessFlowWrapper;
+        }
 
-        //    public int TemperatureF
-        //    {
-        //        get
-        //        {
-        //            return 32 + (int)(TemperatureC / 0.5556);
-        //        }
-        //    }
-        //}
+        void RunFlow(BusinessFlow businessFlow)
+        {
+            GingerRunner gingerRunner = new GingerRunner();
+            gingerRunner.RunBusinessFlow(businessFlow, true);
+
+            Console.WriteLine("Execution completed");
+            Console.WriteLine("Business Flow Status: " + businessFlow.RunStatus);
+            foreach (Activity activity in businessFlow.Activities)
+            {
+                Console.WriteLine("Activity: " + activity.ActivityName + " Status: " + activity.Status);
+
+                Console.WriteLine("Actions Found:" + activity.Acts.Count);
+                foreach (Act act in activity.Acts)
+                {
+                    Console.WriteLine("--");
+                    Console.WriteLine("Action:" + act.Description);
+                    Console.WriteLine("Description:" + act.ActionDescription);
+                    Console.WriteLine("Type:" + act.ActionType);
+                    Console.WriteLine("Class:" + act.ActClass);
+                    Console.WriteLine("Status:" + act.Status);
+                    Console.WriteLine("Error:" + act.Error);
+                    Console.WriteLine("ExInfo:" + act.ExInfo);
+                }
+            }
+        }
+
+
     }
 }

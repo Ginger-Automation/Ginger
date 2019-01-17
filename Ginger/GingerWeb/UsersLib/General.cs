@@ -5,6 +5,7 @@ using Amdocs.Ginger.GingerConsole.ReporterLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -35,6 +36,7 @@ namespace GingerWeb.UsersLib
 
             // WorkSpace.Instance.OpenSolution(@"C:\yaron\GingerSolution\Plugins\Plugins");
             OpenSolution(@"C:\yaron\GingerSolution\Plugins\Plugins");
+            WorkSpace.Instance.Solution = (Solution)(ISolution)SR.RepositorySerializer.DeserializeFromFile(Path.Combine(SR.SolutionFolder, "Ginger.Solution.xml"));
 
             var gg = WorkSpace.Instance.LocalGingerGrid;
             var nodes = gg.NodeList;
@@ -102,6 +104,7 @@ namespace GingerWeb.UsersLib
 
             // Add all RI classes from GingerCoreCommon
             NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(typeof(Solution).Assembly);
 
             // Add all RI classes from GingerCore
             // NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActButton).Assembly); // GingerCore.dll
