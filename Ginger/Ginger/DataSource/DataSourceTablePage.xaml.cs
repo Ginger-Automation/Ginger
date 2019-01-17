@@ -312,9 +312,10 @@ namespace Ginger.DataSource
                     else if (sColName == "GINGER_ID")
                     {
                         dr[sColName] = row[sColName];
-                        long aa = (long)dr[0];
-                         aa++;
-                        dr[0] = aa;
+                         
+                        //long aa = (long)dr[3];
+                        // aa++;
+                        //dr[3] = aa;
                     }
                     else
                         dr[sColName] = "";

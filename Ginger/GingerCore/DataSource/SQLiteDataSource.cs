@@ -27,11 +27,11 @@ namespace GingerCore.DataSource
 
             if (sMode == "Read")
             {
-                strAccessConn = "Data Source=" + mFilePath + " ; Version = 3; New = True;";
+                strAccessConn = "Data Source=" + mFilePath ;
             }
             else
             {
-                strAccessConn = "Data Source=" + mFilePath + "Version = 3; New = True; Compress = True;";
+                strAccessConn = "Data Source=" + mFilePath ;
             }
 
             try
@@ -227,16 +227,11 @@ namespace GingerCore.DataSource
 
         public override DataTable GetQueryOutput(string query)
         {
+            var table = new DataTable();
             SQLiteCommand myAccessCommand = new SQLiteCommand(query, sqlite);
-            SQLiteDataAdapter myDataAdapterTest = new SQLiteDataAdapter(myAccessCommand);
-
-            myDataAdapterTest.AcceptChangesDuringUpdate = true;
-
-            DataTable dataTable = new DataTable();
-            myDataAdapterTest.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-            myDataAdapterTest.FillSchema(dataTable, SchemaType.Mapped);
-            myDataAdapterTest.Fill(dataTable);
-            return dataTable;
+            
+            table.Load(myAccessCommand.ExecuteReader());
+            return table;
         }
 
         public override ObservableList<DataSourceTable> GetTablesList()
@@ -327,8 +322,13 @@ namespace GingerCore.DataSource
             sqlite.Close();
             Init(mFilePath, "Write");
             SQLiteCommand myCommand = new SQLiteCommand();
+            List<string> listCol = GetColumnList(tableName);
+            listCol.Remove(columnName);
+            string cols= String.Join(",", listCol.ToArray());
+           
             myCommand.Connection = sqlite;
-            myCommand.CommandText = "ALTER TABLE " + tableName + " DROP COLUMN [" + columnName + "]";
+            string cmd = "CREATE TABLE t1_backup AS SELECT "+cols+" FROM " + tableName +";" + "DROP TABLE " + tableName +";"+ "ALTER TABLE t1_backup RENAME TO " +tableName+";" ;
+            myCommand.CommandText = cmd;
             myCommand.ExecuteNonQuery();
             sqlite.Close();
             Init(mFilePath, "Read");
