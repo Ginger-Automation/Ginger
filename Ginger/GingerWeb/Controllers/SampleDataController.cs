@@ -4,7 +4,6 @@ using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Environments;
-using GingerWeb.RepositoryLib;
 using GingerWeb.UsersLib;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,6 +19,17 @@ namespace GingerWeb.Controllers
         // temp remove from here !!!!!!!!!!!
         static bool bDone;
 
+        public class RunBusinessFlowRequest
+        {
+            public string name { get; set; }            
+        }
+
+        public class RunBusinessFlowResult
+        {
+            public string name { get; set; }
+            public string Status { get; internal set; }
+        }
+
         [HttpGet("[action]")]
         public IEnumerable<object> WeatherForecasts()        
         {
@@ -29,33 +39,45 @@ namespace GingerWeb.Controllers
                 bDone = true;
             }
 
-            ObservableList<BusinessFlow> Bfs = General.SR.GetAllRepositoryItems<BusinessFlow>();
-            var v2 = Bfs.Select(x => 
+            ObservableList<BusinessFlow> BusinessFlows = General.SR.GetAllRepositoryItems<BusinessFlow>();
+            var data = BusinessFlows.Select(x => 
                                     new
                                     {
                                         name = x.Name,
-                                        description = x.Description
+                                        description = x.Description,
+                                        fileName = x.FileName,
+                                        status = x.RunStatus.ToString()
                                     });
 
-            return v2;            
+            return data;
         }
-        
 
-        [HttpPost("[action]")]
-        public BusinessFlowWrapper RunBusinessFlow(string name)
+
+        [HttpPost("[action]")]        
+        public RunBusinessFlowResult RunBusinessFlow([FromBody] RunBusinessFlowRequest runBusinessFlowRequest)
         {
-            if (string.IsNullOrEmpty(name))
+            RunBusinessFlowResult runBusinessFlowResult = new RunBusinessFlowResult();
+
+            if (string.IsNullOrEmpty(runBusinessFlowRequest.name))
             {
-                name = "String Service List Concat";
-                //return null;
+                runBusinessFlowResult.Status = "Name cannot be null";
+                return runBusinessFlowResult;
             }
 
-            BusinessFlow BF = (from x in General.SR.GetAllRepositoryItems<BusinessFlow>() where x.Name == name select x).SingleOrDefault();
-            RunFlow(BF);
-            // GenerateReport();
+            BusinessFlow BF = (from x in General.SR.GetAllRepositoryItems<BusinessFlow>() where x.Name == runBusinessFlowRequest.name select x).SingleOrDefault();
+            if (BF == null)
+            {
+                runBusinessFlowResult.Status = "Name cannot be null";
+                return runBusinessFlowResult;
+            }
 
-            BusinessFlowWrapper businessFlowWrapper = new BusinessFlowWrapper(BF);
-            return businessFlowWrapper;
+            RunFlow(BF);
+
+            runBusinessFlowResult.Status = "Executed - BF.Status=" + BF.RunStatus;
+
+
+
+            return runBusinessFlowResult;
         }
 
         void GenerateReport()

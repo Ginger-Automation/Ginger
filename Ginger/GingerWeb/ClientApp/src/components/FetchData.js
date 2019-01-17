@@ -15,15 +15,14 @@ export class FetchData extends Component {
   }
 
     static runFlowClick(flowName) {
-        // alert(flowName);
-        // "String Service List Concat"
-
+         
         fetch('api/SampleData/RunBusinessFlow', {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
-            body: "aaa"
-    
-            //body: JSON.stringify({ name: "Some text here" })
+             // data : "aaaa",
+            // body: flowName
+             body: JSON.stringify({ "name": flowName})
+            // body: JSON.stringify({ name: "Some text here" })
         });        
     }
 
@@ -50,7 +49,7 @@ export class FetchData extends Component {
                     <td>{forecast.status}</td>
                 
                         <td>
-                            <button className="btn btn-primary" onClick={() => this.runFlowClick("zzz")}>Run</button>
+                            <button className="btn btn-primary" onClick={this.runFlowClick.bind(this, forecast.name)}>Run</button>
                         </td>
             </tr>
           )}
