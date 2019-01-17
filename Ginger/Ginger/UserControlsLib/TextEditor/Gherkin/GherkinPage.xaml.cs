@@ -131,10 +131,10 @@ namespace Ginger.GherkinLib
         }
 
         private void AddTable(TextEditorToolRoutedEventArgs Args)
-        {
-
+        {   
+            
             this.GherkinTextEditor.textEditor.SelectedText = Environment.NewLine + "Examples:" + Environment.NewLine + "|A|B|C|" + Environment.NewLine + "|1|2|3|";
-
+            
         }
 
         public bool Optimize()
@@ -283,7 +283,10 @@ namespace Ginger.GherkinLib
                 foreach (ParserException PE in ex.Errors)
                 {
                     mErrorsList.Add(new GherkinParserException(PE));
-
+                    if(PE.Location.Line > GherkinTextEditor.textEditor.Document.LineCount)
+                    {
+                        continue;
+                    }
                     var line = GherkinTextEditor.textEditor.Document.GetLineByNumber(PE.Location.Line);
                     GherkinTextEditor.BackgroundRenderer.Segments.Add(line);
                 }
@@ -541,13 +544,15 @@ namespace Ginger.GherkinLib
                 }
                 UpdateBFButton.Content = "Update " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                 isBFexists = true;
-                Reporter.ToUser(eUserMsgKey.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\", "") + "\\" + mBizFlow.Name, "Created");
+                Reporter.ToUser(eUserMsgKey.BusinessFlowUpdate, mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, "Created");
             }
             else
             {
                 UpdateBFButton_Click();
-                Reporter.ToUser(eUserMsgKey.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\","") + "\\" + mBizFlow.Name, "Updated");
+                Reporter.ToUser(eUserMsgKey.BusinessFlowUpdate, mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, "Updated");
             }
+
+            GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(GherkinTextEditor.FileName) + " , Target Business Flow: " + mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, (Style)TryFindResource("@ucGridTitleLightStyle"));
 
             if(App.BusinessFlow == mBizFlow)
             {
@@ -667,7 +672,7 @@ namespace Ginger.GherkinLib
                 if (mBizFlow == null)
                 {                    
                     CreateNewBF(FeatureName);
-                }
+                }                
                 CreateActivities();
             }            
             finally
@@ -679,7 +684,7 @@ namespace Ginger.GherkinLib
         public bool Load(string FileName)
         {
             featureFileName = FileName;
-            GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(FileName), (Style)TryFindResource("@ucGridTitleLightStyle"));
+            GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(FileName) + " , Target Business Flow: N/A", (Style)TryFindResource("@ucGridTitleLightStyle"));
             GherkinDcoumentEditor g = new GherkinDcoumentEditor();                        
             g.OptimizedSteps = mOptimizedSteps;
             g.OptimizedTags = mTags;
@@ -716,6 +721,7 @@ namespace Ginger.GherkinLib
                 BFName = mBizFlow.FileName;
                 isBFexists = true;
                 UpdateBFButton.Content = "Update "+ GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(FileName) +  " , Target Business Flow: " + mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, (Style)TryFindResource("@ucGridTitleLightStyle"));
             }
             else
             {
