@@ -418,8 +418,7 @@ namespace Ginger.UserControlsLib.TextEditor
 
             args.CaretLocation = textEditor.CaretOffset;
             args.txt = textEditor.Text;
-            clickHandler.Invoke(args);
-            textEditor.Text = args.txt;
+            clickHandler.Invoke(args);            
 
             BackgroundRenderer.Segments.Clear();
             if (!string.IsNullOrEmpty(args.ErrorMessage))
@@ -486,7 +485,11 @@ namespace Ginger.UserControlsLib.TextEditor
         }       
 
         public void HighlightLine(int LineNumber)
-        {            
+        {
+            if (LineNumber > textEditor.Document.LineCount)
+            {
+                return;
+            }                
             var line = textEditor.Document.GetLineByNumber(LineNumber); 
             BackgroundRenderer.HighLightLine = line;
             textEditor.Focus();  // need to focus to get the redraw to happen, //TODO: find alternative so user can stay in grid or wherever
