@@ -25,6 +25,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions._Common.ActUIElementLib;
 using GingerCore.Platforms.PlatformsInfo;
 using System.Collections.Generic;
+using System;
 
 namespace Ginger.Actions
 {
@@ -35,6 +36,7 @@ namespace Ginger.Actions
     {
         private ActBrowserElement mAct;
         PlatformInfoBase mPlatform;
+        string mExistingPOMGuidString = "";
         public ActBrowserElementEditPage(ActBrowserElement act)
         {
             InitializeComponent();
@@ -55,6 +57,7 @@ namespace Ginger.Actions
             ValueUC.Init(mAct.GetOrCreateInputParam("Value"));
             xLocateValueVE.BindControl(mAct, Act.Fields.LocateValue);
             xGotoURLTypeRadioButton.Init(typeof(ActBrowserElement.eGotoURLType), xGotoURLTypeRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString()));
+            xURLSrcRadioButton.Init(typeof(ActBrowserElement.eURLSrc), xURLSrcRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString()), URLSrcRadioButton_Clicked);
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy);
             xImplicitWaitVE.BindControl(mAct, ActBrowserElement.Fields.ImplicitWait);
 
@@ -65,6 +68,7 @@ namespace Ginger.Actions
         {
             xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Collapsed;
             xOpenURLInPnl.Visibility = System.Windows.Visibility.Collapsed;
+            xURLSrcPnl.Visibility = System.Windows.Visibility.Collapsed;
             xValueGrid.Visibility = System.Windows.Visibility.Collapsed;
             xImplicitWaitPnl.Visibility = System.Windows.Visibility.Collapsed;
         }
@@ -99,6 +103,15 @@ namespace Ginger.Actions
                     if (mAct.ControlAction == ActBrowserElement.eControlAction.GotoURL)
                     {
                         xOpenURLInPnl.Visibility = System.Windows.Visibility.Visible;
+                        xURLSrcPnl.Visibility = System.Windows.Visibility.Visible;
+                        if (mAct.GetInputParamValue(ActBrowserElement.Fields.URLSrc) == ActBrowserElement.eURLSrc.UrlPOM.ToString())
+                        {
+                            ValueUC.Visibility = System.Windows.Visibility.Collapsed;
+                            xPOMUrlFrame.Visibility = System.Windows.Visibility.Visible;
+
+                            SetLocateValueFrame();
+                        }
+
                     }
                     xValueGrid.Visibility = System.Windows.Visibility.Visible;
                     xValueLabel.Content = "URL:";
@@ -152,6 +165,30 @@ namespace Ginger.Actions
                     xLocateValueEditFrame.Visibility = System.Windows.Visibility.Collapsed;
                     break;
             }
+        }
+
+        private void URLSrcRadioButton_Clicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            RadioButton rbSender = sender as RadioButton;
+
+            if(rbSender.Content.ToString() == ActBrowserElement.eURLSrc.Static.ToString())
+            {
+                ValueUC.Visibility = System.Windows.Visibility.Visible;
+                xPOMUrlFrame.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            else
+            {
+                ValueUC.Visibility = System.Windows.Visibility.Collapsed;
+                xPOMUrlFrame.Visibility = System.Windows.Visibility.Visible;
+
+                SetLocateValueFrame();
+            }
+        }
+
+        private void SetLocateValueFrame()
+        {
+            LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAct, null, mAct, nameof(ActBrowserElement.ElementLocateValue));
+            xPOMUrlFrame.Content = locateByPOMElementPage;
         }
     }
 }

@@ -36,6 +36,7 @@ namespace GingerCore.Actions
             public static string ElementLocateBy = "ElementLocateBy";
             public static string GotoURLType = "GotoURLType";
             public static string ImplicitWait = "ImplicitWait";
+            public static string URLSrc = "URLSrc";
         }
 
         public override string ActionDescription { get { return "Browser Action"; } }
@@ -79,6 +80,14 @@ namespace GingerCore.Actions
             NewTab,
             [EnumValueDescription("New Window")]
             NewWindow,
+        }
+
+        public enum eURLSrc
+        {
+            [EnumValueDescription("Static")]
+            Static,
+            [EnumValueDescription("Page Objects Model URL")]
+            UrlPOM,
         }
 
         [IsSerializedForLocalRepository]
@@ -176,5 +185,18 @@ namespace GingerCore.Actions
             }
 
             public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }
+
+        public string ElementLocateValue
+        {
+            get
+            {
+                return GetOrCreateInputParam(Fields.ElementLocateValue).Value;
+            }
+            set
+            {
+                GetOrCreateInputParam(Fields.ElementLocateValue).Value = value;
+                OnPropertyChanged(nameof(ElementLocateValue));
+            }
+        }
     }
 }

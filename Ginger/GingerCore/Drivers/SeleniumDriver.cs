@@ -406,8 +406,7 @@ namespace GingerCore.Drivers
                     case eBrowserType.Chrome:
                         ChromeOptions options = new ChromeOptions();
 
-                        if (BrowserMinimized == false)
-                            options.AddArgument("--start-maximized");
+                        options.AddArgument("--start-maximized");
 
                         if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
@@ -5386,7 +5385,25 @@ namespace GingerCore.Drivers
 
                 case ActBrowserElement.eControlAction.OpenURLNewTab:
                     OpenUrlNewTab();
-                    GotoURL(act, act.GetInputParamCalculatedValue("Value"));
+
+                    if ((act.GetInputParamValue(ActBrowserElement.Fields.URLSrc) == ActBrowserElement.eURLSrc.UrlPOM.ToString()))
+                    {
+                        string POMGuid = act.GetInputParamCalculatedValue("UrlPOM");
+                        string POMUrl = "";
+                        if (!string.IsNullOrEmpty(POMGuid))
+                        {
+                            ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(p => p.Guid.ToString() == POMGuid).FirstOrDefault();
+                            if (SelectedPOM != null)
+                            {
+                                POMUrl = SelectedPOM.PageURL;
+                            }
+                        }
+                        GotoURL(act, POMUrl);
+                    }
+                    else
+                    {
+                        GotoURL(act, act.GetInputParamCalculatedValue("Value"));
+                    }
                     break;
 
                 case ActBrowserElement.eControlAction.GotoURL:
@@ -5402,8 +5419,22 @@ namespace GingerCore.Drivers
                         Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
                         Driver.Manage().Window.Maximize();
                     }
-                    GotoURL(act, act.GetInputParamCalculatedValue("Value"));
 
+                    if ((act.GetInputParamValue(ActBrowserElement.Fields.URLSrc) == ActBrowserElement.eURLSrc.UrlPOM.ToString()))
+                    {
+                        string POMGuid = act.GetInputParamCalculatedValue("UrlPOM");
+                        string POMUrl = "";
+                        if (!string.IsNullOrEmpty(POMGuid))
+                        {
+                            ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(p => p.Guid.ToString() == POMGuid).FirstOrDefault();
+                            POMUrl = SelectedPOM?.PageURL;
+                        }
+                        GotoURL(act, POMUrl);
+                    }
+                    else
+                    {
+                        GotoURL(act, act.GetInputParamCalculatedValue("Value"));
+                    }
                     break;
                 case ActBrowserElement.eControlAction.Close:
                     Driver.Close();

@@ -26,7 +26,7 @@
         <Label Style="{StaticResource $LabelStyle}" Grid.Column="0" Content="Page Objects Model:" VerticalAlignment="Top"/>
         <TextBox x:Name="xHTMLReportFolderTextBox" Grid.Column="1" Style="{StaticResource $TextBoxStyle}" Height="25" IsEnabled="False" VerticalAlignment="Top" Margin="2,0,2,3"></TextBox>
         <Button Style="{StaticResource $InputButtonStyle}" Grid.Column="2" Height="25" Width="25" VerticalAlignment="Top" Click="SelectPOM_Click">...</Button>
-        <Label Style="{StaticResource $LabelStyle}" HorizontalContentAlignment="Right" Grid.Column="3" Content="Model Element:" VerticalAlignment="Top" />
+        <Label x:Name="POMElementsLbl" Style="{StaticResource $LabelStyle}" HorizontalContentAlignment="Right" Grid.Column="3" Content="Model Element:" VerticalAlignment="Top" />
         <TextBox x:Name="xPOMElementTextBox" Grid.Column="4" Style="{StaticResource $TextBoxStyle}" Height="25" IsEnabled="False"  VerticalAlignment="Top" Margin="2,0,2,3"></TextBox>
         <StackPanel Orientation="Vertical" Grid.Row="0"  Grid.Column="4">
             <Ginger:ucGrid x:Name="xPOMElementsGrid" Height="150" Visibility="Collapsed" Title="POM Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" />

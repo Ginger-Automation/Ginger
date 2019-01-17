@@ -79,8 +79,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             SetControlsGridView();
 
             mLocateValue = (string)mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).GetValue(mObjectLocateValue);
-
-            if ((mLocateValue != null) && (mLocateValue != string.Empty))
+            SelectElement(true);
+            if (!string.IsNullOrWhiteSpace(mLocateValue))
             {
                 try
                 {
@@ -96,21 +96,24 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     else
                     {
                         SetPOMPathToShow();
-                        Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                        ElementInfo selectedPOMElement = (ElementInfo)mSelectedPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
-                        if (selectedPOMElement == null)
+                        if (mObjectElementType.GetType() != typeof(ActGotoURL) && mObjectElementType.GetType() != typeof(ActBrowserElement))
                         {
-                            Reporter.ToUser(eUserMsgKeys.POMElementSearchByGUIDFailed);
-                        }
-                        else
-                        {
-                            xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
+                            Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
+                            ElementInfo selectedPOMElement = (ElementInfo)mSelectedPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                            if (selectedPOMElement == null)
+                            {
+                                Reporter.ToUser(eUserMsgKeys.POMElementSearchByGUIDFailed);
+                            }
+                            else
+                            {
+                                xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
 
-                            xPOMElementsGrid.Grid.SelectedItem = selectedPOMElement;
-                            SetElementTypeProperty(selectedPOMElement.ElementTypeEnum);
+                                xPOMElementsGrid.Grid.SelectedItem = selectedPOMElement;
+                                SetElementTypeProperty(selectedPOMElement.ElementTypeEnum);
 
-                            xPOMElementTextBox.Text = selectedPOMElement.ElementName;
-                            HighlightButton.IsEnabled = true;
+                                xPOMElementTextBox.Text = selectedPOMElement.ElementName;
+                                HighlightButton.IsEnabled = true;
+                            }
                         }
                     }
                 }
@@ -150,11 +153,22 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 mSelectedPOM = (ApplicationPOMModel)selectedPOMs[0];
                 SetPOMPathToShow();
-                xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
-                xPOMElementTextBox.Text = string.Empty;
-                mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, string.Empty);
-                SetElementTypeProperty(eElementType.Unknown);
-                SelectElement();
+
+                if (mObjectElementType.GetType() == typeof(ActGotoURL) || mObjectElementType.GetType() == typeof(ActBrowserElement))
+                {
+                    Act actBrowserElem = mObjectElementType as Act;
+                    actBrowserElem.AddOrUpdateInputParamValue("UrlPOM", mSelectedPOM.Guid.ToString());
+                    mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, mSelectedPOM.Guid.ToString());
+                    SelectElement(true);
+                }
+                else
+                {
+                    xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
+                    xPOMElementTextBox.Text = string.Empty;
+                    mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, string.Empty);
+                    SetElementTypeProperty(eElementType.Unknown);
+                    SelectElement();
+                }
             }
         }
 
@@ -175,13 +189,26 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
-        private void SelectElement()
+        private void SelectElement(bool UrlPOMRequest = false)
         {
-            xPOMElementTextBox.Visibility = Visibility.Collapsed;
-            xPOMElementsGrid.Visibility = Visibility.Visible;
-            xSelectElement.Visibility = Visibility.Visible;
-            xPOMElementsGrid.Refresh();
-            ArrowExpended = true;
+            if (UrlPOMRequest)
+            {
+                POMElementsLbl.Visibility = Visibility.Collapsed;
+                ArrowDownButton.Visibility = Visibility.Collapsed;
+                HighlightButton.Visibility = Visibility.Collapsed;
+                xPOMElementTextBox.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                POMElementsLbl.Visibility = Visibility.Visible;
+                ArrowDownButton.Visibility = Visibility.Visible;
+                HighlightButton.Visibility = Visibility.Visible;
+                xPOMElementTextBox.Visibility = Visibility.Collapsed;
+                xPOMElementsGrid.Visibility = Visibility.Visible;
+                xSelectElement.Visibility = Visibility.Visible;
+                xPOMElementsGrid.Refresh();
+                ArrowExpended = true;
+            }
         }
 
         private void SetPOMPathToShow()
