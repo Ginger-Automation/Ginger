@@ -27,11 +27,11 @@ jobs:
 
   - task: VSBuild@1
     inputs:
-     solution: '$(solution)'
+      solution: '$(solution)'
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
 
-  - script: "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" "Unit Tests\bin\Debug\UnitTests.dll" /TestCaseFilter:TestCategory=Level1
+  - script: "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" "Unit Tests\bin\Debug\UnitTests.dll" /TestCaseFilter:TestCategory=Level1
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
