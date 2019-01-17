@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActMobileDevice : Act
@@ -30,7 +30,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Mobile Device Action"; } }
         public override string ActionUserDescription { get { return "Run events which can be performed on mobile device"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
         }        
 

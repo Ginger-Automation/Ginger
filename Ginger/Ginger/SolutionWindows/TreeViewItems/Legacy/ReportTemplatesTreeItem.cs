@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
@@ -102,7 +103,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void AddNewReport(object sender, System.Windows.RoutedEventArgs e)
         {
             ReportTemplateTreeItem r = new ReportTemplateTreeItem();
-            r.ReportTemplate = (Ginger.Reports.ReportTemplate)App.UserProfile.Solution.CreateNewReportTemplate();
+            r.ReportTemplate = (Ginger.Reports.ReportTemplate) WorkSpace.UserProfile.Solution.CreateNewReportTemplate();
             if (r.ReportTemplate!= null)                       
                 mTV.Tree.AddChildItemAndSelect(this, r);            
         }
@@ -113,7 +114,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             RTS.ShowAsWindow();
             if (RTS.SelectedReportTemplate != null)
             {
-                App.UserProfile.ReportTemplateName = RTS.SelectedReportTemplate.Name;
+                 WorkSpace.UserProfile.ReportTemplateName = RTS.SelectedReportTemplate.Name;
             }
         }
 

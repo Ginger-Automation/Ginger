@@ -436,7 +436,7 @@ namespace Ginger.Actions
         private void grdActions_grdMain_MouseDoubleClick(object sender, EventArgs e)
         {
             Act a = (Act)grdActions.CurrentItem;
-            a.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            a.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
             ActionEditPage actedit = new ActionEditPage(a, EditMode);
             actedit.ap = this;
             actedit.ShowAsWindow();

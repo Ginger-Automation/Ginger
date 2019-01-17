@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using GingerWPFUnitTest.POMs;
 using System;
 using System.Reflection;
@@ -93,7 +94,7 @@ namespace GingerTest
                 Ginger.App.RunningFromUnitTest = true;
                 splash = new Ginger.SplashWindow();
                 splash.Show();                
-                //Ginger.App.UserProfile.AutoLoadLastSolution = false;                
+                //Ginger. WorkSpace.UserProfile.AutoLoadLastSolution = false;                
 
                 while (!app.IsReady && splash.IsVisible)
                 {
@@ -270,7 +271,7 @@ namespace GingerTest
 
         internal void ReloadSolution()
         {
-            string path = Ginger.App.UserProfile.Solution.ContainingFolderFullPath;
+            string path =  WorkSpace.UserProfile.Solution.ContainingFolderFullPath;
             CloseSolution();
             OpenSolution(path);
         }

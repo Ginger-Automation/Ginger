@@ -53,6 +53,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.ALMLib.ALMIntegration;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 
 namespace Ginger.Run
 {
@@ -313,7 +314,9 @@ namespace Ginger.Run
             ExecutedFrom = eExecutedFrom.Run;
 
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
-            RunListeners.Add(new ProgressReportRunListener());            
+            RunListeners.Add(new ProgressReportRunListener());
+
+            RunListeners.Add(new ExecutionLogger(this.ProjEnvironment, ExecutedFrom));
         }
 
         public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
@@ -322,6 +325,7 @@ namespace Ginger.Run
 
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             RunListeners.Add(new ProgressReportRunListener());
+            RunListeners.Add(new ExecutionLogger(this.ProjEnvironment, ExecutedFrom));
         }
 
 
@@ -1991,8 +1995,15 @@ namespace Ginger.Run
             NewPayLoad p = CreateActionPayload(actPlugin);
             NewPayLoad RC = GNP.RunAction(p);
 
-            // After we send it we parse the driver response
+            // release the node as soon as the result came in
+            bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, actPlugin.ServiceId);
+            if (!IsSessionService)
+            {
+                // standalone plugin action release the node
+                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
+            }
 
+            // After we send it we parse the driver response
             if (RC.Name == "ActionResult")
             {
                 // We read the ExInfo, Err and output params
@@ -2039,13 +2050,7 @@ namespace Ginger.Run
             }
 
             gingerNodeInfo.IncreaseActionCount();
-
-            bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, actPlugin.ServiceId);
-            if (!IsSessionService) 
-            {
-                // standalone plugin action release the node
-                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
-            }
+            
             st.Stop();
             long millis = st.ElapsedMilliseconds;
             actPlugin.ExInfo += Environment.NewLine + "Elapsed: " +  millis + "ms";

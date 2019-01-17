@@ -80,7 +80,7 @@ namespace Ginger.GherkinLib
         {           
             InitializeComponent();
 
-            folder = App.UserProfile.Solution.BusinessFlowsMainFolder;
+            folder =  WorkSpace.UserProfile.Solution.BusinessFlowsMainFolder;
 
             GherkinTextEditor.AddToolbarTool(General.GetImage("@Save_16x16.png"), Save_Click, "Save Gherkin Feature");
             GherkinTextEditor.SaveButton.Visibility = Visibility.Collapsed;
@@ -131,10 +131,10 @@ namespace Ginger.GherkinLib
         }
 
         private void AddTable(TextEditorToolRoutedEventArgs Args)
-        {
-
+        {   
+            
             this.GherkinTextEditor.textEditor.SelectedText = Environment.NewLine + "Examples:" + Environment.NewLine + "|A|B|C|" + Environment.NewLine + "|1|2|3|";
-
+            
         }
 
         public bool Optimize()
@@ -283,7 +283,10 @@ namespace Ginger.GherkinLib
                 foreach (ParserException PE in ex.Errors)
                 {
                     mErrorsList.Add(new GherkinParserException(PE));
-
+                    if(PE.Location.Line > GherkinTextEditor.textEditor.Document.LineCount)
+                    {
+                        continue;
+                    }
                     var line = GherkinTextEditor.textEditor.Document.GetLineByNumber(PE.Location.Line);
                     GherkinTextEditor.BackgroundRenderer.Segments.Add(line);
                 }
@@ -453,11 +456,11 @@ namespace Ginger.GherkinLib
 
             mBizFlow = App.CreateNewBizFlow(BizFlowName);
             mBizFlow.Source = BusinessFlow.eSource.Gherkin;
-            mBizFlow.ExternalID = GherkinTextEditor.FileName.Replace(App.UserProfile.Solution.Folder, "~") ;                                                
+            mBizFlow.ExternalID = GherkinTextEditor.FileName.Replace( WorkSpace.UserProfile.Solution.Folder, "~") ;                                                
             mBizFlow.Name = BizFlowName;
             mBizFlow.Activities.Clear();
             
-            mBizFlow.ContainingFolder = targetFolder.FolderFullPath.Replace(App.UserProfile.Solution.Folder,"~");
+            mBizFlow.ContainingFolder = targetFolder.FolderFullPath.Replace( WorkSpace.UserProfile.Solution.Folder,"~");
             mBizFlow.ContainingFolderFullPath = targetFolder.FolderFullPath;            
             targetFolder.AddRepositoryItem(mBizFlow);
             targetFolder.RefreshFolderAndChildElementsSourceControlStatus();            
@@ -541,13 +544,15 @@ namespace Ginger.GherkinLib
                 }
                 UpdateBFButton.Content = "Update " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                 isBFexists = true;
-                Reporter.ToUser(eUserMsgKey.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\", "") + "\\" + mBizFlow.Name, "Created");
+                Reporter.ToUser(eUserMsgKey.BusinessFlowUpdate, mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, "Created");
             }
             else
             {
                 UpdateBFButton_Click();
-                Reporter.ToUser(eUserMsgKey.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\","") + "\\" + mBizFlow.Name, "Updated");
+                Reporter.ToUser(eUserMsgKey.BusinessFlowUpdate, mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, "Updated");
             }
+
+            GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(GherkinTextEditor.FileName) + " , Target Business Flow: " + mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, (Style)TryFindResource("@ucGridTitleLightStyle"));
 
             if(App.BusinessFlow == mBizFlow)
             {
@@ -608,7 +613,7 @@ namespace Ginger.GherkinLib
                         Activity a = new Activity();
                         a.ActivityName = GH.Text;                        
                         a.Active = false;
-                        a.TargetApplication = App.UserProfile.Solution.MainApplication;
+                        a.TargetApplication =  WorkSpace.UserProfile.Solution.MainApplication;
                         a.ActionRunOption = eActionRunOption.ContinueActionsRunOnFailure;
                         CreateActivityVariables(a);
                         CreateActivitySelectionVariables(a);                        
@@ -638,7 +643,7 @@ namespace Ginger.GherkinLib
         {
             if (TagName.StartsWith("@"))
                 TagName = TagName.Substring(1);
-            Guid TagGuid = (from x in App.UserProfile.Solution.Tags where x.Name == TagName select x.Guid).FirstOrDefault();            
+            Guid TagGuid = (from x in  WorkSpace.UserProfile.Solution.Tags where x.Name == TagName select x.Guid).FirstOrDefault();            
             return TagGuid;
         }
 
@@ -657,7 +662,7 @@ namespace Ginger.GherkinLib
             Mouse.OverrideCursor = Cursors.Wait;
             try
             {
-                string externalID = featureFileName.Replace(App.UserProfile.Solution.Folder, "~");
+                string externalID = featureFileName.Replace( WorkSpace.UserProfile.Solution.Folder, "~");
                 if(BFName.EndsWith(".Ginger.BusinessFlow.xml"))
                 {
                     BFName = Path.GetFileName(BFName).Replace(".Ginger.BusinessFlow.xml", "");
@@ -667,7 +672,7 @@ namespace Ginger.GherkinLib
                 if (mBizFlow == null)
                 {                    
                     CreateNewBF(FeatureName);
-                }
+                }                
                 CreateActivities();
             }            
             finally
@@ -679,7 +684,7 @@ namespace Ginger.GherkinLib
         public bool Load(string FileName)
         {
             featureFileName = FileName;
-            GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(FileName), (Style)TryFindResource("@ucGridTitleLightStyle"));
+            GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(FileName) + " , Target Business Flow: N/A", (Style)TryFindResource("@ucGridTitleLightStyle"));
             GherkinDcoumentEditor g = new GherkinDcoumentEditor();                        
             g.OptimizedSteps = mOptimizedSteps;
             g.OptimizedTags = mTags;
@@ -696,7 +701,7 @@ namespace Ginger.GherkinLib
             ARP.xActivitiesRepositoryGrid.EnableTagsPanel = false;
             SharedActivitiesFrame.Content = ARP;
 
-            BFName = FileName.Replace(App.UserProfile.Solution.Folder, "");
+            BFName = FileName.Replace( WorkSpace.UserProfile.Solution.Folder, "");
             //to prevent creating a folder rather than putting them on BF level.
             if (BFName.Contains("Business Flows"))
             {
@@ -707,7 +712,7 @@ namespace Ginger.GherkinLib
                 BFName = Path.GetFileName(FileName).Replace(".feature", "");
             }            
             // search if we have the BF defined already, so search in BF will work
-            string externalID = FileName.Replace(App.UserProfile.Solution.Folder, "~");
+            string externalID = FileName.Replace( WorkSpace.UserProfile.Solution.Folder, "~");
             
             mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x =>x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == FileName)).SingleOrDefault();                           
             
@@ -716,6 +721,7 @@ namespace Ginger.GherkinLib
                 BFName = mBizFlow.FileName;
                 isBFexists = true;
                 UpdateBFButton.Content = "Update "+ GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(FileName) +  " , Target Business Flow: " + mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, (Style)TryFindResource("@ucGridTitleLightStyle"));
             }
             else
             {

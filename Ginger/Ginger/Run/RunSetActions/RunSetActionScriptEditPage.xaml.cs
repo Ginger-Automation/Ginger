@@ -18,7 +18,7 @@ limitations under the License.
 
 using System.Windows;
 using System.Windows.Controls;
-
+using amdocs.ginger.GingerCoreNET;
 namespace Ginger.Run.RunSetActions
 {
     /// <summary>
@@ -42,7 +42,7 @@ namespace Ginger.Run.RunSetActions
 
             dlg.DefaultExt = "*.VBS";
             dlg.Filter = "Script File (*.VBS)|*.VBS";
-            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
             
             if(dlg.ShowDialog()==System.Windows.Forms.DialogResult.OK)
             {

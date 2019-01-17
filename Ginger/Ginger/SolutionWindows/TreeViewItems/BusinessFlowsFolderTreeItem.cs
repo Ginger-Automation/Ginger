@@ -218,7 +218,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     //customize the imported BF
                     importedBF.Guid = Guid.NewGuid();
                     for (int i = 0; i < importedBF.TargetApplications.Count; i++)
-                        if (App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == importedBF.TargetApplications[i].Name).FirstOrDefault() == null)
+                        if ( WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == importedBF.TargetApplications[i].Name).FirstOrDefault() == null)
                         {
                             importedBF.TargetApplications.RemoveAt(i);//No such Application so Delete it
                             i--;
@@ -226,7 +226,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     if (importedBF.TargetApplications.Count == 0)
                     {
                         TargetApplication ta = new TargetApplication();
-                        ta.AppName = App.UserProfile.Solution.ApplicationPlatforms[0].AppName;
+                        ta.AppName =  WorkSpace.UserProfile.Solution.ApplicationPlatforms[0].AppName;
                         importedBF.TargetApplications.Add(ta);
                     }
 
@@ -249,7 +249,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 BusinessFlow BizFlow = App.CreateNewBizFlow(BizFlowName);
 
-                if (App.UserProfile.Solution.ApplicationPlatforms.Count != 1)
+                if ( WorkSpace.UserProfile.Solution.ApplicationPlatforms.Count != 1)
                 {
                     EditBusinessFlowAppsPage EBFP = new EditBusinessFlowAppsPage(BizFlow);
                     EBFP.ResetPlatformSelection();

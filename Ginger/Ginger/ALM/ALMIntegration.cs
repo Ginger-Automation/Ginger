@@ -41,7 +41,7 @@ namespace Ginger.ALM
 
         private ALMIntegration()
         {
-            UpdateALMType((eALMType)App.UserProfile.Solution.AlmType);
+            UpdateALMType((eALMType) WorkSpace.UserProfile.Solution.AlmType);
         }
 
         public void UpdateALMType(eALMType AlmType)
@@ -53,7 +53,7 @@ namespace Ginger.ALM
             switch (AlmType)
             {
                 case eALMType.QC:
-                    if (!App.UserProfile.Solution.UseRest)
+                    if (! WorkSpace.UserProfile.Solution.UseRest)
                     {
                         AlmCore = new QCCore();
                         AlmRepo = new QCRepository();
@@ -242,7 +242,7 @@ namespace Ginger.ALM
 
         public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false)
         {
-            ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
             bool isExportSucc = false;
             if (AutoALMProjectConnect(almConnectionType, false))
             {
@@ -353,7 +353,7 @@ namespace Ginger.ALM
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             Reporter.ToLog(eLogLevel.DEBUG, ("Exporting Activity Groups of business flow: " + businessFlow.Name + " to ALM"));
-            ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
                 AlmRepo.ExportBfActivitiesGroupsToALM(businessFlow, grdActivitiesGroups);
@@ -365,7 +365,7 @@ namespace Ginger.ALM
         public bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, bool performSaveAfterExport = false)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
             bool isExportSucc = false;
             if (AutoALMProjectConnect(eALMConnectType.Auto))
@@ -383,7 +383,7 @@ namespace Ginger.ALM
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             //Passing Solution Folder path to GingerCore
-            ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
             bool isExportSucc = true;
             if (AutoALMProjectConnect(eALMConnectType.Auto))
@@ -414,7 +414,7 @@ namespace Ginger.ALM
 
             Reporter.ToLog(eLogLevel.DEBUG, ("Exporting business flow: " + businessFlow.Name + " to ALM"));
             //Passing Solution Folder path to GingerCore
-            ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
             bool isExportSucc = false;
             if (AutoALMProjectConnect(eALMConnectType.Auto))
@@ -447,7 +447,7 @@ namespace Ginger.ALM
             Reporter.ToLog(eLogLevel.DEBUG, "Importing Business flow from ALM");
             if (AutoALMProjectConnect(eALMConnectType.Auto, true, true))
             {
-                ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+                ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
                 AlmRepo.ImportALMTests(importDestinationFolderPath);
                 DisconnectALMServer();
             }
@@ -459,7 +459,7 @@ namespace Ginger.ALM
             Reporter.ToLog(eLogLevel.DEBUG, "Importing Business flow from ALM By Id");
             if (AutoALMProjectConnect(eALMConnectType.Auto, true, true))
             {
-                ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+                ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
                 AlmRepo.ImportALMTestsById(importDestinationFolderPath);
                 DisconnectALMServer();
             }

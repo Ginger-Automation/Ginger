@@ -80,7 +80,7 @@ namespace Ginger.Run
         {
             DefectProfiles_cbx.ItemsSource = null;
 
-            if (App.UserProfile.Solution != null)
+            if ( WorkSpace.UserProfile.Solution != null)
             {
                 DefectProfiles_cbx.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
                 DefectProfiles_cbx.DisplayMemberPath = nameof(ALMDefectProfile.Name).ToString();

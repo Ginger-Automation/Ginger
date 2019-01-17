@@ -13,49 +13,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {          
             UpdateStat.Invoke(this, null);
         }
-        public override void ActionStart(uint eventTime, Act action)
-        {
-            UpdateStat.Invoke(this, null);
-        }
-        public override void ActionEnd(uint eventTime, Act action)
-        {
-            UpdateStat.Invoke(this, null);
-        }
-
-        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow)
-        {
-            UpdateStat.Invoke(this, null);
-        }
-
-        public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow)
-        {
-            UpdateStat.Invoke(this, null);
-        }
-
-        public override void ActivityStart(uint eventTime, Activity activity)
-        {
-            UpdateStat.Invoke(this, null);
-        }
-
-        public override void ActivityEnd(uint eventTime, Activity activity)
-        {
-            UpdateStat.Invoke(this, null);
-        }
-
-        public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner)
-        {
-            UpdateStat.Invoke(this, null);
-        }
-
-        public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner)
-        {
-            UpdateStat.Invoke(this, null);
-        }
-
-        public override void DynamicActivityWasAddedToBusinessflow(uint eventTime, BusinessFlow businessFlow)
-        {
-            UpdateStat.Invoke(this, null);
-        }
+       
 
        
     }

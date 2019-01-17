@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using GingerCore.Helpers;
 using System.IO;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.Actions
 {
@@ -33,7 +34,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Screen Shot Action"; } }
         public override string ActionUserDescription { get { return "Takes screen shot"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate screen shot of page.");
             TBH.AddLineBreak();
