@@ -25,6 +25,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.ALM
 {

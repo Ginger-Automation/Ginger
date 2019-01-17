@@ -78,7 +78,7 @@ namespace GingerCore.ALM.JIRA
                     fields.Append(SetALMItemsFields(testExecutionFieldsList, ResourceType.TEST_CASE_EXECUTION_RECORDS));
                 }
             }
-            catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
+            catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
 
             return fields;
         }
@@ -278,7 +278,7 @@ namespace GingerCore.ALM.JIRA
                                     stepActivityVar = new VariableSelectionList();
                                     stepActivityVar.Name = param;
                                     stepActivity.AddVariable(stepActivityVar);
-                                    stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new flow control param was added
+                                    stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
                                 }
                                 else
                                 {
@@ -301,7 +301,7 @@ namespace GingerCore.ALM.JIRA
                                         stepActivityVar = new VariableSelectionList();
                                         stepActivityVar.Name = param;
                                         stepActivity.AddVariable(stepActivityVar);
-                                        stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because flow control param was added
+                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                                     }
                                 }
                                 else if (isflowControlParam == false)
@@ -314,7 +314,7 @@ namespace GingerCore.ALM.JIRA
                                         stepActivityVar.Name = param;
                                         ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                         stepActivity.AddVariable(stepActivityVar);
-                                        stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because flow control param was removed
+                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
                                     }
                                 }
                             }
@@ -329,7 +329,7 @@ namespace GingerCore.ALM.JIRA
                                     stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
                                     ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
                                     if (isflowControlParam == true)
-                                        stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
+                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
                                 }
                                 //set the selected value
                                 ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
@@ -343,7 +343,7 @@ namespace GingerCore.ALM.JIRA
                                     if (stepActivityVar is VariableString)
                                         ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                 }
-                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
 
                             //add linked variable if needed
@@ -398,7 +398,7 @@ namespace GingerCore.ALM.JIRA
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
                     }
                 }
@@ -406,7 +406,7 @@ namespace GingerCore.ALM.JIRA
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return null;
             }
         }
@@ -427,7 +427,7 @@ namespace GingerCore.ALM.JIRA
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while stripping the HTML from Jira TC Step Description/Expected", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while stripping the HTML from Jira TC Step Description/Expected", ex);
                 return HTMLText;
             }
         }
@@ -446,7 +446,7 @@ namespace GingerCore.ALM.JIRA
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while pulling the parameters names from Jira TC Step Description/Expected", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while pulling the parameters names from Jira TC Step Description/Expected", ex);
             }
         }
         public JiraTestSet GetTestSetData(JiraTestSet currentTS)

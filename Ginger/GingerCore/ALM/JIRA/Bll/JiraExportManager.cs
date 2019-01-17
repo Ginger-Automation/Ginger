@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common.InterfacesLib;
+
 
 namespace GingerCore.ALM.JIRA.Bll
 {
@@ -88,7 +90,7 @@ namespace GingerCore.ALM.JIRA.Bll
             return resultFlag;
         }
 
-        private string CreateCommentForRun(List<Act> list)
+        private string CreateCommentForRun(List<IAct> list)
         {
             StringBuilder sb = new StringBuilder();
             if (list.Exists(a => !string.IsNullOrEmpty(a.Error)))
@@ -326,7 +328,7 @@ namespace GingerCore.ALM.JIRA.Bll
             }
         }
 
-        private string CreateStringFromActions(ObservableList<Act> acts)
+        private string CreateStringFromActions(ObservableList<IAct> acts)
         {
             StringBuilder variablesSb = new StringBuilder();
             for (var a = 0; a < acts.Count; a++)
