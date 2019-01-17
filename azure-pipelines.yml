@@ -20,7 +20,9 @@ jobs:
 - job: Windows
   pool:
    vmImage: 'vs2017-win2016'
-  variables:  
+  variables:
+    solution: '**/*.sln'
+    buildPlatform: 'Any CPU' 
     buildConfiguration: 'Release'
     solutionDIrectory:  'Ginger-Automation/Ginger'
   steps:
@@ -31,7 +33,7 @@ jobs:
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
 
-  - script: C:\"Program Files (x86)"\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "Unit Tests\bin\Debug\UnitTests.dll" /TestCaseFilter:TestCategory=Level1
+  - script: C:\"Program Files (x86)"\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "Unit Tests\bin\Release\UnitTests.dll" /TestCaseFilter:TestCategory=Level1
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
