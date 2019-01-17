@@ -647,7 +647,6 @@
     <Compile Include="DataSource\ActDSTableElement.cs" />
     <Compile Include="DataSource\ActDSConditon.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
-    <Compile Include="DataSource\SQLiteDataSource.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriver.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml.cs">
       <DependentUpon>AndroidADBDriverWindow.xaml</DependentUpon>
