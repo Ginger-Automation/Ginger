@@ -1,14 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
+using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Environments;
 using GingerWeb.RepositoryLib;
 using GingerWeb.UsersLib;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace GingerWeb.Controllers
 {
@@ -19,7 +21,7 @@ namespace GingerWeb.Controllers
         static bool bDone;
 
         [HttpGet("[action]")]
-        public IEnumerable<BusinessFlowWrapper> WeatherForecasts()
+        public IEnumerable<object> WeatherForecasts()        
         {
             if (!bDone)
             {
@@ -28,15 +30,16 @@ namespace GingerWeb.Controllers
             }
 
             ObservableList<BusinessFlow> Bfs = General.SR.GetAllRepositoryItems<BusinessFlow>();
-            List<BusinessFlowWrapper> list = new List<BusinessFlowWrapper>();
-            foreach (BusinessFlow businessFlow in Bfs)
-            {
-                list.Add(new BusinessFlowWrapper(businessFlow));
-            }
-            
-            
-            return list;
+            var v2 = Bfs.Select(x => 
+                                    new
+                                    {
+                                        name = x.Name,
+                                        description = x.Description
+                                    });
+
+            return v2;            
         }
+        
 
         [HttpPost("[action]")]
         public BusinessFlowWrapper RunBusinessFlow(string name)
@@ -49,13 +52,47 @@ namespace GingerWeb.Controllers
 
             BusinessFlow BF = (from x in General.SR.GetAllRepositoryItems<BusinessFlow>() where x.Name == name select x).SingleOrDefault();
             RunFlow(BF);
+            // GenerateReport();
+
             BusinessFlowWrapper businessFlowWrapper = new BusinessFlowWrapper(BF);
             return businessFlowWrapper;
         }
 
+        void GenerateReport()
+        {
+            ExecutionLoggerConfiguration executionLoggerConfiguration = new ExecutionLoggerConfiguration();            
+            // HTMLReportsConfiguration currentConf = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            //get logger files
+            string exec_folder = Ginger.Run.ExecutionLogger.GetLoggerDirectory(executionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLogger.defaultAutomationTabLogName);
+            //create the report
+            string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), true, null, null, false, 100000);
+
+            if (reportsResultFolder == string.Empty)
+            {
+                Reporter.ToUser(eUserMsgKey.AutomationTabExecResultsNotExists);
+            }
+            else
+            {
+                foreach (string txt_file in System.IO.Directory.GetFiles(reportsResultFolder))
+                {
+                    string fileName = Path.GetFileName(txt_file);
+                    if (fileName.Contains(".html"))
+                    {
+                        System.Diagnostics.Process.Start(reportsResultFolder);
+                        System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
+                    }
+                }
+            }
+        }
+
+        ExecutionLogger executionLogger;
         void RunFlow(BusinessFlow businessFlow)
         {
             GingerRunner gingerRunner = new GingerRunner();
+            ProjEnvironment projEnvironment = new ProjEnvironment();
+            executionLogger = new ExecutionLogger(projEnvironment, eExecutedFrom.Automation);
+            executionLogger.Configuration.ExecutionLoggerConfigurationIsEnabled = true;
+            gingerRunner.RunListeners.Add(executionLogger);
             gingerRunner.RunBusinessFlow(businessFlow, true);
 
             Console.WriteLine("Execution completed");
