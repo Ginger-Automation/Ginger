@@ -25,6 +25,8 @@ using GingerCore.FlowControlLib;
 using Ginger.Run;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Ginger.Actions.UserControls
 {
@@ -99,9 +101,19 @@ namespace Ginger.Actions.UserControls
             }
             else
             {
-                App.FillComboFromEnumVal(ActionComboBox, FC.FlowControlAction);
+                if (mActParentActivity.GetType() == typeof(ErrorHandler))
+                {
+                    //var ErrorFlowControlActions = Enum.GetValues(typeof(eFlowControlAction)).Cast<eFlowControlAction>().Except(new eFlowControlAction[] {eFlowControlAction .GoToActivity, eFlowControlAction .GoToActivityByName, eFlowControlAction .GoToNextActivity,eFlowControlAction.RerunActivity, eFlowControlAction .RunSharedRepositoryActivity});
+                    List<eFlowControlAction> ErrorFlowControlActions = FC.GetErrorFlowControlActions();
 
-                App.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
+                    App.FillComboFromEnumVal(ActionComboBox, FC.FlowControlAction, ErrorFlowControlActions.Cast<object>().ToList());
+                    App.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
+                }
+                else
+                {
+                    App.FillComboFromEnumVal(ActionComboBox, FC.FlowControlAction);
+                    App.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
+                }
             }                               
 
             App.ObjFieldBinding(ActionValueTextBox, TextBox.TextProperty, FC, FlowControl.Fields.Value);

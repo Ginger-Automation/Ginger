@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Utils;
@@ -67,7 +68,7 @@ namespace GingerCore.FlowControlLib
         SetVariableValue,
         [EnumValueDescription("Run Shared Repository Activity")]
         RunSharedRepositoryActivity,
-        [EnumValueDescription("Fail Action & Stop Business Flow)")]
+        [EnumValueDescription("Fail Action & Stop Business Flow")]
         FailActionAndStopBusinessFlow,
         [EnumValueDescription("GoTo Activity By Name")]
         GoToActivityByName,
@@ -327,6 +328,21 @@ namespace GingerCore.FlowControlLib
                 Console.WriteLine(ex.StackTrace);
                 return string.Empty;
             }
+        }
+        public List<eFlowControlAction> GetErrorFlowControlActions()
+        {
+            List<eFlowControlAction> errorFlowControlActions = new List<eFlowControlAction>();
+            errorFlowControlActions.Add(eFlowControlAction.FailActionAndStopBusinessFlow);
+            errorFlowControlActions.Add(eFlowControlAction.FailureIsAutoOpenedDefect);
+            errorFlowControlActions.Add(eFlowControlAction.GoToAction);
+            errorFlowControlActions.Add(eFlowControlAction.GoToNextAction);
+            errorFlowControlActions.Add(eFlowControlAction.MessageBox);
+            errorFlowControlActions.Add(eFlowControlAction.RerunAction);
+            errorFlowControlActions.Add(eFlowControlAction.SetVariableValue);
+            errorFlowControlActions.Add(eFlowControlAction.StopBusinessFlow);
+            errorFlowControlActions.Add(eFlowControlAction.StopRun);
+
+            return errorFlowControlActions;
         }
     }
 }
