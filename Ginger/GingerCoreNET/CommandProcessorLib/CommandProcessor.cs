@@ -42,10 +42,10 @@ namespace GingerCoreNET.CommandProcessorLib
             return String.Format(nameof(GingerConsoleScriptGlobals.LoadPluginPackage) + "(@\"{0}\");", PackageFolder) + Environment.NewLine;
         }
 
-        public static string CreateStartServiceScript(string driverID, string name, string host, int port)
-        {
-            return String.Format(nameof(GingerConsoleScriptGlobals.StartService) + "(\"{0}\",\"{1}\",\"{2}\",{3}); ", driverID, name, host, port) + Environment.NewLine;
-        }
+        //public static string CreateStartServiceScript(string driverID, string name, string host, int port)
+        //{
+        //    return String.Format(nameof(GingerConsoleScriptGlobals.StartService) + "(\"{0}\",\"{1}\",\"{2}\",{3}); ", driverID, name, host, port) + Environment.NewLine;
+        //}
     }
 }
 

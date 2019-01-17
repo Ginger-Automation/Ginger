@@ -34,6 +34,7 @@ using Ginger.BusinessFlowWindows;
 using Ginger.BusinessFlowFolder;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Repository
 {
@@ -146,7 +147,7 @@ namespace Ginger.Repository
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                    Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 }                    
             }
         }
@@ -160,7 +161,7 @@ namespace Ginger.Repository
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 
@@ -172,7 +173,7 @@ namespace Ginger.Repository
                 usagePage.ShowAsWindow();
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected); 
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected); 
         }
 
         private void grdActivitiesGroupsRepository_PreviewDragItem(object sender, EventArgs e)
@@ -199,7 +200,7 @@ namespace Ginger.Repository
                     if (dragedItemInGrid != null)
                         xActivitiesGroupsRepositoryGrid.Grid.SelectedItem = dragedItemInGrid;
                 }
-                catch(Exception ex){ Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                catch(Exception ex){ Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }
         }
 

@@ -31,6 +31,7 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
 using GingerTestHelper;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
@@ -51,9 +52,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.Name = "BF Test Fire Fox";
             mBF.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.Web;            
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };
@@ -66,7 +65,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //a.DriverType = Agent.eDriverType.SeleniumFireFox;//have known firefox issues with selenium 3
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(a);
             // p2.Agent = a;
 
@@ -76,7 +75,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.BusinessFlows.Add(mBF);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SCM_Login()
         {
 
@@ -124,7 +123,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
         // Test the time to enter data into text box
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SpeedTest()
         {
             //Arrange
@@ -167,7 +166,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestVariableResetIssue()
         {
             //This was a tricky bug not repro every time.

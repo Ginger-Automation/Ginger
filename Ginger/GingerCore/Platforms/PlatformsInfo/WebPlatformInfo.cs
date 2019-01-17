@@ -308,8 +308,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                 {
                     ElementType = eElementType.Span,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.SetValue,
-                                                                ActUIElement.eElementAction.GetValue }
+                    ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.Click,
+                                                               ActUIElement.eElementAction.SetValue,
+                                                               ActUIElement.eElementAction.GetValue}
                 });
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
@@ -349,6 +350,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.ClickXY,
                                                                 ActUIElement.eElementAction.DrawObject,
+                                                                ActUIElement.eElementAction.DoubleClickXY,
+                                                                ActUIElement.eElementAction.SendKeysXY,
                                                                }
                 });
 

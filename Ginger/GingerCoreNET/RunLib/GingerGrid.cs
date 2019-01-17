@@ -17,12 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
-using GingerCoreNET.Drivers;
-using GingerCoreNET.GeneralLib;
 using System.Linq;
-using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 
 namespace GingerCoreNET.RunLib
 {
@@ -38,6 +36,14 @@ namespace GingerCoreNET.RunLib
         public GingerGrid(int Port)
         {
             mPort = Port;
+        }
+
+        /// <summary>
+        /// Create nwe GingerGrid and auto select free port
+        /// </summary>
+        public GingerGrid()
+        {            
+            mPort = SocketHelper.GetOpenPort();
         }
 
         public void Start()
@@ -76,7 +82,7 @@ namespace GingerCoreNET.RunLib
                         gingerSocketInfo.Response = RC;
 
                         // add the info of the new node to the grid list
-                        mGingerNodeInfo.Add(new GingerNodeInfo() { Name = NodeName, ServiceId = NodeServiceID, OS = NodeOS, Host = NodeHost, IP = NodeIP, SessionID = gingerSocketInfo.SessionID , Status = "Ready"});
+                        mGingerNodeInfo.Add(new GingerNodeInfo() { Name = NodeName, ServiceId = NodeServiceID, OS = NodeOS, Host = NodeHost, IP = NodeIP, SessionID = gingerSocketInfo.SessionID , Status = GingerNodeInfo.eStatus.Ready });
                         break;
                     }
 
@@ -84,7 +90,11 @@ namespace GingerCoreNET.RunLib
                     {
                         Guid SessionID = p.GetGuid();
                         GingerNodeInfo GNI = (from x in mGingerNodeInfo where x.SessionID == SessionID select x).FirstOrDefault();
-                        //TODO - if not found return err
+                        if (GNI == null)
+                        {
+                            gingerSocketInfo.Response =  new NewPayLoad("Error", "Ginger node info not found for session id " + SessionID.ToString());
+                        }
+
                         mGingerNodeInfo.Remove(GNI);
 
                         NewPayLoad RC = new NewPayLoad("OK");
@@ -120,9 +130,17 @@ namespace GingerCoreNET.RunLib
             mGingerSocketServer.Shutdown();
         }
 
+        string HostIP;
+
         public string Status
         {
-            get { return SocketHelper.GetLocalHostIP() + " Port: " + mPort; }  // TODO: add status enum 
+            get {
+                if (HostIP == null)
+                {
+                    HostIP = SocketHelper.GetLocalHostIP();
+                }
+                return HostIP + " Port: " + mPort;
+            }  // TODO: add status enum 
         }
 
         public ObservableList<GingerNodeInfo> NodeList
@@ -141,9 +159,9 @@ namespace GingerCoreNET.RunLib
         }
         
 
-        internal NewPayLoad SendRequestPayLoad(Guid sessionID, NewPayLoad pL)
+        internal NewPayLoad SendRequestPayLoad(Guid sessionID, NewPayLoad payload)
         {
-            NewPayLoad rc = mGingerSocketServer.SendPayLoad(sessionID, pL);
+            NewPayLoad rc = mGingerSocketServer.SendPayLoad(sessionID, payload);
             return rc;
         }
 
@@ -152,10 +170,12 @@ namespace GingerCoreNET.RunLib
             // TODO: send ShutDown to each node
             //foreach (GingerNodeInfo GNI in NodeList)
             //{
-            //    GNI.
+            //    GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(GNI);
+            //    gingerNodeProxy.GingerGrid = this;
+            //    gingerNodeProxy.Shutdown();
+            //    NodeList.Remove(GNI);
             //}
-
-            NodeList.Clear();
+            //}
         }
     }
 }

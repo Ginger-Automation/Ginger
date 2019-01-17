@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
@@ -48,12 +49,8 @@ namespace UnitTests.NonUITests
             mBF.Name = "Output Simulation";
             mBF.Active = true;
 
-
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.WebServices;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
-
+            p.PlatformType = ePlatformType.WebServices;            
 
             wsAgent = new Agent();
             wsAgent.DriverType = Agent.eDriverType.WebServices;
@@ -62,7 +59,7 @@ namespace UnitTests.NonUITests
             mAG.Agent = wsAgent;
 
             mGR = new GingerRunner();
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(wsAgent);
 
             mGR.BusinessFlows.Add(mBF);
@@ -75,7 +72,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SimulatedOuputGingerRunnerFlagOn()
         {
 
@@ -124,7 +121,7 @@ namespace UnitTests.NonUITests
             }
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SimulatedOuputActionFlagOn()
         {
             Activity Activity2 = new Activity();
@@ -173,7 +170,7 @@ namespace UnitTests.NonUITests
             }
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SimulatedOutputWithVETest()
         {
             Activity Activity2 = new Activity();
@@ -225,7 +222,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SimulatedOutputTest()
         {
             Activity Activity3 = new Activity();

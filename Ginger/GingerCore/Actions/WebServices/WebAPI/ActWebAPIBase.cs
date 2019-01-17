@@ -22,7 +22,7 @@ using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.WebServices
 {
     public class ActWebAPIBase : Act
@@ -34,7 +34,7 @@ namespace GingerCore.Actions.WebServices
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool IsSelectableAction { get { return false; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
         }
 

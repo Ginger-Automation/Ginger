@@ -118,7 +118,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.ImageSize, "500");
+                    Reporter.ToUser(eUserMsgKey.ImageSize, "500");
                 }
             }
         }

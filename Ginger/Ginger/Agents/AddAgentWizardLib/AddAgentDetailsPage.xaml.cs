@@ -16,9 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerWPF.WizardLib;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static Ginger.ExtensionMethods;
@@ -35,7 +40,7 @@ namespace Ginger.Agents.AddAgentWizardLib
         
         public AddAgentDetailsPage()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }        
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -51,14 +56,27 @@ namespace Ginger.Agents.AddAgentWizardLib
                     xAgentDescriptionTextBox.BindControl(mWizard.Agent, nameof(Agent.Notes));
                     xAgentTagsViewer.Init(mWizard.Agent.Tags);
 
+                    //Removing ASCF from platform combobox
+                    List<GingerCore.General.ComboEnumItem> platformList = (GingerCore.General.GetEnumValuesForCombo(typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType))).Where(x => ((GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType)x.Value) != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF).ToList();
+                  
+                    xPlatformTypeComboBox.BindControl(platformList);
                     xPlatformTypeComboBox.SelectionChanged += xPlatformTypeComboBox_SelectionChanged;
-                    App.FillComboFromEnumVal(xPlatformTypeComboBox, mWizard.Agent.Platform);
                     xPlatformTypeComboBox.SelectedIndex = 0;
 
                     xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverType));
                     xDriverTypeComboBox.SelectionChanged += xDriverTypeComboBox_SelectionChanged;
-                    xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);
+                    xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);                    
                     xDriverTypeStackPanel.Visibility = Visibility.Collapsed;
+
+                    if (mWizard.Agent.AgentType == Agent.eAgentType.Service)
+                    {
+                        xPluginRadioButton.IsChecked = true;
+                    }
+                    else
+                    {
+                        xDriverRadioButton.IsChecked = true;
+                    }
+                    
                     break;                
             }
 
@@ -70,7 +88,7 @@ namespace Ginger.Agents.AddAgentWizardLib
             xDriverTypeComboBox.SelectedItem = null;
             xDriverTypeComboBox.Items.Clear();
 
-            List<object> driverTypeValues = mWizard.Agent.GetDriverTypesByPlatfrom(xPlatformTypeComboBox.SelectedItem.ToString());
+            List<object> driverTypeValues = mWizard.Agent.GetDriverTypesByPlatfrom(xPlatformTypeComboBox.SelectedValue.ToString());
             App.FillComboFromEnumVal(xDriverTypeComboBox, mWizard.Agent.DriverType, driverTypeValues, false);
             if (xDriverTypeComboBox.Items.Count > 0)
                 xDriverTypeComboBox.SelectedItem = xDriverTypeComboBox.Items[0];
@@ -88,6 +106,56 @@ namespace Ginger.Agents.AddAgentWizardLib
         private void xDriverTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mWizard.Agent.InitDriverConfigs();
-        }        
+        }
+
+        private void xDriverRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mWizard.Agent.AgentType = Agent.eAgentType.Driver;            
+            ShowConfig();
+        }
+
+        private void xPluginRadioButton_Checked(object sender, RoutedEventArgs e)
+        {            
+            mWizard.Agent.AgentType = Agent.eAgentType.Service;
+            mWizard.Agent.DriverType = Agent.eDriverType.NA;
+            ShowConfig();
+        }
+
+        void ShowConfig()
+        {
+            if (mWizard.Agent.AgentType == Agent.eAgentType.Service)
+            {
+                xPluginConfigStackPanel.Visibility = Visibility.Visible;
+                xDriverConfigStackPanel.Visibility = Visibility.Collapsed;
+
+                // Plugin combo
+                xPluginIdComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+                xPluginIdComboBox.DisplayMemberPath = nameof(PluginPackage.PluginId);                
+                xPluginIdComboBox.BindControl(mWizard.Agent, nameof(Agent.PluginId));
+            }
+            else
+            {
+                xPluginConfigStackPanel.Visibility = Visibility.Collapsed;
+                xDriverConfigStackPanel.Visibility = Visibility.Visible;
+            }
+            
+            
+        }
+
+        private void xPluginIdComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            PluginPackage p = (PluginPackage)xPluginIdComboBox.SelectedItem;
+            p.LoadServicesFromJSON();
+            xServiceIdComboBox.ItemsSource = p.Services;
+            xServiceIdComboBox.DisplayMemberPath = nameof(PluginServiceInfo.ServiceId);
+            xServiceIdComboBox.SelectedValuePath = nameof(PluginServiceInfo.ServiceId);
+            xServiceIdComboBox.BindControl(mWizard.Agent, nameof(Agent.ServiceId));
+
+            // auto select if there is only one service in the plugin
+            if (p.Services.Count == 1)
+            {
+                xServiceIdComboBox.SelectedItem = p.Services[0];
+            }
+        }
     }
 }

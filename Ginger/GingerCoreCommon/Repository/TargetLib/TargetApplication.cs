@@ -16,18 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Platforms
 {
-    public class TargetApplication : RepositoryItemBase
+    public class TargetApplication : TargetBase
     {
-       
-        //TOOD: is it needed to serialized?
-        public bool Selected { get; set; }
+        public override string Name { get { return AppName; } }
 
-        //TODO: how about use GUID or add it for in case
-        private string mAppName;
+        string mAppName;
+        //TODO: how about use GUID or add it for in case        
         [IsSerializedForLocalRepository]
         public string AppName
         {
@@ -37,25 +36,12 @@ namespace GingerCore.Platforms
             }
             set
             {
-                mAppName = value;
-                OnPropertyChanged(nameof(AppName));
-            }
-        }
-
-        // Save the last agent who executed on this App, for reports
-        [IsSerializedForLocalRepository]
-        public string LastExecutingAgentName { get; set; }
-
-
-        public override string ItemName
-        {
-            get
-            {
-                return string.Empty;
-            }
-            set
-            {
-                return;
+                if (mAppName != value)
+                {
+                    mAppName = value;
+                    OnPropertyChanged(nameof(AppName));
+                    OnPropertyChanged(nameof(Name));
+                }
             }
         }
     }

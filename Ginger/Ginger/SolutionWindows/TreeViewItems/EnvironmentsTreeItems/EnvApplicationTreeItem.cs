@@ -129,7 +129,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             if (appsWereAdded)
             {
-                Reporter.ToUser(eUserMsgKeys.ShareEnvAppWithAllEnvs);
+                Reporter.ToUser(eUserMsgKey.ShareEnvAppWithAllEnvs);
             }
         }
 

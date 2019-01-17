@@ -51,7 +51,7 @@ namespace GingerCore.ALM.QC
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     return false;
                 }
             }
@@ -71,7 +71,7 @@ namespace GingerCore.ALM.QC
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     return false;
                 }
             }
@@ -130,7 +130,7 @@ namespace GingerCore.ALM.QC
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
             if (mTDConn.Connected == true)
@@ -167,7 +167,7 @@ namespace GingerCore.ALM.QC
             }
             catch (Exception e)
             {
-                Reporter.ToUser(eUserMsgKeys.ALMOperationFailed, "disconnect from project", e.Message);
+                Reporter.ToUser(eUserMsgKey.ALMOperationFailed, "disconnect from project", e.Message);
                 return false;
             }
         }
@@ -185,7 +185,7 @@ namespace GingerCore.ALM.QC
             }
             catch (Exception e)
             {
-                Reporter.ToUser(eUserMsgKeys.ALMOperationFailed, "disconnect from project", e.Message);
+                Reporter.ToUser(eUserMsgKey.ALMOperationFailed, "disconnect from project", e.Message);
                 return false;
             }
         }
@@ -268,7 +268,7 @@ namespace GingerCore.ALM.QC
             catch (Exception e)
             {
                 tsFilter["CY_FOLDER_ID"] = "\"" + tsFolder.Path.ToString() + "\"";
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
 
             List TestsetList = TSetFact.NewList(tsFilter.Text);

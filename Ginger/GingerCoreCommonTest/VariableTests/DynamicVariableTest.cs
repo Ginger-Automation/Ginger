@@ -55,7 +55,7 @@ namespace GingerCoreCommonTest.VariableTests
         }
         #endregion
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void DynamicVar_TestVariableType()
         {
             //Arrange
@@ -68,7 +68,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Dynamic", varType, "Dynamic Variable Type");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void DynamicVar_TestVariableUIType()
         {
             //Arrange
@@ -81,7 +81,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(varType.Contains("Dynamic"), "Dynamic Variable UI Type");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void DynamicVar_TestImageType()
         {
             //Arrange
@@ -95,7 +95,7 @@ namespace GingerCoreCommonTest.VariableTests
         }
 
         [Ignore]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void DynamicVar_TestFormula()
         {
             //Arrange
@@ -114,12 +114,11 @@ namespace GingerCoreCommonTest.VariableTests
         }
 
         [Ignore]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void DynamicVar_TestAutoValue()
         {
             //Arrange
             string valExpr = "{VBS Eval=1+1}";
-            string expectedResult = "2";
             VariableDynamic variableDynamic = new VariableDynamic();
             variableDynamic.Name = "d1";
             variableDynamic.Value = valExpr;
@@ -129,7 +128,7 @@ namespace GingerCoreCommonTest.VariableTests
             int num1 = Convert.ToInt32(variableDynamic.Value);
 
             //Assert            
-            Assert.IsTrue(num1 >= 0 && num1 <= 9999999999999, "num1 >= 0 && num1 <= 9999999999999");
+            Assert.IsTrue(num1 >= 0 && num1 <= int.MaxValue, "num1 >= 0 && num1 <= int.max");
         }
 
     }

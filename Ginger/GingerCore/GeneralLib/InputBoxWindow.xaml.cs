@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -140,7 +141,7 @@ namespace GingerCore.GeneralLib
                 resultValue = resultValue.Trim();
                 if (string.IsNullOrEmpty(resultValue.Trim()))
                 {                                        
-                    Reporter.ToUser(eUserMsgKeys.ValueIssue, "Value cannot be empty");
+                    Reporter.ToUser(eUserMsgKey.ValueIssue, "Value cannot be empty");
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
                 if (!(resultValue.IndexOfAny(CharsNotAllowed) < 0))
@@ -150,8 +151,8 @@ namespace GingerCore.GeneralLib
                     {
                         builder.Append(value);
                         builder.Append(" ");
-                    }                    
-                    Reporter.ToUser(eUserMsgKeys.ValueIssue, "Value cannot contain characters like: " +  builder);
+                    }
+                    Reporter.ToUser(eUserMsgKey.ValueIssue, "Value cannot contain characters like: " + builder);
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
             }

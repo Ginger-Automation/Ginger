@@ -28,6 +28,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Drivers.JavaDriverLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer.Java
 {
@@ -134,6 +135,11 @@ namespace Ginger.WindowExplorer.Java
                 //TODO: handle err
                 return null;
             }
+        }
+
+        public ObservableList<ActInputValue> GetItemSpecificActionInputValues()
+        {
+            return null;
         }
     }
 }

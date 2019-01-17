@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -161,7 +162,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to InvokPropertyChanngedForAllObjectFields for the object: " + this.ToString(), ex);
+                Reporter.ToLog(eLogLevel.WARN, "Failed to InvokPropertyChanngedForAllObjectFields for the object: " + this.ToString(), ex);
             }
         }
 
@@ -233,7 +234,7 @@ namespace GingerCore
         public virtual Type GetTypeOfItemParts()
         {
             if (this is Activity)
-                return typeof(Activity.eItemParts);
+                return typeof(eItemParts);
 
             else if (this is Act)
                 return typeof(Act.eItemParts);

@@ -52,7 +52,7 @@ namespace Ginger.DataSource
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             //validate details
-           if (DSColNameComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKeys.MissingNewColumn, "Column type"); return; }
+           if (DSColNameComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKey.MissingNewColumn, "Column type"); return; }
             okClicked = true;
             _pageGenericWin.Close();
         }

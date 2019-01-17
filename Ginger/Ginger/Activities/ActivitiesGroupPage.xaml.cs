@@ -106,11 +106,11 @@ namespace Ginger.Activities
 
             foreach (ActivityIdentifiers actIdent in mActivitiesGroup.ActivitiesIdentifiers)
             {
-                Activity repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                Activity repoAct = (Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
                 if (repoAct == null)
-                    repoAct = activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                    repoAct =(Activity) activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
                 if (repoAct == null)
-                    repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
+                    repoAct =(Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
                 if (repoAct != null)
                 {
                     actIdent.IdentifiedActivity = repoAct;
@@ -195,7 +195,7 @@ namespace Ginger.Activities
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
             }

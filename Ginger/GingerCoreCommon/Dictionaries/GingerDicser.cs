@@ -64,7 +64,7 @@ namespace GingerCore
             catch (Exception ex)
             {
                 termResValue = null;
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
 
             if (termResValue != null)

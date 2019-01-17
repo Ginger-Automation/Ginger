@@ -25,6 +25,7 @@ using System.Windows.Documents;
 using System.Windows.Markup;
 using System.IO;
 using GingerCore;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Reports
 {
@@ -61,7 +62,7 @@ namespace Ginger.Reports
             }
             catch (Exception ex)
             {                
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error in Customized report XML - " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in Customized report XML - " + ex.Message);
             }
         }
 

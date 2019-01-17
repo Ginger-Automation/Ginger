@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
@@ -126,39 +144,47 @@ namespace Ginger.ApplicationModelsLib.POMModels
         }
 
 
-        System.Windows.Threading.DispatcherTimer dispatcherTimer = null;
+        System.Windows.Threading.DispatcherTimer mDispatcherTimer = null;
+
+        public void StopSpy()
+        {
+            if (mDispatcherTimer != null)
+            {
+                mDispatcherTimer.IsEnabled = false;
+            }
+        }
 
         private void LiveSpyHandler(object sender, RoutedEventArgs e)
         {
             if (mWinExplorer == null)
             {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
                 return;
             }
 
             if (mAgent.Driver.IsDriverBusy)
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
                 return;
             }
 
             if (LiveSpyButton.IsChecked == true)
             {
                 xStatusLable.Content = "Spying is On";
-                if (dispatcherTimer == null)
+                if (mDispatcherTimer == null)
                 {
-                    dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-                    dispatcherTimer.Tick += new EventHandler(timenow);
-                    dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+                    mDispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+                    mDispatcherTimer.Tick += new EventHandler(timenow);
+                    mDispatcherTimer.Interval = new TimeSpan(0, 0, 1);
                 }
 
-                dispatcherTimer.IsEnabled = true;
+                mDispatcherTimer.IsEnabled = true;
             }
             else
             {
                 xCreateNewElement.Visibility = Visibility.Collapsed;
                 xStatusLable.Content = "Spying is Off";
-                dispatcherTimer.IsEnabled = false;
+                mDispatcherTimer.IsEnabled = false;
             }
         }
 
@@ -166,7 +192,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             xCreateNewElement.Visibility = Visibility.Collapsed;
             xStatusLable.Content = "Spying is Off";
-            dispatcherTimer.IsEnabled = false;
+            mDispatcherTimer.IsEnabled = false;
         }
 
         ElementInfo mSpyElement;
@@ -268,13 +294,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if (mWinExplorer == null)
             {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
                 return;
             }
 
             if (mAgent != null && mAgent.Driver.IsDriverBusy)
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
                 return;
             }
 
@@ -296,6 +322,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTestAllElements.Visibility = Visibility.Collapsed;
             xStopTestAllElements.Visibility = Visibility.Visible;
             mStopProcess = false;
+
             if (xMappedElementsTab.IsSelected)
             {
                 await Task.Run(() => TestAllElements(mPOM.MappedUIElements));
@@ -313,7 +340,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             int TotalElements = Elements.Count;
             int TotalFails = 0;
-
+            
             bool WarnErrorOccured = false;
             foreach (ElementInfo EI in Elements)
             {
@@ -327,7 +354,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     return;
                 }
 
-                if (mWinExplorer.TestElementLocators(EI.Locators,true))
+                if (mWinExplorer.TestElementLocators(EI,true))
                 {
                     EI.ElementStatus = ElementInfo.eElementStatus.Passed;
                 }
@@ -340,7 +367,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 if (!WarnErrorOccured && ((double)TotalFails / TotalElements) > 0.2)
                 {
                     WarnErrorOccured = true;
-                    if (Reporter.ToUser(eUserMsgKeys.POMNotOnThePageWarn, TotalFails, TotalElements) == MessageBoxResult.No)
+                    if (Reporter.ToUser(eUserMsgKey.POMNotOnThePageWarn, TotalFails, TotalElements) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                     {
                         return;
                     }
@@ -396,7 +423,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in POM All Elements Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in POM All Elements Page tabs style", ex);
             }
         }
 

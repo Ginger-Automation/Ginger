@@ -128,7 +128,7 @@ namespace Ginger.Actions.VisualTesting
         {
             string url = mAct.GetReturnParam("ResultsURL");
             if (string.IsNullOrEmpty(url))
-                Reporter.ToUser(eUserMsgKeys.ApplitoolsLastExecutionResultsNotExists);
+                Reporter.ToUser(eUserMsgKey.ApplitoolsLastExecutionResultsNotExists);
             else
             {
                 try
@@ -142,13 +142,13 @@ namespace Ginger.Actions.VisualTesting
                     {
                         //Try open with Firefox
                         System.Diagnostics.Process.Start("firefox.exe", url);
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
                     catch (Exception ee)
                     {
                         //Show message that Applitools can't be open with Explorer Browser
-                        Reporter.ToUser(eUserMsgKeys.ApplitoolsMissingChromeOrFirefoxBrowser);
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ee.Message}", ee);
+                        Reporter.ToUser(eUserMsgKey.ApplitoolsMissingChromeOrFirefoxBrowser);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ee.Message}", ee);
                     }
                 }
             }

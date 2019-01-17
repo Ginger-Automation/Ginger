@@ -21,7 +21,6 @@ using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.UserControls;
-using GingerCoreNET.ReporterLib;
 using GingerWPF.WizardLib;
 
 namespace Ginger.Repository.ItemToRepositoryWizard

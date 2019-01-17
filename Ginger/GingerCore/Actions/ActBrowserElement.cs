@@ -23,7 +23,7 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using Amdocs.Ginger.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActBrowserElement : Act
@@ -41,7 +41,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Browser Action"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
             
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
             {
                 TBH.AddText("Action to handle Browser and Widgets");
                 TBH.AddLineBreak();
@@ -63,9 +63,10 @@ namespace GingerCore.Actions
                     {
                         mPlatforms.Add(ePlatformType.Java);
                         mPlatforms.Add(ePlatformType.Web);
+                        mPlatforms.Add(ePlatformType.Mobile);
                         mPlatforms.Add(ePlatformType.PowerBuilder);
                         mPlatforms.Add(ePlatformType.Windows);
-                }
+                    }
                     return mPlatforms;
                 }
             }
