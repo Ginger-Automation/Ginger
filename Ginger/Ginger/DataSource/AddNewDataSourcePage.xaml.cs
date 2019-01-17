@@ -71,15 +71,23 @@ namespace Ginger.DataSource
                 mDSDetails = new AccessDataSource();
             if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.MSAccess.ToString())
                 mFileType = "mdb";
+            if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.SQLite.ToString() && mDSDetails.GetType() != typeof(SQLiteDataSource))
+            {
+                mDSDetails = new SQLiteDataSource();
+            }
+            if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.SQLite.ToString())
+            {
+                mFileType = "db";
+            }
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             //validate details
-            if (FilePathTextBox.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "File Path"); return; }
-            else if (DSTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "DB type"); return; }
-
-            mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~",  WorkSpace.UserProfile.Solution.Folder);
+            if (FilePathTextBox.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKeys.MissingNewDSDetails, "File Path"); return; }
+            else if (DSTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKeys.MissingNewDSDetails, "DB type"); return; }
+            
+            mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~", App.UserProfile.Solution.Folder);
 
             if (!Directory.Exists(Path.GetDirectoryName(mDSDetails.FileFullPath)))
             { Reporter.ToUser(eUserMsgKey.InvalidDSPath, Path.GetDirectoryName(mDSDetails.FileFullPath)); return; }
@@ -140,6 +148,7 @@ namespace Ginger.DataSource
                 FilePathTextBox.Text = dlg.FileName;
                 path = FilePathTextBox.Text;
             }
+            mDSDetails.FilePath = path;
         }
 
         public DataSourceBase DSDetails

@@ -34,6 +34,8 @@ namespace GingerCore.DataSource
             // Access
             [EnumValueDescription("MS Access")]
             MSAccess,
+            [EnumValueDescription("SQLite")]
+            SQLite,
         }
 
         public  static class Fields
