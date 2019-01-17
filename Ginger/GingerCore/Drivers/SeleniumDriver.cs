@@ -4352,6 +4352,23 @@ namespace GingerCore.Drivers
                     list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
                 }
 
+                if (ElementInfo.ElementTypeEnum == eElementType.TextBox || ElementInfo.ElementTypeEnum == eElementType.Text ||
+                    ElementInfo.ElementTypeEnum == eElementType.ComboBox || ElementInfo.ElementTypeEnum == eElementType.ComboBoxOption ||
+                    ElementInfo.ElementTypeEnum == eElementType.List || ElementInfo.ElementTypeEnum == eElementType.ListItem ||
+                    ElementInfo.ElementTypeEnum == eElementType.Div || ElementInfo.ElementTypeEnum == eElementType.Span)
+                {
+                    bool isDefault = false;
+                    foreach (IWebElement val in el.FindElements(By.XPath("*")))
+                    {
+                        if (!string.IsNullOrEmpty(val.Text))
+                        {
+                            ElementInfo.OptionalVals.Add(new OptionalValue() { Value = val.Text, IsDefault = !isDefault });
+                            isDefault = true;
+                        }
+                    }
+                    list.Add(new ControlProperty() { Name = "Modified Optional Values", Value = ElementInfo.OpValsString });
+                }
+
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
                 Dictionary<string, object> attributes = javascriptDriver.ExecuteScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;", el) as Dictionary<string, object>;
                 if (!(attributes == null))

@@ -219,8 +219,34 @@ namespace Amdocs.Ginger.Common.UIElement
         }
 
         [IsSerializedForLocalRepository]
-        public List<String> OptionalValues = new List<String>();
+        public List<String> OptionalValues = new List<string>();
 
+        [IsSerializedForLocalRepository]
+        public ObservableList<OptionalValue> OptionalVals = new ObservableList<OptionalValue>();
+
+        public string OpValsString
+        {
+            get
+            {
+                string opValsString = string.Empty;
+                foreach (OptionalValue value in OptionalVals)
+                {
+                    if (value.IsDefault)
+                    {
+                        opValsString += value.ItemName + "*,"; 
+                    }
+                    else
+                    {
+                        opValsString += value.ItemName + ",";
+                    }
+                }
+                opValsString.TrimEnd(',');
+                OptionalValuesAsString = opValsString;
+                return opValsString;
+            }
+        }
+
+        public string mOptionalValuesAsString;
         public string OptionalValuesAsString
         {
             get
@@ -228,11 +254,41 @@ namespace Amdocs.Ginger.Common.UIElement
                 string listString = string.Empty;
                 foreach (string value in OptionalValues) listString += value + ",";
                 listString.TrimEnd(',');
+                SetOptionalValuesFromOldObject();
+                mOptionalValuesAsString = listString;
                 return listString;
+            }
+            private set
+            {
+                mOptionalValuesAsString = value;
+                if (!string.IsNullOrEmpty(mOptionalValuesAsString))
+                {
+                    OptionalValues = new List<string>();
+                    foreach (string str in mOptionalValuesAsString.Split(','))
+                        OptionalValues.Add(str.Replace("*", "")); 
+                }
             }
         }
 
+        private void SetOptionalValuesFromOldObject()
+        {
+            if (OptionalVals.Count <= 0)
+            {
+                bool isDefault = false;
+                foreach (string vl in OptionalValues)
+                {
+                    OptionalVals.Add(new OptionalValue()
+                    {
+                        ItemName = vl,
+                        IsDefault = !isDefault
+                    });
+                    isDefault = true;
+                } 
+            }
+        }
+               
         // Used for Lazy loading when possible
+
         public virtual string GetElementType()
         {
             // we return ElementType unless it was overridden as expected

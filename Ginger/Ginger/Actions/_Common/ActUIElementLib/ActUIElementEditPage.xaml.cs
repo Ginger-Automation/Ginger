@@ -291,6 +291,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     comboBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
                     ((Ginger.UserControlsLib.UCComboBox)comboBox).ComboBox.ItemsSource = element.PossibleValues;
 
+                    ((Ginger.UserControlsLib.UCComboBox)comboBox).ComboBox.SelectedValue = element.DefaultValue;
                     dynamicPanel.Children.Add(elementLabel);
                     dynamicPanel.Children.Add(comboBox);
                 }
@@ -328,12 +329,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
             List<ElementConfigControl> elementList = new List<ElementConfigControl>();
 
             if (new ActUIElement.eElementAction[] {
-                ActUIElement.eElementAction.SetValue,
                 ActUIElement.eElementAction.MultiSetValue,
-                ActUIElement.eElementAction.SendKeys,
                 ActUIElement.eElementAction.SetDate,
                 ActUIElement.eElementAction.SendKeyPressRelease,
-                ActUIElement.eElementAction.SetText,
                 ActUIElement.eElementAction.SelectByText,
                 ActUIElement.eElementAction.GetAttrValue,
                 ActUIElement.eElementAction.RunJavaScript}.Contains(mAction.ElementAction))
@@ -347,12 +345,18 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     mAction.GetInputParamValue(ActUIElement.Fields.Value).Split(',').ToList()
                 });
             }
-            else if (mAction.ElementAction == ActUIElement.eElementAction.Select)
+            else if (mAction.ElementAction == ActUIElement.eElementAction.Select ||
+                     mAction.ElementAction == ActUIElement.eElementAction.SelectByText ||
+                     mAction.ElementAction == ActUIElement.eElementAction.SetValue ||
+                     mAction.ElementAction == ActUIElement.eElementAction.SetText ||
+                     mAction.ElementAction == ActUIElement.eElementAction.SendKeys)
             {
                 List<string> possibleValues;
+                string defaultValue = string.Empty;
                 if (mAction.ElementLocateBy == eLocateBy.POMElement)
                 {
                     possibleValues = GetPomElementOptionalValues();
+                    defaultValue = GetPomElementOptionalValuesDefaultValue();
                 }
                 else
                 {
@@ -366,7 +370,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         Title = "Value",
                         BindedString = ActUIElement.Fields.ValueToSelect,
                         ControlType = eElementType.ComboBox,
-                        PossibleValues = possibleValues
+                        PossibleValues = possibleValues,
+                        DefaultValue = defaultValue
                     });
                 }
             }
@@ -379,7 +384,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         Title = "Value",
                         BindedString = ActUIElement.Fields.ValueToSelect,
                         ControlType = eElementType.ComboBox,
-                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "0", "1", "2", "3", "4","5","6","7","8","9","10" } :
+                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? GetPomElementOptionalValuesCount() :
                         mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect).Split(',').ToList()
                     });
                 }
@@ -561,12 +566,67 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {               
                 Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
                 ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
-                if (selectedPOMElement != null)
+                if (selectedPOMElement != null && selectedPOMElement.OptionalVals.Count > 0)        //For new implementation
                 {
-                    optionalValues = selectedPOMElement.OptionalValues;                    
+                    optionalValues = selectedPOMElement.OptionalVals.Select(s => (string)s.ItemName).ToList();
+                }
+                else      //For existing POM objects where the "OptionalVals" is not set
+                {
+                    optionalValues = selectedPOMElement.OptionalValues;
                 }
             }
             return optionalValues;
+        }
+
+        private List<string> GetPomElementOptionalValuesCount()
+        {
+            List<string> indexes = new List<string>();
+            int count = 0;
+            mExistingPOMAndElementGuidString = mAction.ElementLocateValue;
+            string[] pOMandElementGUIDs = mAction.ElementLocateValue.Split('_');
+            Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
+            ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+            if (currentPOM != null)
+            {
+                Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
+                ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                if (selectedPOMElement != null && selectedPOMElement.OptionalVals.Count > 0)        //For new implementation
+                {
+                    count = selectedPOMElement.OptionalVals.Count;
+                }
+                else      //For existing POM objects where the "OptionalVals" is not set
+                {
+                    count = selectedPOMElement.OptionalValues.Count;
+                }
+            }
+            for (int i = 0; i < count; i++)
+            {
+                indexes.Add(Convert.ToString(i));
+            }
+            return indexes;
+        }
+
+        private string GetPomElementOptionalValuesDefaultValue()
+        {
+            string defaultValue = string.Empty;
+            mExistingPOMAndElementGuidString = mAction.ElementLocateValue;
+            string[] pOMandElementGUIDs = mAction.ElementLocateValue.Split('_');
+            Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
+            ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+            if (currentPOM != null)
+            {
+                Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
+                ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                if (selectedPOMElement != null && selectedPOMElement.OptionalVals.Count > 0)        //For new implementation
+                {
+                    defaultValue = selectedPOMElement.OptionalVals.Where(s => s.IsDefault == true).Select(s => (string)s.ItemName).FirstOrDefault();
+                }
+                else      //For existing POM objects where the "OptionalVals" is not set
+                {
+                    defaultValue = selectedPOMElement.OptionalValues.FirstOrDefault();
+                }
+            }
+            return defaultValue;
         }
     }
 }
