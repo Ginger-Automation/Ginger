@@ -1859,7 +1859,8 @@ namespace Ginger.Run
                 //Adding for New Control
                 else if (item.StoreTo == ActReturnValue.eStoreTo.DataSource && !String.IsNullOrEmpty(item.StoreToValue))
                 {
-                    act.ValueExpression.Calculate(item.Actual);
+                    act.ValueExpression.Value = item.Actual;
+                    act.ValueExpression.Calculate(item.StoreToValue);
                 }
                 else if(item.StoreTo == ActReturnValue.eStoreTo.ApplicationModelParameter && !string.IsNullOrEmpty(item.StoreToValue))
                 {

@@ -101,6 +101,7 @@ namespace GingerCore
         // so no need to create new VE class everywhere in code
         // Can simpliy do: ValueExpression VE = "{Var Name=V1}"
         public static string SolutionFolder = "";
+        private const string DATA_SOURCE_PRE_FIX = "{DS Name=";
 
         public static explicit operator ValueExpression(string Value)
         {
@@ -135,6 +136,12 @@ namespace GingerCore
 
         public string Calculate(string expression)
         {
+            if (!string.IsNullOrEmpty(expression) && expression.StartsWith(DATA_SOURCE_PRE_FIX))
+            {
+                bUpdate = true;
+                updateValue = Value;
+                mValueCalculated = expression;
+            }
             Value = expression;
             Calculate();            
             return mValueCalculated;
@@ -178,7 +185,8 @@ namespace GingerCore
                 mValueCalculated = "";
                 return;
             }
-            mValueCalculated = Value;
+            if(string.IsNullOrEmpty(mValueCalculated) || !mValueCalculated.StartsWith(DATA_SOURCE_PRE_FIX))
+                mValueCalculated = Value;
 
             //Do the operation based on order
             //First replace Vars - since they can appear in other func like VBS v1+v2 or VBS mid(v1,1,4);
