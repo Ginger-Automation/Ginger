@@ -32,6 +32,7 @@ using Couchbase.Core;
 using Couchbase.N1QL;
 using Couchbase.Management;
 using Couchbase.Configuration.Server.Serialization;
+using Newtonsoft.Json.Linq;
 
 namespace GingerCore.NoSqlBase
 {
@@ -59,10 +60,14 @@ namespace GingerCore.NoSqlBase
                 clusterCB = new Couchbase.Cluster(new ClientConfiguration
                 {
                     ViewRequestTimeout = 45000,
-                    Servers = new List<Uri> { new Uri("http://incespr020:8091/ui/index.html") },
-                    PoolConfiguration = new PoolConfiguration { MinSize = 10, MaxSize = 10 },                    
+                    Servers = new List<Uri> { new Uri("http://incespr020:8091") },
+                    //PoolConfiguration = new PoolConfiguration { MinSize = 10, MaxSize = 10 },                    
                 });
-                PasswordAuthenticator authenticator = new PasswordAuthenticator("Administrator", "Administrator");
+                clusterCB.Authenticate("Administrator", "Administrator");
+                
+
+                //PasswordAuthenticator authenticator = new PasswordAuthenticator("Administrator", "Administrator");
+                //authenticator.Validate();
                 //ClusterHelper.Initialize(new ClientConfiguration
                 //{
                 //    ViewRequestTimeout = 45000,
@@ -89,21 +94,22 @@ namespace GingerCore.NoSqlBase
                 //        break;
                 //    }
                 //}
-                
+
                 ClassicAuthenticator classicAuthenticator = new ClassicAuthenticator("Administrator", "Administrator");
                 //classicAuthenticator.AddBucketCredential();
                 
-                classicAuthenticator.AddBucketCredential("com.amdocs.digital.ms.shoppingcart.shoppingcart", null);
+                classicAuthenticator.AddBucketCredential("com.amdocs.digital.ms.shoppingcart.shoppingcart", "");
                 //PasswordAuthenticator authenticator = new PasswordAuthenticator("Administrator", "Administrator");
                 clusterCB.Authenticate(classicAuthenticator);
-                IQueryResult<dynamic> test= clusterCB.Query<dynamic>("select * from `com.amdocs.digital.ms.shoppingcart.shoppingcart` where productOrderId = 'ProductOrder_04414115-5000-45ed-8802-a08222280258'");
-                IBucket bucket = clusterCB.OpenBucket("com.amdocs.digital.ms.shoppingcart.shoppingcart",null);
-
+                //IQueryResult<dynamic> test= clusterCB.Query<dynamic>("select * from `com.amdocs.digital.ms.shoppingcart.shoppingcart` where productOrderId = 'ProductOrder_04414115-5000-45ed-8802-a08222280258'");
+                IBucket bucket = clusterCB.OpenBucket("com.amdocs.digital.ms.shoppingcart.shoppingcart","");
+                //BucketConfig bucket = buckets[33];
+                
                 ////Positional parameters example
                 IQueryRequest queryRequest = new QueryRequest()
-                    .Statement("select id from `com.amdocs.digital.ms.shoppingcart.shoppingcart` where id=id order by createdOn desc limit 10")
+                    .Statement("select * from `com.amdocs.digital.ms.shoppingcart.shoppingcart` where id=id order by createdOn desc limit 10")
                     .AddPositionalParameter(10)
-                    .Metrics(false).AddCredentials("Administrator", "Administrator",true);
+                    .Metrics(false);//.AddCredentials("Administrator", "Administrator",false);
 
                 var result = bucket.Query<dynamic>(queryRequest);
                 //foreach (var row in result.Rows)
@@ -111,12 +117,12 @@ namespace GingerCore.NoSqlBase
 
                 //}
 
-                //                //Named parameters example
-                //                var queryRequest = new QueryRequest()
-                //                    .Statement("SELECT * FROM `travel-sample` LIMIT $limit")
-                //                    .AddNamedParameter("$limit", 10);
+                //Named parameters example
+                //var queryRequest1 = new QueryRequest()
+                //    .Statement("select * from `com.amdocs.digital.ms.shoppingcart.shoppingcart` where productOrderId = 'ProductOrder_04414115-5000-45ed-8802-a08222280258'")
+                //    .AddNamedParameter("$limit", 10);
 
-                //                var result = await bucket.QueryAsync<dynamic>(queryRequest);
+                //               var result1 =  bucket.Query<dynamic>(queryRequest1);
                 //                foreach (var row in result.Rows)
                 //                {
 
@@ -149,7 +155,7 @@ namespace GingerCore.NoSqlBase
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to connect to Cassandra DB", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Couchbase DB", e);
                 throw (e);
             }
         }
@@ -190,13 +196,12 @@ namespace GingerCore.NoSqlBase
         {
             Connect();
             List<string> table = new List<string>();
-            Metadata m = cluster.Metadata;
-            ICollection<string> tables = m.GetKeyspace(keyspace).GetTablesNames();
-
-            foreach (string t in tables)
+            var clusterMan = clusterCB.CreateManager("Administrator", "Administrator");
+            var buckets = clusterMan.ListBuckets().Value;
+            foreach (BucketConfig bucket in buckets)
             {
-                table.Add(t);
-            }
+                table.Add(bucket.Name);
+            }            
             return table;
         }
 
@@ -205,14 +210,24 @@ namespace GingerCore.NoSqlBase
             Connect();
 
             List<string> cols = new List<string>();
-            string sql = "Select * from " + tablename;
-            RowSet r = session.Execute(sql);
-            CqlColumn[] Cols = r.Columns;
+            IBucket bucket = clusterCB.OpenBucket(tablename, "");
+         
+            ////Positional parameters example
+            IQueryRequest queryRequest = new QueryRequest()
+                .Statement("select * from `"+ tablename  + "` limit 10")
+                .AddPositionalParameter(10)
+                .Metrics(false);
 
-            foreach (CqlColumn col in Cols)
-            {
-                cols.Add(col.Name);
-            }
+            IQueryResult<dynamic> result = bucket.Query<dynamic>(queryRequest);
+
+            //string sql = "Select * from " + tablename;
+            //RowSet r = session.Execute(sql);
+            //CqlColumn[] Cols = r.Columns;
+
+            //foreach (CqlColumn col in Cols)
+            //{
+            //    cols.Add(col.Name);
+            //}
             return cols;
         }
 
@@ -424,7 +439,7 @@ namespace GingerCore.NoSqlBase
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
         }
 
@@ -516,7 +531,7 @@ namespace GingerCore.NoSqlBase
                         catch (Exception e)
                         {
                             Act.Error = "Please check the version of the Database and update on the Environment(by default it will take 2.2)" + e;
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                            Reporter.ToLog(eLogLevel.ERROR, e.Message);
                         }
                         break;
 
@@ -552,7 +567,7 @@ namespace GingerCore.NoSqlBase
                         catch (Exception e)
                         {
                             Act.Error = "Please check the version of the Database and update on the Environment(by default it will take 2.2)";
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                            Reporter.ToLog(eLogLevel.ERROR, e.Message);
                         }
                         break;
 
@@ -567,7 +582,7 @@ namespace GingerCore.NoSqlBase
             catch (Exception e)
             {
                 Act.Error = "Failed to execute";
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
             if (!Db.KeepConnectionOpen)
             {
@@ -653,7 +668,7 @@ namespace GingerCore.NoSqlBase
                         }
                         catch (Exception e)
                         {
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                         }
 
                     }
@@ -705,7 +720,7 @@ namespace GingerCore.NoSqlBase
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                     }
                 }
             }
@@ -749,13 +764,13 @@ namespace GingerCore.NoSqlBase
                             }
                             catch (Exception e)
                             {
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                             }
                         }
                     }
                 }
                 catch (Exception e)
-                { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
+                { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
             }
             else
             {// to retrieve values without udt
