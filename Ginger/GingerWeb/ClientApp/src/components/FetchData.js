@@ -5,7 +5,11 @@ export class FetchData extends Component {
 
   constructor (props) {
     super(props);
-    this.state = { forecasts: [], loading: true };
+      this.state = {
+                      forecasts: [],
+                      loading: true,
+                      BFStatus: { status: "zaa" }
+                    };
 
     fetch('api/SampleData/WeatherForecasts')
       .then(response => response.json())
@@ -14,18 +18,24 @@ export class FetchData extends Component {
       });
   }
 
-    static runFlowClick(flowName) {
+   static runFlowClick(flowName) {
          
-        fetch('api/SampleData/RunBusinessFlow', {
-            method: 'post',
-            headers: { 'Content-Type': 'application/json' },
-             // data : "aaaa",
-            // body: flowName
-             body: JSON.stringify({ "name": flowName})
-            // body: JSON.stringify({ name: "Some text here" })
-        });        
+       fetch('api/SampleData/RunBusinessFlow', {
+           method: 'post',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ "name": flowName })
+
+       })
+           ;
+            //.then(response => response.json())
+            //.then(data => {
+            //    this.setState({ BFStatus: data });
+            //});              
     }
 
+    static ShowReport() {
+        alert("report");
+    }
    
 
   static renderForecastsTable (forecasts) {
@@ -63,12 +73,16 @@ export class FetchData extends Component {
       ? <p><em>Loading...</em></p>
       : FetchData.renderForecastsTable(this.state.forecasts);
 
+      let bfstatus = (this.state.BFStatus.status);
+
       return (
           
           <div>
               <label>Solution folder</label>
               <input type="text" />
               <input type="button" value="Load" />
+              <input type="button" value="Report" onClick="{this.ShowReport.bind()}" />
+              <label>{bfstatus}</label>
 
         <h1>Business Flows</h1>
         <p>Showing all business flows found in solution</p>
