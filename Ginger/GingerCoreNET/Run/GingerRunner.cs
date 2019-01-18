@@ -53,7 +53,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.ALMLib.ALMIntegration;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 
 namespace Ginger.Run
 {
