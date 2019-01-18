@@ -329,7 +329,7 @@ namespace GingerCore.FlowControlLib
                 return string.Empty;
             }
         }
-        public List<eFlowControlAction> GetErrorFlowControlActions()
+        public List<eFlowControlAction> GetFlowControlActionsForErrorAndPopupHandler()
         {
             List<eFlowControlAction> errorFlowControlActions = new List<eFlowControlAction>();
             errorFlowControlActions.Add(eFlowControlAction.FailActionAndStopBusinessFlow);

@@ -103,8 +103,7 @@ namespace Ginger.Actions.UserControls
             {
                 if (mActParentActivity.GetType() == typeof(ErrorHandler))
                 {
-                    //var ErrorFlowControlActions = Enum.GetValues(typeof(eFlowControlAction)).Cast<eFlowControlAction>().Except(new eFlowControlAction[] {eFlowControlAction .GoToActivity, eFlowControlAction .GoToActivityByName, eFlowControlAction .GoToNextActivity,eFlowControlAction.RerunActivity, eFlowControlAction .RunSharedRepositoryActivity});
-                    List<eFlowControlAction> ErrorFlowControlActions = FC.GetErrorFlowControlActions();
+                    List<eFlowControlAction> ErrorFlowControlActions = FC.GetFlowControlActionsForErrorAndPopupHandler();
 
                     App.FillComboFromEnumVal(ActionComboBox, FC.FlowControlAction, ErrorFlowControlActions.Cast<object>().ToList());
                     App.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
