@@ -145,7 +145,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error, Could not create Perfecto Mobile Automation Driver, " + e.Message);
+                Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, "Perfecto", e.Message);
             }
 
             if (mContextType != eContextType.WebAndroid && mContextType != eContextType.WebIOS)
@@ -168,20 +168,6 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             if (!string.IsNullOrEmpty(Perfecto_Token))
             {
                 capabilities.SetCapability("securityToken", Perfecto_Token);
-                //Proxy p = new Proxy();
-                //p.Kind = ProxyKind.Manual;
-                ////p.ProxyAutoConfigUrl = "http://wpad/wpad.dat";
-                //p.HttpProxy = "genproxy.amdocs.com:8080";
-                //p.SocksProxy = "genproxy.amdocs.com:8080";
-                //p.SslProxy = "genproxy.amdocs.com:8080";
-
-                System.Environment.SetEnvironmentVariable("http.proxyHost", "one.proxy.att.com");
-                System.Environment.SetEnvironmentVariable("http.proxyPort", "8080");
-                System.Environment.SetEnvironmentVariable("https.proxyHost", "one.proxy.att.com");
-                System.Environment.SetEnvironmentVariable("https.proxyPort", "8080");
-
-
-
             }
             else
             {
@@ -216,18 +202,6 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             if (!string.IsNullOrEmpty(Perfecto_Token))
             {
                 driverOptions.AddAdditionalCapability("securityToken", Perfecto_Token);
-                Proxy p = new Proxy();
-                p.Kind = ProxyKind.Manual;
-                //p.ProxyAutoConfigUrl = "http://wpad/wpad.dat";
-                p.HttpProxy = "genproxy.amdocs.com:8080";
-                p.SocksProxy = "genproxy.amdocs.com:8080";
-                p.SslProxy = "genproxy.amdocs.com:8080";
-                driverOptions.Proxy = p;
-
-                System.Environment.SetEnvironmentVariable("http.proxyHost", "one.proxy.att.com");
-                System.Environment.SetEnvironmentVariable("http.proxyPort", "8080");
-                System.Environment.SetEnvironmentVariable("https.proxyHost", "one.proxy.att.com");
-                System.Environment.SetEnvironmentVariable("https.proxyPort", "8080");
 
             }
             else
