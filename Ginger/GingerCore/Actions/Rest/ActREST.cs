@@ -30,7 +30,7 @@ using System.Net.Security;
 using System.Text;
 using System.Web;
 using System.Xml;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.Actions.REST
 {
@@ -234,7 +234,7 @@ namespace GingerCore.Actions.REST
         public override string ActionDescription { get { return "REST Action"; } }
         public override string ActionUserDescription { get { return "Performs REST action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform any REST actions.");
             TBH.AddLineBreak();
@@ -537,10 +537,10 @@ namespace GingerCore.Actions.REST
                 {
                     //TODO: check if UTF8 is good for all
                     StreamReader reader = new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);
-                    Reporter.ToLog(eLogLevel.INFO, "Response");
+                    Reporter.ToLog(eLogLevel.DEBUG, "Response");
 
                     resp = reader.ReadToEnd();
-                    Reporter.ToLog(eLogLevel.INFO, resp);
+                    Reporter.ToLog(eLogLevel.DEBUG, resp);
                 }
                 else
                 {
@@ -710,7 +710,7 @@ namespace GingerCore.Actions.REST
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToUser(eUserMsgKeys.FileOperationError, e.Message);
+                    Reporter.ToUser(eUserMsgKey.FileOperationError, e.Message);
                 }
             }
             else

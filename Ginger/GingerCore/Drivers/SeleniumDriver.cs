@@ -51,7 +51,6 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using HtmlAgilityPack;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers
 {
@@ -435,11 +434,18 @@ namespace GingerCore.Drivers
                         if (SeleniumUserArgs != null)
                             foreach (string arg in SeleniumUserArgs)
                                 options.AddArgument(arg);
+                        if (HideConsoleWindow)
+                        {
+                            ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
+                            ChService.HideCommandPromptWindow = HideConsoleWindow;
+                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        }
 
-                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
-                        ChService.HideCommandPromptWindow = HideConsoleWindow;
-                        Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-
+                        else
+                        {
+                            
+                            Driver = new ChromeDriver(options);
+                        }
                         break;
 
                     #endregion
@@ -550,21 +556,24 @@ namespace GingerCore.Drivers
         {
             try
             {
-                Driver.Quit();
-                Driver = null;
+                if (Driver != null)
+                {
+                    Driver.Quit();
+                    Driver = null;
+                }
                 if (StartBMP)
                 {
                     BMPClient.Close();
                     BMPServer.Stop();
                 }
             }
-            catch (System.InvalidOperationException)
+            catch (System.InvalidOperationException ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "got System.InvalidOperationException when trying to close Selenium Driver");
+                Reporter.ToLog(eLogLevel.ERROR, "Got System.InvalidOperationException when trying to close Selenium Driver", ex);
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Selenium Driver - " + e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Selenium Driver", e);
             }
         }
 
@@ -1630,7 +1639,7 @@ namespace GingerCore.Drivers
 
                 case ActGenElement.eGenElementAction.MsgBox: //TODO: FIXME: This action should not be part of GenElement
                     string msg = act.GetInputParamCalculatedValue("Value");
-                    Reporter.ToUser(eUserMsgKeys.ScriptPaused);
+                    Reporter.ToUser(eUserMsgKey.ScriptPaused);
                     break;
 
                 case ActGenElement.eGenElementAction.GetStyle:
@@ -2236,19 +2245,65 @@ namespace GingerCore.Drivers
                 switch (act.GenElementAction)
                 {
                     case ActGenElement.eGenElementAction.XYClick:
-                        OpenQA.Selenium.Interactions.Actions actionClick = new OpenQA.Selenium.Interactions.Actions(Driver);
-                        actionClick.MoveToElement(e, x, y).Click().Build().Perform();
+                        ClickXY(e, x, y);
                         break;
                     case ActGenElement.eGenElementAction.XYSendKeys:
-                        OpenQA.Selenium.Interactions.Actions actionSetValue = new OpenQA.Selenium.Interactions.Actions(Driver);
-                        actionSetValue.MoveToElement(e, x, y).SendKeys(GetKeyName(act.GetInputParamCalculatedValue("Value"))).Build().Perform();
+                        SendKeysXY(e, x, y, GetKeyName(act.GetInputParamCalculatedValue("Value")));
                         break;
                     case ActGenElement.eGenElementAction.XYDoubleClick:
-                        OpenQA.Selenium.Interactions.Actions actionDoubleClick = new OpenQA.Selenium.Interactions.Actions(Driver);
-                        actionDoubleClick.MoveToElement(e, x, y).DoubleClick().Build().Perform();
+                        DoubleClickXY(e, x, y);
+                        break;                  
+                }
+            }
+        }
+
+        private void MoveToElementActions(ActUIElement act)
+        {
+            IWebElement e = LocateElement(act, true);
+            int x = 0;
+            int y = 0;
+            if (!Int32.TryParse(act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver, out x) || !Int32.TryParse(act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver, out y))
+            {
+                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                act.ExInfo = "Cannot Click by XY with String Value, X Value: " + act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver + ", Y Value: " + act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver + "  ";
+            }
+            if (e == null)
+            {
+                act.ExInfo += "Element not found - " + act.LocateBy + " " + act.LocateValue;
+                act.AddOrUpdateReturnParamActual("Actual", "False");
+                return;
+            }
+            else
+            {
+                switch (act.ElementAction)
+                {
+                    case ActUIElement.eElementAction.ClickXY:
+                        ClickXY(e, x, y);
+                        break;
+                    case ActUIElement.eElementAction.SendKeysXY:
+                        SendKeysXY(e, x, y, GetKeyName(act.GetInputParamCalculatedValue("Value")));
+                        break;
+                    case ActUIElement.eElementAction.DoubleClickXY:
+                        DoubleClickXY(e, x, y);
                         break;
                 }
             }
+        }
+
+        private void ClickXY(IWebElement iwe, int x, int y)
+        {
+            OpenQA.Selenium.Interactions.Actions actionClick = new OpenQA.Selenium.Interactions.Actions(Driver);
+            actionClick.MoveToElement(iwe, x, y).Click().Build().Perform();
+        }
+        private void SendKeysXY(IWebElement iwe, int x, int y, string Value)
+        {
+            OpenQA.Selenium.Interactions.Actions actionSetValue = new OpenQA.Selenium.Interactions.Actions(Driver);
+            actionSetValue.MoveToElement(iwe, x, y).SendKeys(Value).Build().Perform();
+        }
+        private void DoubleClickXY(IWebElement iwe, int x, int y)
+        {
+            OpenQA.Selenium.Interactions.Actions actionDoubleClick = new OpenQA.Selenium.Interactions.Actions(Driver);
+            actionDoubleClick.MoveToElement(iwe, x, y).DoubleClick().Build().Perform();
         }
 
         private void ActCheckboxHandler(ActCheckbox actCheckbox)
@@ -2892,7 +2947,7 @@ namespace GingerCore.Drivers
 
         private void SelectDropDownListOptionByValue(Act dd, string s, SelectElement se)
         {
-            se.SelectByValue(s);
+           se.SelectByValue(s);
         }
 
         #endregion
@@ -3037,6 +3092,7 @@ namespace GingerCore.Drivers
 
         private void SwitchFrame(ElementInfo EI)
         {
+            UnhighlightLast();
             Driver.SwitchTo().DefaultContent();
             if (EI.Path != null)
             {
@@ -3049,7 +3105,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        private IWebElement LocateElementByLocators(ObservableList<ElementLocator> Locators)
+        public IWebElement LocateElementByLocators(ObservableList<ElementLocator> Locators)
         {
             IWebElement elem = null;
             foreach (ElementLocator locator in Locators)
@@ -3442,17 +3498,17 @@ namespace GingerCore.Drivers
                         {
                             exceptioncount = 0;
                             count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         }
                         catch (System.NullReferenceException ex)
                         {
                             count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         }
                         catch (Exception ex)
                         {
                             //throw exception to outer catch
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                             throw;
                         }
 
@@ -3486,7 +3542,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.NoSuchWindowException ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {"IsRunning() OpenQA.Selenium.NoSuchWindowException ex"}, Error - {ex.ToString()}", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Method - {"IsRunning() OpenQA.Selenium.NoSuchWindowException ex"}, Error - {ex.ToString()}", ex);
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
                         return true;
@@ -3498,7 +3554,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.WebDriverTimeoutException ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {"IsRunning() OpenQA.Selenium.NoSuchWindowException ex"}, Error - {ex.ToString()}", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Method - {"IsRunning() OpenQA.Selenium.NoSuchWindowException ex"}, Error - {ex.ToString()}", ex);
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
                         return true;
@@ -3510,7 +3566,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.WebDriverException ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {"IsRunning() OpenQA.Selenium.WebDriverException ex"}, Error - {ex.ToString()}", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Method - {"IsRunning() OpenQA.Selenium.WebDriverException ex"}, Error - {ex.ToString()}", ex);
 
                     if (PreviousRunStopped && ex.Message == "Unexpected error. Error 404: Not Found\r\nNot Found")
                         return true;
@@ -3523,7 +3579,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex2)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {"IsRunning(): ex2"}, Error - {ex2.ToString()}", ex2);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Method - {"IsRunning(): ex2"}, Error - {ex2.ToString()}", ex2);
                     if (ex2.Message.ToString().ToUpper().Contains("DIALOG"))
                         return true;
 
@@ -4220,6 +4276,8 @@ namespace GingerCore.Drivers
             HighlightElement(ElementInfo, null, locateElementByItLocators);
         }
 
+
+
         private void HighlightElement(ElementInfo ElementInfo, IWebElement el=null,  bool locateElementByItLocators = false)
         {
             try
@@ -4254,14 +4312,13 @@ namespace GingerCore.Drivers
 
                 //Highlight element
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
-                string highlightJavascript = string.Empty;
 
-                //if (ElementInfo.ElementType == "INPUT.CHECKBOX" || ElementInfo.ElementType == "TR" || ElementInfo.ElementType == "TBODY")
-                if (ElementInfo.ElementTypeEnum == eElementType.CheckBox || ElementInfo.ElementTypeEnum == eElementType.TableItem || ElementInfo.ElementType == "TBODY")
-                    highlightJavascript = "arguments[0].style.outline='3px dashed red'";
-                else
-                    highlightJavascript = "arguments[0].style.border='3px dashed red'";
-                javascriptDriver.ExecuteScript(highlightJavascript, new object[] { el });
+                List<string> attributesList = new List<string>() { "arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'" };
+
+                foreach (string attribuet in attributesList)
+                {
+                    javascriptDriver.ExecuteScript(attribuet, new object[] { el });
+                }
 
                 LastHighLightedElement = el;
             }
@@ -4287,21 +4344,19 @@ namespace GingerCore.Drivers
             {
                 if (LastHighLightedElement != null)
                 {
-                    ElementInfo elementInfo = GetElementInfoWithIWebElement(LastHighLightedElement,null, string.Empty);
-
-                    //Un Highlight
+                    ElementInfo elementInfo = GetElementInfoWithIWebElement(LastHighLightedElement, null, string.Empty);
+                    List<string> attributesList = new List<string>() { "arguments[0].style.outline=''", "arguments[0].style.backgroundColor=''", "arguments[0].style.border=''" };
                     IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
-                    if (elementInfo.ElementTypeEnum == eElementType.CheckBox || elementInfo.ElementTypeEnum == eElementType.TableItem || elementInfo.ElementType == "TBODY")
-                        javascriptDriver.ExecuteScript("arguments[0].style.outline=''", LastHighLightedElement);
-                    else
-                        javascriptDriver.ExecuteScript("arguments[0].style.border=''", LastHighLightedElement);
+                    foreach (string attribuet in attributesList)
+                    {
+                        javascriptDriver.ExecuteScript(attribuet, new object[] { LastHighLightedElement });
+                    }
                 }
             }
             catch (Exception ex)
             {
-
-                Reporter.ToLog(eLogLevel.INFO, "failed to unhighlight object", ex);
-                    }
+                Reporter.ToLog(eLogLevel.WARN, "failed to unhighlight object", ex);
+            }
         }
 
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)
@@ -5924,18 +5979,15 @@ namespace GingerCore.Drivers
                         }
                         break;
 
-                    case ActUIElement.eElementAction.ClickXY:
-                        int x = 0;
-                        int y = 0;
-                        if (!Int32.TryParse(act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver, out x) || !Int32.TryParse(act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver, out y))
-                        {
-                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                            act.ExInfo = "Cannot Click by XY with String Value, X Value: " + act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver + ", Y Value: " + act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver + "  ";
-                        }
-                        OpenQA.Selenium.Interactions.Actions actionClick = new OpenQA.Selenium.Interactions.Actions(Driver);
-                        actionClick.MoveToElement(e, x, y).Click().Build().Perform();
+                    case ActUIElement.eElementAction.ClickXY:                       
+                        MoveToElementActions(act);
                         break;
-
+                    case ActUIElement.eElementAction.DoubleClickXY:                      
+                        MoveToElementActions(act);
+                        break;
+                    case ActUIElement.eElementAction.SendKeysXY:
+                        MoveToElementActions(act);
+                        break;
                     case ActUIElement.eElementAction.IsEnabled:
                         act.AddOrUpdateReturnParamActual("Enabled", e.Enabled.ToString());
                         break;
@@ -6683,16 +6735,18 @@ namespace GingerCore.Drivers
             return true;
         }
 
-        bool IWindowExplorer.TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
+        bool IWindowExplorer.TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
         {
             try
             {
-
-                foreach (ElementLocator el in elementLocators)
+                mIsDriverBusy = true;
+                SwitchFrame(EI);
+                foreach (ElementLocator el in EI.Locators)
                     el.LocateStatus = ElementLocator.eLocateStatus.Pending;
 
-                List<ElementLocator> activesElementLocators = elementLocators.Where(x => x.Active == true).ToList();
+                List<ElementLocator> activesElementLocators = EI.Locators.Where(x => x.Active == true).ToList();
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+                
                 foreach (ElementLocator el in activesElementLocators)
                 {
                     if (LocateElementByLocator(el, true) != null)
@@ -6724,6 +6778,8 @@ namespace GingerCore.Drivers
             finally
             {
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+                Driver.SwitchTo().DefaultContent();
+                mIsDriverBusy = false;
             }
 
         }

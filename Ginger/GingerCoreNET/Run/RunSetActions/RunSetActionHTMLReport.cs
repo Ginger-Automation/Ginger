@@ -25,8 +25,7 @@ using Ginger.Reports;
 using Amdocs.Ginger;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCoreNET.ReporterLib;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 
 namespace Ginger.Run.RunSetActions
 {
@@ -122,7 +121,7 @@ namespace Ginger.Run.RunSetActions
             else
             {
                 Errors = "In order to get HTML report, please, perform executions before";
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
                 Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
                 return;
             }
@@ -136,7 +135,7 @@ namespace Ginger.Run.RunSetActions
 
         
 
-        public override void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
         {
             throw new NotImplementedException();
         }

@@ -700,11 +700,11 @@ namespace Ginger
         {
             if (mObjList.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
+                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
                 return;
             }
 
-            if ((Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 mObjList.SaveUndoData();
                 mObjList.ClearAll();
@@ -714,7 +714,7 @@ namespace Ginger
         {
             if (grdMain.SelectedItems.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.SelectItemToDelete);
+                Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
                 return;
             }
 
@@ -1391,7 +1391,7 @@ public void RemoveCustomView(string viewName)
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.FailedToloadTheGrid, ex.Message);
+                Reporter.ToUser(eUserMsgKey.FailedToloadTheGrid, ex.Message);
             }
         }
 
@@ -1835,7 +1835,7 @@ public void RemoveCustomView(string viewName)
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Operation Failed");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation Failed");
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
@@ -1851,7 +1851,7 @@ public void RemoveCustomView(string viewName)
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Operation Failed");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation Failed");
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
@@ -1906,7 +1906,7 @@ public void RemoveCustomView(string viewName)
             {
                 mCutSourceList = null;
                 mCopiedorCutItems.Clear();
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Operation Failed, make sure the copied items type is correct." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation Failed, make sure the copied items type is correct." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + ex.Message);
             }
         }
 

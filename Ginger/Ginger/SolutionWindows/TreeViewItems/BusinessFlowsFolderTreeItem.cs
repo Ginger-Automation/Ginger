@@ -218,7 +218,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     //customize the imported BF
                     importedBF.Guid = Guid.NewGuid();
                     for (int i = 0; i < importedBF.TargetApplications.Count; i++)
-                        if (App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == importedBF.TargetApplications[i].Name).FirstOrDefault() == null)
+                        if ( WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == importedBF.TargetApplications[i].Name).FirstOrDefault() == null)
                         {
                             importedBF.TargetApplications.RemoveAt(i);//No such Application so Delete it
                             i--;
@@ -226,7 +226,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     if (importedBF.TargetApplications.Count == 0)
                     {
                         TargetApplication ta = new TargetApplication();
-                        ta.AppName = App.UserProfile.Solution.ApplicationPlatforms[0].AppName;
+                        ta.AppName =  WorkSpace.UserProfile.Solution.ApplicationPlatforms[0].AppName;
                         importedBF.TargetApplications.Add(ta);
                     }
 
@@ -235,7 +235,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Failed to copy and load the selected " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " file." + System.Environment.NewLine + "Error: " + System.Environment.NewLine + ex.Message);
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to copy and load the selected " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " file." + System.Environment.NewLine + "Error: " + System.Environment.NewLine + ex.Message);
                     return;
                 }
             }
@@ -249,7 +249,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 BusinessFlow BizFlow = App.CreateNewBizFlow(BizFlowName);
 
-                if (App.UserProfile.Solution.ApplicationPlatforms.Count != 1)
+                if ( WorkSpace.UserProfile.Solution.ApplicationPlatforms.Count != 1)
                 {
                     EditBusinessFlowAppsPage EBFP = new EditBusinessFlowAppsPage(BizFlow);
                     EBFP.ResetPlatformSelection();
@@ -284,8 +284,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 else
                 {
                     if (ALMIntegration.Instance.ExportAllBusinessFlowsToALM(bfToExport, true, ALMIntegration.eALMConnectType.Auto))
-                        Reporter.ToUser(eUserMsgKeys.ExportAllItemsToALMSucceed);
-                    else Reporter.ToUser(eUserMsgKeys.ExportAllItemsToALMFailed);
+                        Reporter.ToUser(eUserMsgKey.ExportAllItemsToALMSucceed);
+                    else Reporter.ToUser(eUserMsgKey.ExportAllItemsToALMFailed);
                 }
             }
         }

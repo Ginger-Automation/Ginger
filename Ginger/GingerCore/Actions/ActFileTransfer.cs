@@ -31,7 +31,7 @@ using GingerCore.Platforms;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActFileTransfer : ActWithoutDriver
@@ -39,7 +39,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "File Transfer Action"; } }
         public override string ActionUserDescription { get { return "Transfer File from one location to other"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to transfer any file from one location to another.");
             TBH.AddLineBreak();

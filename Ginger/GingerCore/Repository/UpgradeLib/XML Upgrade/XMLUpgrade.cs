@@ -21,7 +21,6 @@ using System.IO;
 using Amdocs.Ginger.Common;
 using GingerCore.Repository;
 using GingerCore.Repository.UpgradeLib;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.XMLConverters
 {

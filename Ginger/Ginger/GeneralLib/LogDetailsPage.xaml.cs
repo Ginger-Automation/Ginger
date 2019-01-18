@@ -16,27 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore;
+using Amdocs.Ginger.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Amdocs.Ginger.Common;
-using System.Text.RegularExpressions;
 
 namespace Ginger.GeneralLib
 {
@@ -90,17 +79,21 @@ namespace Ginger.GeneralLib
                 }
                 else if (log.Contains("#### Application version"))
                 {
-                    mTextBlockHelper.AddHeader1(log);
+                    mTextBlockHelper.AddFormattedText(log, Brushes.Black, true);
                 }
                 else if(log.Contains("| INFO  |"))
                 {
                     mTextBlockHelper.AddFormattedText(log, Brushes.Blue);
                 }
+                else if (log.Contains("| DEBUG |"))
+                {
+                    mTextBlockHelper.AddFormattedText(log, Brushes.Purple);
+                }
                 else if (log.Contains("| WARN  |"))
                 {
                     mTextBlockHelper.AddFormattedText(log, Brushes.Orange);
                 }
-                else if(log.Contains("| ERROR |"))
+                else if(log.Contains("| ERROR |") || log.Contains("| FATAL |"))
                 {
                     mTextBlockHelper.AddFormattedText(log, Brushes.Red, isBold:true);
                 }
@@ -150,7 +143,7 @@ namespace Ginger.GeneralLib
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Ginger log file was not found.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Ginger log file was not found.");
             }
         }
 
@@ -174,11 +167,11 @@ namespace Ginger.GeneralLib
                 mail.DisplayAsOutlookMail();
 
                 if (mail.Event != null && mail.Event.IndexOf("Failed") >= 0)
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to send the Log Details mail." + System.Environment.NewLine + System.Environment.NewLine + "Details: " + mail.Event);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to send the Log Details mail." + System.Environment.NewLine + System.Environment.NewLine + "Details: " + mail.Event);
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to send the Log Details mail." + System.Environment.NewLine + System.Environment.NewLine + "Details: " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to send the Log Details mail." + System.Environment.NewLine + System.Environment.NewLine + "Details: " + ex.Message);
             }
         }
 

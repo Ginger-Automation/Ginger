@@ -79,6 +79,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="APIModelLib\POMsTest.cs" />
     <Compile Include="APIModelLib\WSDLParserTest.cs" />
     <!--<Compile Include="APIModelLib\WSDLToAPITest.cs" />-->
     <Compile Include="AgentsLib\AgentsTest.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="POMs\Common\PagePOM.cs" />
     <Compile Include="POMs\Common\POMButtons.cs" />
     <Compile Include="POMs\Common\TreeViewItemPOM.cs" />
+    <Compile Include="POMs\Common\ucAgentControlPOM.cs" />
     <Compile Include="POMs\Common\ucGridPOM.cs" />
     <Compile Include="POMs\Common\WindowPOM.cs" />
     <Compile Include="POMs\EnvironmentsPOM.cs" />
@@ -105,6 +107,7 @@
     <!--<Compile Include="GeneralLib\GingerTests.cs" />-->
     <Compile Include="POMs\MainWindowPOM.cs" />
     <Compile Include="GingerBasicsTest.cs" />
+    <Compile Include="POMs\POMsPOM.cs" />
     <Compile Include="POMs\SingleItemTreeViewExplorerPagePOM.cs" />
     <Compile Include="POMs\UCButtonPOM.cs" />
     <Compile Include="POMs\UIElementPOM.cs" />
@@ -131,6 +134,9 @@
     </None>
     <None Include="TestResources\Solutions\BasicSimple\RecentlyUsed.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\Solutions\POMsTest\RecentlyUsed.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +167,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TestResources\HTML\HTMLControls.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\Solutions\AgentsTest\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -186,6 +195,27 @@
     <Content Include="TestResources\Solutions\DosConsole\Environments\Default.Ginger.Environment.xml" />
     <Content Include="TestResources\Solutions\DosConsole\Ginger.Solution.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\POMsTest\Agents\MyWebApp - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\POMsTest\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\POMsTest\DataSources\GingerDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\POMsTest\DataSources\GingerDataSource.mdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\POMsTest\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\POMsTest\Ginger.Solution.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\POMsTest\HTMLReportConfigurations\Default.Ginger.HTMLReportConfiguration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\Solutions\ReportSR\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -256,6 +286,21 @@
     <Content Include="TestResources\VisualCompareScreens\VisualCompareAgentConfig.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestResources\Solutions\POMsTest\ALMDefectProfiles\" />
+    <Folder Include="TestResources\Solutions\POMsTest\Applications Models\API Models\" />
+    <Folder Include="TestResources\Solutions\POMsTest\Applications Models\Global Models Parameters\" />
+    <Folder Include="TestResources\Solutions\POMsTest\Applications Models\POM Models\" />
+    <Folder Include="TestResources\Solutions\POMsTest\ExecutionResults\AutomationTab_LastExecution\" />
+    <Folder Include="TestResources\Solutions\POMsTest\HTMLReportConfigurations\HTMLReportTemplate\" />
+    <Folder Include="TestResources\Solutions\POMsTest\HTMLReportConfigurations\ReportTemplates\" />
+    <Folder Include="TestResources\Solutions\POMsTest\Plugins\" />
+    <Folder Include="TestResources\Solutions\POMsTest\RunSetConfigs\" />
+    <Folder Include="TestResources\Solutions\POMsTest\SharedRepository\Actions\" />
+    <Folder Include="TestResources\Solutions\POMsTest\SharedRepository\ActivitiesGroup\" />
+    <Folder Include="TestResources\Solutions\POMsTest\SharedRepository\Activities\" />
+    <Folder Include="TestResources\Solutions\POMsTest\SharedRepository\Variables\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

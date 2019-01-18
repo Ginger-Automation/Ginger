@@ -87,9 +87,9 @@ namespace Ginger.Imports.QTP
             InitCommonFunctionMappingUCGrid();
 
             TargetApplication sTarget = new TargetApplication();
-            if (App.UserProfile.Solution != null)
+            if ( WorkSpace.UserProfile.Solution != null)
             {
-                sTarget.AppName = App.UserProfile.Solution.MainApplication.ToString();
+                sTarget.AppName =  WorkSpace.UserProfile.Solution.MainApplication.ToString();
                 sTarget.Selected = true;
                 TargetApplicationsList.Add(sTarget);
                 mBusinessFlow.TargetApplications = TargetApplicationsList;
@@ -153,7 +153,7 @@ namespace Ginger.Imports.QTP
         {
             if (UFTObjectRepositoryTextBox.Text.Trim().Length == 0)
             {                
-                Reporter.ToUser(eUserMsgKeys.RepositoryNameCantEmpty);
+                Reporter.ToUser(eUserMsgKey.RepositoryNameCantEmpty);
                 return;
             }
 
@@ -242,7 +242,7 @@ namespace Ginger.Imports.QTP
         {
             if (BusinessFlowNameTextBox.Text.Trim().Length == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, (GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) +" name cannot be empty", "QTP to Ginger Converter", Amdocs.Ginger.Common.MessageBoxButton.OK));
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, (GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) +" name cannot be empty", "QTP to Ginger Converter", Amdocs.Ginger.Common.eUserMsgOption.OK));
                 return; 
             }
             mBusinessFlow.Name = BusinessFlowNameTextBox.Text;
@@ -250,7 +250,7 @@ namespace Ginger.Imports.QTP
             
 
             //TODO: open the new BF in Automate tab + make sure it is added to the tree
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ScriptImported_RefreshSolution);
+            Reporter.ToStatus(eStatusMsgKey.ScriptImported_RefreshSolution);
             _pageGenericWin.Close();
         }
 
@@ -259,7 +259,7 @@ namespace Ginger.Imports.QTP
         {
             if (mCCL.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
+                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
                 return;
             }
             else
@@ -398,7 +398,7 @@ namespace Ginger.Imports.QTP
             at.ActivityName = "Activity1";
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
-            mBusinessFlow.CurrentActivity.TargetApplication = App.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
+            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
             App.BusinessFlow = mBusinessFlow;
            
             AddActionPage addAction = new AddActionPage();

@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Linq;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActHello : Act
@@ -29,7 +29,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Agent Hello Action"; } }
         public override string ActionUserDescription { get { return "Agent Hello Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action to open an alert on web page.To open an alert,select control property type from Locate By drop down and then enter the value of that control and provide value in Value textbox and run the action");            
         }        

@@ -175,7 +175,7 @@ namespace Ginger.Actions.UserControls
 
                             if (FC.Value != null && ActionValueComboBox.SelectedItem == null)
                             {
-                                Reporter.ToUser(eUserMsgKeys.ActivityIDNotFound, FC.Value);
+                                Reporter.ToUser(eUserMsgKey.ActivityIDNotFound, FC.Value);
                             }
                             break;
                         }
@@ -226,7 +226,7 @@ namespace Ginger.Actions.UserControls
 
                             if (FC.Value != null && ActionValueComboBox.SelectedItem == null)
                             {
-                                Reporter.ToUser(eUserMsgKeys.ActionIDNotFound, FC.Value);
+                                Reporter.ToUser(eUserMsgKey.ActionIDNotFound, FC.Value);
                             }
                         }
                         break;
@@ -264,7 +264,7 @@ namespace Ginger.Actions.UserControls
 
                             if (FC.Value != null && ActionValueComboBox.SelectedItem == null)
                             {
-                                Reporter.ToUser(eUserMsgKeys.ActivityIDNotFound, FC.Value);
+                                Reporter.ToUser(eUserMsgKey.ActivityIDNotFound, FC.Value);
                             }
                             break;
                         }

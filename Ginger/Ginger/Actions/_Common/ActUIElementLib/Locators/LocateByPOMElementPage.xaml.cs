@@ -89,7 +89,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     mSelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
                     if (mSelectedPOM == null)
                     {
-                        Reporter.ToUser(eUserMsgKeys.POMSearchByGUIDFailed);
+                        Reporter.ToUser(eUserMsgKey.POMSearchByGUIDFailed);
                         mLocateValue = string.Empty;
                         SelectPOM_Click(null, null);
                     }
@@ -119,7 +119,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 }
                 catch
                 {
-                    Reporter.ToUser(eUserMsgKeys.POMSearchByGUIDFailed);
+                    Reporter.ToUser(eUserMsgKey.POMSearchByGUIDFailed);
                     mLocateValue = string.Empty;
                     SelectPOM_Click(null, null);
                 }
@@ -263,7 +263,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ApplicationAgent currentAgent = (ApplicationAgent)App.AutomateTabGingerRunner.ApplicationAgents.Where(z => z.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
             if ((currentAgent == null) || !(((Agent)currentAgent.Agent).Driver is IWindowExplorer) || (((Agent)currentAgent.Agent).Status != Agent.eStatus.Running))
             {
-                Reporter.ToUser(eUserMsgKeys.NoRelevantAgentInRunningStatus);
+                Reporter.ToUser(eUserMsgKey.NoRelevantAgentInRunningStatus);
             }
             else
             {

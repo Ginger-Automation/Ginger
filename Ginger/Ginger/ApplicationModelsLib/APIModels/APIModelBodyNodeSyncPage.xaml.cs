@@ -296,7 +296,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
             }
             else
             {                
-                Reporter.ToUser(eUserMsgKeys.ParsingError, "Can't parse API Model Request Body, please check it's syntax is valid.");
+                Reporter.ToUser(eUserMsgKey.ParsingError, "Can't parse API Model Request Body, please check it's syntax is valid.");
             }
         }
     }

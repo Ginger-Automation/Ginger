@@ -8,8 +8,6 @@ jobs:
     buildConfiguration: 'Release'
     solutionDIrectory:  'Ginger-Automation/Ginger'
   steps:
-  - script: dotnet build Ginger/GingerCoreNETUnitTest/GingerCoreNETUnitTest.csproj 
-  - script: dotnet build Ginger/GingerCoreCommonTest/GingerCoreCommonTest.csproj
   - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
   - task: PublishTestResults@2
     condition: succeededOrFailed()
@@ -19,30 +17,34 @@ jobs:
 
   - task: PublishBuildArtifacts@1
 
-
-
 - job: Windows
   pool:
-    vmImage: 'VS2017-Win2016'
-  variables:  
+   vmImage: 'vs2017-win2016'
+  variables:
     solution: '**/*.sln'
-    buildPlatform: 'Any CPU'
+    buildPlatform: 'Any CPU' 
     buildConfiguration: 'Release'
-
+    solutionDIrectory:  'Ginger-Automation/Ginger'
   steps:
+
   - task: NuGetToolInstaller@0
+
   - task: NuGetCommand@2
     inputs:
-      restoreSolution: '$(solution)'
-
+      restoreSolution: '$(solution)'  
   - task: VSBuild@1
     inputs:
       solution: '$(solution)'
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
-  - task: VSTest@2
+
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
     inputs:
-      platform: '$(buildPlatform)'
-      configuration: '$(buildConfiguration)'
-      TestAdapterPath:  'Ginger\packages\MSTest.TestAdapter.1.4.0\build\_common'
+      testRunner: VSTest
       testResultsFiles: '**/*.trx'
+
+  - task: PublishBuildArtifacts@1
+

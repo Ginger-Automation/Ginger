@@ -66,13 +66,13 @@ namespace Ginger.Run
             if (mApplicationAgent != null)
             {
                 //find out the target application platform
-                ApplicationPlatform ap = (from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == mApplicationAgent.AppName select x).FirstOrDefault();
+                ApplicationPlatform ap = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == mApplicationAgent.AppName select x).FirstOrDefault();
                 if (ap != null)
                 {
                     ePlatformType appPlatform = ap.Platform;
 
                     //get the solution Agents which match to this platform
-                    //List<Agent> optionalAgentsList = (from p in App.UserProfile.Solution.Agents where p.Platform == appPlatform select p).ToList();
+                    //List<Agent> optionalAgentsList = (from p in  WorkSpace.UserProfile.Solution.Agents where p.Platform == appPlatform select p).ToList();
                     List<Agent> optionalAgentsList = (from p in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where p.Platform == appPlatform select p).ToList();
                     if (optionalAgentsList != null && mGingerRunner != null)
                     {
@@ -101,7 +101,7 @@ namespace Ginger.Run
             }
 
             if (optionalAgents.Count == 0)
-                Reporter.ToUser(eUserMsgKeys.NoOptionalAgent);
+                Reporter.ToUser(eUserMsgKey.NoOptionalAgent);
 
             grdPossibleAgents.DataSourceList = optionalAgents;
 
@@ -139,7 +139,7 @@ namespace Ginger.Run
         {
             if (grdPossibleAgents.Grid.SelectedItem == null)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
             else
@@ -148,7 +148,7 @@ namespace Ginger.Run
                 mApplicationAgent.Agent = selectedAgent;
 
                 //save last used agent on the Solution Target Applications
-                ApplicationPlatform ap = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == mApplicationAgent.AppName).FirstOrDefault();
+                ApplicationPlatform ap =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == mApplicationAgent.AppName).FirstOrDefault();
                 if (ap != null)
                     ap.LastMappedAgentName = selectedAgent.Name;
             }

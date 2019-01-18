@@ -43,6 +43,7 @@ namespace Amdocs.Ginger.GingerConsole
         MenuItem BusinessFlowsListMenuItem;
         MenuItem EnvironmentsListMenuItem;
         MenuItem RunBusinessFlowMenuItem;
+        MenuItem RunSetMenuItem;
 
         public MenuItem GetMenu()
         {
@@ -52,6 +53,7 @@ namespace Amdocs.Ginger.GingerConsole
             BusinessFlowsListMenuItem = new MenuItem(ConsoleKey.L, "Business Flows List", BusinessFlowsList, false);
             EnvironmentsListMenuItem = new MenuItem(ConsoleKey.E, "Environments List", EnvironmentsList, false);
             RunBusinessFlowMenuItem = new MenuItem(ConsoleKey.R, "Run Business Flow", RunBusinessFlow, false);
+            RunSetMenuItem = new MenuItem(ConsoleKey.S, "Run set", RunSet, false);
 
             MenuItem SolutionMenu = new MenuItem(ConsoleKey.S, "Solution");
             SolutionMenu.SubItems.Add(OpenSolutionMenuItem);
@@ -60,8 +62,29 @@ namespace Amdocs.Ginger.GingerConsole
             SolutionMenu.SubItems.Add(BusinessFlowsListMenuItem);
             SolutionMenu.SubItems.Add(EnvironmentsListMenuItem);
             SolutionMenu.SubItems.Add(RunBusinessFlowMenuItem);
+            SolutionMenu.SubItems.Add(RunSetMenuItem);
 
             return SolutionMenu;
+        }
+
+        private void RunSet()
+        {
+            Console.WriteLine("Run Set Name?");
+            string runSetName = Console.ReadLine();
+            RunSetConfig runSetConfig = (from x in SR.GetAllRepositoryItems<RunSetConfig>() where x.Name == runSetName select x).SingleOrDefault();
+            if (runSetConfig == null)
+            {
+                Console.WriteLine("RunSetConfig not found");
+                return;
+            }
+
+
+            Console.WriteLine("starting RunSetConfig execution");
+            RunsetExecutor runsetExecuto = new RunsetExecutor();
+            runsetExecuto.RunSetConfig = runSetConfig;
+            runsetExecuto.RunRunset();            
+
+            Console.WriteLine("Execution completed");            
         }
 
         private void RunBusinessFlow()
@@ -78,11 +101,26 @@ namespace Amdocs.Ginger.GingerConsole
             gingerRunner.RunBusinessFlow(businessFlow, true);
 
             Console.WriteLine("Execution completed");
-            Console.WriteLine("BF Status: " + businessFlow.Status);
+            Console.WriteLine("Business Flow Status: " + businessFlow.RunStatus);
             foreach (Activity activity in businessFlow.Activities)
             {
-                Console.WriteLine("Activity: " + activity.ActivityName + " Status: " + activity.Status);                
+                Console.WriteLine("Activity: " + activity.ActivityName + " Status: " + activity.Status);
+
+                Console.WriteLine("Actions Found:" + activity.Acts.Count);
+                foreach (Act act in activity.Acts )
+                {
+                    Console.WriteLine("--");
+                    Console.WriteLine("Action:" + act.Description);
+                    Console.WriteLine("Description:" + act.ActionDescription);
+                    Console.WriteLine("Type:" + act.ActionType);
+                    Console.WriteLine("Class:" + act.ActClass );
+                    Console.WriteLine("Status:" + act.Status );
+                    Console.WriteLine("Error:" + act.Error);
+                    Console.WriteLine("ExInfo:" + act.ExInfo);
+                }
             }
+
+
         }
 
         public static void InitClassTypesDictionary()
@@ -199,6 +237,7 @@ namespace Amdocs.Ginger.GingerConsole
                 BusinessFlowsListMenuItem.Active = true;
                 EnvironmentsListMenuItem.Active = true;
                 RunBusinessFlowMenuItem.Active = true;
+                RunSetMenuItem.Active = true;
             }
             else
             {
@@ -221,6 +260,7 @@ namespace Amdocs.Ginger.GingerConsole
             BusinessFlowsCountMenuItem.Active = false;
             BusinessFlowsListMenuItem.Active = false;
             EnvironmentsListMenuItem.Active = false;
+            RunSetMenuItem.Active = false;
         }
 
         private void BusinessFlowsList()

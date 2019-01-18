@@ -39,7 +39,7 @@ namespace Ginger.MenusLib
                 if (mMenusPage == null)
                 {
                     mMenusPage = new TwoLevelMenuPage(GetMenu());
-                    App.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+                     WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
                 }
                 return mMenusPage;
             }

@@ -31,7 +31,6 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Threading;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -107,7 +106,7 @@ namespace GingerCore.Drivers.PBDriver
             
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, "Start Executing action of type '" + actClass + "' Description is" + act.Description);
+                Reporter.ToLog(eLogLevel.DEBUG, "Start Executing action of type '" + actClass + "' Description is" + act.Description);
                  
                 switch (actClass)
                 {
@@ -1070,7 +1069,7 @@ namespace GingerCore.Drivers.PBDriver
             throw new NotImplementedException();
         }
 
-        public bool TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
+        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
         {
             throw new NotImplementedException();
         }
