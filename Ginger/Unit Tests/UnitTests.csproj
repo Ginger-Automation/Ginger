@@ -409,6 +409,9 @@
     <Content Include="TestResources\APlusB.vbs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestResources\XML\calculator_soapui_project.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="TestResources\AutoPilot\JSONTemplates\login.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

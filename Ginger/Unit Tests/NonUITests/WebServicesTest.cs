@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Actions.WebServices;
 using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Drivers.WebServicesDriverLib;
@@ -398,7 +399,50 @@ namespace UnitTests.NonUITests
 
         }
 
+        [TestMethod]
+        [Timeout(10000)]
+        public void WebServices_SoapWrapperActionTest()
+        {
+            WebServicesDriver mDriver = new WebServicesDriver(mBF);
 
+            Agent wsAgent = new Agent();
+            wsAgent.DriverType = Agent.eDriverType.WebServices;
+            wsAgent.Driver = mDriver;
+            ApplicationAgent mAG = new ApplicationAgent();
+            mAG.Agent = wsAgent;
+
+            mGR = new GingerRunner();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
+            mGR.SolutionAgents.Add(wsAgent);
+
+            mGR.BusinessFlows.Add(mBF);
+
+            Activity Activity2 = new Activity();
+            Activity2.Active = true;
+            Activity2.ActivityName = "Soap UI Wrapper action";
+            Activity2.CurrentAgent = wsAgent;
+            mBF.Activities.Add(Activity2);
+
+            ActWebAPISoap actSoapUi = new ActWebAPISoap();
+
+            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML\calculator_soapui_project.xml");
+
+            actSoapUi.AddOrUpdateInputParamValue(ActSoapUI.Fields.ImportFile, xmlFilePath);
+
+            mBF.Activities[0].Acts.Add(actSoapUi);
+
+            if (actSoapUi.ActInputValues.Count > 0)
+            {
+                foreach (var item in actSoapUi.ActInputValues)
+                {
+                    if (item.Value.ToString().Contains(xmlFilePath))
+                    {
+                        Assert.AreEqual(true, item.Value.ToString().Contains(xmlFilePath));
+                    }
+                }
+            }
+
+        }
 
     }
 }
