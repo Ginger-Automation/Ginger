@@ -371,7 +371,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 if (DSDetails.FilePath.StartsWith("~"))
                 {
                     DSDetails.FileFullPath = DSDetails.FilePath.Replace(@"~\", "").Replace("~", "");
-                    DSDetails.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, DSDetails.FileFullPath);
+                    DSDetails.FileFullPath = System.IO.Path.Combine(WorkSpace.UserProfile.Solution.Folder, DSDetails.FileFullPath);
                 }
                 ADC.Init(DSDetails.FileFullPath);
                 DSDetails.DSC = ADC;

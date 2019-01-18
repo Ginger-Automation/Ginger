@@ -82,6 +82,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestResources\DataSource\SQLiteDataSource.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Reports\Activity.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -22,14 +22,7 @@ namespace GingerCore.DataSource
             string strAccessConn = "";
             mFilePath = sFilePath;
 
-            if (sMode == "Read")
-            {
-                strAccessConn = "Data Source=" + mFilePath ;
-            }
-            else
-            {
-                strAccessConn = "Data Source=" + mFilePath ;
-            }
+            strAccessConn = "Data Source=" + mFilePath;
 
             try
             {
@@ -40,7 +33,7 @@ namespace GingerCore.DataSource
                         sqlite = new SQLiteConnection(strAccessConn);
                         DSC = this;
                         sqlite.Open();
-                        
+
                     }
                 }
             }
@@ -49,7 +42,7 @@ namespace GingerCore.DataSource
                 Console.WriteLine("Error: Failed to create a database connection. \n{0}", ex.Message);
                 return;
             }
-        }
+        } 
         public override void AddColumn(string tableName, string columnName, string columnType)
         {
             sqlite.Close();
@@ -102,7 +95,7 @@ namespace GingerCore.DataSource
                 Init(mFilePath, "Write");
                 SQLiteCommand myCommand = new SQLiteCommand();
                 myCommand.Connection = sqlite;
-                myCommand.CommandText = "SELECT * INTO " + CopyTableName + " FROM " + tableName;
+                myCommand.CommandText = "CREATE TABLE " + CopyTableName + " AS SELECT * FROM " + tableName;
                 myCommand.ExecuteNonQuery();
                 sqlite.Close();
                 Init(mFilePath, "Read");
@@ -125,7 +118,7 @@ namespace GingerCore.DataSource
             }
             catch (Exception e)
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
             }
         }
 
@@ -275,7 +268,6 @@ namespace GingerCore.DataSource
             int iUpdateCount = 0;
             foreach (DataColumn column in dtTable.Columns)
             {
-
                 if (column.ToString() == "GINGER_KEY_NAME" || column.ToString() == "GINGER_KEY_VALUE")
                     iCount++;
                 else if (column.ToString() == "GINGER_ID")
@@ -339,7 +331,7 @@ namespace GingerCore.DataSource
                 Init(mFilePath, "Write");
                 SQLiteCommand myCommand = new SQLiteCommand();
                 myCommand.Connection = sqlite;
-                myCommand.CommandText = "SELECT * INTO " + newTableName + " FROM " + tableName;
+                myCommand.CommandText = "ALTER TABLE " + tableName  + " RENAME TO " + newTableName;
                 myCommand.ExecuteNonQuery();
                 sqlite.Close();
                 Init(mFilePath, "Read");
@@ -434,7 +426,7 @@ namespace GingerCore.DataSource
             catch (Exception e)
             {
                 dataTable.RejectChanges();
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
             }
         }
 
