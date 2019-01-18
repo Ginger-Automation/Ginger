@@ -29,6 +29,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Ginger.ApplicationModelsLib.POMModels
@@ -118,17 +119,20 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 //SetElementsGroup();
                 //SetElementsFields();
                 mElements = mPOM.mCopiedUnienedList;
-                    /*GingerCore.General.ConvertListToObservableList<ElementInfo>(mPOM.MappedUIElements.Union(mPOM.UnMappedUIElements).ToList());*/
-            }
+                SetGridRowStyle(xMainElementsGrid);
+                SetGridRowStyle(xLocatorsGrid);
+                SetGridRowStyle(xPropertiesGrid);
 
+
+                /*GingerCore.General.ConvertListToObservableList<ElementInfo>(mPOM.MappedUIElements.Union(mPOM.UnMappedUIElements).ToList());*/
+            }
 
             SetElementsGridView();
             SetLocatorsGridView();
             SetControlPropertiesGridView();
 
-
-
             xMainElementsGrid.DataSourceList = mElements;
+
             if (mElements.Count > 0)
             {
                 xMainElementsGrid.Grid.SelectedItem = mElements[0];
@@ -280,10 +284,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mContext == PomAllElementsPage.eElementsContext.AllDeltaElements)
             {
-                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Updated), Header = "Updated", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Update), Header = "Update", WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["FieldUpdate"] });
             }
 
-                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 40, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 40, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), WidthWeight = 35, AllowSorting = true });
 
             List<GingerCore.General.ComboEnumItem> ElementTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(eElementType));
@@ -332,6 +336,17 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             xMainElementsGrid.SelectedItemChanged += XMainElementsGrid_SelectedItemChanged;
             xMainElementsGrid.Grid.SelectionChanged += Grid_SelectionChanged;
+        }
+
+        private void SetGridRowStyle(ucGrid xGrid)
+        {
+            Style st = xGrid.grdMain.RowHeaderStyle;
+            DataTrigger DT = new DataTrigger();
+            PropertyPath PT = new PropertyPath(nameof(ElementInfo.IsNotEqual));
+            DT.Binding = new Binding() { Path = PT, Mode = BindingMode.OneWay};
+            DT.Value = true;
+            DT.Setters.Add(new Setter(DataGridRow.BackgroundProperty, Brushes.Red));
+            st.Triggers.Add(DT);
         }
 
         private void XMainElementsGrid_SelectedItemChanged(object selectedItem)

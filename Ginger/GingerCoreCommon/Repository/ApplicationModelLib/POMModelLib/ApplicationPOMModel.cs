@@ -60,18 +60,18 @@ namespace Amdocs.Ginger.Repository
 
         public ObservableList<ElementInfo> mCopiedUnienedList = new ObservableList<ElementInfo>();
 
-        public ObservableList<ElementInfo> GetDuplicatedUnienedElementsList()
+        public void PopulateDuplicatedUnienedElementsList()
         {
             foreach (ElementInfo EI in MappedUIElements)
             {
-                mCopiedUnienedList.Add((ElementInfo)EI.CreateCopy(false));
+                EI.ElementGroup = ElementInfo.eElementGroup.Mapped;
+                mCopiedUnienedList.Add(EI);
             }
             foreach (ElementInfo EI in UnMappedUIElements)
             {
-                mCopiedUnienedList.Add((ElementInfo)EI.CreateCopy(false));
+                EI.ElementGroup = ElementInfo.eElementGroup.Unmapped;
+                mCopiedUnienedList.Add(EI);
             }
-
-            return mCopiedUnienedList;
         }
 
         public void SetElementsGroup()

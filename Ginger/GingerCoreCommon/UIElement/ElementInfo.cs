@@ -260,15 +260,17 @@ namespace Amdocs.Ginger.Common.UIElement
             return mValue;
         }
 
-        public bool Updated { get; set; }
+        public bool Update { get; set; }
 
-        public eElementGroup ElementGroup { get; set; }
+
 
         public enum eElementGroup
         {
             Mapped,
             Unmapped
         }
+
+        public eElementGroup ElementGroup { get; set; }
 
         public enum eDeltaStatus
         {
@@ -277,6 +279,23 @@ namespace Amdocs.Ginger.Common.UIElement
             Modified,
             New
         }
+        public eDeltaStatus DeltaStatus { get; set; }
+
+        public bool IsNotEqual
+        {
+            get
+            {
+                if (DeltaStatus == eDeltaStatus.Equal)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+        }
 
         public enum eDeltaExtraDetails
         {
@@ -284,7 +303,6 @@ namespace Amdocs.Ginger.Common.UIElement
             PropertiesChanged
         }
 
-        public eDeltaStatus DeltaStatus { get; set; }
         public eDeltaExtraDetails DeltaExtraDetails { get; set; }
 
         [IsSerializedForLocalRepository]

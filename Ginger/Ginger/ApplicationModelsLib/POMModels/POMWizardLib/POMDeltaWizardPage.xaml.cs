@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Drivers;
@@ -51,14 +52,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             {
                 case EventType.Init:
                     mWizard = (PomRelearnWizard)WizardEventArgs.Wizard;
-                    mPOM = mWizard.mPOM;
+                    mPOM = mWizard.mDuplicatedPOM;
                     mElementsList.CollectionChanged += ElementsListCollectionChanged;
                     InitilizePomElementsMappingPage();
                     mAppPlatform = App.UserProfile.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
                     SetAutoMapElementTypes();
                     mPomElementsPage.SetAgent(mWizard.Agent);
-                    mPOM.SetElementsGroup();
-                    mOriginalList = mPOM.GetDuplicatedUnienedElementsList();
+                    mPOM.PopulateDuplicatedUnienedElementsList();
+                    mOriginalList = mPOM.mCopiedUnienedList;
                     CollectOriginalElementsData();
 
                     xReLearnButton.Visibility = Visibility.Visible;
@@ -66,6 +67,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     break;
             }
         }
+
 
         private async void CollectOriginalElementsData()
         {
@@ -178,6 +180,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
                 if (originalElementInfo == null)
                 {
+                    latestElementInfo.DeltaStatus = ElementInfo.eDeltaStatus.New;
                     mDeltaNewElementsList.Add(latestElementInfo);
                 }
                 else
@@ -202,10 +205,39 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 {
                     originalEL.DeltaStatus = ElementInfo.eDeltaStatus.New;
                 }
+                else if (originalEL.IsAutoLearned = true && originalEL.LocateBy == latestEL.LocateBy && originalEL.LocateValue != latestEL.LocateValue)
+                {
+                    originalEL.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                }
                 else
                 {
                     originalEL.DeltaStatus = ElementInfo.eDeltaStatus.Equal;
                 }
+            }
+
+            foreach (ControlProperty originalCP in originalElelemnt.Properties)
+            {
+                ControlProperty latestCP = latestElement.Properties.Where(x => x.Name == originalCP.Name && x.Value == originalCP.Value).FirstOrDefault();
+                if (latestCP == null)
+                {
+                    originalCP.DeltaStatus = ElementInfo.eDeltaStatus.New;
+                }
+                else if (originalCP.Name == latestCP.Name && originalCP.Value != latestCP.Value)
+                {
+                    originalCP.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                }
+                else
+                {
+                    originalCP.DeltaStatus = ElementInfo.eDeltaStatus.Equal;
+                }
+            }
+
+            List<ElementLocator> ModifiedElementsLocatorsList = originalElelemnt.Locators.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Equal).ToList();
+            List<ControlProperty> ModifiedControlPropertiesList = originalElelemnt.Properties.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Equal).ToList();
+            if (ModifiedElementsLocatorsList.Count > 0 || ModifiedControlPropertiesList.Count > 0)
+            {
+                originalElelemnt.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                originalElelemnt.Update = true;
             }
 
         }

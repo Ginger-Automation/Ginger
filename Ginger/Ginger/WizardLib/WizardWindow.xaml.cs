@@ -297,7 +297,7 @@ namespace GingerWPF.WizardLib
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantMoveWhileInProcess, "Finish");
+                Reporter.ToUser(eUserMsgKeys.WizardCantMoveWhileInProcess, "Cancel");
             }
             else
             {

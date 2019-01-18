@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Common.UIElement;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
 using GingerCore;
@@ -13,7 +14,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 {
     public class PomRelearnWizard : WizardBase
     {
-        public ApplicationPOMModel mPOM;
+        public ApplicationPOMModel mDuplicatedPOM;
+        public ApplicationPOMModel mOriginalPOM;
+
 
         public override string Title { get { return "POM Delta Check Wizard"; } }
 
@@ -45,16 +48,25 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         public PomRelearnWizard(ApplicationPOMModel POM, Agent agent)
         {
-            mPOM = POM.CreateCopy(false) as ApplicationPOMModel;
+            mOriginalPOM = POM;
+            mDuplicatedPOM = POM.CreateCopy(false) as ApplicationPOMModel;
+            mDuplicatedPOM.ContainingFolder = POM.ContainingFolder;
+            mDuplicatedPOM.ContainingFolderFullPath = POM.ContainingFolderFullPath;
             mAgent = agent;
 
             AddPage(Name: "Delta Status", Title: "Delta Status", SubTitle: "Get latest changes from page", Page: new POMDeltaWizardPage());
-
         }
 
         public override void Finish()
         {
-           
+            List<ElementInfo>  ElementsToUpdate = mDuplicatedPOM.mCopiedUnienedList.Where(x => x.Update = true).ToList();
+            foreach (ElementInfo EI in ElementsToUpdate)
+            {
+                ElementInfo CorrespondedOriginalElementInfo =  mOriginalPOM.mCopiedUnienedList.Where(x => x.Guid == EI.Guid).FirstOrDefault();
+                CorrespondedOriginalElementInfo = EI;
+            }
+
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mOriginalPOM);
         }
     }
 }

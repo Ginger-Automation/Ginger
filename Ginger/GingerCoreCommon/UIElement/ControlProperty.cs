@@ -33,5 +33,22 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public eDeltaStatus DeltaStatus { get; set; }
         public eDeltaExtraDetails DeltaExtraDetails { get; set; }
+
+        public bool IsNotEqual
+        {
+            get
+            {
+                if (DeltaStatus == eDeltaStatus.Equal)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+        }
+
     }
 }

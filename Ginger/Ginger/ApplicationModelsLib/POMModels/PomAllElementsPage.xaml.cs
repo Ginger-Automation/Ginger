@@ -412,7 +412,23 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void ReLearnClicked(object sender, RoutedEventArgs e)
         {
+            if (mWinExplorer == null)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                return;
+            }
+
+            if (mAgent.Driver.IsDriverBusy)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                return;
+            }
+
+
             WizardWindow.ShowWizard(new PomRelearnWizard(mPOM,mAgent));
         }
+
+
+
     }
 }

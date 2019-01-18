@@ -3588,6 +3588,7 @@ namespace GingerCore.Drivers
                 list = GingerCore.General.ConvertObservableListToList<ElementInfo>((GetAllElementsFromPage("", filteredElementType, foundElementsList, learnFullElementInfoDetails)));
                 allReadElem.Clear();
                 CurrentFrame = "";
+                Thread.Sleep(2000);
                 Driver.SwitchTo().DefaultContent();
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
                 return list;
@@ -6722,6 +6723,7 @@ namespace GingerCore.Drivers
                         else
                         {
                             EI.DeltaStatus = ElementInfo.eDeltaStatus.Deleted;
+                            EI.Update = true;
                         }
                     }
                     catch(Exception ex)
@@ -6744,10 +6746,6 @@ namespace GingerCore.Drivers
             ElementInfo OriginalElementInfo = originalElements.Where(x => x.ElementObject.Equals(latestElement.ElementObject)).FirstOrDefault();
 
             return OriginalElementInfo;
-
-            return null;
-
-            //throw new NotImplementedException();
         }
     }
 }
