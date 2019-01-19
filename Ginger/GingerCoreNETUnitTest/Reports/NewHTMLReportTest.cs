@@ -91,6 +91,10 @@ namespace GingerCoreNETUnitTest.Reports
             NewHTMLReport rep = new NewHTMLReport();            
             string s = rep.CreateReport(reportInfo);
 
+
+
+            // TODO: need to create same report like HTMLDetailedReport
+
             // System.IO.File.WriteAllText(@"c:\temp\rep1.html", s);
 
 

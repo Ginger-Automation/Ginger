@@ -1,8 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Run;
-using Ginger.Reports;
-using Ginger.Reports.GingerExecutionReport;
-using Ginger.Reports.HTMLReports;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -10,6 +7,7 @@ using GingerTestHelper;
 using GingerUtils.TimeLine;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
@@ -26,7 +24,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
             mGingerRunner = new GingerRunner();
             mGingerRunnerTimeLine = new GingerRunnerTimeLine();
             mGingerRunner.RunListeners.Add(mGingerRunnerTimeLine);
-
+            RunListenerBase.Start();
+            Thread.Sleep(10);
         }
 
         [ClassCleanup]
@@ -66,8 +65,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             mGingerRunner.BusinessFlows.Add(mBF);
 
 
-            //Act
-            RunListenerBase.Start();
+            //Act            
             mGingerRunner.RunBusinessFlow(mBF);
 
             List<TimeLineEvent> events = mGingerRunnerTimeLine.timeLineEvents.EventList;
@@ -100,41 +98,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             //TODO: add more test that timeline is in boundries of parent
         }
 
-        //[TestMethod]
-        //public void CreateReport()
-        //{
-        //    ReportInfo reportInfo = new ReportInfo(@"C:\Yaron\GingerSolution\Plugins\Plugins\ExecutionResults\AutomationTab_LastExecution");
-        //    NewHTMLReport rep = new NewHTMLReport();
-        //    //reportInfo.
-        //    string s = rep.CreateReport(reportInfo);
-        //    System.IO.File.WriteAllText(@"c:\temp\rep1.html", s);
-
-
-        //    HTMLDetailedReport hTMLDetailedReport = new HTMLDetailedReport();
-
-        //    HTMLReportConfiguration hTMLReportConfiguration = new HTMLReportConfiguration();
-        //    hTMLReportConfiguration.RunSetFieldsToSelect = HTMLReportConfiguration.GetReportLevelMembers(typeof(RunSetReport));
-        //    hTMLReportConfiguration.EmailSummaryViewFieldsToSelect = HTMLReportConfiguration.GetReportLevelMembers(typeof(RunSetReport));
-        //    hTMLReportConfiguration.GingerRunnerFieldsToSelect = HTMLReportConfiguration.GetReportLevelMembers(typeof(GingerReport));
-        //    hTMLReportConfiguration.BusinessFlowFieldsToSelect = HTMLReportConfiguration.GetReportLevelMembers(typeof(BusinessFlowReport));
-        //    hTMLReportConfiguration.ActivityGroupFieldsToSelect = HTMLReportConfiguration.GetReportLevelMembers(typeof(ActivityGroupReport));
-        //    hTMLReportConfiguration.ActivityFieldsToSelect = HTMLReportConfiguration.GetReportLevelMembers(typeof(ActivityReport));
-        //    hTMLReportConfiguration.ActionFieldsToSelect = HTMLReportConfiguration.GetReportLevelMembers(typeof(ActionReport));
-
-
-        //    GingerExecutionReport gingerExecutionReport = new GingerExecutionReport();
-        //    gingerExecutionReport.TemplatesFolder = @"C:\Users\yaronwe\source\repos\Ginger\Ginger\Ginger\Reports\GingerExecutionReport\";
-        //    gingerExecutionReport.HTMLReportMainFolder = @"c:\temp\rep1";
-        //    gingerExecutionReport.CreateSummaryViewReport(reportInfo);
-        //    // gingerExecutionReport.CreateSummaryViewReport( .CreateBusinessFlowLevelReport(reportInfo);
-
-        //    // string s = ExtensionMethods.CreateSummaryViewReport( .CreateGingerExecutionReport(reportInfo, true);
-        //    // string s = hTMLDetailedReport.CreateReport(reportInfo);
-        //    //System.IO.File.WriteAllText(@"c:\temp\rep1.html", s);
-
-        //    // gingerExecutionReport.cre .CreateGingerExecutionReport()
-        //    //HTMLSummaryReport
-        //}
+        
 
     }
 
