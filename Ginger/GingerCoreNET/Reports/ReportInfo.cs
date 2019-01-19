@@ -45,6 +45,7 @@ namespace Ginger.Reports
 
         public enum ReportInfoLevel
         {
+            Unknown,
             RunSetLevel,
             GingerLevel,
             BussinesFlowLevel,
@@ -52,7 +53,7 @@ namespace Ginger.Reports
             ActivityLevel,
             ActionLevel
         }
-        public ReportInfoLevel reportInfoLevel;
+        public ReportInfoLevel reportInfoLevel = ReportInfoLevel.Unknown;
         
         private ObservableList<BusinessFlowExecutionSummary> mBFESs;
         private ProjEnvironment mProjEnvironment;
@@ -66,7 +67,7 @@ namespace Ginger.Reports
         /// <summary>
         /// The root item of the report which can be RunSet, Runner, BF
         /// </summary>
-        public Object ReportInfoRootObject = new Object();   
+        public Object ReportInfoRootObject;   
 
         public EnvironmentReport Environment { get; set; }
 
