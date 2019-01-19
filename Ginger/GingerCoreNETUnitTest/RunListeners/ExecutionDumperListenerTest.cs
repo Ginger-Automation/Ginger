@@ -46,7 +46,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
 
         [TestMethod]
-        public void DumplerListener()
+        public void DumperListener()
         {
             
             // We lock Ginger runner so we will not run 2 flows at the same time on same GR
@@ -94,7 +94,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
 
         [TestMethod]
-        public void DumplerListenerBigFlow()
+        public void DumperListenerBigFlow()
         {
             // TODO: add more data and check speed
             // We lock Ginger runner so we will not run 2 flows at the same time on same GR

@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Run;
 using Ginger.Reports;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using Newtonsoft.Json;
@@ -44,6 +45,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         private void ResetCounters()
         {
             mBusinessFlowCounter = 0;                        
+        }
+
+        public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner)
+        {
+            ResetCounters();
         }
 
         public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow)
