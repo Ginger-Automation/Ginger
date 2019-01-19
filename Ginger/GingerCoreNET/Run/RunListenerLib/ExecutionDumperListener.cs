@@ -26,44 +26,57 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         int mBusinessFlowCounter = 0;
         int mActivitiesCounter = 0;
         int mActionsCounter = 0;
-        string mFolder;
+        string mDumpFolder;
         string CurrentBusinessFlowFolder;        
         string CurrentActivityFolder;
         string CurrentActionFolder;
 
         public ExecutionDumperListener(string folder)
         {
-            mFolder = folder;
+            mDumpFolder = folder;
             if (mJsonSerializer == null)
             {
                 mJsonSerializer = new JsonSerializer();
             }
-            ResetCounters();
-            
+            Reset();            
         }
 
-        private void ResetCounters()
+        private void Reset()
         {
-            mBusinessFlowCounter = 0;                        
+            mBusinessFlowCounter = 0;
+            CleanDumpFolder();            
+        }
+
+        private void CleanDumpFolder()
+        {
+            DirectoryInfo di = new DirectoryInfo(mDumpFolder);
+            foreach (FileInfo file in di.EnumerateFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.EnumerateDirectories())
+            {
+                dir.Delete(true);
+            }
         }
 
         public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner)
         {
-            ResetCounters();
+            Reset();
         }
 
         public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow)
         {
             mBusinessFlowCounter++;
             mActivitiesCounter = 0;
-            CurrentBusinessFlowFolder = Path.Combine(mFolder, mBusinessFlowCounter + " " + businessFlow.GetNameForFileName());
+            CurrentBusinessFlowFolder = Path.Combine(mDumpFolder, mBusinessFlowCounter + " " + businessFlow.GetNameForFileName());
             Directory.CreateDirectory(CurrentBusinessFlowFolder);
         }
 
         public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow)
         {
             BusinessFlowReport businessFlowReport = new BusinessFlowReport(businessFlow);
-            SaveObjToJSonFile(businessFlowReport, Path.Combine(mFolder, CurrentBusinessFlowFolder, "BusinessFlowReport.txt"));
+            SaveObjToJSonFile(businessFlowReport, Path.Combine(mDumpFolder, CurrentBusinessFlowFolder, "BusinessFlowReport.txt"));
         }
 
         public override void ActivityStart(uint eventTime, Activity activity)
@@ -77,7 +90,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public override void ActivityEnd(uint eventTime, Activity activity)
         {
             ActivityReport activityReport = new ActivityReport(activity);
-            SaveObjToJSonFile(activityReport, Path.Combine(mFolder, CurrentActivityFolder, "ActivityReport.txt"));
+            SaveObjToJSonFile(activityReport, Path.Combine(mDumpFolder, CurrentActivityFolder, "ActivityReport.txt"));
         }
 
         public override void ActionStart(uint eventTime, Act action)
