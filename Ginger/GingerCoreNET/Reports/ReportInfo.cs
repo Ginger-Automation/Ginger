@@ -63,7 +63,10 @@ namespace Ginger.Reports
         public string ExecutionEnv { get; set; }
         public TimeSpan ExecutionElapsedTime { get; set; }
         
-        public Object ReportInfoRootObject = new Object();
+        /// <summary>
+        /// The root item of the report which can be RunSet, Runner, BF
+        /// </summary>
+        public Object ReportInfoRootObject = new Object();   
 
         public EnvironmentReport Environment { get; set; }
 
@@ -82,7 +85,7 @@ namespace Ginger.Reports
             TotalExecutionTime = mGingersMultiRun.Elapsed;
 
             DateCreated = DateTime.Now.ToString();
-            DateCreatedShort = DateTime.Now.ToString("MM/dd");
+            DateCreatedShort = DateTime.Now.ToString("MM/dd");  
             ExecutionEnv = mProjEnvironment.Name;
             ExecutionElapsedTime = mGingersMultiRun.Elapsed;
         }
@@ -150,7 +153,7 @@ namespace Ginger.Reports
             foreach (string txt_file in System.IO.Directory.GetFiles(folder))
             {
                 fileName = Path.GetFileName(txt_file);
-                if (fileName.Contains(".txt") && (fileName != "ActivityGroups.txt"))
+                if (fileName.Contains(".txt") && (fileName != "ActivityGroups.txt"))     // !!!!!!!!!!!!!!!!!!!!!!!!
                 {
                     txtFilesInDirectoryCount++;
                     txtFileName = fileName;
