@@ -29,14 +29,15 @@ namespace GingerCoreNETUnitTest.RunTestslib
             RunListenerBase.Start();
         }
 
-        private void RunFlow(BusinessFlow mBF)
+        private void RunFlow(BusinessFlow businessFlow)
         {
             // We lock Ginger runner so we will not run 2 flows at the same time on same GR
             lock (mGingerRunner)
             {
                 mGingerRunner.BusinessFlows.Clear();
-                mGingerRunner.BusinessFlows.Add(mBF);
-                mGingerRunner.RunBusinessFlow(mBF);
+                mGingerRunner.BusinessFlows.Add(businessFlow);
+                mGingerRunner.CurrentBusinessFlow = businessFlow;                
+                mGingerRunner.RunRunner();
             }
         }
 
