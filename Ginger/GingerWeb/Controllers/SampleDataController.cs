@@ -1,4 +1,5 @@
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
@@ -39,7 +40,7 @@ namespace GingerWeb.Controllers
                 bDone = true;
             }
 
-            ObservableList<BusinessFlow> BusinessFlows = General.SR.GetAllRepositoryItems<BusinessFlow>();
+            IEnumerable<BusinessFlow> BusinessFlows = General.SR.GetAllRepositoryItems<BusinessFlow>().OrderBy(x => x.Name) ;
             var data = BusinessFlows.Select(x => 
                                     new
                                     {
@@ -107,18 +108,30 @@ namespace GingerWeb.Controllers
             }
         }
 
-        ExecutionLogger executionLogger;
+        //ExecutionLogger executionLogger;
         void RunFlow(BusinessFlow businessFlow)
         {
             GingerRunner gingerRunner = new GingerRunner();
+            gingerRunner.RunListeners.Clear();  // temp until we get clean GR 
+
+            // TODO: add dumper
+
             ProjEnvironment projEnvironment = new ProjEnvironment();
-            executionLogger = new ExecutionLogger(projEnvironment, eExecutedFrom.Automation);
-            executionLogger.Configuration.ExecutionLoggerConfigurationIsEnabled = true;
-            gingerRunner.RunListeners.Add(executionLogger);
-            gingerRunner.RunBusinessFlow(businessFlow, true);
+            ExecutionDumperListener executionDumperListener = new ExecutionDumperListener(@"c:\temp\dumper");   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! temp
+            gingerRunner.RunListeners.Add(executionDumperListener);
+
+
+            // executionLogger = new ExecutionLogger(projEnvironment, eExecutedFrom.Automation);
+            // executionLogger.Configuration.ExecutionLoggerConfigurationIsEnabled = true;
+            // gingerRunner.RunListeners.Add(executionLogger);
+            gingerRunner.BusinessFlows.Clear();
+            gingerRunner.BusinessFlows.Add(businessFlow);
+            gingerRunner.CurrentBusinessFlow = businessFlow;
+            gingerRunner.RunRunner();
 
             Console.WriteLine("Execution completed");
             Console.WriteLine("Business Flow Status: " + businessFlow.RunStatus);
+            Console.WriteLine("Business Flow Elapsed: " + businessFlow.Elapsed);
             foreach (Activity activity in businessFlow.Activities)
             {
                 Console.WriteLine("Activity: " + activity.ActivityName + " Status: " + activity.Status);
@@ -136,6 +149,9 @@ namespace GingerWeb.Controllers
                     Console.WriteLine("ExInfo:" + act.ExInfo);
                 }
             }
+
+            //TODO: create report
+
         }
 
 

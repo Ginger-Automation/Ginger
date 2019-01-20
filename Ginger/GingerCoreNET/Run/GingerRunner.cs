@@ -3798,7 +3798,7 @@ namespace Ginger.Run
 
                     //Map agent to the application
                     ApplicationPlatform ap = null;
-                    if (CurrentSolution.ApplicationPlatforms != null)
+                    if (CurrentSolution!= null && CurrentSolution.ApplicationPlatforms != null)
                     {
                         ap = CurrentSolution.ApplicationPlatforms.Where(x => x.AppName == ag.AppName).FirstOrDefault();
                     }
