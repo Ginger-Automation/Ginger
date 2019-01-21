@@ -465,7 +465,7 @@ namespace Ginger
                     foreach (string mapping in appAgentMapping)
                     {
                         string[] appAgent = mapping.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (appAgent.Length == 2)
+                        if (appAgent.Length == 2 && !mappingDic.ContainsKey(appAgent[0]))
                         {
                             mappingDic.Add(appAgent[0], appAgent[1]);
                         }
