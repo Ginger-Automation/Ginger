@@ -67,7 +67,7 @@
 
 
         
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void GetSolutionFolders()
 //        {
 //            //Arrange            
@@ -90,7 +90,7 @@
 
 //        }
 
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void FoldersTerminologyTest()
 //        {
 
@@ -112,7 +112,7 @@
 
        
 
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void GetSolutionEnvs()
 //        {
 //            //Arrange            
@@ -126,7 +126,7 @@
 
 //        }
         
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void UpdateBFInMemoryAndRequest()
 //        {
 //            //Arrange                   
@@ -152,7 +152,7 @@
 
         
 
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void GetSolutionBusinessFlows()
 //        {
 //            //Arrange            
@@ -168,7 +168,7 @@
 
 //        }
         
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void BF_BackupAndRestore()
 //        {
 //            //Arrange                        

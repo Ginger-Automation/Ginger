@@ -78,7 +78,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.RunStatus = eRunStatus.Pending;
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void TestVariable_StringSetValue()
         {
             //Arrange
@@ -105,7 +105,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(v1.Value, newValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void TestVariable_StringResetValue()
         {
             //Arrange
@@ -131,7 +131,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(v1.Value, initialValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void TestVariable_StringClearSpecialChar()
         {
             //Arrange
@@ -165,7 +165,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             return new String(value.Except(specialCharacters).ToArray());
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void TestVariable_PasswordStringSetValue()
         {
             //Arrange
@@ -193,7 +193,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void TestVariable_RandomNumberSetValue()
         {
             //Arrange
@@ -223,7 +223,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void TestVariable_RandomStringSetValue()
         {
             //Arrange
@@ -251,7 +251,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void TestVariable_SelectionListSetValue()
         {
             //Arrange

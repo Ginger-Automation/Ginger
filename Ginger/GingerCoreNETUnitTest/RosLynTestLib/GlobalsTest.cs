@@ -34,7 +34,7 @@ namespace GingerCoreNETUnitTest.RosLynTestLib
         }
         
 
-        //[TestMethod]  [Timeout(60000)]
+        //[TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         //public void StartFireFoxDriver()
         //{
         //    //Arrange            

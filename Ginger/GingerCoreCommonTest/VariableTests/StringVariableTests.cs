@@ -53,7 +53,7 @@ namespace GingerCoreCommonTest.VariableTests
         }
         #endregion
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void StringVar_TestVariableType()
         {
             //Arrange
@@ -66,7 +66,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("String", varType, "String Variable Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void StringVar_TestVariableUIType()
         {
             //Arrange
@@ -79,7 +79,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Variable String", varType, "String Variable UI Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void StringVar_TestImageType()
         {
             //Arrange
@@ -92,7 +92,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(eImageType.Variable, eImageType, "Image Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void StringVar_TestFormulaVal()
         {
             //Arrange
@@ -107,7 +107,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Initial String Value=", formulaStr, "Mismatch with Default Formula String");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void StringVar_TestResetVal()
         {
             //Arrange
@@ -122,7 +122,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsNull(variableString.Value, "Reset Value not null");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void StringVar_TestVal()
         {
             //Arrange
@@ -136,7 +136,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("testVal", variableString.Value, "String Value");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void PasswordStringVar_TestVal()
         {
             //Arrange
@@ -151,7 +151,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(passwordVal, variablePasswordString.Value, "Mismatch with VariablePasswordString.Value");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void PasswordStringVar_TestResetValue()
         {
             //Arrange
@@ -168,7 +168,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(password, variablePasswordString.Value, "Password Reset Fail");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void PasswordStringVar_TestVariableUIType()
         {
             //Arrange
@@ -181,7 +181,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(varType.Contains("Password"), "Password String Variable UI Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void PasswordStringVar_TestVariableType()
         {
             //Arrange
@@ -194,7 +194,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("PasswordString", varType, "Password String Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void PasswordStringVar_TestFormula()
         {
             //Arrange
@@ -210,7 +210,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(passwordVal, formulaVal, "Password Formula");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void PasswordStringVar_TestImageType()
         {
             //Arrange

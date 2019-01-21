@@ -79,7 +79,7 @@ namespace GingerTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void TestBusinessFlowVariableSyncWithRepo()
         {
             string variableName = "BFV1";
@@ -117,7 +117,7 @@ namespace GingerTest
             Assert.AreEqual(updatedValue, V2.InitialStringValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void TestActivityVariablesSyncWithRepo()
         {
             string variableName = "ACTVAR1";
@@ -160,7 +160,7 @@ namespace GingerTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void TestActivityVariablesSyncWithRepo_v2()
         {
             string variableName = "ACTVAR2";
@@ -205,7 +205,7 @@ namespace GingerTest
         }
 
 
-        //[TestMethod]  [Timeout(60000)]
+        //[TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         //public void TestSolutionVariablesSyncWithRepo()
         //{
         //    string variableName = "SOLVAR1";

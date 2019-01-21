@@ -50,7 +50,7 @@ namespace UnitTests.NonUITests
             mAct = new ActDummy();
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void GetInputParamEnumValueTest()
         {
             mAct.AddOrUpdateInputParamValue("Enum Value", eSampleEnum.Yes.ToString());

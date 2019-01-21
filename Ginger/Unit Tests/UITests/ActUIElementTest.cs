@@ -75,7 +75,7 @@ namespace UnitTests.UITests
         }
 
         
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void DragAndDropSelenium()
         {
             ResetBusinessFlow();
@@ -110,7 +110,7 @@ namespace UnitTests.UITests
         }
 
         
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void DragAndDropJS()
         {
             ResetBusinessFlow();
@@ -143,7 +143,7 @@ namespace UnitTests.UITests
         }
 
         
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public  void DoDragAndDropByOffSet()
         {
             ResetBusinessFlow();
@@ -176,7 +176,7 @@ namespace UnitTests.UITests
         }
 
         
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void DrawObject()
         {
             ResetBusinessFlow();

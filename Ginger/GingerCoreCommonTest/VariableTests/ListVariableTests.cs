@@ -55,7 +55,7 @@ namespace GingerCoreCommonTest.VariableTests
         }
         #endregion
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ListVar_TestVariableType()
         {
             //Arrange
@@ -68,7 +68,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("List", varType, "List Variable Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ListVar_TestVariableUIType()
         {
             //Arrange
@@ -81,7 +81,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(varType.Contains("List"), "List Variable UI Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ListVar_TestImageType()
         {
             //Arrange
@@ -96,7 +96,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(eImageType.VariableList, eImageType, "Image Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ListVar_TestGenerateAutoValue()
         {
             //Arrange
@@ -116,7 +116,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Apple", strValue, "GenerateAutoValue");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ListVar_TestGenerateAutoValuesSequence()
         {
             //Arrange
@@ -139,7 +139,7 @@ namespace GingerCoreCommonTest.VariableTests
             }
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ListVar_TestRandomGenerateAutoValue()
         {
             //Arrange
@@ -157,7 +157,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(lstTemp.Contains(strValue), "Random GenerateAutoValue");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ListVar_TestRandomGenerateAutoValueNotExists()
         {
             //Arrange
@@ -172,7 +172,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsFalse(lstTemp.Contains("Dummy"), "Random GenerateAutoValue");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ListVar_TestFormula()
         {
             //Arrange
@@ -189,7 +189,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(formulaExpectedResult, formulaResult, "List Formula");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ListVar_TestFormulaForEmptyList()
         {
             //Arrange
@@ -204,7 +204,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(formulaExpectedResult, formulaResult, "List Formula");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ListVar_TestFormulaNoList()
         {
             //Arrange
@@ -217,7 +217,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(string.Empty, formulaResult, "List Formula");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ListVar_TestResetIndexValue()
         {
             //Arrange
@@ -234,7 +234,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(lstTemp[0], variableList.Value, "Reset Index Value");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ListVar_TestResetIndexValueForEmptyList()
         {
             //Arrange

@@ -58,7 +58,7 @@ namespace UnitTests.NonUITests
             mDriver.CloseDriver();
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void EchoSimpleString()
         {
             // Arrange            
@@ -77,7 +77,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(txt, txtRC, "txt=txtRC");            
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void EchoSringwithSymbols()
         {
             // Arrange            
@@ -96,7 +96,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        //[TestMethod]  [Timeout(60000)]
+        //[TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         //[Ignore]
         //public void EchoSringwithHebrew()
         //{
@@ -116,7 +116,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void EchoLongSring()
         {
             // Arrange            
@@ -139,7 +139,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]  [Timeout(60000)]        
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]        
         public void GetVisibleElements()
         {            
             PayLoad PLRequest = new PayLoad("GetVisibleElements");         

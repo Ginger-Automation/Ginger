@@ -57,7 +57,7 @@
 //        }
 
         
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void ConvertBFToString()
 //        {
 //            //Arrange
@@ -100,7 +100,7 @@
 
 
         
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void BFToStringAndBack()
 //        {
 //            //Arrange
@@ -118,7 +118,7 @@
 //        }
 
         
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void VerifyRepositoryItemHeaderSaveLoad()
 //        {
 //            //Arrange
@@ -145,7 +145,7 @@
 //        }
 
 //        [Ignore]
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void BFWithData()
 //        {
 //            //Arrange
@@ -179,7 +179,7 @@
 //        }
 
         
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void VerifySerialzedAttrDefaultValue()
 //        {
 //            //Arrange
@@ -195,7 +195,7 @@
 //        }
 
         
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void VerifySerialzedAttrDefaultValueWithChange()
 //        {
 //            //Arrange
@@ -212,7 +212,7 @@
 //        }
 
         
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void RepositoryItemKey()
 //        {
 //            //Arrange
@@ -231,7 +231,7 @@
 //        }
 
         
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void ApiModelTagItemKey()
 //        {
 //            //Arrange
@@ -256,7 +256,7 @@
 //        }
 
         
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void POMWithTargetApplicationKey()
 //        {
 //            //Arrange
@@ -283,7 +283,7 @@
 //        //-----------------------------------------------------------------------------------------------------------------------------------------
 //        // RunSetConfig
 //        //-----------------------------------------------------------------------------------------------------------------------------------------
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void RunSetConfigSaveLoad()
 //        {
 //            //Arrange
@@ -304,7 +304,7 @@
 //            // RunSetConfig RSC2 = (RunSetConfig)RepositoryItem.LoadFromFile(typeof(RunSetConfig), @"c:\temp\UTRSC1.xml");
 //        }
         
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void SaveLoadRunSetWithRunSetActionSendFreeEmailX2()
 //        {
 //            //Arrange
@@ -325,7 +325,7 @@
 //        }
 
 
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void SaveLoadRunSetWithRunSetActionSendFreeEmailValidateEmail()
 //        {
 //            //Arrange
@@ -348,7 +348,7 @@
 //        }
 
 
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void LoadRunSetWith5Operations()
 //        {
 //            NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();

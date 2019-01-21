@@ -39,7 +39,7 @@ namespace GingerCoreNETUnitTest.Script
         #endregion
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void MidExpressionTest_OnlyStartPoint()
         {
             //Arrange
@@ -53,7 +53,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "MID Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void MidExpressionTest_StartPointAndEndPoint()
         {
             //Arrange
@@ -67,7 +67,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "MID Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void MidExpressionTest_FullString()
         {
             //Arrange
@@ -82,7 +82,7 @@ namespace GingerCoreNETUnitTest.Script
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void SplitExpressionTest()
         {
             //Arrange
@@ -124,7 +124,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "Split Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ReplaceExpressionTest()
         {
             //Arrange
@@ -138,7 +138,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "Replace Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ReplaceExpressionTest_StringNotFound()
         {
             //Arrange
@@ -152,7 +152,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "Replace Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ReplaceExpressionTest_ReplaceOnlyOneOccurance()
         {
             //Arrange
@@ -166,7 +166,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "Replace Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void InStrExpressionTest_FindStringPos()
         {
             //Arrange
@@ -180,7 +180,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "InStr Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void InStrExpressionTest_UsingDifferentStartingPositions()
         {
             //Arrange
@@ -194,7 +194,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "InStr Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void InStrExpressionTest_UsingDifferentStartingPositions2()
         {
             //Arrange
@@ -208,7 +208,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "InStr Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void InStrRevExpressionTest_FindStringPos()
         {
             //Arrange
@@ -222,7 +222,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "InStrRev Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void InStrRevExpressionTest_FindLetterUsingDifferentStartPos()
         {
             //Arrange
@@ -241,7 +241,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult1, result1, "InStrRev Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void LeftExpressionTest()
         {
             //Arrange
@@ -255,7 +255,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "Left Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void RightExpressionTest()
         {
             //Arrange
@@ -270,7 +270,7 @@ namespace GingerCoreNETUnitTest.Script
         }
 
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void LTrimExpressionTest()
         {
             //Arrange
@@ -284,7 +284,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "LTrim Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void TrimExpressionTest()
         {
             //Arrange
@@ -298,7 +298,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual(expectedResult, result, "Trim Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 
         [Ignore]
         public void RTrimExpressionTest()

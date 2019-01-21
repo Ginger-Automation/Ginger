@@ -103,7 +103,7 @@ namespace GingerTest
 
       
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void VerifyEnvcopyIsOK()
         {
             //Arrange
@@ -120,7 +120,7 @@ namespace GingerTest
             Assert.AreEqual(env1.Guid, env1Copy.Guid);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void EnvRenameshouldKeepOriginalFileName()
         {
             //Arrange
@@ -139,7 +139,7 @@ namespace GingerTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void EnvRenameDupWithFileNameExist()
         {
             //Arrange
@@ -162,7 +162,7 @@ namespace GingerTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void EnvRenameDupWithFileNameExistx3()
         {
             //Arrange
@@ -196,7 +196,7 @@ namespace GingerTest
         //TODO: add another test which update value with same and see prop changed didn't trigger
 
         [Ignore] // Temp so the build will pass
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void CheckPropertyChangedTriggered()
         {
             // Scan all RIs for each prop marked with [IsSerializedForLocalRepositoryAttribute] try to change and verify prop changed triggered

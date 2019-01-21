@@ -42,7 +42,7 @@
            
             
 //        }
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        [Ignore]
 //        public void LoginWithOutPrivateKey()
 //        {
@@ -61,7 +61,7 @@
 //            uxsh.CloseDriver();
 //        }
 
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void LoginWithPrivateKey()
 //        {
 //            // TODO: Add AAA
@@ -79,7 +79,7 @@
 //            uxsh.CloseDriver();
 //        }
 
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        [Ignore]
 //        public void LoginWithPrivateKeyandPassPhrase()
 //        {
@@ -98,7 +98,7 @@
 //            uxsh.Disconnect();
 //            uxsh.CloseDriver();
 //        }
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void RunScripts()
 //        {
 //            // TODO: Add AAA
@@ -136,7 +136,7 @@
 //            uxsh.Disconnect();
 //            uxsh.CloseDriver();
 //        }
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void RunScriptsAgainstLinux()
 //        {
 //            // TODO: Add AAA
@@ -173,36 +173,36 @@
 //            uxsh.RunAction(act);
             
 //        }
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        [Ignore]
 //        public void RunScriptsAgainstFreeBSD()
 //        {
 
 //        }
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        [Ignore]
 //        public void RunScriptsAgainstHPUX()
 //        {
 
 //        }
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        [Ignore]
 //        public void RunScriptsAgainstSunOS()
 //        {
 
 //        }
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        [Ignore]
 //        public void LongRunCommands()
 //        {
 
 //        }
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void MultiInput()
 //        {
 
 //        }
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        [Ignore]
 //        public void MultiOuput()
 //        {

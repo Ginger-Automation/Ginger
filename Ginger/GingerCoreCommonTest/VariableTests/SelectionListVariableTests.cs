@@ -54,7 +54,7 @@ namespace GingerCoreCommonTest.VariableTests
         }
         #endregion
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void SelectionListVar_TestVariableType()
         {
             //Arrange
@@ -67,7 +67,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Selection List", varType, "Selection List Variable Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void SelectionListVar_TestVariableUIType()
         {
             //Arrange
@@ -80,7 +80,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Variable Selection List", varType, "Selection List Variable UI Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void SelectionListVar_TestImageType()
         {
             //Arrange

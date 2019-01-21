@@ -40,7 +40,7 @@ namespace GingerConsoleUnitTest
         }
 
         [Level2]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void SeleniumChromeDriver()
         {
             ////Arrange            
@@ -73,7 +73,7 @@ namespace GingerConsoleUnitTest
         }
 
         [Level1]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void FireFoxDriver()
         {
             ////Arrange
@@ -104,7 +104,7 @@ namespace GingerConsoleUnitTest
 
         }
         [Level1]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void PACT()
         {
             ////Arrange

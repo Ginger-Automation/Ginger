@@ -77,7 +77,7 @@ namespace GingerTest
 
         
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void VerifyEnvsShowinTree()
         {
             //Arrange            
@@ -93,7 +93,7 @@ namespace GingerTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void AddEnvUsingWizard()
         {
             //Arrange            
@@ -109,7 +109,7 @@ namespace GingerTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void AddEnvToFileSystemWillShowinEnvsTree()
         {
             // Arrange                                                
@@ -132,7 +132,7 @@ namespace GingerTest
 
 
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void DeleteEnvFromFileSystem()
         {
             // Arrange            
@@ -155,7 +155,7 @@ namespace GingerTest
         }
 
         [Ignore] // TODO: FIXME not shwoing in tree b is false
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
         {
             //Arrange
@@ -178,7 +178,7 @@ namespace GingerTest
 
         [Ignore]
         [Level3]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void AddEnvFolderShowinTree()
         {
             //Arrange
@@ -198,7 +198,7 @@ namespace GingerTest
 
         [Ignore]
         [Level3]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void DeleteEnvFolderRemovedfromTree()
         {
             //Arrange
@@ -220,7 +220,7 @@ namespace GingerTest
         }
 
         [Ignore] //TODO: FIXME
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void RenameEnvFolderSyncWithTree()
         {
             //Arrange

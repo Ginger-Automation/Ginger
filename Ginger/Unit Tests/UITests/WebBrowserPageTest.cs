@@ -131,21 +131,21 @@ namespace UnitTests.UITests.WebBrowserPageTest
 
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void HomeLinkXPath()
         {
             //Act
             TestElementXPath("QAHome", ".//*[@id='home']");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void AdminLinkXPath()
         {
             //Act
             TestElementXPath("QAAdmin", ".//*[@id='menu']/li[2]/a");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ItemInTable()
         {
             //Act
