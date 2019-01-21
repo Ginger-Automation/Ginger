@@ -26,6 +26,7 @@ using Rally.RestApi.Json;
 using Rally.RestApi.Response;
 using GingerCore.ALM.Rally;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.ALM
 {

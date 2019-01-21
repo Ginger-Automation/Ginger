@@ -38,6 +38,14 @@ namespace GingerCoreNET.RunLib
             mPort = Port;
         }
 
+        /// <summary>
+        /// Create nwe GingerGrid and auto select free port
+        /// </summary>
+        public GingerGrid()
+        {            
+            mPort = SocketHelper.GetOpenPort();
+        }
+
         public void Start()
         {
             mGingerSocketServer = new GingerSocketServer2();
@@ -122,9 +130,17 @@ namespace GingerCoreNET.RunLib
             mGingerSocketServer.Shutdown();
         }
 
+        string HostIP;
+
         public string Status
         {
-            get { return SocketHelper.GetLocalHostIP() + " Port: " + mPort; }  // TODO: add status enum 
+            get {
+                if (HostIP == null)
+                {
+                    HostIP = SocketHelper.GetLocalHostIP();
+                }
+                return HostIP + " Port: " + mPort;
+            }  // TODO: add status enum 
         }
 
         public ObservableList<GingerNodeInfo> NodeList

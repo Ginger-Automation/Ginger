@@ -130,7 +130,7 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
 
                 default:                    
-                    Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
+                    Reporter.ToUser(eUserMsgKey.ActionNotImplemented, controlType);
                     break;
 
             }

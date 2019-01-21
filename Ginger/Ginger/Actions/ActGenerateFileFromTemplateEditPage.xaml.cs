@@ -21,6 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerCore.Actions;
 using System.IO;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Actions
 {
@@ -38,8 +39,8 @@ namespace Ginger.Actions
         public ActGenerateFileFromTemplateEditPage(Act act)
         {
             InitializeComponent();
-            TemplatesFilesPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Templates\");
-            OutputFilesPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\OutputFiles\");
+            TemplatesFilesPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\Templates\");
+            OutputFilesPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\OutputFiles\");
             this.mAct = (ActGenerateFileFromTemplate)act;
             App.FillComboFromEnumVal(FileActionComboBox, mAct.FileAction);
             App.ObjFieldBinding(FileActionComboBox, ComboBox.TextProperty, mAct, ActGenerateFileFromTemplate.Fields.FileAction);
@@ -72,7 +73,7 @@ namespace Ginger.Actions
 
             dlg.DefaultExt = "*.xlsx";
             dlg.Filter = "Excel Files (*.xlsx)|*.xlsx";
-            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

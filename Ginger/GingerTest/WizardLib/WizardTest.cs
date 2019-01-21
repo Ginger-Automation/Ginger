@@ -20,13 +20,13 @@ limitations under the License.
 
 using GingerTestHelper;
 using GingerWPF.WizardLib;
-using GingerWPFUnitTest;
 using GingerWPFUnitTest.POMs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 using System.Threading.Tasks;
+using GingerTest.WizardLib;
 
-namespace GingerTest.WizardLib
+namespace GingerTest
 {
     [TestClass]
     public class WizardTest
@@ -78,11 +78,11 @@ namespace GingerTest.WizardLib
         }
 
         [Level3]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VerifyButtonsOnStartThenCancel()
         {
             //Arrange            
-            string folder = TestResources.getGingerUnitTesterTempFolder("MyWizardItemsFolder1");
+            string folder = TestResources.GetTestTempFolder("MyWizardItemsFolder1");
 
             //Act
             WizardPOM mWizard = ShowMyWizard(folder);
@@ -100,11 +100,11 @@ namespace GingerTest.WizardLib
         }
 
         [Level3]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CreateMyWizardItem()
         {
             //Arrange            
-            string folder = TestResources.getGingerUnitTesterTempFolder("MyWizardItemsFolder2");
+            string folder = TestResources.GetTestTempFolder("MyWizardItemsFolder2");
 
             //Act
             WizardPOM mWizard = ShowMyWizard(folder);
@@ -122,13 +122,13 @@ namespace GingerTest.WizardLib
 
         [Level3]
         [Ignore] //TODO FIXME
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void WizardWithWindowWidth()
         {
             //Arrange            
 
             double width = 1200;
-            string folder = TestResources.getGingerUnitTesterTempFolder("MyWizardItemsFolder3");
+            string folder = TestResources.GetTestTempFolder("MyWizardItemsFolder3");
 
             //Act
             WizardPOM mWizard = ShowMyWizard(folder, width);
@@ -140,7 +140,7 @@ namespace GingerTest.WizardLib
         }
 
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void WizardIntro()
         //{
         //    //Arrange                        

@@ -45,6 +45,7 @@ using Ginger.SolutionGeneral;
 using System.IO;
 using System.Dynamic;
 using Newtonsoft.Json.Linq;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger
 {
@@ -229,7 +230,8 @@ namespace Ginger
             AddVBSEval(tviVars, "Current Day (0# format)", "Right(\"0\" & Day(Now), 2)");
             AddVBSEval(tviVars, "Current Year (#### format)", "DatePart(\"yyyy\", Now)");
             AddVBSEval(tviVars, "Current Year (## format)", "Right(DatePart(\"yyyy\", Now),2)");
-            AddVBSEval(tviVars, "Current Date +7 days", "DateSerial(Year(Now), Month(Now),Day(DateAdd(\"d\",7,Now)))");
+            AddVBSEval(tviVars, "Current Month Date +3 Days", "DateSerial(Year(Now), Month(Now),Day(DateAdd(\"d\",3,Now)))");
+            AddVBSEval(tviVars, "Current Date +5 Days", "FormatDateTime(DateAdd(\"d\",5,Now),2)");
             AddVBSEval(tviVars, "Current Day of month +7 days (0# format) ", "Right(\"0\" & Day(DateAdd(\"d\",7,Now)), 2)");
             AddVBSEval(tviVars, "Current Date -1 month", "DateSerial(Year(Now), Month(DateAdd(\"m\",-1,Now)),Day(Now))");
             AddVBSEval(tviVars, "Current Month -1 (0# format)", "Right(\"0\" & Month(DateAdd(\"m\",-1,Now)), 2)");
@@ -268,7 +270,7 @@ namespace Ginger
             catch (Exception ex)
             {
 
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Add Security Configuration Failed: ", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Add Security Configuration Failed: ", ex);
             }
         }
 
@@ -371,14 +373,14 @@ namespace Ginger
 
         private void AddVariables()
         {
-            if (App.UserProfile.Solution != null)
+            if ( WorkSpace.UserProfile.Solution != null)
             {
                 TreeViewItem solutionVars = new TreeViewItem();
                 solutionVars.Items.IsLiveSorting = true;
                 SetItemView(solutionVars, "Global " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
                 xObjectsTreeView.Items.Add(solutionVars);
                  
-                foreach (VariableBase v in App.UserProfile.Solution.Variables.OrderBy("Name"))
+                foreach (VariableBase v in  WorkSpace.UserProfile.Solution.Variables.OrderBy("Name"))
                     InsertNewVarTreeItem(solutionVars, v);
                 InsertAddNewVarTreeItem(solutionVars, eVariablesLevel.Solution);
             }
@@ -442,7 +444,7 @@ namespace Ginger
                 if (ds.FilePath.StartsWith("~"))
                 {
                     ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
-                    ds.FileFullPath = Path.Combine(App.UserProfile.Solution.Folder , ds.FileFullPath);
+                    ds.FileFullPath = Path.Combine( WorkSpace.UserProfile.Solution.Folder , ds.FileFullPath);
                 }
                 ds.Init(ds.FileFullPath);
                 TreeViewItem tviDataSource = new TreeViewItem();
@@ -496,7 +498,7 @@ namespace Ginger
             switch (varLevel)
             {
                 case eVariablesLevel.Solution:
-                    ((Solution)App.UserProfile.Solution).AddVariable(newStringVar);
+                    ((Solution) WorkSpace.UserProfile.Solution).AddVariable(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
                     ((BusinessFlow)App.BusinessFlow).AddVariable(newStringVar);
@@ -513,7 +515,7 @@ namespace Ginger
             switch (varLevel)
             {
                 case eVariablesLevel.Solution:
-                    ((Solution)App.UserProfile.Solution).SetUniqueVariableName(newStringVar);
+                    ((Solution) WorkSpace.UserProfile.Solution).SetUniqueVariableName(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
                     ((BusinessFlow)App.BusinessFlow).SetUniqueVariableName(newStringVar);
@@ -577,7 +579,7 @@ namespace Ginger
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 

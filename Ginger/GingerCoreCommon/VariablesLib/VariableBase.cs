@@ -243,7 +243,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex, true);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex);
                 }
 
                 if (value is IObservableList)
@@ -307,16 +307,18 @@ namespace GingerCore.Variables
                 object value = null;
                 try
                 {
-                    if (mi.MemberType == MemberTypes.Property)
+                    if (mi.MemberType == MemberTypes.Property && PI != null)
+                    {
                         value = PI.GetValue(item);
+                    }
                     else if (mi.MemberType == MemberTypes.Field)
-                    {                        
-                            value = item.GetType().GetField(mi.Name).GetValue(item);
+                    {
+                        value = item.GetType().GetField(mi.Name).GetValue(item);
                     }
                 }
                 catch (Exception ex)
                 {
-                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex, true);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex);
                     value = null;
                 } 
                 
@@ -327,7 +329,7 @@ namespace GingerCore.Variables
                 }
                 else
                 {
-                    if (value != null)
+                    if (value != null && PI != null)
                     {
                         try
                         {
@@ -383,7 +385,7 @@ namespace GingerCore.Variables
                         }
                         catch (Exception ex)
                         {
-                            // TODO: FIXME!!! no empty exception
+                           Reporter.ToLog(eLogLevel.ERROR, "Failed to get list of used variables", ex); 
                         } 
                     }
                 }
@@ -450,17 +452,17 @@ namespace GingerCore.Variables
                         int originalIndex = 0;
 
                         //TODO: Fix the issues
-                        if (hostItem is IActivity)
+                        if (hostItem is Activity)
                         {
-                            originalIndex = ((IActivity)hostItem).GetVariables().IndexOf(variableBaseInstance);
-                            ((IActivity)hostItem).GetVariables().Remove(variableBaseInstance);
-                            ((IActivity)hostItem).GetVariables().Insert(originalIndex, newInstance);
+                            originalIndex = ((Activity)hostItem).GetVariables().IndexOf(variableBaseInstance);
+                            ((Activity)hostItem).GetVariables().Remove(variableBaseInstance);
+                            ((Activity)hostItem).GetVariables().Insert(originalIndex, newInstance);
                         }
                         else
                         {
-                            originalIndex = ((IBusinessFlow)hostItem).GetVariables().IndexOf(variableBaseInstance);
-                            ((IBusinessFlow)hostItem).GetVariables().Remove(variableBaseInstance);
-                            ((IBusinessFlow)hostItem).GetVariables().Insert(originalIndex, newInstance);
+                            originalIndex = ((BusinessFlow)hostItem).GetVariables().IndexOf(variableBaseInstance);
+                            ((BusinessFlow)hostItem).GetVariables().Remove(variableBaseInstance);
+                            ((BusinessFlow)hostItem).GetVariables().Insert(originalIndex, newInstance);
                         }
                     }
                     break;

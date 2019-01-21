@@ -116,10 +116,10 @@ namespace Ginger.Environments
                 }
 
                 if (appsWereAdded)
-                    Reporter.ToUser(eUserMsgKeys.ShareEnvAppWithAllEnvs);
+                    Reporter.ToUser(eUserMsgKey.ShareEnvAppWithAllEnvs);
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
 
         #endregion Functions

@@ -33,6 +33,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Agents
 {
@@ -83,21 +84,21 @@ namespace Ginger.Agents
                 StartAppAgent(AG);
 
                 //If there is errorMessageFromDriver is populated then do not wait. 
-                if(AG.Agent.Driver!=null && String.IsNullOrEmpty(AG.Agent.Driver.ErrorMessageFromDriver))               
-                    AG.Agent.WaitForAgentToBeReady();
-                Agent.eStatus Status = AG.Agent.Status;
+                if(((Agent)AG.Agent).Driver!=null && String.IsNullOrEmpty(((Agent)AG.Agent).Driver.ErrorMessageFromDriver))
+                    ((Agent)AG.Agent).WaitForAgentToBeReady();
+                Agent.eStatus Status = ((Agent)AG.Agent).Status;
                 if (Status!= Agent.eStatus.Running && Status!= Agent.eStatus.Starting)
                 {
-                    string errorMessage = AG.Agent.Driver.ErrorMessageFromDriver;
+                    string errorMessage = ((Agent)AG.Agent).Driver.ErrorMessageFromDriver;
                     if (String.IsNullOrEmpty(errorMessage))
                         errorMessage = "Failed to Connect the agent";
                     
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgentFailed,null, errorMessage);
+                    Reporter.ToStatus(eStatusMsgKey.StartAgentFailed,null, errorMessage);
                 }
             }
             catch(Exception ex)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgentFailed, null, ex.Message);
+                Reporter.ToStatus(eStatusMsgKey.StartAgentFailed, null, ex.Message);
            }         
         }
 
@@ -112,7 +113,7 @@ namespace Ginger.Agents
         private void CloseAgentButton_Click(object sender, RoutedEventArgs e)
         {
             ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
-            AG.Agent.Close();
+            ((Agent)AG.Agent).Close();
         }
 
         private void ExplorerAgentButton_Click(object sender, RoutedEventArgs e)
@@ -120,25 +121,25 @@ namespace Ginger.Agents
             ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
             if (AG.Agent != null)
             {
-                if (AG.Agent.Status == Agent.eStatus.NotStarted)
+                if (((Agent)AG.Agent).Status == Agent.eStatus.NotStarted)
                     StartAppAgent(AG);
                 //TODO: Temporary to launch Web service window, till we merge web services to window explorer
-                if (AG.Agent.Driver is WebServicesDriver)
+                if (((Agent)AG.Agent).Driver is WebServicesDriver)
                 {
-                    ((WebServicesDriver)AG.Agent.Driver).LauncDriverWindow();
+                    ((WebServicesDriver)((Agent)AG.Agent).Driver).LauncDriverWindow();
                     return;
                 }
 
-                //if (AG.Agent.Driver is IWindowExplorer)
+                //if (((Agent)AG.Agent).Driver is IWindowExplorer)
                 //Once all the driver implementing IwindowExplorer are ready, simply checking is IWindowExplorer will server the purpose and flag IsWindowExplorerSupportReady can be removed
-                if (AG.Agent.IsWindowExplorerSupportReady)
+                if (((Agent)AG.Agent).IsWindowExplorerSupportReady)
                 {
                     WindowExplorerPage WEP = new WindowExplorerPage(AG);
                     WEP.ShowAsWindow();
                 }               
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.DriverNotSupportingWindowExplorer, AG.Agent.DriverType);
+                    Reporter.ToUser(eUserMsgKey.DriverNotSupportingWindowExplorer, ((Agent)AG.Agent).DriverType);
                 }
             }
         }
@@ -146,22 +147,22 @@ namespace Ginger.Agents
         private void StartAppAgent(ApplicationAgent AG)
         {
             AutoLogProxy.UserOperationStart("StartAgentButton_Click");
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
-            if (AG.Agent.Status == Agent.eStatus.Running) AG.Agent.Close();
+            Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
+            if (((Agent)AG.Agent).Status == Agent.eStatus.Running) ((Agent)AG.Agent).Close();
 
-            AG.Agent.ProjEnvironment = App.AutomateTabEnvironment;
-            AG.Agent.BusinessFlow = App.BusinessFlow; ;
-            AG.Agent.SolutionFolder = App.UserProfile.Solution.Folder;
-            AG.Agent.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            AG.Agent.StartDriver();               
+            ((Agent)AG.Agent).ProjEnvironment = App.AutomateTabEnvironment;
+            ((Agent)AG.Agent).BusinessFlow = App.BusinessFlow; ;
+            ((Agent)AG.Agent).SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
+            ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            ((Agent)AG.Agent).StartDriver();               
             //For ASCF, launch explorer automatically when launching Agent
-            if (AG.Agent.IsShowWindowExplorerOnStart && AG.Agent.Status == Agent.eStatus.Running)
+            if (((Agent)AG.Agent).IsShowWindowExplorerOnStart && ((Agent)AG.Agent).Status == Agent.eStatus.Running)
             {
                 WindowExplorerPage WEP = new WindowExplorerPage(AG);
                 WEP.ShowAsWindow();
             }
 
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
             AutoLogProxy.UserOperationEnd();
         }
 
@@ -176,7 +177,7 @@ namespace Ginger.Agents
         private void LoadingAgentButton_Click(object sender, RoutedEventArgs e)
         {
             ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
-            AG.Agent.Driver.cancelAgentLoading = true;
+            ((Agent)AG.Agent).Driver.cancelAgentLoading = true;
         }
     }
 }

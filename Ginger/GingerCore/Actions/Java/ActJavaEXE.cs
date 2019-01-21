@@ -29,7 +29,7 @@ using GingerCore.Repository;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.Java
 {
     public class ActJavaEXE : ActWithoutDriver
@@ -37,7 +37,7 @@ namespace GingerCore.Actions.Java
         public override string ActionDescription { get { return "Java Execution Action"; } }
         public override string ActionUserDescription { get { return "Execute Java Program with set of input params and process it output to be integrated with the entire flow."; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to execute java program (jar file using java.exe) and parse it results.");
             TBH.AddLineBreak();
@@ -202,7 +202,7 @@ namespace GingerCore.Actions.Java
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
                 this.Error = "Failed to execute the script. Details: " + e.Message;
 
                 return DataBuffer + "\n" + ErrorBuffer;
@@ -264,20 +264,12 @@ namespace GingerCore.Actions.Java
             string[] lines = DataBuffer.Split('\n');
             return lines;             
         }
-
-        ValueExpression mVE = null;
-        private string CalculateValue(string valueTocalc)
-        {
-            mVE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-            mVE.Value = valueTocalc;
-            return mVE.ValueCalculated.Trim();
-        }
-
+        
         private bool CalculateArguments()
         {
             try
             {
-                mJavaWSEXEPath_Calc = CalculateValue(mJavaWSEXEPath);
+                mJavaWSEXEPath_Calc = ValueExpression.Calculate(mJavaWSEXEPath);
                 if (string.IsNullOrEmpty(mJavaWSEXEPath_Calc))
                     mJavaWSEXEPath_Calc = CommonLib.GetJavaHome();               
 

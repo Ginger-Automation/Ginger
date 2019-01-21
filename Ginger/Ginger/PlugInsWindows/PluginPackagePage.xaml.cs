@@ -143,7 +143,7 @@ namespace Ginger.PlugInsWindows
             //}
             //catch (Exception ex)
             //{
-            //    Reporter.ToLog(eLogLevel.ERROR, "Error in PlugIn tabs style", ex);
+            //    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in PlugIn tabs style", ex);
             //}
         }
 

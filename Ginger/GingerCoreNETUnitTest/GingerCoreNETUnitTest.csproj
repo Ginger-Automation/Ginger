@@ -62,10 +62,11 @@
   </ItemGroup>-->
 
   <ItemGroup>
-    <PackageReference Include="GingerTestHelper" Version="1.0.4" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
-    <PackageReference Include="MSTest.TestAdapter" Version="1.3.2" />
-    <PackageReference Include="MSTest.TestFramework" Version="1.3.2" />
+    <PackageReference Include="GingerTestHelper" Version="1.0.5" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="2.10.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,6 +82,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestResources\Reports\Activity.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\CommandProcessorFiles\StartSeleniumDriver.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -109,6 +113,96 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\PluginPackages\GingerOfficePlugin\System.IO.Packaging.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\1 Goto SCM URL\1 Goto App URL - httpcmitechint1\Action.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\1 Goto SCM URL\1 Goto App URL - httpcmitechint1\ScreenShot_1_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\1 Goto SCM URL\Activity.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\2 Login\1 Enter value in UserName\Action.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\2 Login\1 Enter value in UserName\ScreenShot_1_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\2 Login\2 Enter value in Password\Action.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\2 Login\2 Enter value in Password\ScreenShot_2_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\2 Login\3 Submit Page - login\Action.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\2 Login\3 Submit Page - login\ScreenShot_3_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\2 Login\Activity.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\3 Select Customer Management\1 Click Link Manage Customer\Action.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\3 Select Customer Management\1 Click Link Manage Customer\ScreenShot_1_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\3 Select Customer Management\Activity.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\4 Create new customer\1 Click Link Create New\Action.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\4 Create new customer\1 Click Link Create New\ScreenShot_1_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\4 Create new customer\2 Enter value in FirstName\Action.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\4 Create new customer\2 Enter value in FirstName\ScreenShot_2_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\4 Create new customer\3 Enter value in LastName\Action.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\4 Create new customer\3 Enter value in LastName\ScreenShot_3_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\4 Create new customer\4 Enter value in HomeAddress\Action.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\4 Create new customer\4 Enter value in HomeAddress\ScreenShot_4_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\4 Create new customer\5 Enter value in EmailAddress\Action.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\4 Create new customer\5 Enter value in EmailAddress\ScreenShot_5_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\4 Create new customer\6 Submit Page\Action.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\4 Create new customer\6 Submit Page\ScreenShot_6_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\4 Create new customer\Activity.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\AutomationTab_LastExecution\BusinessFlow.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\BusinessFlow.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\FailedAction.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Reports\PassedAction.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\BasicSimple\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">

@@ -25,6 +25,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.User
 {
@@ -41,28 +42,28 @@ namespace Ginger.User
             InitializeComponent();
 
             //profile image
-            if (string.IsNullOrEmpty(App.UserProfile.ProfileImage))
+            if (string.IsNullOrEmpty( WorkSpace.UserProfile.ProfileImage))
             {
                 xProfileImageImgBrush.ImageSource = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User, foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_DarkBlue"), width: 50);
             }
             else
             {
-                xProfileImageImgBrush.ImageSource = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(App.UserProfile.ProfileImage));
+                xProfileImageImgBrush.ImageSource = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage( WorkSpace.UserProfile.ProfileImage));
             }
 
-            App.ObjFieldBinding(xUserNameTxtBox, TextBox.TextProperty, App.UserProfile, nameof(UserProfile.UserName), BindingMode.OneWay);
-            App.ObjFieldBinding(xUserFirstNameTxtBox, TextBox.TextProperty, App.UserProfile, nameof(UserProfile.UserFirstName));
-            App.ObjFieldBinding(xUserMiddleNameTxtBox, TextBox.TextProperty, App.UserProfile, nameof(UserProfile.UserMiddleName));
-            App.ObjFieldBinding(xUserLastNameTxtBox, TextBox.TextProperty, App.UserProfile, nameof(UserProfile.UserLastName));
+            App.ObjFieldBinding(xUserNameTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserName), BindingMode.OneWay);
+            App.ObjFieldBinding(xUserFirstNameTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserFirstName));
+            App.ObjFieldBinding(xUserMiddleNameTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserMiddleName));
+            App.ObjFieldBinding(xUserLastNameTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserLastName));
                       
-            mOriginalUserType = App.UserProfile.UserType;
-            xUserTypeComboBox.BindControl(App.UserProfile, nameof(UserProfile.UserType));
+            mOriginalUserType =  WorkSpace.UserProfile.UserType;
+            xUserTypeComboBox.BindControl( WorkSpace.UserProfile, nameof(UserProfile.UserType));
             xUserTypeNoteLbl.Visibility = Visibility.Collapsed;
-            xUserRoleComboBox.BindControl(App.UserProfile, nameof(UserProfile.UserRole));
-            App.ObjFieldBinding(xUserDepartmentTxtBox, TextBox.TextProperty, App.UserProfile, nameof(UserProfile.UserDepartment));
+            xUserRoleComboBox.BindControl( WorkSpace.UserProfile, nameof(UserProfile.UserRole));
+            App.ObjFieldBinding(xUserDepartmentTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserDepartment));
 
-            App.ObjFieldBinding(xUserEmailAddressTxtBox, TextBox.TextProperty, App.UserProfile, nameof(UserProfile.UserEmail));
-            App.ObjFieldBinding(xUserPhoneTxtBox, TextBox.TextProperty, App.UserProfile, nameof(UserProfile.UserPhone));
+            App.ObjFieldBinding(xUserEmailAddressTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserEmail));
+            App.ObjFieldBinding(xUserPhoneTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserPhone));
         }
 
         private void xProfileImageBrowseBtn_Click(object sender, RoutedEventArgs e)
@@ -91,13 +92,13 @@ namespace Ginger.User
                             bi_resized.DecodePixelWidth = sizes.Item1;
                             bi_resized.EndInit();
 
-                            App.UserProfile.ProfileImage = Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(bi_resized));
+                             WorkSpace.UserProfile.ProfileImage = Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(bi_resized));
                         }
                     }
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.ImageSize, "50");
+                    Reporter.ToUser(eUserMsgKey.ImageSize, "50");
                 }
             }
         }
@@ -105,7 +106,7 @@ namespace Ginger.User
         private void xProfileImageDeleteBtn_Click(object sender, RoutedEventArgs e)
         {
             xProfileImageImgBrush.ImageSource = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User, width: 50);
-            App.UserProfile.ProfileImage = string.Empty;
+             WorkSpace.UserProfile.ProfileImage = string.Empty;
         }
 
         private void xUserTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -122,7 +123,7 @@ namespace Ginger.User
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
-            App.UserProfile.SaveBackup();
+             WorkSpace.UserProfile.SaveBackup();
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button saveBtn = new Button();
@@ -145,13 +146,13 @@ namespace Ginger.User
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
-            App.UserProfile.SaveUserProfile();
+             WorkSpace.UserProfile.SaveUserProfile();
             _pageGenericWin.Close();
         }
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
             }
@@ -159,7 +160,7 @@ namespace Ginger.User
 
         private void UndoChangesAndClose()
         {
-            App.UserProfile.RestoreFromBackup(true);
+             WorkSpace.UserProfile.RestoreFromBackup(true);
             _pageGenericWin.Close();
         }
     }

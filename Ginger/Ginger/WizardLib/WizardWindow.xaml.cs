@@ -25,6 +25,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common;
 
 namespace GingerWPF.WizardLib
 {
@@ -156,7 +157,7 @@ namespace GingerWPF.WizardLib
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantMoveWhileInProcess, "Next");
+                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Next");
             }
             else
             {
@@ -279,7 +280,7 @@ namespace GingerWPF.WizardLib
         {
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantMoveWhileInProcess, "Previous");
+                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Previous");
             }
             else
             {
@@ -296,7 +297,7 @@ namespace GingerWPF.WizardLib
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantMoveWhileInProcess, "Finish");
+                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Finish");
             }
             else
             {
@@ -319,7 +320,7 @@ namespace GingerWPF.WizardLib
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantMoveWhileInProcess, "Finish");
+                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Finish");
             }
             else
             {

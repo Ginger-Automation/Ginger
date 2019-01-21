@@ -119,7 +119,7 @@ namespace Ginger.BusinessFlowFolder
                 xAutomateBtn.Visibility = Visibility.Collapsed;
             }
 
-            if (!App.UserProfile.UserTypeHelper.IsSupportAutomate)
+            if (! WorkSpace.UserProfile.UserTypeHelper.IsSupportAutomate)
             {
                 xAutomateBtn.Visibility = Visibility.Collapsed;
             }
@@ -132,7 +132,7 @@ namespace Ginger.BusinessFlowFolder
             mBusinessFlow.Activities.CollectionChanged += mBusinessFlowActivities_CollectionChanged;
             foreach (Activity activity in mBusinessFlow.Activities)
             {
-                try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; }catch(Exception ex){ Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }  //to make sure wont be added twice              
+                try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; }catch(Exception ex){ Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }  //to make sure wont be added twice              
                 activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
             }
         }
@@ -156,7 +156,7 @@ namespace Ginger.BusinessFlowFolder
             {
                 foreach (Activity activity in mBusinessFlow.Activities)
                 {
-                    try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; } catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }  //to make sure wont be added twice              
+                    try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; } catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }  //to make sure wont be added twice              
                     activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
                 }
             }
@@ -292,7 +292,7 @@ namespace Ginger.BusinessFlowFolder
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChanges();
                 _pageGenericWin.Close();

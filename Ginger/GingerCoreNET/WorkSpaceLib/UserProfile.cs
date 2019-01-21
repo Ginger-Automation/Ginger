@@ -86,7 +86,7 @@
 //            }
 //            catch (Exception ex)
 //            {
-//                Reporter.ToLog(eLogLevel.ERROR, "Failed to set Recent Solutions Objects", ex);
+//                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to set Recent Solutions Objects", ex);
 //            }
 //        }
 

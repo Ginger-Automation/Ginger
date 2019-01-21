@@ -27,6 +27,7 @@ using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer.Appium
 {
@@ -131,6 +132,11 @@ namespace Ginger.WindowExplorer.Appium
 
             return AppiumElementInfo.WindowExplorer.GetElementProperties(AppiumElementInfo);
             
+        }
+
+        public ObservableList<ActInputValue> GetItemSpecificActionInputValues()
+        {
+            return null;
         }
     }
 }

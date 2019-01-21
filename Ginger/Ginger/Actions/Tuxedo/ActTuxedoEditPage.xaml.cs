@@ -24,6 +24,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.Tuxedo;
 using Ginger.UserControls;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Actions.Tuxedo
 {
@@ -84,7 +85,7 @@ namespace Ginger.Actions.Tuxedo
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
             dlg.DefaultExt = "*.UD";
             dlg.Filter = "UD Input Data Files (*.UD)|*.UD";
-            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -105,7 +106,7 @@ namespace Ginger.Actions.Tuxedo
             string FileName = PCPath.Text;
             if (FileName.Contains("~\\"))
             {
-                FileName = FileName.Replace("~", App.UserProfile.Solution.ContainingFolderFullPath);
+                FileName = FileName.Replace("~",  WorkSpace.UserProfile.Solution.ContainingFolderFullPath);
             }
 
             mAct.DynamicUDElements.Clear();

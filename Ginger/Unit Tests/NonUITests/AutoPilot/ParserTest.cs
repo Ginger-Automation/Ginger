@@ -35,7 +35,7 @@ namespace UnitTests.NonUITests.AutoPilot
     public class ParserTest
     {
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void WSDLParserRechargeServices()
         //{
         //    //Arrange                        
@@ -60,7 +60,7 @@ namespace UnitTests.NonUITests.AutoPilot
 
 
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void XMLTemplateParesrCreatePaymentProfile()
         //{
         //    //Arrange                        
@@ -83,7 +83,7 @@ namespace UnitTests.NonUITests.AutoPilot
         //    Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters[1].OptionalValuesList.Count, 1, "AppModelParameters count");
         //}
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void JSONTemplateCREATE_BILLING_ARRANGEMENT()
         //{
         //    //Arrange                        
