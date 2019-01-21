@@ -59,11 +59,53 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         public override void Finish()
         {
-            List<ElementInfo>  ElementsToUpdate = mDuplicatedPOM.mCopiedUnienedList.Where(x => x.Update = true).ToList();
+            List<ElementInfo>  ElementsToUpdate = mDuplicatedPOM.CopiedUnienedList.Where(x => x.IsSelected == true).ToList();
             foreach (ElementInfo EI in ElementsToUpdate)
             {
-                ElementInfo CorrespondedOriginalElementInfo =  mOriginalPOM.mCopiedUnienedList.Where(x => x.Guid == EI.Guid).FirstOrDefault();
-                CorrespondedOriginalElementInfo = EI;
+                if (EI.DeltaStatus == ElementInfo.eDeltaStatus.Deleted)
+                {
+                    continue;
+                }
+
+                List<ElementLocator> LocatorrsToRemove = EI.Locators.Where(x => x.DeltaStatus == ElementInfo.eDeltaStatus.Deleted).ToList();
+                for (int i = 0; i < LocatorrsToRemove.Count; i++)
+                {
+                    EI.Locators.Remove(LocatorrsToRemove[i]);
+                }
+
+                List<ControlProperty> PropertiesToRemove = EI.Properties.Where(x => x.DeltaStatus == ElementInfo.eDeltaStatus.Deleted).ToList();
+                for (int i = 0; i < PropertiesToRemove.Count; i++)
+                {
+                    EI.Properties.Remove(PropertiesToRemove[i]);
+                }
+
+
+                foreach (ElementLocator EL in EI.Locators)
+                {
+                    if (EL.DeltaStatus == ElementInfo.eDeltaStatus.Modified)
+                    {
+                        EL.LocateValue = EL.UpdatedValue;
+                    }
+                }
+
+                foreach (ControlProperty CP in EI.Properties)
+                {
+                    if (CP.DeltaStatus == ElementInfo.eDeltaStatus.Modified)
+                    {
+                        CP.Value = CP.UpdatedValue;
+                    }
+                }
+
+                if (EI.ElementGroup == ElementInfo.eElementGroup.Mapped)
+                {
+                    mOriginalPOM.MappedUIElements.Remove(mOriginalPOM.MappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault());
+                    mOriginalPOM.MappedUIElements.Add(EI);
+                }
+                else
+                {
+                    mOriginalPOM.UnMappedUIElements.Remove(mOriginalPOM.UnMappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault());
+                    mOriginalPOM.UnMappedUIElements.Add(EI);
+                }
             }
 
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mOriginalPOM);

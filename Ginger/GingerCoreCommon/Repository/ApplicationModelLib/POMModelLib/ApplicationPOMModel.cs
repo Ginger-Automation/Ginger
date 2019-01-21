@@ -58,7 +58,7 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> MappedUIElements = new ObservableList<ElementInfo>();
 
-        public ObservableList<ElementInfo> mCopiedUnienedList = new ObservableList<ElementInfo>();
+        //public ObservableList<ElementInfo> mCopiedUnienedList = new ObservableList<ElementInfo>();
 
         public void PopulateDuplicatedUnienedElementsList()
         {
@@ -74,16 +74,17 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public void SetElementsGroup()
-        {
-            foreach (ElementInfo EI in MappedUIElements)
-            {
-                EI.ElementGroup = ElementInfo.eElementGroup.Mapped;
-            }
+        private ObservableList<ElementInfo> mCopiedUnienedList = new ObservableList<ElementInfo>();
 
-            foreach (ElementInfo EI in UnMappedUIElements)
+        public ObservableList<ElementInfo> CopiedUnienedList
+        {
+            get
             {
-                EI.ElementGroup = ElementInfo.eElementGroup.Unmapped;
+                if (mCopiedUnienedList.Count == 0)
+                {
+                    PopulateDuplicatedUnienedElementsList();
+                }
+                return mCopiedUnienedList;
             }
         }
 

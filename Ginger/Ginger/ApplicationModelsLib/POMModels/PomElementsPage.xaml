@@ -13,7 +13,7 @@
     <Grid x:Name="PageGrid">
         <Grid.Resources>
             <DataTemplate x:Key="FieldUpdate">
-                <CheckBox x:Name="xElementsGrid_FieldUpdate"  Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotEqual, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Center"/>
+                <CheckBox x:Name="xElementsGrid_FieldUpdate"  Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotEqual, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Center"/>
             </DataTemplate>
 
 

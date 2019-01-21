@@ -3588,9 +3588,18 @@ namespace GingerCore.Drivers
                 list = GingerCore.General.ConvertObservableListToList<ElementInfo>((GetAllElementsFromPage("", filteredElementType, foundElementsList, learnFullElementInfoDetails)));
                 allReadElem.Clear();
                 CurrentFrame = "";
-                Thread.Sleep(2000);
-                Driver.SwitchTo().DefaultContent();
-                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
+
+                try
+                {
+                    Thread.Sleep(5000);
+                    Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
+                    Driver.SwitchTo().DefaultContent();
+                }
+                catch
+                {
+                }
+
+
                 return list;
             }
             finally
@@ -4470,13 +4479,15 @@ namespace GingerCore.Drivers
             }
 
             // Organize based on better locators at start
-            if (!string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).ID))
+            string id = e.GetAttribute("id");
+            if (!string.IsNullOrEmpty(id))
             {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByID, LocateValue = ((HTMLElementInfo)ElementInfo).ID, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
+                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByID, LocateValue = id, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
             }
-            if (!string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).Name))
+            string name = e.GetAttribute("name");
+            if (!string.IsNullOrEmpty(name))
             {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = ((HTMLElementInfo)ElementInfo).Name, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
+                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = name, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
             }
             list.Add(new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = ((HTMLElementInfo)ElementInfo).RelXpath, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
             list.Add(new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = ElementInfo.XPath, Help = "Recommended (sensitive to page design changes)", Active = true, IsAutoLearned = true });
@@ -6723,7 +6734,6 @@ namespace GingerCore.Drivers
                         else
                         {
                             EI.DeltaStatus = ElementInfo.eDeltaStatus.Deleted;
-                            EI.Update = true;
                         }
                     }
                     catch(Exception ex)

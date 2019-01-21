@@ -50,5 +50,6 @@ namespace Amdocs.Ginger.Common.UIElement
 
         }
 
+        public string UpdatedValue { get; set; }
     }
 }

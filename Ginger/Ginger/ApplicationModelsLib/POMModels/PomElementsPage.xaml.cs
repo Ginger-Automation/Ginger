@@ -22,7 +22,6 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
-using GingerCore.Drivers.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -118,10 +117,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 //SetElementsGroup();
                 //SetElementsFields();
-                mElements = mPOM.mCopiedUnienedList;
-                SetGridRowStyle(xMainElementsGrid);
-                SetGridRowStyle(xLocatorsGrid);
-                SetGridRowStyle(xPropertiesGrid);
+                mElements = mPOM.CopiedUnienedList;
+
 
 
                 /*GingerCore.General.ConvertListToObservableList<ElementInfo>(mPOM.MappedUIElements.Union(mPOM.UnMappedUIElements).ToList());*/
@@ -130,6 +127,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             SetElementsGridView();
             SetLocatorsGridView();
             SetControlPropertiesGridView();
+
+            SetDeltaStatusCellStyle(xMainElementsGrid);
+            SetDeltaStatusCellStyle(xLocatorsGrid);
+            SetDeltaStatusCellStyle(xPropertiesGrid);
 
             xMainElementsGrid.DataSourceList = mElements;
 
@@ -284,7 +285,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mContext == PomAllElementsPage.eElementsContext.AllDeltaElements)
             {
-                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Update), Header = "Update", WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["FieldUpdate"] });
+                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.IsSelected), Header = "Update", WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["FieldUpdate"] });
             }
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 40, AllowSorting = true });
@@ -301,7 +302,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementGroup), Header = "Elements Group", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
                 view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.DeltaStatus), Header = "Delta Status", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
-                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.DeltaExtraDetails), Header = "Delta Extra Details", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.DeltaExtraDetails), Header = "Delta Extra Details", WidthWeight = 10, MaxWidth = 200, AllowSorting = true, ReadOnly = true });
             }
             
 
@@ -338,15 +339,42 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xMainElementsGrid.Grid.SelectionChanged += Grid_SelectionChanged;
         }
 
-        private void SetGridRowStyle(ucGrid xGrid)
+
+
+        private void SetDeltaStatusCellStyle(ucGrid xGrid)
         {
-            Style st = xGrid.grdMain.RowHeaderStyle;
+
             DataTrigger DT = new DataTrigger();
-            PropertyPath PT = new PropertyPath(nameof(ElementInfo.IsNotEqual));
-            DT.Binding = new Binding() { Path = PT, Mode = BindingMode.OneWay};
-            DT.Value = true;
-            DT.Setters.Add(new Setter(DataGridRow.BackgroundProperty, Brushes.Red));
-            st.Triggers.Add(DT);
+            PropertyPath PT = new PropertyPath(nameof(ElementInfo.DeltaStatus));
+            DT.Binding = new Binding() { Path = PT, Mode = BindingMode.OneWay };
+            DT.Value = ElementInfo.eDeltaStatus.Modified;
+            DT.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.Red));
+            Style cellStyle = new Style(typeof(DataGridCell));
+            cellStyle.Triggers.Add(DT);
+
+            DataTrigger DT1 = new DataTrigger();
+            PropertyPath PT1 = new PropertyPath(nameof(ElementInfo.DeltaStatus));
+            DT1.Binding = new Binding() { Path = PT1, Mode = BindingMode.OneWay };
+            DT1.Value = ElementInfo.eDeltaStatus.Deleted;
+            DT1.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.Yellow));
+            cellStyle.Triggers.Add(DT1);
+
+
+            DataTrigger DT2 = new DataTrigger();
+            PropertyPath PT2 = new PropertyPath(nameof(ElementInfo.DeltaStatus));
+            DT2.Binding = new Binding() { Path = PT2, Mode = BindingMode.OneWay };
+            DT2.Value = ElementInfo.eDeltaStatus.New;
+            DT2.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.Green));
+            cellStyle.Triggers.Add(DT2);
+
+            foreach (DataGridColumn col in xGrid.grdMain.Columns)
+            {
+                if (col.SortMemberPath == nameof(ElementInfo.DeltaStatus))
+                {
+                    col.CellStyle = cellStyle;
+                }
+            }
+
         }
 
         private void XMainElementsGrid_SelectedItemChanged(object selectedItem)
@@ -432,15 +460,21 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
+
+            if (mContext != PomAllElementsPage.eElementsContext.AllDeltaElements)
+            {
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25, ReadOnly = true });
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
+                defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
+            }
+
 
             if (mContext == PomAllElementsPage.eElementsContext.AllDeltaElements)
             {
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.UpdatedValue), Header = "OriginalLocateValue", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.DeltaStatus), Header = "Delta Status", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
-                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.DeltaExtraDetails), Header = "Delta Extra Details", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
+                //defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.DeltaExtraDetails), Header = "Delta Extra Details", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
             }
 
             xLocatorsGrid.SetAllColumnsDefaultView(defView);
@@ -507,12 +541,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
             view.GridColsView = new ObservableList<GridColView>();
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Name), WidthWeight = 25, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 75, ReadOnly = true });
+            if (mContext != PomAllElementsPage.eElementsContext.AllDeltaElements)
+            {
+                view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 75, ReadOnly = true });
+            }
 
             if (mContext == PomAllElementsPage.eElementsContext.AllDeltaElements)
             {
+                view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Value), Header = "Original Value", WidthWeight = 75, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.UpdatedValue), Header = "Updated Value", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
                 view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.DeltaStatus), Header = "Delta Status", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
-                view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.DeltaExtraDetails), Header = "Delta Extra Details", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
+                //view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.DeltaExtraDetails), Header = "Delta Extra Details", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
+                
             }
 
             xPropertiesGrid.SetAllColumnsDefaultView(view);
@@ -692,6 +732,5 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 Reporter.ToLog(eLogLevel.ERROR, "Error in POM Edit Page tabs style", ex);
             }
         }
-
     }
 }

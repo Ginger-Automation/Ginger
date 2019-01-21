@@ -74,6 +74,7 @@ namespace Amdocs.Ginger.Common.UIElement
 
         }
 
+        public string UpdatedValue { get; set; }
 
         public ElementInfo.eDeltaExtraDetails DeltaExtraDetails { get; set; }
 

@@ -58,8 +58,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     mAppPlatform = App.UserProfile.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
                     SetAutoMapElementTypes();
                     mPomElementsPage.SetAgent(mWizard.Agent);
-                    mPOM.PopulateDuplicatedUnienedElementsList();
-                    mOriginalList = mPOM.mCopiedUnienedList;
+                    mOriginalList = mPOM.CopiedUnienedList;
                     CollectOriginalElementsData();
 
                     xReLearnButton.Visibility = Visibility.Visible;
@@ -134,7 +133,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void ReLearnButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.POMWizardReLearnWillDeleteAllElements) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.POMDeltaWizardReLearnWillEraseModification) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
             {
                 mWizard.IsLearningWasDone = false;
                 Learn();
@@ -198,48 +197,92 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void SetElementDelta(ElementInfo originalElelemnt, ElementInfo latestElement)
         {
-            foreach (ElementLocator originalEL in originalElelemnt.Locators)
+            List<ElementLocator> originalLocatorsList = originalElelemnt.Locators.ToList();
+
+            foreach (ElementLocator latestEL in latestElement.Locators)
             {
-                ElementLocator latestEL = latestElement.Locators.Where(x => x.LocateBy == originalEL.LocateBy && x.LocateValue == originalEL.LocateValue).FirstOrDefault();
-                if (latestEL == null)
+               
+                ElementLocator originalModifiedEL = originalLocatorsList.Where(x => x.LocateBy == latestEL.LocateBy && x.LocateValue != latestEL.LocateValue).FirstOrDefault();
+                ElementLocator ExistingEL = originalLocatorsList.Where(x => x.IsAutoLearned == true && x.LocateBy == latestEL.LocateBy).FirstOrDefault();
+                if (originalModifiedEL != null)
                 {
-                    originalEL.DeltaStatus = ElementInfo.eDeltaStatus.New;
+                    originalModifiedEL.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                    originalModifiedEL.UpdatedValue = latestEL.LocateValue;
                 }
-                else if (originalEL.IsAutoLearned = true && originalEL.LocateBy == latestEL.LocateBy && originalEL.LocateValue != latestEL.LocateValue)
+                else if (ExistingEL == null)
                 {
-                    originalEL.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                    latestEL.DeltaStatus = ElementInfo.eDeltaStatus.New;
+                    originalElelemnt.Locators.Add(latestEL);
                 }
                 else
                 {
-                    originalEL.DeltaStatus = ElementInfo.eDeltaStatus.Equal;
+                    ExistingEL.DeltaStatus = ElementInfo.eDeltaStatus.Equal;
                 }
             }
 
-            foreach (ControlProperty originalCP in originalElelemnt.Properties)
+            foreach (ElementLocator originalEL in originalLocatorsList)
             {
-                ControlProperty latestCP = latestElement.Properties.Where(x => x.Name == originalCP.Name && x.Value == originalCP.Value).FirstOrDefault();
-                if (latestCP == null)
+                if (originalEL.IsAutoLearned)
                 {
-                    originalCP.DeltaStatus = ElementInfo.eDeltaStatus.New;
+                    ElementLocator latestExistedEL = originalLocatorsList.Where(x => x.LocateBy == originalEL.LocateBy && x.LocateValue == originalEL.LocateValue).FirstOrDefault();
+                    if (latestExistedEL == null)
+                    {
+                        originalEL.DeltaStatus = ElementInfo.eDeltaStatus.Deleted;
+                    }
                 }
-                else if (originalCP.Name == latestCP.Name && originalCP.Value != latestCP.Value)
+            }
+
+            List<ControlProperty> originalPropertiesList = originalElelemnt.Properties.ToList();
+
+            foreach (ControlProperty latestCP in latestElement.Properties)
+            {
+                ControlProperty originalModifiedCP = originalPropertiesList.Where(x => x.Name == latestCP.Name && ( x.Value != latestCP.Value) && !(string.IsNullOrEmpty(x.Value) && string.IsNullOrEmpty(latestCP.Value))).FirstOrDefault();
+                ControlProperty ExistingCP = originalElelemnt.Properties.Where(x => x.Name == latestCP.Name).FirstOrDefault();
+                if (originalModifiedCP != null)
                 {
-                    originalCP.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                    originalModifiedCP.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                    originalModifiedCP.UpdatedValue = latestCP.Value;
+                }
+                else if (ExistingCP == null)
+                {
+                    latestCP.DeltaStatus = ElementInfo.eDeltaStatus.New;
+                    originalElelemnt.Properties.Add(latestCP);
                 }
                 else
                 {
-                    originalCP.DeltaStatus = ElementInfo.eDeltaStatus.Equal;
+                    ExistingCP.DeltaStatus = ElementInfo.eDeltaStatus.Equal;
                 }
             }
+
+            foreach (ControlProperty originalEL in originalPropertiesList)
+            {
+                ControlProperty latestExistedEL = originalPropertiesList.Where(x => x.Name == originalEL.Name && x.Value == originalEL.Value).FirstOrDefault();
+
+                if (latestExistedEL == null)
+                {
+                    originalEL.DeltaStatus = ElementInfo.eDeltaStatus.Deleted;
+                }
+            }
+
 
             List<ElementLocator> ModifiedElementsLocatorsList = originalElelemnt.Locators.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Equal).ToList();
             List<ControlProperty> ModifiedControlPropertiesList = originalElelemnt.Properties.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Equal).ToList();
-            if (ModifiedElementsLocatorsList.Count > 0 || ModifiedControlPropertiesList.Count > 0)
+            if (ModifiedElementsLocatorsList.Count > 0 && ModifiedControlPropertiesList.Count > 0)
             {
                 originalElelemnt.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
-                originalElelemnt.Update = true;
+                originalElelemnt.DeltaExtraDetails = ElementInfo.eDeltaExtraDetails.LocatorsAndPropertiesChanged;
             }
+            else if (ModifiedElementsLocatorsList.Count > 0)
+            {
+                originalElelemnt.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                originalElelemnt.DeltaExtraDetails = ElementInfo.eDeltaExtraDetails.LocatorsChanged;
+            }
+            else if (ModifiedControlPropertiesList.Count > 0)
+            {
+                originalElelemnt.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                originalElelemnt.DeltaExtraDetails = ElementInfo.eDeltaExtraDetails.PropertiesChanged;
 
+            }
         }
     }
 }

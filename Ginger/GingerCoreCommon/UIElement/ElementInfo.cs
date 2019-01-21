@@ -260,9 +260,46 @@ namespace Amdocs.Ginger.Common.UIElement
             return mValue;
         }
 
-        public bool Update { get; set; }
+
+        //private bool mUpdate = false;
+
+        //public bool Update
+        //{
+        //    get
+        //    {
+        //        return 
+        //            mUpdate;
+        //    }
+        //    set
+        //    {
+        //        if (mUpdate != value)
+        //        {
+        //            mUpdate = value;
+        //            OnPropertyChanged(nameof(Update));
+        //        }
+        //    }
+        //}
 
 
+
+
+        private bool mIsSelected = false;
+        // [IsSerializedForLocalRepository]
+        public bool IsSelected
+        {
+            get
+            {
+                return mIsSelected;
+            }
+            set
+            {
+                if (mIsSelected != value)
+                {
+                    mIsSelected = value;
+                    OnPropertyChanged(nameof(IsSelected));
+                }
+            }
+        }
 
         public enum eElementGroup
         {
@@ -279,7 +316,22 @@ namespace Amdocs.Ginger.Common.UIElement
             Modified,
             New
         }
-        public eDeltaStatus DeltaStatus { get; set; }
+
+        private eDeltaStatus mDeltaStatus;
+
+        public eDeltaStatus DeltaStatus
+        {
+            get
+            {
+                return mDeltaStatus;
+            }
+            set
+            {
+                mDeltaStatus = value;
+                OnPropertyChanged(nameof(DeltaStatus));
+                OnPropertyChanged(nameof(IsNotEqual));
+            }
+        }
 
         public bool IsNotEqual
         {
@@ -299,11 +351,28 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public enum eDeltaExtraDetails
         {
+            NA,
             LocatorsChanged,
-            PropertiesChanged
+            PropertiesChanged,
+            LocatorsAndPropertiesChanged
         }
 
-        public eDeltaExtraDetails DeltaExtraDetails { get; set; }
+        //public eDeltaExtraDetails DeltaExtraDetails { get; set; }
+
+        private eDeltaExtraDetails mDeltaExtraDetails;
+
+        public eDeltaExtraDetails DeltaExtraDetails
+        {
+            get
+            {
+                return mDeltaExtraDetails;
+            }
+            set
+            {
+                mDeltaExtraDetails = value;
+                OnPropertyChanged(nameof(DeltaExtraDetails));
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public string Path { get; set; }
