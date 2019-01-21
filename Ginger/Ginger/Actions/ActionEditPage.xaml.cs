@@ -123,7 +123,6 @@ namespace Ginger.Actions
             if (mActParentActivity.GetType() == typeof(ErrorHandler))
             {
                 RetyrMechainsmTab.IsEnabled = false;
-                FlowControlTab.IsEnabled = false;
                 ScreenShotTab.IsEnabled = false;
             }
             //Binding            
