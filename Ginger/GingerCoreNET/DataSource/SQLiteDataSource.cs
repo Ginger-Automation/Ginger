@@ -45,26 +45,22 @@ namespace GingerCore.DataSource
         } 
         public override void AddColumn(string tableName, string columnName, string columnType)
         {
-            sqlite.Close();
-            Init(mFilePath, "Write");
+            //sqlite.Close();
+            //Init(mFilePath, "Write");
             SQLiteCommand myCommand = new SQLiteCommand();
             myCommand.Connection = sqlite;
             myCommand.CommandText = "ALTER TABLE " + tableName + " ADD COLUMN [" + columnName + "] " + columnType;
             myCommand.ExecuteNonQuery();
-            sqlite.Close();
-            Init(mFilePath, "Read");
+            //sqlite.Close();
+            //Init(mFilePath, "Read");
         }
 
         public override void AddTable(string tableName, string columnList = "")
         {
-            sqlite.Close();
-            Init(mFilePath, "Write");
             SQLiteCommand myCommand = new SQLiteCommand();
             myCommand.Connection = sqlite;
             myCommand.CommandText = "CREATE TABLE " + tableName + "(" + columnList + ")";
             myCommand.ExecuteNonQuery();
-            sqlite.Close();
-            Init(mFilePath, "Read");
         }
 
         public override void Close()
@@ -91,14 +87,12 @@ namespace GingerCore.DataSource
             if (CopyTableName != tableName)
             {
                 //DataSet TableDataSet = GetQueryOutput("Select * rom ");
-                sqlite.Close();
-                Init(mFilePath, "Write");
+                
                 SQLiteCommand myCommand = new SQLiteCommand();
                 myCommand.Connection = sqlite;
                 myCommand.CommandText = "CREATE TABLE " + CopyTableName + " AS SELECT * FROM " + tableName;
                 myCommand.ExecuteNonQuery();
-                sqlite.Close();
-                Init(mFilePath, "Read");
+                
             }
             return CopyTableName;
         }
@@ -107,14 +101,11 @@ namespace GingerCore.DataSource
         {
             try
             {
-                sqlite.Close();
-                Init(mFilePath, "Write");
                 SQLiteCommand myCommand = new SQLiteCommand();
                 myCommand.Connection = sqlite;
                 myCommand.CommandText = "DROP TABLE " + tableName;
                 myCommand.ExecuteNonQuery();
-                sqlite.Close();
-                Init(mFilePath, "Read");
+              
             }
             catch (Exception e)
             {
@@ -124,79 +115,13 @@ namespace GingerCore.DataSource
 
         public override bool ExporttoExcel(string TableName, string sExcelPath, string sSheetName)
         {
-            sqlite.Close();
-            Init(mFilePath, "Read");
             DataTable dsTable = GetQueryOutput("select * from " + TableName);
             ExportDSToExcel(dsTable, sExcelPath, sSheetName);
             return false;
         }
         private void ExportDSToExcel(DataTable table, string sFilePath, string sSheetName = "")
         {
-            //SpreadsheetDocument workbook;
-
-            //if (sSheetName == "")
-            //    sSheetName = table.TableName;
-
-            //if (File.Exists(sFilePath))
-            //    workbook = SpreadsheetDocument.Open(sFilePath, true);
-            //else
-            //{
-            //    workbook = SpreadsheetDocument.Create(sFilePath, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
-            //    workbook.AddWorkbookPart();
-            //    workbook.WorkbookPart.Workbook = new DocumentFormat.OpenXml.Spreadsheet.Workbook();
-            //    workbook.WorkbookPart.Workbook.Sheets = new DocumentFormat.OpenXml.Spreadsheet.Sheets();
-            //}
-
-            //uint sheetId = 1;
-            //var sheetPart = workbook.WorkbookPart.AddNewPart<WorksheetPart>();
-            //var sheetData = new DocumentFormat.OpenXml.Spreadsheet.SheetData();
-            //sheetPart.Worksheet = new DocumentFormat.OpenXml.Spreadsheet.Worksheet(sheetData);
-
-            //DocumentFormat.OpenXml.Spreadsheet.Sheets sheets = workbook.WorkbookPart.Workbook.GetFirstChild<DocumentFormat.OpenXml.Spreadsheet.Sheets>();
-            //string relationshipId = workbook.WorkbookPart.GetIdOfPart(sheetPart);
-
-            //DocumentFormat.OpenXml.Spreadsheet.Sheet oSheet = sheets.Elements<DocumentFormat.OpenXml.Spreadsheet.Sheet>().Where(s => s.Name == sSheetName).FirstOrDefault();
-            //if (oSheet != null)
-            //    oSheet.Remove();
-
-            //if (sheets.Elements<DocumentFormat.OpenXml.Spreadsheet.Sheet>().Count() > 0)
-            //{
-            //    sheetId =
-            //        sheets.Elements<DocumentFormat.OpenXml.Spreadsheet.Sheet>().Select(s => s.SheetId.Value).Max() + 1;
-            //}
-
-            //DocumentFormat.OpenXml.Spreadsheet.Sheet sheet = new DocumentFormat.OpenXml.Spreadsheet.Sheet() { Id = relationshipId, SheetId = sheetId, Name = sSheetName };
-            //sheets.Append(sheet);
-
-            //DocumentFormat.OpenXml.Spreadsheet.Row headerRow = new DocumentFormat.OpenXml.Spreadsheet.Row();
-
-            //List<string> columns = new List<string>();
-            //foreach (DataColumn column in table.Columns)
-            //{
-            //    columns.Add(column.ColumnName);
-
-            //    DocumentFormat.OpenXml.Spreadsheet.Cell cell = new DocumentFormat.OpenXml.Spreadsheet.Cell();
-            //    cell.DataType = DocumentFormat.OpenXml.Spreadsheet.CellValues.String;
-            //    cell.CellValue = new DocumentFormat.OpenXml.Spreadsheet.CellValue(column.ColumnName);
-            //    headerRow.AppendChild(cell);
-            //}
-
-            //sheetData.AppendChild(headerRow);
-
-            //foreach (DataRow dsrow in table.Rows)
-            //{
-            //    DocumentFormat.OpenXml.Spreadsheet.Row newRow = new DocumentFormat.OpenXml.Spreadsheet.Row();
-            //    foreach (String col in columns)
-            //    {
-            //        DocumentFormat.OpenXml.Spreadsheet.Cell cell = new DocumentFormat.OpenXml.Spreadsheet.Cell();
-            //        cell.DataType = DocumentFormat.OpenXml.Spreadsheet.CellValues.String;
-            //        cell.CellValue = new DocumentFormat.OpenXml.Spreadsheet.CellValue(dsrow[col].ToString()); //
-            //        newRow.AppendChild(cell);
-            //    }
-
-            //    sheetData.AppendChild(newRow);
-            //}
-            //workbook.Close();
+           
         }
     
     public override List<string> GetColumnList(string tableName)
@@ -308,8 +233,6 @@ namespace GingerCore.DataSource
 
         public override void RemoveColumn(string tableName, string columnName)
         {
-            sqlite.Close();
-            Init(mFilePath, "Write");
             SQLiteCommand myCommand = new SQLiteCommand();
             List<string> listCol = GetColumnList(tableName);
             listCol.Remove(columnName);
@@ -319,36 +242,26 @@ namespace GingerCore.DataSource
             string cmd = "CREATE TABLE t1_backup AS SELECT "+cols+" FROM " + tableName +";" + "DROP TABLE " + tableName +";"+ "ALTER TABLE t1_backup RENAME TO " +tableName+";" ;
             myCommand.CommandText = cmd;
             myCommand.ExecuteNonQuery();
-            sqlite.Close();
-            Init(mFilePath, "Read");
         }
 
         public override void RenameTable(string tableName, string newTableName)
         {
             if (tableName != newTableName)
             {
-                sqlite.Close();
-                Init(mFilePath, "Write");
                 SQLiteCommand myCommand = new SQLiteCommand();
                 myCommand.Connection = sqlite;
                 myCommand.CommandText = "ALTER TABLE " + tableName  + " RENAME TO " + newTableName;
                 myCommand.ExecuteNonQuery();
                 sqlite.Close();
-                Init(mFilePath, "Read");
-                DeleteTable(tableName);
             }
         }
 
         public override void RunQuery(string query)
         {
-            sqlite.Close();
-            Init(mFilePath, "Write");
             SQLiteCommand myCommand = new SQLiteCommand();
             myCommand.Connection = sqlite;
             myCommand.CommandText = query;
             myCommand.ExecuteNonQuery();
-            sqlite.Close();
-            Init(mFilePath, "Read");
         }
 
         public override void SaveTable(DataTable dataTable)

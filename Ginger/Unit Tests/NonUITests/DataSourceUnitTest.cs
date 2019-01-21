@@ -16,6 +16,7 @@ using GingerTestHelper;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace UnitTests.NonUITests
 {
@@ -52,7 +53,7 @@ namespace UnitTests.NonUITests
             Platform p = new Platform();
             p.PlatformType = ePlatformType.NA;
             mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            //mBF.Platforms.Add(p);
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
             mGR = new GingerRunner();
@@ -61,7 +62,7 @@ namespace UnitTests.NonUITests
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.NA;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(a);
 
             mGR.ProjEnvironment= environment;

@@ -196,6 +196,7 @@ namespace Ginger.SolutionWindows
             a.DSType = DataSourceBase.eDSType.MSAccess;
             RepositoryFolder<DataSourceBase> dsTargetFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
             dsTargetFolder.AddRepositoryItem(a);
+
             // TO add SQliteDb 
             byte[] sqlobj = Properties.Resources.SQLiteDataSource;
             if (!File.Exists(System.IO.Path.Combine(mSolution.Folder, @"DataSources\GingerSQLiteDBDataSource.db")))

@@ -28,6 +28,8 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Environments;
 using Ginger;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace UnitTests.NonUITests
 {
@@ -51,8 +53,8 @@ namespace UnitTests.NonUITests
             
             mGMR.RunsetExecutionEnvironment = new ProjEnvironment();
             mEnv = mGMR.RunsetExecutionEnvironment;
-            App.UserProfile = new Ginger.UserProfile();
-            App.UserProfile.Solution = new Ginger.SolutionGeneral.Solution();
+            WorkSpace.UserProfile = new Ginger.UserProfile();
+            WorkSpace.UserProfile.Solution = new Ginger.SolutionGeneral.Solution();
 
             mGMR.RunSetConfig.mRunWithAnalyzer = false;
 
@@ -77,17 +79,17 @@ namespace UnitTests.NonUITests
             Platform p = new Platform();
             p.PlatformType = ePlatformType.Web;
             mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            //mBF.Platforms.Add(p);
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
 
             mGR = new GingerRunner();
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
-            mGR.GiveUserFeedback = true;
+            //mGR.GiveUserFeedback = true;
 
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(a);
 
             mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
@@ -177,7 +179,7 @@ namespace UnitTests.NonUITests
             Platform p = new Platform();
             p.PlatformType = ePlatformType.Web;
             mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+           // mBF.Platforms.Add(p);
 
             Activity a1 = new Activity();
             a1.Active = true;

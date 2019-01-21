@@ -252,13 +252,12 @@ namespace Ginger.DataSource
         {
             DataRow dr = mDSTableDetails.DataTable.NewRow();
             mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
+           
             foreach (string sColName in mColumnNames)
                 if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
                     dr[sColName] = "";
                 else if (sColName == "GINGER_ID")
-                    dr[sColName] = "1";
-                else
-                    dr[sColName] = "";
+                    dr[sColName] = System.DBNull.Value;
 
             mDSTableDetails.DataTable.Rows.Add(dr);             
         }
