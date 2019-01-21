@@ -3848,9 +3848,8 @@ private PayLoad SetComponentFocus(Component c)
 		
 		List<PayLoad> Elements = new ArrayList<PayLoad>(); 	
 		String PayLoadName="";
-		if(c instanceof JEditorPane)
+		if(c instanceof JEditorPane && (c.getClass().getName().contains("JEditorPane")))
 		{
-
 			PayLoadName="HTML Element Children";
 			Elements= getEditorComponents();
 		}

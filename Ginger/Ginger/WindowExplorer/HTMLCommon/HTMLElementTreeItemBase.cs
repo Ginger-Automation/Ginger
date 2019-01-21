@@ -52,12 +52,16 @@ namespace Ginger.WindowExplorer.HTMLCommon
             List<ITreeViewItem> list = new List<ITreeViewItem>();
 
             List<ElementInfo> ChildrenList = ElementInfo.WindowExplorer.GetElementChildren(this.ElementInfo);
-            foreach (ElementInfo EI in ChildrenList)
+            if(ChildrenList != null)
             {
-                //TODO: move converter to here
-                ITreeViewItem TVI = HTMLElementInfoConverter.GetHTMLElementTreeItem(EI);                
-                list.Add(TVI);
+                foreach (ElementInfo EI in ChildrenList)
+                {
+                    //TODO: move converter to here
+                    ITreeViewItem TVI = HTMLElementInfoConverter.GetHTMLElementTreeItem(EI);
+                    list.Add(TVI);
+                }
             }
+            
             return list;          
         }
         

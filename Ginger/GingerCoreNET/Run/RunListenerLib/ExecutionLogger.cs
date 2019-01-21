@@ -20,8 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
@@ -45,7 +43,7 @@ namespace Ginger.Run
 {
     // Each ExecutionLogger instance should be added to GingerRunner Listeneres
     // Create new ExecutionLogger for each run 
-    
+
     public class ExecutionLogger : RunListenerBase
     {
         public static string defaultAutomationTabLogName = "AutomationTab_LastExecution";
@@ -54,7 +52,7 @@ namespace Ginger.Run
         public static string defaultRunTabRunConsolidatedName = "RunTab_ConsolidatedReportLastExecution";
         public static string defaultRunTabLogName = "DefaultRunSet";
         static JsonSerializer mJsonSerializer;
-        public static string mLogsFolder;
+        public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public string ExecutionLogfolder { get; set; }
         string mLogsFolderName;
         DateTime mCurrentExecutionDateTime;
