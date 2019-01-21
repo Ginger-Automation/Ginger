@@ -111,6 +111,8 @@ namespace GingerCore
 
         public List<string> VariablesBeforeExec { get; set; }
 
+
+        // Why here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public List<string> SolutionVariablesBeforeExec { get; set; }
 
         private string mName;
