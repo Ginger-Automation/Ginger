@@ -68,26 +68,26 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         void AddExecutionDetailsToLog(eExecutionPhase objExecutionPhase, string objType, string objName, object obj)
         {
-            if (Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug)
+            if (Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug || Reporter.RunningInExecutionMode == true)
             {
-                StringBuilder stringBuilder = new StringBuilder("--> ");
                 string prefix = string.Empty;
+
+                StringBuilder stringBuilder = new StringBuilder();                
                 switch (objExecutionPhase)
                 {
                     case eExecutionPhase.Start:
-                        stringBuilder.Append("Execution Started for the ");                        
+                        stringBuilder.Append("--> Execution Started for the ");                        
                         break;
                     case eExecutionPhase.End:
-                        stringBuilder.Append("Execution Ended for the ");                        
+                        stringBuilder.Append("<-- Execution Ended for the ");                        
                         break;
                 }
                 stringBuilder.Append(objType).Append(": '").Append(objName).Append("'").AppendLine();
 
-
                 //get the execution fields and their values
-                if (obj != null)
+                if (objExecutionPhase == eExecutionPhase.End && obj != null)
                 {
-                    // List<KeyValuePair<string, string>> fieldsAndValues = new List<KeyValuePair<string, string>>();
+                    stringBuilder.Append("Details:").AppendLine();
                     try
                     {
                         PropertyInfo[] props = obj.GetType().GetProperties();
@@ -128,17 +128,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     catch (Exception)
                     {
                         //TODO: !!!!!!!!!!!!!!!!!! FIXME
-                    }
-
-
-                    Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
+                    }                    
                 }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.INFO, prefix + System.Environment.NewLine);
-                }
+
+                Reporter.ToLog(eLogLevel.DEBUG, stringBuilder.ToString());
             }
-
         }
 
     }
