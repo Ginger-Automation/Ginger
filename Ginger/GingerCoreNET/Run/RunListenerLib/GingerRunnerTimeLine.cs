@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.Run
             timeLineEvents.AddEvent(BusinessFlowTimeLineEvent);
         }
 
-        public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow)
+        public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
             BusinessFlowTimeLineEvent.End = eventTime;
         }
@@ -43,7 +43,7 @@ namespace Amdocs.Ginger.Run
             }
         }
 
-        public override void ActivityEnd(uint eventTime, Activity activity)
+        public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode= false)
         {
             //TODO: verify the same activity
             ActivityTimeLineEvent.End = eventTime;
@@ -75,7 +75,7 @@ namespace Amdocs.Ginger.Run
         }
 
 
-        public override void ActionEnd(uint eventTime, Act action)
+        public override void ActionEnd(uint eventTime, Act action, bool offlineMode=false)
         {
             ActionTimeLineEvent.End = eventTime;
         }
