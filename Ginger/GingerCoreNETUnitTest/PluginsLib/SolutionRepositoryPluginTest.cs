@@ -92,7 +92,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetPlugins()
         {
             //Arrange            
@@ -106,11 +106,11 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         }
 
-        //[TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        //[TestMethod]  [Timeout(60000)]
         //public void GetPluginServices()        
 
         [Ignore]
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetPluginTextEditor()
         {
             //Arrange            
@@ -124,7 +124,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             Assert.AreEqual(1, list.Count, "There are one text editor");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GingerOfficePluginTestAction()
         {
             ////Arrange            
@@ -146,7 +146,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         }
 
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GingerOfficePluginTestActionx3()
         {
             ////Arrange            
@@ -174,7 +174,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         }
 
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetOnlinePlugins()
         {
             //Arrange       
@@ -187,7 +187,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             Assert.IsTrue(list.Count > 0, "list.Count > 0");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetOnlinePluginReleases()
         {
             //Arrange       
@@ -202,7 +202,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             Assert.IsTrue(releases.Count > 0, "list.Count > 0");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void InstallSeleniumPlugin_1_0()
         {
             //Arrange       

@@ -78,7 +78,7 @@
 //        }
 
         
-//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]  
+//        [TestMethod]  [Timeout(60000)]  
 //        [Ignore]
 //        public void CheckTabsWhenSolutionClosed()
 //        {
@@ -93,7 +93,7 @@
 //            Assert.AreEqual("HomeRibbon,SolutionRibbon,SupportRibbon", tabs);
 //        }
         
-//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+//        [TestMethod]  [Timeout(60000)]
 //        [Ignore]
 //        public void CheckTabsWhenSolutionOpen()
 //        {

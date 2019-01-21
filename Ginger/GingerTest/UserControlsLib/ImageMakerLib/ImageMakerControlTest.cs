@@ -63,7 +63,7 @@ namespace GingerTest
 
         private static Action EmptyDelegate = delegate () { };
         [Level3]
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         [Ignore]
         public void ImageMakerControlsVisualTest1_50()
         {
@@ -90,7 +90,7 @@ namespace GingerTest
 
 
         [Level3]
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         [Ignore]
         public void ImageMakerControlsVisualTest51_100()
         {

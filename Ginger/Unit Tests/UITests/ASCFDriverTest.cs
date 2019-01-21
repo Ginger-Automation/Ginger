@@ -114,7 +114,7 @@ namespace UnitTests.UITests.ASCFDriverTest
             }
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void SetTextField_FirstName_Value()
         {           
             //Arrange            
@@ -132,7 +132,7 @@ namespace UnitTests.UITests.ASCFDriverTest
             Assert.IsTrue(c.ExInfo.StartsWith("OK|Jenny set"), "c.ExInfo.StartsWith 'Jenny set'");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void DriverCommunicationSpeedTest()
         {
             //Arrange            
@@ -164,7 +164,7 @@ namespace UnitTests.UITests.ASCFDriverTest
             Assert.IsTrue(st.ElapsedMilliseconds < 700, "Elapsed < 300");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void ClickButton_MessageButton()
         {           
             //Arrange            
@@ -202,7 +202,7 @@ namespace UnitTests.UITests.ASCFDriverTest
 
         
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetLabelValue_CustomerIDLabel()
         {
             //Arrange
@@ -220,7 +220,7 @@ namespace UnitTests.UITests.ASCFDriverTest
            Assert.AreEqual(c.ExInfo, "OK|Customer ID: 125671", "Ex Info");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void TakeScreenShot()
         {
             // Make sure we take screen shot only of CRM screen not the main screen, need to use C# to take Screen shot and then compare!?
@@ -247,7 +247,7 @@ namespace UnitTests.UITests.ASCFDriverTest
             
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetDateTimeValue_OrderDateTime()
         {
             //Arrange
@@ -265,7 +265,7 @@ namespace UnitTests.UITests.ASCFDriverTest
            Assert.AreEqual(c.ExInfo, "2015-07-28 21:09" , "ExInfo");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetComboBoxText()
         {
             //Arrange
@@ -285,7 +285,7 @@ namespace UnitTests.UITests.ASCFDriverTest
             Assert.IsTrue(c.ExInfo.StartsWith("OK|a"), "ExInfo");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void SetComboBoxText()
         {
             //Arrange
@@ -305,7 +305,7 @@ namespace UnitTests.UITests.ASCFDriverTest
         }
 
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void SetDateTime_OrderDateTime()
         {           
             //Arrange
@@ -324,7 +324,7 @@ namespace UnitTests.UITests.ASCFDriverTest
             Assert.IsTrue(c.ExInfo.StartsWith("OK|1464469620000 set"), "ExInfo");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GridFormGetValue()
         {            
             //Arrange
@@ -347,7 +347,7 @@ namespace UnitTests.UITests.ASCFDriverTest
             Assert.IsTrue(c.ExInfo.StartsWith("OK|fa"), "ExInfo");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GridFormSetValue()
         {
             //Arrange
@@ -369,7 +369,7 @@ namespace UnitTests.UITests.ASCFDriverTest
             Assert.IsTrue(c.ExInfo.StartsWith("OK|ABCDE set"), "ExInfo");
         }
         
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void SetFieldNotFound_Check_Action_Fail()
         {
             //Arrange
@@ -387,7 +387,7 @@ namespace UnitTests.UITests.ASCFDriverTest
             Assert.IsTrue(c.ExInfo.StartsWith("Error|Control not found:  Control123"), "c.ExInfo.StartsWith 'Control not found:  Control123'");            
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void SelectCheckBoxFromAllControlsHGRid()
         {
             //Arrange            
@@ -414,7 +414,7 @@ namespace UnitTests.UITests.ASCFDriverTest
             }
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void CollapseTreeFromAllControlsHGRid()
         {
             //Arrange            
@@ -440,7 +440,7 @@ namespace UnitTests.UITests.ASCFDriverTest
                Assert.AreEqual(status, "OK");
             }
         }
-         [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+         [TestMethod]  [Timeout(60000)]
         public void ExpandTreeFromAllControlsHGRid()
         {
             //Arrange            
@@ -466,7 +466,7 @@ namespace UnitTests.UITests.ASCFDriverTest
                Assert.AreEqual(status, "OK");
             }
         }
-         [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+         [TestMethod]  [Timeout(60000)]
          public void ClickButtonFromAllControlsHGRid()
          {
              //Arrange            
@@ -492,7 +492,7 @@ namespace UnitTests.UITests.ASCFDriverTest
                 Assert.AreEqual(status, "OK");
              }
          }
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void SelectRadioButtonFromAllControlsHGRid()
         {
             //Arrange            
@@ -521,7 +521,7 @@ namespace UnitTests.UITests.ASCFDriverTest
         }
 
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void MultiColumnsConditionsSelectFromHierarchicalGrid()
         {
             //Arrange            
@@ -559,7 +559,7 @@ namespace UnitTests.UITests.ASCFDriverTest
             }
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void Echo()
         {
             //Arrange            
@@ -571,7 +571,7 @@ namespace UnitTests.UITests.ASCFDriverTest
            Assert.AreEqual(RC, "OK|Hello", "RC");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void Echo_1_to_200000()
         {
             //Target of this test is to check sending and receiving of packets different sizes, ince the first 4 bytes used as int length we verify the calc and parsing on both sides
@@ -596,7 +596,7 @@ namespace UnitTests.UITests.ASCFDriverTest
             
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void Echo_Special_Letters1()
         {
             //Arrange   
@@ -615,7 +615,7 @@ namespace UnitTests.UITests.ASCFDriverTest
         }
 
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void Echo_Spanish_Letter()
         {
             //Arrange   
@@ -636,7 +636,7 @@ namespace UnitTests.UITests.ASCFDriverTest
         
 
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void CreateContact()
         {
             //Arrange            
@@ -817,7 +817,7 @@ namespace UnitTests.UITests.ASCFDriverTest
         //test command err-  Error|Command is not defined:  Command123
 
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void SwitchWindowByTitle()
         {
             //Arrange            
@@ -839,7 +839,7 @@ namespace UnitTests.UITests.ASCFDriverTest
             
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void SwitchWindowByTitleNotExistWillErr()
         {
             //Arrange            
@@ -861,7 +861,7 @@ namespace UnitTests.UITests.ASCFDriverTest
         }
 
 
-        //[TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        //[TestMethod]  [Timeout(60000)]
         //[Ignore]
         //public void SwitchWindowsByTitleX4()
         //{
@@ -883,7 +883,7 @@ namespace UnitTests.UITests.ASCFDriverTest
 
         //}
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void IsVisibleActionTest()
         {
             //Arrange
@@ -901,7 +901,7 @@ namespace UnitTests.UITests.ASCFDriverTest
            Assert.AreEqual((c.ReturnValues[0]).Actual, "False", "Return Value Param Value");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void BrowserTestForm()
         {
             //Arrange            
@@ -918,7 +918,7 @@ namespace UnitTests.UITests.ASCFDriverTest
 
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void OMSFrameworkWidgetsTestForm()
         {
             //Arrange            

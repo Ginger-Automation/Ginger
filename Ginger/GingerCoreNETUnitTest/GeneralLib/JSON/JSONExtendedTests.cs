@@ -36,7 +36,7 @@ namespace GingerCoreNETUnitTest.GeneralLib.JSON
         }
 
         [Level2]
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void XMLDocGetAllNodesTest()
         {
             //Arrange

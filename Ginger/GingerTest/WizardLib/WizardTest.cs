@@ -78,7 +78,7 @@ namespace GingerTest
         }
 
         [Level3]
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void VerifyButtonsOnStartThenCancel()
         {
             //Arrange            
@@ -100,7 +100,7 @@ namespace GingerTest
         }
 
         [Level3]
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void CreateMyWizardItem()
         {
             //Arrange            
@@ -122,7 +122,7 @@ namespace GingerTest
 
         [Level3]
         [Ignore] //TODO FIXME
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void WizardWithWindowWidth()
         {
             //Arrange            
@@ -140,7 +140,7 @@ namespace GingerTest
         }
 
 
-        //[TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        //[TestMethod]  [Timeout(60000)]
         //public void WizardIntro()
         //{
         //    //Arrange                        

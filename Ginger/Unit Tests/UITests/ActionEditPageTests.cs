@@ -34,7 +34,7 @@ namespace UnitTests.UITests
     public class ActionEditPageTests
     {
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void ActionEditPagesLoadTest()
         {
 
