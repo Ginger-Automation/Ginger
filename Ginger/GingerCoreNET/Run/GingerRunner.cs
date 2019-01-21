@@ -2251,6 +2251,7 @@ namespace Ginger.Run
                                     if (vals.Count() == 2)
                                     {
                                         ActSetVariableValue setValueAct = new ActSetVariableValue();
+                                        PrepActionValueExpression(setValueAct, CurrentBusinessFlow);
                                         setValueAct.VariableName = vals[0];
                                         setValueAct.SetVariableValueOption = VariableBase.eSetValueOptions.SetValue;
                                         setValueAct.Value = vals[1];
