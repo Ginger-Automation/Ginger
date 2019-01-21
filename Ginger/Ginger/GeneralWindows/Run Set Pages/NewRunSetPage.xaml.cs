@@ -667,9 +667,9 @@ namespace Ginger.Run
                 GRP.xRunnerNameTxtBlock.Foreground = FindResource("$SelectionColor_Pink") as Brush;
             }                
             mCurrentSelectedRunner = GRP;
-            //!!!!!!!!!!!!!!!!!!!!
-            //mCurrentSelectedRunner.RunnerPageEvent -= RunnerPageEvent;
-            //mCurrentSelectedRunner.RunnerPageEvent += RunnerPageEvent;
+            
+            mCurrentSelectedRunner.RunnerPageEvent -= RunnerPageEvent;
+            mCurrentSelectedRunner.RunnerPageEvent += RunnerPageEvent;
             UpdateRunnerTime();
 
             // mCurrentSelectedRunner.Runner.GingerRunnerEvent += Runner_GingerRunnerEvent;
@@ -690,7 +690,7 @@ namespace Ginger.Run
             InitRunnerExecutionDebugSection();
         }
 
-        // !!!!!!!!!!!! zzz
+        
         private void Runner_GingerRunnerEvent(GingerRunnerEventArgs EventArgs)
         {
             switch (EventArgs.EventType)
@@ -883,10 +883,9 @@ namespace Ginger.Run
 
                     GR.PropertyChanged -= Runner_PropertyChanged;
                     GR.PropertyChanged += Runner_PropertyChanged;
-
-                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    //runnerPage.RunnerPageEvent -= RunnerPageEvent;
-                    //runnerPage.RunnerPageEvent += RunnerPageEvent;
+                    
+                    runnerPage.RunnerPageEvent -= RunnerPageEvent;
+                    runnerPage.RunnerPageEvent += RunnerPageEvent;
                 });
             }
 
@@ -1739,14 +1738,14 @@ namespace Ginger.Run
         public void viewActivity(Activity activitytoView)
         {
             Activity ac = activitytoView;
-            BusinessFlowWindows.ActivityEditPage w = new BusinessFlowWindows.ActivityEditPage(ac, General.RepositoryItemPageViewMode.View);
+            BusinessFlowWindows.ActivityEditPage w = new BusinessFlowWindows.ActivityEditPage(ac, General.RepositoryItemPageViewMode.View,mCurrentBusinessFlowRunnerItemObject);
             w.ShowAsWindow();
         }
 
         public void viewAction(Act actiontoView)
         {
             Act act = actiontoView;
-            ActionEditPage w = new ActionEditPage(act, General.RepositoryItemPageViewMode.View);
+            ActionEditPage w = new ActionEditPage(act, General.RepositoryItemPageViewMode.View,mCurrentBusinessFlowRunnerItemObject,mCurrentActivityRunnerItemObject);
             w.ShowAsWindow();
         }
 
