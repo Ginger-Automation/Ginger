@@ -36,7 +36,7 @@ namespace UnitTest
 
         // Need to have our own REST server, so will not be dependent on David server
         //[Ignore]
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]        
+        [TestMethod]    [Timeout(60000)]
         public void Rest1()
         {
 

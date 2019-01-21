@@ -19,7 +19,7 @@ namespace UnitTests.NonUITests
             AutoLogProxy.Init("Encryption Unit Tests");         
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void IsEncryptedFalse()
         {
             //Arrange
@@ -33,7 +33,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(false, IsDecrypt);
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void IsEncryptedTrue()
         {
             //Arrange
@@ -47,7 +47,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(true, IsDecrypt);
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void EncryptString()
         {
             //Arrange
@@ -61,7 +61,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual("mDL33JRKM3Zv1FdtGQMNZg==", encryptedString);
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void DecryptString()
         {
             //Arrange

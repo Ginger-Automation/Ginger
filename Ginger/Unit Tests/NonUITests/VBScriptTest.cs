@@ -45,7 +45,7 @@ namespace UnitTests.NonUITests
         /// <summary>
         /// Running a free VBS command
         /// </summary>
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void FreeCommand()
         {
             ActScript v = new ActScript();
@@ -61,7 +61,7 @@ namespace UnitTests.NonUITests
 
 
         
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void RunScriptAPlusB()
         {
             // Arrange

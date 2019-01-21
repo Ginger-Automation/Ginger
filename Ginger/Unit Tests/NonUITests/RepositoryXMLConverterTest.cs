@@ -44,7 +44,7 @@ namespace UnitTests.NonUITests
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void BusinessFlowDeserializationTest()
         {
             //Arrange            
@@ -59,7 +59,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(14, BF.Activities.Count, "BF has 14 activities");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void AgentDeserializationTest()
         {
             //Arrange
@@ -75,7 +75,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(agent.DriverType,Agent.eDriverType.InternalBrowser);
         }
         
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void EnvironmentDeserializationTest()
         {
             //Arrange

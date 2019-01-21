@@ -57,7 +57,7 @@ namespace GingerTest.APIModelLib
             GingerAutomator.EndSession();
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void ValidatePOMWasAddedToPOMsTree()
         {
             //Act
@@ -69,7 +69,7 @@ namespace GingerTest.APIModelLib
         }
 
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void ValidatePOMGeneralDetails()
         {
             //Assert
@@ -80,7 +80,7 @@ namespace GingerTest.APIModelLib
         }
 
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void ValidatePOMScreenshotWasTaken()
         {
             //Act
@@ -90,7 +90,7 @@ namespace GingerTest.APIModelLib
         }
 
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void ValidateLearnedItems()
         {
             //Act
@@ -104,7 +104,7 @@ namespace GingerTest.APIModelLib
             Assert.IsNotNull(EI2, "POM.Element learned check");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void ValidateElementsProperties()
         {
             //Act  
@@ -173,7 +173,7 @@ namespace GingerTest.APIModelLib
         }
 
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void ValidateElementsLocators()
         {
             //Act

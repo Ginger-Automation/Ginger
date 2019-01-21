@@ -113,7 +113,7 @@ namespace UnitTest {
         }
 
         #region Text box field
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]        
+        [TestMethod]  [Timeout(60000)]        
         public void SetTextField_tb_lastname()
         {           
             //Arrange                        
@@ -154,7 +154,7 @@ namespace UnitTest {
            Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetTextField_tb_lastname()
         {
             //Arrange                        
@@ -227,7 +227,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetControlProperty_Value()
         {
             ActPBControl c = new ActPBControl();
@@ -253,7 +253,7 @@ namespace UnitTest {
         #endregion
 
         #region Windows
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void WindowVisualStateCheck()
         {
 
@@ -306,7 +306,7 @@ namespace UnitTest {
         #endregion
         #region Button
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void ClickButton_ByText()
         {
             
@@ -421,7 +421,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "c.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetControlProperty_AutomationId_Button()
         {
             ActPBControl c = new ActPBControl();
@@ -444,7 +444,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetControlProperty_ClassName_Button()
         {
             ActPBControl c = new ActPBControl();
@@ -467,7 +467,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetControlProperty_IsKeyboardFocusable_Button()
         {
             ActPBControl c = new ActPBControl();
@@ -490,7 +490,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void IsExist_Button()
         {
             ActPBControl c = new ActPBControl();
@@ -511,7 +511,7 @@ namespace UnitTest {
             Assert.AreEqual(actual, "True", "True");            
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void SmartSync_WaitUntilDisplay_Button()
         {            
             ActSmartSync act = new ActSmartSync();
@@ -532,7 +532,7 @@ namespace UnitTest {
         #endregion
 
         #region CheckBox
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void SetCheckboxValue_ByName()
         {
             //Arrange                        
@@ -575,7 +575,7 @@ namespace UnitTest {
            Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetCheckboxValue_ByName()
         {
             //Arrange      
@@ -610,7 +610,7 @@ namespace UnitTest {
            Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void ToggleCheckboxValue_ByName()
         {//Arrange                        
 
@@ -664,7 +664,7 @@ namespace UnitTest {
       
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void IsCheckboxEnabled_ByName()
         {
             //Arrange                        
@@ -685,7 +685,7 @@ namespace UnitTest {
            Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetControlProperty_ToggleState()
         {
             ActPBControl act = new ActPBControl();
@@ -725,7 +725,7 @@ namespace UnitTest {
         #endregion
 
         #region radio button
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void SelectRadioButton_Bachelors()
         {
             //Select the radio button
@@ -762,7 +762,7 @@ namespace UnitTest {
            Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetValueRadioButton_Bachelors()
         {
             ActPBControl c1 = new ActPBControl();
@@ -795,7 +795,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void IsSelectedRadioButton_Masters()
         {
             //Select the radio button
@@ -829,7 +829,7 @@ namespace UnitTest {
         #endregion
 
         #region Title Bar
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetTitleBarText_SimplePage()
         {
             ActPBControl c = new ActPBControl();
@@ -850,7 +850,7 @@ namespace UnitTest {
 
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetTextByName_name()
         {
             ActPBControl c = new ActPBControl();
@@ -907,7 +907,7 @@ namespace UnitTest {
 
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetSelectedItem_ComboBox()
         {
 
@@ -939,7 +939,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetAllItems_ComboBox()
         {
 
@@ -960,7 +960,7 @@ namespace UnitTest {
         #endregion
 
         #region List box
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void ClickListBoxItem_English()
         {
             ActPBControl c = new ActPBControl();
@@ -1025,7 +1025,7 @@ namespace UnitTest {
         }
 
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetAllItems_ListBox()
         {
 
@@ -1046,7 +1046,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetControlProperty_IsOffScreen_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1069,7 +1069,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetControlProperty_NameProperty_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1092,7 +1092,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetControlProperty_LocalizedControlType_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1115,7 +1115,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetControlProperty_IsPassword_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1138,7 +1138,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetControlProperty_IsEnabled_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1161,7 +1161,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetControlProperty_IsSelected_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1184,7 +1184,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetControlProperty_Xpath_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1207,7 +1207,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetControlProperty_GetFieldValue_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1232,7 +1232,7 @@ namespace UnitTest {
         #endregion
 
         #region Dialog control
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetDialogTitle_ClickMeButton()
         {
 
@@ -1270,7 +1270,7 @@ namespace UnitTest {
             mGR.RunAction(c, false);
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetDialogText_ClickMeButton()
         {
             ActPBControl c = new ActPBControl();
@@ -1311,7 +1311,7 @@ namespace UnitTest {
         #endregion
 
         #region Menu bar
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetAllMenuBarElements()
         {
             ActPBControl c = new ActPBControl();
@@ -1404,7 +1404,7 @@ namespace UnitTest {
         #endregion
 
         #region XPath locator
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void SetTextBoxValue_ByXpath()
         {
             ActPBControl c = new ActPBControl();
@@ -1437,7 +1437,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetTextBoxValue_ByXpath()
         {
             ActPBControl c = new ActPBControl();
@@ -1469,7 +1469,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetTextBoxValue_ByXpathWithValueProperty()
         {
             ActPBControl c = new ActPBControl();
@@ -1534,7 +1534,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetText_TableActionGrid()
         {            
             ActTableElement actGrid = new ActTableElement();
@@ -1566,7 +1566,7 @@ namespace UnitTest {
         }
 
          
-         [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+         [TestMethod]  [Timeout(60000)]
         public void SetText_TableActionGrid()
         {
             ActTableElement actGrid1 = new ActTableElement();
@@ -1633,7 +1633,7 @@ namespace UnitTest {
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
          public void Click_TableAction()
         {
              ActTableElement actGrid = new ActTableElement();
@@ -1670,7 +1670,7 @@ namespace UnitTest {
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void DoubleClick_TableAction()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1706,7 +1706,7 @@ namespace UnitTest {
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void ClickXY_TableAction()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1746,7 +1746,7 @@ namespace UnitTest {
 
         #region Table Action on Grid
         //For Xpath with only name property
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetText_TableActionGrid_OnRowNumColNum()
         { 
             ActTableElement actGrid = new ActTableElement();
@@ -1782,7 +1782,7 @@ namespace UnitTest {
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetText_TableActionGrid_OnRowNumColTitle()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1818,7 +1818,7 @@ namespace UnitTest {
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetText_TableActionGrid_OnAnyRowColNum()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1857,7 +1857,7 @@ namespace UnitTest {
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetText_TableActionGrid_OnAnyRowColtitle()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1897,7 +1897,7 @@ namespace UnitTest {
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
 
         public void GetText_TableActionGrid_OnColNumwhereColTitle()
         {
@@ -1930,7 +1930,7 @@ namespace UnitTest {
         }
 
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetText_TableActionGrid_OnColTitlewhereColTitle()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1961,7 +1961,7 @@ namespace UnitTest {
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetText_TableActionGrid_OnColNumwhereColNum()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1992,7 +1992,7 @@ namespace UnitTest {
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetText_TableActionGrid_OnColTitlewhereColNum()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -2023,7 +2023,7 @@ namespace UnitTest {
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetRowCount_TableActionGrid()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -2062,7 +2062,7 @@ namespace UnitTest {
         #endregion
 
         #region UIElement Action- Click and Validate
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void TestClickAndValidate_isExist()
         {
             ActUIElement actUI = new ActUIElement();
@@ -2128,7 +2128,7 @@ namespace UnitTest {
             Assert.AreEqual(actUI.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void TestClickAndValidate_NotExist()
         {
             ActPBControl c = new ActPBControl();
@@ -2202,7 +2202,7 @@ namespace UnitTest {
             Assert.AreEqual(actUI.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void TestClickAndValidate_isEnabled()
         {
             ActUIElement actUI = new ActUIElement();
@@ -2279,7 +2279,7 @@ namespace UnitTest {
             Assert.AreEqual(actUI.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void TestClickAndValidate_LoopThroughClicks()
         {
             ActPBControl c = new ActPBControl();
@@ -2357,7 +2357,7 @@ namespace UnitTest {
         #endregion
 
         #region Text
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetControlProperty_Text_Text()
         {
             ActPBControl c = new ActPBControl();
@@ -2380,7 +2380,7 @@ namespace UnitTest {
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void GetTitle_Text()
         {
             ActPBControl c = new ActPBControl();
@@ -2404,7 +2404,7 @@ namespace UnitTest {
         #endregion
 
         #region Tab Control
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]        
+        [TestMethod]  [Timeout(60000)]        
         public void SelectByIndex_Tab()
         {
             ActPBControl c = new ActPBControl();

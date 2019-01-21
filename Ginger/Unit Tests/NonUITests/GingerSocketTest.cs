@@ -103,7 +103,7 @@ namespace UnitTests.NonUITests
 
         
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void ClientConnect()
         {
             // Arrange
@@ -114,7 +114,7 @@ namespace UnitTests.NonUITests
             //Assert
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void Echo()
         {
             // Arrange
@@ -130,7 +130,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(txt, txt2, "txt = txt2");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void Echo1000Speed()
         {
 
@@ -158,7 +158,7 @@ namespace UnitTests.NonUITests
             Assert.IsTrue(st.ElapsedMilliseconds < 3000, "st.ElapsedMilliseconds < 3000");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void SlowResponse1000()
         {
             // Arrange            
@@ -172,7 +172,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void LongAction()
         {
             // Arrange            

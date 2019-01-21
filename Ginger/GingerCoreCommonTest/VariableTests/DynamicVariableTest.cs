@@ -55,7 +55,7 @@ namespace GingerCoreCommonTest.VariableTests
         }
         #endregion
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void DynamicVar_TestVariableType()
         {
             //Arrange
@@ -68,7 +68,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Dynamic", varType, "Dynamic Variable Type");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void DynamicVar_TestVariableUIType()
         {
             //Arrange
@@ -81,7 +81,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(varType.Contains("Dynamic"), "Dynamic Variable UI Type");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void DynamicVar_TestImageType()
         {
             //Arrange
@@ -95,7 +95,7 @@ namespace GingerCoreCommonTest.VariableTests
         }
 
         [Ignore]
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void DynamicVar_TestFormula()
         {
             //Arrange
@@ -114,7 +114,7 @@ namespace GingerCoreCommonTest.VariableTests
         }
 
         [Ignore]
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void DynamicVar_TestAutoValue()
         {
             //Arrange

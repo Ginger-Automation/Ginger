@@ -40,7 +40,7 @@
 
         
 //        [Ignore]
-//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+//        [TestMethod]  [Timeout(60000)]
 //        public void CopyRepositoryItem()
 //        {
 //            // Arrange
@@ -60,7 +60,7 @@
 //        }
 
 
-//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+//        [TestMethod]  [Timeout(60000)]
 //        public void DuplicateRepositoryItem()
 //        {
 //            // Arrange

@@ -20,7 +20,7 @@ namespace UnitTests.NonUITests.AutoPilot
     [TestClass]
     public class APILearningTests
     {
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void APILearnWSDLStockSimbolTest()
         {
             //Arrange
@@ -51,7 +51,7 @@ namespace UnitTests.NonUITests.AutoPilot
             await Task.Run(() => wsdlParser.ParseDocument(path, AAMSList));
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void XMLTemplateParesrCreatePaymentProfile()
         {
             //Arrange                        
@@ -77,7 +77,7 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters[0].OptionalValuesList[0].Value, "46451012", "OptionalValue check");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void JSONTemplateCreateBillingArrangement()
         {
             //Arrange                        
@@ -104,7 +104,7 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters[0].OptionalValuesList[0].Value, "restOwner", "OptionalValue check");
         }
 
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void APILearnSwaggerMetroTest()
         {
             //Arrange

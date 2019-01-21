@@ -87,7 +87,7 @@
       
 
 
-//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+//        [TestMethod]  [Timeout(60000)]
 //        public void TestMethod1()
 //        {
             

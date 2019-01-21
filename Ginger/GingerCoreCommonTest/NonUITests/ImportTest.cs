@@ -45,7 +45,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        //[TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        //[TestMethod]  [Timeout(60000)]
         //public void ObjectCount_OR()
         //{
         //    //Arrange            
@@ -64,7 +64,7 @@ namespace UnitTests.NonUITests
         //}
 
 
-        //[TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        //[TestMethod]  [Timeout(60000)]
         //public void BusAndAssociatedGUI()
         //{
         //    //Arrange   
@@ -100,7 +100,7 @@ namespace UnitTests.NonUITests
         //}
 
         [Level3]
-        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
+        [TestMethod]  [Timeout(60000)]
         public void Import_ASAP_1()
         {
             //Arrange            
