@@ -69,7 +69,7 @@
 
 
 
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void StartLocalDriverFromPlugin()
 //        {
 //            //Arrange  
@@ -99,7 +99,7 @@
 
         
 
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void StartX3LocalDriverFromPlugin()
 //        {
 //            //Arrange  
@@ -129,7 +129,7 @@
 //        }
 
 //        [Priority(9)]
-//        [TestMethod]  [Timeout(60000)]
+//        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
 //        public void StartFiveLocalDriverFromPluginParallerRun()
 //        {
 //            //Arrange  

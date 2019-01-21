@@ -90,7 +90,7 @@ namespace UnitTests.NonUITests
         
         #endregion
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void JSonTests()
         {
             
@@ -112,7 +112,7 @@ namespace UnitTests.NonUITests
             //
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void XMLTests()
         {
             ActXMLTagValidation XTA = new ActXMLTagValidation();

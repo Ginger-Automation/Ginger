@@ -77,7 +77,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void PluginSay()
         {
             //Arrange
@@ -103,7 +103,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void SpeedTest()
         {
             //Arrange

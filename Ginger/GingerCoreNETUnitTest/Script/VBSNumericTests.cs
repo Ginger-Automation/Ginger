@@ -35,7 +35,7 @@ namespace GingerCoreNETUnitTest.Script
         }
         #endregion
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void SimpleExpressionTest()
         {
             //Arrange
@@ -48,7 +48,7 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual("2", result, "Simple Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void RoundExpressionTest()
         {
             //Arrange
@@ -71,7 +71,7 @@ namespace GingerCoreNETUnitTest.Script
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void IntExpressionTest()
         {
             //Arrange

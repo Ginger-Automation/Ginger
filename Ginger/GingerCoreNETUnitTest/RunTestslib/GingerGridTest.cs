@@ -86,7 +86,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
 
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ListGingerNodes()
         {
             //Arrange  
@@ -100,7 +100,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
 
         // FIXME
-        //[TestMethod]  [Timeout(60000)]
+        //[TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         //// TODO: find how we can utilize categories
         //public void DummyDriverA1()
         //{

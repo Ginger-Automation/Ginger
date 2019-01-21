@@ -147,7 +147,7 @@ namespace UnitTests.UITests.JavaDriverTest
         /**
          * TextField Test Cases  
         */
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void SetTextFieldValue()
         {
             ActJavaElement a = new ActJavaElement();
@@ -167,7 +167,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(ExInfo, "Text Field Value Set to - " + a.Value, "ExInfo");          
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void GetTextFieldValue()
         {
             PayLoad plText = new PayLoad("ElementAction");
@@ -196,7 +196,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void IsTextFieldEnabled()
         {
             ActJavaElement a = new ActJavaElement();
@@ -215,7 +215,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
        
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void AsyncDialogClickandDismiss()
         {
             ActJavaElement asyncClickAction = new ActJavaElement();
@@ -249,7 +249,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(acceptdialogAction.Error, null, "Act.Error");            
         }      
         
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void GetDialogText()
         {
             //*************Create Dialog*********************//
@@ -302,7 +302,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actAcceptDialog.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void AcceptDialog()
         {
             //*************Create Dialog*********************//
@@ -330,7 +330,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actAcceptDialog.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void SelectComponentByXPathInDialog()
         {
 
@@ -396,7 +396,7 @@ namespace UnitTests.UITests.JavaDriverTest
              RCSwitch = mDriver.Send(PLSwitch);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void SelectComponentByNameIndexInDialog()
         {
             PayLoad PLSwitch = new PayLoad("SwitchWindow");
@@ -450,7 +450,7 @@ namespace UnitTests.UITests.JavaDriverTest
         /**
          * TreeNode Test Cases  
         */
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void GetValueTreeNode()
         {
             PayLoad PLClick = new PayLoad("ElementAction");
@@ -479,7 +479,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actJavaElement.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void DoubleClickTreeNode()
         {
             ActJavaElement doubleClickAction = new ActJavaElement();
@@ -502,7 +502,7 @@ namespace UnitTests.UITests.JavaDriverTest
         /**
          * Menu Item Test Cases  
         */
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ClickMenu()
         {
             ActJavaElement menuClickAction = new ActJavaElement();
@@ -569,7 +569,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actDismissDialog.Error, null, "Act.Error");
         }
         
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void GetButtonText()
         {
 
@@ -592,7 +592,7 @@ namespace UnitTests.UITests.JavaDriverTest
            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void IsButtonEnabled()
         {
             ActJavaElement a = new ActJavaElement();
@@ -614,7 +614,7 @@ namespace UnitTests.UITests.JavaDriverTest
            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ToggleCheckBox()
         {
             ActJavaElement a = new ActJavaElement();
@@ -632,7 +632,7 @@ namespace UnitTests.UITests.JavaDriverTest
            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void IfCheckboxChecked()
         {
             ActJavaElement a = new ActJavaElement();
@@ -647,7 +647,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void GetCheckBoxValue()
         {
             ActJavaElement a = new ActJavaElement();
@@ -667,7 +667,7 @@ namespace UnitTests.UITests.JavaDriverTest
            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void IsCheckBoxEnabled()
         {
             ActJavaElement a = new ActJavaElement();
@@ -687,7 +687,7 @@ namespace UnitTests.UITests.JavaDriverTest
            Assert.AreEqual(a.Error, null, "Act.Error");
         }        
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void SelectRadioButton()
         {
             ActJavaElement a = new ActJavaElement();
@@ -704,7 +704,7 @@ namespace UnitTests.UITests.JavaDriverTest
            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void GetRadioButtonValue()
         {
             ActJavaElement a = new ActJavaElement();
@@ -724,7 +724,7 @@ namespace UnitTests.UITests.JavaDriverTest
            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void IsRadioButtonSelected()
         {
             ActJavaElement a = new ActJavaElement();
@@ -744,7 +744,7 @@ namespace UnitTests.UITests.JavaDriverTest
            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void SelectComboBoxValue()
         {
             ActJavaElement a = new ActJavaElement();
@@ -762,7 +762,7 @@ namespace UnitTests.UITests.JavaDriverTest
            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void GetComboBoxSelectedValue()
         {
             ActJavaElement a = new ActJavaElement();
@@ -782,7 +782,7 @@ namespace UnitTests.UITests.JavaDriverTest
            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void SetTabSelected()
         {
             ActJavaElement actSelectTab = new ActJavaElement();
@@ -801,7 +801,7 @@ namespace UnitTests.UITests.JavaDriverTest
            Assert.AreEqual(actSelectTab.Error, null, "Act.Error");
         }
         
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void GetSelectedTabText()
         {
             ActJavaElement actSelectTab = new ActJavaElement();
@@ -838,7 +838,7 @@ namespace UnitTests.UITests.JavaDriverTest
            Assert.AreEqual(a.Error, null, "Act.Error");
         }
         
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ClickButton()
         {
             ActJavaElement a = new ActJavaElement();
@@ -860,7 +860,7 @@ namespace UnitTests.UITests.JavaDriverTest
         }
         
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void SetValueInTableCell()
         {
             PayLoad PLTable = new PayLoad("TableAction");
@@ -909,7 +909,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(ExInfo, "Text Field Value Set to - " + actTableElement.Value, "ExInfo");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void ActivateRowInTable()
         {
             ActTableElement actTableElement = new ActTableElement();
@@ -933,7 +933,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void GetValueFromTable()
         {
             ActTableElement actTableElement = new ActTableElement();
@@ -958,7 +958,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "2", "ExInfo");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void GetRowCountFromTable()
         {
             ActTableElement actTableElement = new ActTableElement();
@@ -983,7 +983,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "4", "ExInfo");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void CheckIsCellVisibleInTable()
         {
             ActTableElement actTableElement = new ActTableElement();
@@ -1008,7 +1008,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void CheckIsCellEnabledInTable()
         {
             ActTableElement actTableElement = new ActTableElement();
@@ -1033,7 +1033,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void GetValueFromTableUsingWhereClause()
         {
             ActTableElement actTableElement = new ActTableElement();
@@ -1063,7 +1063,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "1", "ExInfo");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void DoubleClickOnTableCell()
         {
             ActTableElement actTableElement = new ActTableElement();
@@ -1094,7 +1094,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(ExInfo, "Double Click Activity Passed", "ExInfo");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void GetSelectedInternalFrameTitle()
         {
             ActJavaElement actSelectInternalFrame = new ActJavaElement();

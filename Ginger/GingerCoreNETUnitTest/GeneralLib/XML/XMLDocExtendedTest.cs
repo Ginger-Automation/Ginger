@@ -43,14 +43,14 @@ namespace GingerCoreNETUnitTest.GeneralLib.XML
         }
 
         [Level2]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void XMLDocGetAllNodesTest()
 
         {
             Assert.AreEqual(191, XDE.GetAllNodes().Count);
         }
         [Level2]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void XMLDocGetTerminalNodesTest()
 
         {
@@ -68,7 +68,7 @@ namespace GingerCoreNETUnitTest.GeneralLib.XML
         }
 
         [Level2]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(TimeSpan.FromSeconds(60))]
         public void XMLDocExtendedValidateXpathGenerated()
 
         {
