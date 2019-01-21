@@ -423,7 +423,7 @@ namespace Ginger
             Reporter.ToLog(eLogLevel.INFO, "######################## Application version " + App.AppVersion + " Started ! ########################");
 
             AppSplashWindow.LoadingInfo("Init Application");
-
+            WorkSpace.AppVersion = App.AppShortVersion;
             // We init the classes dictionary for the Repository Serializer only once
             InitClassTypesDictionary();
 
