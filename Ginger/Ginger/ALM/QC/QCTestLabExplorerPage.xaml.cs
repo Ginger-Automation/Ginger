@@ -144,6 +144,12 @@ namespace Ginger.ALM.QC {
                 CurrentSelectedPath = ((QCTestLabFolderTreeItem)mCurrentSelectedTreeItem).Path;
                 ShowTestSetDetailsPanel(false);
             }
+            if (GingerCore.ALM.QCRestAPI.ImportFromQCRest.OpenALMConnectionPageFlag == true)
+            {
+                ALMConnectionPage almConnPage = new ALMConnectionPage(ALMIntegration.eALMConnectType.SettingsPage);
+                almConnPage.ShowAsWindow();
+            }
+
         }
 
         private void GetFolderChildTestSets(ITreeViewItem folder)

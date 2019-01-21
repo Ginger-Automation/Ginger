@@ -26,6 +26,7 @@ using Ginger.UserControls;
 using System.ComponentModel;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using System.Windows.Input;
 
 namespace Ginger.ALM
 {
@@ -42,17 +43,32 @@ namespace Ginger.ALM
 
         public static string LoadFieldsState = "aa";
 
+
         public ALMItemsFieldsConfigurationPage()
         {
             InitializeComponent();
 
             mItemsFields =  WorkSpace.UserProfile.Solution.ExternalItemsFields;
-            ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, false, null);
             if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
+                //Get latestALMFields from ALMCore with Online flag
                 RunWorker(true);
             }
+            else //Get latestALMFields from ALMCore without Online flag
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, false, null);
+                Mouse.OverrideCursor = null;
 
+                if (GingerCore.ALM.QCRestAPI.ImportFromQCRest.OpenALMConnectionPageFlag == true)
+                {
+                    //genWin.Hide();
+
+                    ALMConnectionPage almConnPage = new ALMConnectionPage(ALMIntegration.eALMConnectType.SettingsPage);
+                    almConnPage.ShowAsWindow();
+                }
+            }
+            
             grdQCFields.DataSourceList = mItemsFields;
             SetFieldsGrid();
         }
@@ -142,6 +158,11 @@ namespace Ginger.ALM
             if (mItemsFields.Count != 0)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "ALM Item Fields population is complete");
+            }
+            if (GingerCore.ALM.QCRestAPI.ImportFromQCRest.OpenALMConnectionPageFlag == true)
+            {
+                ALMConnectionPage almConnPage = new ALMConnectionPage(ALMIntegration.eALMConnectType.SettingsPage);
+                almConnPage.ShowAsWindow();
             }
         }
         #endregion

@@ -28,13 +28,14 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web;
-
 namespace GingerCore.ALM.QCRestAPI
 {
     public static class ImportFromQCRest
     {
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
+
+        public static bool OpenALMConnectionPageFlag = false;
 
         #region Public Functions
         public static QCTestInstanceColl ImportTestSetInstanceData(QCTestSet TS)
@@ -615,7 +616,7 @@ namespace GingerCore.ALM.QCRestAPI
             string runfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_RUN);
             List<QCField> runfieldsCollection = QCRestAPIConnect.GetFields(runfieldInRestSyntax);
 
-            if (testSetfieldsCollection != null || testCasefieldsCollection != null || designStepfieldsCollection != null || testInstancefieldsCollection != null || designStepParamsfieldsCollection != null || runfieldsCollection != null)
+            if (testSetfieldsCollection != null && testCasefieldsCollection != null && designStepfieldsCollection != null && testInstancefieldsCollection != null && designStepParamsfieldsCollection != null && runfieldsCollection != null)
             {
                 fields.Append(AddFieldsValues(testSetfieldsCollection, testSetfieldInRestSyntax));
                 fields.Append(AddFieldsValues(testCasefieldsCollection, testCasefieldInRestSyntax));
@@ -626,7 +627,10 @@ namespace GingerCore.ALM.QCRestAPI
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.QcCheckRestApi, "ALM Connection Message.");
+                if (Reporter.ToUser(eUserMsgKey.QcCheckRestApi, "ALM Connection Message.") == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                {
+                    OpenALMConnectionPageFlag = true;
+                }
             }
 
             return fields;
