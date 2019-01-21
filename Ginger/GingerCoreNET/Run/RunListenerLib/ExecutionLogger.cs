@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
@@ -340,9 +341,7 @@ namespace Ginger.Run
 
         
 
-        public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0)
-           
-        // public void GingerEnd(GingerRunner GR = null, string filename = null, int runnerCount = 0)
+        public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0)                   
         {
 
             if (gingerRunner == null)
@@ -472,8 +471,7 @@ namespace Ginger.Run
         }
 
         public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode= false)
-        {
-            //bool offlineMode = false; // !!!!!!!!!!!!!!!!!!!!        
+        {            
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {                
                 BusinessFlowReport BFR = new BusinessFlowReport(businessFlow);
@@ -567,9 +565,6 @@ namespace Ginger.Run
 
         public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode= false)
         { 
-
-            //bool offlineMode = false; // !!!!!!!!!!!!!!!!!!!
-
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {                
                 ActivityReport AR = new ActivityReport(activity);
@@ -648,7 +643,6 @@ namespace Ginger.Run
 
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode=false)
         {                    
-             //offlineMode = false;  // !!!!!!!!!!!!!!!!!!!!!!
             // if user set special action log in output
             if (action.EnableActionLogConfig)
             {                                             
@@ -1100,8 +1094,6 @@ namespace Ginger.Run
 
         public bool OfflineBusinessFlowExecutionLog(BusinessFlow businessFlow, string logFolderPath)
         {
-            //return true;
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FIXME
             try
             {
                 //handle root directory
