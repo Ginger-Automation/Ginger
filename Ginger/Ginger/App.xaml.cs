@@ -579,9 +579,7 @@ namespace Ginger
             AddClass(list, typeof(RunSetActionSendSMS));
             AddClass(list, typeof(RunSetActionPublishToQC));
             AddClass(list, typeof(ActSetVariableValue));
-            AddClass(list, typeof(ActAgentManipulation));
-            AddClass(list, typeof(RunSetActionPublishToQC));
-            AddClass(list, typeof(EmailAttachment));
+            AddClass(list, typeof(ActAgentManipulation));       
             AddClass(list, typeof(UserProfile));
             AddClass(list, typeof(Solution));
             AddClass(list, typeof(Email));
