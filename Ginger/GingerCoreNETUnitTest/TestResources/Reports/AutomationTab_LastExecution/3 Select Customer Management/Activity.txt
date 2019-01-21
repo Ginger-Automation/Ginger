@@ -1,0 +1,1 @@
+{"Seq":3,"GUID":"73c38037-67d3-4d66-98d5-794a2ad091cd","ActivityName":"Select Customer Management","StartTimeStamp":"2019-01-19T14:29:51.5550529Z","EndTimeStamp":"2019-01-19T14:30:04.0342023Z","Elapsed":12368,"RunStatus":"Passed","VariablesBeforeExec":[],"VariablesAfterExec":[]}

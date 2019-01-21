@@ -7,6 +7,7 @@ using GingerTestHelper;
 using GingerUtils.TimeLine;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
@@ -23,7 +24,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
             mGingerRunner = new GingerRunner();
             mGingerRunnerTimeLine = new GingerRunnerTimeLine();
             mGingerRunner.RunListeners.Add(mGingerRunnerTimeLine);
-
+            RunListenerBase.Start();
+            Thread.Sleep(10);
         }
 
         [ClassCleanup]
@@ -63,8 +65,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             mGingerRunner.BusinessFlows.Add(mBF);
 
 
-            //Act
-            RunListenerBase.Start();
+            //Act            
             mGingerRunner.RunBusinessFlow(mBF);
 
             List<TimeLineEvent> events = mGingerRunnerTimeLine.timeLineEvents.EventList;
@@ -92,7 +93,12 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.IsTrue(actionLineEvent.Start != 0, "Action TimeLine Event.Start !=0");
             Assert.IsTrue(actionLineEvent.End != 0, "Action TimeLine Event.End !=0");
             Assert.AreEqual("Action", actionLineEvent.ItemType, "ItemType");
+
+
+            //TODO: add more test that timeline is in boundries of parent
         }
+
+        
 
     }
 
