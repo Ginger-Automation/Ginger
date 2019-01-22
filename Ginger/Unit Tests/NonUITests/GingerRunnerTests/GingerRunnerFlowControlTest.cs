@@ -33,7 +33,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
     [TestClass]
-    [Level1]
+    
     public class GingerRunnerFlowControlTest 
     {
 
