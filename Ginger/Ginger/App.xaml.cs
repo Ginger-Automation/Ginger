@@ -423,7 +423,7 @@ namespace Ginger
             Reporter.ToLog(eLogLevel.INFO, "######################## Application version " + App.AppVersion + " Started ! ########################");
 
             AppSplashWindow.LoadingInfo("Init Application");
-
+            WorkSpace.AppVersion = App.AppShortVersion;
             // We init the classes dictionary for the Repository Serializer only once
             InitClassTypesDictionary();
 
@@ -579,9 +579,7 @@ namespace Ginger
             AddClass(list, typeof(RunSetActionSendSMS));
             AddClass(list, typeof(RunSetActionPublishToQC));
             AddClass(list, typeof(ActSetVariableValue));
-            AddClass(list, typeof(ActAgentManipulation));
-           
-            AddClass(list, typeof(EmailAttachment));
+            AddClass(list, typeof(ActAgentManipulation));       
             AddClass(list, typeof(UserProfile));
             AddClass(list, typeof(Solution));
             AddClass(list, typeof(Email));
