@@ -24,7 +24,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
-
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
 using GingerCore;
@@ -53,7 +53,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.ALMLib.ALMIntegration;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 
 namespace Ginger.Run
 {
@@ -446,7 +445,7 @@ namespace Ginger.Run
                 }
 
                 //Init 
-                Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Started;
+                Status = eRunStatus.Started;
                 mIsRunning = true;
                 mStopRun = false;
                 if (doContinueRun == false)
@@ -1995,8 +1994,15 @@ namespace Ginger.Run
             NewPayLoad p = CreateActionPayload(actPlugin);
             NewPayLoad RC = GNP.RunAction(p);
 
-            // After we send it we parse the driver response
+            // release the node as soon as the result came in
+            bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, actPlugin.ServiceId);
+            if (!IsSessionService)
+            {
+                // standalone plugin action release the node
+                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
+            }
 
+            // After we send it we parse the driver response
             if (RC.Name == "ActionResult")
             {
                 // We read the ExInfo, Err and output params
@@ -2043,13 +2049,7 @@ namespace Ginger.Run
             }
 
             gingerNodeInfo.IncreaseActionCount();
-
-            bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, actPlugin.ServiceId);
-            if (!IsSessionService) 
-            {
-                // standalone plugin action release the node
-                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
-            }
+            
             st.Stop();
             long millis = st.ElapsedMilliseconds;
             actPlugin.ExInfo += Environment.NewLine + "Elapsed: " +  millis + "ms";

@@ -40,6 +40,7 @@ using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.Environments;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Repository;
 using GingerCore.Repository.UpgradeLib;
@@ -576,13 +577,15 @@ namespace Ginger
             AddClass(list, typeof(RunSetActionSaveResults));
             AddClass(list, typeof(RunSetActionSendFreeEmail));
             AddClass(list, typeof(RunSetActionSendSMS));
+            AddClass(list, typeof(RunSetActionPublishToQC));
             AddClass(list, typeof(ActSetVariableValue));
             AddClass(list, typeof(ActAgentManipulation));
 
             AddClass(list, typeof(UserProfile));
             AddClass(list, typeof(Solution));
-
-
+            AddClass(list, typeof(Email));
+            AddClass(list, typeof(EmailAttachment));
+            AddClass(list, typeof(RunSetActionScript));
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
 
