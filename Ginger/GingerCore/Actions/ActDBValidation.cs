@@ -133,7 +133,7 @@ namespace GingerCore.Actions
             get
             {try
                 {
-                    if (DB.DBType == Database.eDBTypes.Cassandra)
+                    if (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase)
                         return eDatabaseTye.NoSQL;
                     else return eDatabaseTye.Relational;
                 }
