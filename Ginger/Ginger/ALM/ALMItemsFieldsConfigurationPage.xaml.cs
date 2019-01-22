@@ -62,8 +62,6 @@ namespace Ginger.ALM
 
                 if (GingerCore.ALM.QCRestAPI.ImportFromQCRest.OpenALMConnectionPageFlag == true)
                 {
-                    //genWin.Hide();
-
                     ALMConnectionPage almConnPage = new ALMConnectionPage(ALMIntegration.eALMConnectType.SettingsPage);
                     almConnPage.ShowAsWindow();
                 }
