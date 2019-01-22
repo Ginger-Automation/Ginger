@@ -678,6 +678,10 @@ namespace GingerCore.Actions
 
                     foreach (Process process in processlist)
                     {
+                        if (process.StartInfo.Environment["USERNAME"] != Environment.UserName)
+                        {
+                            continue;
+                        }
                         if (BlockingJavaWindow) 
                         {
                             if (CheckForBlockWindow(process))

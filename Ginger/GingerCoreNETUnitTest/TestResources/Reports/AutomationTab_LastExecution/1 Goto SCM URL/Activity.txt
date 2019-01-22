@@ -1,0 +1,1 @@
+{"Seq":1,"GUID":"6d6d4d03-28fa-4e1f-8791-b7a7800bb899","ActivityName":"Goto SCM URL","StartTimeStamp":"2019-01-19T14:29:18.6299125Z","EndTimeStamp":"2019-01-19T14:29:48.7226955Z","Elapsed":21220,"RunStatus":"Passed","VariablesBeforeExec":[],"VariablesAfterExec":[]}
