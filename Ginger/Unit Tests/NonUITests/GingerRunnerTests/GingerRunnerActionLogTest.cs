@@ -29,7 +29,7 @@ using System.Text.RegularExpressions;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
-    [Level1]
+
     [TestClass]
     public class GingerRunnerActionLogTest
     {
