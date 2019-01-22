@@ -4321,6 +4321,10 @@ namespace Ginger.Run
             activityGroup.EndTimeStamp = eventTime;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
+                if(runnerListener.ToString() == nameof(Ginger.Run.ExecutionLogger))
+                {
+                    ((Ginger.Run.ExecutionLogger)runnerListener).mCurrentBusinessFlow = CurrentBusinessFlow;
+                }
                 runnerListener.ActivityGroupEnd(eventTime, activityGroup);
             }
         }
