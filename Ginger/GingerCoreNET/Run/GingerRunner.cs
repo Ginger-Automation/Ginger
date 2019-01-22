@@ -1858,7 +1858,8 @@ namespace Ginger.Run
                 //Adding for New Control
                 else if (item.StoreTo == ActReturnValue.eStoreTo.DataSource && !String.IsNullOrEmpty(item.StoreToValue))
                 {
-                    act.ValueExpression.Calculate(item.Actual);
+                    ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList, true, item.Actual);
+                    VE.Calculate(item.StoreToValue);
                 }
                 else if(item.StoreTo == ActReturnValue.eStoreTo.ApplicationModelParameter && !string.IsNullOrEmpty(item.StoreToValue))
                 {
@@ -2251,6 +2252,7 @@ namespace Ginger.Run
                                     if (vals.Count() == 2)
                                     {
                                         ActSetVariableValue setValueAct = new ActSetVariableValue();
+                                        PrepActionValueExpression(setValueAct, CurrentBusinessFlow);
                                         setValueAct.VariableName = vals[0];
                                         setValueAct.SetVariableValueOption = VariableBase.eSetValueOptions.SetValue;
                                         setValueAct.Value = vals[1];
