@@ -857,7 +857,7 @@ namespace Ginger.Run
                 //Not suppose to happen but just in case        
                 if (act == null)
                 {
-                    Reporter.ToUser(eUserMsgKey.AskToSelectAction);
+                    //Reporter.ToUser(eUserMsgKey.AskToSelectAction);
                     return;
                 }
 
@@ -4176,6 +4176,7 @@ namespace Ginger.Run
         private void NotifyActionEnd(Act action)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+            action.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActionEnd(eventTime, action);
