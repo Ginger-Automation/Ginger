@@ -1,4 +1,4 @@
-#region License
+E#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -32,7 +32,7 @@ namespace UnitTests.NonUITests
 {
     [TestClass]
     [Level3]
-
+    [Ignore]
     public class JSPayloadTest 
     {
 
