@@ -393,7 +393,7 @@ namespace Ginger
                 {
                     // This Ginger is running with run set config will do the run and close Ginger
                     WorkSpace.RunningInExecutionMode = true;
-                    Reporter.RunningInExecutionMode = true; //needed so all reportering will be added to Consol
+                    Reporter.ReportAllAlsoToConsole = true; //needed so all reportering will be added to Consol
                     //Reporter.AppLogLevel = eAppReporterLoggingLevel.Debug;//needed so all reportering will be added to Log file
                 }
             }
