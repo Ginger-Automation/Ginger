@@ -37,9 +37,6 @@ namespace Ginger.ALM.QC.TreeViewItems
 
         public List<ITreeViewItem> CurrentChildrens = null;
 
-        public static bool OpenALMConnectionPageFlag = false;
-
-
         Object ITreeViewItem.NodeObject()
         {
             return null;
@@ -101,7 +98,8 @@ namespace Ginger.ALM.QC.TreeViewItems
                 //Msg to user ALM Connection check 
                 if (Reporter.ToUser(eUserMsgKey.QcCheckRestApi, "ALM Connection Message.") == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
-                    OpenALMConnectionPageFlag = true;
+                    ALMConnectionPage almConnPage = new ALMConnectionPage(ALMIntegration.eALMConnectType.SettingsPage);
+                    almConnPage.ShowAsWindow();
                 }
             }
             return CurrentChildrens;
