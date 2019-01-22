@@ -48,6 +48,7 @@ namespace GingerCore.Environments
             Cassandra,
             PostgreSQL,
             MySQL,
+            Couchbase,
         }
 
         public enum eConfigType
@@ -406,6 +407,16 @@ namespace GingerCore.Environments
                             LastConnectionUsedTime = DateTime.Now;
                         return true;
                         break;
+                    case eDBTypes.Couchbase:
+                        GingerCouchbase CouchbaseDriver = new GingerCouchbase(this);
+                        bool isConnectionCB;
+                        isConnectionCB = CouchbaseDriver.Connect();
+                        if (isConnectionCB == true)
+                        { 
+                            LastConnectionUsedTime = DateTime.Now;
+                        }
+                        return true;
+                        break;
 
                     case eDBTypes.MySQL:
                         oConn = new MySqlConnection();
@@ -477,6 +488,11 @@ namespace GingerCore.Environments
                         NoSqlBase.NoSqlBase NoSqlDriver = null;
                         NoSqlDriver = new GingerCassandra(this);
                         rc = NoSqlDriver.GetTableList(Keyspace);
+                    } else if (DBType == Database.eDBTypes.Couchbase)
+                    {
+                        NoSqlBase.NoSqlBase NoSqlDriver = null;
+                        NoSqlDriver = new GingerCouchbase(this);
+                        rc = NoSqlDriver.GetTableList(Keyspace);
                     }
                     else
                     {
@@ -529,6 +545,11 @@ namespace GingerCore.Environments
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerCassandra(this);
+                rc = NoSqlDriver.GetColumnList(table);
+            }else if (DBType == Database.eDBTypes.Couchbase)
+            {
+                NoSqlBase.NoSqlBase NoSqlDriver = null;
+                NoSqlDriver = new GingerCouchbase(this);
                 rc = NoSqlDriver.GetColumnList(table);
             }
             else 
