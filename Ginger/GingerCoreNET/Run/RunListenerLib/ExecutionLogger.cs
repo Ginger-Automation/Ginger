@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
@@ -269,6 +270,7 @@ namespace Ginger.Run
             using (JsonWriter writer = new JsonTextWriter(SW))
             {
                 mJsonSerializer.Serialize(writer, obj);
+                SW.Dispose();
             }
         }
 
@@ -371,7 +373,7 @@ namespace Ginger.Run
                 gingerReport.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName+ "_:_" + a.AppName).ToList();
                 gingerReport.EnvironmentName = gingerRunner.ProjEnvironment != null ? gingerRunner.ProjEnvironment.Name : string.Empty;
                 gingerReport.Elapsed = (double)gingerRunner.Elapsed / 1000;
-                // gingerReport.LogFolder = filename;   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FIXME
+                gingerReport.LogFolder = filename;   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FIXME
                 SaveObjToJSonFile(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");
                 this.ExecutionLogBusinessFlowsCounter = 0;
                 this.BFCounter = 0;

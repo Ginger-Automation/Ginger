@@ -3321,7 +3321,14 @@ namespace Ginger.Run
                     Status = RunsetStatus;            
                 }
 
-                NotifyBusinessFlowEnd(CurrentBusinessFlow);
+                if (doContinueRun == false)
+                {
+                    NotifyBusinessFlowEnd(CurrentBusinessFlow);
+                }
+                else
+                {
+                    NotifyBusinessFlowEnd(CurrentBusinessFlow, true);
+                }
 
                                 
             }
@@ -4243,13 +4250,21 @@ namespace Ginger.Run
         }
 
 
-        private void NotifyBusinessFlowEnd(BusinessFlow businessFlow)
+        private void NotifyBusinessFlowEnd(BusinessFlow businessFlow , bool offlinemode= false)
         {
             uint eventTime = RunListenerBase.GetEventTime();
             businessFlow.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.BusinessFlowEnd(eventTime, CurrentBusinessFlow);
+                if (!offlinemode)
+                {
+                    runnerListener.BusinessFlowEnd(eventTime, CurrentBusinessFlow);
+                }
+                else
+                {
+                    runnerListener.BusinessFlowEnd(eventTime, CurrentBusinessFlow, offlinemode);
+                }
+          
             }
         }
 
