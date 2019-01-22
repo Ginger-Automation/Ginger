@@ -83,19 +83,66 @@ namespace Ginger.BusinessFlowWindows
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             int SelectedPlatformCount = 0;
-            mBusinessFlow.TargetApplications.Clear();
-            foreach (ApplicationPlatform TA in mApplicationsPlatforms)
+            if(SelectedPlatformCount>1)
+            if (!(mBusinessFlow.TargetApplications.Count >=2))
             {
-                if (TA.Selected)
+                mBusinessFlow.TargetApplications.Clear();
+
+                foreach (ApplicationPlatform TA in mApplicationsPlatforms)
                 {
                     TargetApplication tt = new TargetApplication();
-                    tt.AppName = TA.AppName;
-                    tt.Selected = true;
-                    mBusinessFlow.TargetApplications.Add(tt);
-                    SelectedPlatformCount++;
+                    if (TA.Selected)
+                    {
+                        tt.AppName = TA.AppName;
+                        tt.Selected = true;
+                        mBusinessFlow.TargetApplications.Add(tt);
+                        SelectedPlatformCount++;
+                        mBusinessFlow.CurrentActivity.TargetApplication = tt.Name;
+                    }
+                   
+                    if (SelectedPlatformCount > 1)
+                    {
+                        mBusinessFlow.CurrentActivity.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
+                        break;
+                    }
+                   
+                }
+                //if (SelectedPlatformCount == 1)
+                //{
+                //    foreach (Activity act in mBusinessFlow.Activities)
+                //    {
+                //        act.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
+                //    }
+                //}
+            }
+            else
+            {
+                mBusinessFlow.TargetApplications.Clear();
+                TargetApplication tt = new TargetApplication();
+                foreach (ApplicationPlatform TA in mApplicationsPlatforms)
+                {
+
+                    if (TA.Selected)
+                    {
+                        tt.AppName = TA.AppName;
+                        tt.Selected = true;
+                        mBusinessFlow.TargetApplications.Add(tt);
+                        SelectedPlatformCount++;
+                    }
+
+                }
+                if (SelectedPlatformCount == 1)
+                {
+                    foreach (Activity act in mBusinessFlow.Activities)
+                    {
+                        act.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
+                    }
+                }
+                else
+                {
+
                 }
             }
-
             if (App.BusinessFlow == mBusinessFlow)
             {
                 App.UpdateApplicationsAgentsMapping();
