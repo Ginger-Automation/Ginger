@@ -35,7 +35,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AddExecutionDetailsToLog(eExecutionPhase.End, "Runner", gingerRunner.Name, new GingerReport());
         }
 
-        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow)
+        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
         {
             mBusinessFlow = businessFlow;
             AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, new BusinessFlowReport(businessFlow));

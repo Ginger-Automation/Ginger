@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             Reset();
         }
 
-        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow)
+        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
         {
             mBusinessFlowCounter++;
             mActivitiesCounter = 0;

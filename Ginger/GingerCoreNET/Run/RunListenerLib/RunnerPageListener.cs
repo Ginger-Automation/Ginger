@@ -22,7 +22,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             UpdateStat.Invoke(this, null);
         }
 
-        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow)
+        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
         {
             UpdateStat.Invoke(this, null);
         }
