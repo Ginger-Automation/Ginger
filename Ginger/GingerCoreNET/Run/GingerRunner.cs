@@ -559,7 +559,7 @@ namespace Ginger.Run
                     if (doContinueRun == false)
                     {
                         // ExecutionLogger.GingerEnd();
-                        NotifyRunnerRunEnd();
+                        NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
                     }
                 }   
                 else
@@ -2785,7 +2785,14 @@ namespace Ginger.Run
 
             //Run the Activity
             CurrentBusinessFlow.CurrentActivity.Status = eRunStatus.Running;
-            NotifyActivityStart(CurrentBusinessFlow.CurrentActivity);
+            if (doContinueRun)
+            {
+                NotifyActivityStart(CurrentBusinessFlow.CurrentActivity, doContinueRun);
+            }
+            else
+            {
+                NotifyActivityStart(CurrentBusinessFlow.CurrentActivity);
+            }
             if (SolutionApplications != null && SolutionApplications.Where(x => (x.AppName == activity.TargetApplication && x.Platform == ePlatformType.NA)).FirstOrDefault() == null)
             {
                 //load Agent only if Activity includes Actions which needs it
@@ -3176,9 +3183,13 @@ namespace Ginger.Run
                     }
                 }
 
+                
                 CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
 
-                NotifyBusinessFlowStart(CurrentBusinessFlow);
+                if (!doContinueRun)
+                {
+                    NotifyBusinessFlowStart(CurrentBusinessFlow);
+                }
                 
 
                 mStopBusinessFlow = false;
@@ -4163,13 +4174,12 @@ namespace Ginger.Run
             });
         }
 
-        void NotifyRunnerRunEnd()
-        {
-
+        void NotifyRunnerRunEnd(string ExecutionLogFolder= null)
+        { 
             uint evetTime = RunListenerBase.GetEventTime();
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.RunnerRunEnd(evetTime, this);
+                runnerListener.RunnerRunEnd(evetTime, this, ExecutionLogFolder);
             }
         }
 
@@ -4221,13 +4231,13 @@ namespace Ginger.Run
         }
 
 
-        private void NotifyActivityStart(Activity activity)
+        private void NotifyActivityStart(Activity activity, bool continuerun=false)
         {
             uint evetTime = RunListenerBase.GetEventTime();
             activity.StartTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.ActivityStart(evetTime, CurrentBusinessFlow.CurrentActivity);
+                runnerListener.ActivityStart(evetTime, CurrentBusinessFlow.CurrentActivity, continuerun);
             }
         }
 

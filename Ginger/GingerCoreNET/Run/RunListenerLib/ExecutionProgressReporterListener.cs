@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activityGroup.Name, new ActivityGroupReport(activityGroup, mBusinessFlow));
         }
 
-        public override void ActivityStart(uint eventTime, Activity activity)
+        public override void ActivityStart(uint eventTime, Activity activity, bool continuerun = false)
         {                        
             AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.Activity), activity.ActivityName, new ActivityReport(activity));
         }
