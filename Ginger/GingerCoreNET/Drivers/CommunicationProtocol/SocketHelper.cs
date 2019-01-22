@@ -42,52 +42,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
         private static void SetLocalHostIP()
         {
-            Console.WriteLine("Geting Local Host IP....");
-
-            //string newIpAddress = NetworkInterface
-            //    .GetAllNetworkInterfaces()
-            //    .FirstOrDefault(ni =>
-            //        ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet
-            //        && ni.OperationalStatus == OperationalStatus.Up
-            //        && ni.GetIPProperties().GatewayAddresses.FirstOrDefault() != null
-            //        && ni.GetIPProperties().UnicastAddresses.FirstOrDefault(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork) != null
-            //    )
-            //    ?.GetIPProperties()
-            //    .UnicastAddresses
-            //    .FirstOrDefault(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork)
-            //    ?.Address
-            //    ?.ToString()
-            //    ?? string.Empty;
-
-            //Console.WriteLine("IP Address:" + newIpAddress);
-
-            //return newIpAddress;
-
-
-            IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());            
-            List<IPAddress> IPList = ipEntry.AddressList.ToList();
-            Console.WriteLine("Number of IP Addresses Found: " + IPList.Count);
-
-            if (IPList.Count() == 1)
-            {
-                // if we have only one return it
-                LocalHostIP = IPList[0].ToString();
-            }
-            else if (IPList.Count() > 1)
-            {                
-                int i = 0;
-                foreach (IPAddress ip in IPList)
-                {
-                    i++;
-                    Console.WriteLine("IP Address [" + i + "] : " + ip.ToString());
-                    
-                    if (ip.AddressFamily == AddressFamily.InterNetwork)
-                    {
-                        LocalHostIP = ip.ToString();
-                    }                    
-                }
-            }
-
+            LocalHostIP = GingerUtils.Network.GetFirstLocalHostIPAddress();
             Console.WriteLine("Selected '" + LocalHostIP + "' as Local Host IP");
         }
 

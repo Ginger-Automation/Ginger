@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace GingerCoreNETUnitTests.RunTestslib
 {
-    [GingerService("DummyService","Dummy Service")]
+    [GingerService(Id : "DummyService", Group: "Dummy", Description: "Dummy Service")]
     public class DummyDriver : IServiceSession
     {
         public List<string> Platforms => throw new NotImplementedException();

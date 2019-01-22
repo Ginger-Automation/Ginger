@@ -53,7 +53,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.ALMLib.ALMIntegration;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 
 namespace Ginger.Run
 {
@@ -446,7 +445,7 @@ namespace Ginger.Run
                 }
 
                 //Init 
-                Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Started;
+                Status = eRunStatus.Started;
                 mIsRunning = true;
                 mStopRun = false;
                 if (doContinueRun == false)
@@ -1859,7 +1858,8 @@ namespace Ginger.Run
                 //Adding for New Control
                 else if (item.StoreTo == ActReturnValue.eStoreTo.DataSource && !String.IsNullOrEmpty(item.StoreToValue))
                 {
-                    act.ValueExpression.Calculate(item.Actual);
+                    ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList, true, item.Actual);
+                    VE.Calculate(item.StoreToValue);
                 }
                 else if(item.StoreTo == ActReturnValue.eStoreTo.ApplicationModelParameter && !string.IsNullOrEmpty(item.StoreToValue))
                 {
@@ -1995,8 +1995,15 @@ namespace Ginger.Run
             NewPayLoad p = CreateActionPayload(actPlugin);
             NewPayLoad RC = GNP.RunAction(p);
 
-            // After we send it we parse the driver response
+            // release the node as soon as the result came in
+            bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, actPlugin.ServiceId);
+            if (!IsSessionService)
+            {
+                // standalone plugin action release the node
+                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
+            }
 
+            // After we send it we parse the driver response
             if (RC.Name == "ActionResult")
             {
                 // We read the ExInfo, Err and output params
@@ -2043,13 +2050,7 @@ namespace Ginger.Run
             }
 
             gingerNodeInfo.IncreaseActionCount();
-
-            bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, actPlugin.ServiceId);
-            if (!IsSessionService) 
-            {
-                // standalone plugin action release the node
-                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
-            }
+            
             st.Stop();
             long millis = st.ElapsedMilliseconds;
             actPlugin.ExInfo += Environment.NewLine + "Elapsed: " +  millis + "ms";
@@ -2251,6 +2252,7 @@ namespace Ginger.Run
                                     if (vals.Count() == 2)
                                     {
                                         ActSetVariableValue setValueAct = new ActSetVariableValue();
+                                        PrepActionValueExpression(setValueAct, CurrentBusinessFlow);
                                         setValueAct.VariableName = vals[0];
                                         setValueAct.SetVariableValueOption = VariableBase.eSetValueOptions.SetValue;
                                         setValueAct.Value = vals[1];
