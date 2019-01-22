@@ -71,7 +71,7 @@ namespace Amdocs.Ginger.Run
 
 
         #region Activity
-        public virtual void ActivityStart(uint eventTime, Activity activity)
+        public virtual void ActivityStart(uint eventTime, Activity activity, bool continuerun= false)
         {
 
         }

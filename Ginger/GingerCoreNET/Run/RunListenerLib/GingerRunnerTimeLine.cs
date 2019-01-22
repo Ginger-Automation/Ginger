@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.Run
         }
 
         
-        public override void ActivityStart(uint eventTime, Activity activity)
+        public override void ActivityStart(uint eventTime, Activity activity,  bool continuerun = false)
         {
             ActivityTimeLineEvent = new TimeLineEvent("Activity", activity.ActivityName, eventTime);
             if (BusinessFlowTimeLineEvent != null)
