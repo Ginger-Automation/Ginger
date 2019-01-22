@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, new BusinessFlowReport(businessFlow));
         }
 
-        public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow)
+        public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
             AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, new BusinessFlowReport(businessFlow));
         }
@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.Activity), activity.ActivityName, new ActivityReport(activity));
         }
 
-        public override void ActivityEnd(uint eventTime, Activity activity)
+        public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode= false)
         {
             AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.Activity), activity.ActivityName, new ActivityReport(activity));
         }
@@ -61,7 +61,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AddExecutionDetailsToLog(eExecutionPhase.Start, "Action", action.Description, new ActionReport(action));
         }
 
-        public override void ActionEnd(uint eventTime, Act action)
+        public override void ActionEnd(uint eventTime, Act action, bool offlineMode=false)
         {
             AddExecutionDetailsToLog(eExecutionPhase.End, "Action", action.Description, new ActionReport(action));
         }

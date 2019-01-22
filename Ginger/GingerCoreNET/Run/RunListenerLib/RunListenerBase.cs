@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.Run
 
         }
 
-        public virtual void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner)
+        public virtual void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0)
         {
 
         }
@@ -58,7 +58,7 @@ namespace Amdocs.Ginger.Run
         {
 
         }
-        public virtual void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow)
+        public virtual void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
 
         }
@@ -75,7 +75,7 @@ namespace Amdocs.Ginger.Run
         {
 
         }
-        public virtual void ActivityEnd(uint eventTime, Activity activity)
+        public virtual void ActivityEnd(uint eventTime, Activity activity, bool offlineMode=false)
         {
 
         }
@@ -92,7 +92,7 @@ namespace Amdocs.Ginger.Run
         {
 
         }
-        public virtual void ActionEnd(uint eventTime, Act action)
+        public virtual void ActionEnd(uint eventTime, Act action, bool offlineMode= false)
         {
 
         }
@@ -155,6 +155,18 @@ namespace Amdocs.Ginger.Run
         }
         #endregion Action
 
+
+        //enum aa
+        //{
+        //    UserClickRunFlow
+        //        BreakPoint
+        //        User clicked Contrine
+        //}
+
+        //public virtual void FlowInterrruptiont(uint eventTime, enum)
+        //{
+
+        //}
 
 
     }
