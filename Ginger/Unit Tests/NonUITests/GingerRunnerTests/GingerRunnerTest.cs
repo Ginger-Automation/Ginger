@@ -36,7 +36,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
     [TestClass]
-   
+    [Level1]
     public class GingerRunnerTest
     {
 
