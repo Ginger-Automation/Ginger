@@ -286,10 +286,14 @@ namespace Ginger.Actions
             if (db == null) return;
             string KeySpace = KeySpaceComboBox.Text;
             List<string> Tables = db.GetTablesList(KeySpace);
-                foreach (string s in Tables)
-                {
-                    TablesComboBox.Items.Add(s);
-                }
+            if (Tables == null)
+            { 
+                return;
+            }
+            foreach (string s in Tables)
+            {
+                TablesComboBox.Items.Add(s);
+            }
         }
         
         private void ColumnComboBox_DropDownOpened(object sender, EventArgs e)
@@ -308,6 +312,10 @@ namespace Ginger.Actions
                 table = TablesComboBox.Text;
             }
             List<string> Columns = db.GetTablesColumns(table);
+            if (Columns == null)
+            {
+                return;
+            }                
             foreach (string s in Columns)
             {
                 ColumnComboBox.Items.Add(s);

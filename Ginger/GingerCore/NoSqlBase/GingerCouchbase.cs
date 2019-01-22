@@ -54,7 +54,7 @@ namespace GingerCore.NoSqlBase
                     Servers = new List<Uri> { new Uri(Db.TNSCalculated.ToString()) },//http://incespr021:8091                    
                 });
                 bool res = false;
-                String deCryptValue = EncryptionHandler.DecryptString(Db.PassCalculated.ToString(), ref res);
+                String deCryptValue = EncryptionHandler.DecryptString(Db.PassCalculated.ToString(), ref res, false);
                 if (res == true)
                 {
                     Db.Pass = deCryptValue;                    

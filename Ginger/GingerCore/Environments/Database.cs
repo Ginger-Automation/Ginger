@@ -412,7 +412,9 @@ namespace GingerCore.Environments
                         bool isConnectionCB;
                         isConnectionCB = CouchbaseDriver.Connect();
                         if (isConnectionCB == true)
+                        { 
                             LastConnectionUsedTime = DateTime.Now;
+                        }
                         return true;
                         break;
 
