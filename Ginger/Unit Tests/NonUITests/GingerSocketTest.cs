@@ -27,7 +27,7 @@ namespace UnitTests.NonUITests
 {
     [TestClass]
 
-
+    [Level1]
     public class GingerSocketTest 
     {
 
