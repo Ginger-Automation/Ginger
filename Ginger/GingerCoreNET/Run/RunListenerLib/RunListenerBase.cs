@@ -54,7 +54,7 @@ namespace Amdocs.Ginger.Run
         #endregion Runner
 
         #region BusinessFlow
-        public virtual void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow)
+        public virtual void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
         {
 
         }

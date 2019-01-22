@@ -919,6 +919,7 @@ namespace Ginger.Run
 
                     ResetAction(act);
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
+                    
                     NotifyActionStart(act);
                     executeErrorAndPopUpHandler(lstMappedErrorHandlers);
                     mErrorHandlerExecuted = true;
@@ -2922,8 +2923,10 @@ namespace Ginger.Run
                 {
                     CalculateActivityFinalStatus(activity);
                 }
-                PostScopeVariableHandling(activity.Variables);                
-                NotifyActivityEnd(activity);
+                PostScopeVariableHandling(activity.Variables);
+                
+                    NotifyActivityEnd(activity);
+               
                 mLastExecutedActivity = activity;
                 GiveUserFeedback();                
 
@@ -3192,7 +3195,10 @@ namespace Ginger.Run
                 {
                     NotifyBusinessFlowStart(CurrentBusinessFlow);
                 }
-                
+                else
+                {
+                    NotifyBusinessFlowStart(CurrentBusinessFlow, doContinueRun);
+                }
 
                 mStopBusinessFlow = false;
                 CurrentBusinessFlow.Elapsed = null;                
@@ -4278,13 +4284,13 @@ namespace Ginger.Run
             }
         }
 
-        private void NotifyBusinessFlowStart(BusinessFlow businessFlow)
+        private void NotifyBusinessFlowStart(BusinessFlow businessFlow, bool ContinueRun = false)
         {
             uint evetTime = RunListenerBase.GetEventTime();
             businessFlow.StartTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.BusinessFlowStart(evetTime, CurrentBusinessFlow);
+                runnerListener.BusinessFlowStart(evetTime, CurrentBusinessFlow, ContinueRun);
             }
         }
 
@@ -4321,7 +4327,7 @@ namespace Ginger.Run
             activityGroup.EndTimeStamp = eventTime;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                if(runnerListener.ToString() == nameof(Ginger.Run.ExecutionLogger))
+                if(runnerListener.ToString().Contains("Ginger.Run.ExecutionLogger"))
                 {
                     ((Ginger.Run.ExecutionLogger)runnerListener).mCurrentBusinessFlow = CurrentBusinessFlow;
                 }

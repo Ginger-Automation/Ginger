@@ -22,7 +22,7 @@ namespace Amdocs.Ginger.Run
         }
 
 
-        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow) 
+        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false) 
         {
             BusinessFlowTimeLineEvent = new TimeLineEvent("BusinessFlow", businessFlow.Name, eventTime);
             timeLineEvents.AddEvent(BusinessFlowTimeLineEvent);

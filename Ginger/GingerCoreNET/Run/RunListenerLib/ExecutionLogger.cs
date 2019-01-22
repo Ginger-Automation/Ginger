@@ -443,7 +443,7 @@ namespace Ginger.Run
             }
         }
 
-        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow)        
+        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)        
         {
             mCurrentBusinessFlow = businessFlow;
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
@@ -461,6 +461,12 @@ namespace Ginger.Run
                         }
                         else
                             return;
+                        break;
+                    case Amdocs.Ginger.Common.eExecutedFrom.Run:
+                        if(ContinueRun==false)
+                        {
+                            BFFolder = BFCounter + " " + folderNameNormalazing(businessFlow.Name);
+                        }
                         break;
                     default:
                         BFFolder = BFCounter + " " + folderNameNormalazing(businessFlow.Name);
