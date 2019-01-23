@@ -291,7 +291,7 @@ namespace Ginger.Run
 
         
 
-        public ObservableList<DataSourceBase> DSList {get; set;} = new ObservableList<DataSourceBase>();
+        public ObservableList<DataSourceBase> DSList {get; set;}
              
 
         private bool mRunInSimulationMode;
