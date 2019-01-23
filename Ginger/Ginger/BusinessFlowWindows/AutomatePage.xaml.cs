@@ -456,6 +456,7 @@ namespace Ginger
                 }
                 App.UpdateApplicationsAgentsMapping();
                 BindEnvsCombo();
+                AddRunnerListeners();
             }
         }
 

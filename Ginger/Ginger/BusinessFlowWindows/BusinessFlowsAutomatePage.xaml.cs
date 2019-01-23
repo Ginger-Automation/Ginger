@@ -73,18 +73,13 @@ namespace Ginger.BusinessFlowWindows
             if (e.PropertyName == nameof(UserProfile.Solution))
             {
                 Reset();
-                mAutomatePage = null;
-               
             }
         }
 
-        internal void Reset(bool clearAUtomatePage=false)
+        private void Reset()
         {
             mBusFlowsPage = null;                      
             ShiftToBusinessFlowView();
-
-             mAutomatePage = null;
-            
         }
 
         private void ShiftToBusinessFlowView()
