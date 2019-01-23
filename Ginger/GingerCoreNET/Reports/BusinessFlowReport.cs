@@ -413,7 +413,7 @@ namespace Ginger.Reports
             }
             set { variablesAfterExec = value; }
         }
-        private List<string> variablesAfterExec;
+        private List<string> variablesAfterExec = new List<string>();
 
         [FieldParams]
         [FieldParamsNameCaption("Variables Details")]

@@ -76,10 +76,15 @@ namespace Ginger.BusinessFlowWindows
             }
         }
 
-        private void Reset()
+        internal void Reset(bool clearAUtomatePage=false)
         {
             mBusFlowsPage = null;                      
             ShiftToBusinessFlowView();
+
+            if(clearAUtomatePage)
+            {
+                mAutomatePage = null;
+            }
         }
 
         private void ShiftToBusinessFlowView()

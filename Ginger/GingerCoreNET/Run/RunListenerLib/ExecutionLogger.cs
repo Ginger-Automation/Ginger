@@ -458,6 +458,11 @@ namespace Ginger.Run
                             CleanDirectory(ExecutionLogfolder);
                         }
                         else
+                        {
+                            // Temporary fix !!!!!!!! Need to fix it later
+                            ExecutionLogfolder = GetLoggerDirectory(ExecutionLogfolder);
+                            CleanDirectory(ExecutionLogfolder);
+                        }
                             return;
                         break;
                     case Amdocs.Ginger.Common.eExecutedFrom.Run:
@@ -574,6 +579,10 @@ namespace Ginger.Run
                 else
                 {
                     if (this.ExecutedFrom == eExecutedFrom.Run && continuerun == false)
+                    {
+                        mCurrentBusinessFlow.ExecutionLogActivityCounter++;
+                    }
+                    else if(this.ExecutedFrom== eExecutedFrom.Automation && continuerun== false)
                     {
                         mCurrentBusinessFlow.ExecutionLogActivityCounter++;
                     }

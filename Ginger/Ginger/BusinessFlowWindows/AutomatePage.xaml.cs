@@ -165,7 +165,7 @@ namespace Ginger
             mAutomatePageRunnerListener.AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback;
             App.AutomateTabGingerRunner.RunListeners.Add(mAutomatePageRunnerListener);
             mExecutionLogger = new ExecutionLogger(App.AutomateTabEnvironment, eExecutedFrom.Automation);
-            mExecutionLogger.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            
 
 
             WorkSpace.AutomateTabGingerRunner.ExecutionLogger.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
@@ -979,6 +979,7 @@ namespace Ginger
                 SetAutomateTabRunnerForExecution();
 
                 mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
+                
                 RunActivity();
                 AutoLogProxy.UserOperationEnd();
             }
@@ -1126,6 +1127,7 @@ namespace Ginger
             SetAutomateTabRunnerForExecution();
             App.AutomateTabGingerRunner.ResetRunnerExecutionDetails(true);
             mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
+            
         }
 
         private void EnableDisableAutomateTabGrids(bool enableGrids)
