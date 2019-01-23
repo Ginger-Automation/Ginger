@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Run;
 using Ginger.Reports;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -11,18 +12,27 @@ using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
-    public class ProgressReportRunListener :  RunListenerBase
+       public class ExecutionProgressReporterListener :  RunListenerBase
     {
-
-         /// <summary>
-         ///  udpate in BF start !!!!!!!!!!!!!!!!!!!!!!!
-         /// </summary>
-        BusinessFlow mBusinessFlow;
-
-        enum eExecutionPhase
+        public enum eExecutionPhase
         {
             Start,
             End
+        }
+
+        /// <summary>
+        ///  udpate in BF start !!!!!!!!!!!!!!!!!!!!!!!
+        /// </summary>
+        BusinessFlow mBusinessFlow;
+       
+        public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner)
+        {
+            AddExecutionDetailsToLog(eExecutionPhase.Start, "Runner", gingerRunner.Name, null);
+        }
+
+        public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0)
+        {
+            AddExecutionDetailsToLog(eExecutionPhase.End, "Runner", gingerRunner.Name, new GingerReport());
         }
 
         public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
@@ -66,28 +76,28 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AddExecutionDetailsToLog(eExecutionPhase.End, "Action", action.Description, new ActionReport(action));
         }
 
-        void AddExecutionDetailsToLog(eExecutionPhase objExecutionPhase, string objType, string objName, object obj)
+        public static void AddExecutionDetailsToLog(eExecutionPhase objExecutionPhase, string objType, string objName, object obj)
         {
-            if (Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug)
+            if (Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug || Reporter.ReportAllAlsoToConsole == true)//needed for not derlling the objects if not needed to be reported
             {
-                StringBuilder stringBuilder = new StringBuilder("--> ");
                 string prefix = string.Empty;
+
+                StringBuilder stringBuilder = new StringBuilder();                
                 switch (objExecutionPhase)
                 {
                     case eExecutionPhase.Start:
-                        stringBuilder.Append("Execution Started for the ");                        
+                        stringBuilder.Append("--> ").Append(objType + " Execution Started");                        
                         break;
-                    case eExecutionPhase.End:
-                        stringBuilder.Append("Execution Ended for the ");                        
+                    case eExecutionPhase.End:                        
+                        stringBuilder.Append("<-- ").Append(objType + " Execution Ended");
                         break;
                 }
-                stringBuilder.Append(objType).Append(": '").Append(objName).Append("'").AppendLine();
-
+                stringBuilder.Append(": '").Append(objName).Append("'").AppendLine();
 
                 //get the execution fields and their values
-                if (obj != null)
+                if (objExecutionPhase == eExecutionPhase.End && obj != null)
                 {
-                    // List<KeyValuePair<string, string>> fieldsAndValues = new List<KeyValuePair<string, string>>();
+                    stringBuilder.Append("Details:").AppendLine();
                     try
                     {
                         PropertyInfo[] props = obj.GetType().GetProperties();
@@ -105,7 +115,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                                 {
                                     string propName = prop.Name;
                                     string propFullName = ((FieldParamsNameCaption)prop.GetCustomAttribute(typeof(FieldParamsNameCaption))).NameCaption;
-                                    object propVal = prop.GetValue(obj);
+                                    object propVal = prop.GetValue(obj);//obj.GetType().GetProperty(propName, BindingFlags.Public | BindingFlags.Instance).GetValue(obj).ToString();
                                     string propValue;
                                     if (propVal != null)
                                     {
@@ -115,30 +125,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                                     {
                                         propValue = "";
                                     }
-                                    
-                                    stringBuilder.Append(propName).Append("= ").Append(propValue).AppendLine();
+
+                                    stringBuilder.Append(propFullName).Append("= ").Append(propValue).AppendLine();
                                 }
                             }
-                            catch (Exception ex)
-                            {
-                                //TODO: !!!!!!!!!!!!!!!!!! FIXME
-                            }
+                            catch (Exception) { }                            
                         }
                     }
-                    catch (Exception)
-                    {
-                        //TODO: !!!!!!!!!!!!!!!!!! FIXME
-                    }
-
-
-                    Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
+                    catch (Exception) { }                  
                 }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.INFO, prefix + System.Environment.NewLine);
-                }
+
+                Reporter.ToLog(eLogLevel.DEBUG, stringBuilder.ToString());
             }
-
         }
 
     }

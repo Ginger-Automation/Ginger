@@ -124,8 +124,8 @@ namespace Ginger.Run
         {
             runner.SetExecutionEnvironment(RunsetExecutionEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
             runner.CurrentSolution = WorkSpace.Instance.Solution;
-            runner.SolutionAgents = RepositoryItemHelper.RepositoryItemFactory.GetAllIAgents();            
-            runner.DSList = new ObservableList<GingerCore.DataSource.DataSourceBase>();
+            runner.SolutionAgents = RepositoryItemHelper.RepositoryItemFactory.GetAllIAgents();
+            runner.DSList = RepositoryItemHelper.RepositoryItemFactory.GetDatasourceList();
             runner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             runner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
 
@@ -311,12 +311,13 @@ namespace Ginger.Run
             //Start Run 
             if (doContinueRun == false)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting {0} Execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## {0} Execution Started: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), RunSetConfig.Name));
                 SetRunnersExecutionLoggerConfigs();//contains ExecutionLogger.RunSetStart()
             }
             else
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Continue {0} Execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## {0} Execution Continuation: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), RunSetConfig.Name));
             mStopwatch.Start();
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## {0} Runners Execution Started", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             if (RunSetConfig.RunModeParallel)
             {
                 //running parallel 
