@@ -33,7 +33,7 @@
 
 
         <DockPanel Grid.Row="1" Margin="5,0,10,0">
-            <agents:ucAgentControl x:Name="xAgentControlUC" AutomationProperties.AutomationId="ucAgentControl AID" DockPanel.Dock="Top" Margin="0,0,0,0"></agents:ucAgentControl>
+            <agents:ucAgentControl x:Name="xAgentControlUC" AutomationProperties.AutomationId="ucAgentControl AID" DockPanel.Dock="Top" Margin="0,0,0,15"></agents:ucAgentControl>
 
             <Expander x:Name="xAutoMapElementLocatorsExpander" DockPanel.Dock="Top" Visibility="Visible" IsExpanded="False" Margin="0,0,0,15">
                 <Expander.Header>
