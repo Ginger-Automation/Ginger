@@ -356,7 +356,14 @@ namespace Ginger.Run
             }
             else
             {
-                gingerReport.Seq = runnerCount;  //!!!
+                if (runnerCount != 0)
+                {
+                    gingerReport.Seq = runnerCount;
+                }
+                else
+                {
+                    gingerReport.Seq = this.GingerData.Seq;  //!!!
+                }
                 gingerReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
                 gingerReport.GUID = gingerRunner.Guid.ToString();
                 gingerReport.Name = gingerRunner.Name;
