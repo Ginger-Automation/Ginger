@@ -209,7 +209,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             if (itemsSavedCount == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Nothing found to Save.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Nothing found to Save.");
             }
         }
         public override void AddTreeItem()

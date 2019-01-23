@@ -145,7 +145,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error, Could not create Perfecto Mobile Automation Driver, " + e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error, Could not create Perfecto Mobile Automation Driver, " + e.Message);
             }
 
             if (mContextType != eContextType.WebAndroid && mContextType != eContextType.WebIOS)
@@ -480,7 +480,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
 
                 return null;
             }
@@ -604,20 +604,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             return "TBD";
         }
 
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
-
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
-
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
+        
+        
 
         public override void HighlightActElement(Act act)
         {

@@ -37,6 +37,7 @@ using GingerCore.Drivers.PBDriver;
 using GingerCore.Drivers.WindowsLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Drivers.PowerBuilder
 {
@@ -237,6 +238,11 @@ namespace Ginger.Drivers.PowerBuilder
             treeItem.UIAElementInfo = EI;
 
             return treeItem;
+        }
+
+        public ObservableList<ActInputValue> GetItemSpecificActionInputValues()
+        {
+            return null;
         }
     }
 }

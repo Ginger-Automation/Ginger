@@ -20,7 +20,9 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
+
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.AnalyzerLib;
@@ -34,14 +36,12 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
-using GingerCore.GeneralLib;
 using GingerCoreNET.RunLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using IWshRuntimeLibrary;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -188,7 +188,7 @@ namespace Ginger.Run
         {
             InitializeComponent();
 
-            if (App.UserProfile.Solution != null)
+            if ( WorkSpace.UserProfile.Solution != null)
             {
                 //Init
                 Init();
@@ -199,7 +199,7 @@ namespace Ginger.Run
                     LoadRunSetConfig(defualtRunSet);
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, string.Format("No {0} found to load, please add {0}.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("No {0} found to load, please add {0}.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     //TODO: hide all pages elements
                 }
             }
@@ -228,7 +228,7 @@ namespace Ginger.Run
                 LoadRunSetConfig(runSetConfig, false);
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, string.Format("No {0} found to load, please add {0}.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("No {0} found to load, please add {0}.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 //TODO: hide all pages elements
             }           
         }
@@ -241,8 +241,8 @@ namespace Ginger.Run
 
         private void SetNonSpecificRunSetEventsTracking()
         {
-            App.UserProfile.PropertyChanged -= UserProfilePropertyChanged;
-            App.UserProfile.PropertyChanged += UserProfilePropertyChanged;
+             WorkSpace.UserProfile.PropertyChanged -= UserProfilePropertyChanged;
+             WorkSpace.UserProfile.PropertyChanged += UserProfilePropertyChanged;
 
             App.RunsetExecutor.PropertyChanged -= RunsetExecutor_PropertyChanged;
             App.RunsetExecutor.PropertyChanged += RunsetExecutor_PropertyChanged;
@@ -270,7 +270,7 @@ namespace Ginger.Run
                 {
                     Parallel.ForEach(mRunSetConfig.GingerRunners, Runner =>
                     {
-                        Runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+                        Runner.SolutionAgents = new ObservableList<IAgent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x).ToList());
                         //to get the latest list of applications agents
                         Runner.UpdateApplicationAgents();
                     });
@@ -361,7 +361,7 @@ namespace Ginger.Run
                 case RunnerItemEventArgs.eEventType.ContinueRunRequired:
                     if (currentSelectedRunner.IsRunning)
                     {
-                        Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Runner is already running, please stop it first.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Runner is already running, please stop it first.");
                         return;
                     }
                     App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
@@ -369,13 +369,13 @@ namespace Ginger.Run
                     switch (EventArgs.RunnerItemType)
                     {
                         case RunnerItemPage.eRunnerItemType.BusinessFlow:
-                            await currentSelectedRunner.ContinueRunAsync(GingerRunner.eContinueLevel.Runner, Run.GingerRunner.eContinueFrom.SpecificBusinessFlow, (BusinessFlow)EventArgs.RunnerItemObject, null, null);
+                            await currentSelectedRunner.ContinueRunAsync(eContinueLevel.Runner, eContinueFrom.SpecificBusinessFlow, (BusinessFlow)EventArgs.RunnerItemObject, null, null);
                             break;
                         case RunnerItemPage.eRunnerItemType.Activity:
-                            await currentSelectedRunner.ContinueRunAsync(GingerRunner.eContinueLevel.Runner, Run.GingerRunner.eContinueFrom.SpecificActivity, mCurrentBusinessFlowRunnerItemObject, (Activity)EventArgs.RunnerItemObject, null);
+                            await currentSelectedRunner.ContinueRunAsync(eContinueLevel.Runner, eContinueFrom.SpecificActivity, mCurrentBusinessFlowRunnerItemObject, (Activity)EventArgs.RunnerItemObject, null);
                             break;
                         case RunnerItemPage.eRunnerItemType.Action:
-                            await currentSelectedRunner.ContinueRunAsync(GingerRunner.eContinueLevel.Runner, Run.GingerRunner.eContinueFrom.SpecificAction, mCurrentBusinessFlowRunnerItemObject, mCurrentActivityRunnerItemObject, (Act)EventArgs.RunnerItemObject);
+                            await currentSelectedRunner.ContinueRunAsync(eContinueLevel.Runner, eContinueFrom.SpecificAction, mCurrentBusinessFlowRunnerItemObject, mCurrentActivityRunnerItemObject, (Act)EventArgs.RunnerItemObject);
                             break;
                     }
                     break;
@@ -525,15 +525,15 @@ namespace Ginger.Run
         {
             try
             {
-                if (App.UserProfile.Solution == null) return null;
+                if ( WorkSpace.UserProfile.Solution == null) return null;
 
                 ObservableList<RunSetConfig> allRunsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
 
                 //looking for last used Run Set
-                if (App.UserProfile.RecentRunset != null &&
-                            App.UserProfile.RecentRunset != Guid.Empty)
+                if ( WorkSpace.UserProfile.RecentRunset != null &&
+                             WorkSpace.UserProfile.RecentRunset != Guid.Empty)
                 {
-                    RunSetConfig recentRunset = allRunsets.Where(runsets => runsets.Guid == App.UserProfile.RecentRunset).FirstOrDefault();
+                    RunSetConfig recentRunset = allRunsets.Where(runsets => runsets.Guid ==  WorkSpace.UserProfile.RecentRunset).FirstOrDefault();
                     if (recentRunset != null)
                         return recentRunset;
                 }
@@ -552,7 +552,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to load the recent " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " used", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the recent " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " used", ex);
                 return null;
             }
         }
@@ -598,7 +598,7 @@ namespace Ginger.Run
             // Handle Solution change
             if (e.PropertyName == nameof(UserProfile.Solution))
             {
-                if (App.UserProfile.Solution == null)
+                if ( WorkSpace.UserProfile.Solution == null)
                 {                    
                     mSolutionWasChanged = true;
                     //ToDO: Clear Run Set page
@@ -628,7 +628,7 @@ namespace Ginger.Run
                 LoadRunSetConfig(runSetToSet);
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, string.Format("No {0} found to load, please add {0}.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("No {0} found to load, please add {0}.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 //TODO: hide all pages elements
             }
         }
@@ -667,10 +667,13 @@ namespace Ginger.Run
                 GRP.xRunnerNameTxtBlock.Foreground = FindResource("$SelectionColor_Pink") as Brush;
             }                
             mCurrentSelectedRunner = GRP;
+            
             mCurrentSelectedRunner.RunnerPageEvent -= RunnerPageEvent;
             mCurrentSelectedRunner.RunnerPageEvent += RunnerPageEvent;
             UpdateRunnerTime();
-            mCurrentSelectedRunner.Runner.GingerRunnerEvent += Runner_GingerRunnerEvent;
+
+            // mCurrentSelectedRunner.Runner.GingerRunnerEvent += Runner_GingerRunnerEvent;
+
             //set it as flow diagram current item
             List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
             foreach (FlowElement f in fe)
@@ -687,6 +690,7 @@ namespace Ginger.Run
             InitRunnerExecutionDebugSection();
         }
 
+        
         private void Runner_GingerRunnerEvent(GingerRunnerEventArgs EventArgs)
         {
             switch (EventArgs.EventType)
@@ -737,8 +741,11 @@ namespace Ginger.Run
 
                 mCurrentSelectedRunner.Runner.BusinessFlows.CollectionChanged -= BusinessFlows_CollectionChanged;
                 mCurrentSelectedRunner.Runner.BusinessFlows.CollectionChanged += BusinessFlows_CollectionChanged;
-                mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick -= dispatcherTimerElapsedTick;
-                mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick += dispatcherTimerElapsedTick;               
+
+                //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                //mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick -= dispatcherTimerElapsedTick;
+                //mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick += dispatcherTimerElapsedTick;               
+
                 GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mCurrentSelectedRunner.Runner, nameof(GingerRunner.Status), BindingMode.OneWay);                
             }
             finally
@@ -876,6 +883,7 @@ namespace Ginger.Run
 
                     GR.PropertyChanged -= Runner_PropertyChanged;
                     GR.PropertyChanged += Runner_PropertyChanged;
+                    
                     runnerPage.RunnerPageEvent -= RunnerPageEvent;
                     runnerPage.RunnerPageEvent += RunnerPageEvent;
                 });
@@ -913,10 +921,10 @@ namespace Ginger.Run
         }
         private void SetBusinessFlowsChangesLisener()
         {
-            if (App.UserProfile.Solution != null)
+            if ( WorkSpace.UserProfile.Solution != null)
             {
                 mBusinessFlowsXmlsChangeWatcher = new FileSystemWatcher();
-                mBusinessFlowsXmlsChangeWatcher.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
+                mBusinessFlowsXmlsChangeWatcher.Path =  WorkSpace.UserProfile.Solution.BusinessFlowsMainFolder;
                 mBusinessFlowsXmlsChangeWatcher.Filter = "*.xml";
                 mBusinessFlowsXmlsChangeWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
                 mBusinessFlowsXmlsChangeWatcher.IncludeSubdirectories = true;
@@ -959,7 +967,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while checking Run Set Business Flow files change", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking Run Set Business Flow files change", ex);
             }
         }
 
@@ -967,7 +975,7 @@ namespace Ginger.Run
         {
             xRunsetEnvironmentCombo.ItemsSource = null;
 
-            if (App.UserProfile.Solution != null)
+            if ( WorkSpace.UserProfile.Solution != null)
             {
                 xRunsetEnvironmentCombo.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
                 xRunsetEnvironmentCombo.DisplayMemberPath = nameof(ProjEnvironment.Name);
@@ -978,11 +986,11 @@ namespace Ginger.Run
                 //select last used environment
                 if (xRunsetEnvironmentCombo.Items != null && xRunsetEnvironmentCombo.Items.Count > 0)
                 {
-                    if (xRunsetEnvironmentCombo.Items.Count > 1 && App.UserProfile.RecentEnvironment != null && App.UserProfile.RecentEnvironment != Guid.Empty)
+                    if (xRunsetEnvironmentCombo.Items.Count > 1 &&  WorkSpace.UserProfile.RecentEnvironment != null &&  WorkSpace.UserProfile.RecentEnvironment != Guid.Empty)
                     {
                         foreach (object env in xRunsetEnvironmentCombo.Items)
                         {
-                            if (((ProjEnvironment)env).Guid == App.UserProfile.RecentEnvironment)
+                            if (((ProjEnvironment)env).Guid ==  WorkSpace.UserProfile.RecentEnvironment)
                             {
                                 xRunsetEnvironmentCombo.SelectedIndex = xRunsetEnvironmentCombo.Items.IndexOf(env);
                                 return;
@@ -1000,7 +1008,7 @@ namespace Ginger.Run
         {
             xRunnersCombo.ItemsSource = null;
 
-            if (App.UserProfile.Solution != null)
+            if ( WorkSpace.UserProfile.Solution != null)
             {
                 xRunnersCombo.ItemsSource = mRunSetConfig.GingerRunners;
                 xRunnersCombo.DisplayMemberPath = nameof(GingerRunner.Name);
@@ -1046,7 +1054,7 @@ namespace Ginger.Run
                     //Init Execution History Section
                     InitExecutionHistorySection();
 
-                    App.UserProfile.RecentRunset = mRunSetConfig.Guid;//to be loaded automatically next time
+                     WorkSpace.UserProfile.RecentRunset = mRunSetConfig.Guid;//to be loaded automatically next time
                 });
 
             }
@@ -1121,7 +1129,7 @@ namespace Ginger.Run
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
             
 
-            Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, GingerDicser.GetTermResValue(eTermResKey.RunSet) + " was saved successfully");
+            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, GingerDicser.GetTermResValue(eTermResKey.RunSet) + " was saved successfully");
         }
 
         internal void AddNewRunSetConfig()
@@ -1135,7 +1143,7 @@ namespace Ginger.Run
             else
             {
                 //failed to add the run set
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to add new " + GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to add new " + GingerDicser.GetTermResValue(eTermResKey.RunSet));
             }
         }
 
@@ -1175,7 +1183,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.CannotAddGinger);
+                Reporter.ToUser(eUserMsgKey.CannotAddGinger);
             }
         }
 
@@ -1205,9 +1213,9 @@ namespace Ginger.Run
             WshShell shell = new WshShell();
             string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\Ginger " + RunSet + " " + Env + ".lnk";
             IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
-            shortcut.Description = "Ginger Solution=" + App.UserProfile.Solution.Name + ", RunSet=" + RunSet + ", Env=" + Env;
+            shortcut.Description = "Ginger Solution=" +  WorkSpace.UserProfile.Solution.Name + ", RunSet=" + RunSet + ", Env=" + Env;
             string GingerPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            string SolFolder = App.UserProfile.Solution.Folder;
+            string SolFolder =  WorkSpace.UserProfile.Solution.Folder;
             if (SolFolder.EndsWith(@"\"))
             {
                 SolFolder = SolFolder.Substring(0, SolFolder.Length - 1);
@@ -1223,12 +1231,23 @@ namespace Ginger.Run
 
             shortcut.Arguments = "ConfigFile=\"" + sConfigFile + "\"";
             shortcut.Save();
-            Reporter.ToUser(eUserMsgKeys.ShortcutCreated, shortcut.Description);
+            Reporter.ToUser(eUserMsgKey.ShortcutCreated, shortcut.Description);
         }
 
         private void createShortcutRunset_Click(object sender, RoutedEventArgs e)
         {
             AutoLogProxy.UserOperationStart("CreateShortcutButton_Click");
+
+            char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
+
+            if (mRunSetConfig.Name.IndexOfAny(invalidChars) >= 0 )
+            {
+                foreach (char value in invalidChars)
+                {
+                    if(mRunSetConfig.Name.Contains(value))
+                        mRunSetConfig.Name = mRunSetConfig.Name.Replace(value, '_');
+                }
+            }
 
             CreateRunSetShortCut(mRunSetConfig.Name, xRunsetEnvironmentCombo.Text);
 
@@ -1244,10 +1263,10 @@ namespace Ginger.Run
             Run.RunSetConfig RSC = mRunSetConfig;
             if (RSC.ContainingFolder == "")
             {
-                Reporter.ToUser(eUserMsgKeys.AnalyzerSaveRunSet);
+                Reporter.ToUser(eUserMsgKey.AnalyzerSaveRunSet);
                 return;
             }
-            AP.Init(App.UserProfile.Solution, RSC);
+            AP.Init( WorkSpace.UserProfile.Solution, RSC);
             AP.ShowAsWindow();
 
             AutoLogProxy.UserOperationEnd();
@@ -1310,7 +1329,7 @@ namespace Ginger.Run
 
             if (RunSetConfig.GingerRunners.Where(x => x.IsRunning == true).FirstOrDefault() == null)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "There are no Running Runners to Stop.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "There are no Running Runners to Stop.");
                 return;
             }
 
@@ -1325,7 +1344,7 @@ namespace Ginger.Run
 
             if (RunSetConfig.GingerRunners.Where(x=>x.Status==eRunStatus.Stopped).FirstOrDefault() == null)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "There are no Stopped Runners to Continue.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "There are no Stopped Runners to Continue.");
                 return;
             }
 
@@ -1370,7 +1389,7 @@ namespace Ginger.Run
             if (CheckCurrentRunnerIsNotRuning()) return;
             if (mRunSetConfig.GingerRunners.Count > 0)
             {
-                if (Reporter.ToUser(eUserMsgKeys.DeleteRunners) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.DeleteRunners) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     mRunSetConfig.GingerRunners.Clear();
                     mFlowDiagram.ClearAllFlowElement();
@@ -1379,7 +1398,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
+                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
             }
         }
 
@@ -1413,30 +1432,30 @@ namespace Ginger.Run
 
         private void xRunsetReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            if(App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
+            if(WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
             {
-                ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-                HTMLReportsConfiguration currentConf = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
                 
                 string reportsResultFolder = string.Empty;
                 if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
                 {
-                    Reporter.ToUser(eUserMsgKeys.ExecutionsResultsProdIsNotOn);
+                    Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                     return;
                 }
-                if (App.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
+                if (WorkSpace.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                 {
                     string runSetFolder = App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
                     reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder), false, null, null);
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.ExecutionsResultsNotExists);
+                    Reporter.ToUser(eUserMsgKey.ExecutionsResultsNotExists);
                     return;
                 }
                 if (reportsResultFolder == string.Empty)
                 {
-                    Reporter.ToUser(eUserMsgKeys.AutomationTabExecResultsNotExists);
+                    Reporter.ToUser(eUserMsgKey.AutomationTabExecResultsNotExists);
                     return;
                 }
                 else
@@ -1446,8 +1465,8 @@ namespace Ginger.Run
                         string fileName = System.IO.Path.GetFileName(txt_file);
                         if (fileName.Contains(".html"))
                         {
-                            Process.Start(reportsResultFolder);
-                            Process.Start(reportsResultFolder + "\\" + fileName);
+                            System.Diagnostics.Process.Start(reportsResultFolder);
+                            System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
                         }
                     }
                 }
@@ -1624,7 +1643,7 @@ namespace Ginger.Run
             {
                 if (mCurrentSelectedRunner.Runner.Status == eRunStatus.Running)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Please wait for Runner to complete run.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please wait for Runner to complete run.");
                     return true;
                 }
             }
@@ -1671,7 +1690,7 @@ namespace Ginger.Run
 
             if (mCurrentSelectedRunner.Runner.BusinessFlows.Count > 0)
             {
-                if (Reporter.ToUser(eUserMsgKeys.DeleteBusinessflows) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.DeleteBusinessflows) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     mCurrentSelectedRunner.Runner.BusinessFlows.Clear();
                     mCurrentSelectedRunner.BusinessflowRunnerItems.Clear();
@@ -1679,7 +1698,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
+                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
             }
         }
         
@@ -1719,14 +1738,14 @@ namespace Ginger.Run
         public void viewActivity(Activity activitytoView)
         {
             Activity ac = activitytoView;
-            BusinessFlowWindows.ActivityEditPage w = new BusinessFlowWindows.ActivityEditPage(ac, General.RepositoryItemPageViewMode.View);
+            BusinessFlowWindows.ActivityEditPage w = new BusinessFlowWindows.ActivityEditPage(ac, General.RepositoryItemPageViewMode.View,mCurrentBusinessFlowRunnerItemObject);
             w.ShowAsWindow();
         }
 
         public void viewAction(Act actiontoView)
         {
             Act act = actiontoView;
-            ActionEditPage w = new ActionEditPage(act, General.RepositoryItemPageViewMode.View);
+            ActionEditPage w = new ActionEditPage(act, General.RepositoryItemPageViewMode.View,mCurrentBusinessFlowRunnerItemObject,mCurrentActivityRunnerItemObject);
             w.ShowAsWindow();
         }
 
@@ -1736,7 +1755,7 @@ namespace Ginger.Run
 
             if (mCurrentBusinessFlowRunnerItem != null)
             {
-                if (Reporter.ToUser(eUserMsgKeys.DeleteBusinessflow) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.DeleteBusinessflow) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     BusinessFlow bff = (BusinessFlow)(mCurrentBusinessFlowRunnerItem).ItemObject;
                     mCurrentSelectedRunner.Runner.BusinessFlows.Remove(bff);
@@ -1744,7 +1763,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.SelectItemToDelete);
+                Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
             }
         }
 
@@ -1753,12 +1772,12 @@ namespace Ginger.Run
             if (CheckCurrentRunnerIsNotRuning()) return;
             if (mRunSetConfig.GingerRunners.Count == 1)
             {
-                Reporter.ToUser(eUserMsgKeys.CantDeleteRunner);
+                Reporter.ToUser(eUserMsgKey.CantDeleteRunner);
                 return;
             }
             if (runner != null)
             {
-                if (Reporter.ToUser(eUserMsgKeys.DeleteRunner) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.DeleteRunner) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     int index = mRunSetConfig.GingerRunners.IndexOf(runner);
                     List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
@@ -1779,7 +1798,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.SelectItemToDelete);
+                Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
             }
         }
 
@@ -1799,7 +1818,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
 
@@ -1818,7 +1837,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
 
@@ -1851,7 +1870,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
 
@@ -1877,7 +1896,7 @@ namespace Ginger.Run
                 }
                 else if (mRunSetBusinessFlowWasChanged)
                 {
-                    if (Reporter.ToUser(eUserMsgKeys.RunsetBuinessFlowWasChanged) == MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKey.RunsetBuinessFlowWasChanged) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         RefreshCurrentRunSet();
                     mRunSetBusinessFlowWasChanged = false;
                 }
@@ -1892,7 +1911,7 @@ namespace Ginger.Run
         private void xRunSetReload_Click(object sender, RoutedEventArgs e)
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
-            if (Reporter.ToUser(eUserMsgKeys.RunSetReloadhWarn) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.RunSetReloadhWarn) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 RefreshCurrentRunSet();
         }
 
@@ -1929,7 +1948,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
         private void xRunnerDetailView_Click(object sender, RoutedEventArgs e)
@@ -1978,7 +1997,7 @@ namespace Ginger.Run
                 return;
             if (mCurrentSelectedRunner.Runner.Guid == (Guid)xRunnersCombo.SelectedValue)
                 return;
-            GingerRunner SelectedRunner = mRunSetConfig.GingerRunners.Where(x => x.Guid.ToString() == xRunnersCombo.SelectedValue.ToString()).FirstOrDefault();
+            GingerRunner SelectedRunner = (GingerRunner) mRunSetConfig.GingerRunners.Where(x => x.Guid.ToString() == xRunnersCombo.SelectedValue.ToString()).FirstOrDefault();
             int index = mRunSetConfig.GingerRunners.IndexOf(SelectedRunner);
             List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
             GingerRunnerHighlight(((RunnerPage)fe[index].GetCustomeShape().Content));
@@ -2153,12 +2172,12 @@ namespace Ginger.Run
             }
             if (!ExportResultsToALMConfigPage.Instance.IsProcessing)
             {
-                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables));
+                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false,  WorkSpace.UserProfile.Solution.Variables));
                 ExportResultsToALMConfigPage.Instance.ShowAsWindow();
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.ExportedExecDetailsToALMIsInProcess);
+                Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALMIsInProcess);
             }
         }
 

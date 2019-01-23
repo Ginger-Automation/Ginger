@@ -43,35 +43,30 @@ namespace Ginger.Actions._Common.ActUIElementLib
     {
         ActUIElement mAction;
         PlatformInfoBase mPlatform;
+        string mExistingPOMAndElementGuidString = null;
 
         public ActUIElementEditPage(ActUIElement act)
         {
             InitializeComponent();
             mAction = act;
-
             if (act.Platform == ePlatformType.NA)
             {
                 act.Platform = GetActionPlatform();
             }
             mPlatform = PlatformInfoBase.GetPlatformImpl(act.Platform);
-
             List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
-            ElementLocateByComboBox.BindControl(mAction, ActUIElement.Fields.ElementLocateBy, LocateByList);
-
+            ElementLocateByComboBox.BindControl(mAction, nameof(ActUIElement.ElementLocateBy), LocateByList);
+            ElementTypeComboBox.BindControl(mAction, nameof(ActUIElement.ElementType), mPlatform.GetPlatformUIElementsType());
             SetLocateValueFrame();
-
-            ElementTypeComboBox.BindControl(mAction, ActUIElement.Fields.ElementType, mPlatform.GetPlatformUIElementsType());
-
             ShowPlatformSpecificPage();
-            ShowControlSpecificPage();          
-
+            ShowControlSpecificPage();
             ElementLocateByComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
         }
 
         private ePlatformType GetActionPlatform()
         {
             string targetapp = App.BusinessFlow.CurrentActivity.TargetApplication;
-            ePlatformType platform = (from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            ePlatformType platform = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             return platform;
         }
 
@@ -90,7 +85,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mAction.LocateValue = string.Empty;
             mAction.LocateValueCalculated = string.Empty;
             mAction.ElementLocateValue = string.Empty;
-
             SetLocateValueFrame();
         }
 
@@ -111,6 +105,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
+        List<ActUIElement.eElementAction> mElementActionsList = new List<ActUIElement.eElementAction>();
+
         private void ElementTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ElementLocateByComboBox.IsEnabled = true;
@@ -125,9 +121,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 }
             }
             ElementTypeImage.Source = GetImageSource(mAction.Image);
-            List<ActUIElement.eElementAction> list = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);            
-            //ElementActionComboBox.BindControlWithGrouping(mAction, ActUIElement.Fields.ElementAction, list);
-            ElementActionComboBox.BindControl(mAction, ActUIElement.Fields.ElementAction, list);
+            mElementActionsList = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
+            ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
             UpdateActionInfo(mAction.ElementAction);
             UIElementActionEditPageFrame.Visibility = Visibility.Collapsed;
             if (mAction.ElementType != eElementType.Unknown && mAction.ElementAction != ActUIElement.eElementAction.Unknown)
@@ -243,8 +238,25 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 UIElementActionEditPageFrame.Content = new UIElementDragAndDropEditPage(mAction, mPlatform);
                 UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
             }
+            else if ((mAction.Platform == ePlatformType.Java &&
+                       (mAction.ElementAction == ActUIElement.eElementAction.DoubleClick ||
+                       mAction.ElementAction == ActUIElement.eElementAction.WinClick ||
+                       mAction.ElementAction == ActUIElement.eElementAction.MouseClick ||
+                       mAction.ElementAction == ActUIElement.eElementAction.MousePressRelease) &&
+                           (mAction.ElementType == eElementType.RadioButton ||
+                               mAction.ElementType == eElementType.CheckBox ||
+                               mAction.ElementType == eElementType.ComboBox ||
+                               mAction.ElementType == eElementType.Button))
+                      ||
+                      (mAction.Platform == ePlatformType.Web &&
+                       mAction.ElementAction == ActUIElement.eElementAction.ClickXY || mAction.ElementAction == ActUIElement.eElementAction.DoubleClickXY || mAction.ElementAction == ActUIElement.eElementAction.SendKeysXY))
+            {
+                UIElementActionEditPageFrame.Content = new UIElementXYCoordinatePage(mAction);
+                UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
+            }
             else
             {
+
                 List<ElementConfigControl> configControlsList = GetRequiredConfigControls();
                 Page elementEditPage = null;
                 if (configControlsList.Count != 0)
@@ -401,37 +413,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         mAction.GetInputParamValue(ActUIElement.Fields.Value).Split(',').ToList()
                     });
                 }
-            }
-            else if ( (mAction.Platform == ePlatformType.Java &&
-                        (mAction.ElementAction == ActUIElement.eElementAction.DoubleClick ||
-                        mAction.ElementAction == ActUIElement.eElementAction.WinClick ||
-                        mAction.ElementAction == ActUIElement.eElementAction.MouseClick ||
-                        mAction.ElementAction == ActUIElement.eElementAction.MousePressRelease) &&
-                            (mAction.ElementType == eElementType.RadioButton ||
-                                mAction.ElementType == eElementType.CheckBox ||
-                                mAction.ElementType == eElementType.ComboBox ||
-                                mAction.ElementType == eElementType.Button))
-                       ||
-                       (mAction.Platform == ePlatformType.Web &&
-                        mAction.ElementAction == ActUIElement.eElementAction.ClickXY))
-                {
-                elementList.Add(new ElementConfigControl()
-                {
-                    Title = "XCoordinate",
-                    BindedString = ActUIElement.Fields.XCoordinate,
-                    ControlType = eElementType.TextBox,
-                    PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.XCoordinate)) ? new List<string>() { "0" } :
-                    mAction.GetInputParamValue(ActUIElement.Fields.XCoordinate).Split(',').ToList()
-                });
-                elementList.Add(new ElementConfigControl()
-                {
-                    Title = "YCoordinate",
-                    BindedString = ActUIElement.Fields.YCoordinate,
-                    ControlType = eElementType.TextBox,
-                    PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.YCoordinate)) ? new List<string>() { "0" } :
-                    mAction.GetInputParamValue(ActUIElement.Fields.YCoordinate).Split(',').ToList()
-                });
-            }
+            }           
             else if ((mAction.ElementAction == ActUIElement.eElementAction.GetControlProperty))
             {
                 //TODO: find a better way to bind list of enum with possible values.
@@ -475,7 +457,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 case eLocateBy.POMElement:                 
                     ElementTypeComboBox.IsEnabled = false;
-                    return new LocateByPOMElementPage(mAction);
+
+                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAction, nameof(ActUIElement.ElementType), mAction, nameof(ActUIElement.ElementLocateValue));
+                    locateByPOMElementPage.ElementChangedPageEvent -= POMElementChanged;
+                    locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
+                    return locateByPOMElementPage;
                 case eLocateBy.ByXY:                   
                     return new LocateByXYEditPage(mAction);
                 default:                 
@@ -483,15 +469,26 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
+        
+
+        private void POMElementChanged()
+        {
+            if (mExistingPOMAndElementGuidString != mAction.ElementLocateValue)
+            {
+                mAction.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, string.Empty);
+            }
+            ShowControlSpecificPage();
+        }
+
         private void UpdateActionInfo(ActUIElement.eElementAction SelectedAction)
         {
             // TODO - Add case for KeyboardChange event for LocateValue
             // TODO - Add KeyboardChangeEventHandler for LocateValueEditPage
 
-            ActionInfoLabel.Text = string.Empty;
-            TextBlockHelper text = new TextBlockHelper(ActionInfoLabel);
-            
-            ActionInfoLabel.Visibility = Visibility.Visible;
+            xActionInfoLabel.Text = string.Empty;
+            TextBlockHelper text = new TextBlockHelper(xActionInfoLabel);
+
+            xActionInfoLabel.Visibility = Visibility.Visible;
             if (mAction.ElementType.ToString() != null && mAction.ElementType.ToString() != "" && mAction.ElementType != eElementType.Unknown)
             {                
                 text.AddBoldText(string.Format("Configured '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
@@ -537,9 +534,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
+
+
         private List<string> GetPomElementOptionalValues()
         {
             List<string> optionalValues = new List<string>();
+            mExistingPOMAndElementGuidString = mAction.ElementLocateValue;
             string[] pOMandElementGUIDs = mAction.ElementLocateValue.Split('_');
             Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
             ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);

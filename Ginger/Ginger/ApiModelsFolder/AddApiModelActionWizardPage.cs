@@ -17,11 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.WebServices.WebAPI;
 using GingerWPF.WizardLib;
 using System.Linq;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ApiModelsFolder
 {
@@ -29,7 +31,7 @@ namespace Ginger.ApiModelsFolder
     {
         private ObservableList<ApplicationAPIModel> mAAMList = new ObservableList<ApplicationAPIModel>();
 
-        ObservableList<Act> mActions = App.BusinessFlow.CurrentActivity.Acts;
+        ObservableList<IAct> mActions = App.BusinessFlow.CurrentActivity.Acts;
 
         public AddApiModelActionWizardPage()
         {
@@ -77,7 +79,7 @@ namespace Ginger.ApiModelsFolder
                 aNew.APIModelParamsValue = GetEnhancedUpdatedParams(aamb.MergedParamsList);
                 aNew.ReturnValues = ConvertTemplateReturnValues(aamb.ReturnValues);
                 aNew.AddNewReturnParams = true;
-                aNew.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+                aNew.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
 
                 mActions.Add(aNew);

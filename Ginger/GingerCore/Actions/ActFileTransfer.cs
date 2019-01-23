@@ -31,7 +31,7 @@ using GingerCore.Platforms;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActFileTransfer : ActWithoutDriver
@@ -39,7 +39,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "File Transfer Action"; } }
         public override string ActionUserDescription { get { return "Transfer File from one location to other"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to transfer any file from one location to another.");
             TBH.AddLineBreak();
@@ -270,10 +270,7 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
-            string sPCPath="";
-           // ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow);
-
-
+            string sPCPath="";           
             sPCPath = drvPCPath;
             
             string UnixTargetFilePath = "";
@@ -342,7 +339,7 @@ namespace GingerCore.Actions
                         {
                             this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                             this.Error = e.Message;
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                            Reporter.ToLog(eLogLevel.ERROR, e.Message);
                         }
                         
                         break;
@@ -399,7 +396,7 @@ namespace GingerCore.Actions
                         {
                             this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                             this.Error = e.Message;
-	                        Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+	                        Reporter.ToLog(eLogLevel.ERROR, e.Message);
                         }
                         
                         break;
@@ -412,7 +409,7 @@ namespace GingerCore.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
             }
         }
 
@@ -451,7 +448,7 @@ namespace GingerCore.Actions
             }
             //catch (Exception e)
             //{
-            //    Reporter.ToLog(eLogLevel.ERROR, e.Message);
+            //    Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
            // }
 
         }

@@ -18,27 +18,24 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Reports;
-using Ginger.SolutionWindows;
+using Ginger.Run;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Activities;
 using GingerCore.Environments;
-using GingerCore.SourceControl;
+using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using GingerCore.Variables;
-using Ginger.Run;
-using GingerCore.Activities;
 
 namespace Ginger.SourceControl
 {
@@ -83,7 +80,7 @@ namespace Ginger.SourceControl
             viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.Name), Header = "Item Name", WidthWeight = 20, AllowSorting = true });
             viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.FileType), Header = "Item Type", WidthWeight = 20, AllowSorting = true });
             viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.SolutionPath), Header="Item Path", WidthWeight = 40, ReadOnly=true, AllowSorting = true });
-            if (App.UserProfile.Solution.ShowIndicationkForLockedItems)
+            if ( WorkSpace.UserProfile.Solution.ShowIndicationkForLockedItems)
             {
                 viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.Locked), Header = "Locked", WidthWeight = 10,  StyleType=GridColView.eGridColStyleType.Text });
             }
@@ -98,27 +95,16 @@ namespace Ginger.SourceControl
                 xProcessingIcon.Visibility = Visibility.Visible;
                 if (SourceControlIntegration.BusyInProcessWhileDownloading)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                     return;
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
                
                 await Task.Run(() =>
                 {
-                    
-                //set paths to ignore:
-                List<string> pathsToIgnore = new List<string>();
-                    pathsToIgnore.Add("PrevVersions");
-                    pathsToIgnore.Add("RecentlyUsed.dat");
-                    pathsToIgnore.Add("AutoSave");
-                    pathsToIgnore.Add("Recover");
-                    if (App.UserProfile.Solution != null && App.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null && App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
-                        pathsToIgnore.Add(Ginger.Run.ExecutionLogger.GetLoggerDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder));
-                HTMLReportsConfiguration reportConfig = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-                    if (reportConfig != null)
-                        pathsToIgnore.Add(Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(reportConfig.HTMLReportsFolder));
-
-                    mFiles = SourceControlIntegration.GetPathFilesStatus(App.UserProfile.Solution.SourceControl, mPath, pathsToIgnore);
+                   
+              
+                    mFiles = SourceControlIntegration.GetPathFilesStatus( WorkSpace.UserProfile.Solution.SourceControl, mPath);
                 //set items name and type
                 Parallel.ForEach(mFiles, SCFI =>
                      {
@@ -126,9 +112,10 @@ namespace Ginger.SourceControl
                          {
                              if (SCFI.Path.ToUpper().Contains(".GINGER.") && SCFI.Path.ToUpper().Contains(".XML"))
                              {
-                                 //try to unserialize
-                                 object item = RepositoryItem.LoadFromFile(SCFI.Path);
-                                 SCFI.Name = ((RepositoryItem)item).GetNameForFileName();
+                                 NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+                                 //unserialize the item
+                                 RepositoryItemBase item = newRepositorySerializer.DeserializeFromFile(SCFI.Path);
+                                 SCFI.Name = item.ItemName;
                              }
                              else
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
@@ -137,7 +124,7 @@ namespace Ginger.SourceControl
                          {
                              if (SCFI.Path.Contains('\\') && (SCFI.Path.LastIndexOf('\\') + 1 < SCFI.Path.Length - 1))
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
-                             Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                             Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                          }
                     
                          if (string.IsNullOrEmpty(SCFI.Path)) SCFI.FileType = "";
@@ -193,22 +180,22 @@ namespace Ginger.SourceControl
                 xProcessingIcon.Visibility = Visibility.Visible;
                 if (SourceControlIntegration.BusyInProcessWhileDownloading)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                     return;
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
                 List<SourceControlFileInfo> SelectedFiles = mFiles.Where(x => x.Selected == true).ToList();
                 if (SelectedFiles == null || SelectedFiles.Count == 0)
                 {
-                    Reporter.ToUser(eUserMsgKeys.SourceControlMissingSelectionToCheckIn);
+                    Reporter.ToUser(eUserMsgKey.SourceControlMissingSelectionToCheckIn);
                     return;
                 }
                 if (CommentsTextBox.Text.Length == 0)
                 {
-                    Reporter.ToUser(eUserMsgKeys.AskToAddCheckInComment);
+                    Reporter.ToUser(eUserMsgKey.AskToAddCheckInComment);
                     return;
                 }
-                if (Reporter.ToUser(eUserMsgKeys.SourceControlChkInConfirmtion, SelectedFiles.Count) == MessageBoxResult.No)
+                if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtion, SelectedFiles.Count) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                     return;
                 string Comments = CommentsTextBox.Text.ToString();
                 // performing on the another thread 
@@ -219,7 +206,7 @@ namespace Ginger.SourceControl
                         SaveAllDirtyFiles(SelectedFiles);
                     });
                 //performing cleanup for the solution folder to clean old locks left by faild check ins
-                SourceControlIntegration.CleanUp(App.UserProfile.Solution.SourceControl, App.UserProfile.Solution.Folder);
+                SourceControlIntegration.CleanUp( WorkSpace.UserProfile.Solution.SourceControl,  WorkSpace.UserProfile.Solution.Folder);
                     List<string> pathsToCommit = new List<string>();
                     foreach (SourceControlFileInfo fi in SelectedFiles)
                     {
@@ -227,32 +214,32 @@ namespace Ginger.SourceControl
                     switch (fi.Status)
                         {
                             case SourceControlFileInfo.eRepositoryItemStatus.New:
-                                SourceControlIntegration.AddFile(App.UserProfile.Solution.SourceControl, fi.Path);
+                                SourceControlIntegration.AddFile( WorkSpace.UserProfile.Solution.SourceControl, fi.Path);
                                 pathsToCommit.Add(fi.Path);
                                 break;
                             case SourceControlFileInfo.eRepositoryItemStatus.Modified:
-                                if (fi.Locked && fi.LockedOwner != App.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKeys.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == MessageBoxResult.Yes)
+                                if (fi.Locked && fi.LockedOwner !=  WorkSpace.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                                 {
-                                    SourceControlIntegration.UpdateFile(App.UserProfile.Solution.SourceControl, fi.Path);
+                                    SourceControlIntegration.UpdateFile( WorkSpace.UserProfile.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
                                 }
-                                else if (fi.Locked && fi.LockedOwner == App.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKeys.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == MessageBoxResult.Yes)
+                                else if (fi.Locked && fi.LockedOwner ==  WorkSpace.UserProfile.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                                 {
-                                    SourceControlIntegration.UpdateFile(App.UserProfile.Solution.SourceControl, fi.Path);
+                                    SourceControlIntegration.UpdateFile( WorkSpace.UserProfile.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
                                 }
                                 else if (!fi.Locked)
                                 {
-                                    SourceControlIntegration.UpdateFile(App.UserProfile.Solution.SourceControl, fi.Path);
+                                    SourceControlIntegration.UpdateFile( WorkSpace.UserProfile.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
                                 }
                                 break;
                             case SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved:
                                 pathsToCommit.Add(fi.Path);
-                                SourceControlIntegration.UpdateFile(App.UserProfile.Solution.SourceControl, fi.Path);
+                                SourceControlIntegration.UpdateFile( WorkSpace.UserProfile.Solution.SourceControl, fi.Path);
                                 break;
                             case SourceControlFileInfo.eRepositoryItemStatus.Deleted:
-                                SourceControlIntegration.DeleteFile( App.UserProfile.Solution.SourceControl, fi.Path);
+                                SourceControlIntegration.DeleteFile(  WorkSpace.UserProfile.Solution.SourceControl, fi.Path);
                                 pathsToCommit.Add(fi.Path);
                                 break;
                             default:
@@ -263,7 +250,7 @@ namespace Ginger.SourceControl
                     bool conflictHandled = false;
                     bool CommitSuccess = false;
 
-                    CommitSuccess = SourceControlIntegration.CommitChanges(App.UserProfile.Solution.SourceControl, pathsToCommit, Comments, App.UserProfile.Solution.ShowIndicationkForLockedItems, ref conflictHandled);
+                    CommitSuccess = SourceControlIntegration.CommitChanges( WorkSpace.UserProfile.Solution.SourceControl, pathsToCommit, Comments,  WorkSpace.UserProfile.Solution.ShowIndicationkForLockedItems, ref conflictHandled);
 
                     AfterCommitProcess(CommitSuccess, conflictHandled);
 
@@ -349,13 +336,13 @@ namespace Ginger.SourceControl
                 new Action(
                     delegate ()
                     {
-                        if (CommitSuccess && conflictHandled && Reporter.ToUser(eUserMsgKeys.SourceControlChkInConflictHandled) == MessageBoxResult.Yes)
+                        if (CommitSuccess && conflictHandled && Reporter.ToUser(eUserMsgKey.SourceControlChkInConflictHandled) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         {
                             Init();
                             CommentsTextBox.Text = string.Empty;
                             mCheckInWasDone = true;
                         }
-                        else if (CommitSuccess && Reporter.ToUser(eUserMsgKeys.SourceControlChkInSucss) == MessageBoxResult.Yes)
+                        else if (CommitSuccess && Reporter.ToUser(eUserMsgKey.SourceControlChkInSucss) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         {
                             Init();
                             CommentsTextBox.Text = string.Empty;
@@ -363,7 +350,7 @@ namespace Ginger.SourceControl
                         }
                         else if (!CommitSuccess)
                         {
-                            Reporter.ToUser(eUserMsgKeys.SourceControlChkInConflictHandledFailed);
+                            Reporter.ToUser(eUserMsgKey.SourceControlChkInConflictHandledFailed);
                             CloseWindow();
                         }
                         else
@@ -430,15 +417,15 @@ namespace Ginger.SourceControl
 
                 if (obj != null && ((RepositoryItemBase)obj).DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
                 {
-                    if (Reporter.ToUser(eUserMsgKeys.SourceControlCheckInUnsavedFileChecked, SCFI.Name) == MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKey.SourceControlCheckInUnsavedFileChecked, SCFI.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
-                        Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.UserProfile.Solution.GetNameForFileName(), "item");                        
+                        Reporter.ToStatus(eStatusMsgKey.SaveItem, null,  WorkSpace.UserProfile.Solution.GetNameForFileName(), "item");                        
                         WorkSpace.Instance.SolutionRepository.SaveRepositoryItem((RepositoryItemBase)obj);                        
-                        Reporter.CloseGingerHelper();
+                        Reporter.HideStatusMessage();
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, "Check in Aborted");
+                        Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, "Check in Aborted");
                         return;
                     }
                 }
@@ -478,17 +465,17 @@ namespace Ginger.SourceControl
         public void openDiff(string diff)
         {
             System.Diagnostics.Process p = new System.Diagnostics.Process();
-            p.StartInfo = new ProcessStartInfo("TortoiseUDiff.exe");
+            p.StartInfo = new System.Diagnostics.ProcessStartInfo("TortoiseUDiff.exe");
             p.StartInfo.RedirectStandardInput = true;
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.RedirectStandardError = true;
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            p.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.CreateNoWindow = true;
 
             try
             {
-                Process udiff = Process.Start(p.StartInfo);
+                System.Diagnostics.Process udiff = System.Diagnostics.Process.Start(p.StartInfo);
                 StreamWriter myWriter = udiff.StandardInput;
                 myWriter.AutoFlush = true;
                 myWriter.Write(diff);
@@ -502,7 +489,7 @@ namespace Ginger.SourceControl
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
             }
         }
     }

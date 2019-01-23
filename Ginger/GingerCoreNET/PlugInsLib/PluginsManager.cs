@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
@@ -35,10 +34,27 @@ namespace Amdocs.Ginger.Repository
         private ObservableList<PluginPackage> mPluginPackages;
         SolutionRepository mSolutionRepository;
 
+        ObservableList<PluginProcessWrapper> mProcesses = new ObservableList<PluginProcessWrapper>();
+
+        public ObservableList<PluginProcessWrapper> PluginProcesses
+        {
+            get
+            {
+                return mProcesses;
+            }
+        }
+
+
         public PluginsManager(SolutionRepository solutionRepository)
         {
             mSolutionRepository = solutionRepository;
-            mPluginPackages = solutionRepository.GetAllRepositoryItems<PluginPackage>();
+            GetPackages();
+        }
+
+        private void GetPackages()
+        {
+            mPluginPackages = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
+
         }
 
         public class DriverInfo
@@ -135,14 +151,14 @@ namespace Amdocs.Ginger.Repository
         //            return null;
         //        }
 
-
-        public System.Diagnostics.Process StartService(string PluginId)
+       
+        public System.Diagnostics.Process StartService(string pluginId, string serviceID)
         {
-            if (string.IsNullOrEmpty(PluginId))
+            if (string.IsNullOrEmpty(pluginId))
             {
-                throw new ArgumentNullException(nameof(PluginId));
+                throw new ArgumentNullException(nameof(pluginId));
             }
-            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == PluginId select x).SingleOrDefault();
+            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
 
             // TODO: only once !!!!!!!!!!!!!!!!!!!!!!!!! temp             
             pluginPackage.LoadServicesFromJSON();
@@ -150,26 +166,40 @@ namespace Amdocs.Ginger.Repository
 
             if (pluginPackage == null)
             {                
-                throw new Exception("PluginPackage not found in solution PluginId=" + PluginId);
+                throw new Exception("PluginPackage not found in solution PluginId=" + pluginId);
             }
             if (string.IsNullOrEmpty(pluginPackage.StartupDLL))
             {
-                throw new Exception("StartupDLL is missing in the Ginger.PluginPackage.json for: " + PluginId);
+                throw new Exception("StartupDLL is missing in the Ginger.PluginPackage.json for: " + pluginId);
             }
 
             string dll = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
 
-            string nodeFileName = NodeConfigFile.CreateNodeConfigFile(PluginId + "1");  // TODO: check if 1 exist then try 2,3 in case more than one same id service start
+            string nodeFileName = NodeConfigFile.CreateNodeConfigFile(pluginId + "1", serviceID);  // !!!!! TODO: check if 1 exist then try 2,3 in case more than one same id service start
             string cmd = "dotnet \"" + dll + "\" \"" + nodeFileName + "\"";
             System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);            
-            procStartInfo.UseShellExecute = true;             
+            procStartInfo.UseShellExecute = true;
+            
+            // TODO: Make it config not to show the console window
+           // procStartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo = procStartInfo;
-            proc.Start();            
+            proc.Start();
+            mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
             return proc;
             //TODO: delete the temp file - or create temp files tracker with auto delete 
         }
 
+
+        public void CloseAllRunningPluginProcesses()
+        {
+            foreach (PluginProcessWrapper process in mProcesses)
+            {
+                process.Close();                
+            }
+            mProcesses.Clear();
+        }
 
         public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
         {
@@ -186,7 +216,7 @@ namespace Amdocs.Ginger.Repository
             // raw url to get the file content            
             string url = "https://raw.githubusercontent.com/Ginger-Automation/Ginger-Plugins-Index/master/PluginsList.json";
             ObservableList < OnlinePluginPackage > list = GitHTTPClient.GetJSON<ObservableList<OnlinePluginPackage>>(url);
-            ObservableList<PluginPackage> installedPlugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            ObservableList<PluginPackage> installedPlugins = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
             foreach (OnlinePluginPackage onlinePluginPackage in list)
             {                
                 PluginPackage pluginPackage = (from x in installedPlugins where x.PluginId == onlinePluginPackage.Id select x).SingleOrDefault();
@@ -198,19 +228,21 @@ namespace Amdocs.Ginger.Repository
             return list;
         }
 
-        public bool IsRunOnPluginDriver(string pluginId, string serviceId)
-        {
-            // PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == pluginId select x).SingleOrDefault();
-            // PluginService pluginService = pluginPackage.GetService(serviceId);
-            return true; // temp!!!!!!!!!!!!!!!
-        }
+        
 
         public bool IsSessionService(string pluginId, string serviceId)
         {
+            // TODO: Cache
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
             pluginPackage.LoadServicesFromJSON();
             PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
             return pluginServiceInfo.IsSession;
         }
+
+        public void SolutionChanged(SolutionRepository solutionRepository)
+        {        
+            mSolutionRepository = solutionRepository;
+            GetPackages();
+         }
     }
 }

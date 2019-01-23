@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActSetConfig : Act,  INotifyPropertyChanged
@@ -30,7 +30,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Set Config Action"; } }
         public override string ActionUserDescription { get { return "Set config"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate a config on an object.");
             TBH.AddLineBreak();

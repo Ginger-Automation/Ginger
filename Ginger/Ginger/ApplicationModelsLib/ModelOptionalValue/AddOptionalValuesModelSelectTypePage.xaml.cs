@@ -39,6 +39,8 @@ using System.Diagnostics;
 using System.Reflection;
 using Amdocs.Ginger.ValidationRules;
 using System.IO;
+using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 {
@@ -207,7 +209,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
             }
             else
@@ -367,7 +369,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             catch (Exception ex)
             {
                 xSaveExcelLable.Visibility = Visibility.Visible;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
 
             GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);
@@ -399,7 +401,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             bool overrideFile = true;
             if (File.Exists(fileName))
             {
-                if(MessageBox.Show("File already exists, do you want to override?", "File Exists", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+                if(Reporter.ToUser(eUserMsgKey.FileAlreadyExistWarn) == eUserMsgSelection.Cancel)
                 {
                     overrideFile = false;
                 }
@@ -467,13 +469,31 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             if (xDBTypeComboBox.SelectedValue == null || string.IsNullOrEmpty(xBDHostTextBox.Text.Trim()))
             {
-                Reporter.ToUser(eUserMsgKeys.ErrorConnectingToDataBase, "Please Fill all connection details.");
+                Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, "Please Fill all connection details.");
             }
             else
             {
                 try
                 {
-                    mAddModelOptionalValuesWizard.ImportOptionalValues.SetDBDetails(xDBTypeComboBox.SelectedValue.ToString(), xBDHostTextBox.Text.Trim(), xDBUserTextBox.Text.Trim(), xDBPasswordTextBox.Text.Trim());
+                    SqlConnectionStringBuilder scSB = new SqlConnectionStringBuilder();
+
+                    if (Regex.IsMatch(xBDHostTextBox.Text, "(Data Source=)", RegexOptions.IgnoreCase)
+                        && Regex.IsMatch(xBDHostTextBox.Text, "(User ID=)", RegexOptions.IgnoreCase)
+                            && Regex.IsMatch(xBDHostTextBox.Text, "(Password=)", RegexOptions.IgnoreCase))
+                    {
+                        scSB.ConnectionString = xBDHostTextBox.Text.Trim();
+                        xBDHostTextBox.Text = scSB.DataSource;
+                        xDBUserTextBox.Text = scSB.UserID;
+                        xDBPasswordTextBox.Text = scSB.Password;
+                    }
+                    else if(xDBTypeComboBox.SelectedValue.ToString() == GingerCore.Environments.Database.eDBTypes.Oracle.ToString() )
+                    {
+                        scSB.DataSource = xBDHostTextBox.Text;
+                        scSB.UserID = xDBUserTextBox.Text;
+                        scSB.Password = xDBPasswordTextBox.Text;
+                    }
+
+                    mAddModelOptionalValuesWizard.ImportOptionalValues.SetDBDetails(xDBTypeComboBox.SelectedValue.ToString(), xBDHostTextBox.Text.Trim(), xDBUserTextBox.Text.Trim(), xDBPasswordTextBox.Text.Trim(), scSB.ConnectionString);
                     if (mAddModelOptionalValuesWizard.ImportOptionalValues.Connect())
                     {
                         xSQLLable.Visibility = Visibility.Visible;
@@ -490,7 +510,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     if (ex.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
                     {
-                        if (Reporter.ToUser(eUserMsgKeys.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == MessageBoxResult.Yes)
+                        if (Reporter.ToUser(eUserMsgKey.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         {
                             System.Diagnostics.Process.Start("https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149");
                             System.Diagnostics.Process.Start("http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html");
@@ -498,7 +518,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         }
                     }
                     else
-                        Reporter.ToUser(eUserMsgKeys.ErrorConnectingToDataBase, ex.Message);
+                        Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
                 }
             }
         }

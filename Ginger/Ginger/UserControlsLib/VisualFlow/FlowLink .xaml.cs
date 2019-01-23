@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using GingerCore;
 using System;
 using System.Windows;
@@ -75,7 +76,7 @@ namespace Ginger.UserControlsLib.VisualFlow
         {
             //TODO: move to Canvas to handle
             SetHighlight(true);                    
-            Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Conn click");
+            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Conn click");
         }
 
         public void Draw()

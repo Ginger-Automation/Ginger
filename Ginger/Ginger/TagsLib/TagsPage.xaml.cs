@@ -47,7 +47,7 @@ namespace Ginger.TagsLib
 
             if (mViewMode == eViewMode.Solution)
             {
-                App.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+                 WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
             }
 
             SetTagsGridView();
@@ -66,9 +66,9 @@ namespace Ginger.TagsLib
         {
             if (mViewMode == eViewMode.Solution)
             {
-                if (App.UserProfile.Solution != null)
+                if ( WorkSpace.UserProfile.Solution != null)
                 {
-                    mTags = App.UserProfile.Solution.Tags;
+                    mTags =  WorkSpace.UserProfile.Solution.Tags;
                 }
                 else
                 {
@@ -138,7 +138,7 @@ namespace Ginger.TagsLib
         {
             xTagsGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
             CleanUnValidTags();
-            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.Tags);
+             WorkSpace.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.Tags);
         }
 
         private void closeBtn_Click(object sender, EventArgs e)

@@ -16,22 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using System.Linq;
+using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
-
+using GingerCore.Actions.Common;
 using GingerCore.Platforms;
 using GingerCore.Variables;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
-using Ginger.Actions;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger;
 using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Ginger.Repository;
 
 namespace UnitTests.UITests
 {
@@ -47,14 +46,14 @@ namespace UnitTests.UITests
         public static void ClassInit(TestContext context)
         {
             AutoLogProxy.Init("Unit Tests");
+            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test Chrome";
             mBF.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.Web;            
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "WebApp" });
 
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };
@@ -66,7 +65,7 @@ namespace UnitTests.UITests
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
             
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents = new ObservableList<IAgent>();
             mGR.SolutionAgents.Add(a);
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "WebApp", Agent = a });
@@ -75,7 +74,8 @@ namespace UnitTests.UITests
             mGR.BusinessFlows.Add(mBF);
         }
 
-        [TestMethod]
+        
+        [TestMethod]  [Timeout(60000)]
         public void DragAndDropSelenium()
         {
             ResetBusinessFlow();
@@ -109,7 +109,8 @@ namespace UnitTests.UITests
 
         }
 
-        [TestMethod]
+        
+        [TestMethod]  [Timeout(60000)]
         public void DragAndDropJS()
         {
             ResetBusinessFlow();
@@ -141,7 +142,8 @@ namespace UnitTests.UITests
 
         }
 
-        [TestMethod]
+        
+        [TestMethod]  [Timeout(60000)]
         public  void DoDragAndDropByOffSet()
         {
             ResetBusinessFlow();
@@ -173,7 +175,8 @@ namespace UnitTests.UITests
             Assert.AreEqual(act3.Status, eRunStatus.Passed);
         }
 
-        [TestMethod]
+        
+        [TestMethod]  [Timeout(60000)]
         public void DrawObject()
         {
             ResetBusinessFlow();

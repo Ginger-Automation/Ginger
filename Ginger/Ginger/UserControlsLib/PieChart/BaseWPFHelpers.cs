@@ -428,7 +428,7 @@ namespace Ginger.UserControlsLib.PieChart
                         }
                         catch (Exception e)
                         {
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                         }
                     }
                 }
@@ -456,7 +456,7 @@ namespace Ginger.UserControlsLib.PieChart
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                     }
                 }
             }

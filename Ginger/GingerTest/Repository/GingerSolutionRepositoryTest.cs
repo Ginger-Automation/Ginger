@@ -29,7 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace GingerCoreCommonTest.Repository
+namespace GingerTest
 {
 
     [TestClass]
@@ -46,7 +46,7 @@ namespace GingerCoreCommonTest.Repository
             // Init SR
             mSolutionRepository = Ginger.App.CreateGingerSolutionRepository();
             Ginger.App.InitClassTypesDictionary();            
-            string TempRepositoryFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\SRTestTemp");            
+            string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTemp");            
             mSolutionRepository.Open(TempRepositoryFolder);
         }
 
@@ -54,7 +54,7 @@ namespace GingerCoreCommonTest.Repository
         {
             // First we create a basic solution with some sample items
             SolutionRepository SR = new SolutionRepository();            
-            string TempRepositoryFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\SRTestTemp");
+            string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTemp");
             if (Directory.Exists(TempRepositoryFolder))
             {
                 Directory.Delete(TempRepositoryFolder, true);
@@ -103,7 +103,7 @@ namespace GingerCoreCommonTest.Repository
 
       
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VerifyEnvcopyIsOK()
         {
             //Arrange
@@ -120,7 +120,7 @@ namespace GingerCoreCommonTest.Repository
             Assert.AreEqual(env1.Guid, env1Copy.Guid);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void EnvRenameshouldKeepOriginalFileName()
         {
             //Arrange
@@ -139,7 +139,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void EnvRenameDupWithFileNameExist()
         {
             //Arrange
@@ -162,7 +162,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void EnvRenameDupWithFileNameExistx3()
         {
             //Arrange
@@ -196,7 +196,7 @@ namespace GingerCoreCommonTest.Repository
         //TODO: add another test which update value with same and see prop changed didn't trigger
 
         [Ignore] // Temp so the build will pass
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CheckPropertyChangedTriggered()
         {
             // Scan all RIs for each prop marked with [IsSerializedForLocalRepositoryAttribute] try to change and verify prop changed triggered

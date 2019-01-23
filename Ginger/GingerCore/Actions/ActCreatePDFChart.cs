@@ -29,7 +29,8 @@ using PdfSharp.Pdf;
 using PdfSharp;
 using System.Diagnostics;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActCreatePDFChart : ActWithoutDriver
@@ -38,7 +39,7 @@ namespace GingerCore.Actions
         public override string ActionUserDescription { get { return "Create PDF Chart from CSV data"; } }
         private List<string> Params;
         private ChartFrame chartFrame=new ChartFrame();
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to create PDF chart from CSV file.");
             TBH.AddLineBreak();
@@ -262,7 +263,7 @@ namespace GingerCore.Actions
                     }
                     catch(Exception e)
                     {
-
+                        Reporter.ToLog(eLogLevel.DEBUG, "", e);
                     }
                 }
                 else

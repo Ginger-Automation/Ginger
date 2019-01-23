@@ -84,7 +84,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             // get stuck when Ginger close
             while (mProcessingStatus != eProcessingStatus.Ready && mProcessingStatus != eProcessingStatus.ResponseCompleted)
             {
-                Thread.Sleep(1);  //TODO: add timeout!!! or??
+                Thread.Sleep(new TimeSpan(1));  //TODO: add timeout!!! or??
             }            
             
             OutgoingRequetsesCounter++;
@@ -246,6 +246,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             {
                 gingerSocketInfo.Response = new NewPayLoad("SessionID", SessionID);
                 gingerSocketInfo.Response.PaylodType = NewPayLoad.ePaylodType.SocketResponse;  
+                return;
+            }
+            if (Req.Name == "NodeClosing")
+            {
+                gingerSocketInfo.Response = new NewPayLoad("OK", "Bye");
+                gingerSocketInfo.Response.PaylodType = NewPayLoad.ePaylodType.SocketResponse;
+                // TODO: close...
                 return;
             }
 

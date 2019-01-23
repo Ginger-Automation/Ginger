@@ -34,6 +34,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.ALM.Repository
 {
@@ -43,17 +44,17 @@ namespace Ginger.ALM.Repository
         {
             try
             {
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Connecting to QC server");
+                Reporter.ToLog(eLogLevel.DEBUG, "Connecting to QC server");
                 return ALMIntegration.Instance.AlmCore.ConnectALMServer();
             }
             catch (Exception e)
             {
                 if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
-                    Reporter.ToUser(eUserMsgKeys.QcConnectFailure, e.Message);
+                    Reporter.ToUser(eUserMsgKey.QcConnectFailure, e.Message);
                 else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
-                    Reporter.ToUser(eUserMsgKeys.ALMConnectFailureWithCurrSettings, e.Message);
+                    Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, e.Message);
 
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error connecting to QC server", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Error connecting to QC server", e);
                 return false;
             }
         }
@@ -105,10 +106,10 @@ namespace Ginger.ALM.Repository
         #region Import From QC
         public override void ImportALMTests(string importDestinationFolderPath)
         {
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "Start importing from QC");
+            Reporter.ToLog(eLogLevel.DEBUG, "Start importing from QC");
             //set path to import to               
             if (importDestinationFolderPath == "")
-                importDestinationFolderPath = App.UserProfile.Solution.BusinessFlowsMainFolder;
+                importDestinationFolderPath =  WorkSpace.UserProfile.Solution.BusinessFlowsMainFolder;
 
             //show Test Lab browser for selecting the Test Set/s to import
             QCTestLabExplorerPage win = new QCTestLabExplorerPage(QCTestLabExplorerPage.eExplorerTestLabPageUsageType.Import, importDestinationFolderPath);
@@ -126,8 +127,8 @@ namespace Ginger.ALM.Repository
                     //check if some of the Test Set was already imported                
                     if (testSetItem.AlreadyImported == true)
                     {
-                        MessageBoxResult userSelection = Reporter.ToUser(eUserMsgKeys.TestSetExists, testSetItem.TestSetName);
-                        if (userSelection == MessageBoxResult.Yes)
+                        Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testSetItem.TestSetName);
+                        if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         {
                             //Delete the mapped BF
                             File.Delete(testSetItem.MappedBusinessFlow.FileName);
@@ -152,7 +153,7 @@ namespace Ginger.ALM.Repository
                     try
                     {
                         //import test set data
-                        Reporter.ToGingerHelper(eGingerHelperMsgKey.ALMTestSetImport, null, testSetItemtoImport.TestSetName);
+                        Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testSetItemtoImport.TestSetName);
                         QCTestSet TS = new QCTestSet();
                         TS.TestSetID = testSetItemtoImport.TestSetID;
                         TS.TestSetName = testSetItemtoImport.TestSetName;
@@ -163,30 +164,30 @@ namespace Ginger.ALM.Repository
                         BusinessFlow tsBusFlow = ((QCCore)ALMIntegration.Instance.AlmCore).ConvertQCTestSetToBF(TS);
 
                         //Set BF/Activities target application
-                        //if (App.UserProfile.Solution.MainApplication != null)
+                        //if ( WorkSpace.UserProfile.Solution.MainApplication != null)
                         //{
                         //    if (tsBusFlow.TargetApplications.Count == 0)
                         //    {
-                        //        tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = App.UserProfile.Solution.MainApplication });
+                        //        tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.UserProfile.Solution.MainApplication });
                         //        if (tsBusFlow.TargetApplications.Count > 0)
                         //            foreach (Activity activ in tsBusFlow.Activities)
                         //                activ.TargetApplication = tsBusFlow.TargetApplications[0].AppName;
                         //    }
                         //}
-                        if (App.UserProfile.Solution.MainApplication != null)
+                        if ( WorkSpace.UserProfile.Solution.MainApplication != null)
                         {
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
                                 if (string.IsNullOrEmpty(activ.TargetApplication) == false)
                                     if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                                     {
-                                        ApplicationPlatform appAgent = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                        ApplicationPlatform appAgent =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                                         if (appAgent != null)
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
                                     }
                             //handle non mapped Activities
                             if (tsBusFlow.TargetApplications.Count == 0)
-                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = App.UserProfile.Solution.MainApplication });
+                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.UserProfile.Solution.MainApplication });
                             foreach (Activity activ in tsBusFlow.Activities)
                                 if (string.IsNullOrEmpty(activ.TargetApplication))
                                     activ.TargetApplication = tsBusFlow.MainApplication;
@@ -199,21 +200,21 @@ namespace Ginger.ALM.Repository
 
                         //save bf
                         WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);                        
-                        Reporter.CloseGingerHelper();
+                        Reporter.HideStatusMessage();
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToUser(eUserMsgKeys.ErrorInTestsetImport, testSetItemtoImport.TestSetName, ex.Message);
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error importing from QC", ex);
+                        Reporter.ToUser(eUserMsgKey.ErrorInTestsetImport, testSetItemtoImport.TestSetName, ex.Message);
+                        Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC", ex);
                     }
                 }
                 
-                Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
+                Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
 
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Imported from QC successfully");
+                Reporter.ToLog(eLogLevel.DEBUG, "Imported from QC successfully");
                 return true;
             }
-            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error importing from QC");
+            Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC");
             return false;
         }
 
@@ -232,7 +233,7 @@ namespace Ginger.ALM.Repository
 
 
         #region Export To QC
-        public override void ExportBfActivitiesGroupsToALM(GingerCore.BusinessFlow businessFlow, ObservableList<GingerCore.Activities.ActivitiesGroup> grdActivitiesGroups)
+        public override void ExportBfActivitiesGroupsToALM(GingerCore.BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
             bool askToSaveBF = false;
             foreach (ActivitiesGroup group in grdActivitiesGroups)
@@ -242,12 +243,12 @@ namespace Ginger.ALM.Repository
             }
 
             if (askToSaveBF)
-                if (Reporter.ToUser(eUserMsgKeys.AskIfToSaveBFAfterExport, businessFlow.Name) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.AskIfToSaveBFAfterExport, businessFlow.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, businessFlow.Name,
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name,
                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                 }
         }
 
@@ -263,10 +264,10 @@ namespace Ginger.ALM.Repository
                 if (matchingTC != null)
                 {
                     //ask user if want to continue
-                    MessageBoxResult userSelec = Reporter.ToUser(eUserMsgKeys.ActivitiesGroupAlreadyMappedToTC, activtiesGroup.Name, matchingTC["TS_SUBJECT"].Path + "\\" + matchingTC.Name);
-                    if (userSelec == MessageBoxResult.Cancel)
+                    Amdocs.Ginger.Common.eUserMsgSelection userSelec = Reporter.ToUser(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, activtiesGroup.Name, matchingTC["TS_SUBJECT"].Path + "\\" + matchingTC.Name);
+                    if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
                         return false;
-                    else if (userSelec == MessageBoxResult.No)
+                    else if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.No)
                         matchingTC = null;
                 }
             }
@@ -283,39 +284,35 @@ namespace Ginger.ALM.Repository
             }
 
             //upload the Activities Group
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportItemToALM, null, activtiesGroup.Name);
+            Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);
             string res = string.Empty;
             //TODO: retireve test case fields -->DONE
-            ObservableList<ExternalItemFieldBase> testCaseFields = App.UserProfile.Solution.ExternalItemsFields;
+            ObservableList<ExternalItemFieldBase> testCaseFields =  WorkSpace.UserProfile.Solution.ExternalItemsFields;
             ALMIntegration.Instance.RefreshALMItemFields(testCaseFields, true, null);
 
             //Going through the fields to leave only Test Case fields
-            for (int indx = 0; indx < testCaseFields.Count; indx++)
+            for (int indx = testCaseFields.Count - 1; indx >= 0; indx--)
             {
-                if(testCaseFields[indx].Name == "Version")
-                {
-                }
                 if (testCaseFields[indx].ItemType != eQCItemType.TestCase.ToString())
                 {
                     testCaseFields.RemoveAt(indx);
-                    indx--;
                 }
             }
             
             bool exportRes = ((QCCore)ALMIntegration.Instance.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, matchingTC, uploadPath, testCaseFields, ref res);
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
             if (exportRes)
             {
                 if (performSaveAfterExport)
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, activtiesGroup.Name, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));                    
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, activtiesGroup.Name, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));                    
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(activtiesGroup);
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                 }
                 return true;
             }
             else
-                Reporter.ToUser(eUserMsgKeys.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activtiesGroup.Name, res);
+                Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activtiesGroup.Name, res);
  
             return false;
         }
@@ -326,13 +323,13 @@ namespace Ginger.ALM.Repository
 
             if (businessFlow.ActivitiesGroups.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " do not include " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " which supposed to be mapped to ALM Test Cases, please add at least one " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " before doing export.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " do not include " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " which supposed to be mapped to ALM Test Cases, please add at least one " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " before doing export.");
                 return false;
             }
 
             TestSet matchingTS = null;
 
-            MessageBoxResult userSelec = MessageBoxResult.None;
+            Amdocs.Ginger.Common.eUserMsgSelection userSelec = Amdocs.Ginger.Common.eUserMsgSelection.None;
             //check if the businessFlow already mapped to QC Test Set
             if (String.IsNullOrEmpty(businessFlow.ExternalID) == false)
             {
@@ -340,10 +337,10 @@ namespace Ginger.ALM.Repository
                 if (matchingTS != null)
                 {
                     //ask user if want to continue
-                    userSelec = Reporter.ToUser(eUserMsgKeys.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.TestSetFolder.Path + "\\" + matchingTS.Name);
-                    if (userSelec == MessageBoxResult.Cancel)
+                    userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.TestSetFolder.Path + "\\" + matchingTS.Name);
+                    if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
                         return false;
-                    else if (userSelec == MessageBoxResult.No)
+                    else if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.No)
                         matchingTS = null;
                 }
             }
@@ -362,8 +359,8 @@ namespace Ginger.ALM.Repository
 
             if (matchingTS == null && string.IsNullOrEmpty(testLabUploadPath))
             {
-                if(userSelec == MessageBoxResult.No)
-                    Reporter.ToUser(eUserMsgKeys.ExportQCNewTestSetSelectDiffFolder);
+                if(userSelec == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    Reporter.ToUser(eUserMsgKey.ExportQCNewTestSetSelectDiffFolder);
 
                 //get the QC Test Plan path to upload the activities group to
                 testLabUploadPath = SelectALMTestLabPath();
@@ -375,42 +372,37 @@ namespace Ginger.ALM.Repository
             }
 
             //upload the business flow
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportItemToALM, null, businessFlow.Name);
+            Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
             string res = string.Empty;
             //TODO : need to update to retrieve only Test Set Item Fields -->DONE
-            ObservableList<ExternalItemFieldBase> testSetFields = App.UserProfile.Solution.ExternalItemsFields;
+            ObservableList<ExternalItemFieldBase> testSetFields =  WorkSpace.UserProfile.Solution.ExternalItemsFields;
             ALMIntegration.Instance.RefreshALMItemFields(testSetFields, true, null);
 
-            for (int indx = 0; indx < testSetFields.Count; indx++)
+            for (int indx = testSetFields.Count - 1 ; indx >= 0; indx--)
             {
-                if (testSetFields[indx].Name == "Version")
-                {                    
-                }
-
                 if (testSetFields[indx].ItemType != eQCItemType.TestSet.ToString())
                 {
                     testSetFields.RemoveAt(indx);
-                    indx--;
                 }
             }
 
             bool exportRes = ((QCCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToALM(businessFlow, matchingTS, testLabUploadPath, testSetFields, ref res);
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
             if (exportRes)
             {
                 if (performSaveAfterExport)
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                 }
                 if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
-                    Reporter.ToUser(eUserMsgKeys.ExportItemToALMSucceed);
+                    Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
                 return true;
             }
             else
                 if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
-                Reporter.ToUser(eUserMsgKeys.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
+                Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             //}
 
             return false;
@@ -427,9 +419,9 @@ namespace Ginger.ALM.Repository
             throw new NotImplementedException();
         }
 
-        public override eUserMsgKeys GetDownloadPossibleValuesMessage()
+        public override eUserMsgKey GetDownloadPossibleValuesMessage()
         {
-            return eUserMsgKeys.AskIfToDownloadPossibleValuesShortProcesss;
+            return eUserMsgKey.AskIfToDownloadPossibleValuesShortProcesss;
         }
 
         public override void ImportALMTestsById(string importDestinationFolderPath)

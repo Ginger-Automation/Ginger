@@ -19,7 +19,7 @@
         <StackPanel Grid.Row="0" Margin="0,10,0,0">
             <StackPanel Orientation="Horizontal" >
                 <Label Content="Target Application:" Style="{StaticResource @LabelStyle}"/>
-                <ComboBox x:Name="xTargetApplicationComboBox"  AutomationProperties.AutomationId="Platform Type AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
+                <ComboBox x:Name="xTargetApplicationComboBox"  AutomationProperties.AutomationId="TargetApplication AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="5,10,0,0">
@@ -33,7 +33,7 @@
 
 
         <DockPanel Grid.Row="1" Margin="5,0,10,0">
-            <agents:ucAgentControl x:Name="xAgentControlUC" DockPanel.Dock="Top" Margin="0,0,0,15"></agents:ucAgentControl>
+            <agents:ucAgentControl x:Name="xAgentControlUC" AutomationProperties.AutomationId="ucAgentControl AID" DockPanel.Dock="Top" Margin="0,0,0,15"></agents:ucAgentControl>
 
             <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" IsExpanded="False" >
                 <Expander.Header>
@@ -44,7 +44,7 @@
                     </Label>
                 </Expander.Header>
                 <Expander.Content>
-                    <Ginger:ucGrid x:Name="xAutoMapElementTypesGrid" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+                    <Ginger:ucGrid x:Name="xAutoMapElementTypesGrid" AutomationProperties.AutomationId="AutoMapElementTypesGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
                 </Expander.Content>
             </Expander>
         </DockPanel>

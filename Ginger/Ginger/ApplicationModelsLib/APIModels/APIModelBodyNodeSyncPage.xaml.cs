@@ -24,13 +24,12 @@ using GingerCore.Helpers;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Media;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -297,7 +296,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
             }
             else
             {                
-                Reporter.ToUser(eUserMsgKeys.ParsingError, "Can't parse API Model Request Body, please check it's syntax is valid.");
+                Reporter.ToUser(eUserMsgKey.ParsingError, "Can't parse API Model Request Body, please check it's syntax is valid.");
             }
         }
     }

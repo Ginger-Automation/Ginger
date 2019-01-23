@@ -24,7 +24,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.XML
 {
     public class ActXMLProcessing : ActWithoutDriver
@@ -39,7 +39,7 @@ namespace GingerCore.Actions.XML
             public override string ActionDescription { get { return "XML Processing Action"; } }
             public override string ActionUserDescription { get { return "Performs XML Processing action"; } }
 
-            public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+            public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
             {
                 TBH.AddText("Use this action in case you want to perform any XML Processing.");
                 TBH.AddLineBreak();

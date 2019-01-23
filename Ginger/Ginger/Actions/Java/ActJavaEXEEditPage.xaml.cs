@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using GingerCore.Actions.Java;
 using GingerCore.GeneralLib;
 using System;
@@ -30,7 +31,7 @@ namespace Ginger.Actions.Java
     {
         private ActJavaEXE mAct;
 
-        string JarFilesPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Java\");
+        string JarFilesPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\Java\");
 
         public ActJavaEXEEditPage(ActJavaEXE act)
         {

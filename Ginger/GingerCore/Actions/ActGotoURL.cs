@@ -22,7 +22,7 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.Common;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     //This class is for Browser actions
@@ -33,7 +33,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Goto URL Action"; } }
         public override string ActionUserDescription { get { return "Goto URL Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action to open a url in ginger.To open an url,just put url in value and run the action.");            
         }        

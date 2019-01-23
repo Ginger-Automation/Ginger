@@ -402,7 +402,7 @@ namespace Ginger.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 return;
             }
         }
@@ -511,7 +511,7 @@ namespace Ginger.Actions
         {
             if (ErrorLabel.Content.ToString() != "")
             {
-                if (Reporter.ToUser(eUserMsgKeys.InvalidValueExpression, "Data Source") == MessageBoxResult.No)
+                if (Reporter.ToUser(eUserMsgKey.InvalidValueExpression, "Data Source") == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 {
                     return;
                 }
@@ -930,7 +930,7 @@ namespace Ginger.Actions
             catch (Exception ex)
             {                
                 mActDSTblElem.ValueExp = "";
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed", ex);
             }
         }
 
@@ -1257,7 +1257,7 @@ namespace Ginger.Actions
                     if (ds.FilePath.StartsWith("~"))
                     {
                         ds.FileFullPath = ds.FilePath.Replace(@"~\","").Replace("~", "");
-                        ds.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, ds.FileFullPath);
+                        ds.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, ds.FileFullPath);
                     }
                     ds.Init(ds.FileFullPath);
                     //ds.Init(ds.FilePath);

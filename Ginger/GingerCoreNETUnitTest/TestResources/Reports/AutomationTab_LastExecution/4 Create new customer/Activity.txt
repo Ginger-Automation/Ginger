@@ -1,0 +1,1 @@
+{"Seq":4,"GUID":"1a11db41-97d9-484f-b037-56347e819e33","ActivityName":"Create new customer","StartTimeStamp":"2019-01-19T14:30:04.185202Z","EndTimeStamp":"2019-01-19T14:30:11.0818536Z","Elapsed":6787,"RunStatus":"Passed","VariablesBeforeExec":[],"VariablesAfterExec":[]}

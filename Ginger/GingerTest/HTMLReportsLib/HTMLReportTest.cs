@@ -20,19 +20,13 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
-using GingerCore.Environments;
 using GingerTestHelper;
 using GingerWPFUnitTest;
-using GingerWPFUnitTest.GeneralLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace GingerTest.HTMLReportsLib
+namespace GingerTest
 {
     [TestClass]
     [Level3]
@@ -62,7 +56,7 @@ namespace GingerTest.HTMLReportsLib
         private static void CreateTestSolution()
         {                        
             string sourceFolder = TestResources.GetTestResourcesFolder(@"Solutions\ReportSR");
-            solutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\ReportSR");
+            solutionFolder = TestResources.GetTestTempFolder(@"Solutions\ReportSR");
             if (Directory.Exists(solutionFolder))
             {
                 Directory.Delete(solutionFolder, true);
@@ -84,7 +78,7 @@ namespace GingerTest.HTMLReportsLib
 
 
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddHTMLReport()
         {
             //Arrange
