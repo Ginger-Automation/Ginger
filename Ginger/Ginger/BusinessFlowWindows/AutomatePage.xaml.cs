@@ -456,6 +456,7 @@ namespace Ginger
                 }
                 App.UpdateApplicationsAgentsMapping();
                 BindEnvsCombo();
+                AddRunnerListeners();
             }
         }
 
@@ -979,6 +980,7 @@ namespace Ginger
                 SetAutomateTabRunnerForExecution();
 
                 mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
+                
                 RunActivity();
                 AutoLogProxy.UserOperationEnd();
             }
@@ -1126,6 +1128,7 @@ namespace Ginger
             SetAutomateTabRunnerForExecution();
             App.AutomateTabGingerRunner.ResetRunnerExecutionDetails(true);
             mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
+            
         }
 
         private void EnableDisableAutomateTabGrids(bool enableGrids)

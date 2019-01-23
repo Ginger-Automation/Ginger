@@ -102,7 +102,7 @@ namespace Ginger.Repository
 
         public ObservableList<DataSourceBase> GetDatasourceList()
         {
-            return new ObservableList<DataSourceBase>();
+            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
         }
 
 
