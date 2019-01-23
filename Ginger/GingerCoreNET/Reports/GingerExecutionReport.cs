@@ -2488,9 +2488,7 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-
-
-                Image Logoimage=Bitmap.FromFile(new Uri("pack://application:,,,/Ginger;component/Images/" + "@BeatLogo.jpg").AbsolutePath);
+                Image Logoimage=Bitmap.FromFile((Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/images/" + "@BeatLogo.jpg"));
                 //beatSource.
                 Tuple<int, int> sizes=General.RecalculatingSizeWithKeptRatio(Logoimage, logoWidth, logoHight);
 
@@ -2508,7 +2506,7 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                Image gingerSource =  Bitmap.FromFile(new Uri("pack://application:,,,/Ginger;component/Images/" + "@GingerLogo_lowRes.jpg").AbsolutePath);
+                Image gingerSource =  Bitmap.FromFile((Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) +"/images/" +"@GingerLogo_lowRes.jpg"));
                 Tuple<int, int> sizes = General.RecalculatingSizeWithKeptRatio(gingerSource, logoWidth, logoHight);
                 gingerLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + General.ImagetoBase64String(gingerSource) + "' style='float:right;padding-left:70px' />";
             }
@@ -2547,7 +2545,7 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                Image nextImage = Image.FromFile(new Uri("pack://application:,,,/Ginger;component/Images/" + "@ItemNext.jpg").AbsolutePath);
+                Image nextImage = Image.FromFile((Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/images/" + "@ItemNext.jpg"));
                 Tuple<int, int> sizes = General.RecalculatingSizeWithKeptRatio(nextImage, itemPrevNextWidth, itemPrevNextHight);
                 itemNextImage = "<img width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + General.ImagetoBase64String(nextImage) + "' style='padding-left:1px'/>";
             }
@@ -2563,7 +2561,7 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                Image prevImage = Image.FromFile(new Uri("pack://application:,,,/Ginger;component/Images/" + "@ItemPrev.jpg").AbsolutePath);
+                Image prevImage = Image.FromFile((Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/images/"+ "@ItemPrev.jpg"));
                 Tuple<int, int> sizes = General.RecalculatingSizeWithKeptRatio(prevImage, itemPrevNextWidth, itemPrevNextHight);
                 itemPrevImage = "<img width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + General.ImagetoBase64String(prevImage)+ "' style='padding-left:1px'/>";
             }

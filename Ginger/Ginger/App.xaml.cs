@@ -756,6 +756,7 @@ namespace Ginger
                 mLoadingSolution = true;
                 OnPropertyChanged(nameof(LoadingSolution));
 
+               
                 // Cleanup last loaded solution Plugins 
                 // WorkSpace.Instance.LocalGingerGrid.Reset();  //Clear the grid
 

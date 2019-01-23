@@ -459,12 +459,12 @@ namespace Ginger.Run
                 switch (this.ExecutedFrom)
                 {
                     case Amdocs.Ginger.Common.eExecutedFrom.Automation:
-                        if (Configuration.ExecutionLoggerAutomationTabContext == ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun)
-                        {
+                        //if (Configuration.ExecutionLoggerAutomationTabContext == ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun) // Not Sure why it is added, not working at some points, removing it for now
+                        //{
                             ExecutionLogfolder = GetLoggerDirectory(ExecutionLogfolder);
                             CleanDirectory(ExecutionLogfolder);
-                        }
-                        else
+                        // }
+                        
                             return;
                         break;
                     case Amdocs.Ginger.Common.eExecutedFrom.Run:
@@ -508,12 +508,16 @@ namespace Ginger.Run
 
                 if (offlineMode)
                 {
-                    if (WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
+                    // To check whether the execution is from Runset/Automate tab
+                    if((this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation))
+                    {
+                        businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
+                    }
+                    else if ((WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)  )
                     {
                         businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
                     }
                     SaveObjToJSonFile(BFR, businessFlow.ExecutionFullLogFolder + @"\BusinessFlow.txt");
-                    //businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
                     
                 }
                 else
@@ -577,6 +581,10 @@ namespace Ginger.Run
                 else
                 {
                     if (this.ExecutedFrom == eExecutedFrom.Run && continuerun == false)
+                    {
+                        mCurrentBusinessFlow.ExecutionLogActivityCounter++;
+                    }
+                    else if(this.ExecutedFrom== eExecutedFrom.Automation && continuerun== false)
                     {
                         mCurrentBusinessFlow.ExecutionLogActivityCounter++;
                     }
