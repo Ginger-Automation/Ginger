@@ -502,7 +502,11 @@ namespace Ginger.Run
                 if (offlineMode)
                 {
                     // To check whether the execution is from Runset/Automate tab
-                    if (WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null || (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation))
+                    if((this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation))
+                    {
+                        businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
+                    }
+                    else if ((WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)  )
                     {
                         businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
                     }
