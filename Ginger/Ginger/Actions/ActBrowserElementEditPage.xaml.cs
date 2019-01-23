@@ -110,11 +110,13 @@ namespace Ginger.Actions
                             ValueUC.Visibility = System.Windows.Visibility.Collapsed;
                             xPOMUrlFrame.Visibility = System.Windows.Visibility.Visible;
 
+                            xValueLabel.Content = "Page Objects Model URL:";
                             SetLocateValueFrame();
                         }
 
                     }
                     xValueGrid.Visibility = System.Windows.Visibility.Visible;
+
                     xValueLabel.Content = "URL:";
                 }
                 else if (mAct.ControlAction == ActBrowserElement.eControlAction.InjectJS || mAct.ControlAction == ActBrowserElement.eControlAction.RunJavaScript)
@@ -176,11 +178,14 @@ namespace Ginger.Actions
             {
                 ValueUC.Visibility = System.Windows.Visibility.Visible;
                 xPOMUrlFrame.Visibility = System.Windows.Visibility.Collapsed;
+                xValueLabel.Content = "URL:";
             }
             else
             {
                 ValueUC.Visibility = System.Windows.Visibility.Collapsed;
                 xPOMUrlFrame.Visibility = System.Windows.Visibility.Visible;
+
+                xValueLabel.Content = "POM URL:";
 
                 SetLocateValueFrame();
             }

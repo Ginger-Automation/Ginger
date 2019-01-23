@@ -12,7 +12,7 @@
         <DockPanel Margin="10,0,0,0">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
                 <Label Style="{StaticResource $LabelStyle}">Operation Type:</Label>
-                <ComboBox x:Name="xControlActionComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ControlActionComboBox_SelectionChanged" Width="300"></ComboBox>
+                <ComboBox x:Name="xControlActionComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ControlActionComboBox_SelectionChanged" Width="300" Margin="10,0,0,0"></ComboBox>
             </StackPanel>
 
             <DockPanel x:Name="xLocateByAndValuePanel" DockPanel.Dock="Top" Margin="0,10,0,0">
@@ -33,15 +33,8 @@
 
             <StackPanel x:Name="xURLSrcPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
                 <Label x:Name="URLSrcLbl" Style="{StaticResource $LabelStyle}">URL Source:</Label>
-                <StackPanel x:Name="xURLSrcRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="24,0,0,0">
+                <StackPanel x:Name="xURLSrcRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="7,0,0,0">
                     <UserControlsLib:UCRadioButtons x:Name="xURLSrcRadioButton" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                </StackPanel>
-            </StackPanel>
-
-            <StackPanel x:Name="xOpenURLInPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
-                <Label x:Name="Lable" Style="{StaticResource $LabelStyle}">Open URL in:</Label>
-                <StackPanel x:Name="xGotoURLTypeRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="18,0,0,0">
-                    <UserControlsLib:UCRadioButtons x:Name="xGotoURLTypeRadioButton" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 </StackPanel>
             </StackPanel>
 
@@ -54,6 +47,13 @@
                 <Actions:UCValueExpression x:Name="ValueUC" Grid.Column="1"/>
                 <Frame x:Name="xPOMUrlFrame" NavigationUIVisibility="Hidden" BorderBrush="Transparent" Grid.Column="1" Margin="28,0,0,0"/>
             </Grid>
+            
+            <StackPanel x:Name="xOpenURLInPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+                <Label x:Name="Lable" Style="{StaticResource $LabelStyle}">Open URL in:</Label>
+                <StackPanel x:Name="xGotoURLTypeRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="0,0,0,0">
+                    <UserControlsLib:UCRadioButtons x:Name="xGotoURLTypeRadioButton" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                </StackPanel>
+            </StackPanel>
 
             <StackPanel x:Name="xImplicitWaitPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
                 <Label x:Name="ImplicitWait" Content="Browser load max wait time(seconds):" Style="{StaticResource $LabelStyle}"/>

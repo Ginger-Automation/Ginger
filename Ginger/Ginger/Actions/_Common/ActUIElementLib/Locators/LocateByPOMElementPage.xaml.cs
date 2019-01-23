@@ -197,6 +197,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 ArrowDownButton.Visibility = Visibility.Collapsed;
                 HighlightButton.Visibility = Visibility.Collapsed;
                 xPOMElementTextBox.Visibility = Visibility.Collapsed;
+                POMTitleLbl.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -204,6 +205,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 ArrowDownButton.Visibility = Visibility.Visible;
                 HighlightButton.Visibility = Visibility.Visible;
                 xPOMElementTextBox.Visibility = Visibility.Collapsed;
+                POMTitleLbl.Visibility = Visibility.Collapsed;
                 xPOMElementsGrid.Visibility = Visibility.Visible;
                 xSelectElement.Visibility = Visibility.Visible;
                 xPOMElementsGrid.Refresh();
