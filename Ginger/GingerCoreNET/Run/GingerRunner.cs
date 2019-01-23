@@ -559,7 +559,7 @@ namespace Ginger.Run
                     if (doContinueRun == false)
                     {
                         // ExecutionLogger.GingerEnd();
-                        NotifyRunnerRunEnd();
+                        NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
                     }
                 }   
                 else
@@ -914,14 +914,15 @@ namespace Ginger.Run
                         if (lstMappedErrorHandlers.Count <= 0)
                             break;
 
-                        ResetAction(act);
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
-                        NotifyActionStart(act);
-                        executeErrorAndPopUpHandler(lstMappedErrorHandlers);
-                        mErrorHandlerExecuted = true;
-                    }
-                    else
-                        break;
+                    ResetAction(act);
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
+                    
+                    NotifyActionStart(act);
+                    executeErrorAndPopUpHandler(lstMappedErrorHandlers);
+                    mErrorHandlerExecuted = true;
+                }
+                else
+                    break;
 
                 }
                 // Run any code needed after the action executed, used in ACTScreenShot save to file after driver took screen shot
@@ -2785,7 +2786,14 @@ namespace Ginger.Run
 
             //Run the Activity
             CurrentBusinessFlow.CurrentActivity.Status = eRunStatus.Running;
-            NotifyActivityStart(CurrentBusinessFlow.CurrentActivity);
+            if (doContinueRun)
+            {
+                NotifyActivityStart(CurrentBusinessFlow.CurrentActivity, doContinueRun);
+            }
+            else
+            {
+                NotifyActivityStart(CurrentBusinessFlow.CurrentActivity);
+            }
             if (SolutionApplications != null && SolutionApplications.Where(x => (x.AppName == activity.TargetApplication && x.Platform == ePlatformType.NA)).FirstOrDefault() == null)
             {
                 //load Agent only if Activity includes Actions which needs it
@@ -2915,8 +2923,10 @@ namespace Ginger.Run
                 {
                     CalculateActivityFinalStatus(activity);
                 }
-                PostScopeVariableHandling(activity.Variables);                
-                NotifyActivityEnd(activity);
+                PostScopeVariableHandling(activity.Variables);
+                
+                    NotifyActivityEnd(activity);
+               
                 mLastExecutedActivity = activity;
                 GiveUserFeedback();                
 
@@ -3176,10 +3186,17 @@ namespace Ginger.Run
                     }
                 }
 
+                
                 CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
 
-                NotifyBusinessFlowStart(CurrentBusinessFlow);
-                
+                if (!doContinueRun)
+                {
+                    NotifyBusinessFlowStart(CurrentBusinessFlow);
+                }
+                else
+                {
+                    NotifyBusinessFlowStart(CurrentBusinessFlow, doContinueRun);
+                }
 
                 mStopBusinessFlow = false;
                 CurrentBusinessFlow.Elapsed = null;                
@@ -4163,13 +4180,12 @@ namespace Ginger.Run
             });
         }
 
-        void NotifyRunnerRunEnd()
-        {
-
+        void NotifyRunnerRunEnd(string ExecutionLogFolder= null)
+        { 
             uint evetTime = RunListenerBase.GetEventTime();
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.RunnerRunEnd(evetTime, this);
+                runnerListener.RunnerRunEnd(evetTime, this, ExecutionLogFolder);
             }
         }
 
@@ -4221,13 +4237,13 @@ namespace Ginger.Run
         }
 
 
-        private void NotifyActivityStart(Activity activity)
+        private void NotifyActivityStart(Activity activity, bool continuerun=false)
         {
             uint evetTime = RunListenerBase.GetEventTime();
             activity.StartTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.ActivityStart(evetTime, CurrentBusinessFlow.CurrentActivity);
+                runnerListener.ActivityStart(evetTime, CurrentBusinessFlow.CurrentActivity, continuerun);
             }
         }
 
@@ -4252,13 +4268,13 @@ namespace Ginger.Run
             }
         }
 
-        private void NotifyBusinessFlowStart(BusinessFlow businessFlow)
+        private void NotifyBusinessFlowStart(BusinessFlow businessFlow, bool ContinueRun = false)
         {
             uint evetTime = RunListenerBase.GetEventTime();
             businessFlow.StartTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.BusinessFlowStart(evetTime, CurrentBusinessFlow);
+                runnerListener.BusinessFlowStart(evetTime, CurrentBusinessFlow, ContinueRun);
             }
         }
 
@@ -4295,6 +4311,10 @@ namespace Ginger.Run
             activityGroup.EndTimeStamp = eventTime;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
+                if(runnerListener.ToString().Contains("Ginger.Run.ExecutionLogger"))
+                {
+                    ((Ginger.Run.ExecutionLogger)runnerListener).mCurrentBusinessFlow = CurrentBusinessFlow;
+                }
                 runnerListener.ActivityGroupEnd(eventTime, activityGroup);
             }
         }
