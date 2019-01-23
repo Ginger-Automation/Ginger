@@ -41,7 +41,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();                      
         PomAllElementsPage mPomAllElementsPage = null;
         List<eElementType> mSelectedElementTypesList = new List<eElementType>();
-        
+        List<eLocateBy> mElementLocatorsList = new List<eLocateBy>();
+
         public POMObjectsMappingWizardPage()
         {
             InitializeComponent();                       
@@ -79,6 +80,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         xReLearnButton.Visibility = Visibility.Visible;
 
                         mSelectedElementTypesList = mWizard.AutoMapElementTypesList.Where(x => x.Selected == true).Select(x => x.ElementType).ToList();
+                        mElementLocatorsList = mWizard.AutoMapElementLocatorsList.Where(x => x.Active == true).Select(x => x.LocateBy).ToList();
                         Learn();
                     }
                     break;
@@ -156,6 +158,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             try
             {
                 ElementInfo EI = ((ObservableList<ElementInfo>)sender).Last();
+
+                List<ElementLocator> orderedLocatorsList = EI.Locators.Where(m => mElementLocatorsList.Contains(m.LocateBy)).OrderBy(m => mElementLocatorsList.IndexOf(m.LocateBy)).ToList();
+                EI.Locators = new ObservableList<ElementLocator>(orderedLocatorsList);
 
                 if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
                 {

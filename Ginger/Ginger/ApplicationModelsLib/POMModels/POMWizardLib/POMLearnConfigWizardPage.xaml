@@ -33,7 +33,20 @@
 
 
         <DockPanel Grid.Row="1" Margin="5,0,10,0">
-            <agents:ucAgentControl x:Name="xAgentControlUC" AutomationProperties.AutomationId="ucAgentControl AID" DockPanel.Dock="Top" Margin="0,0,0,15"></agents:ucAgentControl>
+            <agents:ucAgentControl x:Name="xAgentControlUC" AutomationProperties.AutomationId="ucAgentControl AID" DockPanel.Dock="Top" Margin="0,0,0,0"></agents:ucAgentControl>
+
+            <Expander x:Name="xAutoMapElementLocatorsExpander" DockPanel.Dock="Top" Visibility="Visible" IsExpanded="False" Margin="0,0,0,15">
+                <Expander.Header>
+                    <Label x:Name="LocatorsExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
+                        <Label.Content>
+                            <GingerCore:ucTextDicResource Text="Custom Locators Setting"/>
+                        </Label.Content>
+                    </Label>
+                </Expander.Header>
+                <Expander.Content>
+                    <Ginger:ucGrid x:Name="xAutoMapElementLocatorsGrid" Title="Locators:" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Collapsed"/>
+                </Expander.Content>
+            </Expander>
 
             <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" IsExpanded="False" >
                 <Expander.Header>

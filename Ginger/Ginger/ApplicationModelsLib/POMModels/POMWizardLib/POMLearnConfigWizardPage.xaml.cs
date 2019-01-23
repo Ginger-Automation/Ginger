@@ -87,9 +87,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     if (mWizard.POM.TargetApplicationKey != null)
                         mAppPlatform =  WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(mWizard.POM.TargetApplicationKey);
                     mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
-                    foreach (Agent agent in mWizard.OptionalAgentsList)
+                    foreach (Agent agent in GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList()))
                     {
                         agent.Tag = string.Empty;
+
+                        // Filter the Agents List and remove Headless Browsers for POM Learning..
+                        if(agent.DriverType == eDriverType.SeleniumChrome || agent.DriverType == eDriverType.SeleniumFireFox)
+                        {
+                            var selDriverObj = agent.DriverConfiguration as ObservableList<DriverConfigParam>;
+                            DriverConfigParam drivConfigParam = selDriverObj.Where(x => x.ItemName == "HeadlessBrowserMode").FirstOrDefault();
+                            if (drivConfigParam != null && drivConfigParam.Value.ToLower().Equals("true"))
+                            {
+                                mWizard.OptionalAgentsList.Remove(agent);
+                            }
+                        }
                     }
                     xAgentControlUC.Init(mWizard.OptionalAgentsList);
                     App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard, nameof(mWizard.Agent));
@@ -97,7 +108,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                     AddValidations();
                     ClearAutoMapElementTypesSection();
-                    SetAutoMapElementTypesGridView();                    
+                    ClearAutoMapElementLocatorsSection();
+                    SetAutoMapElementTypesGridView();
+                    SetAutoMapElementLocatorsGridView();
                     break;
             }
         }
@@ -128,7 +141,34 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
+        private void SetAutoMapElementLocators()
+        {
+            if (mWizard.AutoMapElementLocatorsList.Count == 0)
+            {
+                switch (mAppPlatform)
+                {
+                    case ePlatformType.Web:
+                        foreach (eLocateBy locator in new WebPlatform().GetPlatformUIElementLocatorsList().ToList())
+                        {
+                            switch (locator)
+                            {
+                                case eLocateBy.ByID:
+                                case eLocateBy.ByName:
+                                case eLocateBy.ByRelXPath:
+                                    mWizard.AutoMapElementLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = locator, Help = "Very Recommended(usually unique)" });
 
+                                    break;
+
+                                case eLocateBy.ByXPath:
+                                    mWizard.AutoMapElementLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = locator, Help = "Recommended (sensitive to page design changes)" });
+
+                                    break;
+                            }
+                        }
+                        break;
+                }
+            }
+        }
 
         private void SetAutoMapElementTypesGridView()
         {
@@ -147,6 +187,26 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAutoMapElementTypesGrid.InitViewItems();
         }
 
+        private void SetAutoMapElementLocatorsGridView()
+        {
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
+            defView.GridColsView = new ObservableList<GridColView>();
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
+            List<GingerCore.General.ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
+
+
+            GingerCore.General.ComboEnumItem comboItem = locateByList.Where(x => ((eLocateBy)x.Value) == eLocateBy.POMElement).FirstOrDefault();
+            if (comboItem != null)
+                locateByList.Remove(comboItem);
+
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25, ReadOnly = true });
+            xAutoMapElementLocatorsGrid.SetAllColumnsDefaultView(defView);
+            xAutoMapElementLocatorsGrid.InitViewItems();
+
+            xAutoMapElementLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
+        }
+
         private void CheckUnCheckAllElements(object sender, RoutedEventArgs e)
         {
             if (mWizard.AutoMapElementTypesList.Count > 0)
@@ -162,9 +222,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (e.PropertyName == nameof(ucAgentControl.AgentIsRunning))
             {
                 if (xAgentControlUC.AgentIsRunning)
+                {
                     SetAutoMapElementTypesSection();
+                    SetAutoMapElementLocatorssSection();
+                }
                 else
+                {
                     ClearAutoMapElementTypesSection();
+                    ClearAutoMapElementLocatorsSection();
+                }
             }
         }
 
@@ -177,6 +243,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
         }
 
+        private void ClearAutoMapElementLocatorsSection()
+        {
+            xAutoMapElementLocatorsExpander.IsExpanded = false;
+            xAutoMapElementLocatorsExpander.IsEnabled = false;
+            mWizard.AutoMapElementLocatorsList = new ObservableList<ElementLocator>();
+            xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
+        }
+
         private void SetAutoMapElementTypesSection()
         {
             xAutoMapElementTypesExpander.IsExpanded = true;
@@ -186,6 +260,16 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             SetAutoMapElementTypes();
             xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
         }
+
+        private void SetAutoMapElementLocatorssSection()
+        {
+            xAutoMapElementLocatorsExpander.IsExpanded = true;
+            xAutoMapElementLocatorsExpander.IsEnabled = true;
+
+            SetAutoMapElementLocators();
+            xAutoMapElementLocatorsGrid.DataSourceList = mWizard.AutoMapElementLocatorsList;
+        }
+
         private void xAutomaticElementConfigurationRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             if (mWizard != null)
@@ -196,6 +280,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     RemoveValidations();
                     xAgentControlUC.Visibility = Visibility.Hidden;
                     xAutoMapElementTypesExpander.Visibility = Visibility.Hidden;
+                    xAutoMapElementLocatorsExpander.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
@@ -203,6 +288,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     AddValidations();
                     xAgentControlUC.Visibility = Visibility.Visible;
                     xAutoMapElementTypesExpander.Visibility = Visibility.Visible;
+                    xAutoMapElementLocatorsExpander.Visibility = Visibility.Visible;
                 }
             }
         }
