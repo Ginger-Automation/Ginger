@@ -756,11 +756,7 @@ namespace Ginger
                 mLoadingSolution = true;
                 OnPropertyChanged(nameof(LoadingSolution));
 
-                if(App.MainWindow.xBusinessFlowsListItem != null && App.MainWindow.xBusinessFlowsListItem.Tag!=null)
-                {
-                    ((BusinessFlowsAutomatePage)App.MainWindow.xBusinessFlowsListItem.Tag).Reset(true);
-
-                }
+               
                 // Cleanup last loaded solution Plugins 
                 // WorkSpace.Instance.LocalGingerGrid.Reset();  //Clear the grid
 

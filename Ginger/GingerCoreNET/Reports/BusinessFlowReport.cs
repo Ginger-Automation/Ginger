@@ -398,7 +398,7 @@ namespace Ginger.Reports
         public double OtherPercent { get { return Activities.Count != 0 ? Math.Round((double)TotalActivitiesOther * 100 / Activities.Count, MidpointRounding.AwayFromZero) + AddOnePercent(ActStatus.Other) : 0; } }
 
         [JsonProperty]
-        public List<string> VariablesBeforeExec { get; set; }
+        public List<string> VariablesBeforeExec { get; set; } = new List<string>();
 
         [JsonProperty]
         public List<string> VariablesAfterExec

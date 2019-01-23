@@ -459,17 +459,12 @@ namespace Ginger.Run
                 switch (this.ExecutedFrom)
                 {
                     case Amdocs.Ginger.Common.eExecutedFrom.Automation:
-                        if (Configuration.ExecutionLoggerAutomationTabContext == ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun)
-                        {
+                        //if (Configuration.ExecutionLoggerAutomationTabContext == ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun) // Not Sure why it is added, not working at some points, removing it for now
+                        //{
                             ExecutionLogfolder = GetLoggerDirectory(ExecutionLogfolder);
                             CleanDirectory(ExecutionLogfolder);
-                        }
-                        else
-                        {
-                            // Temporary fix !!!!!!!! Need to fix it later
-                            ExecutionLogfolder = GetLoggerDirectory(ExecutionLogfolder);
-                            CleanDirectory(ExecutionLogfolder);
-                        }
+                        // }
+                        
                             return;
                         break;
                     case Amdocs.Ginger.Common.eExecutedFrom.Run:
