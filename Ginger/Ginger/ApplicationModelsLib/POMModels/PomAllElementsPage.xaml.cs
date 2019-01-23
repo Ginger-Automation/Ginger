@@ -425,7 +425,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
 
-            WizardWindow.ShowWizard(new PomRelearnWizard(mPOM,mAgent));
+            WizardWindow.ShowWizard(new PomRelearnWizard(mPOM, mAgent),800, true);
         }
 
 

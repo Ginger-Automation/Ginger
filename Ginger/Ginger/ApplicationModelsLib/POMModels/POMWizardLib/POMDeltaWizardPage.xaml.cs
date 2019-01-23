@@ -207,6 +207,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 if (originalModifiedEL != null)
                 {
                     originalModifiedEL.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                    originalModifiedEL.DeltaExtraDetails = "Locate value changed to: " + latestEL.LocateValue;
                     originalModifiedEL.UpdatedValue = latestEL.LocateValue;
                 }
                 else if (ExistingEL == null)
@@ -241,6 +242,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 if (originalModifiedCP != null)
                 {
                     originalModifiedCP.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                    originalModifiedCP.DeltaExtraDetails = "Property value changed to: " + latestCP.Value;
                     originalModifiedCP.UpdatedValue = latestCP.Value;
                 }
                 else if (ExistingCP == null)

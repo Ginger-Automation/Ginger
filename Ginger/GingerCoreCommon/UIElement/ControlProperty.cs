@@ -32,7 +32,9 @@ namespace Amdocs.Ginger.Common.UIElement
         public override string ItemName { get { return Name; } set { Name = value;  } }
 
         public eDeltaStatus DeltaStatus { get; set; }
-        public eDeltaExtraDetails DeltaExtraDetails { get; set; }
+        public string DeltaExtraDetails { get; set; }
+
+        public string UpdatedValue { get; set; }
 
         public bool IsNotEqual
         {
@@ -49,7 +51,5 @@ namespace Amdocs.Ginger.Common.UIElement
             }
 
         }
-
-        public string UpdatedValue { get; set; }
     }
 }

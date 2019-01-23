@@ -261,30 +261,12 @@ namespace Amdocs.Ginger.Common.UIElement
         }
 
 
-        //private bool mUpdate = false;
-
-        //public bool Update
-        //{
-        //    get
-        //    {
-        //        return 
-        //            mUpdate;
-        //    }
-        //    set
-        //    {
-        //        if (mUpdate != value)
-        //        {
-        //            mUpdate = value;
-        //            OnPropertyChanged(nameof(Update));
-        //        }
-        //    }
-        //}
 
 
 
 
-        private bool mIsSelected = false;
-        // [IsSerializedForLocalRepository]
+
+        private bool mIsSelected = true;
         public bool IsSelected
         {
             get
@@ -301,6 +283,8 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
+
+
         public enum eElementGroup
         {
             Mapped,
@@ -315,6 +299,25 @@ namespace Amdocs.Ginger.Common.UIElement
             Deleted,
             Modified,
             New
+        }
+
+        
+        public ObservableList<string> ElementGroupList
+        {
+            get
+            {
+
+                ObservableList<string> elementGroupList = new ObservableList<string>();
+                elementGroupList.Add(eElementGroup.Mapped.ToString());
+                elementGroupList.Add(eElementGroup.Unmapped.ToString());
+
+                return elementGroupList;
+            }
+            set
+            {
+                ElementGroupList = value;
+                OnPropertyChanged(nameof(ElementGroupList));
+            }
         }
 
         private eDeltaStatus mDeltaStatus;
