@@ -34,6 +34,7 @@ using Ginger.Repository;
 
 namespace UnitTests.UITests
 {
+    [Ignore]
     [Level3]
     [TestClass]
     public class ActUIElementTest

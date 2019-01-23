@@ -149,7 +149,7 @@ namespace UnitTests.NonUITests
             ActReturnValue RV = act1.GetReturnValue(ParamName);
             Assert.AreEqual(RV.Status, ActReturnValue.eStatus.Failed, "RV.Status, ActReturnValue.eStatus.Failed");
         }
-
+        [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void ActivityWithActionPass()
         {
@@ -215,7 +215,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(act2.Status, eRunStatus.Failed, "act2.Status=eRunStatus.Failed");
             Assert.AreEqual(act3.Status, eRunStatus.Blocked, "act3.Status=eRunStatus.Blocked");
         }
-
+        [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void ActivityWithActionFailAndRunOptionContinue()
         {
