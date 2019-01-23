@@ -94,9 +94,9 @@ namespace Ginger.BusinessFlowWindows
                 SetTargetApplications();
                 if (mBusinessFlow.TargetApplications.Count == 1)
                 {
-                    foreach (Activity act in mBusinessFlow.Activities)
+                    foreach (Activity activity in mBusinessFlow.Activities)
                     {
-                        act.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
+                        activity.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
                     }
                 }
             }
