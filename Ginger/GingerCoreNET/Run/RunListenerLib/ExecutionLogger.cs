@@ -501,12 +501,12 @@ namespace Ginger.Run
 
                 if (offlineMode)
                 {
-                    if (WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
+                    // To check whether the execution is from Runset/Automate tab
+                    if (WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null || (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation))
                     {
                         businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
                     }
                     SaveObjToJSonFile(BFR, businessFlow.ExecutionFullLogFolder + @"\BusinessFlow.txt");
-                    //businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
                     
                 }
                 else
