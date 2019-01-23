@@ -1,21 +1,7 @@
 # .NET
 
 jobs:
-- job: Linux
-  pool:
-    vmImage: 'Ubuntu 16.04'
-  variables:  
-    buildConfiguration: 'Release'
-    solutionDIrectory:  'Ginger-Automation/Ginger'
-  steps:
-  - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
-  - task: PublishTestResults@2
-    condition: succeededOrFailed()
-    inputs:
-      testRunner: VSTest
-      testResultsFiles: '**/*.trx'
 
-  - task: PublishBuildArtifacts@1
 
 - job: Windows
   pool:
@@ -39,6 +25,33 @@ jobs:
       configuration: '$(buildConfiguration)'
 
   - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerCoreNetUnitTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreNetUnitTest.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerUtilsTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerUtilsTest.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerAutoPilotTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerAutoPilotTest.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerConsoleTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerConsoleTest.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerTest\bin\$(buildConfiguration)\GingerTest.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx  
+
+
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" /TestCaseFilter:TestCategory=Level2 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll" /TestCaseFilter:TestCategory=Level2 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerCoreNetUnitTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreNetUnitTest.dll" /TestCaseFilter:TestCategory=Level2 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerUtilsTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerUtilsTest.dll" /TestCaseFilter:TestCategory=Level2 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerAutoPilotTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerAutoPilotTest.dll" /TestCaseFilter:TestCategory=Level2 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerConsoleTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerConsoleTest.dll" /TestCaseFilter:TestCategory=Level2 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerTest\bin\$(buildConfiguration)\GingerTest.dll" /TestCaseFilter:TestCategory=Level2 /Logger:trx  
+
+
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" /TestCaseFilter:TestCategory=Level3 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll" /TestCaseFilter:TestCategory=Level3 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerCoreNetUnitTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreNetUnitTest.dll" /TestCaseFilter:TestCategory=Level3 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerUtilsTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerUtilsTest.dll" /TestCaseFilter:TestCategory=Level3 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerAutoPilotTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerAutoPilotTest.dll" /TestCaseFilter:TestCategory=Level3 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerConsoleTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerConsoleTest.dll" /TestCaseFilter:TestCategory=Level3 /Logger:trx
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerTest\bin\$(buildConfiguration)\GingerTest.dll" /TestCaseFilter:TestCategory=Level3 /Logger:trx  
+
+
+
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
