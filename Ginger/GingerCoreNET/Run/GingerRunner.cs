@@ -313,7 +313,7 @@ namespace Ginger.Run
             ExecutedFrom = eExecutedFrom.Run;
 
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
-            RunListeners.Add(new ProgressReportRunListener());
+            //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
 
             RunListeners.Add(new ExecutionLogger(this.ProjEnvironment, ExecutedFrom));
         }
@@ -323,7 +323,7 @@ namespace Ginger.Run
             ExecutedFrom = executedFrom;
 
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
-            RunListeners.Add(new ProgressReportRunListener());
+            //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLogger(this.ProjEnvironment, ExecutedFrom));
         }
 
@@ -795,14 +795,13 @@ namespace Ginger.Run
                         act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Wait;
 
                         GiveUserFeedback();
-                        
-
-
                         ProcessIntervaleRetry(act);
+
                         if (mStopRun)
                             break;
+
                         //Run Again
-                        RunActionWithRetryMechanism(act, checkIfActionAllowedToRun);
+                        RunActionWithRetryMechanism(act, checkIfActionAllowedToRun);                        
                     }
                 }
                 if (mStopRun)
@@ -820,11 +819,7 @@ namespace Ginger.Run
                 {
                     mIsRunning = false;
                 }
-                act.OnPropertyChanged(nameof(Act.ReturnValuesInfo));
-
-                NotifyActionEnd(act);
-                
-
+                act.OnPropertyChanged(nameof(Act.ReturnValuesInfo));                             
             }
         }
 
@@ -857,115 +852,120 @@ namespace Ginger.Run
 
         private void RunActionWithRetryMechanism(Act act, bool checkIfActionAllowedToRun = true)
         {
+            try
+            {
                 //Not suppose to happen but just in case        
                 if (act == null)
                 {
-                    Reporter.ToUser(eUserMsgKey.AskToSelectAction);
+                    //Reporter.ToUser(eUserMsgKey.AskToSelectAction);
                     return;
                 }
 
-            if (checkIfActionAllowedToRun)//to avoid duplicate checks in case the RunAction function is called from RunActvity
-            {
-                if (!act.Active)
+                if (checkIfActionAllowedToRun)//to avoid duplicate checks in case the RunAction function is called from RunActvity
                 {
-                    ResetAction(act);
-                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                    act.ExInfo = "Action is not active.";
+                    if (!act.Active)
+                    {
+                        ResetAction(act);
+                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                        act.ExInfo = "Action is not active.";
+                        return;
+                    }
+                    if (act.CheckIfVaribalesDependenciesAllowsToRun((Activity)(CurrentBusinessFlow.CurrentActivity), true) == false)
+                        return;
+                }
+                if (act.BreakPoint)
+                {
+                    StopRun();
+                }
+                if (mStopRun) return;
+                eActionExecutorType ActionExecutorType = eActionExecutorType.RunWithoutDriver;
+                // !!!!!!!!!!!! Remove SW use eventtime
+                Stopwatch st = new Stopwatch();
+                st.Start();
+
+                PrepAction(act, ref ActionExecutorType, st);
+
+
+                if (mStopRun)
+                {
                     return;
                 }
-                if (act.CheckIfVaribalesDependenciesAllowsToRun((Activity)(CurrentBusinessFlow.CurrentActivity), true) == false)
-                    return;
-            }
-            if (act.BreakPoint)
-            {
-                StopRun();
-            }
-            if (mStopRun) return;
-            eActionExecutorType ActionExecutorType = eActionExecutorType.RunWithoutDriver;
-            // !!!!!!!!!!!! Remove SW use eventtime
-            Stopwatch st = new Stopwatch();
-            st.Start();
+                GiveUserFeedback();
 
-            PrepAction(act, ref ActionExecutorType, st);
-            
+                NotifyActionStart(act);
 
-            if (mStopRun)
-            {
-                return;
-            }
-            GiveUserFeedback();
-            
-            NotifyActionStart(act);
-            
-            while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
-            {              
-                RunActionWithTimeOutControl(act, ActionExecutorType);
-                CalculateActionFinalStatus(act);
-                // fetch all pop-up handlers
-                ObservableList<ErrorHandler> lstPopUpHandlers = GetAllErrorHandlersByType(eHandlerType.Popup_Handler);
-                if (lstPopUpHandlers.Count > 0)
+                while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
                 {
-                    executeErrorAndPopUpHandler(lstPopUpHandlers);
-                }
+                    RunActionWithTimeOutControl(act, ActionExecutorType);
+                    CalculateActionFinalStatus(act);
+                    // fetch all pop-up handlers
+                    ObservableList<ErrorHandler> lstPopUpHandlers = GetAllErrorHandlersByType(eHandlerType.Popup_Handler);
+                    if (lstPopUpHandlers.Count > 0)
+                    {
+                        executeErrorAndPopUpHandler(lstPopUpHandlers);
+                    }
 
-                if (!mErrorHandlerExecuted
-                    && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
-                {
-                    // returns list of mapped error handlers with the activity depending on type of error handling mapping chosen i.e. All Available Error Handlers, None or Specific Error Handlers
-                    ObservableList<ErrorHandler> lstMappedErrorHandlers = GetErrorHandlersForCurrentActivity();
+                    if (!mErrorHandlerExecuted
+                        && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
+                    {
+                        // returns list of mapped error handlers with the activity depending on type of error handling mapping chosen i.e. All Available Error Handlers, None or Specific Error Handlers
+                        ObservableList<ErrorHandler> lstMappedErrorHandlers = GetErrorHandlersForCurrentActivity();
 
-                    if (lstMappedErrorHandlers.Count <= 0)
+                        if (lstMappedErrorHandlers.Count <= 0)
+                            break;
+
+                        ResetAction(act);
+                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
+                        NotifyActionStart(act);
+                        executeErrorAndPopUpHandler(lstMappedErrorHandlers);
+                        mErrorHandlerExecuted = true;
+                    }
+                    else
                         break;
 
-                    ResetAction(act);
-                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
-                    NotifyActionStart(act);
-                    executeErrorAndPopUpHandler(lstMappedErrorHandlers);
-                    mErrorHandlerExecuted = true;
                 }
-                else
-                    break;
+                // Run any code needed after the action executed, used in ACTScreenShot save to file after driver took screen shot
 
+                act.PostExecute();
+
+                //Adding for new control
+                ProcessStoretoValue(act);
+
+                CalculateActionFinalStatus(act); //why we need to run it again?
+
+                UpdateDSReturnValues(act);
+
+                // Add time stamp 
+                act.ExInfo = DateTime.Now.ToString() + " - " + act.ExInfo;
+                ProcessScreenShot(act, ActionExecutorType);
+                mErrorHandlerExecuted = false;
+
+                // Stop the counter before DoFlowControl
+                st.Stop();
+
+                // final timing of the action
+                act.Elapsed = st.ElapsedMilliseconds;
+                act.ElapsedTicks = st.ElapsedTicks;
+
+                //check if we have retry mechanism if yes go till max
+                if (act.Status == eRunStatus.Failed && act.EnableRetryMechanism && act.RetryMechanismCount < act.MaxNumberOfRetries)
+                {
+                    //since we return and don't do flow control the action is going to run again                
+                    //NotifyActionEnd(act); //Needed?
+                    return;
+                }
+                // we capture current activity and action to use it for execution logger,
+                // because in DoFlowControl(act) it will point to the other action/activity(as flow control will be applied)
+                Activity activity = (Activity)CurrentBusinessFlow.CurrentActivity;
+                Act action = act;
+
+                DoFlowControl(act);
+                DoStatusConversion(act);   //does it need to be here or earlier?
             }
-            // Run any code needed after the action executed, used in ACTScreenShot save to file after driver took screen shot
-
-            act.PostExecute();
-
-            //Adding for new control
-            ProcessStoretoValue(act);
-
-            CalculateActionFinalStatus(act); //why we need to run it again?
-
-            UpdateDSReturnValues(act);
-                
-            // Add time stamp 
-            act.ExInfo = DateTime.Now.ToString() + " - " + act.ExInfo;
-           ProcessScreenShot(act, ActionExecutorType);
-            mErrorHandlerExecuted = false;            
-
-            // Stop the counter before DoFlowControl
-            st.Stop();
-
-            // final timing of the action
-            act.Elapsed = st.ElapsedMilliseconds;
-            act.ElapsedTicks = st.ElapsedTicks;
-
-            //check if we have retry mechanism if yes go till max
-            if (act.Status == eRunStatus.Failed && act.EnableRetryMechanism && act.RetryMechanismCount < act.MaxNumberOfRetries)
+            finally
             {
-                //since we return and don't do flow control the action is going to run again                
-                NotifyActionEnd(act);
-                return;
+                NotifyActionEnd(act); 
             }
-            // we capture current activity and action to use it for execution logger,
-            // because in DoFlowControl(act) it will point to the other action/activity(as flow control will be applied)
-            Activity activity =(Activity) CurrentBusinessFlow.CurrentActivity;
-            Act action = act;
-
-            DoFlowControl(act);
-            DoStatusConversion(act);   //does it need to be here or earlier?
-            
-            NotifyActionEnd(act);
         }
   
         private ObservableList<ErrorHandler> GetAllErrorHandlersByType(eHandlerType errHandlerType)
@@ -2901,8 +2901,7 @@ namespace Ginger.Run
                 // temporary handling of exception
                 SetNextActionsBlockedStatus();
                 // ExecutionLogger.ActivityEnd(CurrentBusinessFlow, activity);
-                NotifyActivityEnd(activity);
-
+                //NotifyActivityEnd(activity);
 
                 //TODO: Throw exception don't cover in log, so user will see it in report
                 Reporter.ToLog(eLogLevel.ERROR, "Run Activity got error ", ex);
@@ -2947,9 +2946,7 @@ namespace Ginger.Run
                     }
                 }
 
-                NotifyActivityEnd(activity);
-
-
+                //NotifyActivityEnd(activity);
             }
         }
 
@@ -3519,14 +3516,15 @@ namespace Ginger.Run
                                 break;
                             case executionLoggerStatus.StartedNotFinishedYet:
                                 currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.Finished;
-                                if (executionLogger != null)
-                                {                                    
-                                    NotifyActivityGroupEnd(currentActivityGroup);
-                                }
-                                else
-                                {                                    
-                                    NotifyActivityGroupEnd(currentActivityGroup);
-                                }
+                                //if (executionLogger != null)
+                                //{                                    
+                                //    NotifyActivityGroupEnd(currentActivityGroup);
+                                //}
+                                //else
+                                //{                                    
+                                //    NotifyActivityGroupEnd(currentActivityGroup);
+                                //}
+                                NotifyActivityGroupEnd(currentActivityGroup);
                                 break;
                             case executionLoggerStatus.Finished:
                                 // do nothing
@@ -4178,6 +4176,7 @@ namespace Ginger.Run
         private void NotifyActionEnd(Act action)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+            action.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActionEnd(eventTime, action);
@@ -4240,7 +4239,6 @@ namespace Ginger.Run
             {
                 runnerListener.ActivityEnd(evetTime, activity);
             }
-
         }
 
 
