@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             Reset();
         }
 
-        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow)
+        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
         {
             mBusinessFlowCounter++;
             mActivitiesCounter = 0;
@@ -79,7 +79,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             SaveObjToJSonFile(businessFlowReport, Path.Combine(mDumpFolder, CurrentBusinessFlowFolder, "BusinessFlowReport.txt"));
         }
 
-        public override void ActivityStart(uint eventTime, Activity activity)
+        public override void ActivityStart(uint eventTime, Activity activity, bool continuerun= false)
         {
             mActivitiesCounter++;
             mActionsCounter = 0;

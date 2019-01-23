@@ -22,7 +22,7 @@ namespace Amdocs.Ginger.Run
         }
 
 
-        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow) 
+        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false) 
         {
             BusinessFlowTimeLineEvent = new TimeLineEvent("BusinessFlow", businessFlow.Name, eventTime);
             timeLineEvents.AddEvent(BusinessFlowTimeLineEvent);
@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.Run
         }
 
         
-        public override void ActivityStart(uint eventTime, Activity activity)
+        public override void ActivityStart(uint eventTime, Activity activity,  bool continuerun = false)
         {
             ActivityTimeLineEvent = new TimeLineEvent("Activity", activity.ActivityName, eventTime);
             if (BusinessFlowTimeLineEvent != null)
