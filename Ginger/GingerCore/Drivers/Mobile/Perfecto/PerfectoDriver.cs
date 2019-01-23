@@ -145,7 +145,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             }
             catch (Exception e)
             {
-                Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, "Perfecto", e.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error, Could not create Perfecto Mobile Automation Driver, " + e.Message);
             }
 
             if (mContextType != eContextType.WebAndroid && mContextType != eContextType.WebIOS)
