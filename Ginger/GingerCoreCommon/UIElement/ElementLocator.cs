@@ -58,6 +58,29 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public ElementInfo.eDeltaStatus DeltaStatus { get; set; }
 
+
+        public eImageType DeltaStatusIcon
+        {
+            get
+            {
+                switch (DeltaStatus)
+                {
+                    case ElementInfo.eDeltaStatus.Equal:
+                        return eImageType.UnModified;
+                    case ElementInfo.eDeltaStatus.Deleted:
+                        return eImageType.Deleted;
+                    case ElementInfo.eDeltaStatus.Modified:
+                        return eImageType.Modified;
+                    case ElementInfo.eDeltaStatus.New:
+                        return eImageType.New;
+                    default:
+                        return eImageType.UnModified;
+                }
+            }
+        }
+
+
+
         public bool IsNotEqual
         {
             get

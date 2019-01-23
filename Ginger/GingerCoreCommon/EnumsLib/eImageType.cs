@@ -240,6 +240,16 @@ namespace Amdocs.Ginger.Common.Enums
         Check,
         Bug,
         PlusSquare,        
-        DataTable        
+        DataTable,
+
+        #region Comparison Status Images
+        UnModified,
+        Modified,
+        Deleted,
+        Added
+        #endregion
     }
 }
+
+
+

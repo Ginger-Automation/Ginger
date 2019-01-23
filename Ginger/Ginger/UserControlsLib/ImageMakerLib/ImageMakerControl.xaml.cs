@@ -665,6 +665,21 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 #endregion
 
+                #region Comparison Status Images
+                case eImageType.UnModified:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, (SolidColorBrush)FindResource("$RunningStatusColor"), 0, "UnModified");
+                    break;
+                case eImageType.Modified:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, (SolidColorBrush)FindResource("$RunningStatusColor"), 0, "Modified");
+                    break;
+                case eImageType.Deleted:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MinusCircle, (SolidColorBrush)FindResource("$RunningStatusColor"), 0, "Deleted");
+                    break;
+                case eImageType.Added:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlusCircle, (SolidColorBrush)FindResource("$RunningStatusColor"), 0, "Added");
+                    break;
+        #endregion
+
                 default:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Question, Brushes.Red);
                     this.Background = Brushes.Yellow;

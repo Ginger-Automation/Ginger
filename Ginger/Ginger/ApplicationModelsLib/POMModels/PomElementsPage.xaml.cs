@@ -121,11 +121,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             SetElementsGridView();
             SetLocatorsGridView();
             SetControlPropertiesGridView();
-
-            SetDeltaStatusCellStyle(xMainElementsGrid);
-            SetDeltaStatusCellStyle(xLocatorsGrid);
-            SetDeltaStatusCellStyle(xPropertiesGrid);
-
             xMainElementsGrid.DataSourceList = mElements;
 
             if (mElements.Count > 0)
@@ -228,7 +223,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 //            view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.Value), Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(EnhancedActInputValue.OptionalValues), nameof(EnhancedActInputValue.Value), true), WidthWeight = 20 });
                 view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementGroup), Header = "Elements Group", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(ElementInfo.ElementGroupList), nameof(ElementInfo.ElementGroup), true), WidthWeight = 80 });
-                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.DeltaStatus), Header = "Comparison Status", WidthWeight = 100, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
+                //view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.DeltaStatus), Header = "Comparison Status", WidthWeight = 100, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
                 view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.DeltaExtraDetails), Header = "Comparison Details", WidthWeight = 200, MaxWidth = 200, AllowSorting = true, ReadOnly = true });
 
                 xMainElementsGrid.ShowCopy = Visibility.Collapsed;
@@ -291,41 +287,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        private void SetDeltaStatusCellStyle(ucGrid xGrid)
-        {
-
-            DataTrigger DT = new DataTrigger();
-            PropertyPath PT = new PropertyPath(nameof(ElementInfo.DeltaStatus));
-            DT.Binding = new Binding() { Path = PT, Mode = BindingMode.OneWay };
-            DT.Value = ElementInfo.eDeltaStatus.Modified;
-            DT.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.Red));
-            Style cellStyle = new Style(typeof(DataGridCell));
-            cellStyle.Triggers.Add(DT);
-
-            DataTrigger DT1 = new DataTrigger();
-            PropertyPath PT1 = new PropertyPath(nameof(ElementInfo.DeltaStatus));
-            DT1.Binding = new Binding() { Path = PT1, Mode = BindingMode.OneWay };
-            DT1.Value = ElementInfo.eDeltaStatus.Deleted;
-            DT1.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.Yellow));
-            cellStyle.Triggers.Add(DT1);
-
-
-            DataTrigger DT2 = new DataTrigger();
-            PropertyPath PT2 = new PropertyPath(nameof(ElementInfo.DeltaStatus));
-            DT2.Binding = new Binding() { Path = PT2, Mode = BindingMode.OneWay };
-            DT2.Value = ElementInfo.eDeltaStatus.New;
-            DT2.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.Green));
-            cellStyle.Triggers.Add(DT2);
-
-            foreach (DataGridColumn col in xGrid.grdMain.Columns)
-            {
-                if (col.SortMemberPath == nameof(ElementInfo.DeltaStatus))
-                {
-                    col.CellStyle = cellStyle;
-                }
-            }
-
-        }
+  
 
         private void XMainElementsGrid_SelectedItemChanged(object selectedItem)
         {
@@ -420,7 +382,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mContext == PomAllElementsPage.eElementsContext.AllDeltaElements)
             {
-                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.DeltaStatus), Header = "Comparison Status", WidthWeight = 150, MaxWidth = 150, AllowSorting = true, ReadOnly = true });
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
+                //defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.DeltaStatus), Header = "Comparison Status", WidthWeight = 150, MaxWidth = 150, AllowSorting = true, ReadOnly = true });
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.DeltaExtraDetails), Header = "Comparison Details", WidthWeight = 250, MaxWidth = 250, AllowSorting = true, ReadOnly = true });
 
                 xLocatorsGrid.ShowCopy = Visibility.Collapsed;
@@ -499,8 +462,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mContext == PomAllElementsPage.eElementsContext.AllDeltaElements)
             {
-
-                view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.DeltaStatus), Header = "Comparison Status", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
+                //view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.DeltaStatus), Header = "Comparison Status", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
                 view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.DeltaExtraDetails), Header = "Comparison Details", WidthWeight = 10, MaxWidth = 250, AllowSorting = true, ReadOnly = true });
             }
 

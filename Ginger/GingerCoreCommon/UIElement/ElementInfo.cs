@@ -293,13 +293,6 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public eElementGroup ElementGroup { get; set; }
 
-        public enum eDeltaStatus
-        {
-            Equal,
-            Deleted,
-            Modified,
-            New
-        }
 
         
         public ObservableList<string> ElementGroupList
@@ -320,6 +313,15 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
+        public enum eDeltaStatus
+        {
+            Equal,
+            Deleted,
+            Modified,
+            New
+        }
+
+
         private eDeltaStatus mDeltaStatus;
 
         public eDeltaStatus DeltaStatus
@@ -333,6 +335,27 @@ namespace Amdocs.Ginger.Common.UIElement
                 mDeltaStatus = value;
                 OnPropertyChanged(nameof(DeltaStatus));
                 OnPropertyChanged(nameof(IsNotEqual));
+                OnPropertyChanged(nameof(DeltaStatusIcon));
+            }
+        }
+
+        public eImageType DeltaStatusIcon
+        {
+            get
+            {
+                switch (DeltaStatus)
+                {
+                    case eDeltaStatus.Equal:
+                        return eImageType.UnModified;
+                    case eDeltaStatus.Deleted:
+                        return eImageType.Deleted;
+                    case eDeltaStatus.Modified:
+                        return eImageType.Modified;
+                    case eDeltaStatus.New:
+                        return eImageType.New;
+                    default:
+                        return eImageType.UnModified;
+                }
             }
         }
 
