@@ -96,13 +96,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     else
                     {
                         SetPOMPathToShow();
-                        if (mObjectElementType.GetType() != typeof(ActGotoURL) && mObjectElementType.GetType() != typeof(ActBrowserElement))
+                        if (mObjectElementType.GetType() != typeof(ActBrowserElement))
                         {
                             Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
                             ElementInfo selectedPOMElement = (ElementInfo)mSelectedPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
                             if (selectedPOMElement == null)
                             {
-                                Reporter.ToUser(eUserMsgKeys.POMElementSearchByGUIDFailed);
+                                Reporter.ToUser(eUserMsgKey.POMElementSearchByGUIDFailed);
                             }
                             else
                             {
@@ -154,7 +154,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 mSelectedPOM = (ApplicationPOMModel)selectedPOMs[0];
                 SetPOMPathToShow();
 
-                if (mObjectElementType.GetType() == typeof(ActGotoURL) || mObjectElementType.GetType() == typeof(ActBrowserElement))
+                if (mObjectElementType.GetType() == typeof(ActBrowserElement))
                 {
                     Act actBrowserElem = mObjectElementType as Act;
                     actBrowserElem.AddOrUpdateInputParamValue("UrlPOM", mSelectedPOM.Guid.ToString());

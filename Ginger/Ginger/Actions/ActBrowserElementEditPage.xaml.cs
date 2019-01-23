@@ -37,7 +37,7 @@ namespace Ginger.Actions
     {
         private ActBrowserElement mAct;
         PlatformInfoBase mPlatform;
-        string mExistingPOMGuidString = "";
+
         public ActBrowserElementEditPage(ActBrowserElement act)
         {
             InitializeComponent();
