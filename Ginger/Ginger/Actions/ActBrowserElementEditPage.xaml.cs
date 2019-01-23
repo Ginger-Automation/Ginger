@@ -110,7 +110,7 @@ namespace Ginger.Actions
                             ValueUC.Visibility = System.Windows.Visibility.Collapsed;
                             xPOMUrlFrame.Visibility = System.Windows.Visibility.Visible;
 
-                            xValueLabel.Content = "Page Objects Model URL:";
+                            xValueLabel.Content = "Page Objects Model:";
                             SetLocateValueFrame();
                         }
 
@@ -185,7 +185,7 @@ namespace Ginger.Actions
                 ValueUC.Visibility = System.Windows.Visibility.Collapsed;
                 xPOMUrlFrame.Visibility = System.Windows.Visibility.Visible;
 
-                xValueLabel.Content = "POM URL:";
+                xValueLabel.Content = "Page Objects Model:";
 
                 SetLocateValueFrame();
             }

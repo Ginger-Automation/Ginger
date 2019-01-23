@@ -198,6 +198,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 HighlightButton.Visibility = Visibility.Collapsed;
                 xPOMElementTextBox.Visibility = Visibility.Collapsed;
                 POMTitleLbl.Visibility = Visibility.Collapsed;
+                POMGrid.ColumnDefinitions[0].Width = new GridLength(0);
             }
             else
             {
