@@ -51,7 +51,8 @@ namespace Amdocs.Ginger.Common
         ObservableList<IDatabase> GetDatabaseList();
         ObservableList<VariableBase> GetVariaables();
         ObservableList<IAgent> GetAllIAgents();
-     
+
+        ObservableList<DataSourceBase> GetDatasourceList();
 
         void StartAgentDriver(IAgent agent);
         Type GetDriverType(IAgent agent);
