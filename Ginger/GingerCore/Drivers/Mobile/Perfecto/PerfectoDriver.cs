@@ -196,6 +196,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                     driverOptions = new SafariOptions();
                     break;
                 default:
+                    driverOptions = new AppiumOptions();
                     break;
             }
 
