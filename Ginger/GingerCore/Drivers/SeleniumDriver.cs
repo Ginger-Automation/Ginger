@@ -6753,7 +6753,7 @@ namespace GingerCore.Drivers
         public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
         {
 
-            ElementInfo OriginalElementInfo = originalElements.Where(x => x.ElementObject.Equals(latestElement.ElementObject)).FirstOrDefault();
+            ElementInfo OriginalElementInfo = originalElements.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Deleted && x.ElementObject.Equals(latestElement.ElementObject)).FirstOrDefault();
 
             return OriginalElementInfo;
         }
