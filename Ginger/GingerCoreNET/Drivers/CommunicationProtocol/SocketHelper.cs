@@ -32,11 +32,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         static string LocalHostIP;
         public static string GetLocalHostIP()
         {
-            if (LocalHostIP!= null)
+            if (LocalHostIP == null)
             {
-                return LocalHostIP;
+                SetLocalHostIP();                
             }
-            SetLocalHostIP();            
+            
             return LocalHostIP;
         }
 
