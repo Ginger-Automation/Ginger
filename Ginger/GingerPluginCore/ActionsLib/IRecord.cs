@@ -17,20 +17,12 @@ limitations under the License.
 #endregion
 
 
-namespace GingerPlugIns
+namespace Amdocs.Ginger.Plugin.Core
 {
-    public abstract class PlugInCapability
+    [GingerInterface("IBrowser", "Record user actions")]
+    public interface IRecord
     {
-        //Each Plugin can add capabilities to Ginger, in different areas
-
-        // Below are some samples not all are actually implemented but this is the idea where each plugin can extend Ginger in many areas
-        // Plugin can impl one or more capabilities
-        public enum eCapabilityType
-        {
-            Actions,   // this plug in is adding new actions, impl in PACT
-            TextEditor, // This plug know to edit text file, impl in PACT
-        }
-
-        public abstract eCapabilityType CapabilityType { get; }
+        void StartRecording();
+        void StopRecording();
     }
 }
