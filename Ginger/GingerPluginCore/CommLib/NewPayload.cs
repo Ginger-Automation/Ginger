@@ -885,7 +885,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
         }
 
-        internal int PackageLen()
+        public int PackageLen()
         {
             return mBuffer.Length;
         }

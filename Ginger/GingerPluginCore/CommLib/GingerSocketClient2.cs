@@ -18,6 +18,7 @@ limitations under the License.
 
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -55,12 +56,36 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             {                
                 //Local host
                 IPAddress ipAddress = IPAddress.Parse(IP); 
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);                
+                IPEndPoint remoteIP = new IPEndPoint(ipAddress, port);                
                 Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                // Connect to Ginger Server async
-                socket.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), socket);
-                mConnectDone.WaitOne();
+                Console.WriteLine("Connecting to: " + remoteIP + ":" + port);
+                // Connect to Ginger Server async, retyr max 10 seconds                
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                int retrycount = 0;
+                while (!socket.Connected && stopwatch.ElapsedMilliseconds < 30000)
+                {                                        
+                    socket.BeginConnect(remoteIP, new AsyncCallback(ConnectCallback), socket);
+                    mConnectDone.WaitOne();                    
+                    if (!socket.Connected)
+                    {
+                        retrycount++;
+                        Console.WriteLine("Connect retry #" + retrycount);
+                        Thread.Sleep(5000);
+                    }
+                }
+
+                if (socket.Connected)
+                {
+                    // Now Ginger client is ready for incoming data
+                    mConnected = true;
+                }
+                else
+                {
+                    Console.WriteLine("Failed to connect, exiting");
+                    mConnected = false;
+                    return;
+                }
 
                 //start waiting for incoming data async - non blocking
 
@@ -70,9 +95,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 mGingerSocketInfo.MessageHandler = MessageHandler;
                 mGingerSocketInfo.Receive();
 
-                // Now Ginger client is ready for incoming data
-
-                mConnected = true;
+                
                 // if there is code here it will run - no wait
 
                 //TODO: handshake: version, security, encryption
@@ -121,16 +144,31 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             {
                 // Retrieve the socket from the state object.  
                 Socket client = (Socket)ar.AsyncState;
-
-                // Complete the connection 
-                client.EndConnect(ar);
+                if (client.Connected)
+                {
+                    client.EndConnect(ar);
+                    mConnected = true;
+                }
+                else
+                {
+                    mConnected = false;
+                }
                 
+                // Complete the connection 
+
                 // Signal that the connection has been made.  
-                mConnectDone.Set();
+                
             }
             catch (Exception ex)
             {
-                throw ex;
+                Console.WriteLine("Error at Connect Callback: " + ex.Message);
+                
+
+                // the connect fail we will retry, need to release the Wait code                
+            }
+            finally
+            {
+                mConnectDone.Set();
             }
         }
     }
