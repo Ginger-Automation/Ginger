@@ -75,6 +75,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.BusinessFlows.Add(mBF);
         }
 
+        [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void SCM_Login()
         {
@@ -123,6 +124,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
         // Test the time to enter data into text box
+        [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void SpeedTest()
         {
@@ -165,7 +167,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.RunStatus = eRunStatus.Pending;
         }
 
-
+        [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void TestVariableResetIssue()
         {

@@ -667,9 +667,9 @@ namespace Ginger.Run
                 GRP.xRunnerNameTxtBlock.Foreground = FindResource("$SelectionColor_Pink") as Brush;
             }                
             mCurrentSelectedRunner = GRP;
-            //!!!!!!!!!!!!!!!!!!!!
-            //mCurrentSelectedRunner.RunnerPageEvent -= RunnerPageEvent;
-            //mCurrentSelectedRunner.RunnerPageEvent += RunnerPageEvent;
+            
+            mCurrentSelectedRunner.RunnerPageEvent -= RunnerPageEvent;
+            mCurrentSelectedRunner.RunnerPageEvent += RunnerPageEvent;
             UpdateRunnerTime();
 
             // mCurrentSelectedRunner.Runner.GingerRunnerEvent += Runner_GingerRunnerEvent;
@@ -690,7 +690,7 @@ namespace Ginger.Run
             InitRunnerExecutionDebugSection();
         }
 
-        // !!!!!!!!!!!! zzz
+        
         private void Runner_GingerRunnerEvent(GingerRunnerEventArgs EventArgs)
         {
             switch (EventArgs.EventType)
@@ -883,10 +883,9 @@ namespace Ginger.Run
 
                     GR.PropertyChanged -= Runner_PropertyChanged;
                     GR.PropertyChanged += Runner_PropertyChanged;
-
-                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    //runnerPage.RunnerPageEvent -= RunnerPageEvent;
-                    //runnerPage.RunnerPageEvent += RunnerPageEvent;
+                    
+                    runnerPage.RunnerPageEvent -= RunnerPageEvent;
+                    runnerPage.RunnerPageEvent += RunnerPageEvent;
                 });
             }
 
@@ -1433,7 +1432,7 @@ namespace Ginger.Run
 
         private void xRunsetReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            if(App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
+            if(WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
             {
                 ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
                 HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
@@ -1444,7 +1443,7 @@ namespace Ginger.Run
                     Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                     return;
                 }
-                if (App.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
+                if (WorkSpace.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                 {
                     string runSetFolder = App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
                     reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder), false, null, null);

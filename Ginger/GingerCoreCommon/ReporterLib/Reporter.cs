@@ -31,14 +31,14 @@ namespace Amdocs.Ginger.Common
 
         public static ReporterData ReporterData = new ReporterData();
                 
-        public static bool RunningInExecutionMode { get; set; }
+        public static bool ReportAllAlsoToConsole { get; set; }
 
 
         #region ToLog
         public static eAppReporterLoggingLevel AppLoggingLevel { get; set; }
         public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
-            if (RunningInExecutionMode) 
+            if (ReportAllAlsoToConsole) 
             {
                 ToConsole(logLevel, messageToLog, exceptionToLog);
             }
@@ -126,7 +126,7 @@ namespace Amdocs.Ginger.Common
                 {
                     ToLog(eLogLevel.DEBUG, "Showing User Message: '" + messageText + "'");
                 }
-                if (RunningInExecutionMode)
+                else if (ReportAllAlsoToConsole)
                 {
                     ToConsole(eLogLevel.DEBUG, "Showing User Message: '" + messageText + "'");
                 }
@@ -138,7 +138,7 @@ namespace Amdocs.Ginger.Common
                 {
                     ToLog(eLogLevel.DEBUG, "User Message Option Selection: '" + userSelection.ToString() + "'");
                 }
-                else if (RunningInExecutionMode)
+                else if (ReportAllAlsoToConsole)
                 {
                     ToConsole(eLogLevel.DEBUG, "User Message Option Selection: '" + userSelection.ToString() + "'");
                 }
@@ -151,7 +151,7 @@ namespace Amdocs.Ginger.Common
 
                 ToLog(eLogLevel.ERROR, txt, ex);
 
-                if (RunningInExecutionMode)
+                if (ReportAllAlsoToConsole)
                 {
                     ToConsole(eLogLevel.ERROR, txt, ex);
                 }
@@ -205,7 +205,7 @@ namespace Amdocs.Ginger.Common
                 {
                     ToLog(eLogLevel.DEBUG, "Showing Status Message: " + messageContent);
                 }
-                if (RunningInExecutionMode)
+                else if (ReportAllAlsoToConsole)
                 {
                     ToConsole(eLogLevel.DEBUG, "Showing Status Message: " + messageContent);
                 }
