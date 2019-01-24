@@ -62,6 +62,7 @@ namespace Ginger.ALM
 
                 if (GingerCore.ALM.QCRestAPI.ImportFromQCRest.OpenALMConnectionPageFlag == true)
                 {
+                    GingerCore.ALM.QCRestAPI.ImportFromQCRest.OpenALMConnectionPageFlag = false;
                     ALMConnectionPage almConnPage = new ALMConnectionPage(ALMIntegration.eALMConnectType.SettingsPage);
                     almConnPage.ShowAsWindow();
                 }
@@ -88,7 +89,11 @@ namespace Ginger.ALM
         private void Refresh(object sender, RoutedEventArgs e)
         {
             if (Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
                 RunWorker(true);
+                Mouse.OverrideCursor = null;
+            }
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
@@ -116,6 +121,9 @@ namespace Ginger.ALM
         public void RunWorker(Boolean refreshFlag)
         {
             fieldsWorker.WorkerReportsProgress = true;
+            fieldsWorker.DoWork -= new DoWorkEventHandler(fieldsWorker_DoWork);
+            fieldsWorker.ProgressChanged -= new ProgressChangedEventHandler(FieldsWorker_ProgressChanged);
+            fieldsWorker.RunWorkerCompleted -= new RunWorkerCompletedEventHandler(fieldsWorker_Completed);
             fieldsWorker.DoWork += new DoWorkEventHandler(fieldsWorker_DoWork);
             fieldsWorker.ProgressChanged += new ProgressChangedEventHandler(FieldsWorker_ProgressChanged);
             fieldsWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(fieldsWorker_Completed);
@@ -159,9 +167,11 @@ namespace Ginger.ALM
             }
             if (GingerCore.ALM.QCRestAPI.ImportFromQCRest.OpenALMConnectionPageFlag == true)
             {
+                GingerCore.ALM.QCRestAPI.ImportFromQCRest.OpenALMConnectionPageFlag = false;
                 ALMConnectionPage almConnPage = new ALMConnectionPage(ALMIntegration.eALMConnectType.SettingsPage);
                 almConnPage.ShowAsWindow();
             }
+            
         }
         #endregion
     }

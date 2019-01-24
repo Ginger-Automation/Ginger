@@ -438,7 +438,7 @@ namespace Ginger.ALM
 
         public void ImportALMTests(string importDestinationFolderPath = null)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             Reporter.ToLog(eLogLevel.DEBUG, "Importing Business flow from ALM");
             if (AutoALMProjectConnect(eALMConnectType.Auto, true, true))
             {

@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCoreNET.ALMLib;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -234,6 +235,10 @@ namespace GingerCore.ALM.QC
         //get test lab explorer(tree view)
         public static List<string> GetTestLabExplorer(string PathNode)
         {
+            if (!IsProjectConnected)
+            {
+                QCConnect.ConnectQCProject(ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMDomain, ALMCore.AlmConfig.ALMProjectName);
+            }
             TestSetTreeManager treeM = (TestSetTreeManager)mTDConn.TestSetTreeManager;
             TestSetFolder tsFolder = treeM.get_NodeByPath(PathNode);
             if (tsFolder == null && PathNode.ToUpper() == "ROOT")

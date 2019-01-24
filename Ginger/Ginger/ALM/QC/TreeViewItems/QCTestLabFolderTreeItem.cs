@@ -64,34 +64,7 @@ namespace Ginger.ALM.QC.TreeViewItems
             //check for restApi
             try
             {
-                // get the sub items for the root here and return list of Childrens
-                // Step #1 add sub folder of current folder
-                List<string> strParentFolders = ALMIntegration.Instance.GetTestLabExplorer(Path);
-                //Add QC folders to tree children    
-
-                foreach (string sFolder in strParentFolders)
-                {
-                    QCTestLabFolderTreeItem pfn = new QCTestLabFolderTreeItem();
-                    pfn.Folder = sFolder;
-                    pfn.Path = Path + @"\" + sFolder;
-                    CurrentChildrens.Add(pfn);
-                }
-
-                // Step #2 add folder Test Set list
-                List<QCTestSetSummary> sTestSets = (List<QCTestSetSummary>)ALMIntegration.Instance.GetTestSetExplorer(Path);
-
-                foreach (QCTestSetSummary tsItem in sTestSets)
-                {
-                    tsItem.TestSetStatuses = new List<string[]>();
-                    QCTestSetTreeItem pfn = new QCTestSetTreeItem();
-                    pfn.TestSetID = tsItem.TestSetID.ToString();
-                    pfn.TestSetName = tsItem.TestSetName;
-                    pfn.Path = Path + @"\" + tsItem.TestSetName;
-                    QCTestSetSummary tsItemStatus = ALMIntegration.Instance.GetTSRunStatus(tsItem);
-                    pfn.TestSetStatuses = tsItem.TestSetStatuses;
-                    pfn.IsTestSetAlreadyImported();
-                    CurrentChildrens.Add(pfn);
-                }
+                GetTestLabAndTestSet();
             }
             catch (ArgumentOutOfRangeException ex)
             {
@@ -100,12 +73,44 @@ namespace Ginger.ALM.QC.TreeViewItems
                 {
                     ALMConnectionPage almConnPage = new ALMConnectionPage(ALMIntegration.eALMConnectType.SettingsPage);
                     almConnPage.ShowAsWindow();
+                    GetTestLabAndTestSet();
                 }
             }
             return CurrentChildrens;
         }
 
+        private void GetTestLabAndTestSet()
+        {
+            // get the sub items for the root here and return list of Childrens
+            // Step #1 add sub folder of current folder
 
+            List<string> strParentFolders = ALMIntegration.Instance.GetTestLabExplorer(Path);
+            //Add QC folders to tree children    
+
+            foreach (string sFolder in strParentFolders)
+            {
+                QCTestLabFolderTreeItem pfn = new QCTestLabFolderTreeItem();
+                pfn.Folder = sFolder;
+                pfn.Path = Path + @"\" + sFolder;
+                CurrentChildrens.Add(pfn);
+            }
+
+            // Step #2 add folder Test Set list
+            List<QCTestSetSummary> sTestSets = (List<QCTestSetSummary>)ALMIntegration.Instance.GetTestSetExplorer(Path);
+
+            foreach (QCTestSetSummary tsItem in sTestSets)
+            {
+                tsItem.TestSetStatuses = new List<string[]>();
+                QCTestSetTreeItem pfn = new QCTestSetTreeItem();
+                pfn.TestSetID = tsItem.TestSetID.ToString();
+                pfn.TestSetName = tsItem.TestSetName;
+                pfn.Path = Path + @"\" + tsItem.TestSetName;
+                QCTestSetSummary tsItemStatus = ALMIntegration.Instance.GetTSRunStatus(tsItem);
+                pfn.TestSetStatuses = tsItem.TestSetStatuses;
+                pfn.IsTestSetAlreadyImported();
+                CurrentChildrens.Add(pfn);
+            }
+        }
         private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
         {
             try
