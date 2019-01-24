@@ -6752,5 +6752,11 @@ namespace GingerCore.Drivers
             }
 
         }
+
+        void IWindowExplorer.StartSpying()
+        {
+            Driver.SwitchTo().DefaultContent();
+            InjectSpyIfNotIngected();
+        }
     }
 }
