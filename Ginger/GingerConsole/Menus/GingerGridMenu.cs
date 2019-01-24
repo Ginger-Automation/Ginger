@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
@@ -28,8 +29,6 @@ namespace Amdocs.Ginger.GingerConsole
 {
     public class GingerGridMenu
     {
-        GingerGrid mGingerGrid;
-
         MenuItem StartGridMenuItem;
         MenuItem StopGridMenuItem;
         MenuItem NodeListMenuItem;
@@ -39,12 +38,12 @@ namespace Amdocs.Ginger.GingerConsole
         {
             StartGridMenuItem = new MenuItem(ConsoleKey.D1, "Start Grid", () => StartGrid(), true);
             StopGridMenuItem = new MenuItem(ConsoleKey.D2, "Stop Grid", () => StopGrid(), false);
-            NodeListMenuItem = new MenuItem(ConsoleKey.D3, "Node List", () => NodeList(), false);
+            NodeListMenuItem = new MenuItem(ConsoleKey.D3, "Node List", () => NodeList(), true);
             TestPluginMenuItem = new MenuItem(ConsoleKey.D4, "Test Plugin", () => TestPlugin(), true);
 
             MenuItem GingerGridMenu = new MenuItem(ConsoleKey.G, "Ginger Grid");
-            GingerGridMenu.SubItems.Add(StartGridMenuItem);
-            GingerGridMenu.SubItems.Add(StopGridMenuItem);
+            //GingerGridMenu.SubItems.Add(StartGridMenuItem);
+            //GingerGridMenu.SubItems.Add(StopGridMenuItem);
             GingerGridMenu.SubItems.Add(NodeListMenuItem);
             GingerGridMenu.SubItems.Add(TestPluginMenuItem);
 
@@ -56,8 +55,8 @@ namespace Amdocs.Ginger.GingerConsole
             Stopwatch st = Stopwatch.StartNew();
             for (int i = 0; i < 1000; i++)
             {
-                GingerNodeProxy GNP = new GingerNodeProxy(mGingerGrid.NodeList[0]);
-                GNP.GingerGrid = mGingerGrid;
+                GingerNodeProxy GNP = new GingerNodeProxy(WorkSpace.Instance.LocalGingerGrid.NodeList[0]);
+                GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
                 NewPayLoad pl = GetPL();
                 GNP.RunAction(pl);
             }
@@ -88,15 +87,15 @@ namespace Amdocs.Ginger.GingerConsole
         void StartGrid()
         {
             Console.WriteLine("Starting Ginger Grid Hub");
-            mGingerGrid = new GingerGrid(SocketHelper.GetOpenPort());
-            mGingerGrid.Start();
-            Console.WriteLine("Ginger Grid started - " + mGingerGrid.Status);
-            Console.WriteLine("Port: " + mGingerGrid.Port);
+            //WorkSpace.Instance.LocalGingerGrid = new GingerGrid(SocketHelper.GetOpenPort());
+            WorkSpace.Instance.LocalGingerGrid.Start();
+            Console.WriteLine("Ginger Grid started - " + WorkSpace.Instance.LocalGingerGrid.Status);
+            Console.WriteLine("Port: " + WorkSpace.Instance.LocalGingerGrid.Port);
         }
 
         void StopGrid()
         {
-            mGingerGrid.Stop();
+            WorkSpace.Instance.LocalGingerGrid.Stop();
             Console.WriteLine("Ginger Grid stopped");
             // Loop until key press
 
@@ -110,7 +109,8 @@ namespace Amdocs.Ginger.GingerConsole
 
             // Hook chnaged event for auto updates
             // We print the grid info when something changed
-            mGingerGrid.NodeList.CollectionChanged += List_CollectionChanged;
+            //mGingerGrid.NodeList.CollectionChanged += List_CollectionChanged;
+            WorkSpace.Instance.LocalGingerGrid.NodeList.CollectionChanged += List_CollectionChanged;
 
             // Wait for user 
             Console.WriteLine("List will refresh automatically when list changed, Press any key to exit");
@@ -130,18 +130,22 @@ namespace Amdocs.Ginger.GingerConsole
         void PrintGridInfo()
         {
             Console.WriteLine("Ginger Grid Info last update: " + DateTime.Now);
-            Console.WriteLine("Ginger Node Count=" + mGingerGrid.NodeList.Count);
-            Console.WriteLine("========================================================================");
-            Console.WriteLine("| # | Name       |     Host    |  OS       |   IP          |   Status   |");
-            Console.WriteLine("========================================================================");
+            Console.WriteLine("Ginger Node Count=" + WorkSpace.Instance.LocalGingerGrid.NodeList.Count);
+            Console.WriteLine("========================================================================================");
+            Console.WriteLine("| # | Name       | Service ID          | Host      | OS       | IP          | Status   |");
+            Console.WriteLine("========================================================================================");
             int i = 0;
-            foreach (GingerNodeInfo GNI in mGingerGrid.NodeList)
+            foreach (GingerNodeInfo GNI in WorkSpace.Instance.LocalGingerGrid.NodeList)
             {
                 i++;
-                Console.WriteLine("| " + i + " | " + GNI.Name + " | " + GNI.Host + " | " + GNI.OS + " | " + GNI.IP + " | " + GNI.Status + " |");
-                Console.WriteLine("----------------------------------------------------------");
+                if (i > 2)
+                {
+                    Console.WriteLine("----------------------------------------------------------");
+                }
+                Console.WriteLine("| " + i + " | " + GNI.Name + " | " + GNI.ServiceId + " | " + GNI.Host + " | " + GNI.OS + " | " + GNI.IP + " | " + GNI.Status + " |");
             }
-            Console.WriteLine("================================================================");
+            Console.WriteLine("========================================================================================");
         }
+
     }
 }

@@ -156,6 +156,9 @@ namespace Amdocs.Ginger.Common.Enums
         ImportFile,
         Upgrade,
         Recover,
+        Approve,
+        Reject,
+        Warn,
         #endregion
         
         #region Items Images

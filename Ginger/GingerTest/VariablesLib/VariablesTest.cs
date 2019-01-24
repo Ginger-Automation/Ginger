@@ -23,6 +23,7 @@ using GingerWPFUnitTest;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerTest
 {
@@ -74,8 +75,8 @@ namespace GingerTest
 
         }
 
-        
-        [TestMethod]
+        [Ignore]
+        [TestMethod]  [Timeout(60000)]
         public void AddGlobalStringVariable()
         {
             //Arrange
@@ -84,7 +85,7 @@ namespace GingerTest
             //Act                        
             GlobalVariablesPOM globalVariablesPOM = mGingerAutomator.MainWindowPOM.GotoGlobalVariables();
             globalVariablesPOM.AddStringVariable(name);
-            VariableBase v = (from x in Ginger.App.UserProfile.Solution.Variables where x.Name == name select x).SingleOrDefault();
+            VariableBase v = (from x in WorkSpace.UserProfile.Solution.Variables where x.Name == name select x).SingleOrDefault();
 
             //Assert
             Assert.AreEqual(name, v.Name, "Var Name");

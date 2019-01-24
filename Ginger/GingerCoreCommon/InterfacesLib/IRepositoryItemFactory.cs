@@ -51,7 +51,8 @@ namespace Amdocs.Ginger.Common
         ObservableList<IDatabase> GetDatabaseList();
         ObservableList<VariableBase> GetVariaables();
         ObservableList<IAgent> GetAllIAgents();
-     
+
+        ObservableList<DataSourceBase> GetDatasourceList();
 
         void StartAgentDriver(IAgent agent);
         Type GetDriverType(IAgent agent);
@@ -73,7 +74,7 @@ namespace Amdocs.Ginger.Common
         
         void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
 
-        
+        string GenerateReportForREportTemplate(string ReportTemplateName, object RI, object RT);
 
         string GenerateTemplate(string templatename, object o);
         ITextBoxFormatter CreateTextBoxFormatter(object Textblock);
@@ -83,5 +84,10 @@ namespace Amdocs.Ginger.Common
         void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening);
 
         void HTMLReportAttachment(string report, string reportsResultFolder, string reportresultfolder, string runsetfolder, object Attachment, object conf);
+
+        object CreateNewReportTemplate();
+
+        void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder);
+        bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, string refe, PublishToALMConfig PublishToALMConfig);
     }
 }

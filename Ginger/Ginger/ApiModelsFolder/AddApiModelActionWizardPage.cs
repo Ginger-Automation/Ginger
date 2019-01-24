@@ -23,6 +23,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.WebServices.WebAPI;
 using GingerWPF.WizardLib;
 using System.Linq;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ApiModelsFolder
 {
@@ -78,7 +79,7 @@ namespace Ginger.ApiModelsFolder
                 aNew.APIModelParamsValue = GetEnhancedUpdatedParams(aamb.MergedParamsList);
                 aNew.ReturnValues = ConvertTemplateReturnValues(aamb.ReturnValues);
                 aNew.AddNewReturnParams = true;
-                aNew.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+                aNew.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
 
                 mActions.Add(aNew);

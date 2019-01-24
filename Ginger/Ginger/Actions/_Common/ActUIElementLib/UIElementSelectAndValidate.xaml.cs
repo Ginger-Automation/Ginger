@@ -28,6 +28,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -82,7 +83,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private ePlatformType GetActionPlatform()
         {
             string targetapp = App.BusinessFlow.CurrentActivity.TargetApplication;
-            ePlatformType platform = (from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            ePlatformType platform = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             return platform;
         }
 

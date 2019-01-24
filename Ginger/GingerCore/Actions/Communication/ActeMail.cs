@@ -25,7 +25,7 @@ using GingerCore.Helpers;
 using GingerCore.Platforms;
 using GingerCore.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.Communication
 {
     public class ActeMail : ActWithoutDriver
@@ -33,7 +33,7 @@ namespace GingerCore.Actions.Communication
         public override string ActionDescription { get { return "Email Action"; } }
         public override string ActionUserDescription { get { return "Email Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Email Action let you send email");
             TBH.AddLineBreak();

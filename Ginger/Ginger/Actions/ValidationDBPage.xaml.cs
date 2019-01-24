@@ -101,7 +101,7 @@ namespace Ginger.Actions
                 
         private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
             bool ImportFileFlag = false;
             string FileName = QueryFile.ValueTextBox.Text;
             Boolean.TryParse(mValidationDB.GetInputParamValue(ActDBValidation.Fields.ImportFile), out ImportFileFlag);
@@ -265,6 +265,16 @@ namespace Ginger.Actions
                 {
                     KeySpaceComboBox.Items.Add(s);
                 }
+            }else if (db.DBType == Database.eDBTypes.Couchbase)
+            {
+                NoSqlBase NoSqlDriver = null;
+                NoSqlDriver = new GingerCouchbase(db);
+
+                List<string> keyspace = NoSqlDriver.GetKeyspaceList();
+                foreach (string s in keyspace)
+                {
+                    KeySpaceComboBox.Items.Add(s);
+                }
             }
         }
 
@@ -276,10 +286,14 @@ namespace Ginger.Actions
             if (db == null) return;
             string KeySpace = KeySpaceComboBox.Text;
             List<string> Tables = db.GetTablesList(KeySpace);
-                foreach (string s in Tables)
-                {
-                    TablesComboBox.Items.Add(s);
-                }
+            if (Tables == null)
+            { 
+                return;
+            }
+            foreach (string s in Tables)
+            {
+                TablesComboBox.Items.Add(s);
+            }
         }
         
         private void ColumnComboBox_DropDownOpened(object sender, EventArgs e)
@@ -298,6 +312,10 @@ namespace Ginger.Actions
                 table = TablesComboBox.Text;
             }
             List<string> Columns = db.GetTablesColumns(table);
+            if (Columns == null)
+            {
+                return;
+            }                
             foreach (string s in Columns)
             {
                 ColumnComboBox.Items.Add(s);
@@ -486,7 +504,7 @@ namespace Ginger.Actions
 
         public void BrowseQueryFile_Click(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
             if (!String.IsNullOrEmpty(QueryFile.ValueTextBox.Text))
             {
                 if(!System.IO.File.Exists(QueryFile.ValueTextBox.Text))

@@ -59,10 +59,10 @@ namespace Ginger.ALM.Repository
         public override bool ShowImportReviewPage(string importDestinationFolderPath, object selectedTestPlan = null)
         {
             if (importDestinationFolderPath == "")
-                importDestinationFolderPath = App.UserProfile.Solution.BusinessFlowsMainFolder;
+                importDestinationFolderPath =  WorkSpace.UserProfile.Solution.BusinessFlowsMainFolder;
 
             // get activities groups
-            RQMImportReviewPage win = new RQMImportReviewPage(RQMConnect.Instance.GetRQMTestPlanFullData(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, (RQMTestPlan)selectedTestPlan), importDestinationFolderPath);
+            RQMImportReviewPage win = new RQMImportReviewPage(RQMConnect.Instance.GetRQMTestPlanFullData( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,  WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject, (RQMTestPlan)selectedTestPlan), importDestinationFolderPath);
             win.ShowAsWindow();
 
             return true;
@@ -71,7 +71,7 @@ namespace Ginger.ALM.Repository
         public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
         {
             bool isConnectSucc = false;
-            Reporter.ToLog(eLogLevel.INFO, "Connecting to RQM server");
+            Reporter.ToLog(eLogLevel.DEBUG, "Connecting to RQM server");
             try
             {
                 isConnectSucc = ALMIntegration.Instance.AlmCore.ConnectALMServer();
@@ -83,11 +83,11 @@ namespace Ginger.ALM.Repository
 
             if (!isConnectSucc)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Could not connect to RQM server");
+                Reporter.ToLog(eLogLevel.WARN, "Could not connect to RQM server");
                 if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
-                    Reporter.ToUser(eUserMsgKeys.ALMConnectFailure);
+                    Reporter.ToUser(eUserMsgKey.ALMConnectFailure);
                 else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
-                    Reporter.ToUser(eUserMsgKeys.ALMConnectFailureWithCurrSettings);
+                    Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings);
             }
 
             return isConnectSucc;
@@ -109,32 +109,32 @@ namespace Ginger.ALM.Repository
                         BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == RQMID + "=" + testPlan.RQMID).FirstOrDefault();
                         if (existedBF != null)
                         {
-                            Amdocs.Ginger.Common.MessageBoxResult userSelection = Reporter.ToUser(eUserMsgKeys.TestSetExists, testPlan.Name);
-                            if (userSelection == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                            Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testPlan.Name);
+                            if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                             {
                                 File.Delete(existedBF.FileName);
                             }
                         }
 
-                        Reporter.ToGingerHelper(eGingerHelperMsgKey.ALMTestSetImport, null, testPlan.Name);
+                        Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testPlan.Name);
 
                         // convert test set into BF
                         BusinessFlow tsBusFlow = ALMIntegration.Instance.AlmCore.ConvertRQMTestPlanToBF(testPlan);
 
-                        if (App.UserProfile.Solution.MainApplication != null)
+                        if ( WorkSpace.UserProfile.Solution.MainApplication != null)
                         {
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
                                 if (string.IsNullOrEmpty(activ.TargetApplication) == false)
                                     if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                                     {
-                                        ApplicationPlatform appAgent = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                        ApplicationPlatform appAgent =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                                         if (appAgent != null)
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
                                     }
                             //handle non mapped Activities
                             if (tsBusFlow.TargetApplications.Count == 0)
-                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = App.UserProfile.Solution.MainApplication });
+                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.UserProfile.Solution.MainApplication });
                             foreach (Activity activ in tsBusFlow.Activities)
                                 if (string.IsNullOrEmpty(activ.TargetApplication))
                                     activ.TargetApplication = tsBusFlow.MainApplication;
@@ -146,14 +146,14 @@ namespace Ginger.ALM.Repository
                         }
                         
                         WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);                        
-                        Reporter.CloseGingerHelper();
+                        Reporter.HideStatusMessage();
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToUser(eUserMsgKeys.ErrorInTestsetImport, testPlan.Name, ex.Message);
+                        Reporter.ToUser(eUserMsgKey.ErrorInTestsetImport, testPlan.Name, ex.Message);
                     }
 
-                    Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
+                    Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
                 }
                 return true;
             }
@@ -162,11 +162,11 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs)
         {
-            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
+            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,  WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject, System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 if (testPlan.RQMID == ExportToRQM.GetExportedIDString(businessFlow.ExternalID, "RQMID"))
                 {
-                    RQMTestPlan currentRQMTestPlan = RQMConnect.Instance.GetRQMTestPlanFullData(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, (RQMTestPlan)testPlan);
+                    RQMTestPlan currentRQMTestPlan = RQMConnect.Instance.GetRQMTestPlanFullData( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,  WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject, (RQMTestPlan)testPlan);
                     ((RQMCore)ALMIntegration.Instance.AlmCore).UpdatedRQMTestInBF(ref businessFlow, currentRQMTestPlan, TCsIDs.Select(x => x.Item1.ToString()).ToList());
                 }
             }
@@ -174,11 +174,11 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateBusinessFlow(ref BusinessFlow businessFlow)
         {
-            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
+            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,  WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject, System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 if (testPlan.RQMID == ExportToRQM.GetExportedIDString(businessFlow.ExternalID, "RQMID"))
                 {
-                    RQMTestPlan currentRQMTestPlan = RQMConnect.Instance.GetRQMTestPlanFullData(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, (RQMTestPlan)testPlan);
+                    RQMTestPlan currentRQMTestPlan = RQMConnect.Instance.GetRQMTestPlanFullData( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,  WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject, (RQMTestPlan)testPlan);
                     ((RQMCore)ALMIntegration.Instance.AlmCore).UpdateBusinessFlow(ref businessFlow, currentRQMTestPlan);
                 }
             }
@@ -190,76 +190,76 @@ namespace Ginger.ALM.Repository
 
             if (businessFlow.ActivitiesGroups.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
 
             bool exportRes = false;
 
             string res = string.Empty;
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportItemToALM, null, "Selected Activities Groups");
+            Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, "Selected Activities Groups");
             exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBfActivitiesGroupsToALM(businessFlow, grdActivitiesGroups, ref res);
 
             if (exportRes)
             {
                 //Check if we need to perform save
-                Reporter.ToUser(eUserMsgKeys.ExportItemToALMSucceed);
+                Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
+                Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
 
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
         }
 
         public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
             if (businessFlow == null) return false;
 
-            if (App.UserProfile.Solution.ExternalItemsFields.Where(x => x.ItemType == "TestCase").ToList().Count == 0)
+            if ( WorkSpace.UserProfile.Solution.ExternalItemsFields.Where(x => x.ItemType == "TestCase").ToList().Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Current solution have no pre-difined values for RQM's mandatory fieds. Please configure before doing export. ('ALM'-'ALM Items Fields Configuration')");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Current solution have no pre-difined values for RQM's mandatory fieds. Please configure before doing export. ('ALM'-'ALM Items Fields Configuration')");
                 return false;
             }
 
             if (businessFlow.ActivitiesGroups.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " do not include " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " which supposed to be mapped to ALM Test Cases, please add at least one " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " before doing export.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " do not include " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " which supposed to be mapped to ALM Test Cases, please add at least one " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " before doing export.");
                 return false;
             }
 
             bool exportRes = false;
             string res = string.Empty;
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportItemToALM, null, businessFlow.Name);
+            Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
 
-            exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRQM(businessFlow, App.UserProfile.Solution.ExternalItemsFields, ref res);
+            exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRQM(businessFlow,  WorkSpace.UserProfile.Solution.ExternalItemsFields, ref res);
 
             if (exportRes)
             {
                 if (performSaveAfterExport)
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
 
                 }
                 if(almConectStyle != ALMIntegration.eALMConnectType.Auto && almConectStyle != ALMIntegration.eALMConnectType.Silence)
-                    Reporter.ToUser(eUserMsgKeys.ExportItemToALMSucceed);
+                    Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
+                Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
 
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
             return exportRes;
         }
 
         #region External Item Fields
 
-        public override eUserMsgKeys GetDownloadPossibleValuesMessage()
+        public override eUserMsgKey GetDownloadPossibleValuesMessage()
         {
-            return eUserMsgKeys.AskIfToDownloadPossibleValues;
+            return eUserMsgKey.AskIfToDownloadPossibleValues;
         }
 
         #endregion External Item Fields
@@ -276,7 +276,7 @@ namespace Ginger.ALM.Repository
                 if(!((RQMCore)ALMIntegration.Instance.AlmCore).ValidateConfigurationFile(dlg.FileName))
                     return false;
 
-                string folderPath = Path.Combine(App.UserProfile.Solution.Folder, "Configurations");
+                string folderPath = Path.Combine( WorkSpace.UserProfile.Solution.Folder, "Configurations");
                 DirectoryInfo di = Directory.CreateDirectory(folderPath);
 
                 folderPath = Path.Combine(folderPath, "RQMServerConfigurationsPackage");

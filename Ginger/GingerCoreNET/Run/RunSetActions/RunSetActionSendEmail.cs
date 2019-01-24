@@ -2,8 +2,6 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
-
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Reports.HTMLReports;
@@ -197,7 +195,7 @@ namespace Ginger.Run.RunSetActions
             return "RunSetActionSendEmailEditPage";
         }
 
-        public override void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
         {
             throw new NotImplementedException();
         }

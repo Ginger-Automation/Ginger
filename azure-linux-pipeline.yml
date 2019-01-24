@@ -1,0 +1,19 @@
+
+# .NET
+
+jobs:
+- job: Linux
+  pool:
+    vmImage: 'Ubuntu 16.04'
+  variables:  
+    buildConfiguration: 'Release'
+    solutionDIrectory:  'Ginger-Automation/Ginger'
+  steps:
+  - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testRunner: VSTest
+      testResultsFiles: '**/*.trx'
+
+  - task: PublishBuildArtifacts@1

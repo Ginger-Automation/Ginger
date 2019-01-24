@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     //This class is for multiselect list element
@@ -30,7 +30,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Multi Select Action"; } }
         public override string ActionUserDescription { get { return "Click on a multi select object"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform any multi select actions.");
             TBH.AddLineBreak();

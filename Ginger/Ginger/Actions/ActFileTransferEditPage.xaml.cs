@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using System.Windows;
@@ -69,7 +70,7 @@ namespace Ginger.Actions
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
             dlg.DefaultExt = "*.*";
             dlg.Filter = "Any Data Files (*.*)|*.*";
-            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

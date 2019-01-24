@@ -18,10 +18,10 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
+using Ginger;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
@@ -43,8 +43,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         // public UserProfile UserProfile;
 
-        public SolutionRepository SolutionRepository;
-
+        public SolutionRepository SolutionRepository;        
 
         // Will be back when we moved GR to GingerCoreNET
         // public GingerRunner GingerRunner;
@@ -54,7 +53,9 @@ namespace amdocs.ginger.GingerCoreNET
         public SourceControlBase SourceControl;
         public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
         public static string AppVersion="0.0.0.0.0";
-        //public static IGingerRunner AutomateTabGingerRunner = new IGingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
+
+        // move from App to here
+        //public static GingerRunner AutomateTabGingerRunner = new GingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
         public  ISolution mSolution { get; set; }
         public  ISolution Solution
         {
@@ -67,7 +68,7 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public static eRunStatus RunSetExecutionStatus = eRunStatus.Failed;
-
+        
         public static string TempFolder
         {
             get
@@ -90,7 +91,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         // Here we will have knwon GingerGrids - !!!!!!!!!!!!!!!!!!! Design, think..........
         // public IObservable<GingerGrid> GingerGrids;
-
+        public static GingerRunner AutomateTabGingerRunner { get; set; }
         public void OpenSolution(string SolutionFolder)
         {
             mPluginsManager = null;
@@ -144,7 +145,7 @@ namespace amdocs.ginger.GingerCoreNET
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
         }
-
+        public static UserProfile UserProfile { get; set; }
         public static WorkSpace Instance { get { return mWorkSpace; } }
 
         public IWorkSpaceEventHandler EventHandler { get; set; }
@@ -160,8 +161,8 @@ namespace amdocs.ginger.GingerCoreNET
             get
             {
                 if (mLocalGingerGrid == null)
-                {
-                    mLocalGingerGrid = new GingerGrid(15001);   // TODO: config per user profile as many users can use the same machine
+                {                    
+                    mLocalGingerGrid = new GingerGrid();   
                     mLocalGingerGrid.Start();
                 }
                 return mLocalGingerGrid;
@@ -205,7 +206,9 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public static BusinessFlow Businessflow { get;  set; }
-        public static bool RunningFromConfigFile = false;
+
+        public static bool RunningInExecutionMode = false;
+
         public static ProjEnvironment AutomateTabEnvironment;
         public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -245,18 +248,7 @@ namespace amdocs.ginger.GingerCoreNET
             //}
         }
 
-        //private void CheckAssignAgent(ApplicationAgent aA)
-        //{
-        //    if (aA.Agent == null)
-        //    {
-        //        //TODO: FIXME - temp we get the first agent from solution !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //        aA.Agent = SolutionRepository.GetAllRepositoryItems<NewAgent>()[0];
-        //    }
-        //}
-
-        //public void SetAppAgents()
-        //{
-        //}
+        
 
         public void LoadUserProfile()
         {

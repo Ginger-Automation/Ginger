@@ -360,12 +360,12 @@ namespace Ginger.Run
                
                 if (!ExportResultsToALMConfigPage.Instance.IsProcessing)
                 {
-                    ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables));
+                    ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false,  WorkSpace.UserProfile.Solution.Variables));
                     ExportResultsToALMConfigPage.Instance.ShowAsWindow();
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.ExportedExecDetailsToALMIsInProcess);
+                    Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALMIsInProcess);
                 }
             }
         }

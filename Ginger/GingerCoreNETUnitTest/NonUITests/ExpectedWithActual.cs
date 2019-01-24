@@ -39,7 +39,7 @@ namespace UnitTests.NonUITests
             
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedIsSimpleNumber()
         {
             //Arrange
@@ -63,7 +63,7 @@ namespace UnitTests.NonUITests
             GingerRunner.CalculateARCStatus(ARC);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedIsSimpleString()
         {
             //Arrange
@@ -79,7 +79,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(ARC.Status,ActReturnValue.eStatus.Passed);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedActualGreaterThanNumber()
         {
             //Arrange
@@ -96,7 +96,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CheckforStartingwithNot()
         {
             //Arrange
@@ -112,7 +112,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedActualLowerThanNumber()
         {
             //Arrange
@@ -128,7 +128,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(ARC.Status , ActReturnValue.eStatus.Passed);            
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedActualLowerThanNumberIsFalse()
         {
             //Arrange
@@ -145,7 +145,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedActulContainsString()
         {
             //Arrange
@@ -161,7 +161,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);            
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedActulContainsStringIsFalse()
         {
             //Arrange
@@ -178,7 +178,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedActulWithOrNumbers()
         {
             //Arrange
@@ -194,7 +194,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(ARC.Status , ActReturnValue.eStatus.Passed);    
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedActulWithOrNumbersANDCond()
         {
             //Arrange

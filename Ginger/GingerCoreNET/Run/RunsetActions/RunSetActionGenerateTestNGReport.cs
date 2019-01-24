@@ -1,14 +1,13 @@
 ﻿using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
-using GingerCoreNET.ReporterLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Ginger.Reports;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 
 namespace Ginger.Run.RunSetActions
 {
@@ -65,13 +64,13 @@ namespace Ginger.Run.RunSetActions
             {
                 if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
                     if (!Directory.Exists(SaveResultsInSolutionFolderName))
                     {
                         Directory.CreateDirectory(SaveResultsInSolutionFolderName);
                     }
                     SaveBFResults(RI, SaveResultsInSolutionFolderName, IsStatusByActivitiesGroup);
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                 }
                 else
                 {
@@ -102,7 +101,7 @@ namespace Ginger.Run.RunSetActions
             return "RunSetActionGenerateTestNGReportEditPage";
         }
 
-        public override void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
         {
             throw new NotImplementedException();
         }

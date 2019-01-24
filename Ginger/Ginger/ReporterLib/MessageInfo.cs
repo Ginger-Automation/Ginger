@@ -9,7 +9,7 @@ namespace Ginger.ReporterLib
 {
     public class MessageInfo
     {
-        public eUserMsgKeys MessageKey { get; set; }
+        public eUserMsgKey MessageKey { get; set; }
 
         public string message { get; set; }
 

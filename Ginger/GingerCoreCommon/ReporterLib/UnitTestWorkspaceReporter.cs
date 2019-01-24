@@ -1,5 +1,4 @@
 ﻿using System;
-using GingerCoreNET.ReporterLib;
 
 namespace Amdocs.Ginger.Common
 {
@@ -9,11 +8,10 @@ namespace Amdocs.Ginger.Common
         public void ConsoleWriteLine(string message)
         {
             // !!!!!!! Create GingerUtils.WriteConsole(formatted)
-
             Console.WriteLine("Toconsole: " + message);
         }
 
-        public override MessageBoxResult MessageBoxShow(string messageText, string caption, MessageBoxButton buttonsType, MessageBoxImage messageImage, MessageBoxResult defualtResault)
+        public override eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResault)
         {
             string txt = caption + Environment.NewLine;
             txt += messageText;
@@ -22,13 +20,13 @@ namespace Amdocs.Ginger.Common
         }
         
 
-        public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
+        public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
             // For unit tests we write to console too
             Console.WriteLine("ToLog: " + messageToLog);
         }
 
-        public override void ToStatus(eStatusMessageType messageType, string statusText)
+        public override void ToStatus(eStatusMsgType messageType, string statusText)
         {
             Console.WriteLine("ToStatus: " + messageType + " " + statusText);
         }

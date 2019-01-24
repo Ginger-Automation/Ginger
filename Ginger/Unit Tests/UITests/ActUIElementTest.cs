@@ -34,6 +34,7 @@ using Ginger.Repository;
 
 namespace UnitTests.UITests
 {
+    [Ignore]
     [Level3]
     [TestClass]
     public class ActUIElementTest
@@ -75,7 +76,7 @@ namespace UnitTests.UITests
         }
 
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void DragAndDropSelenium()
         {
             ResetBusinessFlow();
@@ -110,7 +111,7 @@ namespace UnitTests.UITests
         }
 
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void DragAndDropJS()
         {
             ResetBusinessFlow();
@@ -143,7 +144,7 @@ namespace UnitTests.UITests
         }
 
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public  void DoDragAndDropByOffSet()
         {
             ResetBusinessFlow();
@@ -176,7 +177,7 @@ namespace UnitTests.UITests
         }
 
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void DrawObject()
         {
             ResetBusinessFlow();

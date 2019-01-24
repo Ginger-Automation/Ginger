@@ -28,7 +28,7 @@ using System.Drawing;
 using System.Windows.Automation;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActCompareImgs : ActWithoutDriver
@@ -36,7 +36,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Compare Screen Areas Action"; } }
         public override string ActionUserDescription { get { return "Compares screen areas"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to compare the screen area.");
         }

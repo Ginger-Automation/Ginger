@@ -220,7 +220,7 @@ namespace UnitTests.UITests.PBDriverTest
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SetValue_textbox()
         {            
             ActGenElement act = new ActGenElement();
@@ -251,7 +251,7 @@ namespace UnitTests.UITests.PBDriverTest
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetValue_Textbox()
         {
             ActGenElement act = new ActGenElement();
@@ -324,7 +324,7 @@ namespace UnitTests.UITests.PBDriverTest
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SelectFromDropdown()
         {
             ActGenElement act = new ActGenElement();
@@ -353,7 +353,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void IsEnabled_Textbox()
         {
             ActGenElement act = new ActGenElement();
@@ -373,7 +373,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void IsVisible_Textbox()
         {
             ActGenElement act = new ActGenElement();
@@ -393,7 +393,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetInnerText_Dropdown()
         {
             ActGenElement act = new ActGenElement();
@@ -413,7 +413,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetStyle_Dropdown()
         {
             ActGenElement act = new ActGenElement();
@@ -453,7 +453,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ClickTest()
         {
             ActGenElement act = new ActGenElement();
@@ -620,7 +620,7 @@ namespace UnitTests.UITests.PBDriverTest
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetAttributeValue_Size()
         {
             ActGenElement act = new ActGenElement();
@@ -738,7 +738,7 @@ namespace UnitTests.UITests.PBDriverTest
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetURL_Testing()
         {
             ActBrowserElement act = new ActBrowserElement();
@@ -775,7 +775,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SwitchToDefaultFrame_Testing()
         {
             ActBrowserElement act = new ActBrowserElement();
@@ -791,7 +791,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetElementAttribute_Dropdown()
         {
             ActGenElement act = new ActGenElement();

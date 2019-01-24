@@ -24,7 +24,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger
 {
@@ -60,13 +62,13 @@ namespace Ginger
 
         private void BaseInit(ObservableList<RepositoryItemTag> fullTagsList = null)
         {
-            if (App.UserProfile.Solution == null)
+            if ( WorkSpace.UserProfile.Solution == null)
                 return;
 
             if (fullTagsList == null)
             {
                 mUseSolutionTags = true;
-                mFullTagsList = App.UserProfile.Solution.Tags;
+                mFullTagsList =  WorkSpace.UserProfile.Solution.Tags;
 
                 if(mAddTags == true)
                 {
@@ -258,7 +260,7 @@ namespace Ginger
         private void TagsComboBox_DropDownOpened(object sender, EventArgs e)
         {
             if(mUseSolutionTags)
-                mFullTagsList = App.UserProfile.Solution.Tags;
+                mFullTagsList =  WorkSpace.UserProfile.Solution.Tags;
 
             RefreshComboSelectionTagsList();
             if (ComboTagsList.Count == 0)

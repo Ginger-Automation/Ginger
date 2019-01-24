@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.Common
 {
     // this action is for Phone Actions Like:
@@ -37,7 +37,7 @@ namespace GingerCore.Actions.Common
         public override string ActionDescription { get { return "Phone Action"; } }
         public override string ActionUserDescription { get { return "Phone Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need run Phone action like: Dial, Wait for ring");
         }

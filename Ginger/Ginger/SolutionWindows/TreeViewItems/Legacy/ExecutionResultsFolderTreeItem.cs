@@ -23,6 +23,7 @@ using GingerCore.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -106,8 +107,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private string GetExecutionResultsFolder()
         {
-            if (App.UserProfile.Solution != null && App.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null && App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
-                return Ginger.Run.ExecutionLogger.GetLoggerDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder);
+            if ( WorkSpace.UserProfile.Solution != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
+                return Ginger.Run.ExecutionLogger.GetLoggerDirectory( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder);
             else
                 return string.Empty;
         }

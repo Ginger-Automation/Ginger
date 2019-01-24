@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
@@ -68,7 +69,7 @@ namespace Ginger.TagsLib
         {
             // We create a temp list for selection and mark the selected if exist already
             list = new ObservableList<SelectedTag>();
-            foreach(RepositoryItemTag t in App.UserProfile.Solution.Tags)
+            foreach(RepositoryItemTag t in  WorkSpace.UserProfile.Solution.Tags)
             {
                 SelectedTag st = new SelectedTag();
                 st.Name = t.Name;

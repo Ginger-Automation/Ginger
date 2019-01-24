@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
@@ -30,7 +31,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Dummy Action"; } }
         public override string ActionUserDescription { get { return "Dummy Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("This is dummy action where you can put any value in value textbox.");            
         }        

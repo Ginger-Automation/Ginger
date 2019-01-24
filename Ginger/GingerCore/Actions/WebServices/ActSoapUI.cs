@@ -24,7 +24,7 @@ using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActSoapUI : Act
@@ -32,7 +32,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "SoapUI Wrapper Action"; } }
         public override string ActionUserDescription { get { return "Run SoapUI commands on Dos/Unix system"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to run SoapUI Project XML using the SoapUI test runner." + Environment.NewLine + Environment.NewLine + "This action contains list of options which will allow you to run simple or complicated test using the generated soapUI project XML." + Environment.NewLine + Environment.NewLine + "Prerequisite:" + Environment.NewLine + "1.) you should have SoapUI 5.0.0 or above installation folder on your Machine." + Environment.NewLine + "2.) SoapUI ProjectXML." + Environment.NewLine + "3.) Values/Properties in case you need to add some on the top of the existing data under the project XML." + Environment.NewLine + "4.) String for validation if needs to verify the output." + Environment.NewLine + Environment.NewLine + "Validation: The action will pass if :" + Environment.NewLine + "1.)ignore validation checkbox is unchecked and No step came back with Failed/unknown status." + Environment.NewLine + "2.)The Ignore Validation checkbox is checked and The entered Validation string for output has been found in the response" + Environment.NewLine + Environment.NewLine + "Validation: The action will be failed if :" + Environment.NewLine + "1.)Ignore Validation is unchecked and at lease one step came back with Failed status." + Environment.NewLine + "2.)Ignore Validation checkbox is checked and The entered Validation string has not been found in the response for at lease one step");
         }

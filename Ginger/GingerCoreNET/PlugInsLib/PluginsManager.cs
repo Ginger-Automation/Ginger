@@ -34,7 +34,6 @@ namespace Amdocs.Ginger.Repository
         private ObservableList<PluginPackage> mPluginPackages;
         SolutionRepository mSolutionRepository;
 
-
         ObservableList<PluginProcessWrapper> mProcesses = new ObservableList<PluginProcessWrapper>();
 
         public ObservableList<PluginProcessWrapper> PluginProcesses
@@ -49,7 +48,13 @@ namespace Amdocs.Ginger.Repository
         public PluginsManager(SolutionRepository solutionRepository)
         {
             mSolutionRepository = solutionRepository;
-            mPluginPackages = solutionRepository.GetAllRepositoryItems<PluginPackage>();
+            GetPackages();
+        }
+
+        private void GetPackages()
+        {
+            mPluginPackages = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
+
         }
 
         public class DriverInfo
@@ -170,7 +175,7 @@ namespace Amdocs.Ginger.Repository
 
             string dll = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
 
-            string nodeFileName = NodeConfigFile.CreateNodeConfigFile(pluginId + "1", serviceID);  // TODO: check if 1 exist then try 2,3 in case more than one same id service start
+            string nodeFileName = NodeConfigFile.CreateNodeConfigFile(pluginId + "1", serviceID);  // !!!!! TODO: check if 1 exist then try 2,3 in case more than one same id service start
             string cmd = "dotnet \"" + dll + "\" \"" + nodeFileName + "\"";
             System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);            
             procStartInfo.UseShellExecute = true;
@@ -233,5 +238,11 @@ namespace Amdocs.Ginger.Repository
             PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
             return pluginServiceInfo.IsSession;
         }
+
+        public void SolutionChanged(SolutionRepository solutionRepository)
+        {        
+            mSolutionRepository = solutionRepository;
+            GetPackages();
+         }
     }
 }

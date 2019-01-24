@@ -23,7 +23,7 @@ using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActTableElement : Act
@@ -31,7 +31,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Table Element Action"; } }
         public override string ActionUserDescription { get { return "Create Java/PowerBulider/Windows Table Action "; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to create Java/Power Builder/Windows Table Action.");
             TBH.AddLineBreak();

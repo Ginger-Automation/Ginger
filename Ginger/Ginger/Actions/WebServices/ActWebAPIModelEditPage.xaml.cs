@@ -197,12 +197,12 @@ namespace Ginger.Actions.WebServices
             ObservableList<ApplicationAPIModel> APIModelsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>();
             if (APIModelsList.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoAPIExistToMappedTo);
+                Reporter.ToUser(eUserMsgKey.NoAPIExistToMappedTo);
                 return false;
             }
 
             if (showNewMappingMessage)
-                Reporter.ToUser(eUserMsgKeys.APIMappedToActionIsMissing);
+                Reporter.ToUser(eUserMsgKey.APIMappedToActionIsMissing);
 
             if (apiModelPage == null)
             {
@@ -226,7 +226,7 @@ namespace Ginger.Actions.WebServices
         {
             APIModelTextBox.Text = AAMB.FilePath.Substring(0, AAMB.FilePath.LastIndexOf("\\")).Substring(mAPIModelFolder.FolderFullPath.Length) + @"\" + AAMB.ItemName;
             if (UpdateParamsEnhancedLists(AAMB.MergedParamsList) && showParametersUpdatedMessage)
-                Reporter.ToUser(eUserMsgKeys.APIParametersListUpdated);
+                Reporter.ToUser(eUserMsgKey.APIParametersListUpdated);
             UpdateOptionalValues();
         }
 
@@ -234,7 +234,7 @@ namespace Ginger.Actions.WebServices
         {
             try
             {
-                if (Reporter.ToUser(eUserMsgKeys.ParamExportMessage) == Amdocs.Ginger.Common.MessageBoxResult.No)
+                if (Reporter.ToUser(eUserMsgKey.ParamExportMessage) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                     return;
 
                 DataSourceTablesListPage dataSourceTablesListPage = new DataSourceTablesListPage();
@@ -242,7 +242,7 @@ namespace Ginger.Actions.WebServices
 
                 if (dataSourceTablesListPage.DSName == "" || dataSourceTablesListPage.DSTableName == "")
                 {
-                    Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
+                    Reporter.ToUser(eUserMsgKey.MappedtoDataSourceError);
                     return;
                 }
 
@@ -256,7 +256,7 @@ namespace Ginger.Actions.WebServices
             catch (System.Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the API Model params to Data Source", ex);
-                Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
+                Reporter.ToUser(eUserMsgKey.MappedtoDataSourceError);
             }
         }
     }

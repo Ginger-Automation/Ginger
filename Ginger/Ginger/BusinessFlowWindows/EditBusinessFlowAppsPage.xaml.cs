@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.UserControls;
 using GingerCore;
@@ -59,7 +60,7 @@ namespace Ginger.BusinessFlowWindows
              AppsGrid.SetAllColumnsDefaultView(view);
              AppsGrid.InitViewItems();
 
-             foreach (ApplicationPlatform AP in App.UserProfile.Solution.ApplicationPlatforms)
+             foreach (ApplicationPlatform AP in  WorkSpace.UserProfile.Solution.ApplicationPlatforms)
              {
                  ApplicationPlatform AP1 = new ApplicationPlatform();
                  AP1.AppName = AP.AppName;
@@ -105,7 +106,7 @@ namespace Ginger.BusinessFlowWindows
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.BusinessFlowNeedTargetApplication);
+                Reporter.ToUser(eUserMsgKey.BusinessFlowNeedTargetApplication);
             }
         }
 
