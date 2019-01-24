@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -43,16 +43,19 @@ namespace Amdocs.Ginger.Repository
 
         public ObservableList<T> GetAllItemsCache()
         {
-
-            if (AllItemsCache == null)
+            string mLock = string.Empty;
+            lock (mLock)
             {
-                AllItemsCache = new ObservableList<T>();
+                if (AllItemsCache == null)
+                {
+                    AllItemsCache = new ObservableList<T>();
 
-                // drill down for each sub folder and get items - combine to one list and cache
-                AllItemsCache = new ObservableList<T>(ItemRootReposiotryfolder.GetFolderItemsRecursive());
+                    // drill down for each sub folder and get items - combine to one list and cache
+                    AllItemsCache = new ObservableList<T>(ItemRootReposiotryfolder.GetFolderItemsRecursive());
+                }
+                mLock = "Released";
+                return AllItemsCache;
             }
-
-            return AllItemsCache;
         }
 
         /// <summary>
