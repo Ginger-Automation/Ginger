@@ -3717,7 +3717,7 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception ex)
                     {
-                       Reporter.ToLog(eLogLevel.ERROR, string.Format("Falied to learn the Web Element '{0}'", htmlNode.Name), ex);
+                       Reporter.ToLog(eLogLevel.DEBUG, string.Format("Falied to learn the Web Element '{0}'", htmlNode.Name), ex);
                     }
                 }
             }
