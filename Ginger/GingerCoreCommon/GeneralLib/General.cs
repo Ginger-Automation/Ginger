@@ -101,6 +101,19 @@ namespace Amdocs.Ginger.Common.GeneralLib
             {
                 return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
             }
+        }        
+
+        public static Tuple<int, int> GetImageHeightWidth(string path)
+        {
+            Tuple<int, int> a;
+            using (Stream stream = File.OpenRead(path))
+            {
+                using (System.Drawing.Image sourceImage = System.Drawing.Image.FromStream(stream, false, false))
+                {
+                    a = new Tuple<int, int>(sourceImage.Width, sourceImage.Height);
+                }
+            }
+            return a;
         }
 
 
@@ -206,7 +219,9 @@ namespace Amdocs.Ginger.Common.GeneralLib
             foreach (FileInfo file in di.GetFiles())
                 file.Delete();
             foreach (DirectoryInfo dir in di.GetDirectories())
+            {
                 dir.Delete(true);
+            }
         }
 
     }
