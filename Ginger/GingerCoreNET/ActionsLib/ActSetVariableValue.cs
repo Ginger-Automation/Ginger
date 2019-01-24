@@ -45,8 +45,9 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddText("The 'Value' field is relevant only for 'SetValue' operation.");
-        }        
+        }
 
+      
         public override string ActionEditPage { get { return "ActSetVariableValuePage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return true; } }
