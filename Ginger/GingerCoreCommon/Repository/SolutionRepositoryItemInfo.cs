@@ -26,22 +26,21 @@ namespace Amdocs.Ginger.Repository
         private ObservableList<T> mAllItemsCache = null;
         private readonly object mAllItemsCacheLock = new object();
         private bool mDoneAllCache = false;
-
-        // Mutex mutex = new Mutex();
+        
         private ObservableList<T> AllItemsCache
         {
             get
-            {                
-                if (!mDoneAllCache)
+            {
+                if (!mDoneAllCache)                
                 {
                     // We use lock since sevwral threads can request AllItems at the same time when it was not initialized yet
                     // if one thread start getting all items we want other threads to wait for it to complete 
                     // so they dont get partial list while work is in progress                                        
                     lock (mAllItemsCacheLock)
-                    {                        
+                    {
                         if (!mDoneAllCache)// make sure all thread which were waiting just return back, only the first enry will do the work
-                        {                            
-                            // drill down for each sub folder and get items - combine to one list and cache
+                        {
+                            // drill down for each sub folder and get items - combine to one list and cache                        
                             mAllItemsCache = new ObservableList<T>(ItemRootReposiotryfolder.GetFolderItemsRecursive());
                             mDoneAllCache = true;                            
                         }                     
