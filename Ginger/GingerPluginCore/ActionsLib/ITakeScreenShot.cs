@@ -17,12 +17,20 @@
 //#endregion
 
 
-//namespace GingerPlugIns.ActionsLib
-//{
-//    public class ActionOutput
-//    {
-//        public string Param { get; set;}
-//        public string Path { get; set; }
-//        public string Value { get; set; }
-//    }
-//}
+namespace Amdocs.Ginger.Plugin.Core
+{
+    public enum eScreens
+    {
+        Active,
+        All,
+        Desktop
+    }
+
+
+    
+    public interface ITakeScreenShot
+    {
+        [GingerAction("TakeScreenShot", "Take Screen Shot")]
+        void TakeScreenShot(IGingerAction gingerAction, eScreens screens);
+    }
+}

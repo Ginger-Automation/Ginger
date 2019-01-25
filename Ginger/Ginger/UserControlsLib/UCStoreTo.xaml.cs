@@ -102,9 +102,9 @@ namespace Ginger.UserControlsLib
         {
             ActDataSourcePage ADSP;
             if (((Button)sender).DataContext.GetType() == typeof(ActReturnValue))
-                 ADSP = new ActDataSourcePage(DSVE, this.TextProp);
+                 ADSP = new ActDataSourcePage(DSVE, ActReturnValue.Fields.StoreToDataSource);
             else
-                ADSP = new ActDataSourcePage(DSVE, this.TextProp,"Get Value");
+                ADSP = new ActDataSourcePage(DSVE, ActReturnValue.Fields.StoreToDataSource, "Get Value");
             ADSP.ShowAsWindow();
         }
         private static void OnItemsSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)

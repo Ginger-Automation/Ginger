@@ -16,21 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System.Collections.Generic;
 
-namespace GingerPlugIns
+namespace  Amdocs.Ginger.Plugin.Core.DriversLib
 {
-    public interface IGingerPlugIn
-    {        
-        string Name();
-        string ID();
-        string PlugInVersion();
-
-        string Description();
-        
-        string GetConfigPage();
-        
-        // return a list text file editor the plug in can edit
-        List<PlugInCapability> Capabilities();
+    public interface IDriverDisplay 
+    {
+        void AttachDisplay(object display);        
     }
 }

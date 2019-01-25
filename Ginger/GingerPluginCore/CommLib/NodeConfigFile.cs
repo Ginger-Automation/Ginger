@@ -16,21 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
-using System;
-using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
-    class NodeConfigFile
-    {        
+    public class NodeConfigFile
+    {
         public string Name { get; set; }
         public string GingerGridHost { get; set; }
         public int GingerGridPort { get; set; }
 
         public NodeConfigFile(string configFileName)
-        {            
+        {
             // config file contains:
             // Name=
             // GingerGridHost=
@@ -46,12 +42,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             return line.Substring(line.IndexOf("=") + 1);
         }
 
-        public static string CreateNodeConfigFile(string name, string serviceId)
-        {
-            string txt = name + " | " + serviceId + " | " +  SocketHelper.GetLocalHostIP() + " | " + WorkSpace.Instance.LocalGingerGrid.Port + Environment.NewLine;            
-            string fileName = Path.GetTempFileName();
-            File.WriteAllText(fileName, txt);
-            return fileName;
-        }
+        //public static string CreateNodeConfigFile(string name, string serviceId)
+        //{
+        //    string txt = name + " | " + serviceId + " | " + SocketHelper.GetLocalHostIP() + " | " + WorkSpace.Instance.LocalGingerGrid.Port + Environment.NewLine;
+        //    string fileName = Path.GetTempFileName();
+        //    File.WriteAllText(fileName, txt);
+        //    return fileName;
+        //}
     }
 }

@@ -32,7 +32,7 @@ namespace UnitTests.NonUITests
 {
     [TestClass]
     [Level3]
-
+    [Ignore]
     public class JSPayloadTest 
     {
 

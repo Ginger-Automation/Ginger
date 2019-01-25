@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 
 namespace GingerCoreNET.DriversLib
 {
@@ -33,11 +32,15 @@ namespace GingerCoreNET.DriversLib
     {                
         private object mService;   // one service per GingerNode, can be any class object marked with [GingerService] Attr like:  [GingerService("MyDriver", "My driver who can speak")]
         private string mServiceID;
+        
 
         // We use Hub client to send Register/UnRegister message - to GingerGrid manager
         GingerSocketClient2 mHubClient;
         Guid mSessionID;
 
+        public bool Connected { get { return mHubClient.IsConnected; } }
+
+        public string Info { get { return mSessionID.ToString() + " " + mService.GetType().Name; } }
 
         public GingerNode(object gingerServiceObject)
         {
@@ -75,31 +78,34 @@ namespace GingerCoreNET.DriversLib
             //TODO: first register at the hub
             mHubClient = new GingerSocketClient2();
             mHubClient.MessageHandler = HubClientMessageHandler;
-
+            // !!!!!!!!!! cleanup
             // We have retry mechanism
-            bool IsConnected = false;
-            int count = 0;
-            while (!IsConnected)
+            //bool IsConnected = false;
+            //int count = 0;
+            //while (!IsConnected)
+            //{
+            //    try
+            //    {
+            Console.WriteLine("Connecting to Ginger Grid Hub: " + HubIP + ":" + HubPort);
+            mHubClient.Connect(HubIP, HubPort);
+            if (!mHubClient.IsConnected)
             {
-                try
-                {
-                    Console.WriteLine("Connecting to Ginger Grid Hub: " + HubIP + ":" + HubPort);
-                    mHubClient.Connect(HubIP, HubPort);
-                    IsConnected = true;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Connection failed: " + ex.Message);
-                    Console.WriteLine("Will retry in 5 seconds");
-                    Thread.Sleep(5000);  
-                    count++;
-                    if (count>50) //TODO: Change it to stop watch wait for 60 seconds, or based on config
-                    {
-                        Console.WriteLine("All connection attempts failed, exiting");
-                        return;
-                    }
-                }
+                return;
             }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine("Connection failed: " + ex.Message);
+            //        Console.WriteLine("Will retry in 5 seconds");
+            //        Thread.Sleep(5000);  
+            //        count++;
+            //        if (count>50) //TODO: Change it to stop watch wait for 60 seconds, or based on config
+            //        {
+            //            Console.WriteLine("All connection attempts failed, exiting");
+            //            return;
+            //        }
+            //    }
+            //}
             
             //Register the service in GG
             NewPayLoad PLRegister = new NewPayLoad(SocketMessages.Register);
