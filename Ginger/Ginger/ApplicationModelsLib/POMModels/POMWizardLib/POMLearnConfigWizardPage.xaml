@@ -36,7 +36,7 @@
             <DockPanel Grid.Row="1" Margin="5,0,10,0">
                 <agents:ucAgentControl x:Name="xAgentControlUC" AutomationProperties.AutomationId="ucAgentControl AID" DockPanel.Dock="Top" Margin="0,0,0,15"></agents:ucAgentControl>
 
-                <Expander x:Name="xAutoMapElementLocatorsExpander" DockPanel.Dock="Top" Visibility="Visible" IsExpanded="False" Margin="0,0,0,15">
+                <Expander x:Name="xAutoMapElementLocatorsExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" Margin="0,0,0,15">
                     <Expander.Header>
                         <Label x:Name="LocatorsExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
                             <Label.Content>
@@ -49,7 +49,7 @@
                     </Expander.Content>
                 </Expander>
 
-                <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" IsExpanded="False" >
+                <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" >
                     <Expander.Header>
                         <Label x:Name="PropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
                             <Label.Content>
