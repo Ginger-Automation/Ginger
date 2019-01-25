@@ -16,14 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
-using GingerCoreNET.Drivers;
 using GingerCoreNET.DriversLib;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RosLynLib
 {
