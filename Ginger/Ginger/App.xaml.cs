@@ -393,7 +393,7 @@ namespace Ginger
                 {
                     // This Ginger is running with run set config will do the run and close Ginger
                     WorkSpace.RunningInExecutionMode = true;
-                    Reporter.RunningInExecutionMode = true; //needed so all reportering will be added to Consol
+                    Reporter.ReportAllAlsoToConsole = true; //needed so all reportering will be added to Consol
                     //Reporter.AppLogLevel = eAppReporterLoggingLevel.Debug;//needed so all reportering will be added to Log file
                 }
             }
@@ -423,7 +423,7 @@ namespace Ginger
             Reporter.ToLog(eLogLevel.INFO, "######################## Application version " + App.AppVersion + " Started ! ########################");
 
             AppSplashWindow.LoadingInfo("Init Application");
-
+            WorkSpace.AppVersion = App.AppShortVersion;
             // We init the classes dictionary for the Repository Serializer only once
             InitClassTypesDictionary();
 
@@ -542,10 +542,7 @@ namespace Ginger
             // Add all RI classes from GingerCore
             NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActButton).Assembly); // GingerCore.dll
 
-            // add  old Plugins - TODO: remove later when we change to new plugins
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerPlugIns.ActionsLib.PlugInActionsBase).Assembly);
-
-
+            
             // add from Ginger
             NewRepositorySerializer.AddClassesFromAssembly(typeof(Ginger.App).Assembly);
 
@@ -577,12 +574,14 @@ namespace Ginger
             AddClass(list, typeof(RunSetActionSaveResults));
             AddClass(list, typeof(RunSetActionSendFreeEmail));
             AddClass(list, typeof(RunSetActionSendSMS));
+            AddClass(list, typeof(RunSetActionPublishToQC));
             AddClass(list, typeof(ActSetVariableValue));
-            AddClass(list, typeof(ActAgentManipulation));
-
+            AddClass(list, typeof(ActAgentManipulation));       
             AddClass(list, typeof(UserProfile));
             AddClass(list, typeof(Solution));
-            AddClass(list, typeof(Email));            
+            AddClass(list, typeof(Email));
+            AddClass(list, typeof(EmailAttachment));
+            AddClass(list, typeof(RunSetActionScript));
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
 
@@ -754,6 +753,7 @@ namespace Ginger
                 mLoadingSolution = true;
                 OnPropertyChanged(nameof(LoadingSolution));
 
+               
                 // Cleanup last loaded solution Plugins 
                 // WorkSpace.Instance.LocalGingerGrid.Reset();  //Clear the grid
 

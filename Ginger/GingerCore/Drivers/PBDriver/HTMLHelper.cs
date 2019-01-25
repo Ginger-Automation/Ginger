@@ -138,7 +138,7 @@ namespace GingerCore.Drivers.PBDriver
                 EIlist.Add(HTMLEI);
                 Reporter.ToLog(eLogLevel.DEBUG, "HTMLElementInfo2::" + HTMLEI.XPath);
             }
-            if (node.tagName.ToLower().Equals("iframe"))
+            if (node.tagName.ToLower().Equals("iframe") || node.tagName.ToLower().Equals("frame"))
             {
                 try
                 {

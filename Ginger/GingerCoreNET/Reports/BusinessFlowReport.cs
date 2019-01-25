@@ -218,13 +218,15 @@ namespace Ginger.Reports
                     if (mActivities == null)
                     {
                         mActivities = new List<ActivityReport>();
+                        // TODO: Load in parallel and verify we keep the original order
+
                         foreach (string folder in System.IO.Directory.GetDirectories(LogFolder))
                         {
                             try
                             {
                                 ActivityReport AR = (ActivityReport)JsonLib.LoadObjFromJSonFile(folder + @"\Activity.txt", typeof(ActivityReport));
                                 AR.LogFolder = folder;
-                                if (ActivitiesGroupReports != null)
+                                if (ActivitiesGroupReports != null)    // !!!!!!!!!!!!!!!!!!!!!!!!
                                 {
                                     ActivityGroupReport CurrentActivitiesGroupReport = this.ActivitiesGroupReports.Where(x => x.ExecutedActivitiesGUID.Select(y => y.ToString()).Contains(AR.SourceGuid)).ToList().FirstOrDefault();
                                     if (CurrentActivitiesGroupReport != null)
@@ -235,7 +237,7 @@ namespace Ginger.Reports
                                 }
                                 mActivities.Add(AR);
                             }
-                            catch { }
+                            catch { } // !!!!!!!!!!!!!!!!!
                         }
                     }
 
@@ -396,7 +398,7 @@ namespace Ginger.Reports
         public double OtherPercent { get { return Activities.Count != 0 ? Math.Round((double)TotalActivitiesOther * 100 / Activities.Count, MidpointRounding.AwayFromZero) + AddOnePercent(ActStatus.Other) : 0; } }
 
         [JsonProperty]
-        public List<string> VariablesBeforeExec { get; set; }
+        public List<string> VariablesBeforeExec { get; set; } = new List<string>();
 
         [JsonProperty]
         public List<string> VariablesAfterExec
@@ -411,7 +413,7 @@ namespace Ginger.Reports
             }
             set { variablesAfterExec = value; }
         }
-        private List<string> variablesAfterExec;
+        private List<string> variablesAfterExec = new List<string>();
 
         [FieldParams]
         [FieldParamsNameCaption("Variables Details")]
