@@ -1432,7 +1432,7 @@ namespace Ginger.Run
 
         private void xRunsetReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            if(App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
+            if(WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
             {
                 ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
                 HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
@@ -1443,7 +1443,7 @@ namespace Ginger.Run
                     Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                     return;
                 }
-                if (App.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
+                if (WorkSpace.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                 {
                     string runSetFolder = App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
                     reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder), false, null, null);
