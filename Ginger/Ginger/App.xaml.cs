@@ -773,7 +773,7 @@ namespace Ginger
 
                 //Cleanup
                 SolutionCleanup();
-
+                // !!!!!!!!!!!!! '\' is not good
                 if (!SolutionFolder.EndsWith(@"\")) SolutionFolder += @"\";
                 string SolFile = System.IO.Path.Combine(SolutionFolder, @"Ginger.Solution.xml");
                 if (File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(SolFile)))
@@ -817,7 +817,7 @@ namespace Ginger
                         ValueExpression.SolutionFolder = SolutionFolder;
                         BusinessFlow.SolutionVariables = sol.Variables;
 
-                         WorkSpace.UserProfile.Solution = sol;
+                        WorkSpace.UserProfile.Solution = sol;
 
        
                         WorkSpace.UserProfile.Solution.SetReportsConfigurations();
