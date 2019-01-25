@@ -180,7 +180,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 inValidTableNameChars[pathChars.Length] = ' ';
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Customized Table", "Table Name", ref name, inValidTableNameChars))
                 {
-                    CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text", DataSourceTable.eDSTableType.Customized);
+                    if(DSDetails.DSC.DSType== DataSourceBase.eDSType.SQLite)
+                    {
+                        CreateTable(name, "[GINGER_ID] Int,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text", DataSourceTable.eDSTableType.Customized);
+
+                    }
+                    else
+                    {
+                        CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text", DataSourceTable.eDSTableType.Customized);
+
+                    }
                 }
             }
             catch (Exception ex)
@@ -205,7 +214,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 inValidTableNameChars[pathChars.Length] = ' ';
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Key Value Table", "Table Name", ref name, inValidTableNameChars))
                 {
-                    CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text",DataSourceTable.eDSTableType.GingerKeyValue);
+                    if (DSDetails.DSC.DSType == DataSourceBase.eDSType.SQLite)
+                    {
+                        CreateTable(name, "[GINGER_ID] Int,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text", DataSourceTable.eDSTableType.GingerKeyValue);
+
+                    }
+                    else
+                    {
+                        CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text", DataSourceTable.eDSTableType.GingerKeyValue);
+                    }
                 }
             }
             catch (Exception ex)
@@ -364,7 +381,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 ADC.Init(DSDetails.FileFullPath);
                 DSDetails.DSC = ADC;
             }
-             if (DSDetails.DSType == DataSourceBase.eDSType.SQLite)
+            if (DSDetails.DSType == DataSourceBase.eDSType.SQLite)
             {
                 DataSourceBase ADC;
                 ADC = new SQLiteDataSource();

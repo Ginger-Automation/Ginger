@@ -28,6 +28,7 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
+using System;
 
 namespace Ginger.DataSource
 {
@@ -43,7 +44,7 @@ namespace Ginger.DataSource
         Setter SetterError = new Setter(Border.BorderBrushProperty, Brushes.Red);
         Setter SetterBorderBold = new Setter(Border.BorderThicknessProperty, new Thickness(2, 2, 2, 2));
         Setter SetterBorder = new Setter(Border.BorderThicknessProperty, new Thickness(1, 1, 1, 1));
-       
+        int index = 0;
         public DataSourceTablePage(DataSourceTable dsTableDetails)
         {
             InitializeComponent();
@@ -250,16 +251,43 @@ namespace Ginger.DataSource
 
         private void AddRow(object sender, RoutedEventArgs e)
         {
-            DataRow dr = mDSTableDetails.DataTable.NewRow();
-            mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
-           
-            foreach (string sColName in mColumnNames)
-                if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
-                    dr[sColName] = "";
-                else if (sColName == "GINGER_ID")
-                    dr[sColName] = System.DBNull.Value;
+            if (!(mDSTableDetails.DSC.ObjFolderName == "SQLiteDataSources"))
+            {
+                DataRow dr = mDSTableDetails.DataTable.NewRow();
+                mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
 
-            mDSTableDetails.DataTable.Rows.Add(dr);             
+                foreach (string sColName in mColumnNames)
+                    if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
+                        dr[sColName] = "";
+                    else if (sColName == "GINGER_ID")
+                        dr[sColName] = System.DBNull.Value;
+
+                mDSTableDetails.DataTable.Rows.Add(dr);
+            }
+
+            else
+            {
+                // Check if any row already present in the databale
+                int a = mDSTableDetails.DataTable.DefaultView.Count;
+                //If yes, then reset index
+                if (a==0)
+                {
+                    index = 0;
+                }
+                DataRow dr = mDSTableDetails.DataTable.NewRow();
+                mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
+
+                foreach (string sColName in mColumnNames)
+                    if (sColName != "GINGER_ID")
+                        dr[sColName] = "";
+                    else if (sColName == "GINGER_ID")
+                    {
+                        index ++;
+                        dr[sColName] = index;
+                    }
+
+                mDSTableDetails.DataTable.Rows.Add(dr);
+            }
         }
 
         private void DeleteRow(object sender, RoutedEventArgs e)
@@ -310,11 +338,24 @@ namespace Ginger.DataSource
                         dr[sColName] = row[sColName];
                     else if (sColName == "GINGER_ID")
                     {
-                        dr[sColName] = row[sColName];
-                         
-                        //long aa = (long)dr[3];
-                        // aa++;
-                        //dr[3] = aa;
+                        if(mDSTableDetails.DSC.ObjFolderName == "SQLiteDataSources")
+                        {
+                            int a = row.Table.Columns.IndexOf(sColName);
+                            int index = Convert.ToInt32(row[a]);
+                            if (mDSTableDetails.DataTable.DefaultView.Count >= index + 1)
+                            {
+                                dr[sColName] = mDSTableDetails.DataTable.DefaultView.Count + 1;
+                            }
+                            else
+                            {
+                                dr[sColName] = index + 1;
+                            }
+                            
+                        }
+                        else
+                        {
+                            dr[sColName] = row[sColName];
+                        }
                     }
                     else
                         dr[sColName] = "";
