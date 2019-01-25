@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.2.6.3\build\Microsoft.CodeAnalysis.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.2.6.3\build\Microsoft.CodeAnalysis.Analyzers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -123,9 +124,6 @@
       <HintPath>..\packages\Gherkin.4.0.0\lib\net45\Gherkin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="GingerPluginCore, Version=3.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ginger.Plugin.Core.3.1.2\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
-    </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.6.13.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.6.13\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
@@ -145,6 +143,18 @@
     </Reference>
     <Reference Include="Magick.NET-Q16-AnyCPU, Version=7.2.1.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
       <HintPath>..\packages\Magick.NET-Q16-AnyCPU.7.3.0\lib\net40\Magick.NET-Q16-AnyCPU.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.2.10.0\lib\netstandard1.3\Microsoft.CodeAnalysis.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.2.10.0\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Scripting, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Scripting.2.10.0\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Scripting, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.2.10.0\lib\netstandard1.3\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions">
       <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
@@ -4411,6 +4421,10 @@
       <Project>{b86281c6-f6ff-4439-94c9-c8ef99bef58f}</Project>
       <Name>GingerCore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj">
+      <Project>{67ecc7f4-78d3-4260-bbe1-20688942c6d1}</Project>
+      <Name>GingerPluginCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GingerPlugIns\GingerPlugIns.csproj">
       <Project>{d5329d81-7ff0-4af1-b186-a2fd65ef0583}</Project>
       <Name>GingerPlugIns</Name>
@@ -4561,6 +4575,10 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.6.3\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.6.3\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -4573,6 +4591,7 @@
     <Error Condition="!Exists('..\packages\Selenium.WebDriver.IEDriver.3.141.0\build\Selenium.WebDriver.IEDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.IEDriver.3.141.0\build\Selenium.WebDriver.IEDriver.targets'))" />
     <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
     <Error Condition="!Exists('..\packages\Selenium.WebDriver.ChromeDriver.2.45.0\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.ChromeDriver.2.45.0\build\Selenium.WebDriver.ChromeDriver.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.2.6.3\build\Microsoft.CodeAnalysis.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.2.6.3\build\Microsoft.CodeAnalysis.Analyzers.props'))" />
   </Target>
   <Import Project="..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.17134\build\Selenium.WebDriver.MicrosoftWebDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.17134\build\Selenium.WebDriver.MicrosoftWebDriver.targets')" />
   <Import Project="..\packages\Selenium.Firefox.WebDriver.0.22.0\build\Selenium.Firefox.WebDriver.targets" Condition="Exists('..\packages\Selenium.Firefox.WebDriver.0.22.0\build\Selenium.Firefox.WebDriver.targets')" />
