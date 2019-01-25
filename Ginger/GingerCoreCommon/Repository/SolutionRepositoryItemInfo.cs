@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,15 +16,48 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using System;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.Repository
 {
     public class SolutionRepositoryItemInfo<T> : SolutionRepositoryItemInfoBase
     {
-        public ObservableList<T> AllItemsCache = null;
-        
+        private ObservableList<T> mAllItemsCache = null;
+        private readonly object mAllItemsCacheLock = new object();
+        private bool mDoneAllCache = false;
+
+        // Mutex mutex = new Mutex();
+        private ObservableList<T> AllItemsCache
+        {
+            get
+            {                
+                if (!mDoneAllCache)
+                {
+                    // We use lock since sevwral threads can request AllItems at the same time when it was not initialized yet
+                    // if one thread start getting all items we want other threads to wait for it to complete 
+                    // so they dont get partial list while work is in progress                                        
+                    lock (mAllItemsCacheLock)
+                    {                        
+                        if (!mDoneAllCache)// make sure all thread which were waiting just return back, only the first enry will do the work
+                        {                            
+                            // drill down for each sub folder and get items - combine to one list and cache
+                            mAllItemsCache = new ObservableList<T>(ItemRootReposiotryfolder.GetFolderItemsRecursive());
+                            mDoneAllCache = true;                            
+                        }                     
+                    }                    
+                }
+                return mAllItemsCache;
+            }
+        }
+
+        public void AddItemToCache(T newItem)
+        {
+            lock (mAllItemsCache)
+            {
+                mAllItemsCache.Add(newItem);
+            }
+        }
 
         public SolutionRepositoryItemInfo()
         {
@@ -41,19 +74,8 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public ObservableList<T> GetAllItemsCache()
-        {
-
-            if (AllItemsCache == null)
-            {
-                AllItemsCache = new ObservableList<T>();
-
-                // drill down for each sub folder and get items - combine to one list and cache
-                AllItemsCache = new ObservableList<T>(ItemRootReposiotryfolder.GetFolderItemsRecursive());
-            }
-
-            return AllItemsCache;
-        }
+        
+        
 
         /// <summary>
         /// Delete the Repository Item folder and it sub folders from file system and cache
@@ -74,18 +96,16 @@ namespace Amdocs.Ginger.Repository
         internal T GetItemByGuid(Guid guid)
         {
             //TODO: first look in items cache instead of getting all items
-
-            //ObservableList<T> Allitems = GetAllItems();
-            foreach(T x in GetAllItemsCache())
+            foreach(T x in mAllItemsCache)
             {
-                RepositoryItemBase RI = (dynamic)x;
+                RepositoryItemBase RI = (RepositoryItemBase)(object)x;
                 if (RI.Guid == guid)
                 {
-                    return (dynamic)RI;
+                    return (T)(object)RI;
                 }
             }
-            dynamic d = null;
-            return d;           
+            object nullObject  = null;
+            return (T)nullObject;           
         }
 
 
@@ -134,7 +154,19 @@ namespace Amdocs.Ginger.Repository
             
             return null;
         }
-       
+
+        internal bool AllItemsContains(T item)
+        {
+            if (mAllItemsCache.Contains(item))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
 
         /// <summary>
         /// Recursive function to find the repositry item folder
@@ -163,6 +195,28 @@ namespace Amdocs.Ginger.Repository
             }
 
             return null;
+        }
+
+        internal void AllItemsCacheRemove(T item)
+        {
+            mAllItemsCache.Remove(item);
+        }
+
+        internal bool AllItemsCacheIsNull()
+        {
+            if (mAllItemsCache is null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        internal ObservableList<T> GetAllItemsCache()
+        {
+            return AllItemsCache;
         }
     }
 }
