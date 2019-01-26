@@ -273,15 +273,11 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         [TestMethod]  [Timeout(60000)]
         public void EchoBig10KMessage()
         {
-            // Arrange
-            StringBuilder sb = new StringBuilder();
+            // Arrange            
+            string bigMessage =new string('*', 10000);
+            
 
-            for (int i = 0; i < 1000; i++)
-            {
-                sb.Append("0123456789");
-            }
-
-            NewPayLoad PL = new NewPayLoad("Echo", sb.ToString());
+            NewPayLoad PL = new NewPayLoad("Echo", bigMessage);
 
             //Act
             NewPayLoad PLRC = mMyGingerClient.Send(PL);
@@ -289,7 +285,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
             //Assert
             Assert.AreEqual(PLRC.Name, "EchoBack", "PLRC.Name = EchoBack");
-            Assert.AreEqual(sb.ToString(), txt2, "sb.ToString() = txt2");
+            Assert.AreEqual(bigMessage.ToString(), txt2, "sb.ToString() = txt2");
         }
 
 
