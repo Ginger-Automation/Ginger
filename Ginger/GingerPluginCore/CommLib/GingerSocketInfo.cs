@@ -46,6 +46,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         // Class using it attach its handler to Action
         public Action<GingerSocketInfo> MessageHandler { get; set; }
         
+        private readonly object mRLock = new object();
         public NewPayLoad DataAsPayload
         {
             get
@@ -101,8 +102,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             mSocket.BeginSend(b, 0, b.Length, SocketFlags.None, SendCallback, this);
             bytesOut += b.Length;
             mProcessingStatus = eProcessingStatus.WaitingForResponse;
-            mSendDone.WaitOne(); // blocking until send completed
-                       
+            lock (mRLock)
+            {
+                mSendDone.WaitOne(); // blocking until send completed
+            }
             bool bOK = mRequestProcessingDone.WaitOne(ResponseTimeoutMS);  // wait for response - blocking
             if (!bOK)
             {
@@ -110,6 +113,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             }
             mProcessingStatus = eProcessingStatus.ResponseCompleted;
             mSocket.Blocking = false;
+            
             return Response;
         }
 
@@ -123,10 +127,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         private void ReceiveCallback(IAsyncResult ar)
         {
             Console.WriteLine("ReceiveCallback");
-            while (mProcessingStatus == eProcessingStatus.SendingRequest)
+            // TODO: add timeout to prevent partial package to get stuck
+
+            lock (mRLock)
             {
-                Thread.Sleep(1);
-            }
+                Console.WriteLine("lll");
+            };
+            
             
             try
             {
@@ -135,27 +142,26 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 GingerSocketInfo gingerSocketInfo = (GingerSocketInfo)ar.AsyncState;
                 Socket socket = gingerSocketInfo.Socket;
 
-            // Read data from the socket
-            int bytesRead = socket.EndReceive(ar);
-            BytesIn += bytesRead;
-            if (bytesRead > 0)
-            {
-
-                if (gingerSocketInfo.BufferPOS == 0) // do only once per Payload
+                // Read data from the socket
+                int bytesRead = socket.EndReceive(ar);
+                BytesIn += bytesRead;
+                if (bytesRead > 0)
                 {
-                    //TODO: There might be more data, so store the data received so far - need to veruf completion, create TC !!
-                    byte[] rcvLenBytesBB = gingerSocketInfo.buffer;  // TODO: !!!!!!!!!!!!!temp do work direct - avoid creating a new byte array
-                    PayloadLen = ((rcvLenBytesBB[0]) << 24) + (rcvLenBytesBB[1] << 16) + (rcvLenBytesBB[2] << 8) + rcvLenBytesBB[3];
 
-
-                    if (PayloadLen > gingerSocketInfo.buffer.Length)
+                    if (gingerSocketInfo.BufferPOS == 0) // do only once per Payload
                     {
-                        Array.Resize(ref gingerSocketInfo.buffer, PayloadLen + 4);   // Make sure we will have enough space  // Add 1024 !!!
-                        // TODO: check if buffer is more than x size release it back....                        
-                    }
-                }
+                        //TODO: There might be more data, so store the data received so far - need to veruf completion, create TC !!
+                        byte[] rcvLenBytesBB = gingerSocketInfo.buffer;  // TODO: !!!!!!!!!!!!!temp do work direct - avoid creating a new byte array
+                        PayloadLen = ((rcvLenBytesBB[0]) << 24) + (rcvLenBytesBB[1] << 16) + (rcvLenBytesBB[2] << 8) + rcvLenBytesBB[3];
 
-                gingerSocketInfo.BufferPOS += bytesRead;
+                        if (PayloadLen > gingerSocketInfo.buffer.Length)
+                        {
+                            Array.Resize(ref gingerSocketInfo.buffer, PayloadLen + 4);   // Make sure we will have enough space  // Add 1024 !!!
+                            // TODO: check if buffer is more than x size release it back....                        
+                        }
+                    }
+
+                    gingerSocketInfo.BufferPOS += bytesRead;
 
                     if (gingerSocketInfo.BufferPOS == PayloadLen + 4)
                     {

@@ -16,22 +16,9 @@ namespace Amdocs.Ginger.Plugin.Core
         {
             ClosedAllNodes();
         }
+       
 
-        /// <summary>
-        /// Start service on node and connect to local GingerGrid
-        /// </summary>
-        /// <param name="gingerServiceObject">Service object with [GingerService] annotation</param>
-        /// <param name="name">Name which will apear in GingerGrid</param>
-        public void StartNode(string name, object gingerServiceObject)
-        {
-            GingerNode gingerNode = new GingerNode(gingerServiceObject);
-            gingerNode.StartGingerNode(name, SocketHelper.GetLocalHostIP(), 15001);
-            if (gingerNode.Connected)
-            {
-                mNodes.Add(gingerNode);
-            }
-        }
-
+        // Being called from the plugin, ref will be zero DO NOT DELELTE
         public void Listen()
         {
             Console.WriteLine(mNodes.Count + " Node(s) Connected succesfully");
@@ -68,7 +55,7 @@ namespace Amdocs.Ginger.Plugin.Core
         {
             GingerNode gingerNode = new GingerNode(gingerServiceObject);
             gingerNode.StartGingerNode(name, gingerGridIP, gingerGridport);
-            mNodes.Add(gingerNode);
+            CheckAddGingerNode(gingerNode);
         }
 
         public void StartNode(string name, Type serviceType)
@@ -81,6 +68,26 @@ namespace Amdocs.Ginger.Plugin.Core
         {
             object serviceObject = Activator.CreateInstance(serviceType);
             StartNode(name, serviceObject, gingerGridIP, gingerGridport);            
+        }
+
+        /// <summary>
+        /// Start service on node and connect to local GingerGrid
+        /// </summary>
+        /// <param name="gingerServiceObject">Service object with [GingerService] annotation</param>
+        /// <param name="name">Name which will apear in GingerGrid</param>
+        public void StartNode(string name, object gingerServiceObject)
+        {
+            GingerNode gingerNode = new GingerNode(gingerServiceObject);
+            gingerNode.StartGingerNode(name, SocketHelper.GetLocalHostIP(), 15001);   // !!!!!!!!!!!!!!!! Get free port, but prefer 15001 if free            
+            CheckAddGingerNode(gingerNode);
+        }
+
+        private void CheckAddGingerNode(GingerNode gingerNode)
+        {
+            if (gingerNode.Connected)
+            {
+                mNodes.Add(gingerNode);
+            }
         }
 
         public object CreateServiceObjectByServiceId(string serviceId)

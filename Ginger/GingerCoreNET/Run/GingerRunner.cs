@@ -1936,36 +1936,43 @@ namespace Ginger.Run
                 }
             }
 
-            gingerNodeInfo = GetGingerNode(actPlugin);
-
-            if (gingerNodeInfo == null)
+            // !!!!!!!!!!!!!!!!!
+            // Need to lock the grid until we get GNI
+            // temo for now we lock all
+            // TODO: improve to do it but without StartService which might be long
+            // for now it is working and safe
+            lock (WorkSpace.Instance.LocalGingerGrid)
             {
-                // call plugin to start service and wait for ready
-                WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId, actPlugin.ServiceId);
+                gingerNodeInfo = GetGingerNode(actPlugin);
 
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                while (gingerNodeInfo == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
-                {
-                    Thread.Sleep(500);
-                    gingerNodeInfo = GetGingerNode(actPlugin);
-                }
                 if (gingerNodeInfo == null)
                 {
-                    actPlugin.Error = "GNI not found, Timeout waiting for service to be available in GingerGrid";
-                    return null;
+                    // call plugin to start service and wait for ready
+                    WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId, actPlugin.ServiceId);
+
+                    Stopwatch stopwatch = Stopwatch.StartNew();
+                    while (gingerNodeInfo == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
+                    {
+                        Thread.Sleep(500);
+                        gingerNodeInfo = GetGingerNode(actPlugin);
+                    }
+                    if (gingerNodeInfo == null)
+                    {
+                        actPlugin.Error = "GNI not found, Timeout waiting for service to be available in GingerGrid";
+                        return null;
+                    }
+                }
+
+
+                if (IsSessionService)
+                {
+                    DoStartSession = true;
+                }
+                else
+                {
+                    gingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
                 }
             }
-
-            
-            if (IsSessionService)
-            {
-                DoStartSession = true;
-            }
-            else
-            {
-                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
-            }
-            
 
             // keep the proxy on agent
             GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
@@ -2059,11 +2066,16 @@ namespace Ginger.Run
 
         private GingerNodeInfo GetGingerNode(ActPlugIn actPlugin)
         {
+            // TODO: create round robin algorithm or something smarter
+
+            // Menahwile we can the first ready node with least amount of actions so balance across same service
             GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
 
+            // In order to balance we order by ActionCount
             GingerNodeInfo GNI = (from x in gingerGrid.NodeList
                                     where x.ServiceId == actPlugin.ServiceId
                                          && x.Status == GingerNodeInfo.eStatus.Ready
+                                         orderby x.ActionCount
                                     select x).FirstOrDefault();
 
             return GNI;
