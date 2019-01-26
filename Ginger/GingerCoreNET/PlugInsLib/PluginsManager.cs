@@ -16,9 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
+using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Newtonsoft.Json;
@@ -175,7 +177,7 @@ namespace Amdocs.Ginger.Repository
 
             string dll = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
 
-            string nodeFileName = NodeConfigFile.CreateNodeConfigFile(pluginId + "1", serviceID);  // !!!!! TODO: check if 1 exist then try 2,3 in case more than one same id service start
+            string nodeFileName = CreateNodeConfigFile(pluginId, serviceID);  
             string cmd = "dotnet \"" + dll + "\" \"" + nodeFileName + "\"";
             System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);            
             procStartInfo.UseShellExecute = true;
@@ -191,6 +193,16 @@ namespace Amdocs.Ginger.Repository
             //TODO: delete the temp file - or create temp files tracker with auto delete 
         }
 
+        int ServiceCounter = 0;
+        private string CreateNodeConfigFile(string name, string serviceId)
+        {
+            ServiceCounter++;
+            string NewName = name + " " + ServiceCounter;  // We add counter since this is auto start service and many can start so to identify
+            string txt = NewName + " | " + serviceId + " | " + SocketHelper.GetLocalHostIP() + " | " + WorkSpace.Instance.LocalGingerGrid.Port + Environment.NewLine;
+            string fileName = Path.GetTempFileName();
+            File.WriteAllText(fileName, txt);
+            return fileName;
+        }
 
         public void CloseAllRunningPluginProcesses()
         {
