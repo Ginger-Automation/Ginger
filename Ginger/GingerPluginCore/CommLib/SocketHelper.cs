@@ -46,6 +46,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             Console.WriteLine("Selected '" + LocalHostIP + "' as Local Host IP");
         }
 
+        
         //TODO: think if we want to have multiple display - enable set for this value
         public static string GetDisplayHost()
         {
