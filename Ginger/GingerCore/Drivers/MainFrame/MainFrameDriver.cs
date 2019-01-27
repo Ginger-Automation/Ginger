@@ -780,5 +780,10 @@ namespace GingerCore.Drivers.MainFrame
         {
             throw new NotImplementedException();
         }
+
+        public void StartSpying()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -2785,5 +2785,10 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             throw new NotImplementedException();
         }
+
+        public void StartSpying()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
