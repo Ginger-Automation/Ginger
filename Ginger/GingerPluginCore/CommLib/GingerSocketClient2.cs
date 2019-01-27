@@ -50,6 +50,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 return mConnected;
             }
         }
+
+        /// <summary>
+        /// Connect to Services Grid
+        /// Retry mechanism will retry every 5 seconds up to total 30 seconds
+        /// </summary>
+        /// <param name="IP"></param>
+        /// <param name="port"></param>
         public void Connect(string IP, int port)
         {            
             try
@@ -60,7 +67,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
                 Console.WriteLine("Connecting to: " + remoteIP + ":" + port);
-                // Connect to Ginger Server async, retyr max 10 seconds                
+                // Connect to Ginger Server async, retry max 30 seconds                
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 int retrycount = 0;
                 while (!socket.Connected && stopwatch.ElapsedMilliseconds < 30000)
@@ -93,7 +100,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 mGingerSocketInfo = new GingerSocketInfo();
                 mGingerSocketInfo.Socket = socket;
                 mGingerSocketInfo.MessageHandler = MessageHandler;
-                mGingerSocketInfo.Receive();
+                mGingerSocketInfo.Receive();   // not blocking
 
                 
                 // if there is code here it will run - no wait
@@ -137,7 +144,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             return mGingerSocketInfo.SendRequest(pl);
         }
 
-        // After connect is succesful we get callback
+        // After connect is succesful/fail we get callback
         private void ConnectCallback(IAsyncResult ar)
         {
             try
@@ -146,25 +153,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 Socket client = (Socket)ar.AsyncState;
                 if (client.Connected)
                 {
+                    // Complete the connection 
+                    // Signal that the connection has been made.  
                     client.EndConnect(ar);
                     mConnected = true;
                 }
                 else
                 {
                     mConnected = false;
-                }
-                
-                // Complete the connection 
-
-                // Signal that the connection has been made.  
-                
+                }                
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error at Connect Callback: " + ex.Message);
-                
+                Console.WriteLine("Error at Connect Callback: " + ex.Message);                
 
-                // the connect fail we will retry, need to release the Wait code                
+                // the connect fail we will retry, need to release the Wait code - done in finally for both
             }
             finally
             {
