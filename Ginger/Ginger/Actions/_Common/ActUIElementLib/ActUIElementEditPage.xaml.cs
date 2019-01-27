@@ -110,20 +110,22 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void ElementTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
             mElementActionsList = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
-            
-            if (mElementActionsList.Contains(mAction.ElementAction))
-            {
-                ElementActionComboBox.SelectionChanged -= ElementActionComboBox_SelectionChanged;
-                ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
-                ElementActionComboBox.SelectionChanged += ElementActionComboBox_SelectionChanged;
-            }
-            else
+
+            ElementActionComboBox.SelectionChanged -= ElementActionComboBox_SelectionChanged;
+            ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
+            ElementActionComboBox.SelectedValue = mAction.ElementAction;//need to fix binding to avoid it
+            ElementActionComboBox.SelectionChanged += ElementActionComboBox_SelectionChanged;
+
+            if(mElementActionsList.Count == 0)
             {
                 mAction.ElementAction = eElementAction.Unknown;
-                ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
             }
+            else if(mAction.ElementType != eElementType.Unknown && !mElementActionsList.Contains(mAction.ElementAction))
+            {
+                mAction.ElementAction = mElementActionsList[0];//defualt operation for element type should be first one
+            }
+
             ElementTypeImage.Source = GetImageSource(mAction.Image);
             UpdateActionInfo(mAction.ElementAction);
         }
@@ -132,7 +134,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             UIElementActionEditPageFrame.Visibility = Visibility.Collapsed;
             ResetActUIFields();
-            if (ElementActionComboBox.SelectedValue == null)
+            if (ElementActionComboBox.SelectedItem == null)
             {
                 return;
             }

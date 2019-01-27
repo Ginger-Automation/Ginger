@@ -170,14 +170,14 @@ namespace GingerCore
                 comboBox.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("text", System.ComponentModel.ListSortDirection.Ascending));
             }
 
-            if ((values == null) && (valuesCollView != null))
-            {
+            //if ((values == null) && (valuesCollView != null))
+            //{
                 comboBox.SelectedItem = EnumObj;
-            }
-            else
-            {
-                comboBox.SelectedValue = EnumObj;
-            }
+            //}
+            //else
+            //{
+            //    comboBox.SelectedValue = EnumObj;
+            //}
         }
 
         public static void FillComboFromEnumType(ComboBox comboBox, Type Etype, List<object> values = null)
