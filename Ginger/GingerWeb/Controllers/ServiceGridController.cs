@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using amdocs.ginger.GingerCoreNET;
+﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCoreNET.RunLib;
-using GingerWeb.RepositoryLib;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
 
 
 namespace GingerWeb.Controllers
@@ -17,15 +13,24 @@ namespace GingerWeb.Controllers
     {
         // GET: api/ServiceGrid/NodeList
         [HttpGet("[action]")]
-        public IEnumerable<GingerNodeInfoWrapper> NodeList()
+        public IEnumerable<object> NodeList()
         {
             ObservableList<GingerNodeInfo> list = WorkSpace.Instance.LocalGingerGrid.NodeList;
-            List<GingerNodeInfoWrapper> gingerNodeInfoWrappers = new List<GingerNodeInfoWrapper>();
-            foreach (GingerNodeInfo gingerNodeInfo in list)
-            {
-                gingerNodeInfoWrappers.Add(new GingerNodeInfoWrapper(gingerNodeInfo));
-            }
-            return gingerNodeInfoWrappers;
+            var data = list.Select(x =>
+                                    new
+                                    {
+                                        name = x.Name,
+                                        actionCount = x.ActionCount,
+                                        host = x.Host,
+                                        ip = x.IP,
+                                        os = x.OS,
+                                        sessionId = x.SessionID,
+                                        serviceId = x.ServiceId,
+                                        status= x.Status.ToString()
+
+                                    });
+                        
+            return data;
         }
 
         //// GET: api/ServiceGrid/5
