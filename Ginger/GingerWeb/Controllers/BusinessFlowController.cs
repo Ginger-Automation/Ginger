@@ -15,7 +15,7 @@ using System.Linq;
 namespace GingerWeb.Controllers
 {
     [Route("api/[controller]")]
-    public class SampleDataController : Controller
+    public class BusinessFlowController : Controller
     {
         // temp remove from here !!!!!!!!!!!
         static bool bDone;
@@ -32,7 +32,7 @@ namespace GingerWeb.Controllers
         }
 
         [HttpGet("[action]")]
-        public IEnumerable<object> WeatherForecasts()        
+        public IEnumerable<object> BusinessFlows()        
         {
             if (!bDone)
             {

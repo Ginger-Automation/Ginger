@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
-export class FetchData extends Component {
-  static displayName = FetchData.name;
+export class BusinessFlow extends Component {
+    static displayName = BusinessFlow.name;
 
   constructor (props) {
     super(props);
@@ -11,7 +11,7 @@ export class FetchData extends Component {
                       BFStatus: { status: "zaa" }
                     };
 
-    fetch('api/SampleData/WeatherForecasts')
+      fetch('api/BusinessFlow/BusinessFlows')
       .then(response => response.json())
       .then(data => {
         this.setState({ forecasts: data, loading: false });
@@ -20,7 +20,7 @@ export class FetchData extends Component {
 
    static runFlowClick(flowName) {
          
-       fetch('api/SampleData/RunBusinessFlow', {
+       fetch('api/BusinessFlow/RunBusinessFlow', {
            method: 'post',
            headers: { 'Content-Type': 'application/json' },
            body: JSON.stringify({ "name": flowName })
@@ -71,7 +71,7 @@ export class FetchData extends Component {
   render () {
     let contents = this.state.loading
       ? <p><em>Loading...</em></p>
-      : FetchData.renderForecastsTable(this.state.forecasts);
+        : BusinessFlow.renderForecastsTable(this.state.forecasts);
 
       let bfstatus = (this.state.BFStatus.status);
 
