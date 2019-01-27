@@ -4680,7 +4680,7 @@ namespace GingerCore.Drivers
         public string GenerateXpathForIWebElement(IWebElement IWE, string current)
         {
             if (IWE.TagName == "html")
-                return "/" + IWE.TagName + current;
+                return "/" + IWE.TagName +"[1]" + current;
 
             IWebElement parentElement = IWE.FindElement(By.XPath(".."));
             ReadOnlyCollection<IWebElement> childrenElements = parentElement.FindElements(By.XPath("./" + IWE.TagName));
