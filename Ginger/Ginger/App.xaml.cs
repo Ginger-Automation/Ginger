@@ -930,9 +930,9 @@ namespace Ginger
         {
             App.AutomateTabGingerRunner.SolutionFolder = solution.Folder;
             List<IAgent> IAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x);
-            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<IAgent>(IAgents);
+            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<Agent>();
             App.AutomateTabGingerRunner.SolutionApplications = solution.ApplicationPlatforms;
-            List<DataSourceBase> DataSourceBases = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().ListItems.ConvertAll(x => (DataSourceBase)x); ;
+            List<DataSourceBase> DataSourceBases = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().ToList();
             App.AutomateTabGingerRunner.DSList= new ObservableList<DataSourceBase>(DataSourceBases);
 
             App.AutomateTabGingerRunner.CurrentSolution = solution;
@@ -1107,10 +1107,14 @@ namespace Ginger
                 }
             }
 
-            if ( WorkSpace.UserProfile.Solution != null)
-                App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<IAgent>( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x=>(IAgent)x).ToList());
+            if (WorkSpace.UserProfile.Solution != null)
+            {
+                App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+            }
             else
+            {
                 App.AutomateTabGingerRunner.SolutionAgents = null;
+            }
             App.AutomateTabGingerRunner.UpdateApplicationAgents();
         }
 

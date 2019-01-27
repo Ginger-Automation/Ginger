@@ -205,7 +205,7 @@ namespace Ginger.Run
         public ObservableList<Guid> FilterExecutionTags = new ObservableList<Guid>();
 
 
-        public ObservableList<IAgent> SolutionAgents { get; set; } = new ObservableList<IAgent>();
+        public ObservableList<Agent> SolutionAgents { get; set; } = new ObservableList<Agent>();
 
         public ObservableList<ApplicationPlatform> SolutionApplications { get; set; }
 

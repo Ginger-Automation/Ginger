@@ -45,7 +45,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Agent agent = new Agent();
             agent.AgentType = Agent.eAgentType.Service;
 
-            mGingerRunner.SolutionAgents = new ObservableList<IAgent>();
+            mGingerRunner.SolutionAgents = new ObservableList<Agent>();
             mGingerRunner.SolutionAgents.Add(agent);
 
             mGingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = mAppName, Agent = agent });
