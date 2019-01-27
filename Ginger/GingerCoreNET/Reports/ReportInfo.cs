@@ -27,7 +27,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 
 namespace Ginger.Reports
 {
@@ -45,6 +45,7 @@ namespace Ginger.Reports
 
         public enum ReportInfoLevel
         {
+            Unknown,
             RunSetLevel,
             GingerLevel,
             BussinesFlowLevel,
@@ -52,7 +53,7 @@ namespace Ginger.Reports
             ActivityLevel,
             ActionLevel
         }
-        public ReportInfoLevel reportInfoLevel;
+        public ReportInfoLevel reportInfoLevel = ReportInfoLevel.Unknown;
         
         private ObservableList<BusinessFlowExecutionSummary> mBFESs;
         private ProjEnvironment mProjEnvironment;
@@ -63,7 +64,10 @@ namespace Ginger.Reports
         public string ExecutionEnv { get; set; }
         public TimeSpan ExecutionElapsedTime { get; set; }
         
-        public Object ReportInfoRootObject = new Object();
+        /// <summary>
+        /// The root item of the report which can be RunSet, Runner, BF
+        /// </summary>
+        public Object ReportInfoRootObject;   
 
         public EnvironmentReport Environment { get; set; }
 
@@ -82,7 +86,7 @@ namespace Ginger.Reports
             TotalExecutionTime = mGingersMultiRun.Elapsed;
 
             DateCreated = DateTime.Now.ToString();
-            DateCreatedShort = DateTime.Now.ToString("MM/dd");
+            DateCreatedShort = DateTime.Now.ToString("MM/dd");  
             ExecutionEnv = mProjEnvironment.Name;
             ExecutionElapsedTime = mGingersMultiRun.Elapsed;
         }
@@ -150,7 +154,7 @@ namespace Ginger.Reports
             foreach (string txt_file in System.IO.Directory.GetFiles(folder))
             {
                 fileName = Path.GetFileName(txt_file);
-                if (fileName.Contains(".txt") && (fileName != "ActivityGroups.txt"))
+                if (fileName.Contains(".txt") && (fileName != "ActivityGroups.txt"))     // !!!!!!!!!!!!!!!!!!!!!!!!
                 {
                     txtFilesInDirectoryCount++;
                     txtFileName = fileName;

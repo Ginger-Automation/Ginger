@@ -125,7 +125,7 @@ namespace Ginger.AnalyzerLib
         {
             if (BusyInProcess)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                 return;
             }
 
@@ -237,7 +237,7 @@ namespace Ginger.AnalyzerLib
                 // Check all GRs BFS
                 foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
                 {
-                    issues = AnalyzeGingerRunner.Analyze(GR, App.UserProfile.Solution.ApplicationPlatforms);
+                    issues = AnalyzeGingerRunner.Analyze(GR,  WorkSpace.UserProfile.Solution.ApplicationPlatforms);
                     AddIssues(issues);
 
                     //Code to analyze Runner Unique Businessflow with Source BF
@@ -582,13 +582,13 @@ namespace Ginger.AnalyzerLib
             {
                 if (mIssues.Where(x=> x.Selected==true).ToList().Count == 0)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Please select issue to fix.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select issue to fix.");
                     return;
                 }
 
                 if (BusyInProcess)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                     return;
                 }
                 BusyInProcess = true;
@@ -636,12 +636,12 @@ namespace Ginger.AnalyzerLib
         {
             if (BusyInProcess)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                 return;
             }
             // TODO: click/use the same code on solution which will save all changed items...
             // Meanwhile the below is good start 
-            if (Reporter.ToUser(eUserMsgKeys.SaveAllItemsParentWarning) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.SaveAllItemsParentWarning) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 BusyInProcess = true;
                 SetStatus("Starting to Save Fixed Items...");
@@ -715,7 +715,7 @@ namespace Ginger.AnalyzerLib
                 {
                     if (AI.FixItHandler != null)
                     {
-                        //Reporter.ToGingerHelper(eGingerHelperMsgKey.AnalyzerFixingIssues, null, AI.ItemName);
+                        //Reporter.ToGingerHelper(eStatusMsgKey.AnalyzerFixingIssues, null, AI.ItemName);
                         SetStatus("Fixing: " + AI.ItemName);                      
                         AI.FixItHandler.Invoke(AI, null);
                         //Reporter.CloseGingerHelper();                        
@@ -735,7 +735,7 @@ namespace Ginger.AnalyzerLib
             {
                 AnalyzeAction currentAnalyzeAction = (AnalyzeAction)AnalyzerItemsGrid.CurrentItem;
                 Act actionIssue = currentAnalyzeAction.mAction;
-                actionIssue.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+                actionIssue.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
                 ActionEditPage actedit = new ActionEditPage(actionIssue, General.RepositoryItemPageViewMode.ChildWithSave, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
                 //setting the BusinessFlow on the Action in Order to save 
                 //actedit.mActParentBusinessFlow = ((AnalyzeAction)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
@@ -747,7 +747,7 @@ namespace Ginger.AnalyzerLib
             {
                 AnalyzeActivity currentAnalyzeActivity = (AnalyzeActivity)AnalyzerItemsGrid.CurrentItem;
                 Activity ActivityIssue = currentAnalyzeActivity.mActivity;
-                //ActivityIssue.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+                //ActivityIssue.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
                 ActivityEditPage ActivityEdit = new ActivityEditPage(ActivityIssue, General.RepositoryItemPageViewMode.ChildWithSave, currentAnalyzeActivity.mBusinessFlow);
                 //setting the BusinessFlow on the Activity in Order to save
                 //ActivityEdit.mBusinessFlow = ((AnalyzeActivity)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;

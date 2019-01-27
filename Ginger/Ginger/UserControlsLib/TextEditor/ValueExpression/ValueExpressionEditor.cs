@@ -28,6 +28,7 @@ using Ginger.Actions;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using GingerPlugIns.TextEditorLib;
 using Amdocs.Ginger.Plugin.Core;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -121,7 +122,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
         void AddVars(List<ICompletionData> list)
         {            
-            foreach (VariableBase v in App.UserProfile.Solution.Variables)
+            foreach (VariableBase v in  WorkSpace.UserProfile.Solution.Variables)
             {
                 list.Add(GETVariableTCD(v));
             }

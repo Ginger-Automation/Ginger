@@ -1,9 +1,11 @@
-﻿using GingerCore;
+﻿using Ginger.Run;
+using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
 using System;
 using System.Diagnostics;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.Run
 {
@@ -39,12 +41,12 @@ namespace Amdocs.Ginger.Run
         #endregion General
 
         #region Runner
-        public virtual void RunnerRunStart(uint eventTime)
+        public virtual void RunnerRunStart(uint eventTime, GingerRunner gingerRunner)
         {
 
         }
 
-        public virtual void RunnerRunEnd(uint eventTime)
+        public virtual void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0)
         {
 
         }
@@ -52,11 +54,11 @@ namespace Amdocs.Ginger.Run
         #endregion Runner
 
         #region BusinessFlow
-        public virtual void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow)
+        public virtual void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
         {
 
         }
-        public virtual void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow)
+        public virtual void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
 
         }
@@ -69,11 +71,11 @@ namespace Amdocs.Ginger.Run
 
 
         #region Activity
-        public virtual void ActivityStart(uint eventTime, Activity activity)
+        public virtual void ActivityStart(uint eventTime, Activity activity, bool continuerun= false)
         {
 
         }
-        public virtual void ActivityEnd(uint eventTime, Activity activity)
+        public virtual void ActivityEnd(uint eventTime, Activity activity, bool offlineMode=false)
         {
 
         }
@@ -90,7 +92,7 @@ namespace Amdocs.Ginger.Run
         {
 
         }
-        public virtual void ActionEnd(uint eventTime, Act action)
+        public virtual void ActionEnd(uint eventTime, Act action, bool offlineMode= false)
         {
 
         }
@@ -141,8 +143,30 @@ namespace Amdocs.Ginger.Run
         {
 
         }
+
+        /// <summary>
+        /// Notify the context of execution: Business Flow, Activity, Action
+        /// </summary>
+        /// <param name="eventTime"></param>
+        /// <param name="automationTabContext"></param>
+        public virtual void ExecutionContext(uint eventTime, AutomationTabContext automationTabContext, BusinessFlow businessFlow)
+        {
+            
+        }
         #endregion Action
 
+
+        //enum aa
+        //{
+        //    UserClickRunFlow
+        //        BreakPoint
+        //        User clicked Contrine
+        //}
+
+        //public virtual void FlowInterrruptiont(uint eventTime, enum)
+        //{
+
+        //}
 
 
     }

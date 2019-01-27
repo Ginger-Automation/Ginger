@@ -124,7 +124,7 @@ namespace Ginger
             {
                 if (mLinkIsByParentID || mLinkIsByExternalID)
                 {
-                    if (Reporter.ToUser(eUserMsgKeys.AskIfSureWantToDeLink) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKey.AskIfSureWantToDeLink) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
                         mItem.ParentGuid = Guid.Empty;
                         mItem.ExternalID = string.Empty;

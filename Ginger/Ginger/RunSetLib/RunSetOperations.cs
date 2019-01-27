@@ -41,7 +41,7 @@ namespace Amdocs.Ginger
                 {
                     if (!string.IsNullOrEmpty(runSetName.Trim()))
                     {
-                        Reporter.ToUser(eUserMsgKeys.DuplicateRunsetName, runSetName);
+                        Reporter.ToUser(eUserMsgKey.DuplicateRunsetName, runSetName);
                     }
 
                     bool returnWindow = InputBoxWindow.OpenDialog(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)),
@@ -52,7 +52,7 @@ namespace Amdocs.Ginger
                     {
                         if (string.IsNullOrEmpty(runSetName.Trim()))
                         {
-                            Reporter.ToUser(eUserMsgKeys.ValueIssue, "Value cannot be empty");
+                            Reporter.ToUser(eUserMsgKey.ValueIssue, "Value cannot be empty");
                         }
                     }
                     else

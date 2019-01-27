@@ -33,7 +33,6 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Automation;
 using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -107,7 +106,7 @@ namespace GingerCore.Drivers.PBDriver
             IHTMLDOMNode domNode = null;
             HTMLElementInfo HTMLEI;
             IHTMLElementCollection coll;
-            Reporter.ToLog(eLogLevel.INFO, "GetElementChildren::" + Ei.XPath);
+            Reporter.ToLog(eLogLevel.DEBUG, "GetElementChildren::" + Ei.XPath);
             if (Ei.ElementObject == null)
             {
                 if(currentFrameDocument !=null)
@@ -132,14 +131,14 @@ namespace GingerCore.Drivers.PBDriver
 
             foreach (IHTMLElement h1 in coll)
             {
-                Reporter.ToLog(eLogLevel.INFO, "HTMLElementInfo1::" + h1.className);
+                Reporter.ToLog(eLogLevel.DEBUG, "HTMLElementInfo1::" + h1.className);
                 HTMLEI = GetHtmlElementInfo(h1);
                 HTMLEI.WindowExplorer = Ei.WindowExplorer;
                 HTMLEI.ElementObject = h1;
                 EIlist.Add(HTMLEI);
-                Reporter.ToLog(eLogLevel.INFO, "HTMLElementInfo2::" + HTMLEI.XPath);
+                Reporter.ToLog(eLogLevel.DEBUG, "HTMLElementInfo2::" + HTMLEI.XPath);
             }
-            if (node.tagName.ToLower().Equals("iframe"))
+            if (node.tagName.ToLower().Equals("iframe") || node.tagName.ToLower().Equals("frame"))
             {
                 try
                 {
@@ -151,7 +150,7 @@ namespace GingerCore.Drivers.PBDriver
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "frameDocument Exception1::" + e.Message);
+                    Reporter.ToLog(eLogLevel.DEBUG, "frameDocument Exception1::" + e.Message);
                 }
             }
             return EIlist;
@@ -1239,7 +1238,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Exception in init::" + ex.Message);
+                Reporter.ToLog(eLogLevel.WARN, "Exception in init Frame", ex);
                 return "false";
             }
         }
@@ -1606,11 +1605,9 @@ namespace GingerCore.Drivers.PBDriver
             {
                 element.scrollIntoView();
                 x = getelementXCordinate(element) + x;
-                Reporter.ToLogAndConsole(eLogLevel.INFO, "elementX::" + x);
-                Reporter.ToConsole(eLogLevel.DEBUG, "elementX::" + x);
+                Reporter.ToLog(eLogLevel.DEBUG, "elementX::" + x);
                 y = getelementYCordinate(element) + y;
-                Reporter.ToLogAndConsole(eLogLevel.INFO, "elementy::" + y);
-                Reporter.ToConsole(eLogLevel.DEBUG, "elementY::" + y);
+                Reporter.ToLog(eLogLevel.DEBUG, "elementy::" + y);
                 winAPI.SendRightClick(AEBrowser, x +"," + y );                
                 return true;
             }
@@ -1725,7 +1722,7 @@ namespace GingerCore.Drivers.PBDriver
 
         public IHTMLElement GetHTMLElementFromPoint(int x, int y)
         {
-            Reporter.ToLogAndConsole(eLogLevel.INFO, "GetHTMLElementFromPoint::" + x + "::" + y);
+            Reporter.ToLog(eLogLevel.DEBUG, "GetHTMLElementFromPoint::" + x + "::" + y);
             
             IHTMLElement Elem = mHtmlDocument.elementFromPoint(x, y);
             if (Elem.tagName.ToLower() == "iframe")
@@ -1739,7 +1736,7 @@ namespace GingerCore.Drivers.PBDriver
                     Elem = currentFrameDocument.elementFromPoint(x, y);
                 }                    
             }            
-            Reporter.ToLogAndConsole(eLogLevel.DEBUG, "GetHTMLElementFromPoint::" + Elem.className);
+            Reporter.ToLog(eLogLevel.DEBUG, "GetHTMLElementFromPoint::" + Elem.className);
             return Elem;
         }
 
@@ -2164,7 +2161,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             if (node != null)
             {
-                Reporter.ToLog(eLogLevel.INFO, "nodenotnull::" + node.XPath);
+                Reporter.ToLog(eLogLevel.DEBUG, "nodenotnull::" + node.XPath);
                 if (currentFrame != null)
                     h1 = GetHTMLElementFromXPath(node.XPath, currentFrameDocument);
                 else
@@ -2172,7 +2169,7 @@ namespace GingerCore.Drivers.PBDriver
                 if (h1 != null)
                     return h1;
             }            
-            Reporter.ToLog(eLogLevel.INFO, "xpath::" + xpath);
+            Reporter.ToLog(eLogLevel.DEBUG, "xpath::" + xpath);
 
             if (currentFrame != null)                           
                 h1 = GetHTMLElementFromXPath(xpath, currentFrameDocument);                                         
@@ -2332,7 +2329,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eLogLevel.INFO, "exception in GetHTMLElementFromXPath::" + e.Message);
+                Reporter.ToLog(eLogLevel.DEBUG, "exception in GetHTMLElementFromXPath::" + e.Message);
                 return null;
             }
         }

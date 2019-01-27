@@ -456,7 +456,7 @@ namespace GingerCore.Drivers.Appium
             catch (Exception ex)
             {
                 Mouse.OverrideCursor = null;
-                Reporter.ToUser(eUserMsgKeys.MobileRefreshScreenShotFailed, ex.Message);
+                Reporter.ToUser(eUserMsgKey.MobileRefreshScreenShotFailed, ex.Message);
                 AppiumDriver.ConnectedToDevice = false;
                 
                 return false;               
@@ -550,7 +550,7 @@ namespace GingerCore.Drivers.Appium
             catch (Exception ex)
             {
                 Mouse.OverrideCursor = null;
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, ex.Message);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
             }
         }
 
@@ -575,7 +575,7 @@ namespace GingerCore.Drivers.Appium
                                 AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to get mobile page source or convert it to XML format", ex);
                 else
-                    Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, ex.Message);
+                    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
 
                 if (step == 1)
                 {
@@ -998,7 +998,7 @@ namespace GingerCore.Drivers.Appium
                         elemntAct.GenElementAction = actionType;
                         elemntAct.Description = "Clicking on " + elemntAct.LocateValue;
                         BF.CurrentActivity.Acts.Add(elemntAct);
-                        if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKeys.MobileActionWasAdded);
+                        if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
                         break;
 
                     case ActGenElement.eGenElementAction.SetValue:
@@ -1009,7 +1009,7 @@ namespace GingerCore.Drivers.Appium
                         {
                             elemntAct.AddOrUpdateInputParamValue("Value", value);
                             BF.CurrentActivity.Acts.Add(elemntAct);
-                            if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKeys.MobileActionWasAdded);
+                            if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
                         }
                         break;
 
@@ -1021,7 +1021,7 @@ namespace GingerCore.Drivers.Appium
                         {
                             elemntAct.AddOrUpdateInputParamValue("Value", Attribute);
                             BF.CurrentActivity.Acts.Add(elemntAct);
-                            if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKeys.MobileActionWasAdded);
+                            if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
                         }
                         break;
 
@@ -1029,7 +1029,7 @@ namespace GingerCore.Drivers.Appium
                         elemntAct.GenElementAction = actionType;
                         elemntAct.Description = "Validate visibility of " + elemntAct.LocateValue;
                         BF.CurrentActivity.Acts.Add(elemntAct);
-                        if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKeys.MobileActionWasAdded);
+                        if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
                         break;
                 }
             }
@@ -1073,7 +1073,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch(Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.MobileShowElementDetailsFailed, ex.Message);
+                Reporter.ToUser(eUserMsgKey.MobileShowElementDetailsFailed, ex.Message);
             }
         }
 
@@ -1098,7 +1098,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, ex.Message);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
             }
         }
 

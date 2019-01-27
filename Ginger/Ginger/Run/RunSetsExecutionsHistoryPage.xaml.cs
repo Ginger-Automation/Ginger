@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Run
 {
@@ -103,9 +104,9 @@ namespace Ginger.Run
             Loading.Visibility = Visibility.Visible;
             mExecutionsHistoryList.Clear();
             await Task.Run(() => {
-                if (App.UserProfile.Solution != null && App.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null && App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
+                if ( WorkSpace.UserProfile.Solution != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
                 {                   
-                    mRunSetExecsRootFolder = ExecutionLogger.GetLoggerDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
+                    mRunSetExecsRootFolder = ExecutionLogger.GetLoggerDirectory( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
 
                     //pull all RunSets JSON files from it
                     string[] runSetsfiles = Directory.GetFiles(mRunSetExecsRootFolder, "RunSet.txt", SearchOption.AllDirectories);
@@ -149,7 +150,7 @@ namespace Ginger.Run
 
         private void DeleteSelectedExecutionResults(object sender, System.Windows.RoutedEventArgs e)
         {
-            if ((Reporter.ToUser(eUserMsgKeys.ExecutionsResultsToDelete)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if ((Reporter.ToUser(eUserMsgKey.ExecutionsResultsToDelete)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 foreach (RunSetReport runSetReport in grdExecutionsHistory.Grid.SelectedItems)
                 {
@@ -168,7 +169,7 @@ namespace Ginger.Run
         }
         private void DeleteAllSelectedExecutionResults(object sender, System.Windows.RoutedEventArgs e)
         {
-            if ((Reporter.ToUser(eUserMsgKeys.AllExecutionsResultsToDelete)) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if ((Reporter.ToUser(eUserMsgKey.AllExecutionsResultsToDelete)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 foreach (RunSetReport runSetReport in grdExecutionsHistory.Grid.Items)
                 {
@@ -210,9 +211,9 @@ namespace Ginger.Run
 
         private void GetExecutionResultsFolder(object sender, RoutedEventArgs e)
         {
-            if (App.UserProfile.Solution != null && App.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null && App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
+            if ( WorkSpace.UserProfile.Solution != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
             {
-                Process.Start(Ginger.Run.ExecutionLogger.GetLoggerDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder));
+                Process.Start(Ginger.Run.ExecutionLogger.GetLoggerDirectory( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder));
             }
             else
                 return;
@@ -222,7 +223,7 @@ namespace Ginger.Run
         {
             if (grdExecutionsHistory.CurrentItem == null)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
 
@@ -251,10 +252,10 @@ namespace Ginger.Run
 
         private void ReportBtnClicked(object sender, RoutedEventArgs e)
         {
-            HTMLReportsConfiguration currentConf = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (grdExecutionsHistory.CurrentItem == null)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
 
@@ -264,7 +265,7 @@ namespace Ginger.Run
 
             if (reportsResultFolder == string.Empty)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
             else

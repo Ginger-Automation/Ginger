@@ -24,7 +24,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Variables
 {
@@ -244,7 +243,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex, true);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex);
                 }
 
                 if (value is IObservableList)
@@ -308,16 +307,18 @@ namespace GingerCore.Variables
                 object value = null;
                 try
                 {
-                    if (mi.MemberType == MemberTypes.Property)
+                    if (mi.MemberType == MemberTypes.Property && PI != null && PI.CanRead)
+                    {
                         value = PI.GetValue(item);
+                    }
                     else if (mi.MemberType == MemberTypes.Field)
-                    {                        
-                            value = item.GetType().GetField(mi.Name).GetValue(item);
+                    {
+                        value = item.GetType().GetField(mi.Name).GetValue(item);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex, true);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex);
                     value = null;
                 } 
                 
@@ -328,7 +329,7 @@ namespace GingerCore.Variables
                 }
                 else
                 {
-                    if (value != null)
+                    if (value != null && PI != null)
                     {
                         try
                         {
@@ -384,7 +385,7 @@ namespace GingerCore.Variables
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.INFO, "Failed to get list of used variables", ex);
+                           Reporter.ToLog(eLogLevel.ERROR, "Failed to get list of used variables", ex); 
                         } 
                     }
                 }

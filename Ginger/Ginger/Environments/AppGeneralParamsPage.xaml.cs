@@ -69,7 +69,7 @@ namespace Ginger.Environments
                 if (changedParam.Name != changedParam.NameBeforeEdit)
                 {
                     //ask user if want us to update the parameter name in all BF's
-                    if (Reporter.ToUser(eUserMsgKeys.ChangingEnvironmentParameterValue) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKey.ChangingEnvironmentParameterValue) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
                         UpdateVariableNameChange(changedParam);
                     }
@@ -236,10 +236,10 @@ namespace Ginger.Environments
                 }
 
                 if (paramsWereAdded)
-                    Reporter.ToUser(eUserMsgKeys.ShareEnvAppParamWithAllEnvs);
+                    Reporter.ToUser(eUserMsgKey.ShareEnvAppParamWithAllEnvs);
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
         #endregion Functions
         

@@ -24,7 +24,6 @@ using GingerCore.Actions.UIAutomation;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Actions.Windows;
 using GingerCore.Drivers.Common;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using mshtml;
 using System;
@@ -965,6 +964,11 @@ namespace GingerCore.Drivers.WindowsLib
         }
 
         public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartSpying()
         {
             throw new NotImplementedException();
         }

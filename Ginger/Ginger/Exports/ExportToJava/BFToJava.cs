@@ -53,7 +53,7 @@ namespace Ginger.Exports.ExportToJava
             catch (Exception e)
             {
                 //TODO: message for Java
-                Reporter.ToUser(eUserMsgKeys.FailedToExportBF, e.Message);
+                Reporter.ToUser(eUserMsgKey.FailedToExportBF, e.Message);
             }
         }
 

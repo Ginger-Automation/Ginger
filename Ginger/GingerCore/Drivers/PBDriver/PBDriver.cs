@@ -31,7 +31,6 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Threading;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -107,7 +106,7 @@ namespace GingerCore.Drivers.PBDriver
             
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, "Start Executing action of type '" + actClass + "' Description is" + act.Description);
+                Reporter.ToLog(eLogLevel.DEBUG, "Start Executing action of type '" + actClass + "' Description is" + act.Description);
                  
                 switch (actClass)
                 {
@@ -1090,6 +1089,11 @@ namespace GingerCore.Drivers.PBDriver
         }
 
         public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartSpying()
         {
             throw new NotImplementedException();
         }

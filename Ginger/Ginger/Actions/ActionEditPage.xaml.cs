@@ -123,7 +123,6 @@ namespace Ginger.Actions
             if (mActParentActivity.GetType() == typeof(ErrorHandler))
             {
                 RetyrMechainsmTab.IsEnabled = false;
-                FlowControlTab.IsEnabled = false;
                 ScreenShotTab.IsEnabled = false;
             }
             //Binding            
@@ -184,6 +183,7 @@ namespace Ginger.Actions
             App.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, Act.Fields.AddNewReturnParams);
             App.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, Act.Fields.SupportSimulation);
             OutputValuesGrid.AddToolbarTool("@Reset_16x16.png", "Clear Un-used Parameters", new RoutedEventHandler(ClearUnusedParameter));
+            OutputValuesGrid.AllowHorizentalScroll = true;
             SetActReturnValuesGrid();
             SetActInputValuesGrid();
 
@@ -467,14 +467,14 @@ namespace Ginger.Actions
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.ExpectedCalculated, Header = "Calculated Expected", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Status, WidthWeight = 70, BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new ActReturnValueStatusConverter(), TextBlock.ForegroundProperty)) });
             
-            List<String> varsCollc = mActParentBusinessFlow.GetAllHierarchyVariables().Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
+            List<String> varsCollc = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
             varsCollc.Sort();
             if (varsCollc.Count > 0)
                 varsCollc.Insert(0, string.Empty);//to be used for clearing selection
 
             ObservableList<GlobalAppModelParameter> appsModelsGlobalParamsList = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
 
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(ActReturnValue.Fields.StoreTo, ActReturnValue.Fields.StoreToValue, varsCollc, mAppGlobalParamList: appsModelsGlobalParamsList) });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 300, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(ActReturnValue.Fields.StoreTo, ActReturnValue.Fields.StoreToValue, varsCollc, mAppGlobalParamList: appsModelsGlobalParamsList) });
 
             //Default mode view
             GridViewDef defView = new GridViewDef(eGridView.NonSimulation.ToString());
@@ -559,7 +559,7 @@ namespace Ginger.Actions
 
             if (ap == null)
             {
-                Reporter.ToUser(eUserMsgKeys.CurrentActionNotSaved);
+                Reporter.ToUser(eUserMsgKey.CurrentActionNotSaved);
             }
             else if (ap.grdActions.grdMain.Items.CurrentPosition < ap.grdActions.grdMain.Items.Count - 1)
             {
@@ -577,7 +577,7 @@ namespace Ginger.Actions
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "No Action to move to.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to move to.");
             }
 
             Mouse.OverrideCursor = null;
@@ -588,7 +588,7 @@ namespace Ginger.Actions
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             if (ap == null)
             {
-                Reporter.ToUser(eUserMsgKeys.CurrentActionNotSaved);
+                Reporter.ToUser(eUserMsgKey.CurrentActionNotSaved);
             }
             else if (ap.grdActions.grdMain.Items.CurrentPosition >= 1)
             {
@@ -605,7 +605,7 @@ namespace Ginger.Actions
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "No Action to move to.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to move to.");
             }
 
             Mouse.OverrideCursor = null;
@@ -866,7 +866,7 @@ namespace Ginger.Actions
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
             }
@@ -902,8 +902,8 @@ namespace Ginger.Actions
 
         private void ParentSaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if ((mActParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow),mActParentBusinessFlow.Name) == Amdocs.Ginger.Common.MessageBoxResult.Yes) 
-                || (mActParentActivity != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.Activity), mActParentActivity.ActivityName) == Amdocs.Ginger.Common.MessageBoxResult.Yes))
+            if ((mActParentBusinessFlow != null && Reporter.ToUser(eUserMsgKey.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow),mActParentBusinessFlow.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes) 
+                || (mActParentActivity != null && Reporter.ToUser(eUserMsgKey.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.Activity), mActParentActivity.ActivityName) == Amdocs.Ginger.Common.eUserMsgSelection.Yes))
             {
                 if(mActParentBusinessFlow != null)                    
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActParentBusinessFlow);
@@ -1114,7 +1114,7 @@ namespace Ginger.Actions
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.MissingImplementation2);
+                Reporter.ToUser(eUserMsgKey.MissingImplementation2);
             }
         }
 
@@ -1137,7 +1137,7 @@ namespace Ginger.Actions
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Control selection is not available yet for driver - " + driver.GetType().ToString());
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Control selection is not available yet for driver - " + driver.GetType().ToString());
                 }
             }
         }
@@ -1503,7 +1503,7 @@ namespace Ginger.Actions
                     if (ds.FilePath.StartsWith("~"))
                     {
                         ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
-                        ds.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, ds.FileFullPath);
+                        ds.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, ds.FileFullPath);
                     }
                     ds.Init(ds.FileFullPath);
                     List<string> dsTableNames = new List<string>();

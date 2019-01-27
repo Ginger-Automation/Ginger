@@ -20,13 +20,13 @@ namespace Ginger.ReporterLib
         private void FillListBox()
         {
             List<MessageInfo> messages = new List<MessageInfo>();
-            Array arr = Enum.GetValues(typeof(eUserMsgKeys));
-            foreach (eUserMsgKeys o in arr)
+            Array arr = Enum.GetValues(typeof(eUserMsgKey));
+            foreach (eUserMsgKey o in arr)
             {
-                UserMessage mess;
+                UserMsg mess;
                 MessageInfo messageInfo = new MessageInfo();
                 messageInfo.MessageKey = o;
-                bool b = Reporter.UserMessagesPool.TryGetValue(o, out mess);               
+                bool b = Reporter.UserMsgsPool.TryGetValue(o, out mess);               
                 if (!b)
                 {
                     messageInfo.status = "Message not found in pool";
@@ -48,13 +48,13 @@ namespace Ginger.ReporterLib
 
         private void XSimpleInfoMessageButton_Click(object sender, RoutedEventArgs e)
         {
-            Amdocs.Ginger.Common.MessageBoxResult messageBoxResult = Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Simple Info Message");
+            Amdocs.Ginger.Common.eUserMsgSelection messageBoxResult = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Simple Info Message");
             MessageBox.Show("You selected: " + messageBoxResult);
         }
 
         private void XYesNoButton_Click(object sender, RoutedEventArgs e)
         {
-            Amdocs.Ginger.Common.MessageBoxResult messageBoxResult = Reporter.ToUser(eUserMsgKeys.AskIfSureWantToClose, "param1", "param2");
+            Amdocs.Ginger.Common.eUserMsgSelection messageBoxResult = Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose, "param1", "param2");
             MessageBox.Show("You selected: " + messageBoxResult);
         }
 
@@ -63,8 +63,8 @@ namespace Ginger.ReporterLib
         private void XDataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             MessageInfo messageInfo = (MessageInfo)xDataGrid.SelectedValue;
-            eUserMsgKeys mess = messageInfo.MessageKey;
-            Amdocs.Ginger.Common.MessageBoxResult messageBoxResult = Reporter.ToUser(mess, "%1", "%2", "%3");
+            eUserMsgKey mess = messageInfo.MessageKey;
+            Amdocs.Ginger.Common.eUserMsgSelection messageBoxResult = Reporter.ToUser(mess, "%1", "%2", "%3");
             MessageBox.Show("You selected: " + messageBoxResult);
         }
     }

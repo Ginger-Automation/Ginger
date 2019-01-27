@@ -66,7 +66,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private ePlatformType GetActionPlatform()
         {
             string targetapp = App.BusinessFlow.CurrentActivity.TargetApplication;
-            ePlatformType platform = (from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            ePlatformType platform = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             return platform;
         }
 
@@ -238,6 +238,22 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 UIElementActionEditPageFrame.Content = new UIElementDragAndDropEditPage(mAction, mPlatform);
                 UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
             }
+            else if ((mAction.Platform == ePlatformType.Java &&
+                       (mAction.ElementAction == ActUIElement.eElementAction.DoubleClick ||
+                       mAction.ElementAction == ActUIElement.eElementAction.WinClick ||
+                       mAction.ElementAction == ActUIElement.eElementAction.MouseClick ||
+                       mAction.ElementAction == ActUIElement.eElementAction.MousePressRelease) &&
+                           (mAction.ElementType == eElementType.RadioButton ||
+                               mAction.ElementType == eElementType.CheckBox ||
+                               mAction.ElementType == eElementType.ComboBox ||
+                               mAction.ElementType == eElementType.Button))
+                      ||
+                      (mAction.Platform == ePlatformType.Web &&
+                       mAction.ElementAction == ActUIElement.eElementAction.ClickXY || mAction.ElementAction == ActUIElement.eElementAction.DoubleClickXY || mAction.ElementAction == ActUIElement.eElementAction.SendKeysXY))
+            {
+                UIElementActionEditPageFrame.Content = new UIElementXYCoordinatePage(mAction);
+                UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
+            }
             else
             {
 
@@ -397,37 +413,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         mAction.GetInputParamValue(ActUIElement.Fields.Value).Split(',').ToList()
                     });
                 }
-            }
-            else if ( (mAction.Platform == ePlatformType.Java &&
-                        (mAction.ElementAction == ActUIElement.eElementAction.DoubleClick ||
-                        mAction.ElementAction == ActUIElement.eElementAction.WinClick ||
-                        mAction.ElementAction == ActUIElement.eElementAction.MouseClick ||
-                        mAction.ElementAction == ActUIElement.eElementAction.MousePressRelease) &&
-                            (mAction.ElementType == eElementType.RadioButton ||
-                                mAction.ElementType == eElementType.CheckBox ||
-                                mAction.ElementType == eElementType.ComboBox ||
-                                mAction.ElementType == eElementType.Button))
-                       ||
-                       (mAction.Platform == ePlatformType.Web &&
-                        mAction.ElementAction == ActUIElement.eElementAction.ClickXY))
-                {
-                elementList.Add(new ElementConfigControl()
-                {
-                    Title = "XCoordinate",
-                    BindedString = ActUIElement.Fields.XCoordinate,
-                    ControlType = eElementType.TextBox,
-                    PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.XCoordinate)) ? new List<string>() { "0" } :
-                    mAction.GetInputParamValue(ActUIElement.Fields.XCoordinate).Split(',').ToList()
-                });
-                elementList.Add(new ElementConfigControl()
-                {
-                    Title = "YCoordinate",
-                    BindedString = ActUIElement.Fields.YCoordinate,
-                    ControlType = eElementType.TextBox,
-                    PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.YCoordinate)) ? new List<string>() { "0" } :
-                    mAction.GetInputParamValue(ActUIElement.Fields.YCoordinate).Split(',').ToList()
-                });
-            }
+            }           
             else if ((mAction.ElementAction == ActUIElement.eElementAction.GetControlProperty))
             {
                 //TODO: find a better way to bind list of enum with possible values.

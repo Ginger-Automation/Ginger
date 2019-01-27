@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.MainFrame;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Open3270;
 using Open3270.TN3270;
@@ -146,7 +145,7 @@ namespace GingerCore.Drivers.MainFrame
             IsServerAvailable = GingerCore.Common.Utility.IsServerListening(this.HostName, HostPort);
             if (!IsServerAvailable)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.MainframeIncorrectConfiguration);
+                Reporter.ToStatus(eStatusMsgKey.MainframeIncorrectConfiguration);
                 return;
             }
 
@@ -788,6 +787,11 @@ namespace GingerCore.Drivers.MainFrame
         }
 
         public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartSpying()
         {
             throw new NotImplementedException();
         }

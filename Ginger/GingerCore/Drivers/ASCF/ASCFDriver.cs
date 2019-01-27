@@ -33,7 +33,6 @@ using System.Diagnostics;
 using System.Reflection;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNET.ReporterLib;
 
 namespace GingerCore.Drivers.ASCF
 {
@@ -95,7 +94,7 @@ namespace GingerCore.Drivers.ASCF
         {
             if (GingerToolBoxHost == null || GingerToolBoxHost.Length ==0)
             {
-                System.Windows.Forms.MessageBox.Show("Missing GingerToolBoxHost config value- Please verify Agent config parameter GingerToolBoxHost is not empty");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Missing GingerToolBoxHost config value- Please verify Agent config parameter GingerToolBoxHost is not empty");
                 return;
             }
           
@@ -164,7 +163,7 @@ namespace GingerCore.Drivers.ASCF
                 General.DoEvents();
                 //Connect Failed after x retry...   
                 IsTryingToConnect = false;
-                Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, "ASCF","");
+                Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, "ASCF","");
             });
         }
 
@@ -178,12 +177,12 @@ namespace GingerCore.Drivers.ASCF
             
             for (int i = 0; i < 240; i++)
             {                
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.ASCFTryToConnect,null, "Try#" + i);
+                Reporter.ToStatus(eStatusMsgKey.ASCFTryToConnect,null, "Try#" + i);
                 try
                 {
                     clientSocket.Connect(serverAddress);
                     mConnected = true;
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                     return;
                 }
                 //TODO: catch excpetion of socket not all..         
@@ -194,7 +193,7 @@ namespace GingerCore.Drivers.ASCF
                 }                
             }
             //Show message failed
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
         }
         
         public string Send(String Action, String LocateBy, String LocateValue, String Property, String Value, bool WaitForIdle)
@@ -503,7 +502,7 @@ namespace GingerCore.Drivers.ASCF
                     InjectGingerHTMLHelper();  
                     break;                
                 default:
-                    System.Windows.Forms.MessageBox.Show("Unknown Browser Control Action - " + act.ControlAction);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage,"Unknown Browser Control Action - " + act.ControlAction);
                     return;
             }
             // send the js script to the current browser, but first check that we have browser set
@@ -664,7 +663,7 @@ namespace GingerCore.Drivers.ASCF
                     action = "KeyType";
                     break;
                 default:
-                    System.Windows.Forms.MessageBox.Show("Unknown Control Action - " + AAC.ControlAction);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Unknown Control Action - " + AAC.ControlAction);
                     return;                    
             }
             //Must get the value for driver !!
@@ -934,7 +933,7 @@ namespace GingerCore.Drivers.ASCF
             String sWindows = Send("GetFormsList", NA, NA, NA, NA, false);
             if (!sWindows.StartsWith("OK"))
             {
-                System.Windows.Forms.MessageBox.Show("Error Getting forms list - " + sWindows);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Error Getting forms list - " + sWindows);
                 return null;
             }
 
@@ -964,7 +963,7 @@ namespace GingerCore.Drivers.ASCF
             string RC = Send("HighLightControl", "ByName" + "", CI.Path, " ", " ", false);
             if (!RC.StartsWith("OK"))
             {
-                System.Windows.Forms.MessageBox.Show("Element Not found - path=" + CI.Path);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Element Not found - path=" + CI.Path);
             }
             
             //TODO: fix later to get HTMLPage
@@ -1004,7 +1003,7 @@ namespace GingerCore.Drivers.ASCF
             }
             else
             {
-                System.Windows.Forms.MessageBox.Show(s);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, s);
                 return null;
             }
         }
@@ -1022,7 +1021,7 @@ namespace GingerCore.Drivers.ASCF
             }
             else
             {
-                System.Windows.Forms.MessageBox.Show(s);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, s);
                 return null;
             }
         }
@@ -1043,7 +1042,7 @@ namespace GingerCore.Drivers.ASCF
             }
             else
             {
-                System.Windows.Forms.MessageBox.Show("Error in GetActiveForm - " + RC);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Error in GetActiveForm - " + RC);
             }
             return null;
         }
@@ -1070,7 +1069,7 @@ namespace GingerCore.Drivers.ASCF
         {
             if (!SocketConnected(clientSocket))
             {
-                Reporter.ToUser(eUserMsgKeys.ASCFNotConnected);
+                Reporter.ToUser(eUserMsgKey.ASCFNotConnected);
                 return;
             }
 
@@ -1081,7 +1080,7 @@ namespace GingerCore.Drivers.ASCF
                 
                 if (s.StartsWith("ERROR"))
                 {
-                    System.Windows.Forms.MessageBox.Show(s);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, s);
                     break;
                 }                
                 CreateAction(s);
@@ -1242,7 +1241,7 @@ namespace GingerCore.Drivers.ASCF
                     break;
 
                 default:
-                    System.Windows.Forms.MessageBox.Show("Unknown Action: " + action + System.Environment.NewLine + s);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Unknown Action: " + action + System.Environment.NewLine + s);
                     break;
             }
         }
@@ -1279,7 +1278,7 @@ namespace GingerCore.Drivers.ASCF
                     act.LocateBy= eLocateBy.ByName;
                     break;
                 default:
-                    System.Windows.Forms.MessageBox.Show("Unknown Locate By: " + locateBy);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Unknown Locate By: " + locateBy);
                     break;
             }
             act.LocateValue = locateValue;
@@ -1330,7 +1329,7 @@ namespace GingerCore.Drivers.ASCF
             else
             {
                 //TODO:
-                System.Windows.Forms.MessageBox.Show("Error - " + RC);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Error - " + RC);
             }
         }
 
@@ -1429,6 +1428,11 @@ namespace GingerCore.Drivers.ASCF
         }
 
         public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartSpying()
         {
             throw new NotImplementedException();
         }

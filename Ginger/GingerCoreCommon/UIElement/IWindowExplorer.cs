@@ -54,5 +54,8 @@ namespace Amdocs.Ginger.Common.UIElement
         void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList);
 
         ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements);
+        bool TestElementLocators(ElementInfo EI,bool GetOutAfterFoundElement = false);
+
+        void StartSpying();
     }
 }

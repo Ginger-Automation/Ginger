@@ -25,6 +25,8 @@ using GingerCore.FlowControlLib;
 using Ginger.Run;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Ginger.Actions.UserControls
 {
@@ -99,9 +101,18 @@ namespace Ginger.Actions.UserControls
             }
             else
             {
-                App.FillComboFromEnumVal(ActionComboBox, FC.FlowControlAction);
+                if (mActParentActivity.GetType() == typeof(ErrorHandler))
+                {
+                    List<eFlowControlAction> ErrorFlowControlActions = FC.GetFlowControlActionsForErrorAndPopupHandler();
 
-                App.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
+                    App.FillComboFromEnumVal(ActionComboBox, FC.FlowControlAction, ErrorFlowControlActions.Cast<object>().ToList());
+                    App.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
+                }
+                else
+                {
+                    App.FillComboFromEnumVal(ActionComboBox, FC.FlowControlAction);
+                    App.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
+                }
             }                               
 
             App.ObjFieldBinding(ActionValueTextBox, TextBox.TextProperty, FC, FlowControl.Fields.Value);
@@ -175,7 +186,7 @@ namespace Ginger.Actions.UserControls
 
                             if (FC.Value != null && ActionValueComboBox.SelectedItem == null)
                             {
-                                Reporter.ToUser(eUserMsgKeys.ActivityIDNotFound, FC.Value);
+                                Reporter.ToUser(eUserMsgKey.ActivityIDNotFound, FC.Value);
                             }
                             break;
                         }
@@ -226,7 +237,7 @@ namespace Ginger.Actions.UserControls
 
                             if (FC.Value != null && ActionValueComboBox.SelectedItem == null)
                             {
-                                Reporter.ToUser(eUserMsgKeys.ActionIDNotFound, FC.Value);
+                                Reporter.ToUser(eUserMsgKey.ActionIDNotFound, FC.Value);
                             }
                         }
                         break;
@@ -264,7 +275,7 @@ namespace Ginger.Actions.UserControls
 
                             if (FC.Value != null && ActionValueComboBox.SelectedItem == null)
                             {
-                                Reporter.ToUser(eUserMsgKeys.ActivityIDNotFound, FC.Value);
+                                Reporter.ToUser(eUserMsgKey.ActivityIDNotFound, FC.Value);
                             }
                             break;
                         }

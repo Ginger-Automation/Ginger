@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using System;
 using System.Reflection;
 using System.Windows;
@@ -54,21 +55,31 @@ namespace Ginger.Run.RunSetActions
         }
 
         public Page GetEditPage(string R)
-        { 
-                string classname = "Ginger.Run.RunSetActions." + R.ToString();
-                Type t = Assembly.GetExecutingAssembly().GetType(classname);
-                if (t == null)
-                {
-                    throw new Exception("Runset edit page not found - " + classname);
-                }
-                Page p = (Page)Activator.CreateInstance(t, mRunSetAction);
+        {
+            //All runset operations are under namespace Ginger.Run.RunSetActions except ExportResultsToALMConfigPage
+            //So for avoding exceptions
+            string classname = null;
+            if (R.ToString() == nameof(ExportResultsToALMConfigPage))
+            {
+                classname = "Ginger.Run." + R.ToString();
+            }
+            else
+            {
+                classname = "Ginger.Run.RunSetActions." + R.ToString();
+            }
+            Type t = Assembly.GetExecutingAssembly().GetType(classname);
+            if (t == null)
+            {
+                throw new Exception("Runset edit page not found - " + classname);
+            }
+            Page p = (Page)Activator.CreateInstance(t, mRunSetAction);
 
             return p;
         }
 
         private void RunActionBtn_Click(object sender, RoutedEventArgs e)
         {
-            mRunSetAction.SolutionFolder = App.UserProfile.Solution.Folder;
+            mRunSetAction.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
             mRunSetAction.ExecuteWithRunPageBFES();
         }
     }

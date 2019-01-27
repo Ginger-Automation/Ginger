@@ -26,6 +26,7 @@ using Ginger.Reports;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
@@ -44,8 +45,6 @@ using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Drivers.WindowsLib;
 using GingerCore.Environments;
 using GingerCore.Variables;
-
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
@@ -103,7 +102,7 @@ namespace Ginger.Repository
 
         public ObservableList<DataSourceBase> GetDatasourceList()
         {
-            return new ObservableList<DataSourceBase>();
+            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
         }
 
 
@@ -236,7 +235,7 @@ namespace Ginger.Repository
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, zAgent.Name, e.Message);
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, zAgent.Name, e.Message);
                 }
 
                 if (zAgent.AgentType == eAgentType.Service)
@@ -345,7 +344,7 @@ namespace Ginger.Repository
 
         public ObservableList<VariableBase> GetVariaables()
         {
-            return App.UserProfile.Solution.Variables;
+            return  WorkSpace.UserProfile.Solution.Variables;
         }
 
         public Type GetPage(string a)
@@ -361,7 +360,7 @@ namespace Ginger.Repository
                 Dispatcher.CurrentDispatcher.Invoke(() => 
                 {
                     RunSetConfig runSetConfig = (RunSetConfig)a;
-                    analyzerPage.Init(App.UserProfile.mSolution, runSetConfig);
+                    analyzerPage.Init( WorkSpace.UserProfile.mSolution, runSetConfig);
                 });
                 await analyzerPage.AnalyzeWithoutUI();
 
@@ -370,7 +369,7 @@ namespace Ginger.Repository
                 {
                     if (!runInSilentMode)
                     {
-                        Reporter.ToUser(eUserMsgKeys.AnalyzerFoundIssues);
+                        Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
                         analyzerPage.ShowAsWindow();
                     }
                     return 1;
@@ -378,7 +377,7 @@ namespace Ginger.Repository
             }
             finally
             {
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
             return 0;
         }
@@ -605,11 +604,6 @@ namespace Ginger.Repository
             ALM.ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, ALM.ALMIntegration.eALMConnectType.Silence);
         }
 
-        public void MessageBoxShow(string message)
-        {
-            System.Windows.Forms.MessageBox.Show(message);
-        }
-
         public ITextBoxFormatter CreateTextBoxFormatter(object Textblock)
         {
             return new TextBoxFormatter(Textblock);
@@ -636,82 +630,82 @@ namespace Ginger.Repository
                 switch (param)
                 {
                     case "SourceControlType":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlType: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlType: '" + value + "'");
                         if (value.Equals("GIT"))
-                            App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
+                             WorkSpace.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
                         else if (value.Equals("SVN"))
-                            App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
+                             WorkSpace.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
                         else
-                            App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
+                             WorkSpace.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
                         break;
 
                     case "SourceControlUrl":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlUrl: '" + value + "'");
-                        if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUrl: '" + value + "'");
+                        if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                         {
                             if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
                                 value = value + "svn/";
                             if (!value.ToUpper().EndsWith("/"))
                                 value = value + "/";
                         }
-                        App.UserProfile.SourceControlURL = value;
+                         WorkSpace.UserProfile.SourceControlURL = value;
                         scURL = value;
                         break;
 
                     case "SourceControlUser":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlUser: '" + value + "'");
-                        if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
+                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUser: '" + value + "'");
+                        if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
                             value = "Test";
-                        App.UserProfile.SourceControlUser = value;
+                         WorkSpace.UserProfile.SourceControlUser = value;
                         scUser = value;
                         break;
 
                     case "SourceControlPassword":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlPassword: '" + value + "'");
-                        App.UserProfile.SourceControlPass = value;
+                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");
+                         WorkSpace.UserProfile.SourceControlPass = value;
                         scPswd = value;
                         break;
 
                     case "PasswordEncrypted":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "PasswordEncrypted: '" + value + "'");
-                        string pswd = App.UserProfile.SourceControlPass;
+                        Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
+                        string pswd =  WorkSpace.UserProfile.SourceControlPass;
                         if (value == "Y")
-                            pswd = EncryptionHandler.DecryptwithKey(App.UserProfile.SourceControlPass, App.ENCRYPTION_KEY);
-                        if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
+                            pswd = EncryptionHandler.DecryptwithKey( WorkSpace.UserProfile.SourceControlPass, App.ENCRYPTION_KEY);
+                        if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
                             pswd = "Test";
-                        App.UserProfile.SourceControlPass = pswd;
+                         WorkSpace.UserProfile.SourceControlPass = pswd;
                         break;
 
                     case "SourceControlProxyServer":
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlProxyServer: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyServer: '" + value + "'");
                         if (value == "")
-                            App.UserProfile.SolutionSourceControlConfigureProxy = false;
+                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = false;
                         else
-                            App.UserProfile.SolutionSourceControlConfigureProxy = true;
+                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = true;
                         if (value != "" && !value.ToUpper().StartsWith("HTTP://"))
                             value = "http://" + value;
-                        App.UserProfile.SolutionSourceControlProxyAddress = value;
+                         WorkSpace.UserProfile.SolutionSourceControlProxyAddress = value;
                         break;
 
                     case "SourceControlProxyPort":
                         if (value == "")
-                            App.UserProfile.SolutionSourceControlConfigureProxy = false;
+                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = false;
                         else
-                            App.UserProfile.SolutionSourceControlConfigureProxy = true;
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
-                        App.UserProfile.SolutionSourceControlProxyPort = value;
+                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = true;
+                        Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
+                         WorkSpace.UserProfile.SolutionSourceControlProxyPort = value;
                         break;
 
                     case "Solution":
                         if (scURL != null && scUser != "" && scPswd != null)
                         {
-                            Reporter.ToLogAndConsole(eLogLevel.INFO, "Downloading Solution from source control");
+                            Reporter.ToLog(eLogLevel.DEBUG, "Downloading Solution from source control");
                             if (value.IndexOf(".git") != -1)
                                 App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
                             else
                                 App.DownloadSolution(value);
                         }
-                        Reporter.ToLog(eLogLevel.INFO, "Loading the Solution: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Loading the Solution: '" + value + "'");
                         try
                         {
                             if (App.SetSolution(value) == false)
@@ -729,7 +723,7 @@ namespace Ginger.Repository
                         break;
 
                     case "Env":
-                        Reporter.ToLog(eLogLevel.INFO, "Selected Environment: '" + value + "'");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Selected Environment: '" + value + "'");
                         ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
                         if (env != null)
                         {
@@ -743,7 +737,7 @@ namespace Ginger.Repository
                         break;
 
                     case "RunSet":
-                        Reporter.ToLog(eLogLevel.INFO, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), value));
+                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), value));
                         ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
                         RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
                         if (runSetConfig != null)
@@ -807,6 +801,70 @@ namespace Ginger.Repository
                                                                                                                         HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault(),
                                                                                                                         extraInformationCalculated + "\\" + System.IO.Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
             }
+        }
+
+        public object CreateNewReportTemplate()
+        {
+            ReportTemplate NewReportTemplate = new ReportTemplate() { Name = "New Report Template", Status = ReportTemplate.eReportStatus.Development };
+
+            ReportTemplateSelector RTS = new ReportTemplateSelector();
+            RTS.ShowAsWindow();
+
+            if (RTS.SelectedReportTemplate != null)
+            {
+
+                NewReportTemplate.Xaml = RTS.SelectedReportTemplate.Xaml;
+
+                //Make it Generic or Const string for names used for File
+                string NewReportName = string.Empty;
+                if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
+                {
+                    NewReportTemplate.Name = NewReportName;
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);
+                }
+                return NewReportTemplate;
+            }
+            return null;
+        }
+
+        public string GenerateReportForREportTemplate(string ReportTemplateName, object RIf, object RTs )
+        {
+            ReportInfo RI = (ReportInfo)RIf;
+            ReportTemplate RT = (ReportTemplate)RTs;
+            ReportPage RP = new ReportPage(RI, RT.Xaml);
+            string FileName = Path.GetTempPath() + ReportTemplateName + ".rtf";
+
+            if (System.IO.File.Exists(FileName))
+                FileName = Path.GetTempPath() + " " + DateTime.Now.ToString("dMMMyyyy_HHmmss_fff") + "_" + ReportTemplateName + ".rtf";
+
+            GC.Collect();
+            RP.SaveReport(FileName);
+
+            string PDFFileName = FileName.Replace(".rtf", ".pdf");
+
+            RTFtoPDF.Convert(FileName, PDFFileName);
+
+            return PDFFileName;
+        }
+
+        public void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder)
+        {
+            //TODO: Remove from here and execute it in actual RunSetActionScript.cs (Not perticularly tested)
+            ActScript act = new ActScript();
+            string FileName = ScriptFileName.Replace(@"~\", SolutionFolder);
+
+            Ginger.Run.RunSetActions.RunSetActionScript actionScript = new RunSetActionScript();
+            actionScript.VerifySolutionFloder(SolutionFolder, FileName);
+            
+            act.ScriptName = FileName;
+            act.ScriptInterpreterType = ActScript.eScriptInterpreterType.VBS;
+            act.Execute();
+            //this.Errors = act.Error;
+        }
+
+        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, string result, PublishToALMConfig PublishToALMConfig)
+        {
+            return ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, ALMIntegration.eALMConnectType.Auto, false);
         }
     }
     

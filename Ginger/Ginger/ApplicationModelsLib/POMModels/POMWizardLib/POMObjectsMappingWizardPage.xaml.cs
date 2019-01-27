@@ -139,7 +139,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToUser(eUserMsgKeys.POMWizardFailedToLearnElement, ex.Message);
+                    Reporter.ToUser(eUserMsgKey.POMWizardFailedToLearnElement, ex.Message);
                     mWizard.IsLearningWasDone = false;
                 }
                 finally
@@ -194,7 +194,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void ReLearnButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.POMWizardReLearnWillDeleteAllElements) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.POMWizardReLearnWillDeleteAllElements) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 mWizard.IsLearningWasDone = false;
                 Learn();

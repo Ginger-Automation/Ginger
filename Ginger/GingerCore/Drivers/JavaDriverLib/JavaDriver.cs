@@ -24,7 +24,6 @@ using GingerCore.Actions.Java;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.CommunicationProtocol;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -126,7 +125,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             if (JavaAgentHost == null || JavaAgentHost.Length ==0)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty");
+                Reporter.ToLog(eLogLevel.WARN, "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty");
                 ErrorMessageFromDriver= "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty";
                 return;
             }
@@ -176,7 +175,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else
             {
-                Reporter.ToLog(eLogLevel.INFO, "Failed to connect Java Agent");
+                Reporter.ToLog(eLogLevel.WARN, "Failed to connect Java Agent");
                 ErrorMessageFromDriver = "Failed to connect Java Agent";
             }
         }
@@ -228,7 +227,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         
         private Boolean Reconnect()
         {
-            Reporter.ToLog(eLogLevel.INFO, "Trying to reconnent Java Agent");
+            Reporter.ToLog(eLogLevel.DEBUG, "Trying to reconnent Java Agent");
             try
             {
                 clientSocket.Connect(serverAddress);
@@ -1859,7 +1858,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             if (Response.IsErrorPayLoad())
             {                
-                Reporter.ToUser(eUserMsgKeys.FailedToInitiate, "JEditor Element");
+                Reporter.ToUser(eUserMsgKey.FailedToInitiate, "JEditor Element");
                 return;
             }
         }
@@ -1886,7 +1885,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             if (Response.IsErrorPayLoad())
             {
                 //TODO:: Handle exception                 
-                Reporter.ToUser(eUserMsgKeys.FailedToInitiate, "Browser Element");
+                Reporter.ToUser(eUserMsgKey.FailedToInitiate, "Browser Element");
                 return;
             }
         }
@@ -2257,7 +2256,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     });
 
                     Mouse.OverrideCursor = null;                    
-                    Reporter.ToUser(eUserMsgKeys.InitializeBrowser);
+                    Reporter.ToUser(eUserMsgKey.InitializeBrowser);
                     return null;
                 }
                 else
@@ -2281,7 +2280,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else
             {                
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error in GetActiveForm");
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in GetActiveForm");
                 return null;
             }
         }
@@ -2302,7 +2301,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             catch (Exception ex)
             {                
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error in GetHTMLElements - " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in GetHTMLElements - " + ex.Message);
                 return null;
             }
         }
@@ -2793,6 +2792,11 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
 
         public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartSpying()
         {
             throw new NotImplementedException();
         }

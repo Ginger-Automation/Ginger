@@ -96,6 +96,15 @@
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Common.Logging, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.3.4.1\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.Core, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.Core.3.4.1\lib\net40\Common.Logging.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Couchbase.NetClient, Version=2.7.3.0, Culture=neutral, PublicKeyToken=05e9c6b5a9ec94c2, processorArchitecture=MSIL">
+      <HintPath>..\packages\CouchbaseNetClient.2.7.3\lib\net452\Couchbase.NetClient.dll</HintPath>
+    </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=2.8.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
       <HintPath>..\packages\DocumentFormat.OpenXml.2.8.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
@@ -214,6 +223,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Ginger\DLLs\Open3270.dll</HintPath>
     </Reference>
+    <Reference Include="OpenTracing, Version=0.12.0.0, Culture=neutral, PublicKeyToken=61503406977abdaf, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTracing.0.12.0\lib\net45\OpenTracing.dll</HintPath>
+    </Reference>
     <Reference Include="Oracle.ManagedDataAccess, Version=4.121.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
       <HintPath>..\packages\Oracle.ManagedDataAccess.12.1.24160719\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
@@ -308,6 +320,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
@@ -318,6 +331,7 @@
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
@@ -341,7 +355,7 @@
     </Reference>
     <Reference Include="System.Speech" />
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.1\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
@@ -477,9 +491,7 @@
     <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
     <Compile Include="Actions\VisualTesting\VisualCompareAnalyzerIntegration.cs" />
     <Compile Include="Actions\RobotFramework\GingerParam.cs" />
-    <Compile Include="Actions\WebServices\ActSoapUiInputValue.cs" />
     <Compile Include="Actions\WebServices\WebAPI\ActWebAPIModel.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\WebAPIKeyBodyValues.cs" />
     <Compile Include="Actions\Common\ActMedia.cs" />
     <Compile Include="Actions\Common\ActBattery.cs" />
     <Compile Include="Actions\Common\ActPhone.cs" />
@@ -704,7 +716,6 @@
     <Compile Include="Drivers\WebServicesDriverLib\HttpWebClientUtils.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\SoapUIUtils.cs" />
     <Compile Include="Drivers\WindowsLib\FlaUIHelper.cs" />
-    <Compile Include="External\ExternalItemField.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
     <Compile Include="GeneralLib\CommonLib.cs" />
     <Compile Include="GeneralLib\JSONHelper.cs" />
@@ -715,6 +726,7 @@
       <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HTMLHelper.cs" />
+    <Compile Include="NoSqlBase\GingerCouchbase.cs" />
     <Compile Include="NoSqlBase\GingerUDTMap.cs" />
     <Compile Include="NoSqlBase\GingerCassandra.cs" />
     <Compile Include="NoSqlBase\MyClassBuilder.cs" />
@@ -789,7 +801,6 @@
     <Compile Include="GeneralLib\InputBoxWindow.xaml.cs">
       <DependentUpon>InputBoxWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reporter\Reporter.cs" />
     <Compile Include="Reporter\BotDialog.xaml.cs">
       <DependentUpon>BotDialog.xaml</DependentUpon>
     </Compile>
@@ -1125,6 +1136,10 @@
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj">
       <Project>{6FACD2AB-8747-473B-AF43-5B6691775F62}</Project>
       <Name>GingerCoreNET</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj">
+      <Project>{67ecc7f4-78d3-4260-bbe1-20688942c6d1}</Project>
+      <Name>GingerPluginCore</Name>
     </ProjectReference>
     <ProjectReference Include="..\GingerPlugIns\GingerPlugIns.csproj">
       <Project>{d5329d81-7ff0-4af1-b186-a2fd65ef0583}</Project>

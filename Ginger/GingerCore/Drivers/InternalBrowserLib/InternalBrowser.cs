@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
-using GingerCoreNET.ReporterLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using mshtml;
 using System;
@@ -230,7 +229,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
                                 break;
                             case ActMultiselectList.eActMultiselectListAction.ClearAllSelectedValues:
                                 //Replacing msgbox with Reporter.ToUser
-                                Reporter.ToUser(eUserMsgKeys.MissingImplementation, el.ActMultiselectListAction.ToString());
+                                Reporter.ToUser(eUserMsgKey.MissingImplementation, el.ActMultiselectListAction.ToString());
                                 //End
 
                                 //TODO: implement ClearAllSelectedValues for ActMultiselectList
@@ -642,7 +641,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
                 case ActGenElement.eGenElementAction.MsgBox:
                     string msg = act.GetInputParamCalculatedValue("Value");                    
-                    Reporter.ToUser(eUserMsgKeys.ScriptPaused);
+                    Reporter.ToUser(eUserMsgKey.ScriptPaused);
                     break;
 
                 default:
@@ -1334,6 +1333,11 @@ namespace GingerCore.Drivers.InternalBrowserLib
         }
 
         public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartSpying()
         {
             throw new NotImplementedException();
         }

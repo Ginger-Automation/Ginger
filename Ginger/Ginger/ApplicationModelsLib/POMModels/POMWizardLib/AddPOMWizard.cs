@@ -122,7 +122,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 foreach (Agent agent in OptionalAgentsList)
                     if (agent != null && agent.Status == Agent.eStatus.Running && agent.Tag != null && agent.Tag.ToString() == "Started with Agent Control" && !agent.Driver.IsDriverBusy)
                     {
-                        if (Reporter.ToUser(eUserMsgKeys.AskIfToCloseAgent, agent.Name) == MessageBoxResult.Yes)
+                        if (Reporter.ToUser(eUserMsgKey.AskIfToCloseAgent, agent.Name) == eUserMsgSelection.Yes)
                         {
                             agent.Close();
                         }

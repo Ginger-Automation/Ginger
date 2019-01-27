@@ -79,13 +79,13 @@ namespace Ginger.Environments
                 Database db = (Database)grdAppDbs.grdMain.CurrentItem;
                 if (db == null)
                 {
-                    Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                    Reporter.ToUser(eUserMsgKey.AskToSelectItem);
                     return;
                 }
                 db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                 db.ProjEnvironment = App.AutomateTabEnvironment;
                 db.BusinessFlow = App.BusinessFlow;
-                if (string.IsNullOrEmpty(db.ConnectionString) && db.TNS.ToLower().Contains("data source=") && db.TNS.ToLower().Contains("password=") && db.TNS.ToLower().Contains("user id="))
+                if (string.IsNullOrEmpty(db.ConnectionString) && !string.IsNullOrEmpty(db.TNS) && db.TNS.ToLower().Contains("data source=") && db.TNS.ToLower().Contains("password=") && db.TNS.ToLower().Contains("user id="))
                 {
                     System.Data.SqlClient.SqlConnectionStringBuilder scSB = new System.Data.SqlClient.SqlConnectionStringBuilder();
                     scSB.ConnectionString = db.TNS;
@@ -98,11 +98,11 @@ namespace Ginger.Environments
                 db.CloseConnection();
                 if (db.Connect(true))
                 {
-                    Reporter.ToUser(eUserMsgKeys.DbConnSucceed);
+                    Reporter.ToUser(eUserMsgKey.DbConnSucceed);
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.DbConnFailed);
+                    Reporter.ToUser(eUserMsgKey.DbConnFailed);
                 }
                 db.CloseConnection();
             }
@@ -110,7 +110,7 @@ namespace Ginger.Environments
             {
                 if (ex.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
                 {
-                    if (Reporter.ToUser(eUserMsgKeys.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKey.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
                         System.Diagnostics.Process.Start("https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149");
                         System.Diagnostics.Process.Start("http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html");
@@ -119,7 +119,7 @@ namespace Ginger.Environments
                     return;
                 }
 
-                Reporter.ToUser(eUserMsgKeys.ErrorConnectingToDataBase, ex.Message);
+                Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
             }
         }
         #endregion Events

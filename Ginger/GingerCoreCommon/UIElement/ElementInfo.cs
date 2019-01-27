@@ -79,7 +79,7 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set { mElementTitle = value; }
         }
-
+        
         public enum eElementStatus
         {
             Unknown,

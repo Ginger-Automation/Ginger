@@ -1,0 +1,30 @@
+﻿<Page x:Class="Ginger.Actions._Common.ActUIElementLib.UIElementXYCoordinatePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.Actions._Common.ActUIElementLib"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:Actions="clr-namespace:Ginger.Actions"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="UIElementXYCoordinatePage">
+
+    <Grid>
+        <StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <Label Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="14">XCoordinate :</Label>
+            <Actions:UCValueExpression x:Name="xXCoordinate" ToolTip="XCoordinate" HorizontalAlignment="Left" VerticalAlignment="Center" Width="600" Margin="10 0 0 0"/>
+           
+        </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <Label Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="14">YCoordinate :</Label>
+                <Actions:UCValueExpression x:Name="xYCoordinate" ToolTip="YCoordinate" HorizontalAlignment="Left" VerticalAlignment="Center" Width="600" Margin="10 10 0 0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="xValuePanel">
+                <Label Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="14">Value :</Label>
+                <Actions:UCValueExpression x:Name="xValue" ToolTip="YCoordinate" HorizontalAlignment="Left" VerticalAlignment="Center" Width="600" Margin="52 10 0 0"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

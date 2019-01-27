@@ -1,41 +1,42 @@
-﻿using Amdocs.Ginger.Common;
-using GingerCore;
-using GingerCoreNET.ReporterLib;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using System;
-using System.Windows;
 
 namespace Ginger.ReporterLib
 {
     public class GingerWorkSpaceReporter : WorkSpaceReporterBase
     {
-
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         
-
-        public override Amdocs.Ginger.Common.MessageBoxResult MessageBoxShow(string messageText, string caption, 
-                        Amdocs.Ginger.Common.MessageBoxButton buttonsType, GingerCoreNET.ReporterLib.MessageBoxImage messageImage, 
-                        Amdocs.Ginger.Common.MessageBoxResult defualtResault)
+        public override Amdocs.Ginger.Common.eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResault)
         {
-            Amdocs.Ginger.Common.MessageBoxResult result = defualtResault;  // if user just close the window we return the default defined result
-            App.MainWindow.Dispatcher.Invoke(() =>
-            {                
-                    MessageBoxWindow messageBoxWindow = new MessageBoxWindow(messageText, caption, buttonsType, messageImage, defualtResault);                    
+            eUserMsgSelection result = defualtResault;  // if user just close the window we return the default defined result
+
+            if (!WorkSpace.RunningInExecutionMode)
+            {
+                App.MainWindow.Dispatcher.Invoke(() =>
+                {
+                    UserMessageBox messageBoxWindow = new UserMessageBox(messageText, caption, buttonsType, messageImage, defualtResault);
                     messageBoxWindow.ShowDialog();
-                    result = messageBoxWindow.messageBoxResult; 
-            });
+                    result = messageBoxWindow.messageBoxResult;
+                });
+            }
+            else
+            {
+                //not showing pop up message because running from config file and not wanting to get stuck
+                ToLog(eLogLevel.WARN, string.Format("Not showing the User Message: '{0}' because application loaded in execution mode. Returning defualt selection value: '{1}'", messageText, defualtResault.ToString()));
+            }
 
             return result;
         }
 
-        public override void ToStatus(eStatusMessageType messageType, string statusText)
+        public override void ToStatus(eStatusMsgType messageType, string statusText)
         {
             // TODO: Add icon, other info? tooltip seperate
             App.MainWindow.ShowStatus(messageType, statusText);
         }
 
-
-        public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
+        public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
             try
             {
@@ -60,12 +61,12 @@ namespace Ginger.ReporterLib
                         log.Info(messageToLog, exceptionToLog);
                         break;
                 }                
-                Console.WriteLine(logLevel.ToString() + ": " + messageToLog, exceptionToLog);
+                //Console.WriteLine(logLevel.ToString() + ": " + messageToLog, exceptionToLog);
             }
             catch (Exception ex)
             {
-                // TODO: throw?
                 //failed to write to log
+                throw (ex);
             }
         }
     }
