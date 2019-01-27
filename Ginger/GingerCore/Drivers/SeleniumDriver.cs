@@ -4550,6 +4550,15 @@ namespace GingerCore.Drivers
             if (isSpyExist == "no")
             {
                 InjectGingerLiveSpy();
+                try
+                {
+                    ((IJavaScriptExecutor)Driver).ExecuteScript("GingerLibLiveSpy.StartEventListner()");
+                }
+                catch
+                {
+                    mListnerCanBeStarted = false;
+                    Reporter.ToLog(eLogLevel.DEBUG, "Spy Listener cannot be started");
+                }
             }
         }
 
@@ -4571,6 +4580,8 @@ namespace GingerCore.Drivers
             }
         }
 
+        bool mListnerCanBeStarted = true;
+
         ElementInfo IWindowExplorer.GetControlFromMousePosition()
         {
             Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
@@ -4580,17 +4591,7 @@ namespace GingerCore.Drivers
                 Driver.SwitchTo().DefaultContent();
                 IWebElement el;
                 InjectSpyIfNotIngected();
-                bool listnerCanBeStarted = true;
-                try
-                {
-                    ((IJavaScriptExecutor)Driver).ExecuteScript("GingerLibLiveSpy.StartEventListner()");
-                }
-                catch
-                {
-                    listnerCanBeStarted = false;
-                }
-
-                if (listnerCanBeStarted)
+                if (mListnerCanBeStarted)
                 {
                     string XPoint = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.GetXPoint();");
                     string YPoint = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.GetYPoint();");
@@ -6751,6 +6752,12 @@ namespace GingerCore.Drivers
                 mIsDriverBusy = false;
             }
 
+        }
+
+        void IWindowExplorer.StartSpying()
+        {
+            Driver.SwitchTo().DefaultContent();
+            InjectSpyIfNotIngected();
         }
     }
 }
