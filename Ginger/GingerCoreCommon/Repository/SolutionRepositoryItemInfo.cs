@@ -198,7 +198,10 @@ namespace Amdocs.Ginger.Repository
 
         internal void AllItemsCacheRemove(T item)
         {
-            mAllItemsCache.Remove(item);
+            lock (mAllItemsCacheLock)
+            {
+                mAllItemsCache.Remove(item);
+            }
         }
 
         internal bool AllItemsCacheIsNull()
