@@ -70,6 +70,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Drivers\" />
     <Folder Include="TestResources\Conversion\" />
     <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\ActivitiesGroups\" />
     <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\Activities\" />
