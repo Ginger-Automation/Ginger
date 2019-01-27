@@ -32,6 +32,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static GingerCore.Actions.Common.ActUIElement;
 using static GingerCore.General;
 
 namespace Ginger.Actions._Common.ActUIElementLib
@@ -109,44 +110,28 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void ElementTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ElementLocateByComboBox.IsEnabled = true;
-            if (!String.IsNullOrEmpty(ElementTypeComboBox.SelectionBoxItem.ToString()))
+
+            mElementActionsList = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
+            
+            if (mElementActionsList.Contains(mAction.ElementAction))
             {
-                if (ElementTypeComboBox.SelectedValue != null && !String.IsNullOrEmpty(ElementTypeComboBox.SelectedValue.ToString()))
-                {
-                    if (ElementTypeComboBox.SelectedValue.ToString() != ElementTypeComboBox.SelectionBoxItem.ToString())
-                    {
-                        ResetActUIFields();
-                    }
-                }
+                ElementActionComboBox.SelectionChanged -= ElementActionComboBox_SelectionChanged;
+                ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
+                ElementActionComboBox.SelectionChanged += ElementActionComboBox_SelectionChanged;
+            }
+            else
+            {
+                mAction.ElementAction = eElementAction.Unknown;
+                ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
             }
             ElementTypeImage.Source = GetImageSource(mAction.Image);
-            mElementActionsList = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
-            ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
             UpdateActionInfo(mAction.ElementAction);
-            UIElementActionEditPageFrame.Visibility = Visibility.Collapsed;
-            if (mAction.ElementType != eElementType.Unknown && mAction.ElementAction != ActUIElement.eElementAction.Unknown)
-            {
-                ShowControlSpecificPage();
-            }
-            ElementTypeComboBox.Refresh();
         }
 
         private void ElementActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!String.IsNullOrEmpty(ElementActionComboBox.SelectionBoxItem.ToString()))
-            {
-                if (ElementActionComboBox.SelectedValue != null && !String.IsNullOrEmpty(ElementActionComboBox.SelectedValue.ToString()))
-                {
-                    if (ElementActionComboBox.SelectedValue.ToString() != ElementActionComboBox.SelectionBoxItem.ToString())
-                    {
-                        ResetActUIFields();
-                    }
-                }
-                else
-                    // will reset the action combobox to unknown whenever element type is changes
-                    ElementActionComboBox.SelectedValue = ActUIElement.eElementAction.Unknown;
-            }
+            UIElementActionEditPageFrame.Visibility = Visibility.Collapsed;
+            ResetActUIFields();
             if (ElementActionComboBox.SelectedValue == null)
             {
                 return;

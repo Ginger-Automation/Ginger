@@ -356,7 +356,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                 });
 
                 // adding generic/common actions per each ElementType
-                List<Enum> ElementCommonActionsList = new List<Enum>() {    ActUIElement.eElementAction.IsVisible,
+                List<Enum> ElementCommonActionsList = new List<Enum>() {
+                                                                            ActUIElement.eElementAction.Unknown,
+                                                                            ActUIElement.eElementAction.IsVisible,
                                                                             ActUIElement.eElementAction.IsDisabled,
                                                                             ActUIElement.eElementAction.IsEnabled,
                                                                             ActUIElement.eElementAction.Hover,                                                                            
