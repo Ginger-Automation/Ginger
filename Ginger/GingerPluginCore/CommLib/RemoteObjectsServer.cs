@@ -73,7 +73,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                         object DispObj = obj;
                         dynamic d = DispObj;
                         // It means it is UI control - so invoke on the UI control Dispatcher, this way we avoid code on the page to change the UI on the Dispatcher every time
-                        remoteObjectHandle.Dispatcher = d.Dispatcher;
+                        // temp comment for build
+                        // !!!!!!!!! d. requires Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo 
+                        // remoteObjectHandle.Dispatcher = d.Dispatcher;
                     }
 
                     mObjects.Add(guid, remoteObjectHandle);
@@ -103,23 +105,25 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
                     // invoke 
                     object rc = null;
-                    
-                    if (ROH.Dispatcher == null)
-                    {
 
-                        // Non UI object safe to call from another thread
-                        rc = mi.Invoke(obj1, param);                        
-                    }
-                    else
-                    {
-                        // It means the obj is UI control like driver Page- so invoke on the UI control Dispatcher, 
-                        // this way we avoid code on the page to change the UI on the Dispatcher every time we do UI changes and avoid getting exception
-                        ROH.Dispatcher.BeginInvoke(
-                                        (Action)(() => {
-                                            rc = mi.Invoke(obj1, param);
-                                        }
-                                    ));
-                    }
+                    // temp comment for build
+                    // !!!!!!!!! d. requires Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo 
+                    //if (ROH.Dispatcher == null)
+                    //{
+
+                    //    // Non UI object safe to call from another thread
+                    //    rc = mi.Invoke(obj1, param);                        
+                    //}
+                    //else
+                    //{
+                    //    // It means the obj is UI control like driver Page- so invoke on the UI control Dispatcher, 
+                    //    // this way we avoid code on the page to change the UI on the Dispatcher every time we do UI changes and avoid getting exception
+                    //    ROH.Dispatcher.BeginInvoke(
+                    //                    (Action)(() => {
+                    //                        rc = mi.Invoke(obj1, param);
+                    //                    }
+                    //                ));
+                    //}
 
                     // return result 
                     NewPayLoad PLRC = new NewPayLoad("OK");                    

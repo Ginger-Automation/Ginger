@@ -19,8 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Plugin.Core;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net.Http;
 
 namespace GingerWPFDriverWindowTest
 {

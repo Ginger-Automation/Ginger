@@ -14,33 +14,26 @@
             <RowDefinition Height="150*"/>
         </Grid.RowDefinitions>
         
-        <usercontrols:ImageMakerControl  ImageType="GingerLogo" Grid.Row="0" DockPanel.Dock="Top" HorizontalAlignment="Center" VerticalAlignment="Center" Width="450"/>
+        <usercontrols:ImageMakerControl ImageType="GingerLogo" Grid.Row="0" DockPanel.Dock="Top" HorizontalAlignment="Center" VerticalAlignment="Center" Width="450"/>
         
         <DockPanel Grid.Row="1">
             <Label Content="Application Details:" Style="{StaticResource $HeaderStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Foreground="{StaticResource $SelectionColor_Pink}"/>
-            <ScrollViewer DockPanel.Dock="Top" Margin="0,10,0,20">
+            <ScrollViewer DockPanel.Dock="Top" Margin="0,0,0,20">
                 <TextBlock x:Name="txtBlkApplicationInfo" Text="Application Details:" Style="{StaticResource $TextBlockStyle}" TextWrapping="Wrap"/>
             </ScrollViewer>
 
-            <Label Content="Credit:" Style="{StaticResource $HeaderStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Foreground="{StaticResource $SelectionColor_Pink}"/>
-            <ScrollViewer DockPanel.Dock="Top" Margin="0,10,0,20">
-                <TextBlock x:Name="txtCredit" Text="Credit:" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" ></TextBlock>
-            </ScrollViewer>
-
-            <Label Content="Support:" Style="{StaticResource $HeaderStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Foreground="{StaticResource $SelectionColor_Pink}"/>
-            <ScrollViewer DockPanel.Dock="Top" Margin="0,10,0,20">
-                <TextBlock x:Name="txtSupport" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" >
-                    <Run Text="For help documents and Videos just click "/><Span FontWeight="Bold"><Run Text="F1"/></Span><Run Text=" from anywhere."/>
+            <Label Content="License:" Style="{StaticResource $HeaderStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Foreground="{StaticResource $SelectionColor_Pink}"/>
+            <ScrollViewer DockPanel.Dock="Top" Margin="0,0,0,20">
+                <TextBlock x:Name="txtLicense" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" >
+                    <Run Text="Ginger project is open source software which can be used for free by everyone, under the Apache v.2.0 license."/>
                     <LineBreak/>
-                    <LineBreak/>
-                    <Run Text="For Questions, Downloads &amp; more please visit: "/>
-                    <LineBreak/>                    
-                    <LineBreak/>
-                    <Run /><Hyperlink NavigateUri="http://ginger/" RequestNavigate="HandleLinkClick">Ginger Support Center</Hyperlink><Run Text=" (http://Ginger)"/>
-                    <LineBreak/><LineBreak/>
-                    <LineBreak/>
-                    <Run Text="BEAT Ginger R&amp;D Team."/>
+                    <Hyperlink NavigateUri="https://www.apache.org/licenses/LICENSE-2.0.html" RequestNavigate="HandleLinkClick">Apache v.2.0 License</Hyperlink>
                 </TextBlock>
+            </ScrollViewer>
+            
+            <Label Content="Credit:" Style="{StaticResource $HeaderStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Foreground="{StaticResource $SelectionColor_Pink}"/>
+            <ScrollViewer DockPanel.Dock="Top" Margin="0,0,0,20">
+                <TextBlock x:Name="txtCredit" Text="Credit:" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" ></TextBlock>
             </ScrollViewer>
         </DockPanel>
     </Grid>

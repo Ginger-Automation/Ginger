@@ -18,6 +18,7 @@ limitations under the License.
 
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -49,18 +50,49 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 return mConnected;
             }
         }
+
+        /// <summary>
+        /// Connect to Services Grid
+        /// Retry mechanism will retry every 5 seconds up to total 30 seconds
+        /// </summary>
+        /// <param name="IP"></param>
+        /// <param name="port"></param>
         public void Connect(string IP, int port)
         {            
             try
             {                
                 //Local host
                 IPAddress ipAddress = IPAddress.Parse(IP); 
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);                
+                IPEndPoint remoteIP = new IPEndPoint(ipAddress, port);                
                 Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                // Connect to Ginger Server async
-                socket.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), socket);
-                mConnectDone.WaitOne();
+                Console.WriteLine("Connecting to: " + remoteIP + ":" + port);
+                // Connect to Ginger Server async, retry max 30 seconds                
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                int retrycount = 0;
+                while (!socket.Connected && stopwatch.ElapsedMilliseconds < 30000)
+                {                                        
+                    socket.BeginConnect(remoteIP, new AsyncCallback(ConnectCallback), socket);
+                    mConnectDone.WaitOne();                    
+                    if (!socket.Connected)
+                    {
+                        retrycount++;
+                        Console.WriteLine("Connect retry #" + retrycount);
+                        Thread.Sleep(5000);
+                    }
+                }
+
+                if (socket.Connected)
+                {
+                    // Now Ginger client is ready for incoming data
+                    mConnected = true;
+                }
+                else
+                {
+                    Console.WriteLine("Failed to connect, exiting");
+                    mConnected = false;
+                    return;
+                }
 
                 //start waiting for incoming data async - non blocking
 
@@ -68,11 +100,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 mGingerSocketInfo = new GingerSocketInfo();
                 mGingerSocketInfo.Socket = socket;
                 mGingerSocketInfo.MessageHandler = MessageHandler;
-                mGingerSocketInfo.Receive();
+                mGingerSocketInfo.Receive();   // not blocking
 
-                // Now Ginger client is ready for incoming data
-
-                mConnected = true;
+                
                 // if there is code here it will run - no wait
 
                 //TODO: handshake: version, security, encryption
@@ -114,23 +144,34 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             return mGingerSocketInfo.SendRequest(pl);
         }
 
-        // After connect is succesful we get callback
+        // After connect is succesful/fail we get callback
         private void ConnectCallback(IAsyncResult ar)
         {
             try
             {
                 // Retrieve the socket from the state object.  
                 Socket client = (Socket)ar.AsyncState;
-
-                // Complete the connection 
-                client.EndConnect(ar);
-                
-                // Signal that the connection has been made.  
-                mConnectDone.Set();
+                if (client.Connected)
+                {
+                    // Complete the connection 
+                    // Signal that the connection has been made.  
+                    client.EndConnect(ar);
+                    mConnected = true;
+                }
+                else
+                {
+                    mConnected = false;
+                }                
             }
             catch (Exception ex)
             {
-                throw ex;
+                Console.WriteLine("Error at Connect Callback: " + ex.Message);                
+
+                // the connect fail we will retry, need to release the Wait code - done in finally for both
+            }
+            finally
+            {
+                mConnectDone.Set();
             }
         }
     }

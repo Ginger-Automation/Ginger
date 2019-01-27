@@ -542,10 +542,7 @@ namespace Ginger
             // Add all RI classes from GingerCore
             NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActButton).Assembly); // GingerCore.dll
 
-            // add  old Plugins - TODO: remove later when we change to new plugins
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerPlugIns.ActionsLib.PlugInActionsBase).Assembly);
-
-
+            
             // add from Ginger
             NewRepositorySerializer.AddClassesFromAssembly(typeof(Ginger.App).Assembly);
 

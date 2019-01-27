@@ -170,6 +170,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (LiveSpyButton.IsChecked == true)
             {
+                mWinExplorer.StartSpying();
                 xStatusLable.Content = "Spying is On";
                 if (mDispatcherTimer == null)
                 {

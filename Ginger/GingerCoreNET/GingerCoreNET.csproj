@@ -65,6 +65,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
+    <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
     <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" />
   </ItemGroup>
 

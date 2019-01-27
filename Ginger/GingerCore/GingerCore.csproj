@@ -1137,6 +1137,10 @@
       <Project>{6FACD2AB-8747-473B-AF43-5B6691775F62}</Project>
       <Name>GingerCoreNET</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj">
+      <Project>{67ecc7f4-78d3-4260-bbe1-20688942c6d1}</Project>
+      <Name>GingerPluginCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GingerPlugIns\GingerPlugIns.csproj">
       <Project>{d5329d81-7ff0-4af1-b186-a2fd65ef0583}</Project>
       <Name>GingerPlugIns</Name>
