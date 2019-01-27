@@ -78,35 +78,15 @@ namespace GingerCoreNET.DriversLib
             //TODO: first register at the hub
             mHubClient = new GingerSocketClient2();
             mHubClient.MessageHandler = HubClientMessageHandler;
-            // !!!!!!!!!! cleanup
-            // We have retry mechanism
-            //bool IsConnected = false;
-            //int count = 0;
-            //while (!IsConnected)
-            //{
-            //    try
-            //    {
+            
             Console.WriteLine("Connecting to Ginger Grid Hub: " + HubIP + ":" + HubPort);
             mHubClient.Connect(HubIP, HubPort);
             if (!mHubClient.IsConnected)
             {
                 return;
             }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine("Connection failed: " + ex.Message);
-            //        Console.WriteLine("Will retry in 5 seconds");
-            //        Thread.Sleep(5000);  
-            //        count++;
-            //        if (count>50) //TODO: Change it to stop watch wait for 60 seconds, or based on config
-            //        {
-            //            Console.WriteLine("All connection attempts failed, exiting");
-            //            return;
-            //        }
-            //    }
-            //}
-            
+            Console.WriteLine("Connected!");
+            Console.WriteLine("Registering Ginger node");
             //Register the service in GG
             NewPayLoad PLRegister = new NewPayLoad(SocketMessages.Register);
             PLRegister.AddValue(Name);
