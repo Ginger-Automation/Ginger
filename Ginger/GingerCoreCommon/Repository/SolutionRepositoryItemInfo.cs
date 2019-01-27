@@ -198,6 +198,7 @@ namespace Amdocs.Ginger.Repository
 
         internal void AllItemsCacheRemove(T item)
         {
+            // Lock in case 2 remove will happen from seperate threads
             lock (mAllItemsCacheLock)
             {
                 mAllItemsCache.Remove(item);
