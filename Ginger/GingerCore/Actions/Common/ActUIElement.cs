@@ -527,11 +527,19 @@ namespace GingerCore.Actions.Common
             }
         }
 
+        eElementAction mElementAction;
         [IsSerializedForLocalRepository]
         public eElementAction ElementAction
         {
-            get;
-            set;
+            get { return mElementAction; }
+            set
+            {
+                if (mElementAction != value)
+                {
+                    mElementAction = value;
+                    OnPropertyChanged(nameof(ActUIElement.ElementAction));
+                }
+            }
         }
 
         [IsSerializedForLocalRepository]
