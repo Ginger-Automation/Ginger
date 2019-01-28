@@ -253,10 +253,9 @@ namespace Ginger.Run
                 }
             }
             catch(Exception ex)
-            {    Reporter.ToLog(eLogLevel.ERROR, "failed to CheckOrCreateDirectory",ex); 
+            {                 
                 return false;
-            }
-            
+            }            
         }
 
         private static void SaveObjToJSonFile(object obj, string FileName, bool toAppend = false)
