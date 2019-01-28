@@ -42,7 +42,7 @@ namespace Ginger.SourceControl
         {
             if (mSCIInfoDetails.ShowRepositoryInfo)
             {
-                TBH.AddHeader1("Solution Repository Info:");
+                TBH.AddBoldText("Solution Repository Info:");
                 TBH.AddLineBreak();
                 if (!string.IsNullOrEmpty(mSCIInfoDetails.RepositoryRoot))
                 {
@@ -103,7 +103,7 @@ namespace Ginger.SourceControl
             if (mSCIInfoDetails.ShowFileInfo)
             {
 
-                TBH.AddHeader1("File Info:");
+                TBH.AddBoldText("File Info:");
                 TBH.AddLineBreak();
                 if (!string.IsNullOrEmpty(mSCIInfoDetails.FilePath))
                 {
@@ -135,7 +135,7 @@ namespace Ginger.SourceControl
             if (mSCIInfoDetails.ShowChangeInfo)
             {
 
-                TBH.AddHeader1("Change Info:");
+                TBH.AddBoldText("Change Info:");
                 TBH.AddLineBreak();
                 if (!string.IsNullOrEmpty(mSCIInfoDetails.LastChangeAuthor))
                 {
@@ -167,7 +167,7 @@ namespace Ginger.SourceControl
             if (mSCIInfoDetails.ShowLock)
             {
 
-                TBH.AddHeader1("Lock Info:");
+                TBH.AddBoldText("Lock Info:");
                 TBH.AddLineBreak();
                 if (!string.IsNullOrEmpty(mSCIInfoDetails.LockOwner))
                 {

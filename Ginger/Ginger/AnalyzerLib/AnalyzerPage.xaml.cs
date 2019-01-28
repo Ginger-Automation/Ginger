@@ -769,7 +769,7 @@ namespace Ginger.AnalyzerLib
                 if (a.ItemClass != null)
                 {
                     TBH.AddLineBreak();
-                    TBH.AddHeader1("Item Type :");
+                    TBH.AddBoldText("Item Type:");
                     TBH.AddLineBreak();
                     TBH.AddText(a.ItemClass.ToString());
                     TBH.AddLineBreak();
@@ -778,7 +778,7 @@ namespace Ginger.AnalyzerLib
                 if (a.ItemName != null)
                 {
                     TBH.AddLineBreak();
-                    TBH.AddHeader1("Item Name :");
+                    TBH.AddBoldText("Item Name:");
                     TBH.AddLineBreak();
                     TBH.AddText(a.ItemName.ToString());
                     TBH.AddLineBreak();
@@ -787,7 +787,7 @@ namespace Ginger.AnalyzerLib
                 if (a.ItemParent != null)
                 {
                     TBH.AddLineBreak();
-                    TBH.AddHeader1("Item Parent :");
+                    TBH.AddBoldText("Item Parent:");
                     TBH.AddLineBreak();
                     TBH.AddText(a.ItemParent.ToString());
                     TBH.AddLineBreak();
@@ -796,7 +796,7 @@ namespace Ginger.AnalyzerLib
                 if (a.Description != null)
                 {
                     TBH.AddLineBreak();
-                    TBH.AddHeader1("Issue :");
+                    TBH.AddBoldText("Issue:");
                     TBH.AddLineBreak();
                     TBH.AddText(a.Description.ToString());
                     TBH.AddLineBreak();
@@ -805,7 +805,7 @@ namespace Ginger.AnalyzerLib
                 if (a.Details != null)
                 {
                     TBH.AddLineBreak();
-                    TBH.AddHeader1("Issue Details :");
+                    TBH.AddBoldText("Issue Details:");
                     TBH.AddLineBreak();
                     TBH.AddText(a.Details.ToString());
                     TBH.AddLineBreak();
@@ -814,7 +814,7 @@ namespace Ginger.AnalyzerLib
                 if (a.Impact != null)
                 {
                     TBH.AddLineBreak();
-                    TBH.AddBoldText("Issue Impact :");
+                    TBH.AddBoldText("Issue Impact:");
                     TBH.AddLineBreak();
                     TBH.AddText(a.Impact.ToString());
                     TBH.AddLineBreak();
@@ -823,14 +823,14 @@ namespace Ginger.AnalyzerLib
                 if (a.HowToFix != null)
                 {
                     TBH.AddLineBreak();
-                    TBH.AddBoldText("How To Fix :");
+                    TBH.AddBoldText("How To Fix:");
                     TBH.AddLineBreak();
                     TBH.AddText(a.HowToFix.ToString());
                     TBH.AddLineBreak();
                 }
 
                 TBH.AddLineBreak();
-                TBH.AddBoldText("Can Auto Fix :");
+                TBH.AddBoldText("Can Auto Fix:");
                 TBH.AddLineBreak();
                 TBH.AddText(a.CanAutoFix.ToString());
                 TBH.AddLineBreak();
