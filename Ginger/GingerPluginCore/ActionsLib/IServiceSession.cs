@@ -16,17 +16,18 @@ limitations under the License.
 */
 #endregion
 
+
+using System;
 using System.Collections.Generic;
 
-namespace GingerPlugIns.ActionsLib
-{
-    // Base class for capability of type Actions, for plugin who want to add new actions to Ginger.
-    public abstract class PlugInActionsBase : PlugInCapability
-    {
-        public override eCapabilityType CapabilityType { get { return eCapabilityType.Actions; } }  // Actions
-
-        public abstract List<PlugInAction> Actions();   // Plugin which impl need to return a list of actions
-
-        //public abstract void RunAction(GingerAction GA);  // The plugin will have to handle the actual run
+namespace  Amdocs.Ginger.Plugin.Core
+{    
+    /// <summary>
+    /// Service which require a session 
+    /// </summary>
+    public interface IServiceSession
+    {        
+        void StartSession();
+        void StopSession();
     }
 }

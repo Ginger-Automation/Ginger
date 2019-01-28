@@ -243,45 +243,37 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Assert.AreEqual(txt, txt2, "txt = txt2");
         }
 
-        //[TestMethod]  [Timeout(60000)]
-        //public void Echo1000Speed()
-        //{
-        //    // We measure speed so we will not introduce code with communcation speed impact 
+        [TestMethod]
+        [Timeout(60000)]
+        public void Echo1000Speed()
+        {
+            // We measure speed so we will not introduce code with communcation speed impact 
 
-        //    // Arrange            
-        //    Thread.Sleep(100);  // let the system or other process relax...
+            // Arrange            
+            Thread.Sleep(100);  // let the system or other process relax...
 
-        //    //Act
-        //    Stopwatch st = new Stopwatch();
-        //    st.Reset();
-        //    st.Start();
+            //Act
+            Stopwatch st = Stopwatch.StartNew();            
 
+            for (int i = 0; i < 1000; i++)
+            {
+                NewPayLoad PL = new NewPayLoad("SpeedTest", "Hello Server - " + i);
+                NewPayLoad PLRC = mMyGingerClient.Send(PL);
 
-        //    for (int i = 0; i < 1000; i++)
-        //    {                
-        //        NewPayLoad PL = new NewPayLoad("SpeedTest", "Hello Server - " + i);
-        //        NewPayLoad PLRC = mMyGingerClient.Send(PL);
-        //        Assert.IsTrue(PLRC.IsOK(), " PLRC.IsOK()");
-        //    }
-        //    st.Stop();
-
-        //    //Assert
-        //    // on fast PC it take less than 500, on the build server it take ??? so keeping some buffer so UT will not fail            
-        //    Assert.IsTrue(st.ElapsedMilliseconds < 500, "st.ElapsedMilliseconds < 500");
-        //}
+                //Assert
+                Assert.IsTrue(PLRC.IsOK(), " PLRC.IsOK()");
+            }
+            st.Stop();            
+        }
 
         [TestMethod]  [Timeout(60000)]
         public void EchoBig10KMessage()
         {
-            // Arrange
-            StringBuilder sb = new StringBuilder();
+            // Arrange            
+            string bigMessage =new string('*', 10000);
+            
 
-            for (int i = 0; i < 1000; i++)
-            {
-                sb.Append("0123456789");
-            }
-
-            NewPayLoad PL = new NewPayLoad("Echo", sb.ToString());
+            NewPayLoad PL = new NewPayLoad("Echo", bigMessage);
 
             //Act
             NewPayLoad PLRC = mMyGingerClient.Send(PL);
@@ -289,7 +281,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
             //Assert
             Assert.AreEqual(PLRC.Name, "EchoBack", "PLRC.Name = EchoBack");
-            Assert.AreEqual(sb.ToString(), txt2, "sb.ToString() = txt2");
+            Assert.AreEqual(bigMessage.ToString(), txt2, "sb.ToString() = txt2");
         }
 
 
