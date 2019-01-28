@@ -76,7 +76,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             DataContext = this;
 
-            SetControlsGridView();
+            SetControlsGridView();          
 
             mLocateValue = (string)mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).GetValue(mObjectLocateValue);
 
@@ -154,7 +154,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 xPOMElementTextBox.Text = string.Empty;
                 mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, string.Empty);
                 SetElementTypeProperty(eElementType.Unknown);
-                SelectElement();
+                AllowElementSelection();
             }
         }
 
@@ -175,7 +175,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
-        private void SelectElement()
+        private void AllowElementSelection()
         {
             xPOMElementTextBox.Visibility = Visibility.Collapsed;
             xPOMElementsGrid.Visibility = Visibility.Visible;
@@ -198,7 +198,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void SelectElement_Click(object sender, RoutedEventArgs e)
         {
-            SelectElement();
+            AllowElementSelection();
         }
 
         private void EndSelectingElement()
@@ -254,14 +254,29 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
             else
             {
-                SelectElement();
+                AllowElementSelection();
             }
         }
 
         private void SelectElementsClicked(object sender, RoutedEventArgs e)
         {
+            SetSelectedElement();
+        }
+    
+        private void XPOMElementsGrid_RowDoubleClick(object sender, EventArgs e)
+        {
+            SetSelectedElement();
+        }
+
+        private void SetSelectedElement()
+        {
             EndSelectingElement();
             ElementChangedEvent();
+        }
+
+        private void XPOMElementTextBox_MouseClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            AllowElementSelection();
         }
     }
 }

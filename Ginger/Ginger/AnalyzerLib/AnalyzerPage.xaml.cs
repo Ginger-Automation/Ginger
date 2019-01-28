@@ -509,7 +509,7 @@ namespace Ginger.AnalyzerLib
                                 }
                                 if ((mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count()) > 0)
                                 {
-                                    CanAutoFixLable.Content = "Can Auto Fix: ";
+                                    CanAutoFixLable.Content = "Can be Auto Fixed: ";
                                     CanAutoFixLableCounter.Content = mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count();
                                     CanAutoFixLable.Visibility = Visibility.Visible;
                                 }
@@ -540,7 +540,7 @@ namespace Ginger.AnalyzerLib
             //view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Details, Header = "Details", WidthWeight = 10 });
             //view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Impact, Header = "Impact", WidthWeight = 5 });
             // view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.HowToFix, Header = "How To Fix", WidthWeight = 10, AllowSorting=true });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.CanAutoFix, Header = "Can Auto Fix", WidthWeight = 3, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.CanAutoFix, Header = "Auto Fixed?", WidthWeight = 3, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Status, Header = "Status", WidthWeight = 3, AllowSorting = true });
 
             AnalyzerItemsGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Select/UnSelect all issues which can be auto fixed", new RoutedEventHandler(MarkUnMark));
@@ -830,7 +830,7 @@ namespace Ginger.AnalyzerLib
                 }
 
                 TBH.AddLineBreak();
-                TBH.AddBoldText("Can Auto Fix:");
+                TBH.AddBoldText("Can be Auto Fixed:");
                 TBH.AddLineBreak();
                 TBH.AddText(a.CanAutoFix.ToString());
                 TBH.AddLineBreak();
