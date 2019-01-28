@@ -571,10 +571,12 @@ namespace GingerCore.ALM.JIRA
         }
         public ObservableList<JiraTestSet> GetJiraTestSets()
         {
-            AlmResponseWithData<List<JiraIssue>> getTestsSet = jiraRepObj.GetJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET, null);
+            WhereDataList filterData = new WhereDataList();
+            List<string> testSetKeys = new List<string> {"reporter", "created", "summary", "project"};
+            filterData.Add(new WhereData() { Name = "fields", Values = testSetKeys , Operator = WhereOperator.Ampersand });
+            AlmResponseWithData<List<JiraIssue>> getTestsSet = jiraRepObj.GetJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET, filterData);
 
             ObservableList<JiraTestSet> jiratestset = new ObservableList<JiraTestSet>();
-            List<string> testSetKeys = new List<string> { "reporter", "created", "summary", "project" };
             List<FieldSchema> templates = JiraRepository.Settings.ExportSettings.Instance.GetSchemaByProject(ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET);
             foreach (var item in getTestsSet.DataResult)
             {
