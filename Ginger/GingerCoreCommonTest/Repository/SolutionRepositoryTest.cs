@@ -298,7 +298,7 @@ namespace GingerCoreCommonTest.Repository
             mSolutionRepository.AddRepositoryItem(MRI);
             // Now we get again all MRIs and want to see that new MRI is included  -checking the list cache
             ObservableList<MyRepositoryItem> MRIs2 = mSolutionRepository.GetAllRepositoryItems<MyRepositoryItem>();
-            MyRepositoryItem MRx = (from x in MRIs2 where x.Guid == MRI.Guid select x).FirstOrDefault();
+            MyRepositoryItem MRx = (from x in MRIs2 where x.Guid == MRI.Guid select x).SingleOrDefault();
 
             //Assert
             Assert.AreEqual(MRI, MRx);
