@@ -100,8 +100,13 @@ namespace Amdocs.Ginger.GingerConsole
             GingerRunner gingerRunner = new GingerRunner();            
             gingerRunner.RunBusinessFlow(businessFlow, true);
 
-            Console.WriteLine("Execution completed");
+            Console.WriteLine("Execution Completed");
+            Console.WriteLine("----------------------------");
+            Console.WriteLine("Business Flow: " + businessFlow.Name);
+            Console.WriteLine("Business Flow Description: " + businessFlow.Description);
             Console.WriteLine("Business Flow Status: " + businessFlow.RunStatus);
+            Console.WriteLine("Activities Count: " + businessFlow.Activities.Count);
+            Console.WriteLine("----------------------------");
             foreach (Activity activity in businessFlow.Activities)
             {
                 Console.WriteLine("Activity: " + activity.ActivityName + " Status: " + activity.Status);
@@ -109,7 +114,7 @@ namespace Amdocs.Ginger.GingerConsole
                 Console.WriteLine("Actions Found:" + activity.Acts.Count);
                 foreach (Act act in activity.Acts )
                 {
-                    Console.WriteLine("--");
+                    Console.WriteLine("------");
                     Console.WriteLine("Action:" + act.Description);
                     Console.WriteLine("Description:" + act.ActionDescription);
                     Console.WriteLine("Type:" + act.ActionType);
@@ -118,6 +123,7 @@ namespace Amdocs.Ginger.GingerConsole
                     Console.WriteLine("Error:" + act.Error);
                     Console.WriteLine("ExInfo:" + act.ExInfo);
                 }
+                Console.WriteLine("----------");
             }
 
 
