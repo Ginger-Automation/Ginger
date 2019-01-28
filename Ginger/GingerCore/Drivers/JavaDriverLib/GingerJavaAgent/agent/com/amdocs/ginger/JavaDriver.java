@@ -3372,7 +3372,7 @@ private PayLoad GetComponentState(Component c)
 			}
 			
 			
-			SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a"); 
+			SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy"); 
 			String actualDateValue= formatter.format(dateValue);  
 			
 			String expectedDateValue= formatter.format(o);

@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
+using System.Threading;
 
 namespace GingerCoreCommonTest.Repository
 {
@@ -29,8 +30,20 @@ namespace GingerCoreCommonTest.Repository
         [IsSerializedForLocalRepository]
         public string prop1 { get; set; }
 
+        string mBigStringHolderSlowSet;
         [IsSerializedForLocalRepository]
-        public string a { get; set; }
+        public string BigStringHolderSlowSet
+        {
+            get
+            {
+                return mBigStringHolderSlowSet;
+            }
+            set
+            {
+                Thread.Sleep(10); // 10ms cause a delay to simulate heavy data load
+                mBigStringHolderSlowSet = value;                    
+            }
+        }
 
         public string DontSaveMe { get; set; }
 
