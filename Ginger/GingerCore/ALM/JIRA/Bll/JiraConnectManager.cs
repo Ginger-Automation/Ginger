@@ -134,7 +134,10 @@ namespace GingerCore.ALM.JIRA
             List<string> jiraDomains = new List<string>();
             foreach (var domain in jiraDomainsProjectsDataList)
             {
-                jiraDomains.Add(domain.DomainName);
+                if (!domain.DomainName.Equals(String.Empty))
+                {
+                    jiraDomains.Add(domain.DomainName);
+                }
             }
             return jiraDomains;
         }
