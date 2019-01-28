@@ -35,7 +35,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             TimeStamp = DateTime.Now;
         }
 
-        internal void SetPayLoad(CommunicationProtocol.NewPayLoad pl)
+        internal void SetPayLoad(NewPayLoad pl)
         {            
             Name = pl.Name;
             Info = pl.ToString();

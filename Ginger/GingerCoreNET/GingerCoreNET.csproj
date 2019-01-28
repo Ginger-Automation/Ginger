@@ -65,6 +65,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
+    <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
     <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" />
   </ItemGroup>
 
@@ -72,6 +73,21 @@
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Images\%40BeatLogo.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\%40GingerLogo_lowRes.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\%40ItemNext.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\%40ItemPrev.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -52,6 +52,18 @@ namespace Ginger.Run
         RunnerPageListener mRunnerPageListener;
         DispatcherTimer mDispatcherTimer;
 
+        public event RunnerPageEventHandler RunnerPageEvent;
+        public delegate void RunnerPageEventHandler(RunnerPageEventArgs EventArgs);
+
+        public void OnGingerRunnerEvent(RunnerPageEventArgs.eEventType EvType, Object obj)
+        {
+            RunnerPageEventHandler handler = RunnerPageEvent;
+            if (handler != null)
+            {
+                handler(new RunnerPageEventArgs(EvType, obj));
+            }
+        }
+
         public TextBlock bfStat()
         {            
             return xBusinessflowsStatistics;                                       
@@ -677,17 +689,18 @@ namespace Ginger.Run
             }
         }
 
+       
+
+
         private void xremoveRunner_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //OnGingerRunnerEvent(RunnerPageEventArgs.eEventType.RemoveRunner, Runner);
+            if (CheckCurrentRunnerIsNotRuning()) return;            
+            OnGingerRunnerEvent(RunnerPageEventArgs.eEventType.RemoveRunner, Runner);
         }
 
         private void xDuplicateRunner_Click(object sender, RoutedEventArgs e)
-        {
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //OnGingerRunnerEvent(RunnerPageEventArgs.eEventType.DuplicateRunner, Runner);
+        {            
+            OnGingerRunnerEvent(RunnerPageEventArgs.eEventType.DuplicateRunner, Runner);
         }
 
         private void xResetRunSetStatus_Click(object sender, RoutedEventArgs e)
@@ -700,28 +713,11 @@ namespace Ginger.Run
             xruntime.Content = "00:00:00";
             Runner.RunnerExecutionWatch.runWatch.Reset();
 
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // OnGingerRunnerEvent(RunnerPageEventArgs.eEventType.ResetRunnerStatus, Runner);
+            
+            OnGingerRunnerEvent(RunnerPageEventArgs.eEventType.ResetRunnerStatus, Runner);
         }
     }
-    public class RunnerPageEventArgs
-    {
-        public enum eEventType
-        {           
-            RemoveRunner,
-            DuplicateRunner,
-            ResetRunnerStatus
-        }
 
-        public eEventType EventType;
-        public Object Object;
 
-        //!!!!!!!!!!!!!!!!!!
-        //TODO: create event per type!????????????? so can listent to specific events
-        public RunnerPageEventArgs(eEventType EventType, object Object)
-        {
-            this.EventType = EventType;
-            this.Object = Object;
-        }
-    }
+    
 }

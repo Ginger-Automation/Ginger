@@ -15,7 +15,10 @@ namespace GingerUtils
             string networkIP = string.Empty;
             if (OperatingSystem.IsWindows())
             {
-                networkIP = GetFirstLocalHostIPAddress_Windows();
+                // !!!!! Combine and use one
+                // use the Linux
+                // networkIP = GetFirstLocalHostIPAddress_Windows();
+                networkIP = GetFirstLocalHostIPAddress_Linux();
             }
             else if (OperatingSystem.IsLinux())
             {
@@ -90,7 +93,7 @@ namespace GingerUtils
                 foreach (IPAddress ip in IPList)
                 {
                     i++;
-                    Console.WriteLine("IP Address [" + i + "] : " + ip.ToString());
+                    Console.WriteLine("IP Address [" + i + "] : " + ip.ToString() + " " + ip.AddressFamily.ToString());
 
                     if (ip.AddressFamily == AddressFamily.InterNetwork)
                     {

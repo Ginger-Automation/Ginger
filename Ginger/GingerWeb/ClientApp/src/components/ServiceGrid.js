@@ -23,7 +23,11 @@ export class ServiceGrid extends Component {
                     <tr>
                         <th>Name</th>
                         <th>Service ID</th>
-                        <th>Session ID</th>                        
+                        <th>Session ID</th>
+                        <th>Host</th>
+                        <th>IP</th>
+                        <th>OS</th>
+                        <th>Status</th>
                         <th>Actions count</th>                        
                     </tr>
                 </thead>
@@ -32,8 +36,12 @@ export class ServiceGrid extends Component {
                         <tr key={gingerNodeInfo.name}>
                             <td>{gingerNodeInfo.name}</td>
                             <td>{gingerNodeInfo.serviceId}</td>
-                            <td>{gingerNodeInfo.sessionID}</td>                            
-                            <td>{gingerNodeInfo.actionCount}</td>                            
+                            <td>{gingerNodeInfo.sessionId}</td>                            
+                            <td>{gingerNodeInfo.host}</td>                            
+                            <td>{gingerNodeInfo.ip}</td>                           
+                            <td>{gingerNodeInfo.os}</td>                           
+                            <td>{gingerNodeInfo.status}</td>                           
+                            <td>{gingerNodeInfo.actionCount}</td>   
                         </tr>
                     )}
                 </tbody>

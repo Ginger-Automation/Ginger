@@ -79,7 +79,7 @@ namespace UnitTest {
                 a.Driver = mDriver;
                 a.DriverType = Agent.eDriverType.PowerBuilder;
 
-                mGR.SolutionAgents = new ObservableList<IAgent>();
+                mGR.SolutionAgents = new ObservableList<Agent>();
                 mGR.SolutionAgents.Add(a);
 
                 ApplicationAgent AA = new ApplicationAgent();

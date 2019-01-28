@@ -44,6 +44,9 @@ namespace GingerWeb.UsersLib
             var v = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();            
         }
 
+
+        // Combine to one in core !!!!!!!!!!!!!!!!!!!!!
+
         private static void OpenSolution(string sFolder)
         {            
 
@@ -62,13 +65,13 @@ namespace GingerWeb.UsersLib
                 SR.AddItemInfo<ProjEnvironment>("*.Ginger.Environment.xml", @"~\Environments", true, "Environments", PropertyNameForFileName: nameof(ProjEnvironment.Name));
                 SR.AddItemInfo<ALMDefectProfile>("*.Ginger.ALMDefectProfile.xml", @"~\ALMDefectProfiles", true, "ALM Defect Profiles", PropertyNameForFileName: nameof(ALMDefectProfile.Name));
 
-                // SR.AddItemInfo<Agent>("*.Ginger.Agent.xml", @"~\Agents", true, "Agents", PropertyNameForFileName: nameof(Agent.Name));
+                SR.AddItemInfo<Agent>("*.Ginger.Agent.xml", @"~\Agents", true, "Agents", PropertyNameForFileName: nameof(Agent.Name));
 
                 //TODO: check if below 2 reports folders are realy needed
                 SR.AddItemInfo<HTMLReportConfiguration>("*.Ginger.HTMLReportConfiguration.xml", @"~\HTMLReportConfigurations", true, "HTMLReportConfigurations", PropertyNameForFileName: nameof(HTMLReportsConfiguration.Name));
                 SR.AddItemInfo<HTMLReportTemplate>("*.Ginger.HTMLReportTemplate.xml", @"~\HTMLReportConfigurations\HTMLReportTemplate", true, "HTMLReportTemplate", PropertyNameForFileName: nameof(HTMLReportTemplate.Name));
 
-                // SR.AddItemInfo<ReportTemplate>("*.Ginger.ReportTemplate.xml", @"~\HTMLReportConfigurations\ReportTemplates", true, "ReportTemplates", PropertyNameForFileName: nameof(ReportTemplate.Name));
+                SR.AddItemInfo<ReportTemplate>("*.Ginger.ReportTemplate.xml", @"~\HTMLReportConfigurations\ReportTemplates", true, "ReportTemplates", PropertyNameForFileName: nameof(ReportTemplate.Name));
 
                 SR.AddItemInfo<DataSourceBase>("*.Ginger.DataSource.xml", @"~\DataSources", true, "Data Sources", PropertyNameForFileName: nameof(DataSourceBase.Name));
 
@@ -92,6 +95,7 @@ namespace GingerWeb.UsersLib
             }
         }
 
+        // COMBINE to one for all !!!!!!!!!!!!!!
         public static void InitClassTypesDictionary()
         {
             //TODO: cleanup after all RIs moved to GingerCoreCommon
@@ -105,6 +109,9 @@ namespace GingerWeb.UsersLib
             // Add all RI classes from GingerCoreCommon
             NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
             NewRepositorySerializer.AddClassesFromAssembly(typeof(Solution).Assembly);
+
+            // corenet
+            // NewRepositorySerializer.AddClassesFromAssembly(typeof(Agent).Assembly);
 
             // Add all RI classes from GingerCore
             // NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActButton).Assembly); // GingerCore.dll
