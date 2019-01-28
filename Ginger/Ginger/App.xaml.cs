@@ -542,10 +542,7 @@ namespace Ginger
             // Add all RI classes from GingerCore
             NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActButton).Assembly); // GingerCore.dll
 
-            // add  old Plugins - TODO: remove later when we change to new plugins
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerPlugIns.ActionsLib.PlugInActionsBase).Assembly);
-
-
+            
             // add from Ginger
             NewRepositorySerializer.AddClassesFromAssembly(typeof(Ginger.App).Assembly);
 
@@ -773,7 +770,7 @@ namespace Ginger
 
                 //Cleanup
                 SolutionCleanup();
-
+                // !!!!!!!!!!!!! '\' is not good
                 if (!SolutionFolder.EndsWith(@"\")) SolutionFolder += @"\";
                 string SolFile = System.IO.Path.Combine(SolutionFolder, @"Ginger.Solution.xml");
                 if (File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(SolFile)))
@@ -817,7 +814,7 @@ namespace Ginger
                         ValueExpression.SolutionFolder = SolutionFolder;
                         BusinessFlow.SolutionVariables = sol.Variables;
 
-                         WorkSpace.UserProfile.Solution = sol;
+                        WorkSpace.UserProfile.Solution = sol;
 
        
                         WorkSpace.UserProfile.Solution.SetReportsConfigurations();
