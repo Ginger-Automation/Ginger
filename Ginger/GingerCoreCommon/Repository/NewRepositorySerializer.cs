@@ -814,19 +814,27 @@ namespace Amdocs.Ginger.Repository
 
         static Dictionary<string, Type> mClassDictionary = new Dictionary<string, Type>();
 
-
-        public static void AddClassesFromAssembly(Assembly a)
-        {            
-            var RepositoryItemTypes =              
-              from type in a.GetTypes()
-                  //where type.IsSubclassOf(typeof(RepositoryItemBase))              
-              where typeof(RepositoryItemBase).IsAssignableFrom(type) // Will load all sub classes including level 2,3 etc.
-              select type;
-
-            foreach (Type t in RepositoryItemTypes)
+        static List<Assembly> mAssemblies = new List<Assembly>();
+        public static void AddClassesFromAssembly(Assembly assembly)
+        {
+            lock (mAssemblies) // Avoid reentry to add assembly - can happen in unit tests
             {
-                mClassDictionary.Add(t.Name, t);
-                mClassDictionary.Add(t.FullName, t);
+                if (mAssemblies.Contains(assembly))
+                {
+                    return;
+                }
+                var RepositoryItemTypes =
+                  from type in assembly.GetTypes()
+                      //where type.IsSubclassOf(typeof(RepositoryItemBase))              
+                    where typeof(RepositoryItemBase).IsAssignableFrom(type) // Will load all sub classes including level 2,3 etc.
+                    select type;
+
+                foreach (Type t in RepositoryItemTypes)
+                {                    
+                    mClassDictionary.Add(t.Name, t);
+                    mClassDictionary.Add(t.FullName, t);
+                }
+                mAssemblies.Add(assembly);
             }
         }
 

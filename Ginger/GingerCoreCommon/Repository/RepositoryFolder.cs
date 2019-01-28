@@ -141,11 +141,15 @@ namespace Amdocs.Ginger.Repository
                 mFolderItemsList = list;
 
                 //add it to general item cache if needed
-                if (mSolutionRepositoryItemInfo.AllItemsCache != null)
+                if (!mSolutionRepositoryItemInfo.AllItemsCacheIsNull())
                 {
                     foreach (T item in list)
-                        if (mSolutionRepositoryItemInfo.AllItemsCache.Contains(item) == false)
-                            mSolutionRepositoryItemInfo.AllItemsCache.Add(item);
+                    {
+                        if (mSolutionRepositoryItemInfo.AllItemsContains(item) == false)
+                        {
+                            mSolutionRepositoryItemInfo.AddItemToCache(item);
+                        }
+                    }
                 }
             }
 
@@ -189,22 +193,31 @@ namespace Amdocs.Ginger.Repository
         /// <param name="list"></param>
         public ConcurrentBag<T> GetFolderItemsRecursive(ConcurrentBag<T> list = null)
         {
+            ConcurrentBag<T> allItemsRecursive;
+
             if (list == null)
-                list = new ConcurrentBag<T>();
+            {
+                allItemsRecursive = new ConcurrentBag<T>();
+            }
+            else
+            {
+                allItemsRecursive = list;
+            }
+            
 
             foreach (T item in GetFolderItems())
             {
-                list.Add(item);
+                allItemsRecursive.Add(item);
             }
 
             ObservableList<RepositoryFolder<T>> subfolders = GetSubFolders();
 
             Parallel.ForEach(subfolders, sf =>
             {
-                sf.GetFolderItemsRecursive(list);
+                sf.GetFolderItemsRecursive(allItemsRecursive);
             });
 
-            return list;
+            return allItemsRecursive;
         }
 
         /// <summary>
@@ -215,9 +228,13 @@ namespace Amdocs.Ginger.Repository
         {
             ObservableList<T> cacheItems = new ObservableList<T>();
             foreach (T item in mFolderItemsCache.Items<T>())
+            {
                 cacheItems.Add(item);//creating list to iterate over
+            }
             foreach (T cacheItem in cacheItems)
-                DeleteRepositoryItem((dynamic)cacheItem);
+            {
+                DeleteRepositoryItem((RepositoryItemBase)(object)cacheItem);
+            }
 
             if (mSubFoldersCache != null)
             {
@@ -256,15 +273,15 @@ namespace Amdocs.Ginger.Repository
             {
                 try
                 {                    
-                        // Check if item exist in cache if yes use it, no need to load from file, yay!
-                        T item = (T)mFolderItemsCache[FileName];
-                        if (item == null)
-                        {
-                            item = LoadItemfromFile<T>(FileName, ContainingFolder);
-                            AddItemtoCache(FileName, item);
-                        }
-                        list.Add(item);
-                    }   
+                    // Check if item exist in cache if yes use it, no need to load from file, yay!
+                    T item = (T)mFolderItemsCache[FileName];
+                    if (item == null)
+                    {
+                        item = LoadItemfromFile<T>(FileName, ContainingFolder);
+                        AddItemtoCache(FileName, item);
+                    }
+                    list.Add(item);
+                }   
                 catch(Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("RepositoryFolder/LoadFolderFiles- Failed to load the Repository Item XML which in file: '{0}'.", FileName), ex);
@@ -629,11 +646,15 @@ namespace Amdocs.Ginger.Repository
             //add it to folder cache
             mFolderItemsCache[repositoryItem.FilePath] = repositoryItem;
             if (mFolderItemsList != null)
-                mFolderItemsList.Add((dynamic)repositoryItem);
+            {
+                mFolderItemsList.Add((T)(object)repositoryItem);
+            }
 
             //add it to general item cache
-            if (mSolutionRepositoryItemInfo.AllItemsCache != null)
-                mSolutionRepositoryItemInfo.AllItemsCache.Add((dynamic)repositoryItem);
+            if (!mSolutionRepositoryItemInfo.AllItemsCacheIsNull())
+            {                                
+                mSolutionRepositoryItemInfo.AddItemToCache((T)(object)repositoryItem);
+            }
         }
 
         /// <summary>
@@ -676,13 +697,15 @@ namespace Amdocs.Ginger.Repository
             //Delete from folder cache
             mFolderItemsCache.DeleteItem(repositoryItem.FilePath);
             if (mFolderItemsList != null)
-                mFolderItemsList.Remove((dynamic)repositoryItem);
-
+            {
+                mFolderItemsList.Remove((T)(object)repositoryItem);
+            }
 
             //Delete it from general item cache
-            if (mSolutionRepositoryItemInfo.AllItemsCache != null)
-                mSolutionRepositoryItemInfo.AllItemsCache.Remove((dynamic)repositoryItem);
-
+            if (!mSolutionRepositoryItemInfo.AllItemsCacheIsNull())
+            {
+                mSolutionRepositoryItemInfo.AllItemsCacheRemove((T)(object)repositoryItem);
+            }
         }
 
         /// <summary>
@@ -771,7 +794,7 @@ namespace Amdocs.Ginger.Repository
                 cacheItems.Add(item);
             foreach (T cacheitem in cacheItems)
             {
-                RepositoryItemBase item = (dynamic)cacheitem;
+                RepositoryItemBase item = (RepositoryItemBase)(object)cacheitem;
                 mFolderItemsCache.DeleteItem(item.FilePath);
                 item.FilePath = Path.Combine(FolderFullPath, Path.GetFileName(PathHelper.GetLongPath(((RepositoryItemBase)item).FilePath)));
                 item.ContainingFolder = FolderRelativePath;
