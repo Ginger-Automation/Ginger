@@ -338,10 +338,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            ElementInfo ei = (ElementInfo)xMainElementsGrid.CurrentItem;
-            if (ei.IsAutoLearned)
+            if (Convert.ToString(e.Column.Header) != "...")
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You can not edit this field of an Element which was auto learned, please duplicate it and create customized Element.");
+                ElementInfo ei = (ElementInfo)xMainElementsGrid.CurrentItem;
+                if (ei.IsAutoLearned)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You can not edit this field of an Element which was auto learned, please duplicate it and create customized Element.");
+                    e.EditingElement.IsEnabled = false;
+                } 
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The selected Element is not allowed to add possible values.");
                 e.EditingElement.IsEnabled = false;
             }
         }

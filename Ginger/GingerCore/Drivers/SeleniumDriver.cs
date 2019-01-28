@@ -4392,13 +4392,13 @@ namespace GingerCore.Drivers
 
             if (el != null)
             {
-                //Learn optional values
-                if (ElementInfo.ElementTypeEnum == eElementType.ComboBox || ElementInfo.ElementTypeEnum == eElementType.List)
-                {
-                    foreach (IWebElement value in el.FindElements(By.XPath("*")))
-                        ElementInfo.OptionalValues.Add(value.Text);
-                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
-                }
+                ////Learn optional values
+                //if (ElementInfo.ElementTypeEnum == eElementType.ComboBox || ElementInfo.ElementTypeEnum == eElementType.List)
+                //{
+                //    foreach (IWebElement value in el.FindElements(By.XPath("*")))
+                //        ElementInfo.OptionalValues.Add(value.Text);
+                //    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
+                //}
 
                 if (ElementInfo.ElementTypeEnum == eElementType.TextBox || ElementInfo.ElementTypeEnum == eElementType.Text ||
                     ElementInfo.ElementTypeEnum == eElementType.ComboBox || ElementInfo.ElementTypeEnum == eElementType.ComboBoxOption ||
@@ -4414,7 +4414,7 @@ namespace GingerCore.Drivers
                             isDefault = true;
                         }
                     }
-                    list.Add(new ControlProperty() { Name = "Modified Optional Values", Value = ElementInfo.OpValsString });
+                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OpValsString });
                 }
 
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
