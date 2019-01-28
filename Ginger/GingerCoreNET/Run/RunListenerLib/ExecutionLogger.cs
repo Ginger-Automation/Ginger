@@ -731,11 +731,8 @@ namespace Ginger.Run
                             mVE.Value = action.RunDescription;
                             AR.RunDescription = mVE.ValueCalculated;
                         }
-
-                        if (!string.IsNullOrEmpty(action.ExecutionLogFolder))
-                        {
-                            SaveObjToJSonFile(AR, executionLogFolder + action.ExecutionLogFolder + @"\Action.txt");
-                        }
+                       
+                        SaveObjToJSonFile(AR, executionLogFolder + action.ExecutionLogFolder + @"\Action.txt");
 
                         // Save screenShots
                         int screenShotCountPerAction = 0;
@@ -1151,7 +1148,7 @@ namespace Ginger.Run
                     CleanDirectory(logFolderPath);
                 else
                     Directory.CreateDirectory(logFolderPath);
-                GingerRunner Gr =new GingerRunner();
+                GingerRunner Gr =new GingerRunner();                
                 mCurrentBusinessFlow = businessFlow;
                 businessFlow.ExecutionLogFolder = logFolderPath;
                 businessFlow.VariablesBeforeExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
@@ -1206,7 +1203,7 @@ namespace Ginger.Run
                 Gr.CalculateBusinessFlowFinalStatus(businessFlow);
                 
                 BusinessFlowEnd(meventtime, businessFlow, true);
-                businessFlow.ExecutionLogFolder = string.Empty;
+                businessFlow.ExecutionLogFolder = string.Empty;                
                 return true;
             }
             catch (Exception ex)
