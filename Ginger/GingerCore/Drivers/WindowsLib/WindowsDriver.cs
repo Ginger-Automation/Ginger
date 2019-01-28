@@ -957,5 +957,10 @@ namespace GingerCore.Drivers.WindowsLib
                 Thread.Sleep(1000);
             }
         }
+
+        public void StartSpying()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -106,36 +106,40 @@ namespace Ginger.Run
             get { return mConfiguration; }
             set
             {
-                mConfiguration = value;
-
-                if(!CheckOrCreateDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder))
+                if (value != null)
                 {
-                    mConfiguration.ExecutionLoggerConfigurationExecResultsFolder= mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\"; 
+                    mConfiguration = value;
+
+                    if (!CheckOrCreateDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder))
+                    {
+                        mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                    }
+
+
+                    switch (this.ExecutedFrom)
+                    {
+                        case Amdocs.Ginger.Common.eExecutedFrom.Automation:
+                            ExecutionLogfolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder + @"\\" + defaultAutomationTabLogName;
+                            break;
+                        case Amdocs.Ginger.Common.eExecutedFrom.Run:
+
+                            if ((WorkSpace.RunsetExecutor.RunSetConfig.Name != null) && (WorkSpace.RunsetExecutor.RunSetConfig.Name != string.Empty))
+                            {
+                                mLogsFolderName = folderNameNormalazing(WorkSpace.RunsetExecutor.RunSetConfig.Name) + "_" + mCurrentExecutionDateTime.ToString("MMddyyyy_HHmmss");
+                            }
+                            else
+                            {
+                                RunSetReport.Name = defaultRunTabLogName;
+                                mLogsFolderName = defaultRunTabLogName + "_" + mCurrentExecutionDateTime.ToString("MMddyyyy_HHmmss");
+                            }
+                            ExecutionLogfolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + mLogsFolderName + "\\" + this.GingerData.Seq.ToString() + " " + this.GingerData.GingerName + "\\";
+
+                            break;
+                    }
+                    ExecutionLogfolder = GetLoggerDirectory(ExecutionLogfolder);
+                    CleanDirectory(ExecutionLogfolder);
                 }
 
-              
-                switch (this.ExecutedFrom)
-                {
-                    case Amdocs.Ginger.Common.eExecutedFrom.Automation:
-                        ExecutionLogfolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder + @"\\" + defaultAutomationTabLogName;
-                        break;
-                    case Amdocs.Ginger.Common.eExecutedFrom.Run:
-
-                        if ((WorkSpace.RunsetExecutor.RunSetConfig.Name!= null) && (WorkSpace.RunsetExecutor.RunSetConfig.Name != string.Empty))
-                        {
-                            mLogsFolderName = folderNameNormalazing(WorkSpace.RunsetExecutor.RunSetConfig.Name) + "_" + mCurrentExecutionDateTime.ToString("MMddyyyy_HHmmss");
-                        }
-                        else
-                        {
-                            RunSetReport.Name = defaultRunTabLogName;
-                            mLogsFolderName = defaultRunTabLogName + "_" + mCurrentExecutionDateTime.ToString("MMddyyyy_HHmmss");
-                        }
-                        ExecutionLogfolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + mLogsFolderName + "\\" + this.GingerData.Seq.ToString() + " " + this.GingerData.GingerName + "\\";
-
-                        break;
-                }
-                ExecutionLogfolder = GetLoggerDirectory(ExecutionLogfolder);
-                CleanDirectory(ExecutionLogfolder);
             }
         }
         
