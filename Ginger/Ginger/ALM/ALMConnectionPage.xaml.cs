@@ -73,7 +73,7 @@ namespace Ginger.ALM
         }
 
         private void SetControls()
-        {
+       {
             bool ServerDetailsSelected = false;
 
             if (!string.IsNullOrEmpty(ServerURLTextBox.Text) && !string.IsNullOrEmpty(UserNameTextBox.Text) && !string.IsNullOrEmpty(PasswordTextBox.Password))
@@ -441,7 +441,7 @@ namespace Ginger.ALM
                     RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
-                    ExampleURLHint.Content = "Example: http://server:8080/almbin";
+                    ExampleURLHint.Content = "Example: https://ServerName";
                     if (!isServerDetailsCorrect)
                     {
                         ServerURLTextBox.IsEnabled = true;
@@ -494,9 +494,9 @@ namespace Ginger.ALM
                     case "RQMRadioButton":
                         if ((ALMIntegration.eALMType) WorkSpace.UserProfile.Solution.AlmType != ALMIntegration.eALMType.RQM)
                         {
-                             WorkSpace.UserProfile.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM;
+                            WorkSpace.UserProfile.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM;
                             ClearALMConfigs();
-                            ALMIntegration.Instance.UpdateALMType(ALMIntegration.eALMType.RQM);
+                            //ALMIntegration.Instance.UpdateALMType(ALMIntegration.eALMType.RQM);
                             ALMIntegration.Instance.SetALMCoreConfigurations(); //Because RQM need to update the server field from existing package
                             SetLoadPackageButtonContent();
                         }
@@ -545,6 +545,7 @@ namespace Ginger.ALM
                 //remove rest of URL
                 ServerURLTextBox.Text = ServerURLTextBox.Text.Substring(0,ServerURLTextBox.Text.ToLower().IndexOf("qcbin") + 5);
             }
+
             SetControls();
         }
 
