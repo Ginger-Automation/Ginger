@@ -117,8 +117,8 @@ namespace GingerWeb.Controllers
             // TODO: add dumper
 
             ProjEnvironment projEnvironment = new ProjEnvironment();
-            ExecutionDumperListener executionDumperListener = new ExecutionDumperListener(@"c:\temp\dumper");   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! temp
-            gingerRunner.RunListeners.Add(executionDumperListener);
+            //ExecutionDumperListener executionDumperListener = new ExecutionDumperListener(@"c:\temp\dumper");   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! temp
+            //gingerRunner.RunListeners.Add(executionDumperListener);
 
 
             // executionLogger = new ExecutionLogger(projEnvironment, eExecutedFrom.Automation);
@@ -129,9 +129,14 @@ namespace GingerWeb.Controllers
             gingerRunner.CurrentBusinessFlow = businessFlow;
             gingerRunner.RunRunner();
 
-            Console.WriteLine("Execution completed");
+            Console.WriteLine("Execution Completed");
+            Console.WriteLine("----------------------------");
+            Console.WriteLine("Business Flow: " + businessFlow.Name);
+            Console.WriteLine("Business Flow Description: " + businessFlow.Description);
             Console.WriteLine("Business Flow Status: " + businessFlow.RunStatus);
-            Console.WriteLine("Business Flow Elapsed: " + businessFlow.Elapsed);
+            Console.WriteLine("Activities Count: " + businessFlow.Activities.Count);
+            Console.WriteLine("----------------------------");
+
             foreach (Activity activity in businessFlow.Activities)
             {
                 Console.WriteLine("Activity: " + activity.ActivityName + " Status: " + activity.Status);
@@ -148,7 +153,9 @@ namespace GingerWeb.Controllers
                     Console.WriteLine("Error:" + act.Error);
                     Console.WriteLine("ExInfo:" + act.ExInfo);
                 }
+                Console.WriteLine("----------");
             }
+            
 
             //TODO: create report
 

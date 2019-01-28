@@ -1649,6 +1649,7 @@ namespace Ginger.Run
                             }
                             catch(Exception ex)
                             {
+                                Console.WriteLine(ex.Message);
                                 string errorMessage = "";
                                 if (GNI == null)
                                 {
@@ -1915,11 +1916,15 @@ namespace Ginger.Run
 
         private GingerNodeInfo GetGingerNodeInfoForPluginAction(ActPlugIn actPlugin)
         {
+            Console.WriteLine("In GetGingerNodeInfoForPluginAction..");
+
             bool DoStartSession = false;
             bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, actPlugin.ServiceId);
             GingerNodeInfo gingerNodeInfo;
             string key = actPlugin.PluginId + "." + actPlugin.ServiceId;
-            
+
+            Console.WriteLine("Plugin Key:" + key);
+
             if (IsSessionService)
             {
                 bool found = dic.TryGetValue(key, out gingerNodeInfo);
@@ -1977,6 +1982,8 @@ namespace Ginger.Run
             // keep the proxy on agent
             GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
             GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
+
+            Console.WriteLine("Checking for DoStartSession..");
 
             //TODO: check if service is session start session only once
             if (DoStartSession)
@@ -2071,12 +2078,29 @@ namespace Ginger.Run
             // Menahwile we can the first ready node with least amount of actions so balance across same service
             GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
 
-            // In order to balance we order by ActionCount
+            Console.WriteLine("Number of Nodes found in GingerGrid:" + gingerGrid.NodeList.Count);
+
+            foreach(GingerNodeInfo gingerNodeInfo in gingerGrid.NodeList)
+            {
+                Console.WriteLine("Name:" + gingerNodeInfo.Name);
+                Console.WriteLine("ServiceId:" + gingerNodeInfo.ServiceId);
+                Console.WriteLine("Status:" + gingerNodeInfo.Status);
+                Console.WriteLine("Host:" + gingerNodeInfo.Host);
+                Console.WriteLine("IP:" + gingerNodeInfo.IP);
+            }
+
+            Console.WriteLine("Searching for ServiceID=" + actPlugin.ServiceId);
+
             GingerNodeInfo GNI = (from x in gingerGrid.NodeList
                                     where x.ServiceId == actPlugin.ServiceId
                                          && x.Status == GingerNodeInfo.eStatus.Ready
                                          orderby x.ActionCount
                                     select x).FirstOrDefault();
+
+            if (GNI is null)
+            {
+                Console.WriteLine("GNI is null");
+            }
 
             return GNI;
         }
