@@ -50,10 +50,10 @@ namespace Ginger.ALM.JIRA
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.JiraID , Header = "Test Set ID", WidthWeight = 15, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.Name, Header = "Test Set Name",  ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.CreatedBy, Header = "Created By", WidthWeight = 25, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.CreationDate, Header = "Creation Date", WidthWeight = 25, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.JiraID , Header = "Test Set ID", WidthWeight = 15, ReadOnly = true, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.Name, Header = "Test Set Name",  ReadOnly = true, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.CreatedBy, Header = "Created By", WidthWeight = 25, ReadOnly = true, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.CreationDate, Header = "Creation Date", WidthWeight = 25, ReadOnly = true, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = "Import Test Set", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ImportButton"] });
             grdJiraTestSets.SetAllColumnsDefaultView(view);
             grdJiraTestSets.InitViewItems();
