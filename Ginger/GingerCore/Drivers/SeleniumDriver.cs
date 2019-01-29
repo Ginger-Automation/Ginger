@@ -5443,7 +5443,7 @@ namespace GingerCore.Drivers
 
                     if ((act.GetInputParamValue(ActBrowserElement.Fields.URLSrc) == ActBrowserElement.eURLSrc.UrlPOM.ToString()))
                     {
-                        string POMGuid = act.GetInputParamCalculatedValue("UrlPOM");
+                        string POMGuid = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.PomGUID);
                         string POMUrl = "";
                         if (!string.IsNullOrEmpty(POMGuid))
                         {
@@ -5477,7 +5477,7 @@ namespace GingerCore.Drivers
 
                     if ((act.GetInputParamValue(ActBrowserElement.Fields.URLSrc) == ActBrowserElement.eURLSrc.UrlPOM.ToString()))
                     {
-                        string POMGuid = act.GetInputParamCalculatedValue("UrlPOM");
+                        string POMGuid = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.PomGUID);
                         string POMUrl = "";
                         if (!string.IsNullOrEmpty(POMGuid))
                         {

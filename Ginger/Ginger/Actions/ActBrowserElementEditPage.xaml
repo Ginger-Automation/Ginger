@@ -32,7 +32,7 @@
             </DockPanel>
 
             <StackPanel x:Name="xURLSrcPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
-                <Label x:Name="URLSrcLbl" Style="{StaticResource $LabelStyle}">URL Source:</Label>
+                <Label x:Name="xURLSrcLbl" Style="{StaticResource $LabelStyle}">URL Source:</Label>
                 <StackPanel x:Name="xURLSrcRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="27,0,0,0">
                     <UserControlsLib:UCRadioButtons x:Name="xURLSrcRadioButton" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 </StackPanel>
@@ -49,7 +49,7 @@
             </Grid>
             
             <StackPanel x:Name="xOpenURLInPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
-                <Label x:Name="Lable" Style="{StaticResource $LabelStyle}">Open URL in:</Label>
+                <Label x:Name="xLable" Style="{StaticResource $LabelStyle}">Open URL in:</Label>
                 <StackPanel x:Name="xGotoURLTypeRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="21,0,0,0">
                     <UserControlsLib:UCRadioButtons x:Name="xGotoURLTypeRadioButton" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 </StackPanel>

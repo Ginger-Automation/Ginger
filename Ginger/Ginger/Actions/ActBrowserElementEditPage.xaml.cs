@@ -193,7 +193,7 @@ namespace Ginger.Actions
 
         private void SetLocateValueFrame()
         {
-            LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAct, null, mAct, nameof(ActBrowserElement.ElementLocateValue));
+            LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAct, null, mAct, nameof(ActBrowserElement.Fields.PomGUID), true);
             xPOMUrlFrame.Content = locateByPOMElementPage;
         }
     }

@@ -37,40 +37,41 @@ namespace GingerCore.Actions
             public static string GotoURLType = "GotoURLType";
             public static string ImplicitWait = "ImplicitWait";
             public static string URLSrc = "URLSrc";
+            public static string PomGUID = "PomGUID";
         }
 
         public override string ActionDescription { get { return "Browser Action"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
-            
-        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
-            {
-                TBH.AddText("Action to handle Browser and Widgets");
-                TBH.AddLineBreak();
-                TBH.AddText("Widget are Internet Explorer browser inside Java form, they contain their own HTML and can have many HTML controls like regular Web Page");
-                TBH.AddLineBreak();
-                TBH.AddText("For Java- This action enable you to set the current active browser control and then locate a specific HTML element and run action on this element");
-            }
-        
-            public override string ActionEditPage { get { return "ActBrowserElementEditPage"; } }
-            public override bool ObjectLocatorConfigsNeeded { get { return false; } }
-            public override bool ValueConfigsNeeded { get { return false; } }
 
-            // return the list of platforms this action is supported on
-            public override List<ePlatformType> Platforms
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
+        {
+            TBH.AddText("Action to handle Browser and Widgets");
+            TBH.AddLineBreak();
+            TBH.AddText("Widget are Internet Explorer browser inside Java form, they contain their own HTML and can have many HTML controls like regular Web Page");
+            TBH.AddLineBreak();
+            TBH.AddText("For Java- This action enable you to set the current active browser control and then locate a specific HTML element and run action on this element");
+        }
+
+        public override string ActionEditPage { get { return "ActBrowserElementEditPage"; } }
+        public override bool ObjectLocatorConfigsNeeded { get { return false; } }
+        public override bool ValueConfigsNeeded { get { return false; } }
+
+        // return the list of platforms this action is supported on
+        public override List<ePlatformType> Platforms
+        {
+            get
             {
-                get
+                if (mPlatforms.Count == 0)
                 {
-                    if (mPlatforms.Count == 0)
-                    {
-                        mPlatforms.Add(ePlatformType.Java);
-                        mPlatforms.Add(ePlatformType.Web);
-                        mPlatforms.Add(ePlatformType.Mobile);
-                        mPlatforms.Add(ePlatformType.PowerBuilder);
-                        mPlatforms.Add(ePlatformType.Windows);
-                    }
-                    return mPlatforms;
+                    mPlatforms.Add(ePlatformType.Java);
+                    mPlatforms.Add(ePlatformType.Web);
+                    mPlatforms.Add(ePlatformType.Mobile);
+                    mPlatforms.Add(ePlatformType.PowerBuilder);
+                    mPlatforms.Add(ePlatformType.Windows);
                 }
+                return mPlatforms;
             }
+        }
 
         public enum eGotoURLType
         {
@@ -169,34 +170,34 @@ namespace GingerCore.Actions
 
 
         [IsSerializedForLocalRepository]
-            public eControlAction ControlAction { get; set; }
+        public eControlAction ControlAction { get; set; }
 
-            public override String ToString()
-            {
-                return "BrowserControl - " + ControlAction;
-            }
+        public override String ToString()
+        {
+            return "BrowserControl - " + ControlAction;
+        }
 
-            public override String ActionType
-            {
-                get
-                {
-                    return "BrowserControl: " + ControlAction.ToString();
-                }
-            }
-
-            public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }
-
-        public string ElementLocateValue
+        public override String ActionType
         {
             get
             {
-                return GetOrCreateInputParam(Fields.ElementLocateValue).Value;
+                return "BrowserControl: " + ControlAction.ToString();
+            }
+        }
+
+        public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }
+        public string PomGUID
+        {
+            get
+            {
+                return GetOrCreateInputParam(Fields.PomGUID).Value;
             }
             set
             {
-                GetOrCreateInputParam(Fields.ElementLocateValue).Value = value;
-                OnPropertyChanged(nameof(ElementLocateValue));
+                GetOrCreateInputParam(Fields.PomGUID).Value = value;
+                OnPropertyChanged(nameof(PomGUID));
             }
         }
+
     }
 }
