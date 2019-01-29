@@ -208,9 +208,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.TextBox,
                     IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.SetText,
-                                                                ActUIElement.eElementAction.SendKeys,
-                                                                ActUIElement.eElementAction.SetValue,
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.SetValue,
+                                                                ActUIElement.eElementAction.SetText,
+                                                                ActUIElement.eElementAction.SendKeys,                                                                
                                                                 ActUIElement.eElementAction.MultiSetValue,
                                                                 ActUIElement.eElementAction.ClearValue,
                                                                 ActUIElement.eElementAction.IsValuePopulated,
@@ -291,10 +291,11 @@ namespace GingerCore.Platforms.PlatformsInfo
                 {
                     ElementType = eElementType.TableItem,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Click,
+                    ElementOperationsList = new List<Enum>() {  
                                                                 ActUIElement.eElementAction.GetValue,
-                                                                ActUIElement.eElementAction.SetValue
-                                                                 }
+                                                                ActUIElement.eElementAction.SetValue,
+                                                                ActUIElement.eElementAction.Click,
+                                                              }
                 });
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
@@ -308,9 +309,10 @@ namespace GingerCore.Platforms.PlatformsInfo
                 {
                     ElementType = eElementType.Span,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.Click,
-                                                               ActUIElement.eElementAction.SetValue,
-                                                               ActUIElement.eElementAction.GetValue}
+                    ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.GetValue,
+                                                               ActUIElement.eElementAction.Click,
+                                                               ActUIElement.eElementAction.SetValue
+                                                               }
                 });
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
@@ -356,7 +358,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                 });
 
                 // adding generic/common actions per each ElementType
-                List<Enum> ElementCommonActionsList = new List<Enum>() {    ActUIElement.eElementAction.IsVisible,
+                List<Enum> ElementCommonActionsList = new List<Enum>() {                                                                            
+                                                                            ActUIElement.eElementAction.IsVisible,
                                                                             ActUIElement.eElementAction.IsDisabled,
                                                                             ActUIElement.eElementAction.IsEnabled,
                                                                             ActUIElement.eElementAction.Hover,                                                                            

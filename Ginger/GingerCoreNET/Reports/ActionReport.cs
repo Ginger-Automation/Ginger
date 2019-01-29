@@ -16,18 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
+using GingerCore;
+using GingerCore.DataSource;
+using GingerCore.Environments;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
 using System.Data;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.InterfacesLib;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.Environments;
-using GingerCore.DataSource;
-using GingerCore.Actions;
+using System.Linq;
 
 namespace Ginger.Reports
 {
@@ -186,6 +186,7 @@ namespace Ginger.Reports
              {
                  if (inputValues == null)
                  {
+                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                      inputValues = mAction.InputValues.Select(a => Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + GetValueForDriverWithoutDescrypting(a.Value))).ToList();
 
                      if ((mAction.GetInputValueListForVEProcessing() != null) && (mAction.GetInputValueListForVEProcessing().Count > 0))
@@ -418,11 +419,12 @@ namespace Ginger.Reports
             }
         }
     
-        //todo
+        //todo !!!!!!!!!!!!!!!!!!!! Why??
 
         private string GetValueForDriverWithoutDescrypting(string value)
         {
-            IValueExpression VE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(mExecutionEnviroment, WorkSpace.Businessflow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, RepositoryItemHelper.RepositoryItemFactory.GetVariaables());
+            // !!!!!!!!!!!!!!!!!!!!!!!!! should not use WorkSpace.BF here 
+            ValueExpression VE = new ValueExpression(mExecutionEnviroment, WorkSpace.Businessflow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, new ObservableList<GingerCore.Variables.VariableBase>());
             VE.DecryptFlag = false;
             VE.Value = value;
 

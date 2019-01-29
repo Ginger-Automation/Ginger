@@ -1082,5 +1082,10 @@ namespace GingerCore.Drivers.PBDriver
                 Thread.Sleep(1000);
             }
         }
+
+        public void StartSpying()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -941,10 +941,10 @@ namespace Ginger
                 //Insert
                 int insertIndex = xExtraOperationsMainMenuItem.Items.IndexOf(xSupportOptionsMenuItem) + 1;
 
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Public Site", "Support", xLoadPublicSiteMenuItem_Click, insertIndex++, iconType: eImageType.Website);               
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Support Site", "Support", xLoadSupportSiteMenuItem_Click, insertIndex++, iconType: eImageType.Website);
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Q&A Fourm Site", "Support", xLoadForumSiteMenuItem_Click, insertIndex++, iconType: eImageType.Forum);
-                AddSubMenuItem(xExtraOperationsMainMenuItem, "Raise Ticket to Core Team", "Support", xOpenTicketMenuItem_Click, insertIndex++, iconType: eImageType.Ticket);
-                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger on GitHub", "Support", xGingerGithubMenuItem_Click, insertIndex, iconType: eImageType.GitHub);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Raise Ticket to Core Team", "Support", xOpenTicketMenuItem_Click, insertIndex++, iconType: eImageType.Ticket);                
             }
         }
 
@@ -993,6 +993,16 @@ namespace Ginger
             }
 
             mSolutionPage.ShowAsWindow();
+        }
+
+        private void xCheckForUpgradeMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://ginger.amdocs.com/#downloads");
+        }
+
+        private void xLoadPublicSiteMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://ginger.amdocs.com/");
         }
     }
 }
