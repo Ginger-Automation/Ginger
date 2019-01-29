@@ -14,10 +14,12 @@ jobs:
   steps:
 
   - task: NuGetToolInstaller@0
+  - script: echo AFTER NuGetToolInstaller
 
   - task: NuGetCommand@2
     inputs:
       restoreSolution: '$(solution)'  
+- script: echo BEFORE VSBuild 
   - task: VSBuild@1
     inputs:
       solution: '$(solution)'
