@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Run.RunSetActions;
 using GingerCore;
+using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
@@ -121,8 +122,8 @@ namespace Ginger.Run
         {
             runner.SetExecutionEnvironment(RunsetExecutionEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
             runner.CurrentSolution = WorkSpace.Instance.Solution;
-            runner.SolutionAgents = RepositoryItemHelper.RepositoryItemFactory.GetAllIAgents();
-            runner.DSList = RepositoryItemHelper.RepositoryItemFactory.GetDatasourceList();
+            runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>(); 
+            runner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             runner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             runner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
         }
