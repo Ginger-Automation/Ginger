@@ -23,8 +23,9 @@ jobs:
       solution: '$(solution)'
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
-
+  - script: echo BEFORE Unit test
   - script: dotnet test "D:\a\1\s\Ginger\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
+  - script: echo AFTER Unit test
 
 
 
