@@ -95,21 +95,21 @@ namespace Ginger.Repository
 
 
  
-        public ObservableList<IDatabase> GetDatabaseList()
-        {
-            return new ObservableList<IDatabase>();
-        }
+        //public ObservableList<IDatabase> GetDatabaseList()
+        //{
+        //    return new ObservableList<IDatabase>();
+        //}
 
         public ObservableList<DataSourceBase> GetDatasourceList()
         {
-            return new ObservableList<DataSourceBase>();
+            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
         }
 
 
-        public ObservableList<IAgent> GetAllIAgents()
-        {
-            return new ObservableList<IAgent>( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x));
-        }
+        //public ObservableList<IAgent> GetAllIAgents()
+        //{
+        //    return new ObservableList<IAgent>( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x));
+        //}
   
         public void StartAgentDriver(IAgent agent)
         {

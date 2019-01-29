@@ -7,7 +7,7 @@ using System.Diagnostics;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.Reports;
 using amdocs.ginger.GingerCoreNET;
-
+using GingerCore;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -181,7 +181,7 @@ namespace Ginger.Run.RunSetActions
             Reporter.ToStatus(eStatusMsgKey.ExecutingRunSetAction, null, this.Name);
             try
             {
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Execution Started for the Run Set Operation from Type '{1}' and Name '{0}'", this.Name, this.Type));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("--> Execution Started for {0} Operation from Type '{1}' and Name '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name));
                 Status = RunSetActionBase.eRunSetActionStatus.Running;
                 Errors = null;
 
@@ -199,7 +199,7 @@ namespace Ginger.Run.RunSetActions
                     Status = RunSetActionBase.eRunSetActionStatus.Completed;
                 }
 
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Execution Ended for the Run Set Operation from Type '{1}' and Name '{0}'", this.Name, this.Type));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("<-- Execution Ended for {0} Operation from Type '{1}' and Name '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name));
             }
             finally
             {

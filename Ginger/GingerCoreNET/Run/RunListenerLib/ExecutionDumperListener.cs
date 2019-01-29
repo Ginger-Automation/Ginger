@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             Reset();
         }
 
-        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow)
+        public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
         {
             mBusinessFlowCounter++;
             mActivitiesCounter = 0;
@@ -73,13 +73,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             Directory.CreateDirectory(CurrentBusinessFlowFolder);
         }
 
-        public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow)
+        public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
             BusinessFlowReport businessFlowReport = new BusinessFlowReport(businessFlow);
             SaveObjToJSonFile(businessFlowReport, Path.Combine(mDumpFolder, CurrentBusinessFlowFolder, "BusinessFlowReport.txt"));
         }
 
-        public override void ActivityStart(uint eventTime, Activity activity)
+        public override void ActivityStart(uint eventTime, Activity activity, bool continuerun= false)
         {
             mActivitiesCounter++;
             mActionsCounter = 0;
@@ -87,7 +87,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             Directory.CreateDirectory(CurrentActivityFolder);
         }
 
-        public override void ActivityEnd(uint eventTime, Activity activity)
+        public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
             ActivityReport activityReport = new ActivityReport(activity);
             SaveObjToJSonFile(activityReport, Path.Combine(mDumpFolder, CurrentActivityFolder, "ActivityReport.txt"));
@@ -100,7 +100,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             Directory.CreateDirectory(CurrentActionFolder);
         }
 
-        public override void ActionEnd(uint eventTime, Act action)
+        public override void ActionEnd(uint eventTime, Act action, bool offlineMode = false)
         {            
             ActionReport actionReport = new ActionReport(action);
             SaveObjToJSonFile(actionReport, Path.Combine(CurrentActivityFolder, CurrentActionFolder, "ActionReport.txt"));
