@@ -19,13 +19,13 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
+using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.RunLib;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -51,8 +51,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
                 Directory.Delete(folder, true);
             }
 
-            SR = new SolutionRepository();
-            SR.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", PropertyNameForFileName: nameof(PluginPackage.PluginId));
+            SR = GingerSolutionRepository.CreateGingerSolutionRepository();            
             SR.CreateRepository(folder);
             SR.Open(folder);
             WorkSpace.Instance.SolutionRepository = SR;

@@ -69,7 +69,7 @@ namespace UnitTests.NonUITests
             a.DriverType = Agent.eDriverType.SeleniumFireFox;
             p2.Agent = a;
 
-            mGR.SolutionAgents = new ObservableList<IAgent>();
+            mGR.SolutionAgents = new ObservableList<Agent>();
             mGR.SolutionAgents.Add(a); 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "App1", Agent = a });
             // mGR.Platforms.Add(p2);
