@@ -2961,10 +2961,10 @@ namespace Ginger.Run
                 }
                 PostScopeVariableHandling(activity.Variables);
                 
-                    NotifyActivityEnd(activity);
+                NotifyActivityEnd(activity);
                
                 mLastExecutedActivity = activity;
-                GiveUserFeedback();                
+                GiveUserFeedback();
 
                 // handling ActivityGroup execution 
                 if (currentActivityGroup != null)
@@ -3136,7 +3136,10 @@ namespace Ginger.Run
                     else
                         return false;//can't do continue
                     if (mExecutedActivityWhenStopped != null && mExecutedBusinessFlowWhenStopped.Activities.Contains(mExecutedActivityWhenStopped))
+                    {
                         CurrentBusinessFlow.CurrentActivity = mExecutedActivityWhenStopped;
+                        CurrentBusinessFlow.ExecutionLogActivityCounter--;
+                    }
                     else
                         return false;//can't do continue
                     if (mExecutedActionWhenStopped != null && mExecutedActivityWhenStopped.Acts.Contains(mExecutedActionWhenStopped))
@@ -3253,7 +3256,7 @@ namespace Ginger.Run
                 //Start execution
                 if (doContinueRun == false)
                 {
-                    CurrentBusinessFlow.ExecutionLogActivityCounter = 0;
+                    CurrentBusinessFlow.ExecutionLogActivityCounter = 1;
                     // ((ExecutionLogger)ExecutionLogger).BusinessFlowStart(CurrentBusinessFlow);
                 }
 
