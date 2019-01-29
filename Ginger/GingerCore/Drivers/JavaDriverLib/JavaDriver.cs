@@ -2785,10 +2785,5 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             throw new NotImplementedException();
         }
-
-        public ObservableList<ElementLocator> GetLearningLocators()
-        {
-            return null;
-        }
     }
 }

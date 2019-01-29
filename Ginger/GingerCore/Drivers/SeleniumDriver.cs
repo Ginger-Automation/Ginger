@@ -4500,7 +4500,7 @@ namespace GingerCore.Drivers
 
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
         {
-            ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
+            ObservableList<ElementLocator> locatorsList = new Platforms.PlatformsInfo.WebPlatform().GetLearningLocators();
             IWebElement e = null;
 
             if (ElementInfo.ElementObject != null)
@@ -4514,21 +4514,42 @@ namespace GingerCore.Drivers
                 ElementInfo.ElementObject = e;
             }
 
-            // Organize based on better locators at start
-            string id = e.GetAttribute("id");
-            if (!string.IsNullOrEmpty(id))
+            foreach (ElementLocator elemLocator in locatorsList)
             {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByID, LocateValue = id, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
-            }
-            string name = e.GetAttribute("name");
-            if (!string.IsNullOrEmpty(name))
-            {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = name, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
-            }
-            list.Add(new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = ((HTMLElementInfo)ElementInfo).RelXpath , Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
-            list.Add(new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = ElementInfo.XPath, Help = "Recommended (sensitive to page design changes)", Active = true, IsAutoLearned = true });
+                // Organize based on better locators at start
+                if (elemLocator.LocateBy == eLocateBy.ByID)
+                {
+                    string id = e.GetAttribute("id");
+                    if (!string.IsNullOrEmpty(id))
+                    {
+                        elemLocator.LocateValue = id;
+                        elemLocator.IsAutoLearned = true;
+                    }
+                }
 
-            return list;
+                if (elemLocator.LocateBy == eLocateBy.ByName)
+                {
+                    string name = e.GetAttribute("name");
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        elemLocator.LocateValue = name;
+                        elemLocator.IsAutoLearned = true;
+                    }
+                }
+
+                if (elemLocator.LocateBy == eLocateBy.ByRelXPath)
+                {
+                    elemLocator.LocateValue = ((HTMLElementInfo)ElementInfo).RelXpath;
+                    elemLocator.IsAutoLearned = true;
+                }
+                if (elemLocator.LocateBy == eLocateBy.ByXPath)
+                {
+                    elemLocator.LocateValue = ElementInfo.XPath;
+                    elemLocator.IsAutoLearned = true;
+                }
+            }
+            locatorsList = new ObservableList<ElementLocator>(locatorsList.Where(x => x.IsAutoLearned).ToList());
+            return locatorsList;
         }
 
         string IWindowExplorer.GetFocusedControl()
@@ -6750,18 +6771,6 @@ namespace GingerCore.Drivers
                 Driver.SwitchTo().DefaultContent();
                 mIsDriverBusy = false;
             }
-
-        }
-
-        public ObservableList<ElementLocator> GetLearningLocators()
-        {
-            ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Very Recommended (usually unique)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Very Recommended (usually unique)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Very Recommended (usually unique)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Recommended (sensitive to page design changes)" });
-
-            return learningLocatorsList;
         }
     }
 }

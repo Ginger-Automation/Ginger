@@ -210,7 +210,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (mWizard.AutoMapElementLocatorsList.Count == 0)
             {
-                mWizard.AutoMapElementLocatorsList = mWizard.IWindowExplorerDriver.GetLearningLocators();
+                mWizard.AutoMapElementLocatorsList = new WebPlatform().GetLearningLocators();
             }
             xAutoMapElementLocatorsGrid.DataSourceList = mWizard.AutoMapElementLocatorsList;
         }

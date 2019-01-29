@@ -38,20 +38,20 @@
 
                 <Expander x:Name="xAutoMapElementLocatorsExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" Margin="0,0,0,15">
                     <Expander.Header>
-                        <Label x:Name="LocatorsExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
+                        <Label x:Name="xLocatorsExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
                             <Label.Content>
                                 <GingerCore:ucTextDicResource Text="Custom Locators Setting"/>
                             </Label.Content>
                         </Label>
                     </Expander.Header>
                     <Expander.Content>
-                        <Ginger:ucGrid x:Name="xAutoMapElementLocatorsGrid" Title="Locators:" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Collapsed"/>
+                        <Ginger:ucGrid x:Name="xAutoMapElementLocatorsGrid" AutomationProperties.AutomationId="AutoMapElementLocatorsGrid AID" Title="Locators:" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Collapsed"/>
                     </Expander.Content>
                 </Expander>
 
                 <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" >
                     <Expander.Header>
-                        <Label x:Name="PropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
+                        <Label x:Name="xPropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
                             <Label.Content>
                                 <GingerCore:ucTextDicResource Text="Elements Types to Auto Map"/>
                             </Label.Content>

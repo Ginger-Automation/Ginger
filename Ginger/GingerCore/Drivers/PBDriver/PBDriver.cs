@@ -1082,10 +1082,5 @@ namespace GingerCore.Drivers.PBDriver
                 Thread.Sleep(1000);
             }
         }
-
-        public ObservableList<ElementLocator> GetLearningLocators()
-        {
-            return null;
-        }
     }
 }

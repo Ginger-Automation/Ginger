@@ -482,5 +482,16 @@ namespace GingerCore.Platforms.PlatformsInfo
             }
             return list;
         }
+
+        public override ObservableList<ElementLocator> GetLearningLocators()
+        {
+            ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Very Recommended (usually unique)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Very Recommended (usually unique)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Very Recommended (usually unique)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Recommended (sensitive to page design changes)" });
+
+            return learningLocatorsList;
+        }
     }
 }

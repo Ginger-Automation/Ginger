@@ -1326,10 +1326,5 @@ namespace GingerCore.Drivers.InternalBrowserLib
         {
             throw new NotImplementedException();
         }
-
-        public ObservableList<ElementLocator> GetLearningLocators()
-        {
-            return null;
-        }
     }
 }

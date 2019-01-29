@@ -1421,10 +1421,5 @@ namespace GingerCore.Drivers.ASCF
         {
             throw new NotImplementedException();
         }
-
-        public ObservableList<ElementLocator> GetLearningLocators()
-        {
-            return null;
-        }
     }
 }

@@ -1495,10 +1495,5 @@ namespace GingerCore.Drivers.Appium
         {
             throw new NotImplementedException();
         }
-
-        public ObservableList<ElementLocator> GetLearningLocators()
-        {
-            return null;
-        }
     }
 }
