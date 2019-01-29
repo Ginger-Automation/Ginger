@@ -14,7 +14,8 @@ jobs:
   steps:
 
   - task: NuGetToolInstaller@0
-
+  - script: choco install nuget.commandline
+  
   - task: NuGetCommand@2
     inputs:
       restoreSolution: '$(solution)'  
