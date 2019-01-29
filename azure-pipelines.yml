@@ -19,8 +19,10 @@ jobs:
   - task: NuGetCommand@2
     inputs:
       restoreSolution: '$(solution)'  
+      
+  - script: dotnet restore -D:\a\1\s\Ginger    
   - task: VSBuild@1
-  - script: dotnet restore -D:\a\1\s\Ginger
+
     inputs:
       solution: '$(solution)'
       platform: '$(buildPlatform)'
