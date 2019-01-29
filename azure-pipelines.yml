@@ -24,7 +24,7 @@ jobs:
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
 
-  - script: dotnet vstest "D:\a\1\s\Ginger\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll" /TestCaseFilter:TestCategory=Level3 /Logger:trx
+  - script: dotnet test "D:\a\1\s\Ginger\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
 
 
 
