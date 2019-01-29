@@ -63,6 +63,11 @@ namespace GingerCore.Drivers.Mobile.Perfecto
 
         [UserConfigured]
         [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Perfecto Cloud Token, if set, token will be considered otherwise the user/pass will be considered")]
+        public String Perfecto_Token { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
         [UserConfiguredDescription("Perfecto Cloud device ID")]
         public String Perfecto_Device_ID { get; set; }
 
@@ -160,9 +165,16 @@ namespace GingerCore.Drivers.Mobile.Perfecto
         {
             DesiredCapabilities capabilities = new DesiredCapabilities("mobileOS", string.Empty, new Platform(PlatformType.Any));
 
-            capabilities.SetCapability("user", Perfecto_User_Name);
-            capabilities.SetCapability("password", Perfecto_Password);
-            //capabilities.SetCapability("securityToken", Perfecto_Password);
+            if (!string.IsNullOrEmpty(Perfecto_Token))
+            {
+                capabilities.SetCapability("securityToken", Perfecto_Token);
+            }
+            else
+            {
+                capabilities.SetCapability("user", Perfecto_User_Name);
+                capabilities.SetCapability("password", Perfecto_Password);
+            }
+
             capabilities.SetCapability("deviceName", Perfecto_Device_ID);
             capabilities.SetPerfectoLabExecutionId(Perfecto_Host_URL);
             return capabilities;
@@ -184,11 +196,21 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                     driverOptions = new SafariOptions();
                     break;
                 default:
+                    driverOptions = new AppiumOptions();
                     break;
             }
 
-            driverOptions.AddAdditionalCapability("user", Perfecto_User_Name);
-            driverOptions.AddAdditionalCapability("password", Perfecto_Password);
+            if (!string.IsNullOrEmpty(Perfecto_Token))
+            {
+                driverOptions.AddAdditionalCapability("securityToken", Perfecto_Token);
+
+            }
+            else
+            {
+                driverOptions.AddAdditionalCapability("user", Perfecto_User_Name);
+                driverOptions.AddAdditionalCapability("password", Perfecto_Password);
+            }
+
             driverOptions.AddAdditionalCapability("deviceName", Perfecto_Device_ID);
 
             return driverOptions;

@@ -22,10 +22,9 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Run;
 using Ginger.BusinessFlowWindows;
 using Ginger.ReporterLib;
 using Ginger.Reports;
@@ -37,7 +36,6 @@ using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
@@ -393,7 +391,7 @@ namespace Ginger
                 {
                     // This Ginger is running with run set config will do the run and close Ginger
                     WorkSpace.RunningInExecutionMode = true;
-                    Reporter.RunningInExecutionMode = true; //needed so all reportering will be added to Consol
+                    Reporter.ReportAllAlsoToConsole = true; //needed so all reportering will be added to Consol
                     //Reporter.AppLogLevel = eAppReporterLoggingLevel.Debug;//needed so all reportering will be added to Log file
                 }
             }
@@ -423,7 +421,7 @@ namespace Ginger
             Reporter.ToLog(eLogLevel.INFO, "######################## Application version " + App.AppVersion + " Started ! ########################");
 
             AppSplashWindow.LoadingInfo("Init Application");
-
+            WorkSpace.AppVersion = App.AppShortVersion;
             // We init the classes dictionary for the Repository Serializer only once
             InitClassTypesDictionary();
 
@@ -542,10 +540,7 @@ namespace Ginger
             // Add all RI classes from GingerCore
             NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActButton).Assembly); // GingerCore.dll
 
-            // add  old Plugins - TODO: remove later when we change to new plugins
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerPlugIns.ActionsLib.PlugInActionsBase).Assembly);
-
-
+            
             // add from Ginger
             NewRepositorySerializer.AddClassesFromAssembly(typeof(Ginger.App).Assembly);
 
@@ -579,8 +574,7 @@ namespace Ginger
             AddClass(list, typeof(RunSetActionSendSMS));
             AddClass(list, typeof(RunSetActionPublishToQC));
             AddClass(list, typeof(ActSetVariableValue));
-            AddClass(list, typeof(ActAgentManipulation));
-
+            AddClass(list, typeof(ActAgentManipulation));       
             AddClass(list, typeof(UserProfile));
             AddClass(list, typeof(Solution));
             AddClass(list, typeof(Email));
@@ -757,6 +751,7 @@ namespace Ginger
                 mLoadingSolution = true;
                 OnPropertyChanged(nameof(LoadingSolution));
 
+               
                 // Cleanup last loaded solution Plugins 
                 // WorkSpace.Instance.LocalGingerGrid.Reset();  //Clear the grid
 
@@ -773,7 +768,7 @@ namespace Ginger
 
                 //Cleanup
                 SolutionCleanup();
-
+                // !!!!!!!!!!!!! '\' is not good
                 if (!SolutionFolder.EndsWith(@"\")) SolutionFolder += @"\";
                 string SolFile = System.IO.Path.Combine(SolutionFolder, @"Ginger.Solution.xml");
                 if (File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(SolFile)))
@@ -806,7 +801,7 @@ namespace Ginger
 
                     if (sol != null)
                     {
-                        WorkSpace.Instance.SolutionRepository = CreateGingerSolutionRepository();
+                        WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
                         WorkSpace.Instance.SolutionRepository.Open(SolutionFolder);
 
                         WorkSpace.Instance.PlugInsManager.SolutionChanged(WorkSpace.Instance.SolutionRepository);
@@ -817,7 +812,7 @@ namespace Ginger
                         ValueExpression.SolutionFolder = SolutionFolder;
                         BusinessFlow.SolutionVariables = sol.Variables;
 
-                         WorkSpace.UserProfile.Solution = sol;
+                        WorkSpace.UserProfile.Solution = sol;
 
        
                         WorkSpace.UserProfile.Solution.SetReportsConfigurations();
@@ -933,9 +928,9 @@ namespace Ginger
         {
             App.AutomateTabGingerRunner.SolutionFolder = solution.Folder;
             List<IAgent> IAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x);
-            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<IAgent>(IAgents);
+            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<Agent>();
             App.AutomateTabGingerRunner.SolutionApplications = solution.ApplicationPlatforms;
-            List<DataSourceBase> DataSourceBases = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().ListItems.ConvertAll(x => (DataSourceBase)x); ;
+            List<DataSourceBase> DataSourceBases = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().ToList();
             App.AutomateTabGingerRunner.DSList= new ObservableList<DataSourceBase>(DataSourceBases);
 
             App.AutomateTabGingerRunner.CurrentSolution = solution;
@@ -958,40 +953,7 @@ namespace Ginger
 
 
 
-        public static SolutionRepository CreateGingerSolutionRepository()
-        {
-            SolutionRepository SR = new SolutionRepository();
-
-            SR.AddItemInfo<BusinessFlow>("*.Ginger.BusinessFlow.xml", @"~\BusinessFlows", true, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), PropertyNameForFileName: nameof(BusinessFlow.Name));
-
-            SR.AddItemInfo<ApplicationAPIModel>("*.Ginger.ApplicationAPIModel.xml", @"~\Applications Models\API Models", true, "API Models", PropertyNameForFileName: nameof(ApplicationAPIModel.Name));
-            SR.AddItemInfo<GlobalAppModelParameter>("*.Ginger.GlobalAppModelParameter.xml", @"~\Applications Models\Global Models Parameters", true, "Global Model Parameters", PropertyNameForFileName: nameof(GlobalAppModelParameter.PlaceHolder));
-            SR.AddItemInfo<ApplicationPOMModel>("*.Ginger.ApplicationPOMModel.xml", @"~\Applications Models\POM Models", true, "POM Models", PropertyNameForFileName: nameof(ApplicationPOMModel.Name));
-
-            SR.AddItemInfo<ProjEnvironment>("*.Ginger.Environment.xml", @"~\Environments", true, "Environments", PropertyNameForFileName: nameof(ProjEnvironment.Name));
-            SR.AddItemInfo<ALMDefectProfile>("*.Ginger.ALMDefectProfile.xml", @"~\ALMDefectProfiles", true, "ALM Defect Profiles", PropertyNameForFileName: nameof(ALMDefectProfile.Name));
-
-            SR.AddItemInfo<Agent>("*.Ginger.Agent.xml", @"~\Agents", true, "Agents", PropertyNameForFileName: nameof(Agent.Name));
-
-            //TODO: check if below 2 reports folders are realy needed
-            SR.AddItemInfo<HTMLReportConfiguration>("*.Ginger.HTMLReportConfiguration.xml", @"~\HTMLReportConfigurations", true, "HTMLReportConfigurations", PropertyNameForFileName: nameof(HTMLReportsConfiguration.Name));
-            SR.AddItemInfo<HTMLReportTemplate>("*.Ginger.HTMLReportTemplate.xml", @"~\HTMLReportConfigurations\HTMLReportTemplate", true, "HTMLReportTemplate", PropertyNameForFileName: nameof(HTMLReportTemplate.Name));
-
-            SR.AddItemInfo<ReportTemplate>("*.Ginger.ReportTemplate.xml", @"~\HTMLReportConfigurations\ReportTemplates", true, "ReportTemplates", PropertyNameForFileName: nameof(ReportTemplate.Name));
-
-            SR.AddItemInfo<DataSourceBase>("*.Ginger.DataSource.xml", @"~\DataSources", true, "Data Sources", PropertyNameForFileName: nameof(DataSourceBase.Name));
-
-            SR.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", PropertyNameForFileName: nameof(PluginPackage.PluginId));
-
-            SR.AddItemInfo<ActivitiesGroup>("*.Ginger.ActivitiesGroup.xml", @"~\SharedRepository\ActivitiesGroup", true, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, "Shared "), PropertyNameForFileName: nameof(ActivitiesGroup.Name));
-            SR.AddItemInfo<Activity>("*.Ginger.Activity.xml", @"~\SharedRepository\Activities", true, GingerDicser.GetTermResValue(eTermResKey.Activities, "Shared "), PropertyNameForFileName: nameof(Activity.ActivityName));
-            SR.AddItemInfo<Act>("*.Ginger.Action.xml", @"~\SharedRepository\Actions", true, "Shared Actions", PropertyNameForFileName: nameof(Act.Description));
-            SR.AddItemInfo<VariableBase>("*.Ginger.Variable.xml", @"~\SharedRepository\Variables", true, GingerDicser.GetTermResValue(eTermResKey.Variables, "Shared "), PropertyNameForFileName: nameof(VariableBase.Name));
-
-            SR.AddItemInfo<RunSetConfig>("*.Ginger.RunSetConfig.xml", @"~\RunSetConfigs", true, GingerDicser.GetTermResValue(eTermResKey.RunSets), PropertyNameForFileName: nameof(RunSetConfig.Name));
-
-            return SR;
-        }
+       
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
@@ -1110,10 +1072,14 @@ namespace Ginger
                 }
             }
 
-            if ( WorkSpace.UserProfile.Solution != null)
-                App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<IAgent>( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x=>(IAgent)x).ToList());
+            if (WorkSpace.UserProfile.Solution != null)
+            {
+                App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+            }
             else
+            {
                 App.AutomateTabGingerRunner.SolutionAgents = null;
+            }
             App.AutomateTabGingerRunner.UpdateApplicationAgents();
         }
 

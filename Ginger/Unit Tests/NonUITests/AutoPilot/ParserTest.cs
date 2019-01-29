@@ -31,7 +31,6 @@ namespace UnitTests.NonUITests.AutoPilot
 {
 
     [TestClass]
-    [Level1]
     public class ParserTest
     {
 

@@ -16,16 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
+using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
-using Amdocs.Ginger.CoreNET.RunLib;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -154,15 +156,16 @@ namespace Amdocs.Ginger.Repository
        
         public System.Diagnostics.Process StartService(string pluginId, string serviceID)
         {
+            Console.WriteLine("Staring Service...");
             if (string.IsNullOrEmpty(pluginId))
             {
                 throw new ArgumentNullException(nameof(pluginId));
             }
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
 
+            Console.WriteLine("Loading Plugin Services from JSON...");
             // TODO: only once !!!!!!!!!!!!!!!!!!!!!!!!! temp             
             pluginPackage.LoadServicesFromJSON();
-
 
             if (pluginPackage == null)
             {                
@@ -175,22 +178,55 @@ namespace Amdocs.Ginger.Repository
 
             string dll = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
 
-            string nodeFileName = NodeConfigFile.CreateNodeConfigFile(pluginId + "1", serviceID);  // !!!!! TODO: check if 1 exist then try 2,3 in case more than one same id service start
+            string nodeFileName = CreateNodeConfigFile(pluginId, serviceID);  
             string cmd = "dotnet \"" + dll + "\" \"" + nodeFileName + "\"";
-            System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);            
-            procStartInfo.UseShellExecute = true;
+
+            Console.WriteLine("Creating Process..");
+
+            // TODO: move to GingerUtils to start a process !!!!!!!!!!!!!!!!
+            System.Diagnostics.ProcessStartInfo procStartInfo = null;
+
+            if (GingerUtils.OperatingSystem.IsWindows())
+            {
+                procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
+                procStartInfo.UseShellExecute = true;
+            }
+            else if (GingerUtils.OperatingSystem.IsLinux())
+            {
+                cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";
+                Console.WriteLine("Command: " + cmd);
+                procStartInfo = new System.Diagnostics.ProcessStartInfo("/bin/bash", " " + cmd + " ");
+                procStartInfo.UseShellExecute = false;
+                procStartInfo.CreateNoWindow = false;
+                procStartInfo.RedirectStandardOutput = true;
+            }
             
             // TODO: Make it config not to show the console window
-           // procStartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            // procStartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
 
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo = procStartInfo;
+
+            Console.WriteLine("Staring Process..");
             proc.Start();
+            Thread.Sleep(30000);
+
             mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
+            Console.WriteLine("Plugin Running on the Process ID:" + proc.Id);
             return proc;
             //TODO: delete the temp file - or create temp files tracker with auto delete 
         }
 
+        int ServiceCounter = 0;
+        private string CreateNodeConfigFile(string name, string serviceId)
+        {
+            ServiceCounter++;
+            string NewName = name + " " + ServiceCounter;  // We add counter since this is auto start service and many can start so to identify
+            string txt = NewName + " | " + serviceId + " | " + SocketHelper.GetLocalHostIP() + " | " + WorkSpace.Instance.LocalGingerGrid.Port + Environment.NewLine;
+            string fileName = Path.GetTempFileName();
+            File.WriteAllText(fileName, txt);
+            return fileName;
+        }
 
         public void CloseAllRunningPluginProcesses()
         {

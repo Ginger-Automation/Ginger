@@ -1495,5 +1495,10 @@ namespace GingerCore.Drivers.Appium
         {
             throw new NotImplementedException();
         }
+
+        public void StartSpying()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
