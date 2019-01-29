@@ -108,7 +108,7 @@ namespace UnitTests.UITests.JavaDriverTest
                 a.Name = "Java Agent";
                 a.Driver = mDriver;
 
-                mGR.SolutionAgents = new ObservableList<IAgent>();
+                mGR.SolutionAgents = new ObservableList<Agent>();
                 mGR.SolutionAgents.Add(a);
 
                 ApplicationAgent AA = new ApplicationAgent();

@@ -5,29 +5,13 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
-namespace GingerUtils
+namespace GingerPluginCore
 {
+    // TODO; dup class with GingerUtils - combine
     public class Network
     {
 
         public static string GetFirstLocalHostIPAddress()
-        {
-            string networkIP = string.Empty;
-            if (OperatingSystem.IsWindows())
-            {
-                // use the Linux
-                // networkIP = GetFirstLocalHostIPAddress_Windows();
-                networkIP = GetFirstLocalHostIPAddress_Linux();
-            }
-            else if (OperatingSystem.IsLinux())
-            {
-                networkIP = GetFirstLocalHostIPAddress_Linux();
-            }
-            return networkIP;
-        }
-
-
-        public static string GetFirstLocalHostIPAddress_Linux()
         {
             List<UnicastIPAddressInformation> unicastIPAddressInformationList = GetIPAddressCollectionList().ToList();
 
@@ -37,6 +21,8 @@ namespace GingerUtils
                                                                         ?? string.Empty;
             return network;
         }
+
+
 
         public static List<string> GetLocalHostIPAddressesList()
         {
