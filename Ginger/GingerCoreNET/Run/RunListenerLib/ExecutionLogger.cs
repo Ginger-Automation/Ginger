@@ -1157,7 +1157,7 @@ namespace Ginger.Run
                 businessFlow.VariablesBeforeExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
                 businessFlow.SolutionVariablesBeforeExec = businessFlow.GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
                 System.IO.Directory.CreateDirectory(businessFlow.ExecutionLogFolder);
-                businessFlow.ExecutionLogActivityCounter = 0;
+                businessFlow.ExecutionLogActivityCounter = 1;
                 foreach (Activity activity in businessFlow.Activities)
                 {   
                     ActivitiesGroup currentActivityGroup = businessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
