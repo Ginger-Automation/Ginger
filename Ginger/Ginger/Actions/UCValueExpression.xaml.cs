@@ -132,7 +132,6 @@ namespace Ginger.Actions
         {
             ValueExpressionEditorPage w = new ValueExpressionEditorPage(obj, AttrName, HideVEBusinessFlowAndActivityVariables);
             w.ShowAsWindow();
-            ValueTextBox.Text = Convert.ToString(obj.GetType().GetProperty(AttrName).GetValue(obj));
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
