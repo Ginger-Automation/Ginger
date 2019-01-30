@@ -15,12 +15,10 @@ using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GingerWeb.UsersLib
 {
-    
+
     public class General
     {
         public static SolutionRepository SR;
@@ -35,7 +33,15 @@ namespace GingerWeb.UsersLib
             WorkSpace.Init(ws);
 
             // WorkSpace.Instance.OpenSolution(@"C:\yaron\GingerSolution\Plugins\Plugins");
-            OpenSolution(@"C:\yaron\GingerSolution\Plugins\Plugins");
+            //OpenSolution(@"C:\yaron\GingerSolution\Plugins\Plugins");
+            if (GingerUtils.GingerOS.IsWindows())
+            {
+                OpenSolution(@"C:\Work\GINGER_WS_TEST");
+            }
+            else if (GingerUtils.GingerOS.IsLinux())
+            {
+                OpenSolution(@"/home/ginger/ginger_tests/ginger_solutions/TestSolution");
+            }
             WorkSpace.Instance.Solution = (Solution)(ISolution)SR.RepositorySerializer.DeserializeFromFile(Path.Combine(SR.SolutionFolder, "Ginger.Solution.xml"));
 
             var gg = WorkSpace.Instance.LocalGingerGrid;
@@ -48,13 +54,12 @@ namespace GingerWeb.UsersLib
         // Combine to one in core !!!!!!!!!!!!!!!!!!!!!
 
         private static void OpenSolution(string sFolder)
-        {            
+        {    
+            
+            Console.WriteLine("Inside OpenSolution.. Opening Solution at folder: " + sFolder);
 
             if (Directory.Exists(sFolder))
             {
-
-                Console.WriteLine("Opening Solution at folder: " + sFolder);
-
                 SR = new SolutionRepository();
                 SR.AddItemInfo<BusinessFlow>("*.Ginger.BusinessFlow.xml", @"~\BusinessFlows", true, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), PropertyNameForFileName: nameof(BusinessFlow.Name));
 
@@ -86,8 +91,6 @@ namespace GingerWeb.UsersLib
 
                 WorkSpace.Instance.SolutionRepository = SR;
                 SR.Open(sFolder);
-
-
             }
             else
             {
