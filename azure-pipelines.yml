@@ -20,7 +20,7 @@ jobs:
       displayName: Install .Net Core 2.2
 
   - task: NuGetToolInstaller@0  
-      displayName: Run NuGet Tool Installer
+    displayName: Run NuGet Tool Installer
 
   - task: NuGetCommand@2
     inputs:
