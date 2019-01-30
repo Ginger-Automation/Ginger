@@ -13,19 +13,24 @@ jobs:
     solutionDIrectory:  'Ginger-Automation/Ginger'
   steps:
 
+  - task: DotNetCoreInstaller@0
+  inputs:
+    packageType: 'sdk' # Options: runtime, sdk
+    version: '2.2.0' 
+
   - task: NuGetToolInstaller@0
   # - script: echo AFTER NuGetToolInstaller
 
-  #- task: NuGetCommand@2
-  #  inputs:
-  #    command: restore  
-  #    restoreSolution: '$(solution)'  
-  #    configuration: '$(BuildConfiguration)'
-  #  displayName: Restore Ginger Solution Nuget Packages
+  - task: NuGetCommand@2
+    inputs:
+      command: restore  
+      restoreSolution: '$(solution)'  
+      configuration: '$(BuildConfiguration)'
+    displayName: Restore Ginger Solution Nuget Packages
 
   # - script: echo BEFORE VSBuild 
   # - script: @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe" '$(solution)'
-  - script: MSBuild.exe -restore "D:\a\1\s\Ginger\Ginger.sln"
+  - script: MSBuild.exe "D:\a\1\s\Ginger\Ginger.sln"
     workingDirectory: C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\
     displayName: Yaron Build 
   # - task: VSBuild@1
