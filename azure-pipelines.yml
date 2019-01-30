@@ -25,7 +25,8 @@ jobs:
   - task: NuGetCommand@2
     inputs:
       command: restore  
-      restoreSolution: '$(solution)'  
+    #  restoreSolution: '$(solution)'  
+      restoreSolution: 'D:\a\1\s\Ginger\GingerCoreCommonTest\GingerCoreCommonTest.csproj'  
       configuration: '$(BuildConfiguration)'
     displayName: Restore Ginger Solution Nuget Packages
   
@@ -33,6 +34,7 @@ jobs:
     inputs:
       solution: 'D:\a\1\s\Ginger\GingerCoreCommonTest\GingerCoreCommonTest.csproj'      
     displayName: Build GingerPluginCoreTest Project
+
 
   # - script: @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe" '$(solution)'
   # - script: MSBuild.exe "D:\a\1\s\Ginger\Ginger.sln"
