@@ -66,6 +66,8 @@ namespace Amdocs.Ginger.Common
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.RecommendNewVersion, new StatusMsg(eStatusMsgType.INFO, "Upgrade Required", "Newer version of Ginger exist." + System.Environment.NewLine + "You can download the latest version from http://cmitechint1srv:8089/", true, "Upgrade"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.SaveItem, new StatusMsg(eStatusMsgType.PROCESS, "Saving", "Saving '{0}' {1}"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExitMode, new StatusMsg(eStatusMsgType.INFO, "Oops...", "Ginger was not closed properly. Please turn to support team."));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExportItem, new StatusMsg(eStatusMsgType.PROCESS, "Exporting", "Exporting '{0}' {1}"));
+
             #endregion General Application Messages
 
             #region Solution Messages
@@ -85,10 +87,12 @@ namespace Amdocs.Ginger.Common
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.StartAgents, new StatusMsg(eStatusMsgType.PROCESS, "Starting Agent/s", "Starting the agent/s:{0}"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.CreateAgentTip, new StatusMsg(eStatusMsgType.INFO, "Tip!", "Create a new 'Agent' which match to your " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " platform to allow platform connection"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.MainframeIncorrectConfiguration, new StatusMsg(eStatusMsgType.INFO, "Mainframe Server not Available", "Mainframe server is not available on configured address and port . Please Check configuration"));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.StartAgentFailed, new StatusMsg(eStatusMsgType.INFO, "Start Agent Failed", "'{0}'"));
             #endregion Agents Messages
 
             #region BusinessFlows Messages
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.CreateBusinessFlowTip, new StatusMsg(eStatusMsgType.INFO, "Tip!", "Start automating by creating a new '" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "' and shifting to the 'Automate' tab"));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.BusinessFlowConversion, new StatusMsg(eStatusMsgType.PROCESS, "Converting Actions", "Converting the Actions of the '{0}' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)));
             #endregion BusinessFlows Messages
 
             #region Execution Messages
@@ -99,7 +103,7 @@ namespace Amdocs.Ginger.Common
             #region Import/Export Messages
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ALMTestSetImport, new StatusMsg(eStatusMsgType.PROCESS, "Importing QC/ALM Test Set", "Importing the ALM Test Set: '{0}'"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExportItemToALM, new StatusMsg(eStatusMsgType.PROCESS, "Exporting to ALM", "Exporting the item: '{0}'"));
-
+            
             #endregion Import/Export Messages
 
             #region BusinessFlows Messages

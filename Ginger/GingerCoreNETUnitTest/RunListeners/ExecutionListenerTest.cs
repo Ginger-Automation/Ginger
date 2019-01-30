@@ -8,6 +8,7 @@ using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GingerCoreNETUnitTest.RunListeners
@@ -30,7 +31,7 @@ namespace GingerCoreNETUnitTest.RunListeners
             //mExecutionLogger.ExecutionLogfolder = @"c:\temp\koko1";
             //mExecutionLogger.Configuration.ExecutionLoggerConfigurationIsEnabled = true; // !!!!!!!!!!!!!!!!!!!!! remove this flag            
             //mGingerRunner.RunListeners.Add(mExecutionLogger);
-            mExecutionLogger = (ExecutionLogger)mGingerRunner.RunListeners[1];   // !!!!!!!!!!!!!!!!
+            mExecutionLogger = (ExecutionLogger)mGingerRunner.RunListeners.Where(x=>x.GetType()==typeof(ExecutionLogger)).FirstOrDefault();   // !!!!!!!!!!!!!!!!
         }
 
         [ClassCleanup]

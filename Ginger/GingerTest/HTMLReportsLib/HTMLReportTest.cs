@@ -18,10 +18,10 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerTestHelper;
-using GingerWPFUnitTest;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
@@ -64,7 +64,7 @@ namespace GingerTest
             CopyDir.Copy(sourceFolder, solutionFolder);
 
             SolutionRepository SR = new SolutionRepository();
-            SR = Ginger.App.CreateGingerSolutionRepository();
+            SR = GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.Open(solutionFolder);
           
             SR.Close();
