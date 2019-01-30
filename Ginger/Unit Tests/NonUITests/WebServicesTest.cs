@@ -412,7 +412,8 @@ namespace UnitTests.NonUITests
             mAG.Agent = wsAgent;
 
             mGR = new GingerRunner();
-            mGR.SolutionAgents = new ObservableList<IAgent>();
+            mGR.SolutionAgents = new ObservableList<Agent>();
+
             mGR.SolutionAgents.Add(wsAgent);
 
             mGR.BusinessFlows.Add(mBF);
