@@ -19,7 +19,7 @@ jobs:
   - task: NuGetCommand@2
     inputs:
       restoreSolution: '$(solution)'  
-- script: echo BEFORE VSBuild 
+  - script: echo BEFORE VSBuild 
   - task: VSBuild@1
     inputs:
       solution: '$(solution)'
