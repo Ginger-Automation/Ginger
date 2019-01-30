@@ -24,7 +24,7 @@ jobs:
 
   - script: echo BEFORE VSBuild 
   # - script: @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe" '$(solution)'
-  - script: MSBuild.exe '$(solution)'  
+  - script: MSBuild.exe "D:\a\1\s\Ginger\"
     workingDirectory: C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\
     displayName: Yaron Build 
   # - task: VSBuild@1
