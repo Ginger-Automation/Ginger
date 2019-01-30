@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using GingerPluginCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
@@ -42,7 +42,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
         private static void SetLocalHostIP()
         {
-            LocalHostIP = GingerUtils.Network.GetFirstLocalHostIPAddress();
+            LocalHostIP = Network.GetFirstLocalHostIPAddress();
             Console.WriteLine("Selected '" + LocalHostIP + "' as Local Host IP");
         }
 

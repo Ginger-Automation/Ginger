@@ -1,8 +1,8 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions.PlugIns;
@@ -12,7 +12,6 @@ using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
-using System.Linq;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
@@ -56,7 +55,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             // Add the plugin to solution
             WorkSpace.Init(new WorkSpaceEventHandler());
-            WorkSpace.Instance.SolutionRepository = Ginger.App.CreateGingerSolutionRepository();
+            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
             string solutionfolder = TestResources.GetTestTempFolder("sol1");
             if (Directory.Exists(solutionfolder))

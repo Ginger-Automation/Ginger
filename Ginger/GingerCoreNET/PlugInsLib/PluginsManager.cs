@@ -22,7 +22,6 @@ using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
-using Amdocs.Ginger.CoreNET.RunLib;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -157,7 +156,7 @@ namespace Amdocs.Ginger.Repository
        
         public System.Diagnostics.Process StartService(string pluginId, string serviceID)
         {
-            Console.WriteLine("Staring Service...");
+            Console.WriteLine("Starting Service...");
             if (string.IsNullOrEmpty(pluginId))
             {
                 throw new ArgumentNullException(nameof(pluginId));
@@ -184,6 +183,7 @@ namespace Amdocs.Ginger.Repository
 
             Console.WriteLine("Creating Process..");
 
+            // TODO: move to GingerUtils to start a process !!!!!!!!!!!!!!!!
             System.Diagnostics.ProcessStartInfo procStartInfo = null;
 
             if (GingerUtils.OperatingSystem.IsWindows())
@@ -207,9 +207,8 @@ namespace Amdocs.Ginger.Repository
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo = procStartInfo;
 
-            Console.WriteLine("Staring Process..");
-            proc.Start();
-            Thread.Sleep(30000);
+            Console.WriteLine("Starting Process..");
+            proc.Start();            
 
             mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
             Console.WriteLine("Plugin Running on the Process ID:" + proc.Id);
