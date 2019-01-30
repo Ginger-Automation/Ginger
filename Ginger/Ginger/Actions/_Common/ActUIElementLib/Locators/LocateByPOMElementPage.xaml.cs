@@ -76,7 +76,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             DataContext = this;
 
-            SetControlsGridView();
+            SetControlsGridView();          
 
             mLocateValue = (string)mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).GetValue(mObjectLocateValue);
 
@@ -109,7 +109,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                             xPOMElementsGrid.Grid.SelectedItem = selectedPOMElement;
                             SetElementTypeProperty(selectedPOMElement.ElementTypeEnum);
 
-                            xPOMElementTextBox.Text = selectedPOMElement.ElementName;
+                            xSelectedElementTextBox.Text = selectedPOMElement.ElementName;
                             HighlightButton.IsEnabled = true;
                         }
                     }
@@ -151,10 +151,10 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 mSelectedPOM = (ApplicationPOMModel)selectedPOMs[0];
                 SetPOMPathToShow();
                 xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
-                xPOMElementTextBox.Text = string.Empty;
+                xSelectedElementTextBox.Text = string.Empty;
                 mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, string.Empty);
                 SetElementTypeProperty(eElementType.Unknown);
-                SelectElement();
+                AllowElementSelection();
             }
         }
 
@@ -175,9 +175,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
-        private void SelectElement()
+        private void AllowElementSelection()
         {
-            xPOMElementTextBox.Visibility = Visibility.Collapsed;
+            xSelectedElementTextBox.Visibility = Visibility.Collapsed;
             xPOMElementsGrid.Visibility = Visibility.Visible;
             xSelectElement.Visibility = Visibility.Visible;
             xPOMElementsGrid.Refresh();
@@ -188,7 +188,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             string pathToShow;
             pathToShow = mSelectedPOM.FilePath.Substring(0, mSelectedPOM.FilePath.LastIndexOf("\\")).Substring(mPOMModelFolder.FolderFullPath.Length) + @"\" + mSelectedPOM.ItemName;
-            xHTMLReportFolderTextBox.Text = pathToShow;
+            xSelectedPOMTextBox.Text = pathToShow;
         }
 
         private void POMElementComboBox_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
@@ -198,18 +198,18 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void SelectElement_Click(object sender, RoutedEventArgs e)
         {
-            SelectElement();
+            AllowElementSelection();
         }
 
         private void EndSelectingElement()
         {
-            xPOMElementTextBox.Visibility = Visibility.Visible;
+            xSelectedElementTextBox.Visibility = Visibility.Visible;
             xPOMElementsGrid.Visibility = Visibility.Collapsed;
             xSelectElement.Visibility = Visibility.Collapsed;
             ArrowExpended = false;
             if ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem != null)
             {
-                xPOMElementTextBox.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
+                xSelectedElementTextBox.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
                 string POMAndElementGuids = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
                 mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, POMAndElementGuids);
                 SetElementTypeProperty(((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum);
@@ -254,14 +254,29 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
             else
             {
-                SelectElement();
+                AllowElementSelection();
             }
         }
 
         private void SelectElementsClicked(object sender, RoutedEventArgs e)
         {
+            SetSelectedElement();
+        }
+    
+        private void XPOMElementsGrid_RowDoubleClick(object sender, EventArgs e)
+        {
+            SetSelectedElement();
+        }
+
+        private void SetSelectedElement()
+        {
             EndSelectingElement();
             ElementChangedEvent();
+        }
+
+        private void XPOMElementTextBox_MouseClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            AllowElementSelection();
         }
     }
 }
