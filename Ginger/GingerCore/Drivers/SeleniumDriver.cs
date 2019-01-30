@@ -63,7 +63,6 @@ namespace GingerCore.Drivers
             Chrome,
             Edge,
             RemoteWebDriver,
-            PhantomJS
         }
         [UserConfigured]
         [UserConfiguredDescription("Proxy Server:Port")]
@@ -463,12 +462,7 @@ namespace GingerCore.Drivers
                         break;
                     #endregion
 
-                    #region PhantomJS - No More Supported
-                    case eBrowserType.PhantomJS:
-
-                        throw new NotSupportedException("Support for PhantomJS is ended");                        
-
-                    #endregion
+                  
 
                     #region Safari - To be Added
                     //TODO: add Safari

@@ -1128,9 +1128,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="CI\updateGingerAgentVersion.vbs" />
-    <Content Include="Drivers\PhantomJS\phantomjs.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Exports\ExportToJava\BusinessFlowJavaTemplate.java" />
     <Compile Include="PlugInsWindows\PlugInsPage.xaml.cs">
       <DependentUpon>PlugInsPage.xaml</DependentUpon>
