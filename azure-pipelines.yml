@@ -16,11 +16,11 @@ jobs:
   - task: DotNetCoreInstaller@0
     inputs:
       packageType: 'sdk' # Options: runtime, sdk
-      version: '2.2.0' 
+      version: '2.2.1' 
       displayName: Install .Net Core 2.2
 
-  - task: NuGetToolInstaller@0
-  # - script: echo AFTER NuGetToolInstaller
+  - task: NuGetToolInstaller@0  
+      displayName: Run NuGet Tool Installer
 
   - task: NuGetCommand@2
     inputs:
@@ -28,8 +28,7 @@ jobs:
       restoreSolution: '$(solution)'  
       configuration: '$(BuildConfiguration)'
     displayName: Restore Ginger Solution Nuget Packages
-
-  # - script: echo BEFORE VSBuild 
+  
   # - script: @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe" '$(solution)'
   - script: MSBuild.exe "D:\a\1\s\Ginger\Ginger.sln"
     workingDirectory: C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\
