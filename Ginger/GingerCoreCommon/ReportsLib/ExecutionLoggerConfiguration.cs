@@ -36,6 +36,8 @@ namespace Ginger.Reports
         }
 
 
+        // Why we serialzie!!?
+
         [IsSerializedForLocalRepository]
         public long Seq { get; set; }
 

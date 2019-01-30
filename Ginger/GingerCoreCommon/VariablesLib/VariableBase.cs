@@ -307,7 +307,7 @@ namespace GingerCore.Variables
                 object value = null;
                 try
                 {
-                    if (mi.MemberType == MemberTypes.Property && PI != null)
+                    if (mi.MemberType == MemberTypes.Property && PI != null && PI.CanRead)
                     {
                         value = PI.GetValue(item);
                     }

@@ -244,7 +244,8 @@ namespace GingerCore.Actions
             set
             {
                 mWait = value;
-                WaitVE = value.ToString();
+                if(WaitVE==null)
+                    WaitVE = value.ToString();
             }
         }
 

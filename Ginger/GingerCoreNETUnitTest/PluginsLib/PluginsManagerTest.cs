@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -69,8 +70,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
                 Directory.Delete(path, true);
             }
 
-            SolutionRepository solutionRepository = new SolutionRepository();
-            solutionRepository.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", PropertyNameForFileName: nameof(PluginPackage.PluginId));
+            SolutionRepository solutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             solutionRepository.CreateRepository(path);
             solutionRepository.Open(path);            
             

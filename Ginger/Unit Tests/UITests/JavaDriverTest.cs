@@ -23,6 +23,7 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.Actions.Java;
 using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Drivers.JavaDriverLib;
@@ -107,7 +108,7 @@ namespace UnitTests.UITests.JavaDriverTest
                 a.Name = "Java Agent";
                 a.Driver = mDriver;
 
-                mGR.SolutionAgents = new ObservableList<IAgent>();
+                mGR.SolutionAgents = new ObservableList<Agent>();
                 mGR.SolutionAgents.Add(a);
 
                 ApplicationAgent AA = new ApplicationAgent();
@@ -1113,5 +1114,125 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actSelectInternalFrame.ActReturnValues.FirstOrDefault().Actual, "Internal Frame 1", "ExInfo");
             Assert.AreEqual(actSelectInternalFrame.Error, null, "Act.Error");
         }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ACtUIElementGetValue()
+        {
+            ActUIElement action = new ActUIElement();
+            action.ElementLocateBy = eLocateBy.ByName;
+            action.ElementLocateValue = "jtxtArea";
+            action.ValueForDriver = "jtxtArea";
+            action.AddNewReturnParams = true;
+
+            action.ElementAction = ActUIElement.eElementAction.GetValue;
+            action.Active = true;
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+
+            //Act
+            mGR.RunAction(action, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+            Assert.AreEqual(action.ReturnValues.FirstOrDefault().Actual, "Sample", "ExInfo");
+            Assert.AreEqual(action.Error, null, "Act.Error");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ACtUIElementSetValue()
+        {
+            ActUIElement action = new ActUIElement();
+            action.ElementLocateBy = eLocateBy.ByName;
+            action.ElementLocateValue = "jtxtArea";
+            action.ValueForDriver = "jtxtArea";
+
+            action.ElementAction = ActUIElement.eElementAction.SetValue;
+            action.Value = "Testing";
+            action.ValueForDriver = "Testing";
+            action.Active = true;
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+           
+            //Act
+            mGR.RunAction(action, false);
+
+            //Assert
+            var IsExpectedExInfo = action.ExInfo.Contains(@"Text Area Value Set to - Testing");
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+            Assert.AreEqual(true, IsExpectedExInfo);
+            Assert.AreEqual(action.Error, null, "Act.Error");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ACtUIElementIsEnabled()
+        {
+            ActUIElement action = new ActUIElement();
+            action.ElementLocateBy = eLocateBy.ByName;
+            action.ElementLocateValue = "btnClickMe5";
+            action.ValueForDriver = "btnClickMe5";
+            action.ElementType = eElementType.Button;
+            action.ElementAction = ActUIElement.eElementAction.IsEnabled;
+            action.Active = true;
+            action.AddNewReturnParams = true;
+
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+
+            //Act
+            mGR.RunAction(action, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+            Assert.AreEqual(action.ReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
+            Assert.AreEqual(action.Error, null, "Act.Error");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ACtUIElementButtonClick()
+        {
+            ActUIElement action = new ActUIElement();
+            action.ElementLocateBy = eLocateBy.ByName;
+            action.ElementLocateValue = "btnClickMe5";
+            action.ValueForDriver = "btnClickMe5";
+            action.ElementType = eElementType.Button;
+            action.ElementAction = ActUIElement.eElementAction.Click;
+            action.Active = true;
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+
+            //Act
+            mGR.RunAction(action, false);
+
+            //Assert
+            var IsExpectedExInfo = action.ExInfo.Contains(@"Click Activity Passed");
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+            Assert.AreEqual(true, IsExpectedExInfo);
+            Assert.AreEqual(action.Error, null, "Act.Error");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ACtUIElementSelectComboBoxValue()
+        {
+            ActUIElement action = new ActUIElement();
+            action.ElementLocateBy = eLocateBy.ByName;
+            action.ElementLocateValue = "Country";
+            action.Value = "India";
+            action.ElementAction = ActUIElement.eElementAction.Select;
+            action.Active = true;
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+            //Act
+            mGR.RunAction(action, false);
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+            Assert.AreEqual(action.Error, null, "Act.Error");
+        }
+
+       
     }
 }
