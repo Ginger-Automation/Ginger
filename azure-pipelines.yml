@@ -17,6 +17,7 @@ jobs:
   inputs:
     packageType: 'sdk' # Options: runtime, sdk
     version: '2.2.0' 
+    displayName: Install .Net Core 2.2
 
   - task: NuGetToolInstaller@0
   # - script: echo AFTER NuGetToolInstaller
