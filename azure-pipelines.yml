@@ -28,7 +28,7 @@ jobs:
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
       restoreNugetPackages: true
-
+  - script: dotnet restore
   - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
   - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
   - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerCoreNetUnitTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreNetUnitTest.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
