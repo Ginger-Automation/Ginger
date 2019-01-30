@@ -270,7 +270,7 @@ namespace Ginger.Run
                 {
                     Parallel.ForEach(mRunSetConfig.GingerRunners, Runner =>
                     {
-                        Runner.SolutionAgents = new ObservableList<IAgent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x).ToList());
+                        Runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
                         //to get the latest list of applications agents
                         Runner.UpdateApplicationAgents();
                     });

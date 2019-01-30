@@ -885,12 +885,5 @@ namespace GingerCore
             }
         }
 
-        ePlatformType IAgent.Platform
-        {
-            get
-            {
-                return Platform;
-            }            
-        }
     }
 }
