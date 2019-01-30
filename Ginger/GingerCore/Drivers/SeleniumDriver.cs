@@ -323,7 +323,7 @@ namespace GingerCore.Drivers
 
                         if (Use64Bitbrowser)
                         {
-                            string IEdriver64bitpath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Locati‌​on) + @"\Drivers\IE64BitDriver");
+                            string IEdriver64bitpath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Locati‌​on) + @"\StaticDrivers\IE64BitDriver");
                             IEService = InternetExplorerDriverService.CreateDefaultService(IEdriver64bitpath);
                         }
                         else
