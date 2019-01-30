@@ -31,7 +31,7 @@ jobs:
   
   - task: VSBuild@1
     inputs:
-      Project:'D:\a\1\s\Ginger\GingerCoreCommonTest.csproj'      
+      solution: 'D:\a\1\s\Ginger\GingerCoreCommonTest.csproj'      
     displayName: Build GingerPluginCoreTest Project
 
   # - script: @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe" '$(solution)'
