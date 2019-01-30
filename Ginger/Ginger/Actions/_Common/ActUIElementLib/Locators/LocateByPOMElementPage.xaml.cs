@@ -77,8 +77,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             DataContext = this;
 
-            SetControlsGridView();          
-
+            SetControlsGridView();
+            AllowElementSelection();
             mLocateValue = (string)mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).GetValue(mObjectLocateValue);
             if (!string.IsNullOrWhiteSpace(mLocateValue))
             {
@@ -203,7 +203,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 ArrowDownButton.Visibility = Visibility.Visible;
                 HighlightButton.Visibility = Visibility.Visible;
                 xPOMElementTextBox.Visibility = Visibility.Collapsed;
-                xPOMTitleLbl.Visibility = Visibility.Collapsed;
+                xPOMTitleLbl.Visibility = Visibility.Visible;
                 xPOMElementsGrid.Visibility = Visibility.Visible;
                 xSelectElement.Visibility = Visibility.Visible;
                 xPOMElementsGrid.Refresh();
@@ -215,7 +215,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             string pathToShow;
             pathToShow = mSelectedPOM.FilePath.Substring(0, mSelectedPOM.FilePath.LastIndexOf("\\")).Substring(mPOMModelFolder.FolderFullPath.Length) + @"\" + mSelectedPOM.ItemName;
-            xSelectedPOMTextBox.Text = pathToShow;
+            xHTMLReportFolderTextBox.Text = pathToShow;
         }
 
         private void POMElementComboBox_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
@@ -230,13 +230,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void EndSelectingElement()
         {
-            xSelectedElementTextBox.Visibility = Visibility.Visible;
+            xPOMElementTextBox.Visibility = Visibility.Visible;
             xPOMElementsGrid.Visibility = Visibility.Collapsed;
             xSelectElement.Visibility = Visibility.Collapsed;
             ArrowExpended = false;
             if ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem != null)
             {
-                xSelectedElementTextBox.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
+                xPOMElementTextBox.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
                 string POMAndElementGuids = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
                 mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, POMAndElementGuids);
                 SetElementTypeProperty(((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum);
