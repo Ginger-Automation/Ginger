@@ -3716,7 +3716,7 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception ex)
                     {
-                       Reporter.ToLog(eLogLevel.ERROR, string.Format("Falied to learn the Web Element '{0}'", htmlNode.Name), ex);
+                       Reporter.ToLog(eLogLevel.DEBUG, string.Format("Falied to learn the Web Element '{0}'", htmlNode.Name), ex);
                     }
                 }
             }
@@ -4549,6 +4549,15 @@ namespace GingerCore.Drivers
             if (isSpyExist == "no")
             {
                 InjectGingerLiveSpy();
+                try
+                {
+                    ((IJavaScriptExecutor)Driver).ExecuteScript("GingerLibLiveSpy.StartEventListner()");
+                }
+                catch
+                {
+                    mListnerCanBeStarted = false;
+                    Reporter.ToLog(eLogLevel.DEBUG, "Spy Listener cannot be started");
+                }
             }
         }
 
@@ -4570,6 +4579,8 @@ namespace GingerCore.Drivers
             }
         }
 
+        bool mListnerCanBeStarted = true;
+
         ElementInfo IWindowExplorer.GetControlFromMousePosition()
         {
             Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
@@ -4579,17 +4590,7 @@ namespace GingerCore.Drivers
                 Driver.SwitchTo().DefaultContent();
                 IWebElement el;
                 InjectSpyIfNotIngected();
-                bool listnerCanBeStarted = true;
-                try
-                {
-                    ((IJavaScriptExecutor)Driver).ExecuteScript("GingerLibLiveSpy.StartEventListner()");
-                }
-                catch
-                {
-                    listnerCanBeStarted = false;
-                }
-
-                if (listnerCanBeStarted)
+                if (mListnerCanBeStarted)
                 {
                     string XPoint = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.GetXPoint();");
                     string YPoint = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.GetYPoint();");
@@ -4678,7 +4679,7 @@ namespace GingerCore.Drivers
         public string GenerateXpathForIWebElement(IWebElement IWE, string current)
         {
             if (IWE.TagName == "html")
-                return "/" + IWE.TagName + current;
+                return "/" + IWE.TagName +"[1]" + current;
 
             IWebElement parentElement = IWE.FindElement(By.XPath(".."));
             ReadOnlyCollection<IWebElement> childrenElements = parentElement.FindElements(By.XPath("./" + IWE.TagName));
@@ -6782,6 +6783,12 @@ namespace GingerCore.Drivers
                 mIsDriverBusy = false;
             }
 
+        }
+
+        void IWindowExplorer.StartSpying()
+        {
+            Driver.SwitchTo().DefaultContent();
+            InjectSpyIfNotIngected();
         }
     }
 }

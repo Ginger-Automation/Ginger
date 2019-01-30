@@ -42,9 +42,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GingerPluginCore, Version=3.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ginger.Plugin.Core.3.1.2\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
-    </Reference>
     <Reference Include="GingerTestHelper, Version=1.0.0.5, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GingerTestHelper.1.0.5\lib\netstandard2.0\GingerTestHelper.dll</HintPath>
     </Reference>
@@ -80,6 +77,10 @@
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj">
       <Project>{6FACD2AB-8747-473B-AF43-5B6691775F62}</Project>
       <Name>GingerCoreNET</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj">
+      <Project>{67ECC7F4-78D3-4260-BBE1-20688942C6D1}</Project>
+      <Name>GingerPluginCore</Name>
     </ProjectReference>
     <ProjectReference Include="..\GingerWPFDriverWindow\GingerWPFDriverWindow.csproj">
       <Project>{ca67e1dd-06cd-442d-aa1f-f4f01d6ca2c5}</Project>

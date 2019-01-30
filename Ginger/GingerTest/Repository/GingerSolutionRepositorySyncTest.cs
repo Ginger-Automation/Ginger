@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
 using Ginger.Repository.ItemToRepositoryWizard;
@@ -47,7 +48,7 @@ namespace GingerTest
 
             // Creating workspace
             WorkSpace.Init(new WorkSpaceEventHandler());
-            WorkSpace.Instance.SolutionRepository = Ginger.App.CreateGingerSolutionRepository();
+            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
             // Init SR
             mSolutionRepository = WorkSpace.Instance.SolutionRepository;
@@ -72,7 +73,7 @@ namespace GingerTest
                 Directory.Delete(TempRepositoryFolder, true);
             }
 
-            SR = Ginger.App.CreateGingerSolutionRepository();
+            SR = GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.Open(TempRepositoryFolder);
 
             SR.Close();
