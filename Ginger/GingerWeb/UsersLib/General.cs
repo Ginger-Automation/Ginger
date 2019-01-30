@@ -28,11 +28,11 @@ namespace GingerWeb.UsersLib
 
             // WorkSpace.Instance.OpenSolution(@"C:\yaron\GingerSolution\Plugins\Plugins");
             //OpenSolution(@"C:\yaron\GingerSolution\Plugins\Plugins");
-            if (GingerUtils.OperatingSystem.IsWindows())
+            if (GingerUtils.GingerOS.IsWindows())
             {
                 OpenSolution(@"C:\Work\GINGER_WS_TEST");
             }
-            else if (GingerUtils.OperatingSystem.IsLinux())
+            else if (GingerUtils.GingerOS.IsLinux())
             {
                 OpenSolution(@"/home/ginger/ginger_tests/ginger_solutions/TestSolution");
             }
