@@ -208,8 +208,7 @@ namespace Amdocs.Ginger.Repository
             proc.StartInfo = procStartInfo;
 
             Console.WriteLine("Staring Process..");
-            proc.Start();
-            Thread.Sleep(30000);
+            proc.Start();            
 
             mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
             Console.WriteLine("Plugin Running on the Process ID:" + proc.Id);
