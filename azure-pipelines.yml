@@ -21,9 +21,12 @@ jobs:
       command: restore  
       restoreSolution: '$(solution)'  
       configuration: '$(BuildConfiguration)'
+
   - script: echo BEFORE VSBuild 
   # - script: @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe" '$(solution)'
-  - script: Invoke-BuildTools '$(solution)'  
+  - script: MSBuild.exe '$(solution)'  
+    workingDirectory: C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\
+    displayName: Yaron Build 
   # - task: VSBuild@1
   #  inputs:
   #    solution: '$(solution)'
