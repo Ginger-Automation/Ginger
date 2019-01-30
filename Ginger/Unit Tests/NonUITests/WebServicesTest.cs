@@ -423,24 +423,16 @@ namespace UnitTests.NonUITests
             Activity2.CurrentAgent = wsAgent;
             mBF.Activities.Add(Activity2);
 
-            ActWebAPISoap actSoapUi = new ActWebAPISoap();
+            ActSoapUI actSoapUi = new ActSoapUI();
 
             var xmlFilePath = TestResources.GetTestResourcesFile(@"XML\calculator_soapui_project.xml");
 
             actSoapUi.AddOrUpdateInputParamValue(ActSoapUI.Fields.ImportFile, xmlFilePath);
-
+            
             mBF.Activities[0].Acts.Add(actSoapUi);
 
-            if (actSoapUi.ActInputValues.Count > 0)
-            {
-                foreach (var item in actSoapUi.ActInputValues)
-                {
-                    if (item.Value.ToString().Contains(xmlFilePath))
-                    {
-                        Assert.AreEqual(true, item.Value.ToString().Contains(xmlFilePath));
-                    }
-                }
-            }
+            Assert.AreEqual(6, actSoapUi.ActInputValues.Count);
+            Assert.AreEqual(xmlFilePath, actSoapUi.ActInputValues[1].Value.ToString());
 
         }
 
