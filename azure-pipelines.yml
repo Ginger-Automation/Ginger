@@ -30,13 +30,14 @@ jobs:
     displayName: Restore Ginger Solution Nuget Packages
   
   # - script: @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe" '$(solution)'
-  - script: MSBuild.exe "D:\a\1\s\Ginger\Ginger.sln"
-    workingDirectory: C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\
-    displayName: Yaron Build 
-  # - task: VSBuild@1
-  #  inputs:
-  #    solution: '$(solution)'
-  #
+  # - script: MSBuild.exe "D:\a\1\s\Ginger\Ginger.sln"
+  #  workingDirectory: C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\
+  #  displayName: Yaron Build 
+  - task: VSBuild@1
+    inputs:
+      solution: '$(solution)'
+    displayName: Build Ginger Solution
+  
   # platform: '$(buildPlatform)'
   #    configuration: '$(buildConfiguration)'
   # - script: echo BEFORE Unit test
