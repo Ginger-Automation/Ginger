@@ -14,16 +14,16 @@ jobs:
   steps:
 
   - task: NuGetToolInstaller@0
-  - script: echo AFTER NuGetToolInstaller
+  # - script: echo AFTER NuGetToolInstaller
 
-  - task: NuGetCommand@2
-    inputs:
-      command: restore  
-      restoreSolution: '$(solution)'  
-      configuration: '$(BuildConfiguration)'
-    displayName: Restore Nuget Packages
+  #- task: NuGetCommand@2
+  #  inputs:
+  #    command: restore  
+  #    restoreSolution: '$(solution)'  
+  #    configuration: '$(BuildConfiguration)'
+  #  displayName: Restore Ginger Solution Nuget Packages
 
-  - script: echo BEFORE VSBuild 
+  # - script: echo BEFORE VSBuild 
   # - script: @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe" '$(solution)'
   - script: MSBuild.exe "D:\a\1\s\Ginger\Ginger.sln"
     workingDirectory: C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\
@@ -34,10 +34,10 @@ jobs:
   #
   # platform: '$(buildPlatform)'
   #    configuration: '$(buildConfiguration)'
-  - script: echo BEFORE Unit test
+  # - script: echo BEFORE Unit test
   - script: dotnet test "D:\a\1\s\Ginger\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
     displayName: Test GingerCoreCommonTest Level 1
-  - script: echo AFTER Unit test
+  # - script: echo AFTER Unit test
 
 
 
