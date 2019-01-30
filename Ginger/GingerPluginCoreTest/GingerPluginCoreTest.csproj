@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AssemblyVersion>2.2</AssemblyVersion>
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+    <RuntimeIdentifiers>win7-x64;win-7x86;ubuntu.16.10-x64</RuntimeIdentifiers>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
