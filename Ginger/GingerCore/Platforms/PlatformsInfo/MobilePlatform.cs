@@ -343,5 +343,10 @@ namespace GingerCore.Platforms.PlatformsInfo
             }
             return list;
         }
+
+        public override ObservableList<ElementLocator> GetLearningLocators()
+        {
+            return null;
+        }
     }
 }
