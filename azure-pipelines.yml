@@ -39,17 +39,26 @@ jobs:
       msbuildArchitecture: 'x86' # Optional. Options: x86, x64
     displayName: Build GingerPluginCoreTest Project
 
+  - task: VSBuild@1
+    inputs:
+      solution: 'D:\a\1\s\Ginger\Ginger.sln'
+      platform: 'x86'
+      clean: true
+      restoreNugetPackages: true
+      msbuildArchitecture: 'x86' # Optional. Options: x86, x64
+    displayName: Build GingerPluginCoreTest Project
+
 
   # - script: @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe" '$(solution)'
   # - script: MSBuild.exe "D:\a\1\s\Ginger\Ginger.sln"
   #  workingDirectory: C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\
   #  displayName: Yaron Build 
-  - task: VSBuild@1
-    inputs:
-      solution:'D:\a\1\s\Ginger\Ginger.sln'          
-      # solution: '$(solution)'
-      # solution: 'D:\a\1\s\Ginger\Ginger\Ginger.csproj'                      
-    displayName: Build Ginger Solution
+  # - task: VSBuild@1
+   # inputs:
+   #   solution:'D:\a\1\s\Ginger\Ginger.sln'          
+   #   # solution: '$(solution)'
+   #   # solution: 'D:\a\1\s\Ginger\Ginger\Ginger.csproj'                      
+   # displayName: Build Ginger Solution
   
   # platform: '$(buildPlatform)'
   #    configuration: '$(buildConfiguration)'
