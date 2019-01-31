@@ -85,6 +85,7 @@ namespace Ginger.ALM.QC.TreeViewItems
 
         public void IsTestSetAlreadyImported()
         {
+            string validBFName = string.Empty;
             AlreadyImported = false;
             MappedBusinessFlow = null;
             MappedBusinessFlowPath = "None";
@@ -96,7 +97,8 @@ namespace Ginger.ALM.QC.TreeViewItems
                     {
                         AlreadyImported = true;
                         MappedBusinessFlow = bf;
-                        MappedBusinessFlowPath = System.IO.Path.Combine(bf.ContainingFolder, bf.Name);                       
+                        validBFName = Amdocs.Ginger.IO.PathHelper.CleanInValidPathChars(bf.Name);
+                        MappedBusinessFlowPath = System.IO.Path.Combine(bf.ContainingFolder, validBFName);                       
                         break;
                     }
                 }
