@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore.Environments;
 using GingerTestHelper;
@@ -44,7 +45,7 @@ namespace GingerTest
             CreateTestSolution();
             
             // Init SR
-            mSolutionRepository = Ginger.App.CreateGingerSolutionRepository();
+            mSolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             Ginger.App.InitClassTypesDictionary();            
             string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTemp");            
             mSolutionRepository.Open(TempRepositoryFolder);
@@ -61,7 +62,7 @@ namespace GingerTest
             }
 
             
-            SR = Ginger.App.CreateGingerSolutionRepository();
+            SR = GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.Open(TempRepositoryFolder);
 
             ProjEnvironment E1 = new ProjEnvironment() { Name = "E1" };
