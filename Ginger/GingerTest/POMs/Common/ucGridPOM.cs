@@ -45,7 +45,7 @@ namespace GingerTest.POMs.Common
             throw new Exception("Grid item not found for: " + property + "=" + value);
         }
 
-        public void ClickOnCheckBox(string checkboxHeaderValue, string fieldToSearchOnHeader, string fieldValueToSearch, bool prioritizeLocators = false, bool clickCheckBox = false, int newIndex = -1)
+        public void ClickOnCheckBox(string checkboxHeaderValue, string fieldToSearchOnHeader, string fieldValueToSearch)
         {
             foreach (var item in mGrid.DataSourceList)
             {
@@ -74,30 +74,35 @@ namespace GingerTest.POMs.Common
                             checkbox = General.GetVisualChild<CheckBox>(cell);
                         }
 
-                        if (!prioritizeLocators || (prioritizeLocators && clickCheckBox))
-                        {
-                            checkbox.IsChecked = !checkbox.IsChecked;
-                        }
+                        checkbox.IsChecked = !checkbox.IsChecked;
                     });
-
-                    if(prioritizeLocators)
-                    {
-                        ReArrangeLocators(item, newIndex);
-                        break;
-                    }
-
                 }
             }
         }
 
-        public void ReArrangeLocators(object item, int prioritizedValue)
+        public void ReOrderGridRows(string fieldToSearchOnHeader, string fieldValueToSearch, int newIndex)
         {
-            Execute(() =>
+            foreach (var item in mGrid.DataSourceList)
             {
-                int i = mGrid.Grid.Items.IndexOf(item);
-                mGrid.DataSourceList.Move(i, prioritizedValue);
-                mGrid.ScrollToViewCurrentItem();
-            });
+                string actualFieldName = item.GetType().GetProperty(fieldToSearchOnHeader).GetValue(item).ToString();
+                if (actualFieldName == fieldValueToSearch)
+                {
+                    Execute(() =>
+                    {
+                        mGrid.Grid.SelectedItem = item;
+                        mGrid.ScrollToViewCurrentItem();
+                    });
+
+                    Execute(() =>
+                    {
+                        int currentIndex = mGrid.Grid.Items.IndexOf(item);
+                        mGrid.DataSourceList.Move(currentIndex, newIndex);
+                        mGrid.ScrollToViewCurrentItem();
+                    });
+
+                    break;
+                }
+            }
         }
     }
 }

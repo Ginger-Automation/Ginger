@@ -54,7 +54,11 @@ namespace GingerTest.POMs
             int locatorIndex = 0;
             foreach (ElementLocator elemLocator in prioritizedLocatorsList)
             {
-                ucElementLocatorsGridPOM.ClickOnCheckBox(nameof(ElementLocator.Active), nameof(ElementLocator.LocateBy), elemLocator.LocateBy.ToString(), true, !elemLocator.Active, locatorIndex);
+                if(!elemLocator.Active)
+                    ucElementLocatorsGridPOM.ClickOnCheckBox(nameof(ElementLocator.Active), nameof(ElementLocator.LocateBy), elemLocator.LocateBy.ToString());
+
+                ucElementLocatorsGridPOM.ReOrderGridRows(nameof(ElementLocator.LocateBy), elemLocator.LocateBy.ToString(), locatorIndex);
+
                 locatorIndex++;
             }
 
