@@ -23,10 +23,10 @@ namespace Amdocs.Ginger.Repository
 {
     public class SolutionRepositoryItemInfo<T> : SolutionRepositoryItemInfoBase
     {
-        private ObservableList<T> mAllItemsCache = null;
         private readonly object mAllItemsCacheLock = new object();
         private bool mDoneAllCache = false;
-        
+
+        private ObservableList<T> mAllItemsCache = null;
         private ObservableList<T> AllItemsCache
         {
             get
@@ -52,9 +52,9 @@ namespace Amdocs.Ginger.Repository
 
         public void AddItemToCache(T newItem)
         {
-            lock (mAllItemsCache)
+            lock (AllItemsCache)
             {
-                mAllItemsCache.Add(newItem);
+                AllItemsCache.Add(newItem);
             }
         }
 
@@ -95,7 +95,7 @@ namespace Amdocs.Ginger.Repository
         internal T GetItemByGuid(Guid guid)
         {
             //TODO: first look in items cache instead of getting all items
-            foreach(T x in mAllItemsCache)
+            foreach(T x in AllItemsCache)
             {
                 RepositoryItemBase RI = (RepositoryItemBase)(object)x;
                 if (RI.Guid == guid)
@@ -156,7 +156,7 @@ namespace Amdocs.Ginger.Repository
 
         internal bool AllItemsContains(T item)
         {
-            if (mAllItemsCache.Contains(item))
+            if (AllItemsCache.Contains(item))
             {
                 return true;
             }
@@ -201,7 +201,7 @@ namespace Amdocs.Ginger.Repository
             // Lock in case 2 remove will happen from seperate threads
             lock (mAllItemsCacheLock)
             {
-                mAllItemsCache.Remove(item);
+                AllItemsCache.Remove(item);
             }
         }
 

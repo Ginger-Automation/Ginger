@@ -42,8 +42,10 @@ namespace GingerCoreNET.RunLib
         /// Create nwe GingerGrid and auto select free port
         /// </summary>
         public GingerGrid()
-        {            
-            mPort = SocketHelper.GetOpenPort();
+        {           
+            // !!!!!!!!!!!!!!!!!!!!!!
+            // mPort = SocketHelper.GetOpenPort(); // Fix me later to get random free port when we need several Gingers running on same machine
+            mPort = 15001;
         }
 
         public void Start()

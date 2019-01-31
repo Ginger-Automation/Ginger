@@ -999,8 +999,8 @@ namespace Ginger
         {
             App.AutomateTabGingerRunner.ProjEnvironment = App.AutomateTabEnvironment;
             App.AutomateTabGingerRunner.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
-            App.AutomateTabGingerRunner.DSList = new ObservableList<DataSourceBase>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().ListItems.ConvertAll(x => (DataSourceBase)x).ToList());
-            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<IAgent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x).ToList());
+            App.AutomateTabGingerRunner.DSList = new ObservableList<DataSourceBase>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<Agent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>());
             App.AutomateTabGingerRunner.SolutionApplications =  WorkSpace.UserProfile.Solution.ApplicationPlatforms;
 
             SetGingerRunnerSpeed();
