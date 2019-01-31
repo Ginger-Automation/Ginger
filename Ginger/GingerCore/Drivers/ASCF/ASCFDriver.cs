@@ -1421,5 +1421,10 @@ namespace GingerCore.Drivers.ASCF
         {
             throw new NotImplementedException();
         }
+
+        public void StartSpying()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

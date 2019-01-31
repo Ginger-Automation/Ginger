@@ -68,7 +68,7 @@ namespace UnitTests.NonUITests
            
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
-            mGR.SolutionAgents = new ObservableList<IAgent>();
+            mGR.SolutionAgents = new ObservableList<Agent>();
             mGR.SolutionAgents.Add(a);
 
             mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
