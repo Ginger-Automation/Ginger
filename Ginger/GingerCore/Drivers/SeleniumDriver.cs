@@ -4402,16 +4402,27 @@ namespace GingerCore.Drivers
 
                 if (ElementInfo.ElementTypeEnum == eElementType.TextBox || ElementInfo.ElementTypeEnum == eElementType.Text ||
                     ElementInfo.ElementTypeEnum == eElementType.ComboBox || ElementInfo.ElementTypeEnum == eElementType.ComboBoxOption ||
-                    ElementInfo.ElementTypeEnum == eElementType.List || ElementInfo.ElementTypeEnum == eElementType.ListItem ||
-                    ElementInfo.ElementTypeEnum == eElementType.Div || ElementInfo.ElementTypeEnum == eElementType.Span)
+                    ElementInfo.ElementTypeEnum == eElementType.List || ElementInfo.ElementTypeEnum == eElementType.ListItem)
                 {
                     bool isDefault = false;
                     foreach (IWebElement val in el.FindElements(By.XPath("*")))
                     {
                         if (!string.IsNullOrEmpty(val.Text))
                         {
-                            ElementInfo.OptionalVals.Add(new OptionalValue() { Value = val.Text, IsDefault = !isDefault });
-                            isDefault = true;
+                            string[] tempOpVals = val.Text.Split('\n');
+                            if (tempOpVals != null && tempOpVals.Length > 1)
+                            {
+                                foreach (string cuVal in tempOpVals)
+                                {
+                                    ElementInfo.OptionalVals.Add(new OptionalValue() { Value = cuVal, IsDefault = !isDefault });
+                                    isDefault = true;
+                                }
+                            }
+                            else
+                            {
+                                ElementInfo.OptionalVals.Add(new OptionalValue() { Value = val.Text, IsDefault = !isDefault });
+                                isDefault = true; 
+                            }
                         }
                     }
                     list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OpValsString });

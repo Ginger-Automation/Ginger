@@ -291,9 +291,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         Margin = new Thickness(10, 0, 0, 0)
                     };
 
+                    eLocateBy SelectedLocType = (eLocateBy)((GingerCore.General.ComboEnumItem)ElementLocateByComboBox.SelectedItem).Value;
+                    if (SelectedLocType == eLocateBy.POMElement)
+                    {
+                        comboBox.ComboBoxObject.Style = this.FindResource("@InputComboBoxStyle") as Style; 
+                    }
+
                     comboBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
                     ((Ginger.UserControlsLib.UCComboBox)comboBox).ComboBox.ItemsSource = element.PossibleValues;
-
                     ((Ginger.UserControlsLib.UCComboBox)comboBox).ComboBox.SelectedValue = element.DefaultValue;
                     dynamicPanel.Children.Add(elementLabel);
                     dynamicPanel.Children.Add(comboBox);

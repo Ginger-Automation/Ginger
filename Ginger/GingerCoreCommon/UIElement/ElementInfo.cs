@@ -218,11 +218,33 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
+        List<String> mOptionalValues = new List<string>();
         [IsSerializedForLocalRepository]
-        public List<String> OptionalValues = new List<string>();
+        public List<String> OptionalValues
+        {
+            get
+            {
+                return mOptionalValues;
+            }
+            set
+            {
+                mOptionalValues = value;
+            }
+        }
 
+        ObservableList<OptionalValue> mOptionalVals = new ObservableList<OptionalValue>();
         [IsSerializedForLocalRepository]
-        public ObservableList<OptionalValue> OptionalVals = new ObservableList<OptionalValue>();
+        public ObservableList<OptionalValue> OptionalVals
+        {
+            get
+            {
+                return mOptionalVals;
+            }
+            set
+            {
+                mOptionalVals = value;
+            }
+        }
 
         public string OpValsString
         {

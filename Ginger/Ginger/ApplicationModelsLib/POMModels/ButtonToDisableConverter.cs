@@ -15,8 +15,8 @@ namespace Ginger.ApplicationModelsLib
             if(value != null && !string.IsNullOrEmpty((string)value))
             {
                 string eType = ((string)value).ToLower();
-                if (eType.StartsWith("input.text".ToLower()) || eType.StartsWith("select".ToLower()) || eType.StartsWith("ComboBox".ToLower()) ||
-                    eType.StartsWith("List".ToLower()) || eType == "Div".ToLower() || eType == "Span".ToLower() || eType == "ul".ToLower())
+                if (eType.StartsWith("input.text".ToLower()) || eType.StartsWith("select".ToLower()) || 
+                    eType.StartsWith("ComboBox".ToLower()) ||eType == "Span".ToLower() || eType == "ul".ToLower())
                 {
                     isEnabled = true;
                 }

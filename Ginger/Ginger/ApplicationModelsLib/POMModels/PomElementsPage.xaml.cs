@@ -290,20 +290,25 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 List<string> lstParName = new List<string>();
                 foreach (var prms in mElements)
                 {
-                    string parName = prms.ItemName.Replace("\r", "").Split('\n')[0];
-                    int count = lstParName.Where(p => p == parName).Count();
-                    lstParName.Add(parName);
-                    if(count > 0)
+                    if (prms.ElementTypeEnum == eElementType.TextBox || prms.ElementTypeEnum == eElementType.Text ||
+                        prms.ElementTypeEnum == eElementType.ComboBox || prms.ElementTypeEnum == eElementType.ComboBoxOption ||
+                        prms.ElementTypeEnum == eElementType.List || prms.ElementTypeEnum == eElementType.ListItem)
                     {
-                        parName = string.Format("{0}_{1}", parName, count);
-                    }
+                        string parName = prms.ItemName.Replace("\r", "").Split('\n')[0];
+                        int count = lstParName.Where(p => p == parName).Count();
+                        lstParName.Add(parName);
+                        if (count > 0)
+                        {
+                            parName = string.Format("{0}_{1}", parName, count);
+                        }
 
-                    AppParameters par = new AppParameters();
-                    par.ItemName = parName;
-                    par.OptionalValuesList = prms.OptionalVals;
-                    par.OptionalValuesString = prms.OpValsString;
-                    par.Description = prms.Description;
-                    parameters.Add(par);
+                        AppParameters par = new AppParameters();
+                        par.ItemName = parName;
+                        par.OptionalValuesList = prms.OptionalVals;
+                        par.OptionalValuesString = prms.OpValsString;
+                        par.Description = prms.Description;
+                        parameters.Add(par); 
+                    }
                 }
             }
             catch (System.Exception ex)
