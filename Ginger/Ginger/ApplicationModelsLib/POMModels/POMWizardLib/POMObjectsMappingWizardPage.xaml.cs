@@ -41,7 +41,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();                      
         PomAllElementsPage mPomAllElementsPage = null;
         List<eElementType> mSelectedElementTypesList = new List<eElementType>();
-        
+
         public POMObjectsMappingWizardPage()
         {
             InitializeComponent();                       
@@ -156,6 +156,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             try
             {
                 ElementInfo EI = ((ObservableList<ElementInfo>)sender).Last();
+                List<eLocateBy> mElementLocatorsList = mWizard.AutoMapElementLocatorsList.Select(x => x.LocateBy).ToList();
+
+                List<ElementLocator> orderedLocatorsList = EI.Locators.OrderBy(m => mElementLocatorsList.IndexOf(m.LocateBy)).ToList();
+                foreach(ElementLocator elemLoc in orderedLocatorsList)
+                {
+                    elemLoc.Active = mWizard.AutoMapElementLocatorsList.Where(m => m.LocateBy == elemLoc.LocateBy).FirstOrDefault().Active;
+                }
+                EI.Locators = new ObservableList<ElementLocator>(orderedLocatorsList);
 
                 if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
                 {
