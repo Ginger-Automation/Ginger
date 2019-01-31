@@ -41,10 +41,11 @@ namespace GingerWPF.WizardLib
 
         List<ValidationError> mValidationErrors = new List<ValidationError>();
 
-        public static void ShowWizard(WizardBase wizard, double width = 800, bool DoNotShowAsDialog = false)
+        public static void ShowWizard(WizardBase wizard, double width = 800, double height = 800, bool DoNotShowAsDialog = false)
         {
             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Width = width;
+            wizardWindow.Height = height;
 
             if (DoNotShowAsDialog)
             {
@@ -297,7 +298,7 @@ namespace GingerWPF.WizardLib
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantMoveWhileInProcess, "Cancel");
+                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Cancel");
             }
             else
             {

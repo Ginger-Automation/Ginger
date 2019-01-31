@@ -40,7 +40,7 @@ namespace Amdocs.Ginger.Common.UIElement
             {
                 switch (DeltaStatus)
                 {
-                    case ElementInfo.eDeltaStatus.Equal:
+                    case ElementInfo.eDeltaStatus.Unchanged:
                         return eImageType.UnModified;
                     case ElementInfo.eDeltaStatus.Deleted:
                         return eImageType.Deleted;
@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.Common.UIElement
         {
             get
             {
-                if (DeltaStatus == eDeltaStatus.Equal)
+                if (DeltaStatus == eDeltaStatus.Unchanged)
                 {
                     return false;
                 }

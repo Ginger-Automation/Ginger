@@ -6768,6 +6768,13 @@ namespace GingerCore.Drivers
             {
                 mIsDriverBusy = true;
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+
+                foreach (ElementInfo EI in mOriginalList)
+                {
+                    EI.ElementStatus = ElementInfo.eElementStatus.Pending;
+                }
+
+
                 foreach (ElementInfo EI in mOriginalList)
                 {
                     try
@@ -6777,13 +6784,15 @@ namespace GingerCore.Drivers
                         if (e != null)
                         {
                             EI.ElementObject = e;
+                            EI.ElementStatus = ElementInfo.eElementStatus.Passed;
                         }
                         else
                         {
                             EI.DeltaStatus = ElementInfo.eDeltaStatus.Deleted;
+                            EI.ElementStatus = ElementInfo.eElementStatus.Failed;
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         EI.DeltaStatus = ElementInfo.eDeltaStatus.Deleted;
                     }

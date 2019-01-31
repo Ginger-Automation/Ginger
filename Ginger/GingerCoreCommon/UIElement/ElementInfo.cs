@@ -266,7 +266,7 @@ namespace Amdocs.Ginger.Common.UIElement
 
 
 
-        private bool mIsSelected = true;
+        private bool mIsSelected = false;
         public bool IsSelected
         {
             get
@@ -287,6 +287,7 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public enum eElementGroup
         {
+            All,
             Mapped,
             Unmapped
         }
@@ -315,7 +316,8 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public enum eDeltaStatus
         {
-            Equal,
+            All,
+            Unchanged,
             Deleted,
             Modified,
             New
@@ -345,14 +347,14 @@ namespace Amdocs.Ginger.Common.UIElement
             {
                 switch (DeltaStatus)
                 {
-                    case eDeltaStatus.Equal:
+                    case eDeltaStatus.Unchanged:
                         return eImageType.UnModified;
                     case eDeltaStatus.Deleted:
                         return eImageType.Deleted;
                     case eDeltaStatus.Modified:
                         return eImageType.Modified;
                     case eDeltaStatus.New:
-                        return eImageType.New;
+                        return eImageType.Added;
                     default:
                         return eImageType.UnModified;
                 }
@@ -363,7 +365,7 @@ namespace Amdocs.Ginger.Common.UIElement
         {
             get
             {
-                if (DeltaStatus == eDeltaStatus.Equal)
+                if (DeltaStatus == eDeltaStatus.Unchanged || DeltaStatus == eDeltaStatus.All)
                 {
                     return false;
                 }
@@ -377,9 +379,13 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public enum eDeltaExtraDetails
         {
+            [EnumValueDescription("")]
             NA,
+            [EnumValueDescription("Locators Changed")]
             LocatorsChanged,
+            [EnumValueDescription("Properties Changed")]
             PropertiesChanged,
+            [EnumValueDescription("Locators And Properties Changed")]
             LocatorsAndPropertiesChanged
         }
 

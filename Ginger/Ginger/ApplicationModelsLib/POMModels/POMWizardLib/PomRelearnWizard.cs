@@ -59,7 +59,25 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         public override void Finish()
         {
-            List<ElementInfo>  ElementsToUpdate = mDuplicatedPOM.CopiedUnienedList.Where(x => x.IsSelected == true).ToList();
+            List<ElementInfo> ElementsToUpdate = mDuplicatedPOM.CopiedUnienedList.Where(x => x.IsSelected == true).ToList();
+            List<ElementInfo> EqualElementsToUpdate = mDuplicatedPOM.CopiedUnienedList.Where(x => x.DeltaStatus == ElementInfo.eDeltaStatus.Unchanged).ToList();
+
+            foreach (ElementInfo EI in EqualElementsToUpdate)
+            {
+                mOriginalPOM.MappedUIElements.Remove(mOriginalPOM.MappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault());
+                mOriginalPOM.UnMappedUIElements.Remove(mOriginalPOM.UnMappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault());
+
+                if (EI.ElementGroup == ElementInfo.eElementGroup.Mapped)
+                {
+                    mOriginalPOM.MappedUIElements.Add(EI);
+                }
+                else if (EI.ElementGroup == ElementInfo.eElementGroup.Unmapped)
+                {
+                    mOriginalPOM.UnMappedUIElements.Add(EI);
+                }
+            }
+
+
             foreach (ElementInfo EI in ElementsToUpdate)
             {
                 if (EI.DeltaStatus == ElementInfo.eDeltaStatus.Deleted)
@@ -96,14 +114,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     }
                 }
 
+                mOriginalPOM.MappedUIElements.Remove(mOriginalPOM.MappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault());
+                mOriginalPOM.UnMappedUIElements.Remove(mOriginalPOM.UnMappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault());
+
                 if (EI.ElementGroup == ElementInfo.eElementGroup.Mapped)
                 {
-                    mOriginalPOM.MappedUIElements.Remove(mOriginalPOM.MappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault());
                     mOriginalPOM.MappedUIElements.Add(EI);
                 }
                 else
                 {
-                    mOriginalPOM.UnMappedUIElements.Remove(mOriginalPOM.UnMappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault());
                     mOriginalPOM.UnMappedUIElements.Add(EI);
                 }
             }

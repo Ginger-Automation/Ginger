@@ -342,6 +342,8 @@ namespace Ginger
             });
         }
 
+
+
         //for grid view        
         private Dictionary<string, DataGridColumn> _CurrentGridCols = new Dictionary<string, DataGridColumn>();
         private Dictionary<string, GridViewDef> _GridViews = new Dictionary<string, GridViewDef>();
@@ -1691,6 +1693,7 @@ public void RemoveCustomView(string viewName)
             AddToolbarTool(image, toolTip, clickHandler, toolVisibility);
         }
 
+
         private void AddToolbarTool(object userControl, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible)
         {
             Button tool = new Button();
@@ -1714,6 +1717,41 @@ public void RemoveCustomView(string viewName)
             toolbar.Items.Add(lblView);
             toolbar.Items.Add(comboView);
         }
+
+
+        public void AddComboBoxToolbarTool(string lableContent,Type enumType, SelectionChangedEventHandler view_SelectionChanged)
+        {
+            ComboBox comboBox = new ComboBox();
+            comboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
+
+            comboBox.Width = 100;
+            List<GingerCore.General.ComboEnumItem> itemsList = GingerCore.General.GetEnumValuesForCombo(enumType);
+            List<GingerCore.General.ComboEnumItem> itemsSourceList = new List<GingerCore.General.ComboEnumItem>();
+            itemsSourceList = itemsList;
+            comboBox.ItemsSource = itemsSourceList;
+            comboBox.SelectedIndex = 0;
+            comboBox.SelectionChanged += view_SelectionChanged;
+            comboBox.Style = (Style)TryFindResource("@ToolBarComboBoxStyle");
+
+            Label label = new Label();
+            label.Content = lableContent;
+
+            toolbar.Items.Remove(lblSearch);
+            toolbar.Items.Remove(txtSearch);
+            toolbar.Items.Remove(btnClearSearch);
+            toolbar.Items.Remove(lblView);
+            toolbar.Items.Remove(comboView);
+            toolbar.Items.Remove(TagsViewer);
+            toolbar.Items.Add(label);
+            toolbar.Items.Add(comboBox);
+            toolbar.Items.Add(lblSearch);
+            toolbar.Items.Add(txtSearch);
+            toolbar.Items.Add(btnClearSearch);
+            toolbar.Items.Add(TagsViewer);
+            toolbar.Items.Add(lblView);
+            toolbar.Items.Add(comboView);
+        }
+
 
 
         /// <summary>

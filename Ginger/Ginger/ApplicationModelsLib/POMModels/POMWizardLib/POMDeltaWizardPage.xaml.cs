@@ -32,7 +32,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
     /// </summary>
     public partial class POMDeltaWizardPage : Page, IWizardPage
     {
-
         PomRelearnWizard mWizard;
         private ePlatformType mAppPlatform;
         ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();
@@ -55,14 +54,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     mPOM = mWizard.mDuplicatedPOM;
                     mElementsList.CollectionChanged += ElementsListCollectionChanged;
                     InitilizePomElementsMappingPage();
-                    mAppPlatform = App.UserProfile.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
+                    mAppPlatform =  WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
                     SetAutoMapElementTypes();
                     mPomElementsPage.SetAgent(mWizard.Agent);
                     mOriginalList = mPOM.CopiedUnienedList;
-                    CollectOriginalElementsData();
+                    //CollectOriginalElementsData();
 
                     xReLearnButton.Visibility = Visibility.Visible;
                     Learn();
+
                     break;
             }
         }
@@ -89,20 +89,18 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
                     mWizard.IWindowExplorerDriver.UnHighLightElements();
 
-                    await Task.Run(() => WaitUntilDriverWillBeFree());
+                    //await Task.Run(() => WaitUntilDriverWillBeFree());
 
-                    //await Task.Run(() => CollectOriginalElementsData());
-
-                    xPreperingDataLable.Content = "Learning";
+                    await Task.Run(() => CollectOriginalElementsData());
 
                     await Task.Run(() => mWizard.IWindowExplorerDriver.GetVisibleControls(null, mElementsList, true));
 
-                    xPreperingDataLable.Content = "Learning Finished";
                     mWizard.IsLearningWasDone = true;
+                    mPomElementsPage.DoEndOfRelearnElementsSorting();
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToUser(eUserMsgKeys.POMWizardFailedToLearnElement, ex.Message);
+                    Reporter.ToUser(eUserMsgKey.POMWizardFailedToLearnElement, ex.Message);
                     mWizard.IsLearningWasDone = false;
                 }
                 finally
@@ -133,7 +131,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void ReLearnButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.POMDeltaWizardReLearnWillEraseModification) == Amdocs.Ginger.Common.MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.POMDeltaWizardReLearnWillEraseModification) == eUserMsgSelection.Yes)
             {
                 mWizard.IsLearningWasDone = false;
                 Learn();
@@ -166,7 +164,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
         }
 
-        ObservableList<ElementInfo> mDeltaNewElementsList = new ObservableList<ElementInfo>();
 
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -179,8 +176,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
                 if (originalElementInfo == null)
                 {
+                    latestElementInfo.ElementStatus = ElementInfo.eElementStatus.Passed;
                     latestElementInfo.DeltaStatus = ElementInfo.eDeltaStatus.New;
-                    mDeltaNewElementsList.Add(latestElementInfo);
+                    latestElementInfo.ElementGroup = ElementInfo.eElementGroup.Mapped;
+                    latestElementInfo.IsSelected = true;
+                    mPOM.CopiedUnienedList.Add(latestElementInfo);
                 }
                 else
                 {
@@ -217,7 +217,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 }
                 else
                 {
-                    ExistingEL.DeltaStatus = ElementInfo.eDeltaStatus.Equal;
+                    ExistingEL.DeltaStatus = ElementInfo.eDeltaStatus.Unchanged;
                 }
             }
 
@@ -252,7 +252,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 }
                 else
                 {
-                    ExistingCP.DeltaStatus = ElementInfo.eDeltaStatus.Equal;
+                    ExistingCP.DeltaStatus = ElementInfo.eDeltaStatus.Unchanged;
                 }
             }
 
@@ -267,21 +267,24 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
 
 
-            List<ElementLocator> ModifiedElementsLocatorsList = originalElelemnt.Locators.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Equal).ToList();
-            List<ControlProperty> ModifiedControlPropertiesList = originalElelemnt.Properties.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Equal).ToList();
+            List<ElementLocator> ModifiedElementsLocatorsList = originalElelemnt.Locators.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Unchanged).ToList();
+            List<ControlProperty> ModifiedControlPropertiesList = originalElelemnt.Properties.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Unchanged).ToList();
             if (ModifiedElementsLocatorsList.Count > 0 && ModifiedControlPropertiesList.Count > 0)
             {
                 originalElelemnt.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                originalElelemnt.IsSelected = true;
                 originalElelemnt.DeltaExtraDetails = ElementInfo.eDeltaExtraDetails.LocatorsAndPropertiesChanged;
             }
             else if (ModifiedElementsLocatorsList.Count > 0)
             {
                 originalElelemnt.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                originalElelemnt.IsSelected = true;
                 originalElelemnt.DeltaExtraDetails = ElementInfo.eDeltaExtraDetails.LocatorsChanged;
             }
             else if (ModifiedControlPropertiesList.Count > 0)
             {
                 originalElelemnt.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                originalElelemnt.IsSelected = true;
                 originalElelemnt.DeltaExtraDetails = ElementInfo.eDeltaExtraDetails.PropertiesChanged;
 
             }

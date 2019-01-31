@@ -77,14 +77,30 @@ namespace Ginger.ApplicationModelsLib.POMModels
             AllDeltaElements
         }
 
+
+        public enum eAllElementsPageContext
+        {
+            POMEditPage,
+            AddPOMWizard
+        }
+
+        public eAllElementsPageContext mContext;
+
         public PomElementsPage mappedUIElementsPage;
         public PomElementsPage unmappedUIElementsPage;
 
 
-        public PomAllElementsPage(ApplicationPOMModel POM)
+        public PomAllElementsPage(ApplicationPOMModel POM, eAllElementsPageContext context)
         {
             InitializeComponent();
             mPOM = POM;
+            mContext = context;
+
+            if (mContext == eAllElementsPageContext.AddPOMWizard)
+            {
+                xReLearnElements.Visibility = Visibility.Collapsed;
+            }
+
             mPOM.MappedUIElements.CollectionChanged += MappedUIElements_CollectionChanged;
             mPOM.UnMappedUIElements.CollectionChanged += UnMappedUIElements_CollectionChanged;
 
@@ -415,18 +431,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if (mWinExplorer == null)
             {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
                 return;
             }
 
             if (mAgent.Driver.IsDriverBusy)
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
                 return;
             }
 
 
-            WizardWindow.ShowWizard(new PomRelearnWizard(mPOM, mAgent),800, true);
+            WizardWindow.ShowWizard(new PomRelearnWizard(mPOM, mAgent),1600,800, true);
         }
 
 
