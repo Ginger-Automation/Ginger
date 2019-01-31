@@ -44,13 +44,13 @@ namespace GingerCore.ALM
         public static string ALMProjectGuid { get; set; }
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
         {
-            get { return JiraImportManager.GingerActivitiesGroupsRepo; }
-            set { JiraImportManager.GingerActivitiesGroupsRepo = value; }
+            get { return jiraImportObj.GingerActivitiesGroupsRepo; }
+            set { jiraImportObj.GingerActivitiesGroupsRepo = value; }
         }
         public override ObservableList<Activity> GingerActivitiesRepo
         {
-            get { return JiraImportManager.GingerActivitiesRepo; }
-            set { JiraImportManager.GingerActivitiesRepo = value; }
+            get { return jiraImportObj.GingerActivitiesRepo; }
+            set { jiraImportObj.GingerActivitiesRepo = value; }
         }
         public JiraCore()
         {
@@ -137,7 +137,7 @@ namespace GingerCore.ALM
 
         public BusinessFlow ConvertJiraTestSetToBF(JiraTestSet testSet)
         {
-            return JiraImportManager.ConvertJiraTestSetToBF(testSet);
+            return jiraImportObj.ConvertJiraTestSetToBF(testSet);
         }
     }
 }

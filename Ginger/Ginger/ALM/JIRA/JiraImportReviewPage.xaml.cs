@@ -87,7 +87,7 @@ namespace Ginger.ALM.JIRA
 
         private void ImportTestSet(object sender, RoutedEventArgs e)
         {
-            ImportTestSet();
+            ImportTestSet(sender);
         }
 
         private void ImportTestSet(object sender, EventArgs e)

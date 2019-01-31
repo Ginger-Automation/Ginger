@@ -16,20 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using ALM_Common.DataContracts;
 using ALM_Common.Data_Contracts;
-using JiraRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Input;
 using ALM_Common.Abstractions;
-using JiraRepository.Data_Contracts;
-using System.IO;
-using System.Reflection;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace GingerCore.ALM.JIRA
 {
@@ -75,27 +67,6 @@ namespace GingerCore.ALM.JIRA
             }
             return false;
         }
-        
-        private string getFieldName(dynamic d)
-        {
-            string itemValue;
-            object propValue = d.GetType().GetProperties();
-            foreach (Newtonsoft.Json.Linq.JProperty property in d.Properties())
-            {
-
-            }
-            switch (d.GetType().Name)
-            {
-                case "JObject":
-                    itemValue = d.name;
-                    break;
-                case "JValue":
-                    itemValue = d;
-                    break;
-            }
-            return "";
-        }
-
         public bool IsServerConnected()
         {
             return connectedToServer;
