@@ -45,7 +45,7 @@ namespace GingerTest.POMs.Common
             throw new Exception("Grid item not found for: " + property + "=" + value);
         }
 
-        public void ClickOnCheckBox(string checkboxHeaderValue, string fieldToSearchOnHeader, string fieldValueToSearch)
+        public void ClickOnCheckBox(string checkboxHeaderValue, string fieldToSearchOnHeader, string fieldValueToSearch, bool prioritizeLocators = false, bool clickCheckBox = false, int newIndex = -1)
         {
             foreach (var item in mGrid.DataSourceList)
             {
@@ -74,17 +74,30 @@ namespace GingerTest.POMs.Common
                             checkbox = General.GetVisualChild<CheckBox>(cell);
                         }
 
-                        if (checkbox.IsChecked == true)
+                        if (!prioritizeLocators || (prioritizeLocators && clickCheckBox))
                         {
-                            checkbox.IsChecked = false;
-                        }
-                        else
-                        {
-                            checkbox.IsChecked = true;
+                            checkbox.IsChecked = !checkbox.IsChecked;
                         }
                     });
+
+                    if(prioritizeLocators)
+                    {
+                        ReArrangeLocators(item, newIndex);
+                        break;
+                    }
+
                 }
             }
+        }
+
+        public void ReArrangeLocators(object item, int prioritizedValue)
+        {
+            Execute(() =>
+            {
+                int i = mGrid.Grid.Items.IndexOf(item);
+                mGrid.DataSourceList.Move(i, prioritizedValue);
+                mGrid.ScrollToViewCurrentItem();
+            });
         }
     }
 }
