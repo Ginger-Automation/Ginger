@@ -36,7 +36,7 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 
 // a lot of samples from Microsoft on UIA at: https://uiautomationverify.svn.codeplex.com/svn/UIAVerify/
-// DO NOT add any specific driver here, this is generic windows app driver helper
+// DO NOT add any specific driver here, this is generic windows app driver helper 
 
 namespace GingerCore.Drivers
 {
