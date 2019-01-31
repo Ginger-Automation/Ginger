@@ -102,6 +102,10 @@ namespace GingerCore.ALM.QC
         // Opening QC Connection 
         public static bool ConnectQCServer(string QCServerUrl, string QCUserName, string QCPassword)
         {
+            if (string.IsNullOrEmpty(QCServerUrl) || string.IsNullOrEmpty(QCUserName) || string.IsNullOrEmpty(QCPassword))
+            {
+                return false;
+            }
             bool qcConn = false;
             DisconnectQCServer();
             mTDConn.InitConnectionEx(QCServerUrl);
