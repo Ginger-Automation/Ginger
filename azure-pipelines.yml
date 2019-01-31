@@ -48,8 +48,7 @@ jobs:
     inputs:
       solution:'D:\a\1\s\Ginger\Ginger.sln'          
       # solution: '$(solution)'
-      # solution: 'D:\a\1\s\Ginger\Ginger\Ginger.csproj'                
-      platform: 'Any CPU'
+      # solution: 'D:\a\1\s\Ginger\Ginger\Ginger.csproj'                      
     displayName: Build Ginger Solution
   
   # platform: '$(buildPlatform)'
