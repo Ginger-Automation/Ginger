@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.IO;
 
 namespace Ginger.ALM.QC.TreeViewItems
 {
@@ -85,7 +86,6 @@ namespace Ginger.ALM.QC.TreeViewItems
 
         public void IsTestSetAlreadyImported()
         {
-            string validBFName = string.Empty;
             AlreadyImported = false;
             MappedBusinessFlow = null;
             MappedBusinessFlowPath = "None";
@@ -97,8 +97,7 @@ namespace Ginger.ALM.QC.TreeViewItems
                     {
                         AlreadyImported = true;
                         MappedBusinessFlow = bf;
-                        validBFName = Amdocs.Ginger.IO.PathHelper.CleanInValidPathChars(bf.Name);
-                        MappedBusinessFlowPath = System.IO.Path.Combine(bf.ContainingFolder, validBFName);                       
+                        MappedBusinessFlowPath = System.IO.Path.Combine(bf.ContainingFolder, PathHelper.CleanInValidPathChars(bf.Name));                       
                         break;
                     }
                 }
