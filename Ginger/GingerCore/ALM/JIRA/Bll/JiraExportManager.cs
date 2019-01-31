@@ -97,7 +97,7 @@ namespace GingerCore.ALM.JIRA.Bll
             foreach (var tc in bftestCases)
             {
                 Dictionary<string, List<IJiraExportData>> fields = new Dictionary<string, List<IJiraExportData>>();
-                fields.Add("label", new List<IJiraExportData>() { new JiraExportData() { value = tc.ExternalID2 } });
+                fields.Add("labels", new List<IJiraExportData>() { new JiraExportData() { value = tc.ExternalID2 } });
                 List<JiraIssueExport> tcList = new List<JiraIssueExport>();
                 tcList.Add(this.UpdateTestCaseWithSpecificFields(tc, fields));
                 var exportResponse = jiraRepObj.ExportJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, tcList);

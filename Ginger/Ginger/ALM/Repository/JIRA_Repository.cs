@@ -118,7 +118,7 @@ namespace Ginger.ALM.Repository
                     ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
                     var testCaseFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_CASE.ToString())&&(a.ToUpdate || a.Mandatory));
                     var testSetFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_SET.ToString()) && (a.ToUpdate || a.Mandatory));
-                    var testExecutionFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_CASE_EXECUTION_RECORDS.ToString()) && (a.ToUpdate || a.Mandatory));
+                    var testExecutionFields = allFields.Where(a => a.ItemType == "TEST_EXECUTION" && (a.ToUpdate || a.Mandatory));
                     var exportRes = ((JiraCore)this.AlmCore).ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
                     if (exportRes)
                     {
