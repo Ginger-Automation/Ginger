@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System.Collections.Generic;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -181,6 +182,11 @@ namespace GingerCore.Platforms.PlatformsInfo
 
             list.Add(ActUIElement.eElementDragDropType.MouseDragDrop);
             return list;
+        }
+
+        public override ObservableList<ElementLocator> GetLearningLocators()
+        {
+            return null;
         }
     }
 }
