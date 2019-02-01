@@ -49,7 +49,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using GingerCore.Actions.Communication;
+
 namespace Ginger.Actions
 {
     enum eGridView {All,NonSimulation}
