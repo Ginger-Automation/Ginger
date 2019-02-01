@@ -35,6 +35,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public string POMFolder;
         public ObservableList<UIElementFilter> AutoMapElementTypesList = new ObservableList<UIElementFilter>();
+        public ObservableList<ElementLocator> AutoMapElementLocatorsList = new ObservableList<ElementLocator>();
         public ObservableList<Agent> OptionalAgentsList = null;
         private Agent mAgent = null;
         private bool mManualElementConfiguration;
