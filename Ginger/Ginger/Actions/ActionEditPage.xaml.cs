@@ -49,7 +49,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-
+using GingerCore.Actions.Communication;
 namespace Ginger.Actions
 {
     enum eGridView {All,NonSimulation}
@@ -290,7 +290,7 @@ namespace Ginger.Actions
 
             if (a.GetType() != typeof(ActDBValidation) && a.GetType() != typeof(ActTableElement) && 
                 a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) && 
-                a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand))
+                a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand) && a.GetType()!=typeof(ActeMail))
             {
                 if (a.InputValues.Count > 1)
                 {
@@ -411,6 +411,12 @@ namespace Ginger.Actions
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;                    
                 }
+            }
+            else if(a.GetType() == typeof(ActeMail))
+            {
+                ValueGridPanel.Visibility = Visibility.Collapsed;
+                ValueBoxPanel.Visibility = Visibility.Collapsed;
+                ValueUC.ValueTextBox.Visibility = Visibility.Collapsed;
             }
         }
 
