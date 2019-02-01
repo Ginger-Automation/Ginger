@@ -53,7 +53,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.ALMLib.ALMIntegration;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 
 namespace Ginger.Run
 {
@@ -447,7 +446,7 @@ namespace Ginger.Run
                 }
 
                 //Init 
-                Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Started;
+                Status = eRunStatus.Started;
                 mIsRunning = true;
                 mStopRun = false;
                 if (doContinueRun == false)

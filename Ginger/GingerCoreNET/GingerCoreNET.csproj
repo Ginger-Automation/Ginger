@@ -33,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ginger.Plugin.Core" Version="3.0.5" />
     <None Remove="Reports\HTMLTemplates\SkeletonHTMLReport.html" />
     <None Remove="Reports\HTMLTemplates\SummaryHTMLReport.html" />
   </ItemGroup>
@@ -49,7 +48,7 @@
 
   <ItemGroup>
   
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.2">
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
