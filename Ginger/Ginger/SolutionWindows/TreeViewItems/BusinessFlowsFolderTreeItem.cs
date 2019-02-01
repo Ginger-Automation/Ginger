@@ -249,13 +249,19 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 BusinessFlow BizFlow = App.CreateNewBizFlow(BizFlowName);
 
-                if ( WorkSpace.UserProfile.Solution.ApplicationPlatforms.Count != 1)
+                if (WorkSpace.UserProfile.Solution.ApplicationPlatforms.Count != 1)
                 {
-                    EditBusinessFlowAppsPage EBFP = new EditBusinessFlowAppsPage(BizFlow);
+                    EditBusinessFlowAppsPage EBFP = new EditBusinessFlowAppsPage(BizFlow,true);
                     EBFP.ResetPlatformSelection();
                     EBFP.Title = "Configure " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Target Application(s)";
                     EBFP.ShowAsWindow(eWindowShowStyle.Dialog, false);
                 }
+                else
+                {
+                    BizFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.UserProfile.Solution.MainApplication });
+                    BizFlow.CurrentActivity.TargetApplication = BizFlow.TargetApplications[0].Name;
+                }
+
                 mBusFlowsFolder.AddRepositoryItem(BizFlow);                
             }
         }        
