@@ -83,7 +83,7 @@ namespace GingerCore.ALM.JIRA
             return fields;
         }
 
-        private ObservableList<ExternalItemFieldBase> SetALMItemsFields( AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList, ResourceType fieldResourceType)
+        private ObservableList<ExternalItemFieldBase> SetALMItemsFields(AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList, ResourceType fieldResourceType)
         {
             ObservableList<ExternalItemFieldBase> resourceFields = new ObservableList<ExternalItemFieldBase>();
             string fieldResourceTypeToString = fieldResourceType.ToString();
@@ -154,7 +154,7 @@ namespace GingerCore.ALM.JIRA
                         //pull TC-Step parameters and add them to the Activity level
                         List<string> stepParamsList = new List<string>();
                         GetStepParameters(StripHTML(step.Description), ref stepParamsList);
-                        GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
+                        //GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
                         foreach (string param in stepParamsList)
                         {
                             ConvertJiraParameters(tc, stepActivity, param);
@@ -358,7 +358,7 @@ namespace GingerCore.ALM.JIRA
                     stepActivity = busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
                     // in any case update description/expected/name - even if "step" was taken from repository
                     stepActivity.Description = StripHTML(step.Description);
-                    stepActivity.Expected = StripHTML(step.Expected);
+                    //stepActivity.Expected = StripHTML(step.Expected);
                     stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
                 }
                 else//not in ActivitiesGroup so get instance from repo
@@ -373,7 +373,7 @@ namespace GingerCore.ALM.JIRA
                 stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
                 stepActivity.ExternalID = step.StepID;
                 stepActivity.Description = StripHTML(step.Description);
-                stepActivity.Expected = StripHTML(step.Expected);
+                //stepActivity.Expected = StripHTML(step.Expected);
 
                 toAddStepActivity = true;
             }
@@ -486,7 +486,7 @@ namespace GingerCore.ALM.JIRA
                     if (item.fields.ContainsKey(tsKey.key))
                     {
                         List<string> fieldValue = getSelectedFieldValue(item.fields[tsKey.key], tsKey.name, ResourceType.TEST_SET);
-                        if (fieldValue != null && fieldValue.Count > 0)
+                        if (fieldValue != null && fieldValue.Count > 0 && tsKey.name != null)
                         {
                             switch (tsKey.name)
                             {
@@ -570,7 +570,7 @@ namespace GingerCore.ALM.JIRA
                                         {
                                             var stepAnonymous = Newtonsoft.Json.JsonConvert.DeserializeAnonymousType(val, stepAnonymousTypeDef);
                                             string[] stepDescription = new[] { "", "" };
-                                            if (stepAnonymous.data != string.Empty)
+                                            if (!string.IsNullOrEmpty(stepAnonymous.data))
                                             {
                                                 string[] getStepData = (stepAnonymous.data).Split(new[] { "=>" }, StringSplitOptions.None);
                                                 if (getStepData.Count() > 1 && getStepData[1].Contains("Description:"))
@@ -591,8 +591,8 @@ namespace GingerCore.ALM.JIRA
         public ObservableList<JiraTestSet> GetJiraTestSets()
         {
             WhereDataList filterData = new WhereDataList();
-            List<string> testSetKeys = new List<string> {"reporter", "created", "summary", "project"};
-            filterData.Add(new WhereData() { Name = "fields", Values = testSetKeys , Operator = WhereOperator.Ampersand });
+            List<string> testSetKeys = new List<string> { "reporter", "created", "summary", "project" };
+            filterData.Add(new WhereData() { Name = "fields", Values = testSetKeys, Operator = WhereOperator.Ampersand });
             AlmResponseWithData<List<JiraIssue>> getTestsSet = jiraRepObj.GetJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET, filterData);
 
             ObservableList<JiraTestSet> jiratestset = new ObservableList<JiraTestSet>();
@@ -680,6 +680,61 @@ namespace GingerCore.ALM.JIRA
 
             }
             return valuesList;
+        }
+        //public void UpdatedJiraTestInBF(ref BusinessFlow busFlow, List<JiraTest> tcsList)
+        //{
+        //    if ((busFlow == null) || (tcsList == null) || (tcsList.Count < 1)) return;
+        //    Dictionary<string, string> busVariables = new Dictionary<string, string>();
+
+        //    int startGroupActsIndxInBf = 0;
+        //    Dictionary<string, int> activityGroupsToRemoveIndexes = new Dictionary<string, int>();
+        //    foreach (QCTSTest tc in tcsList)
+        //    {
+        //        var activitiesToRemove = busFlow.Activities.Where(x => x.ActivitiesGroupID == tc.TestName).ToList();
+        //        foreach (Activity activityToRemove in activitiesToRemove)
+        //        {
+        //            if (startGroupActsIndxInBf < busFlow.Activities.IndexOf(activityToRemove))
+        //                startGroupActsIndxInBf = busFlow.Activities.IndexOf(activityToRemove);
+        //            busFlow.Activities.Remove(activityToRemove);
+        //        }
+        //        var activityGroupsToRemove = busFlow.ActivitiesGroups.Where(x => x.ExternalID2 == tc.TestID).ToList();
+        //        foreach (ActivitiesGroup activityGroupToRemove in activityGroupsToRemove)
+        //        {
+        //            activityGroupsToRemoveIndexes.Add(activityGroupToRemove.ExternalID2, busFlow.ActivitiesGroups.IndexOf(activityGroupToRemove));
+        //        }
+        //        foreach (ActivitiesGroup activityGroupToRemove in activityGroupsToRemove)
+        //        {
+        //            busFlow.ActivitiesGroups.Remove(activityGroupToRemove);
+        //        }
+        //    }
+
+        //    int activityGroupToRemoveIndex;
+        //    foreach (QCTSTest tc in tcsList)
+        //    {
+        //        activityGroupsToRemoveIndexes.TryGetValue(tc.TestID, out activityGroupToRemoveIndex);
+
+        //        //check if the TC is already exist in repository
+        //        ActivitiesGroup tcActivsGroup = new ActivitiesGroup();
+
+        //        tcActivsGroup = new ActivitiesGroup();
+        //        tcActivsGroup.Name = tc.TestName;
+
+        //    }
+        //}
+        public Dictionary<string,JiraTest> GetJiraSelectedTestsData(string testSetID, List<string> TCsIds = null)
+        {
+            Dictionary<string,JiraTest> TSJiraTestsList = new Dictionary<string, JiraTest>();
+
+            JiraTestSet testSet = GetTestSetData(new JiraTestSet { Key = testSetID });
+            if (testSet != null && testSet.Tests.Count > 0)
+            {
+                foreach(string tc in TCsIds)
+                {
+                    TSJiraTestsList.Add(tc,testSet.Tests.Where(tst => tst.TestKey.Equals(tc)).FirstOrDefault());
+                }
+            }
+
+            return TSJiraTestsList;
         }
     }
 }

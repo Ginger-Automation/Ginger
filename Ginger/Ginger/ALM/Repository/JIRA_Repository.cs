@@ -235,8 +235,11 @@ namespace Ginger.ALM.Repository
                     if (tsBusFlow.TargetApplications.Count == 0)
                         tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.UserProfile.Solution.MainApplication });
                     foreach (Activity activ in tsBusFlow.Activities)
+                    {
                         if (string.IsNullOrEmpty(activ.TargetApplication))
                             activ.TargetApplication = tsBusFlow.MainApplication;
+                        activ.Active = true;
+                    }
                 }
                 else
                 {
@@ -279,7 +282,11 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs)
         {
-            throw new NotImplementedException();
+            if (TCsIDs.Count > 0)
+            {
+                Dictionary<string,JiraTest> getActivitiesGroupUpdatedData = ((JiraCore)ALMIntegration.Instance.AlmCore).GetJiraTestsUpdatedData(businessFlow.ExternalID, TCsIDs.Select(x => x.Item1.ToString()).ToList());
+                ((JiraCore)ALMIntegration.Instance.AlmCore).UpdateBFSelectedAG(ref businessFlow, getActivitiesGroupUpdatedData);
+            }
         }
 
         public override void UpdateBusinessFlow(ref BusinessFlow businessFlow)

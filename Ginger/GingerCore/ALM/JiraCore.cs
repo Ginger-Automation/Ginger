@@ -139,5 +139,43 @@ namespace GingerCore.ALM
         {
             return jiraImportObj.ConvertJiraTestSetToBF(testSet);
         }
+        public Dictionary<string,JiraTest> GetJiraTestsUpdatedData(string testSetID, List<string> TCsIDs = null)
+        {
+            return jiraImportObj.GetJiraSelectedTestsData(testSetID, TCsIDs);
+        }
+
+        public void UpdateBFSelectedAG(ref BusinessFlow businessFlow, Dictionary<string,JiraTest> getActivitiesGroupUpdatedData)
+        {
+            List<ActivityIdentifiers> activitiesToRemove = new List<ActivityIdentifiers>();
+            foreach (var ag in businessFlow.ActivitiesGroups)
+            {
+                if(getActivitiesGroupUpdatedData.ContainsKey(ag.ExternalID))
+                {
+                    //UpdatedJiraTestInBF();
+                    ag.ItemName = getActivitiesGroupUpdatedData[ag.ExternalID].TestName;
+                    ag.Description = getActivitiesGroupUpdatedData[ag.ExternalID].Description;
+                    bool isExist = false;
+                    foreach (var act in ag.ActivitiesIdentifiers)
+                    {
+                        isExist = false;
+                        foreach(var step in getActivitiesGroupUpdatedData[ag.ExternalID].Steps)
+                        {
+                            if(act.ActivityExternalID == step.StepID)
+                            {
+                                isExist = true;
+                                act.ActivityName = step.StepName;
+                                act.ActivityDescription = step.Description;
+                            }
+                        }
+                        if(!isExist) activitiesToRemove.Add(act);
+                    }
+                }
+                foreach (var item in activitiesToRemove)
+                {
+                    ag.ActivitiesIdentifiers.Remove(item);
+                }
+            }
+            
+        }
     }
 }
