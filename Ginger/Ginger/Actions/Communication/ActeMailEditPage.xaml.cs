@@ -49,16 +49,14 @@ namespace Ginger.Actions.Communication
             App.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.Port));
             App.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.Pass));       
             xSMTPMailHostTextBox.Init(mAct, nameof(ActeMail.Host));
-            xSMTPUserTextBox.Init(mAct, nameof(ActeMail.User));            
-            App.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, mAct, nameof(Email.EnableSSL));
-            App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, mAct, nameof(Email.ConfigureCredential));            
+            xSMTPUserTextBox.Init(mAct, nameof(ActeMail.User));                                           
             GingerCore.General.ActInputValueBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.EnableSSL, "true"));
             GingerCore.General.ActInputValueBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.ConfigureCredential,"false"));
             App.ObjFieldBinding(AttachmentFilename, TextBox.TextProperty, mAct, nameof(ActeMail.AttachmentFileName));
             if (mAct.MailOption!=null && mAct.MailOption == Email.eEmailMethod.OUTLOOK.ToString())
                 RadioOutlookMailOption.IsChecked = true;
             else
-                RadioSMTPMailOption.IsChecked = true;                      
+                RadioSMTPMailOption.IsChecked = true;            
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -102,18 +100,12 @@ namespace Ginger.Actions.Communication
         }
         private void xcbConfigureCredential_Checked(object sender, RoutedEventArgs e)
         {
-            xSMTPUserTextBox.Visibility = Visibility.Visible;
-            xSMTPPassTextBox.Visibility = Visibility.Visible;
-            xLabelPass.Visibility = Visibility.Visible;
-            xLabelUser.Visibility = Visibility.Visible;
+            xUserDetails.Visibility = Visibility.Visible;           
         }
 
         private void xcbConfigureCredential_Unchecked(object sender, RoutedEventArgs e)
         {
-            xSMTPUserTextBox.Visibility = Visibility.Collapsed;
-            xSMTPPassTextBox.Visibility = Visibility.Collapsed;
-            xLabelPass.Visibility = Visibility.Collapsed;
-            xLabelUser.Visibility = Visibility.Collapsed;
+            xUserDetails.Visibility = Visibility.Collapsed;            
         }
 
         private void xSMTPPassTextBox_LostFocus(object sender, RoutedEventArgs e)

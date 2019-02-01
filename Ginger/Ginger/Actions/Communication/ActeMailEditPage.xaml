@@ -70,10 +70,12 @@
                                 <CheckBox x:Name="xcbEnableSSL" Style="{StaticResource @InputCheckBoxStyle}"  VerticalAlignment="Center" Content="Enable SSL" Margin="10"/>
                                 <CheckBox x:Name="xcbConfigureCredential" Style="{StaticResource @InputCheckBoxStyle}"  VerticalAlignment="Center" Content="Configure Credential" Margin="10" Checked="xcbConfigureCredential_Checked" Unchecked="xcbConfigureCredential_Unchecked"/>
                             </DockPanel>
-                            <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelUser" Visibility="Collapsed">SMTP User:</Label>
-                            <Actions:UCValueExpression x:Name="xSMTPUserTextBox"  ToolTip="SMTP User" Width="235" HorizontalAlignment="Left" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Auto" HideVEBusinessFlowAndActivityVariables="True"  />
-                            <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelPass" Visibility="Collapsed">SMTP Password:</Label>
-                            <TextBox x:Name="xSMTPPassTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left" Visibility="Collapsed" LostFocus="xSMTPPassTextBox_LostFocus"/>
+                            <StackPanel x:Name="xUserDetails" Visibility="Collapsed">
+                                <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelUser" >SMTP User:</Label>
+                                <Actions:UCValueExpression x:Name="xSMTPUserTextBox"  ToolTip="SMTP User" Width="235" HorizontalAlignment="Left" ScrollViewer.VerticalScrollBarVisibility="Auto" HideVEBusinessFlowAndActivityVariables="True"  />
+                                <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelPass">SMTP Password:</Label>
+                                <TextBox x:Name="xSMTPPassTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left" LostFocus="xSMTPPassTextBox_LostFocus"/>
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </Grid>

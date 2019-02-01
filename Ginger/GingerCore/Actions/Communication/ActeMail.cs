@@ -42,7 +42,7 @@ namespace GingerCore.Actions.Communication
 
         public override string ActionEditPage { get { return "Communication.ActeMailEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
-        public override bool ValueConfigsNeeded { get { return true; } }
+        public override bool ValueConfigsNeeded { get { return false; } }
         
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
@@ -68,6 +68,8 @@ namespace GingerCore.Actions.Communication
             public static string ConfigureCredential = "ConfigureCredential";
         }
 
+        #region Action Fields 
+        //These fields were serialized earlier, do not remove it.
         public override string ActionType
         {
             get { return "Email" + eMailActionType.ToString(); }
@@ -169,7 +171,8 @@ namespace GingerCore.Actions.Communication
                     return false;
             }
         }
-        
+        #endregion  
+
         public override void Execute()
         {
             Email e = new Email();

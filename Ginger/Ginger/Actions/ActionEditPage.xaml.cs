@@ -290,7 +290,7 @@ namespace Ginger.Actions
 
             if (a.GetType() != typeof(ActDBValidation) && a.GetType() != typeof(ActTableElement) && 
                 a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) && 
-                a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand) && a.GetType()!=typeof(ActeMail))
+                a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand))
             {
                 if (a.InputValues.Count > 1)
                 {
@@ -411,13 +411,7 @@ namespace Ginger.Actions
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;                    
                 }
-            }
-            else if(a.GetType() == typeof(ActeMail))
-            {
-                ValueGridPanel.Visibility = Visibility.Collapsed;
-                ValueBoxPanel.Visibility = Visibility.Collapsed;
-                ValueUC.ValueTextBox.Visibility = Visibility.Collapsed;
-            }
+            }           
         }
 
         private void AddReturnValue(object sender, RoutedEventArgs e)
