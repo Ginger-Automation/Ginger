@@ -41,11 +41,6 @@ namespace GingerCore.Helpers
             TBF.AddLineBreak();
         }
 
-        public void AddHeader1(string txt)
-        {
-            TBF.AddLineBreak();
-        }
-
         public void AddBoldText(string txt)
         {
             TBF.AddBoldText(txt);
