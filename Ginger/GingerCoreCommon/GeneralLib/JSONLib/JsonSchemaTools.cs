@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -49,7 +49,16 @@ namespace Amdocs.Ginger.Common
                 }
                 if (jkp.Value.HasReference)
                 {
-                    JsonBody.Add(key, JsonSchemaFaker(jkp.Value.Reference, UseXMlNames));
+                    if (jkp.Value.Reference.Equals(schema))
+                    {
+                        JsonBody.Add(key,string.Empty);
+
+                    }
+                    else
+                    {
+                        JsonBody.Add(key, JsonSchemaFaker(jkp.Value.Reference, UseXMlNames));
+                    }
+                   
                 }
                 else
                 {
@@ -65,9 +74,9 @@ namespace Amdocs.Ginger.Common
 
 
         private static object GenerateJsonObjectFromJsonSchema4(JsonProperty value, bool UseXMlNames)
-        {
+         {
 
-
+            return "";
             object output = "";
             switch (value.Type)
             {
@@ -104,27 +113,30 @@ namespace Amdocs.Ginger.Common
                     }
                     if (value.Item.HasReference)
                     {
-                        foreach (var item in value.Item.Reference.ActualProperties)
+                        if (value.Item.Reference.Equals(value))
                         {
-                            if (item.Value.Equals(value))
+                            foreach (var item in value.Item.Reference.ActualProperties)
                             {
-                                jb.Add(item.Key, "");
-                            }
-                            else
-                            {
-
-                                string key = item.Key;
-                                if (key.ToUpper() == "orderTerm".ToUpper())
+                                if (item.Value.Equals(value))
+                                {
+                                    jb.Add(item.Key, "");
+                                }
+                                else
                                 {
 
-                                }
-                                if (UseXMlNames && item.Value.Xml != null)
-                                {
-                                    key = item.Value.Xml.Name;
-                                }
+                                    string key = item.Key;
+                                    if (key.ToUpper() == "orderTerm".ToUpper())
+                                    {
+
+                                    }
+                                    if (UseXMlNames && item.Value.Xml != null)
+                                    {
+                                        key = item.Value.Xml.Name;
+                                    }
 
 
-                                jb.Add(key, JsonConvert.SerializeObject(GenerateJsonObjectFromJsonSchema4(item.Value, UseXMlNames)));
+                                    jb.Add(key, JsonConvert.SerializeObject(GenerateJsonObjectFromJsonSchema4(item.Value, UseXMlNames)));
+                                }
                             }
                         }
 
