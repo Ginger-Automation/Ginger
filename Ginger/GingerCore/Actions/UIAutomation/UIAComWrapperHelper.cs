@@ -434,6 +434,12 @@ namespace GingerCore.Drivers
                         {
                             continue;
                         }
+
+                        Process isLocalProcess = Process.GetProcesses().FirstOrDefault(p => p.StartInfo.Environment["USERNAME"] == Environment.UserName);
+                        if (isLocalProcess == null)
+                        {
+                            continue;
+                        }
                         //list All Windows except PB windows - FNW
 
                         if (!window.Current.ClassName.StartsWith("FNW"))
