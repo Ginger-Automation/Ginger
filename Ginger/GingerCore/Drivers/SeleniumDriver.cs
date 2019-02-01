@@ -4391,14 +4391,6 @@ namespace GingerCore.Drivers
 
             if (el != null)
             {
-                ////Learn optional values
-                //if (ElementInfo.ElementTypeEnum == eElementType.ComboBox || ElementInfo.ElementTypeEnum == eElementType.List)
-                //{
-                //    foreach (IWebElement value in el.FindElements(By.XPath("*")))
-                //        ElementInfo.OptionalValues.Add(value.Text);
-                //    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
-                //}
-
                 if (ElementInfo.ElementTypeEnum == eElementType.TextBox || ElementInfo.ElementTypeEnum == eElementType.Text ||
                     ElementInfo.ElementTypeEnum == eElementType.ComboBox || ElementInfo.ElementTypeEnum == eElementType.ComboBoxOption ||
                     ElementInfo.ElementTypeEnum == eElementType.List || ElementInfo.ElementTypeEnum == eElementType.ListItem)

@@ -96,38 +96,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void UnMappedUIElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            UpdateElementInfoName(sender);
             UnMappedUIElementsUpdate();
-        }
-
-        private void UpdateElementInfoName(object listObj)
-        {
-            try
-            {
-                if (listObj != null && listObj.GetType().Name == typeof(ObservableList<ElementInfo>).Name)
-                {
-                    ObservableList<ElementInfo> list = (ObservableList<ElementInfo>)listObj;
-                    if (list.Count > 0)
-                    {
-                        int indx = list.Count - 1;
-                        string name = list[indx].ElementName.Trim();
-                        if (name.Length > 60)
-                        {
-                            name = name.Replace(".", "").Replace("?", "").Replace("\n", "").Replace("\r", "").Replace("#", "").Replace("!", " ").Replace(",", " ").Replace("   ", "").Substring(0, 60);
-                        }
-                        else
-                        {
-                            name = name.Replace(".", "").Replace("?", "").Replace("\n", "").Replace("\r", "").Replace("#", "").Replace("!", " ").Replace(",", " ").Replace("   ", "");
-                        }
-                        list[indx].ElementName = name;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Updating POM Elements Name", ex);
-            }
-        }
+        }        
 
         private void UnMappedUIElementsUpdate()
         {
@@ -139,7 +109,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void MappedUIElements_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            UpdateElementInfoName(sender);
             MappedUIElementsUpdate();
         }
 

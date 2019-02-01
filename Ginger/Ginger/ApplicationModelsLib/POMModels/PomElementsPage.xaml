@@ -17,7 +17,7 @@
 
             <DataTemplate x:Key="OpenEditOptionalValuesPage">
                 <Button x:Name="OpenEditOptionalValuesPageButton" Content="..." Click="OpenEditOptionalValuesPageButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"
-                        IsEnabled="{Binding ElementType, Converter={StaticResource ButtonToDisableConverter}}" />
+                        IsEnabled="{Binding ElementTypeEnum, Converter={StaticResource ButtonToDisableConverter}}" />
             </DataTemplate>
             
             <DataTemplate x:Key="xHighlightButtonTemplate">

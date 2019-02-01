@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.Enums;
+using System.Text;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
@@ -219,7 +220,6 @@ namespace Amdocs.Ginger.Common.UIElement
         }
 
         List<String> mOptionalValues = new List<string>();
-        [IsSerializedForLocalRepository]
         public List<String> OptionalValues
         {
             get
@@ -238,6 +238,16 @@ namespace Amdocs.Ginger.Common.UIElement
         {
             get
             {
+                if(mOptionalVals.Count == 0 && mOptionalValues.Count > 0)
+                {
+                    bool isDefault = false;
+                    foreach (string opVal in mOptionalValues)
+                    {
+                        mOptionalVals.Add(new OptionalValue() { ItemName = opVal, IsDefault = !isDefault });
+                        isDefault = true;
+                    }
+                    mOptionalValues = new List<string>();
+                }
                 return mOptionalVals;
             }
             set
@@ -250,45 +260,20 @@ namespace Amdocs.Ginger.Common.UIElement
         {
             get
             {
-                string opValsString = string.Empty;
+                StringBuilder opValsString = new StringBuilder();
                 foreach (OptionalValue value in OptionalVals)
                 {
                     if (value.IsDefault)
                     {
-                        opValsString += value.ItemName + "*,"; 
+                        opValsString.Append(value.ItemName + "*,"); 
                     }
                     else
                     {
-                        opValsString += value.ItemName + ",";
+                        opValsString.Append(value.ItemName + ",");
                     }
                 }
-                opValsString.TrimEnd(',');
-                OptionalValuesAsString = opValsString;
-                return opValsString;
-            }
-        }
-
-        public string mOptionalValuesAsString;
-        public string OptionalValuesAsString
-        {
-            get
-            {
-                string listString = string.Empty;
-                foreach (string value in OptionalValues) listString += value + ",";
-                listString.TrimEnd(',');
-                SetOptionalValuesFromOldObject();
-                mOptionalValuesAsString = listString;
-                return listString;
-            }
-            private set
-            {
-                mOptionalValuesAsString = value;
-                if (!string.IsNullOrEmpty(mOptionalValuesAsString))
-                {
-                    OptionalValues = new List<string>();
-                    foreach (string str in mOptionalValuesAsString.Split(','))
-                        OptionalValues.Add(str.Replace("*", "")); 
-                }
+                opValsString.ToString().TrimEnd(',');
+                return opValsString.ToString();
             }
         }
 

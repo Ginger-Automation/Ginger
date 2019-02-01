@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Amdocs.Ginger.Common.UIElement;
+using System;
 using System.Windows.Data;
 
 namespace Ginger.ApplicationModelsLib
@@ -12,11 +9,12 @@ namespace Ginger.ApplicationModelsLib
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             bool isEnabled = false;
-            if(value != null && !string.IsNullOrEmpty((string)value))
+            if(value != null)
             {
-                string eType = ((string)value).ToLower();
-                if (eType.StartsWith("input.text".ToLower()) || eType.StartsWith("select".ToLower()) || 
-                    eType.StartsWith("ComboBox".ToLower()) ||eType == "Span".ToLower() || eType == "ul".ToLower())
+                eElementType eType = (eElementType)value;
+                if (eType == eElementType.TextBox || eType == eElementType.Text ||
+                    eType == eElementType.ComboBox || eType == eElementType.ComboBoxOption ||
+                    eType == eElementType.List || eType == eElementType.ListItem)
                 {
                     isEnabled = true;
                 }

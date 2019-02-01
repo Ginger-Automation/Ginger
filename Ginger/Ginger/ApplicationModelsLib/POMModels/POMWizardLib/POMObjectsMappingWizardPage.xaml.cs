@@ -165,6 +165,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 }
                 EI.Locators = new ObservableList<ElementLocator>(orderedLocatorsList);
 
+                UpdateElementInfoName(EI);
                 if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
                 {
                     mWizard.POM.MappedUIElements.Add(EI);
@@ -179,7 +180,27 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 Reporter.ToLog(eLogLevel.ERROR, "POM: Learned Element Info from type was failed to be added to Page Elements", ex);
             }
         }
-        
+
+        private void UpdateElementInfoName(ElementInfo curElement)
+        {
+            try
+            {
+                if (curElement != null)
+                {
+                    string name = curElement.ElementName.Trim().Replace(".", "").Replace("?", "").Replace("\n", "").Replace("\r", "").Replace("#", "").Replace("!", " ").Replace(",", " ").Replace("   ", "");
+                    if (name.Length > 60)
+                    {
+                        name = name.Substring(0, 60);
+                    }
+                    curElement.ElementName = name;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Updating POM Elements Name", ex);
+            }
+        }
+
         private void InitilizePomElementsMappingPage()
         {
             if (mPomAllElementsPage == null)

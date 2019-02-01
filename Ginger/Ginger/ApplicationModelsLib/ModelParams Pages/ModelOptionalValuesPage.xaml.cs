@@ -37,28 +37,35 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
     public partial class ModelOptionalValuesPage : Page
     {
         GenericWindow mWin;
-        AppModelParameter mAMDP;
-        HTMLElementInfo mHEI;
+        ObservableList<OptionalValue> mOptionalVal;
+        object mParentObject;
         bool editWasDone = false;
         bool mSelectionModePage;
-        bool mIsAppModelParam = false;
-        bool mIsHTMLElementInfoParam = false;
 
-        public ModelOptionalValuesPage(AppModelParameter AMDP, bool selectionModePage = false)
+        public ModelOptionalValuesPage(object parentObject, string elementName, bool selectionModePage = false)
         {
             InitializeComponent();
-            mIsAppModelParam = true;
-            mIsHTMLElementInfoParam = false;
 
-            mAMDP = AMDP;
+            mParentObject = parentObject;
+            if (mParentObject != null)
+            {
+                if (mParentObject.GetType().Name == typeof(AppModelParameter).Name)
+                {
+                    mOptionalVal = ((AppModelParameter)mParentObject).OptionalValuesList;  
+                }
+                else if (mParentObject.GetType().Name == typeof(HTMLElementInfo).Name)
+                {
+                    mOptionalVal = ((HTMLElementInfo)mParentObject).OptionalVals;
+                }
+            }
             mSelectionModePage = selectionModePage;
 
-            OptionalValuesGrid.DataSourceList = mAMDP.OptionalValuesList;
+            OptionalValuesGrid.DataSourceList = mOptionalVal;
             SetOptionalValuesGridView();
 
             if (!mSelectionModePage)
             {
-                mAMDP.PropertyChanged += mAMDP_PropertyChanged;
+                mOptionalVal.PropertyChanged += mAMDP_PropertyChanged;
                 OptionalValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddOptionalValue));
                 OptionalValuesGrid.SetbtnDeleteHandler(btnDelete_Click);
                 OptionalValuesGrid.SetbtnClearAllHandler(btnClearAll_Click);
@@ -66,72 +73,25 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 OptionalValuesGrid.btnCut.AddHandler(Button.ClickEvent, new RoutedEventHandler(BtnCopyClicked));
                 OptionalValuesGrid.btnPaste.AddHandler(Button.ClickEvent, new RoutedEventHandler(BtnPastClicked));
             }
-            this.Title = AMDP.PlaceHolder + " " + "Optional Values:";
-        }
-
-        public ModelOptionalValuesPage(HTMLElementInfo HEI, bool selectionModePage = false)
-        {
-            InitializeComponent();
-            mIsAppModelParam = false;
-            mIsHTMLElementInfoParam = true;
-
-            mHEI = HEI;
-            mSelectionModePage = selectionModePage;
-
-            OptionalValuesGrid.DataSourceList = mHEI.OptionalVals;
-            SetOptionalValuesGridView();
-
-            if (!mSelectionModePage)
-            {
-                mHEI.PropertyChanged += mAMDP_PropertyChanged;
-                OptionalValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddOptionalValue));
-                OptionalValuesGrid.SetbtnDeleteHandler(btnDelete_Click);
-                OptionalValuesGrid.SetbtnClearAllHandler(btnClearAll_Click);
-                OptionalValuesGrid.btnCopy.AddHandler(Button.ClickEvent, new RoutedEventHandler(BtnCopyClicked));
-                OptionalValuesGrid.btnCut.AddHandler(Button.ClickEvent, new RoutedEventHandler(BtnCopyClicked));
-                OptionalValuesGrid.btnPaste.AddHandler(Button.ClickEvent, new RoutedEventHandler(BtnPastClicked));
-            }
-            this.Title = HEI.ElementName.Replace("\n", "_").Replace("\r", "") + " " + "Possible Values";
+            this.Title = elementName + " " + "Optional Values:";
         }
 
         private void btnClearAll_Click(object sender, RoutedEventArgs e)
         {
-            if (mIsAppModelParam)
+            for (int i = 0; i < mOptionalVal.Count; i++)
             {
-                for (int i = 0; i < mAMDP.OptionalValuesList.Count; i++)
+                OptionalValue ov = mOptionalVal[i];
+                if (ov.Value != GlobalAppModelParameter.CURRENT_VALUE)
                 {
-                    OptionalValue ov = mAMDP.OptionalValuesList[i];
-                    if (ov.Value != GlobalAppModelParameter.CURRENT_VALUE)
-                    {
-                        mAMDP.OptionalValuesList.RemoveItem(ov);
-                        i--;
-                    }
-                    else
-                    {
-                        ov.IsDefault = true;
-                        //binding is disabled so setting the radio button as check manually
-                        RadioButton rb = (RadioButton)OptionalValuesGrid.GetDataTemplateCellControl<RadioButton>(ov, 1);
-                        rb.IsChecked = true;
-                    }
-                } 
-            }
-            else if(mIsHTMLElementInfoParam)
-            {
-                for (int i = 0; i < mHEI.OptionalVals.Count; i++)
+                    mOptionalVal.RemoveItem(ov);
+                    i--;
+                }
+                else
                 {
-                    OptionalValue ov = mHEI.OptionalVals[i];
-                    if (ov.Value != GlobalAppModelParameter.CURRENT_VALUE)
-                    {
-                        mHEI.OptionalVals.RemoveItem(ov);
-                        i--;
-                    }
-                    else
-                    {
-                        ov.IsDefault = true;
-                        //binding is disabled so setting the radio button as check manually
-                        RadioButton rb = (RadioButton)OptionalValuesGrid.GetDataTemplateCellControl<RadioButton>(ov, 1);
-                        rb.IsChecked = true;
-                    }
+                    ov.IsDefault = true;
+                    //binding is disabled so setting the radio button as check manually
+                    RadioButton rb = (RadioButton)OptionalValuesGrid.GetDataTemplateCellControl<RadioButton>(ov, 1);
+                    rb.IsChecked = true;
                 }
             }
         }
@@ -155,9 +115,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             }
             return child;
         }
-
-
-
+               
         private void SetOptionalValuesGridView()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -173,7 +131,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 }
             }
             else
-                view.GridColsView.Add(new GridColView() { Field = nameof(OptionalValue.Value), ReadOnly = true, WidthWeight = 10 });
+            { view.GridColsView.Add(new GridColView() { Field = nameof(OptionalValue.Value), ReadOnly = true, WidthWeight = 10 }); }
 
             view.GridColsView.Add(new GridColView() { Field = nameof(OptionalValue.IsDefault), Header = "Default", StyleType = GridColView.eGridColStyleType.Template, HorizontalAlignment = HorizontalAlignment.Center, CellTemplate = (DataTemplate)this.pageGrid.Resources["DefaultValueTemplate"], WidthWeight = 1 });
             OptionalValuesGrid.SetAllColumnsDefaultView(view);
@@ -201,28 +159,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 }
                 else
                 {
-                    if (mIsAppModelParam)
+                    foreach (OptionalValue OP in mOptionalVal)
                     {
-                        foreach (OptionalValue OP in mAMDP.OptionalValuesList)
+                        if (OP != CurrentOP && OP.Value == CurrentOP.Value)
                         {
-                            if (OP != CurrentOP && OP.Value == CurrentOP.Value)
-                            {
-                                CurrentOP.Value = OldValue;
-                                Reporter.ToUser(eUserMsgKeys.SpecifyUniqueValue);
-                                break;
-                            }
-                        } 
-                    }
-                    else if(mIsHTMLElementInfoParam)
-                    {
-                        foreach (OptionalValue OP in mHEI.OptionalVals)
-                        {
-                            if (OP != CurrentOP && OP.Value == CurrentOP.Value)
-                            {
-                                CurrentOP.Value = OldValue;
-                                Reporter.ToUser(eUserMsgKeys.SpecifyUniqueValue);
-                                break;
-                            }
+                            CurrentOP.Value = OldValue;
+                            break;
                         }
                     }
                 }
@@ -235,14 +177,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             OptionalValue newVal = new OptionalValue(string.Empty);
             newVal.IsDefault = true;
-            if (mIsAppModelParam)
-            {                
-                mAMDP.OptionalValuesList.Add(newVal);
-            }
-            else if(mIsHTMLElementInfoParam)
-            {
-                mHEI.OptionalVals.Add(newVal);
-            }            
+            mOptionalVal.Add(newVal);
 
             OptionalValuesGrid.Grid.SelectedItem = newVal;
             OptionalValuesGrid.Grid.CurrentItem = newVal;
@@ -257,13 +192,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             SavedDefaultOV = null;
             OptionalValue defaultOptionalValue = OptionalValuesGrid.Grid.SelectedItems.Cast<OptionalValue>().ToList().Where(x => x.IsDefault == true).FirstOrDefault();
             if (defaultOptionalValue != null)
-                SavedDefaultOV = defaultOptionalValue;
+            { SavedDefaultOV = defaultOptionalValue; }
         }
 
         private void BtnPastClicked(object sender, RoutedEventArgs e)
         {
             if (SavedDefaultOV != null)
-                SavedDefaultOV.IsDefault = true;
+            { SavedDefaultOV.IsDefault = true; }
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
@@ -276,10 +211,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 if (string.IsNullOrEmpty(OV.Value))
                 {
                     if (OV.IsDefault)
-                        ((OptionalValue)(OptionalValuesGrid.Grid.Items[0])).IsDefault = true;
+                    { ((OptionalValue)(OptionalValuesGrid.Grid.Items[0])).IsDefault = true; }
 
-                    if (mIsAppModelParam) mAMDP.OptionalValuesList.Remove(OV);
-                    if (mIsHTMLElementInfoParam) mHEI.OptionalVals.Remove(OV);
+                    mOptionalVal.Remove(OV);
                     i--;
                 }
             }
@@ -288,8 +222,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             mWin.Close();
 
-            if (mIsAppModelParam) mAMDP.OnPropertyChanged(nameof(AppModelParameter.OptionalValuesString));
-            if (mIsHTMLElementInfoParam) mHEI.OnPropertyChanged(nameof(HTMLElementInfo.OpValsString));
+            if (mParentObject.GetType().Name == typeof(AppModelParameter).Name)
+            {
+                ((AppModelParameter)mParentObject).OnPropertyChanged(nameof(AppModelParameter.OptionalValuesString));
+            }
+            else if (mParentObject.GetType().Name == typeof(HTMLElementInfo).Name)
+            {
+                ((HTMLElementInfo)mParentObject).OnPropertyChanged(nameof(HTMLElementInfo.OpValsString));
+            }
         }
 
         private void mAMDP_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -300,7 +240,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             List<OptionalValue> OptionalValuesToRemove = new List<OptionalValue>();
             foreach (OptionalValue selectedOV in OptionalValuesGrid.Grid.SelectedItems)
-                OptionalValuesToRemove.Add(selectedOV);
+            { OptionalValuesToRemove.Add(selectedOV); }
 
             foreach (OptionalValue OV in OptionalValuesToRemove)
             {
@@ -314,8 +254,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                         RadioButton rb = (RadioButton)OptionalValuesGrid.GetDataTemplateCellControl<RadioButton>(newDefault, 1);
                         rb.IsChecked = true;
                     }
-                    if (mIsAppModelParam) mAMDP.OptionalValuesList.RemoveItem(OV);
-                    if (mIsHTMLElementInfoParam) mHEI.OptionalVals.RemoveItem(OV);
+
+                    mOptionalVal.RemoveItem(OV);
                     editWasDone = true;
                 }
             }
@@ -328,7 +268,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             OKButton.Click += new RoutedEventHandler(OKButton_Click);
 
             if (mSelectionModePage)
-                OptionalValuesGrid.ShowToolsBar = Visibility.Collapsed;
+            { OptionalValuesGrid.ShowToolsBar = Visibility.Collapsed; }
 
             GenericWindow.LoadGenericWindow(ref mWin, null, windowStyle, this.Title, this, new ObservableList<Button> { OKButton }, showClosebtn: false);
 
@@ -341,25 +281,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             RadioButton isDefaultRb = (RadioButton)sender;
 
-            if (mIsAppModelParam)
-            {
-                OptionalValue clickedOv = mAMDP.OptionalValuesList.Where(x => x.Guid == (Guid)isDefaultRb.Tag).FirstOrDefault();
-                if (clickedOv != null && clickedOv.IsDefault != true)
-                    clickedOv.IsDefault = true;
+            OptionalValue clickedOv = mOptionalVal.Where(x => x.Guid == (Guid)isDefaultRb.Tag).FirstOrDefault();
+            if (clickedOv != null && clickedOv.IsDefault != true)
+            { clickedOv.IsDefault = true; }
 
-                foreach (OptionalValue nonClickedOv in mAMDP.OptionalValuesList.Where(x => x.Guid != (Guid)isDefaultRb.Tag).ToList())
-                    if (nonClickedOv.IsDefault != false)
-                        nonClickedOv.IsDefault = false; 
-            }
-            else if (mIsHTMLElementInfoParam)
+            foreach (OptionalValue nonClickedOv in mOptionalVal.Where(x => x.Guid != (Guid)isDefaultRb.Tag).ToList())
             {
-                OptionalValue clickedOv = mHEI.OptionalVals.Where(x => x.Guid == (Guid)isDefaultRb.Tag).FirstOrDefault();
-                if (clickedOv != null && clickedOv.IsDefault != true)
-                    clickedOv.IsDefault = true;
-
-                foreach (OptionalValue nonClickedOv in mHEI.OptionalVals.Where(x => x.Guid != (Guid)isDefaultRb.Tag).ToList())
-                    if (nonClickedOv.IsDefault != false)
-                        nonClickedOv.IsDefault = false;
+                if (nonClickedOv.IsDefault != false)
+                { nonClickedOv.IsDefault = false; }
             }
 
             editWasDone = true;

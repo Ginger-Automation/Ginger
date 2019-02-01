@@ -492,14 +492,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         private void OpenEditGlobalParamPossibleValuesPageButton_Click(object sender, RoutedEventArgs e)
         {
             GlobalAppModelParameter SelectedAMGP = (GlobalAppModelParameter)xGlobalModelParametersGrid.CurrentItem;
-            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(SelectedAMGP, true);
+            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(SelectedAMGP, SelectedAMGP.PlaceHolder, true);
             MDPVP.ShowAsWindow();
         }
 
         private void OpenEditLocalParamPossibleValuesPageButton_Click(object sender, RoutedEventArgs e)
         {
             AppModelParameter SelectedAMDP = (AppModelParameter)ModelParametersGrid.CurrentItem;
-            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(SelectedAMDP);
+            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(SelectedAMDP, SelectedAMDP.PlaceHolder);
             MDPVP.ShowAsWindow();
         }
 

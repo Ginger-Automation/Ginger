@@ -239,7 +239,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 xMainElementsGrid.SetbtnDeleteHandler(DeleteUnMappedElementRow);
             }
 
-            xMainElementsGrid.AddToolbarTool(eImageType.DataSource, "Export Possible Values to DataSource", new RoutedEventHandler(ExportPossibleValuesToDataSource));
+            if (mContext == PomAllElementsPage.eElementsContext.Mapped)
+            {
+                xMainElementsGrid.AddToolbarTool(eImageType.DataSource, "Export Possible Values to DataSource", new RoutedEventHandler(ExportPossibleValuesToDataSource)); 
+            }
 
             xMainElementsGrid.grdMain.PreparingCellForEdit += MainElementsGrid_PreparingCellForEdit;
             xMainElementsGrid.PasteItemEvent += PasteElementEvent;
@@ -272,7 +275,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while exporting POM optional Values to Data Source", ex);
             }
         }
 
@@ -321,7 +324,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void OpenEditOptionalValuesPageButton_Click(object sender, RoutedEventArgs e)
         {
             HTMLElementInfo SelectedControl = (HTMLElementInfo)xMainElementsGrid.CurrentItem;
-            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(SelectedControl);
+            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(SelectedControl, SelectedControl.ElementName);
             MDPVP.ShowAsWindow();
         }
 
@@ -354,7 +357,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The selected Element is not allowed to add possible values.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Selected Element type do not support optional values.");
                 e.EditingElement.IsEnabled = false;
             }
         }

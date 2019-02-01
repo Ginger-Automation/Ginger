@@ -525,7 +525,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {
             GlobalAppModelParameter SelectedAMDP = (GlobalAppModelParameter)xModelsGlobalParamsGrid.CurrentItem;
             ObservableList<OptionalValue> list = SelectedAMDP.OptionalValuesList;
-            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(SelectedAMDP);
+            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(SelectedAMDP, SelectedAMDP.PlaceHolder);
             bool editWasDone = MDPVP.ShowAsWindow();
 
             if (editWasDone)
