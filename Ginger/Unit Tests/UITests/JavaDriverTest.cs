@@ -145,6 +145,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR = null;            
         }
 
+        #region Unit Test For ActJavaElement
         /**
          * TextField Test Cases  
         */
@@ -859,7 +860,31 @@ namespace UnitTests.UITests.JavaDriverTest
            Assert.AreEqual(ExInfo, "Click Activity Passed", "ExInfo");
            Assert.AreEqual(a.Error, null, "Act.Error");
         }
-        
+
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void GetSelectedInternalFrameTitle()
+        {
+            ActJavaElement actSelectInternalFrame = new ActJavaElement();
+            actSelectInternalFrame.LocateBy = eLocateBy.ByName;
+            actSelectInternalFrame.LocateValueCalculated = "Internal Frame 1";
+            actSelectInternalFrame.ControlAction = ActJavaElement.eControlAction.GetName;
+            actSelectInternalFrame.AddNewReturnParams = true;
+            actSelectInternalFrame.Active = true;
+            mBF.CurrentActivity.Acts.Add(actSelectInternalFrame);
+            mBF.CurrentActivity.Acts.CurrentItem = actSelectInternalFrame;
+            //Act
+            mGR.RunAction(actSelectInternalFrame, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actSelectInternalFrame.Status, "Action Status");
+            Assert.AreEqual(actSelectInternalFrame.ActReturnValues.FirstOrDefault().Actual, "Internal Frame 1", "ExInfo");
+            Assert.AreEqual(actSelectInternalFrame.Error, null, "Act.Error");
+        }
+        #endregion
+
+        #region Unit test for ActTableElement
 
         [TestMethod]  [Timeout(60000)]
         public void SetValueInTableCell()
@@ -1094,27 +1119,10 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
             Assert.AreEqual(ExInfo, "Double Click Activity Passed", "ExInfo");
         }
+        #endregion
 
-        [TestMethod]  [Timeout(60000)]
-        public void GetSelectedInternalFrameTitle()
-        {
-            ActJavaElement actSelectInternalFrame = new ActJavaElement();
-            actSelectInternalFrame.LocateBy = eLocateBy.ByName;
-            actSelectInternalFrame.LocateValueCalculated = "Internal Frame 1";
-            actSelectInternalFrame.ControlAction = ActJavaElement.eControlAction.GetName;
-            actSelectInternalFrame.AddNewReturnParams = true;
-            actSelectInternalFrame.Active = true;
-            mBF.CurrentActivity.Acts.Add(actSelectInternalFrame);
-            mBF.CurrentActivity.Acts.CurrentItem = actSelectInternalFrame;
-            //Act
-            mGR.RunAction(actSelectInternalFrame, false);
 
-            //Assert
-            Assert.AreEqual(eRunStatus.Passed, actSelectInternalFrame.Status, "Action Status");
-            Assert.AreEqual(actSelectInternalFrame.ActReturnValues.FirstOrDefault().Actual, "Internal Frame 1", "ExInfo");
-            Assert.AreEqual(actSelectInternalFrame.Error, null, "Act.Error");
-        }
-
+        #region Unit test for ActUIElement
         [TestMethod]
         [Timeout(60000)]
         public void ACtUIElementGetValue()
@@ -1232,7 +1240,75 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
             Assert.AreEqual(action.Error, null, "Act.Error");
         }
+        #endregion
 
-       
+        #region Unit Test For ActSwitchWindow
+        [TestMethod]
+        [Timeout(60000)]
+        public void ActSwitchWindowActionTest()
+        {
+            ActSwitchWindow action = new ActSwitchWindow();
+            action.LocateBy = eLocateBy.ByTitle;
+            action.LocateValue = "Java Swing";
+            action.Active = true;
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+
+            //Act
+            mGR.RunAction(action, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+            Assert.AreEqual(action.Error, null, "Act.Error");
+        }
+
+        #endregion
+
+        #region Unit Test For ActWindow
+        [TestMethod]
+        [Timeout(60000)]
+        public void ActWindowActionIsExistWindowTest()
+         {
+            ActWindow action = new ActWindow();
+            action.LocateBy = eLocateBy.ByTitle;
+            action.LocateValue = "Java Swing";
+            action.WindowActionType = ActWindow.eWindowActionType.IsExist;
+            action.Active = true;
+            action.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+
+            //Act
+            mGR.RunAction(action, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+            Assert.AreEqual(1, action.ReturnValues.Count);
+            Assert.AreEqual("true", action.ReturnValues[0].Actual);
+            Assert.AreEqual(action.Error, null, "Act.Error");
+         }
+
+        [TestMethod]
+       // [Timeout(60000)]
+        public void ActWindowActionCloseWindowTest()
+        {
+            ActWindow action = new ActWindow();
+            action.LocateBy = eLocateBy.ByTitle;
+            action.LocateValue = "Java Swing";
+            action.WindowActionType = ActWindow.eWindowActionType.Close;
+            action.Active = true;
+            action.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+
+            //Act
+            mGR.RunAction(action, false);
+
+            //Assert
+           // Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+           // Assert.AreEqual(action.Error, null, "Act.Error");
+        }
+        #endregion
+
     }
 }
