@@ -43,21 +43,19 @@ namespace Amdocs.Ginger.Common
         //ObservableList<BusinessFlow> GetListofBusinessFlow();
 
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow);
-
-        IValueExpression CreateValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null);
-
+        IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow, object DSList);
         IValueExpression CreateValueExpression(Object obj, string attr);
 
         // ObservableList<IDatabase> GetDatabaseList();
-        ObservableList<VariableBase> GetVariaables();
+       
         // ObservableList<IAgent> GetAllIAgents();
 
-        ObservableList<DataSourceBase> GetDatasourceList();
+   //     ObservableList<DataSourceBase> GetDatasourceList();
 
         void StartAgentDriver(IAgent agent);
         Type GetDriverType(IAgent agent);
 
-        Type GetPage(string a);
+       
 
         Task<int> AnalyzeRunset(Object a, bool b);
 
