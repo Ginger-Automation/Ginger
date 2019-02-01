@@ -224,5 +224,15 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
+        public static string RemoveInvalidFileNameChars(string Item)
+        {
+            string fileName = Item;
+            foreach (char invalidChar in Path.GetInvalidFileNameChars())
+            {
+                fileName = fileName.Replace(invalidChar.ToString(), "");
+            }
+            fileName = fileName.Replace(@".", "");
+            return fileName;
+        }
     }
 }
