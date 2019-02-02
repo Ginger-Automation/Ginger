@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -288,6 +289,11 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override List<ActUIElement.eElementDragDropType> GetPlatformDragDropTypeList()
         {
             throw new NotImplementedException();
+        }
+
+        public override ObservableList<ElementLocator> GetLearningLocators()
+        {
+            return null;
         }
     }
 }
