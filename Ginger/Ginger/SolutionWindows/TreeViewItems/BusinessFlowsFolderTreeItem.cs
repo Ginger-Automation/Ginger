@@ -247,7 +247,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             string BizFlowName = string.Empty;
             if (GingerCore.General.GetInputWithValidation("Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name:", ref BizFlowName))
             {
-                BusinessFlow BizFlow = App.CreateNewBizFlow(BizFlowName);
+                BusinessFlow BizFlow = App.GetNewBusinessFlow(BizFlowName);
 
                 if (WorkSpace.UserProfile.Solution.ApplicationPlatforms.Count != 1)
                 {

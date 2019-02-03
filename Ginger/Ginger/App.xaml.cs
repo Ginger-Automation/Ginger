@@ -771,12 +771,17 @@ namespace Ginger
                 {
                     //get Solution files
                     IEnumerable<string> solutionFiles = Solution.SolutionFiles(SolutionFolder);
+                    ConcurrentBag<Tuple<SolutionUpgrade.eGingerVersionComparisonResult, string>> solutionFilesWithVersion = null; 
 
                     //check if Ginger Upgrade is needed for loading this Solution
                     try
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "Checking if Ginger upgrade is needed for loading the Solution");
-                        ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
+                        if (solutionFilesWithVersion == null)
+                        {
+                            solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
+                        }
+                        ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
                         if (higherVersionFiles.Count > 0)
                         {
                             if (WorkSpace.RunningInExecutionMode == false && RunningFromUnitTest == false)
@@ -826,7 +831,11 @@ namespace Ginger
                         {
                             if (WorkSpace.UserProfile.DoNotAskToUpgradeSolutions == false && WorkSpace.RunningInExecutionMode == false && RunningFromUnitTest == false)
                             {
-                                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
+                                if (solutionFilesWithVersion == null)
+                                {
+                                    solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
+                                }
+                                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
                                 if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
                                 {
                                     UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, sol.Folder, sol.Name, lowerVersionFiles.ToList());
@@ -997,9 +1006,8 @@ namespace Ginger
         //    return defualtBF;
         //}
 
-        public static BusinessFlow CreateNewBizFlow(string Name)
+        public static BusinessFlow GetNewBusinessFlow(string Name, bool setTargetApp=false)
         {
-
             BusinessFlow biz = new BusinessFlow();
             biz.Name = Name;
             biz.Activities = new ObservableList<Activity>();
@@ -1010,6 +1018,13 @@ namespace Ginger
             biz.Activities.Add(a);
             biz.Activities.CurrentItem = a;
             biz.CurrentActivity = a;
+
+            if (setTargetApp == true && WorkSpace.UserProfile.Solution.ApplicationPlatforms.Count > 0)
+            {
+                biz.TargetApplications.Add(new TargetApplication() {AppName = WorkSpace.UserProfile.Solution.MainApplication});
+                biz.CurrentActivity.TargetApplication = biz.TargetApplications[0].Name;
+            }
+
             return biz;
         }
 
