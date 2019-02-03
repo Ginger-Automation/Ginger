@@ -253,8 +253,8 @@ namespace Ginger
         [IsSerializedForLocalRepository]
         public List<string> RecentAppAgentsMapping = new List<string>();
 
-        [IsSerializedForLocalRepository]
-        public Guid RecentBusinessFlow { get; set; }
+        //[IsSerializedForLocalRepository]
+        public Guid RecentBusinessFlow { get; set; }//Not needed anymore keeping for allowing to load UserProfile xml
 
         [IsSerializedForLocalRepository]
         public Guid RecentEnvironment { get; set; }
