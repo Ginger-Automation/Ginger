@@ -78,7 +78,10 @@ namespace Ginger.Actions._Common.ActUIElementLib
             DataContext = this;
 
             SetControlsGridView();
-            AllowElementSelection();
+            if(mOnlyPOMRequest)
+            {
+                HideElementSelection();
+            }
             mLocateValue = (string)mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).GetValue(mObjectLocateValue);
             if (!string.IsNullOrWhiteSpace(mLocateValue))
             {
@@ -186,18 +189,19 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
+        private void HideElementSelection()
+        {
+            xPOMElementsLbl.Visibility = Visibility.Collapsed;
+            ArrowDownButton.Visibility = Visibility.Collapsed;
+            HighlightButton.Visibility = Visibility.Collapsed;
+            xPOMElementTextBox.Visibility = Visibility.Collapsed;
+            xPOMTitleLbl.Visibility = Visibility.Collapsed;
+            xPOMGrid.ColumnDefinitions[0].Width = new GridLength(0);
+        }
+
         private void AllowElementSelection()
         {
-            if (mOnlyPOMRequest)
-            {
-                xPOMElementsLbl.Visibility = Visibility.Collapsed;
-                ArrowDownButton.Visibility = Visibility.Collapsed;
-                HighlightButton.Visibility = Visibility.Collapsed;
-                xPOMElementTextBox.Visibility = Visibility.Collapsed;
-                xPOMTitleLbl.Visibility = Visibility.Collapsed;
-                xPOMGrid.ColumnDefinitions[0].Width = new GridLength(0);
-            }
-            else
+            if (!mOnlyPOMRequest)
             {
                 xPOMElementsLbl.Visibility = Visibility.Visible;
                 ArrowDownButton.Visibility = Visibility.Visible;
