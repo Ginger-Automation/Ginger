@@ -1004,30 +1004,14 @@ namespace Ginger
             biz.Name = Name;
             biz.Activities = new ObservableList<Activity>();
             biz.Variables = new ObservableList<VariableBase>();
-            // Set the new BF to be same like main app
-            if ( WorkSpace.UserProfile.Solution.MainApplication != null)
-            {
-                biz.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.UserProfile.Solution.MainApplication });
-            }
-
             Activity a = new Activity() { Active = true };
             a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
             a.Acts = new ObservableList<IAct>();
-            if (biz.TargetApplications.Count > 0)
-            {
-                a.TargetApplication = biz.TargetApplications[0].Name;
-            }                
             biz.Activities.Add(a);
-
             biz.Activities.CurrentItem = a;
             biz.CurrentActivity = a;
             return biz;
         }
-
-
-
-
-
 
         internal static void CheckIn(string Path)
         {

@@ -100,10 +100,10 @@ namespace Ginger.Repository
         //    return new ObservableList<IDatabase>();
         //}
 
-        public ObservableList<DataSourceBase> GetDatasourceList()
-        {
-            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-        }
+        //public ObservableList<DataSourceBase> GetDatasourceList()
+        //{
+        //    return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+        //}
 
 
         //public ObservableList<IAgent> GetAllIAgents()
@@ -343,16 +343,9 @@ namespace Ginger.Repository
                     
             }
         }
+        
 
-        public ObservableList<VariableBase> GetVariaables()
-        {
-            return  WorkSpace.UserProfile.Solution.Variables;
-        }
-
-        public Type GetPage(string a)
-        {
-            throw new NotImplementedException();
-        }
+    
 
         public async Task<int> AnalyzeRunset(object a, bool runInSilentMode)
         {
