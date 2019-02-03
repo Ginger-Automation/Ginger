@@ -25,42 +25,48 @@ namespace GingerCore.ALM.JIRA.Bll
             this.jiraRepObj = jiraRep;
         }
 
-        public Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening)
+        public Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
         {
             Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
             List<JiraIssueExport> defectsToExport = new List<JiraIssueExport>();
             foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
-                defectsToExport.Add(this.CreateDefectData(defectForOpening));
+            {
+                defectsToExport.Add(this.CreateDefectData(defectForOpening, defectsFields));
+            }
             var exportedDefects = jiraRepObj.ExportJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, defectsToExport);
-            exportedDefects.ForEach(a => defectsOpeningResults.Add(new Guid(a.DataResult.self), a.DataResult.key));
+            for (var a = 0; a < exportedDefects.Count; a++)
+            {
+                if(defectsForOpening.Count>a)
+                defectsOpeningResults.Add(defectsForOpening.ElementAt(a).Key, exportedDefects[a].DataResult.key);
+            }
             return defectsOpeningResults;
         }
 
-        private JiraIssueExport CreateDefectData(KeyValuePair<Guid, Dictionary<string, string>> defectForOpening)
+        private JiraIssueExport CreateDefectData(KeyValuePair<Guid, Dictionary<string, string>> defectForOpening, List<ExternalItemFieldBase> defectsFields)
         {
             JiraIssueExport jiraIssue = new JiraIssueExport();
             jiraIssue.issueType = "Defect";
             jiraIssue.self = defectForOpening.Key.ToString();
             jiraIssue.resourceType = ALM_Common.DataContracts.ResourceType.DEFECT;
             jiraIssue.ExportFields.Add("project", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.AlmConfig.ALMProjectKey } });
-            jiraIssue.ExportFields.Add("summary", new List<IJiraExportData>() { new JiraExportData() { value = defectForOpening .Value.ContainsKey("Summary")? defectForOpening.Value["Summary"]:string.Empty } });
+            jiraIssue.ExportFields.Add("summary", new List<IJiraExportData>() { new JiraExportData() { value = defectForOpening.Value.ContainsKey("Summary") ? defectForOpening.Value["Summary"] : string.Empty } });
             jiraIssue.ExportFields.Add("description", new List<IJiraExportData>() { new JiraExportData() { value = defectForOpening.Value.ContainsKey("description") ? defectForOpening.Value["description"] : string.Empty } });
             jiraIssue.ExportFields.Add("issuetype", new List<IJiraExportData>() { new JiraExportData() { value = "Defect" } });
             jiraIssue.ExportFields.Add("reporter", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.AlmConfig.ALMUserName } });
-            this.CreateDefectFields(defectForOpening.Value, jiraIssue);
+            this.CreateDefectFields(defectsFields, jiraIssue);
             return jiraIssue;
         }
 
-        private void CreateDefectFields(Dictionary<string, string> fields, JiraIssueExport exportData)
+        private void CreateDefectFields(List<ExternalItemFieldBase> defectsFields, JiraIssueExport exportData)
         {
-            foreach (var item in fields)
+            foreach (var item in defectsFields.Where(a=>a.Mandatory||a.ToUpdate))
             {
-                var issueTemplate = jiraRepObj.GetFieldFromTemplateByName(ALM_Common.DataContracts.ResourceType.DEFECT, ALMCore.AlmConfig.ALMProjectKey, item.Key);
+                var issueTemplate = jiraRepObj.GetFieldFromTemplateByName(ALM_Common.DataContracts.ResourceType.DEFECT, ALMCore.AlmConfig.ALMProjectKey, item.Name);
                 if (issueTemplate == null || exportData.ExportFields.ContainsKey(issueTemplate.key))
                     continue;
                 if (issueTemplate != null)
                 {
-                    exportData.ExportFields.Add(issueTemplate.key, new List<IJiraExportData>() { new JiraExportData() { value = item.Value } });
+                    exportData.ExportFields.Add(issueTemplate.key, new List<IJiraExportData>() { new JiraExportData() { value = item.SelectedValue } });
                 }
             }
         }
@@ -84,7 +90,7 @@ namespace GingerCore.ALM.JIRA.Bll
                 {
                     businessFlow.ExternalID = exportResponse.First().DataResult.key;
                 }
-                result=CreateTestExecution(businessFlow, tcArray, testExecutionFields);
+                result = CreateTestExecution(businessFlow, tcArray, testExecutionFields);
                 this.UpdateTestCaseLabel(bftestCases);
             }
             else
@@ -346,7 +352,7 @@ namespace GingerCore.ALM.JIRA.Bll
             jiraIssue.ExportFields.Add("description", new List<IJiraExportData>() { new JiraExportData() { value = activtiesGroup.Description } });
             jiraIssue.ExportFields.Add("issuetype", new List<IJiraExportData>() { new JiraExportData() { value = "Test" } });
             jiraIssue.ExportFields.Add("reporter", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.AlmConfig.ALMUserName } });
-            if(!string.IsNullOrEmpty(activtiesGroup.ExternalID2))
+            if (!string.IsNullOrEmpty(activtiesGroup.ExternalID2))
                 jiraIssue.ExportFields.Add("labels", new List<IJiraExportData>() { new JiraExportData() { value = activtiesGroup.ExternalID2 } });
 
             foreach (var item in issueFields)

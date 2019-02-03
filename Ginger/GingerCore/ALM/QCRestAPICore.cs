@@ -71,7 +71,7 @@ namespace GingerCore.ALM
             return ImportFromQCRest.ConvertQCTestSetToBF(testSet);
         }
 
-        public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST = false)
+        public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false)
         {
             return GingerCore.ALM.QC.ImportFromQC.CreateNewDefectQCREST(defectsForOpening);
         }

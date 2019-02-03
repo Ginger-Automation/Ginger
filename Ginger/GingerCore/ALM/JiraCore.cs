@@ -69,9 +69,9 @@ namespace GingerCore.ALM
             return jiraConnectObj.ConnectJiraServer();
         }
 
-        public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST = false)
+        public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false)
         {
-            return exportMananger.CreateNewALMDefects(defectsForOpening);
+            return exportMananger.CreateNewALMDefects(defectsForOpening, defectsFields);
         }
 
         public override bool DisconnectALMProjectStayLoggedIn()
