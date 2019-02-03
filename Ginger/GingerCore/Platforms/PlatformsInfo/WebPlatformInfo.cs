@@ -274,6 +274,15 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
+                    ElementType = eElementType.Text,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.GetValue,
+                                                               ActUIElement.eElementAction.GetText,
+                                                               ActUIElement.eElementAction.GetFont}
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
                     ElementType = eElementType.List,
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {
@@ -302,7 +311,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                 {
                     ElementType = eElementType.Div,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>()
+                    ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.GetValue,
+                                                               }
                 });
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
@@ -310,8 +320,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.Span,
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.GetValue,
+                                                               ActUIElement.eElementAction.SetValue,
                                                                ActUIElement.eElementAction.Click,
-                                                               ActUIElement.eElementAction.SetValue
                                                                }
                 });
 
