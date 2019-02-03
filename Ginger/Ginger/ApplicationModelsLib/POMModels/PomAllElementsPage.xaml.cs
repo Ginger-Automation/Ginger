@@ -256,9 +256,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             } 
             foreach (ElementInfo EI in mPOM.MappedUIElements)
             {
-                ///*mWinExplorer.UpdateElementInfoFields(EI);/*//Not sure if needed
-
-                if (ElementInfo.IsTheSameElement(EI, mSpyElement))
+                if (IsTheSameElement(EI, mSpyElement))
                 {
                     xMappedElementsTab.Focus();
                     elementfocused = true;
@@ -270,9 +268,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             foreach (ElementInfo EI in mPOM.UnMappedUIElements)
             {
-                //mWinExplorer.UpdateElementInfoFields(EI);//Not sure if needed
-
-                if (ElementInfo.IsTheSameElement(EI, mSpyElement))
+                if (IsTheSameElement(EI, mSpyElement))
                 {
                     xUnmappedElementsTab.Focus();
                     elementfocused = true;
@@ -286,6 +282,28 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 xStatusLable.Content = "Found element is not included in below elements list, click here to add it ";
                 xCreateNewElement.Visibility = Visibility.Visible;
+            }
+        }
+
+        public static bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
+        {
+            bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && (firstEI.Path == secondEI.Path || string.IsNullOrEmpty(firstEI.Path) && string.IsNullOrEmpty(secondEI.Path));
+
+            bool HasSimilarLocators = true;
+            foreach (ElementLocator EL in firstEI.Locators)
+            {
+                ElementLocator SimilarLocator = secondEI.Locators.Where(x => x.LocateBy == EL.LocateBy && x.LocateValue == EL.LocateValue).FirstOrDefault();
+                if (SimilarLocator == null)
+                    HasSimilarLocators = false;
+            }
+
+            if (HasSimilarXpath && HasSimilarLocators)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 

@@ -47,23 +47,19 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            switch (WizardEventArgs.EventType)
+            if (WizardEventArgs.EventType == EventType.Init)
             {
-                case EventType.Init:
-                    mWizard = (PomRelearnWizard)WizardEventArgs.Wizard;
-                    mPOM = mWizard.mDuplicatedPOM;
-                    mElementsList.CollectionChanged += ElementsListCollectionChanged;
-                    InitilizePomElementsMappingPage();
-                    mAppPlatform =  WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
-                    SetAutoMapElementTypes();
-                    mPomElementsPage.SetAgent(mWizard.Agent);
-                    mOriginalList = mPOM.CopiedUnienedList;
-                    //CollectOriginalElementsData();
-
-                    xReLearnButton.Visibility = Visibility.Visible;
-                    Learn();
-
-                    break;
+                mWizard = (PomRelearnWizard)WizardEventArgs.Wizard;
+                mPOM = mWizard.mOriginalPOM;
+                mElementsList.CollectionChanged += ElementsListCollectionChanged;
+                InitilizePomElementsMappingPage();
+                mAppPlatform = WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
+                SetAutoMapElementTypes();
+                mPomElementsPage.SetAgent(mWizard.Agent);
+                mPOM.PopulateDuplicatedUnienedElementsList();
+                mOriginalList = mPOM.CopiedUnienedList;
+                xReLearnButton.Visibility = Visibility.Visible;
+                Learn();
             }
         }
 
@@ -89,8 +85,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
                     mWizard.IWindowExplorerDriver.UnHighLightElements();
 
-                    //await Task.Run(() => WaitUntilDriverWillBeFree());
-
                     await Task.Run(() => CollectOriginalElementsData());
 
                     await Task.Run(() => mWizard.IWindowExplorerDriver.GetVisibleControls(null, mElementsList, true));
@@ -110,14 +104,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     mWizard.ProcessEnded();
                 }
 
-            }
-        }
-
-        private void WaitUntilDriverWillBeFree()
-        {
-            while (mWizard.Agent.Driver.IsDriverBusy)
-            {
-                Thread.Sleep(2000);
             }
         }
 
@@ -151,15 +137,16 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             if (mSelectedElementTypesList.Count == 0)
             {
-                switch (mAppPlatform)
+
+                if (mAppPlatform == ePlatformType.Web)
                 {
-                    case ePlatformType.Web:
-                        foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in new WebPlatform().GetPlatformElementTypesData().ToList())
+                    foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in new WebPlatform().GetPlatformElementTypesData().ToList())
+                    {
+                        if (elementTypeOperation.IsCommonElementType)
                         {
-                            if(elementTypeOperation.IsCommonElementType)
-                                 mSelectedElementTypesList.Add(elementTypeOperation.ElementType);
+                            mSelectedElementTypesList.Add(elementTypeOperation.ElementType);
                         }
-                        break;
+                    }
                 }
             }
         }
@@ -267,8 +254,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
 
 
-            List<ElementLocator> ModifiedElementsLocatorsList = originalElelemnt.Locators.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Unchanged).ToList();
-            List<ControlProperty> ModifiedControlPropertiesList = originalElelemnt.Properties.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Unchanged).ToList();
+            List<ElementLocator> ModifiedElementsLocatorsList = originalElelemnt.Locators.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Unchanged && x.DeltaStatus != ElementInfo.eDeltaStatus.All).ToList();
+            List<ControlProperty> ModifiedControlPropertiesList = originalElelemnt.Properties.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Unchanged && x.DeltaStatus != ElementInfo.eDeltaStatus.All).ToList();
             if (ModifiedElementsLocatorsList.Count > 0 && ModifiedControlPropertiesList.Count > 0)
             {
                 originalElelemnt.DeltaStatus = ElementInfo.eDeltaStatus.Modified;

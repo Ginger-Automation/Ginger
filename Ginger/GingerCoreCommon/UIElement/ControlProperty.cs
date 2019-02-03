@@ -40,14 +40,13 @@ namespace Amdocs.Ginger.Common.UIElement
             {
                 switch (DeltaStatus)
                 {
-                    case ElementInfo.eDeltaStatus.Unchanged:
-                        return eImageType.UnModified;
                     case ElementInfo.eDeltaStatus.Deleted:
                         return eImageType.Deleted;
                     case ElementInfo.eDeltaStatus.Modified:
                         return eImageType.Modified;
                     case ElementInfo.eDeltaStatus.New:
                         return eImageType.Added;
+                    case ElementInfo.eDeltaStatus.Unchanged:
                     default:
                         return eImageType.UnModified;
                 }

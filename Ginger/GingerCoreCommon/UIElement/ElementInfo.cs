@@ -347,14 +347,13 @@ namespace Amdocs.Ginger.Common.UIElement
             {
                 switch (DeltaStatus)
                 {
-                    case eDeltaStatus.Unchanged:
-                        return eImageType.UnModified;
                     case eDeltaStatus.Deleted:
                         return eImageType.Deleted;
                     case eDeltaStatus.Modified:
                         return eImageType.Modified;
                     case eDeltaStatus.New:
                         return eImageType.Added;
+                    case eDeltaStatus.Unchanged:
                     default:
                         return eImageType.UnModified;
                 }
@@ -388,8 +387,6 @@ namespace Amdocs.Ginger.Common.UIElement
             [EnumValueDescription("Locators And Properties Changed")]
             LocatorsAndPropertiesChanged
         }
-
-        //public eDeltaExtraDetails DeltaExtraDetails { get; set; }
 
         private eDeltaExtraDetails mDeltaExtraDetails;
 
@@ -462,27 +459,7 @@ namespace Amdocs.Ginger.Common.UIElement
         }
 
 
-        public static bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
-        {
-            bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && (firstEI.Path == secondEI.Path || string.IsNullOrEmpty(firstEI.Path) && string.IsNullOrEmpty(secondEI.Path));
 
-            bool HasSimilarLocators = true;
-            foreach (ElementLocator EL in firstEI.Locators)
-            {
-                ElementLocator SimilarLocator = secondEI.Locators.Where(x => x.LocateBy == EL.LocateBy && x.LocateValue == EL.LocateValue).FirstOrDefault();
-                if (SimilarLocator == null)
-                    HasSimilarLocators = false;
-            }
-
-            if (HasSimilarXpath && HasSimilarLocators)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
     }
 
     public enum eLocateBy

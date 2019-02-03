@@ -62,15 +62,18 @@ namespace Amdocs.Ginger.Repository
 
         public void PopulateDuplicatedUnienedElementsList()
         {
+            mCopiedUnienedList.Clear();
             foreach (ElementInfo EI in MappedUIElements)
             {
-                EI.ElementGroup = ElementInfo.eElementGroup.Mapped;
-                mCopiedUnienedList.Add(EI);
+                ElementInfo DuplicatedEI = (ElementInfo)EI.CreateCopy(false);
+                DuplicatedEI.ElementGroup = ElementInfo.eElementGroup.Mapped;
+                mCopiedUnienedList.Add(DuplicatedEI);
             }
             foreach (ElementInfo EI in UnMappedUIElements)
             {
-                EI.ElementGroup = ElementInfo.eElementGroup.Unmapped;
-                mCopiedUnienedList.Add(EI);
+                ElementInfo DuplicatedEI = (ElementInfo)EI.CreateCopy(false);
+                DuplicatedEI.ElementGroup = ElementInfo.eElementGroup.Unmapped;
+                mCopiedUnienedList.Add(DuplicatedEI);
             }
         }
 
@@ -80,10 +83,6 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                if (mCopiedUnienedList.Count == 0)
-                {
-                    PopulateDuplicatedUnienedElementsList();
-                }
                 return mCopiedUnienedList;
             }
         }
