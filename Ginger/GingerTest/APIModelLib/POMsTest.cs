@@ -23,7 +23,7 @@ namespace GingerTest.APIModelLib
 
         static POMsPOM mPOMsPOM = null;
         static ApplicationPOMModel mLearnedPOM = null;
-
+        static List<ElementLocator> prioritizedLocatorsList = null;
 
         [ClassInitialize]
         public static void ClassInit(TestContext testContext)
@@ -48,7 +48,14 @@ namespace GingerTest.APIModelLib
 
             Agent mChromeAgent = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == "ChromeAgent" select x).SingleOrDefault();
             //Act
-            mLearnedPOM = mPOMsPOM.CreatePOM(name, description, "MyWebApp", mChromeAgent, @"HTML\HTMLControls.html", new List<eElementType>() { eElementType.HyperLink, eElementType.Table, eElementType.ListItem });
+            prioritizedLocatorsList = new List<ElementLocator>()
+            {
+                new ElementLocator() { Active = false, LocateBy = eLocateBy.ByName },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID },
+                new ElementLocator() { Active = false, LocateBy = eLocateBy.ByXPath },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath }
+            };
+            mLearnedPOM = mPOMsPOM.CreatePOM(name, description, "MyWebApp", mChromeAgent, @"HTML\HTMLControls.html", new List<eElementType>() { eElementType.HyperLink, eElementType.Table, eElementType.ListItem }, prioritizedLocatorsList);
         }
 
 
@@ -173,6 +180,19 @@ namespace GingerTest.APIModelLib
             }
         }
 
+        private bool CheckLocatorPriority(ObservableList<ElementLocator> locators, eLocateBy locateBy, string locateValue, bool isActive, int priorityIndexValue)
+        {
+            ElementLocator locator = locators.Where(x => x.LocateBy == locateBy && x.LocateValue == locateValue).FirstOrDefault();
+
+            if (locator != null && locator.Active == isActive && locators.IndexOf(locator) == priorityIndexValue)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         [TestMethod]  [Timeout(60000)]
         public void ValidateElementsLocators()
@@ -193,6 +213,55 @@ namespace GingerTest.APIModelLib
             Assert.IsTrue(IsLocatorExist(ComboBoxEI.Locators, eLocateBy.ByName, "sel1"), "POM.Locator 1 .LocateBy check");
             Assert.IsTrue(IsLocatorExist(ComboBoxEI.Locators, eLocateBy.ByRelXPath, "//select[@id='sel1']"), "POM.Locator 2 .LocateBy check");
             Assert.IsTrue(IsLocatorExist(ComboBoxEI.Locators, eLocateBy.ByXPath, "/html[1]/body[1]/div[9]/select[1]"), "POM.Locator 3 .LocateBy check");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ValidateLocatorsPriority()
+        {
+            //Act
+            ElementInfo ButtonEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.Button).FirstOrDefault();
+            ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.ComboBox).FirstOrDefault();
+
+            #region Assert #1 Element : ButtonEI | POM.LocatorsPriority Check
+            Assert.AreEqual(ButtonEI.Locators.Count, 4, "POM.LocatorsPriority check");
+
+            ElementLocator elemLoc = prioritizedLocatorsList.Find(x => x.LocateBy == eLocateBy.ByID);
+            int locatorIndex = prioritizedLocatorsList.IndexOf(elemLoc);
+            Assert.IsTrue(CheckLocatorPriority(ButtonEI.Locators, eLocateBy.ByID, "submit1", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
+
+            elemLoc = prioritizedLocatorsList.Find(x => x.LocateBy == eLocateBy.ByName);
+            locatorIndex = prioritizedLocatorsList.IndexOf(elemLoc);
+            Assert.IsTrue(CheckLocatorPriority(ButtonEI.Locators, eLocateBy.ByName, "submit1", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
+
+            elemLoc = prioritizedLocatorsList.Find(x => x.LocateBy == eLocateBy.ByRelXPath);
+            locatorIndex = prioritizedLocatorsList.IndexOf(elemLoc);
+            Assert.IsTrue(CheckLocatorPriority(ButtonEI.Locators, eLocateBy.ByRelXPath, "//input[@id='submit1']", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
+
+            elemLoc = prioritizedLocatorsList.Find(x => x.LocateBy == eLocateBy.ByXPath);
+            locatorIndex = prioritizedLocatorsList.IndexOf(elemLoc);
+            Assert.IsTrue(CheckLocatorPriority(ButtonEI.Locators, eLocateBy.ByXPath, "/html[1]/body[1]/div[19]/input[1]", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
+            #endregion
+
+            # region Assert #2 Element : ComboBoxEI | POM.LocatorsPriority Check
+            Assert.AreEqual(ComboBoxEI.Locators.Count, 4, "POM.LocatorsPriority check");
+
+            elemLoc = prioritizedLocatorsList.Find(x => x.LocateBy == eLocateBy.ByID);
+            locatorIndex = prioritizedLocatorsList.IndexOf(elemLoc);
+            Assert.IsTrue(CheckLocatorPriority(ComboBoxEI.Locators, eLocateBy.ByID, "sel1", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
+
+            elemLoc = prioritizedLocatorsList.Find(x => x.LocateBy == eLocateBy.ByName);
+            locatorIndex = prioritizedLocatorsList.IndexOf(elemLoc);
+            Assert.IsTrue(CheckLocatorPriority(ComboBoxEI.Locators, eLocateBy.ByName, "sel1", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
+
+            elemLoc = prioritizedLocatorsList.Find(x => x.LocateBy == eLocateBy.ByRelXPath);
+            locatorIndex = prioritizedLocatorsList.IndexOf(elemLoc);
+            Assert.IsTrue(CheckLocatorPriority(ComboBoxEI.Locators, eLocateBy.ByRelXPath, "//select[@id='sel1']", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
+
+            elemLoc = prioritizedLocatorsList.Find(x => x.LocateBy == eLocateBy.ByXPath);
+            locatorIndex = prioritizedLocatorsList.IndexOf(elemLoc);
+            Assert.IsTrue(CheckLocatorPriority(ComboBoxEI.Locators, eLocateBy.ByXPath, "/html[1]/body[1]/div[9]/select[1]", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
+            #endregion
         }
 
         private TestContext testContextInstance;
