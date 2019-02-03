@@ -157,15 +157,15 @@ namespace Ginger.Repository
                                 break;
                             case eDriverType.SeleniumEdge:
                                 Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Edge);
-                                break;                          
-                            case eDriverType.ASCF:                                
+                                break;
+                            case eDriverType.ASCF:
                                 Driver = new ASCFDriver(BusinessFlow, zAgent.Name);
                                 break;
-                            case eDriverType.DOSConsole:                                
+                            case eDriverType.DOSConsole:
                                 Driver = new DOSConsoleDriver(BusinessFlow);
                                 break;
-                            case eDriverType.UnixShell:                                
-                                 Driver = new UnixShellDriver(BusinessFlow, ProjEnvironment);
+                            case eDriverType.UnixShell:
+                                Driver = new UnixShellDriver(BusinessFlow, ProjEnvironment);
                                 ((UnixShellDriver)Driver).SetScriptsFolder(System.IO.Path.Combine(zAgent.SolutionFolder, @"Documents\sh\"));
                                 break;
                             case eDriverType.MobileAppiumAndroid:
@@ -266,27 +266,25 @@ namespace Ginger.Repository
             }
             finally
             {
-                if (Driver != null)
+                if (zAgent.AgentType == eAgentType.Service)
                 {
-                    if (zAgent.AgentType == eAgentType.Service)
-                    {
-                        zAgent.mIsStarting = false;
-                    }
-                    else
+                    zAgent.mIsStarting = false;
+                }
+                else
+                {
+                    if (Driver != null)
                     {
                         // Give the driver time to start            
                         Thread.Sleep(500);
-                        zAgent.mIsStarting = false;
                         Driver.IsDriverRunning = true;
-                        zAgent.OnPropertyChanged(Fields.Status);
                         Driver.driverMessageEventHandler += zAgent.driverMessageEventHandler;
-                        zAgent.OnPropertyChanged(Fields.IsWindowExplorerSupportReady);
                     }
+
+                    zAgent.mIsStarting = false;
+                    zAgent.OnPropertyChanged(Fields.Status);
+                    zAgent.OnPropertyChanged(Fields.IsWindowExplorerSupportReady);
                 }
             }
-
-
-            //return Driver;
         }
 
         public Type GetDriverType(IAgent agent)
