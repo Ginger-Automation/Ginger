@@ -192,7 +192,18 @@ namespace GingerCore
 
             CalculateFunctions();
 
-            mValueCalculated = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mValueCalculated);
+            if (WorkSpace.Instance != null && WorkSpace.Instance.SolutionRepository != null)
+            {
+                mValueCalculated = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mValueCalculated);
+            }
+            else if(!string.IsNullOrWhiteSpace(SolutionFolder)) 
+            {                
+                if (mValueCalculated.StartsWith("~"))
+                {
+                    mValueCalculated = mValueCalculated.TrimStart(new char[] { '~', '\\', '/' });
+                    mValueCalculated = Path.Combine(SolutionFolder, mValueCalculated);
+                }
+            }
         }
 
         private void ReplaceGlobalParameters()
