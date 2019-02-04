@@ -63,7 +63,6 @@ namespace GingerCore.Drivers
             Chrome,
             Edge,
             RemoteWebDriver,
-            PhantomJS
         }
         [UserConfigured]
         [UserConfiguredDescription("Proxy Server:Port")]
@@ -324,7 +323,7 @@ namespace GingerCore.Drivers
 
                         if (Use64Bitbrowser)
                         {
-                            string IEdriver64bitpath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Locati‌​on) + @"\Drivers\IE64BitDriver");
+                            string IEdriver64bitpath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Locati‌​on) + @"\StaticDrivers\IE64BitDriver");
                             IEService = InternetExplorerDriverService.CreateDefaultService(IEdriver64bitpath);
                         }
                         else
@@ -462,12 +461,7 @@ namespace GingerCore.Drivers
                         break;
                     #endregion
 
-                    #region PhantomJS - No More Supported
-                    case eBrowserType.PhantomJS:
-
-                        throw new NotSupportedException("Support for PhantomJS is ended");
-
-                    #endregion
+                  
 
                     #region Safari - To be Added
                     //TODO: add Safari

@@ -450,9 +450,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
                     return locateByPOMElementPage;
                 case eLocateBy.ByXY:                   
-                    return new LocateByXYEditPage(mAction);
+                    return new LocateByXYEditPage(mAction, mAction, ActUIElement.Fields.ElementLocateValue);
                 default:                 
-                    return new LocateValueEditPage(mAction);
+                    return new LocateValueEditPage(mAction, ActUIElement.Fields.ElementLocateValue);
             }
         }
 

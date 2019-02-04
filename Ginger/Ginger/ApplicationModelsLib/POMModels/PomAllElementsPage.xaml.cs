@@ -179,12 +179,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (mWinExplorer == null)
             {
                 Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
+                LiveSpyButton.IsChecked = false;
                 return;
             }
 
             if (mAgent.Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
+                LiveSpyButton.IsChecked = false;
                 return;
             }
 
