@@ -192,11 +192,7 @@ namespace GingerCore
 
             CalculateFunctions();
 
-            if (!string.IsNullOrEmpty(SolutionFolder))
-            {
-                mValueCalculated = mValueCalculated.Replace(@"~\", SolutionFolder);
-            }
-
+            mValueCalculated = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mValueCalculated);
         }
 
         private void ReplaceGlobalParameters()
@@ -316,11 +312,12 @@ namespace GingerCore
 
             if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
-                if (DataSource.FileFullPath.StartsWith("~"))
-                {
-                    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
-                    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
-                }
+                //if (DataSource.FileFullPath.StartsWith("~"))
+                //{
+                //    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
+                //    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
+                //}
+                DataSource.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 DataSource.Init(DataSource.FileFullPath);
             }
 

@@ -146,11 +146,13 @@ namespace GingerCore.Actions
             calculatedSourceFilePath = GetInputParamCalculatedValue(Fields.SourceFilePath);
                       
             bool IsSorcePathRelative = false;
-            if (calculatedSourceFilePath.StartsWith(@"~\"))
+            if (calculatedSourceFilePath.StartsWith(@"~"))
             {
-                calculatedSourceFilePath = calculatedSourceFilePath.Replace(@"~\", SolutionFolder);
+                //calculatedSourceFilePath = calculatedSourceFilePath.Replace(@"~\", SolutionFolder);
+                calculatedSourceFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedSourceFilePath);
                 IsSorcePathRelative = true;
             }
+
             if (calculatedSourceFilePath.EndsWith("*"))
             {
                 string[] FileNameList = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath));
@@ -346,8 +348,9 @@ namespace GingerCore.Actions
         {
             string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
 
-            if (calculatedDestinationPath.StartsWith(@"~\"))
-                calculatedDestinationPath = calculatedDestinationPath.Replace(@"~\", SolutionFolder);
+            //if (calculatedDestinationPath.StartsWith(@"~\"))
+            //    calculatedDestinationPath = calculatedDestinationPath.Replace(@"~\", SolutionFolder);
+            calculatedDestinationPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedDestinationPath);
 
             DestinationFolder = System.IO.Path.GetDirectoryName(calculatedDestinationPath);
             if (String.IsNullOrEmpty(DestinationFolder))

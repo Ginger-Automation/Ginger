@@ -427,7 +427,8 @@ namespace GingerCore.Actions
                 BaseLineFileName = @"~\Documents\ScreenShots\" + Description + " - Baseline.png";
             }
 
-            string FullPath = BaseLineFileName.Replace(@"~\", SolutionFolder);
+            //string FullPath = BaseLineFileName.Replace(@"~\", SolutionFolder);
+            string FullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(BaseLineFileName);
 
             // no need to ask user, + it might be at run time
             //TOOD: handle err 
@@ -439,10 +440,12 @@ namespace GingerCore.Actions
         // TODO: move from here to general or use general
         public string GetFullFilePath(string relativePath)
         {
-            if (relativePath.StartsWith(@"~\"))
-            {
-                return relativePath.Replace(@"~\", SolutionFolder);
-            }
+            //if (relativePath.StartsWith(@"~\"))
+            //{
+            //    return relativePath.Replace(@"~\", SolutionFolder);
+            //}
+            relativePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(relativePath);
+
             return relativePath;
         }
     }

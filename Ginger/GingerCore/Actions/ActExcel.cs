@@ -820,10 +820,12 @@ namespace GingerCore.Actions
 
             ExcelFileNameAbsolutue = ExcelFileNameAbsolutue.ToUpper();
 
-            if (ExcelFileNameAbsolutue.Contains(@"~\"))
-            {
-                ExcelFileNameAbsolutue = ExcelFileNameAbsolutue.Replace(@"~\", SolutionFolder);
-            }
+            //if (ExcelFileNameAbsolutue.Contains(@"~\"))
+            //{
+            //    ExcelFileNameAbsolutue = ExcelFileNameAbsolutue.Replace(@"~\", SolutionFolder);
+            //}
+            ExcelFileNameAbsolutue = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ExcelFileNameAbsolutue);
+
             return ExcelFileNameAbsolutue;
         }
 
