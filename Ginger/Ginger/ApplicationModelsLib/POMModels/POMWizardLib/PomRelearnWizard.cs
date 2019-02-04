@@ -1,4 +1,5 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
@@ -38,11 +39,26 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             get
             {
                 if (Agent != null)
+                {
                     return ((IWindowExplorer)(Agent.Driver));
+                }
                 else
+                {
                     return null;
+                }
             }
         }
+
+        private ObservableList<ElementInfo> mCopiedUnienedList = new ObservableList<ElementInfo>();
+
+        public ObservableList<ElementInfo> CopiedUnienedList
+        {
+            get
+            {
+                return mCopiedUnienedList;
+            }
+        }
+
 
         public PomRelearnWizard(ApplicationPOMModel POM, Agent agent)
         {
@@ -54,17 +70,17 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         public override void Finish()
         {
             //Updating selected elements
-            List<ElementInfo> ElementsToUpdate = mOriginalPOM.CopiedUnienedList.Where(x => x.IsSelected == true).ToList();
+            List<ElementInfo> ElementsToUpdate = CopiedUnienedList.Where(x => x.IsSelected == true).ToList();
             foreach (ElementInfo EI in ElementsToUpdate)
             {
                 //Add the New onces to the last of the list
                 if (EI.DeltaStatus == ElementInfo.eDeltaStatus.New)
                 {
-                    if (EI.ElementGroup == ElementInfo.eElementGroup.Mapped)
+                    if ((ApplicationPOMModel.eElementGroup)EI.ElementGroup == ApplicationPOMModel.eElementGroup.Mapped)
                     {
                         mOriginalPOM.MappedUIElements.Add(EI);
                     }
-                    else if (EI.ElementGroup == ElementInfo.eElementGroup.Unmapped)
+                    else if ((ApplicationPOMModel.eElementGroup)EI.ElementGroup == ApplicationPOMModel.eElementGroup.Unmapped)
                     {
                         mOriginalPOM.UnMappedUIElements.Add(EI);
                     }
@@ -87,7 +103,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 }
 
                 //Deleting deleted properties
-                List<ControlProperty> PropertiesToRemove = EI.Properties.Where(x => x.DeltaStatus == ElementInfo.eDeltaStatus.Deleted).ToList();
+                List<ControlProperty> PropertiesToRemove = EI.Properties.Where(x => ((HTMLElementProperty)x).DeltaStatus == ElementInfo.eDeltaStatus.Deleted).ToList();
                 for (int i = 0; i < PropertiesToRemove.Count; i++)
                 {
                     EI.Properties.Remove(PropertiesToRemove[i]);
@@ -105,9 +121,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 //Updating modified properties
                 foreach (ControlProperty CP in EI.Properties)
                 {
-                    if (CP.DeltaStatus == ElementInfo.eDeltaStatus.Modified)
+                    if (((HTMLElementProperty)CP).DeltaStatus == ElementInfo.eDeltaStatus.Modified)
                     {
-                        CP.Value = CP.UpdatedValue;
+                        CP.Value = ((HTMLElementProperty)CP).UpdatedValue;
                     }
                 }
 
@@ -116,7 +132,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
 
             //Performing replace to all equals because ElementGroup can be changed
-            List<ElementInfo> EqualElementsToUpdate = mOriginalPOM.CopiedUnienedList.Where(x => x.DeltaStatus == ElementInfo.eDeltaStatus.Unchanged || x.DeltaStatus == ElementInfo.eDeltaStatus.All).ToList();
+            List<ElementInfo> EqualElementsToUpdate = CopiedUnienedList.Where(x => x.DeltaStatus == ElementInfo.eDeltaStatus.Unchanged).ToList();
             foreach (ElementInfo EI in EqualElementsToUpdate)
             {
                 //Updating original element
@@ -137,7 +153,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             mOriginalPOM.MappedUIElements.Remove(CorrespondingMappedElementInfo);
             mOriginalPOM.UnMappedUIElements.Remove(CorrespondingUnMappedElementInfo);
 
-            if (EI.ElementGroup == ElementInfo.eElementGroup.Mapped)
+            if (EI.ElementGroup.ToString() == ApplicationPOMModel.eElementGroup.Mapped.ToString())
             {
                 if (mappedElementIndex != -1)
                 {

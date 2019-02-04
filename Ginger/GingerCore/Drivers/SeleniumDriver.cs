@@ -4376,15 +4376,15 @@ namespace GingerCore.Drivers
             ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
 
             //Base properties 
-            list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
-            list.Add(new ControlProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
-            list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
-            list.Add(new ControlProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
-            list.Add(new ControlProperty() { Name = "Height", Value = ElementInfo.Height.ToString() });
-            list.Add(new ControlProperty() { Name = "Width", Value = ElementInfo.Width.ToString() });
-            list.Add(new ControlProperty() { Name = "X", Value = ElementInfo.X.ToString() });
-            list.Add(new ControlProperty() { Name = "Y", Value = ElementInfo.Y.ToString() });
-            list.Add(new ControlProperty() { Name = "Value", Value = ElementInfo.Value });
+            list.Add(new HTMLElementProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
+            list.Add(new HTMLElementProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
+            list.Add(new HTMLElementProperty() { Name = "XPath", Value = ElementInfo.XPath });
+            list.Add(new HTMLElementProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
+            list.Add(new HTMLElementProperty() { Name = "Height", Value = ElementInfo.Height.ToString() });
+            list.Add(new HTMLElementProperty() { Name = "Width", Value = ElementInfo.Width.ToString() });
+            list.Add(new HTMLElementProperty() { Name = "X", Value = ElementInfo.X.ToString() });
+            list.Add(new HTMLElementProperty() { Name = "Y", Value = ElementInfo.Y.ToString() });
+            list.Add(new HTMLElementProperty() { Name = "Value", Value = ElementInfo.Value });
 
             IWebElement el = null;
             if (ElementInfo.ElementObject != null)
@@ -4408,7 +4408,7 @@ namespace GingerCore.Drivers
                 {
                     foreach (IWebElement value in el.FindElements(By.XPath("*")))
                         ElementInfo.OptionalValues.Add(value.Text);
-                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
+                    list.Add(new HTMLElementProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
                 }
 
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
@@ -4420,7 +4420,7 @@ namespace GingerCore.Drivers
                         {
                             string PName = kvp.Key;
                             string PValue = kvp.Value.ToString();
-                            list.Add(new ControlProperty() { Name = PName, Value = PValue });
+                            list.Add(new HTMLElementProperty() { Name = PName, Value = PValue });
                         }
                     }
             }
@@ -4431,10 +4431,10 @@ namespace GingerCore.Drivers
 
                 foreach (HtmlAttribute htmlAttribute in htmlAttributes)
                 {
-                    ControlProperty existControlProperty = list.Where(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value).FirstOrDefault();
+                    HTMLElementProperty existControlProperty = (HTMLElementProperty)list.Where(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value).FirstOrDefault();
                     if (existControlProperty == null)
                     {
-                        ControlProperty controlProperty = new ControlProperty() { Name = htmlAttribute.Name, Value = htmlAttribute.Value };
+                        HTMLElementProperty controlProperty = new HTMLElementProperty() { Name = htmlAttribute.Name, Value = htmlAttribute.Value };
                         list.Add(controlProperty);
                     }
                 }
@@ -6810,6 +6810,7 @@ namespace GingerCore.Drivers
             finally
             {
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+                mIsDriverBusy = false;
             }
         }
 

@@ -283,40 +283,53 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
+        public object mElementGroup;
 
-
-        public enum eElementGroup
-        {
-            All,
-            Mapped,
-            Unmapped
-        }
-
-        public eElementGroup ElementGroup { get; set; }
-
-
-        
-        public ObservableList<string> ElementGroupList
+        public object ElementGroup
         {
             get
             {
-
-                ObservableList<string> elementGroupList = new ObservableList<string>();
-                elementGroupList.Add(eElementGroup.Mapped.ToString());
-                elementGroupList.Add(eElementGroup.Unmapped.ToString());
-
-                return elementGroupList;
+                return mElementGroup;
             }
             set
             {
-                ElementGroupList = value;
-                OnPropertyChanged(nameof(ElementGroupList));
+                mElementGroup = value;
             }
         }
 
+        //public enum eElementGroup
+        //{
+        //    Mapped,
+        //    Unmapped
+        //}
+
+
+        //public eElementGroup ElementGroup { get; set; }
+
+
+        //public ObservableList<string> ElementGroupList
+        //{
+        //    get
+        //    {
+
+        //        ObservableList<string> elementGroupList = new ObservableList<string>();
+        //        elementGroupList.Add(ElementInfo.eElementGroup.Mapped.ToString());
+        //        elementGroupList.Add(ElementInfo.eElementGroup.Unmapped.ToString());
+
+        //        return elementGroupList;
+        //    }
+        //    set
+        //    {
+        //        ElementGroupList = value;
+        //        OnPropertyChanged(nameof(ElementGroupList));
+        //    }
+        //}
+
+
+
+
         public enum eDeltaStatus
         {
-            All,
             Unchanged,
             Deleted,
             Modified,
@@ -364,7 +377,7 @@ namespace Amdocs.Ginger.Common.UIElement
         {
             get
             {
-                if (DeltaStatus == eDeltaStatus.Unchanged || DeltaStatus == eDeltaStatus.All)
+                if (DeltaStatus == eDeltaStatus.Unchanged)
                 {
                     return false;
                 }

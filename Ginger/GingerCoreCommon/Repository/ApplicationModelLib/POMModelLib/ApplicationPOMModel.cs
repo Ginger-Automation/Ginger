@@ -52,40 +52,44 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+
+
+
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> UnMappedUIElements = new ObservableList<ElementInfo>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> MappedUIElements = new ObservableList<ElementInfo>();
 
-        //public ObservableList<ElementInfo> mCopiedUnienedList = new ObservableList<ElementInfo>();
 
-        public void PopulateDuplicatedUnienedElementsList()
+        public enum eElementGroup
         {
-            mCopiedUnienedList.Clear();
-            foreach (ElementInfo EI in MappedUIElements)
-            {
-                ElementInfo DuplicatedEI = (ElementInfo)EI.CreateCopy(false);
-                DuplicatedEI.ElementGroup = ElementInfo.eElementGroup.Mapped;
-                mCopiedUnienedList.Add(DuplicatedEI);
-            }
-            foreach (ElementInfo EI in UnMappedUIElements)
-            {
-                ElementInfo DuplicatedEI = (ElementInfo)EI.CreateCopy(false);
-                DuplicatedEI.ElementGroup = ElementInfo.eElementGroup.Unmapped;
-                mCopiedUnienedList.Add(DuplicatedEI);
-            }
+            Mapped,
+            Unmapped
         }
 
-        private ObservableList<ElementInfo> mCopiedUnienedList = new ObservableList<ElementInfo>();
 
-        public ObservableList<ElementInfo> CopiedUnienedList
+        public ObservableList<string> ElementGroupList
         {
             get
             {
-                return mCopiedUnienedList;
+
+                ObservableList<string> elementGroupList = new ObservableList<string>();
+                elementGroupList.Add(ApplicationPOMModel.eElementGroup.Mapped.ToString());
+                elementGroupList.Add(ApplicationPOMModel.eElementGroup.Unmapped.ToString());
+
+                return elementGroupList;
+            }
+            set
+            {
+                ElementGroupList = value;
+                OnPropertyChanged(nameof(ElementGroupList));
             }
         }
+
+
+
+
 
 
         string mScreenShotImage;

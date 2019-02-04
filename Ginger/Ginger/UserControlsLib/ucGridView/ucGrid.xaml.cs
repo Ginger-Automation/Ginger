@@ -1405,7 +1405,45 @@ public void RemoveCustomView(string viewName)
             template.VisualTree = factory;
             return template;
         }
-      
+
+
+        public static DataTemplate GetGridComboBoxTemplate(List<GingerCore.General.ComboEnumItem> valuesList, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false,
+         string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null)
+        {
+            DataTemplate template = new DataTemplate();
+            FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));
+
+            combo.SetValue(ComboBox.ItemsSourceProperty, valuesList);
+            combo.SetValue(ComboBox.DisplayMemberPathProperty, nameof(GingerCore.General.ComboEnumItem.text));
+            combo.SetValue(ComboBox.SelectedValuePathProperty,nameof(GingerCore.General.ComboEnumItem.Value)); 
+
+            Binding selectedValueBinding = new Binding(selectedValueField);
+            selectedValueBinding.Mode = BindingMode.TwoWay;
+            selectedValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            combo.SetBinding(ComboBox.SelectedValueProperty, selectedValueBinding);
+            if (isreadonly)
+            {
+                Binding ReadonlyBinding = new Binding(readonlyfield);
+                ReadonlyBinding.Mode = BindingMode.OneWay;
+                ReadonlyBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                combo.SetBinding(ComboBox.IsHitTestVisibleProperty, ReadonlyBinding);
+            }
+            else
+            {
+                if (allowEdit == true)
+                    combo.SetValue(ComboBox.IsEditableProperty, true);
+            }
+            if (selectedByDefault == true)
+            {
+                combo.SetValue(ComboBox.SelectedIndexProperty, 0);
+            }
+            if (comboSelectionChangedHandler != null)
+                combo.AddHandler(ComboBox.SelectionChangedEvent, comboSelectionChangedHandler);
+
+            template.VisualTree = combo;
+            return template;
+        }
+
         public static DataTemplate GetGridComboBoxTemplate(string valuesListField, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false, 
             string readonlyfield ="", bool isreadonly=false)
         {
@@ -1719,19 +1757,37 @@ public void RemoveCustomView(string viewName)
         }
 
 
-        public void AddComboBoxToolbarTool(string lableContent,Type enumType, SelectionChangedEventHandler view_SelectionChanged)
+        public void AddComboBoxToolbarTool(string lableContent,Type enumType, SelectionChangedEventHandler view_SelectionChanged, string defaultOptionText = null)
         {
             ComboBox comboBox = new ComboBox();
             comboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
 
             comboBox.Width = 100;
             List<GingerCore.General.ComboEnumItem> itemsList = GingerCore.General.GetEnumValuesForCombo(enumType);
-            List<GingerCore.General.ComboEnumItem> itemsSourceList = new List<GingerCore.General.ComboEnumItem>();
-            itemsSourceList = itemsList;
-            comboBox.ItemsSource = itemsSourceList;
-            comboBox.SelectedIndex = 0;
+            //List<GingerCore.General.ComboEnumItem> itemsSourceList = new List<GingerCore.General.ComboEnumItem>();
+            if (defaultOptionText != null)
+            {
+                GingerCore.General.ComboEnumItem existingDefaultItem = itemsList.Where(x => x.text == defaultOptionText).FirstOrDefault();
+                if (existingDefaultItem != null)
+                {
+                    comboBox.ItemsSource = itemsList;
+                    comboBox.SelectedItem = existingDefaultItem;
+                }
+                else
+                {
+                    GingerCore.General.ComboEnumItem newDefaultItem = new GingerCore.General.ComboEnumItem() { text = defaultOptionText, Value = null };
+                    List<GingerCore.General.ComboEnumItem> itemsListWithNewDefaultText = new List<GingerCore.General.ComboEnumItem>();
+                    itemsListWithNewDefaultText.Add(newDefaultItem);
+                    foreach (GingerCore.General.ComboEnumItem CEI in itemsList)
+                    {
+                        itemsListWithNewDefaultText.Add(CEI);
+                    }
+                    comboBox.ItemsSource = itemsListWithNewDefaultText;
+                    comboBox.SelectedIndex = 0;
+                }
+            }
+
             comboBox.SelectionChanged += view_SelectionChanged;
-            comboBox.Style = (Style)TryFindResource("@ToolBarComboBoxStyle");
 
             Label label = new Label();
             label.Content = lableContent;
@@ -2139,6 +2195,7 @@ public void RemoveCustomView(string viewName)
         }
 
         public List<eUcGridValidationRules> ValidationRules = new List<eUcGridValidationRules>();
+
 
         public bool HasValidationError()
         {

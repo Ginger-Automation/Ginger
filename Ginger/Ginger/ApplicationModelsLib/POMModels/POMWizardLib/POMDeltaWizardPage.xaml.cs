@@ -56,11 +56,50 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 mAppPlatform = WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
                 SetAutoMapElementTypes();
                 mPomElementsPage.SetAgent(mWizard.Agent);
-                mPOM.PopulateDuplicatedUnienedElementsList();
-                mOriginalList = mPOM.CopiedUnienedList;
+                PopulateDuplicatedUnienedElementsList();
+                mOriginalList = mWizard.CopiedUnienedList;
                 xReLearnButton.Visibility = Visibility.Visible;
                 Learn();
             }
+        }
+
+        public void PopulateDuplicatedUnienedElementsList()
+        {
+            mWizard.CopiedUnienedList.Clear();
+            foreach (ElementInfo EI in mPOM.MappedUIElements)
+            {
+                ElementInfo DuplicatedEI = (ElementInfo)EI.CreateCopy(false);
+                DuplicatedEI.ElementGroup = ApplicationPOMModel.eElementGroup.Mapped;
+                CorrectControlPropertyTypes(DuplicatedEI);
+                mWizard.CopiedUnienedList.Add(DuplicatedEI);
+            }
+            foreach (ElementInfo EI in mPOM.UnMappedUIElements)
+            {
+                ElementInfo DuplicatedEI = (ElementInfo)EI.CreateCopy(false);
+                DuplicatedEI.ElementGroup = ApplicationPOMModel.eElementGroup.Unmapped;
+                CorrectControlPropertyTypes(DuplicatedEI);
+                mWizard.CopiedUnienedList.Add(DuplicatedEI);
+            }
+        }
+
+        private void CorrectControlPropertyTypes(ElementInfo EI)
+        {
+            ObservableList<ControlProperty> newProperties = new ObservableList<ControlProperty>();
+
+            foreach (ControlProperty property in EI.Properties)
+            {
+                if (property is HTMLElementProperty)
+                {
+                    return;
+                }
+                else
+                {
+                    HTMLElementProperty hTMLElementProperety = new HTMLElementProperty() { Name = property.Name, Value = property.Value };
+                    newProperties.Add(hTMLElementProperety);
+                }
+            }
+
+            EI.Properties = newProperties;
         }
 
 
@@ -128,7 +167,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             if (mPomElementsPage == null)
             {
-                mPomElementsPage = new PomElementsPage(mPOM,eElementsContext.AllDeltaElements);
+                mPomElementsPage = new PomElementsPage(mPOM,eElementsContext.AllDeltaElements,mWizard.CopiedUnienedList);
                 xPomElementsMappingPageFrame.Content = mPomElementsPage;
             }
         }
@@ -165,9 +204,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 {
                     latestElementInfo.ElementStatus = ElementInfo.eElementStatus.Passed;
                     latestElementInfo.DeltaStatus = ElementInfo.eDeltaStatus.New;
-                    latestElementInfo.ElementGroup = ElementInfo.eElementGroup.Mapped;
+                    latestElementInfo.ElementGroup = ApplicationPOMModel.eElementGroup.Mapped;
                     latestElementInfo.IsSelected = true;
-                    mPOM.CopiedUnienedList.Add(latestElementInfo);
+                    mWizard.CopiedUnienedList.Add(latestElementInfo);
                 }
                 else
                 {
@@ -228,18 +267,19 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 ControlProperty ExistingCP = originalElelemnt.Properties.Where(x => x.Name == latestCP.Name).FirstOrDefault();
                 if (originalModifiedCP != null)
                 {
-                    originalModifiedCP.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
-                    originalModifiedCP.DeltaExtraDetails = "Property value changed to: " + latestCP.Value;
-                    originalModifiedCP.UpdatedValue = latestCP.Value;
+                    ((HTMLElementProperty)originalModifiedCP).DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                    ((HTMLElementProperty)originalModifiedCP).DeltaExtraDetails = "Property value changed to: " + latestCP.Value;
+                    ((HTMLElementProperty)originalModifiedCP).UpdatedValue = latestCP.Value;
                 }
                 else if (ExistingCP == null)
                 {
-                    latestCP.DeltaStatus = ElementInfo.eDeltaStatus.New;
+                    ((HTMLElementProperty)latestCP).DeltaStatus = ElementInfo.eDeltaStatus.New;
                     originalElelemnt.Properties.Add(latestCP);
                 }
                 else
                 {
-                    ExistingCP.DeltaStatus = ElementInfo.eDeltaStatus.Unchanged;
+
+                    ((HTMLElementProperty)ExistingCP).DeltaStatus = ElementInfo.eDeltaStatus.Unchanged;
                 }
             }
 
@@ -249,13 +289,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
                 if (latestExistedEL == null)
                 {
-                    originalEL.DeltaStatus = ElementInfo.eDeltaStatus.Deleted;
+                    ((HTMLElementProperty)originalEL).DeltaStatus = ElementInfo.eDeltaStatus.Deleted;
                 }
             }
 
 
-            List<ElementLocator> ModifiedElementsLocatorsList = originalElelemnt.Locators.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Unchanged && x.DeltaStatus != ElementInfo.eDeltaStatus.All).ToList();
-            List<ControlProperty> ModifiedControlPropertiesList = originalElelemnt.Properties.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Unchanged && x.DeltaStatus != ElementInfo.eDeltaStatus.All).ToList();
+            List<ElementLocator> ModifiedElementsLocatorsList = originalElelemnt.Locators.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Unchanged).ToList();
+            List<ControlProperty> ModifiedControlPropertiesList = originalElelemnt.Properties.Where(x => ((HTMLElementProperty)x).DeltaStatus != ElementInfo.eDeltaStatus.Unchanged).ToList();
             if (ModifiedElementsLocatorsList.Count > 0 && ModifiedControlPropertiesList.Count > 0)
             {
                 originalElelemnt.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
