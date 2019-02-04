@@ -189,8 +189,11 @@ namespace Ginger.ALM.Repository
                             if (tsBusFlow.TargetApplications.Count == 0)
                                 tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.UserProfile.Solution.MainApplication });
                             foreach (Activity activ in tsBusFlow.Activities)
+                            {
                                 if (string.IsNullOrEmpty(activ.TargetApplication))
                                     activ.TargetApplication = tsBusFlow.MainApplication;
+                                activ.Active = true;
+                            }
                         }
                         else
                         {

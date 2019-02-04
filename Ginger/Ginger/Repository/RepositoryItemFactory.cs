@@ -101,10 +101,10 @@ namespace Ginger.Repository
         //    return new ObservableList<IDatabase>();
         //}
 
-        public ObservableList<DataSourceBase> GetDatasourceList()
-        {
-            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-        }
+        //public ObservableList<DataSourceBase> GetDatasourceList()
+        //{
+        //    return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+        //}
 
 
         //public ObservableList<IAgent> GetAllIAgents()
@@ -159,17 +159,14 @@ namespace Ginger.Repository
                             case eDriverType.SeleniumEdge:
                                 Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Edge);
                                 break;
-                            case eDriverType.SeleniumPhantomJS:
-                                Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.PhantomJS);
-                                break;
-                            case eDriverType.ASCF:                                
+                            case eDriverType.ASCF:
                                 Driver = new ASCFDriver(BusinessFlow, zAgent.Name);
                                 break;
-                            case eDriverType.DOSConsole:                                
+                            case eDriverType.DOSConsole:
                                 Driver = new DOSConsoleDriver(BusinessFlow);
                                 break;
-                            case eDriverType.UnixShell:                                
-                                 Driver = new UnixShellDriver(BusinessFlow, ProjEnvironment);
+                            case eDriverType.UnixShell:
+                                Driver = new UnixShellDriver(BusinessFlow, ProjEnvironment);
                                 ((UnixShellDriver)Driver).SetScriptsFolder(System.IO.Path.Combine(zAgent.SolutionFolder, @"Documents\sh\"));
                                 break;
                             case eDriverType.MobileAppiumAndroid:
@@ -230,13 +227,17 @@ namespace Ginger.Repository
                                     throw new Exception("Please set device config folder");
                                 }
                                 break;
-                                //TODO: default mess
+                            default:
+                                {
+                                    throw new Exception("Matching Driver was not found.");
+                                }
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, zAgent.Name, e.Message);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to set Agent Driver", e);
+                    return;
                 }
 
                 if (zAgent.AgentType == eAgentType.Service)
@@ -272,18 +273,19 @@ namespace Ginger.Repository
                 }
                 else
                 {
-                    // Give the driver time to start            
-                    Thread.Sleep(500);
+                    if (Driver != null)
+                    {
+                        // Give the driver time to start            
+                        Thread.Sleep(500);
+                        Driver.IsDriverRunning = true;
+                        Driver.driverMessageEventHandler += zAgent.driverMessageEventHandler;
+                    }
+
                     zAgent.mIsStarting = false;
-                    Driver.IsDriverRunning = true;
                     zAgent.OnPropertyChanged(Fields.Status);
-                    Driver.driverMessageEventHandler += zAgent.driverMessageEventHandler;
                     zAgent.OnPropertyChanged(Fields.IsWindowExplorerSupportReady);
                 }
             }
-
-
-            //return Driver;
         }
 
         public Type GetDriverType(IAgent agent)
@@ -303,9 +305,7 @@ namespace Ginger.Repository
                 case Agent.eDriverType.SeleniumRemoteWebDriver:
                     return (typeof(SeleniumDriver));                    
                 case Agent.eDriverType.SeleniumEdge:
-                    return (typeof(SeleniumDriver));                    
-                case Agent.eDriverType.SeleniumPhantomJS:
-                    return (typeof(SeleniumDriver));                    
+                    return (typeof(SeleniumDriver));                                     
                 case Agent.eDriverType.ASCF:
                     return (typeof(ASCFDriver));                    
                 case Agent.eDriverType.DOSConsole:
@@ -342,16 +342,9 @@ namespace Ginger.Repository
                     
             }
         }
+        
 
-        public ObservableList<VariableBase> GetVariaables()
-        {
-            return  WorkSpace.UserProfile.Solution.Variables;
-        }
-
-        public Type GetPage(string a)
-        {
-            throw new NotImplementedException();
-        }
+    
 
         public async Task<int> AnalyzeRunset(object a, bool runInSilentMode)
         {

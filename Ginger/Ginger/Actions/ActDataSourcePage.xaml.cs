@@ -433,8 +433,8 @@ namespace Ginger.Actions
             GingerCore.General.FillComboFromEnumType(ControlActionComboBox, typeof(ActDSTableElement.eControlAction));
             GingerCore.General.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mActDSTblElem, ActJavaElement.Fields.ControlAction);
 
-            ExcelFilePath.Init(ExcelFilePath,ActDSTableElement.Fields.ExcelPath, true, true, UCValueExpression.eBrowserType.File, "xlsx");
-            ExcelSheetName.Init(ExcelSheetName,ActDSTableElement.Fields.ExcelSheetName, true);
+            ExcelFilePath.Init(mActDSTblElem, ActDSTableElement.Fields.ExcelPath, true, true, UCValueExpression.eBrowserType.File, "xlsx");
+            ExcelSheetName.Init(mActDSTblElem, ActDSTableElement.Fields.ExcelSheetName, true);
             ExcelFilePath.ValueTextBox.TextChanged += ExcelFilePathTextBox_TextChanged;
             ExcelSheetName.ValueTextBox.TextChanged += ExcelSheetNameTextBox_TextChanged;
             ExcelFilePath.ValueTextBox.LostFocus += ExcelFilePathTextBox_LostFocus;

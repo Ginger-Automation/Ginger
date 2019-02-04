@@ -48,8 +48,8 @@ namespace GingerCore.ALM.JIRA
             this.jiraRepObj = jiraRepObj;
         }
 
-        public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
-        public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
+        public ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
+        public ObservableList<Activity> GingerActivitiesRepo { get; set; }
         internal ObservableList<ExternalItemFieldBase> GetALMItemFields(ResourceType resourceType, BackgroundWorker bw, bool online)
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
@@ -83,7 +83,7 @@ namespace GingerCore.ALM.JIRA
             return fields;
         }
 
-        private ObservableList<ExternalItemFieldBase> SetALMItemsFields( AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList, ResourceType fieldResourceType)
+        private ObservableList<ExternalItemFieldBase> SetALMItemsFields(AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList, ResourceType fieldResourceType)
         {
             ObservableList<ExternalItemFieldBase> resourceFields = new ObservableList<ExternalItemFieldBase>();
             string fieldResourceTypeToString = fieldResourceType.ToString();
@@ -118,7 +118,7 @@ namespace GingerCore.ALM.JIRA
             return resourceFields;
         }
 
-        internal static BusinessFlow ConvertJiraTestSetToBF(JiraTestSet testSet)
+        internal BusinessFlow ConvertJiraTestSetToBF(JiraTestSet testSet)
         {
             try
             {
@@ -135,88 +135,14 @@ namespace GingerCore.ALM.JIRA
                 //Create Activities Group + Activities for each TC
                 foreach (JiraTest tc in testSet.Tests)
                 {
-                    //check if the TC is already exist in repository
-                    ActivitiesGroup tcActivsGroup;
-                    ActivitiesGroup repoActivsGroup = null;
-                    if (repoActivsGroup == null)
-                        repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.TestKey).FirstOrDefault();
-                    if (repoActivsGroup != null)
-                    {
-                        List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
-                                                                                       .Where(x => !tc.Steps.Select(y => y.StepID).ToList().Contains(x.ExternalID)).ToList();
-
-                        tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance(true);
-
-                        var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID));
-                        for (int indx = tcActivsGroup.ActivitiesIdentifiers.Count - 1; indx >= 0; indx--)
-                        {
-                            if ((indx < tcActivsGroup.ActivitiesIdentifiers.Count) && (ActivitySIdentifiersToRemove.Contains(tcActivsGroup.ActivitiesIdentifiers[indx])))
-                            {
-                                tcActivsGroup.ActivitiesIdentifiers.Remove(tcActivsGroup.ActivitiesIdentifiers[indx]);
-                            }
-                        }
-
-                        tcActivsGroup.ExternalID2 = tc.Labels;
-                        busFlow.AddActivitiesGroup(tcActivsGroup);
-                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
-                        busFlow.AttachActivitiesGroupsAndActivities();
-                    }
-                    else //TC not exist in Ginger repository so create new one
-                    {
-                        tcActivsGroup = new ActivitiesGroup();
-                        tcActivsGroup.Name = tc.TestName;
-                        if (tc.LinkedTestID == null || tc.LinkedTestID == string.Empty)
-                        {
-                            tcActivsGroup.ExternalID = tc.TestKey;
-                            tcActivsGroup.ExternalID2 = tc.Labels;
-                            tcActivsGroup.Description = tc.Description;
-                        }
-                        else
-                        {
-                            tcActivsGroup.ExternalID = tc.LinkedTestID;
-                            tcActivsGroup.ExternalID2 = tc.TestID; //original TC ID will be used for uploading the execution details back to QC
-                            tcActivsGroup.Description = tc.Description;
-                        }
-                        busFlow.AddActivitiesGroup(tcActivsGroup);
-                    }
+                    ActivitiesGroup tcActivsGroup = ConvertJiraTestToAG(busFlow, tc);
 
                     //Add the TC steps as Activities if not already on the Activities group
                     foreach (JiraTestStep step in tc.Steps)
                     {
                         Activity stepActivity;
-                        bool toAddStepActivity = false;
-
-                        //check if mapped activity exist in repository
-                        Activity repoStepActivity = GingerActivitiesRepo.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
-                        if (repoStepActivity != null)
-                        {
-                            //check if it is part of the Activities Group
-                            ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
-                            if (groupStepActivityIdent != null)
-                            {
-                                //already in Activities Group so get link to it
-                                stepActivity = busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
-                                // in any case update description/expected/name - even if "step" was taken from repository
-                                stepActivity.Description = StripHTML(step.Description);
-                                stepActivity.Expected = StripHTML(step.Expected);
-                                stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
-                            }
-                            else//not in ActivitiesGroup so get instance from repo
-                            {
-                                stepActivity = (Activity)repoStepActivity.CreateInstance();
-                                toAddStepActivity = true;
-                            }
-                        }
-                        else//Step not exist in Ginger repository so create new one
-                        {
-                            stepActivity = new Activity();
-                            stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
-                            stepActivity.ExternalID = step.StepID;
-                            stepActivity.Description = StripHTML(step.Description);
-                            stepActivity.Expected = StripHTML(step.Expected);
-
-                            toAddStepActivity = true;
-                        }
+                        bool toAddStepActivity;
+                        ConvertJiraStepToActivity(busFlow, tc, tcActivsGroup, step, out stepActivity, out toAddStepActivity);
 
                         if (toAddStepActivity)
                         {
@@ -228,131 +154,10 @@ namespace GingerCore.ALM.JIRA
                         //pull TC-Step parameters and add them to the Activity level
                         List<string> stepParamsList = new List<string>();
                         GetStepParameters(StripHTML(step.Description), ref stepParamsList);
-                        GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
+                        //GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
                         foreach (string param in stepParamsList)
                         {
-                            //get the param value
-                            string paramSelectedValue = string.Empty;
-                            bool? isflowControlParam = null;
-                           JiraTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
-
-                            //get the param value
-                            if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
-                                paramSelectedValue = tcParameter.Value;
-                            else
-                            {
-                                isflowControlParam = null;//empty value
-                                paramSelectedValue = "<Empty>";
-                            }
-
-                            //check if parameter is part of a link
-                            string linkedVariable = null;
-                            if (paramSelectedValue.StartsWith("#$#"))
-                            {
-                                string[] valueParts = paramSelectedValue.Split(new string[] { "#$#" }, StringSplitOptions.None);
-                                if (valueParts.Count() == 3)
-                                {
-                                    linkedVariable = valueParts[1];
-                                    paramSelectedValue = "$$_" + valueParts[2];//so it still will be considered as non-flow control
-                                }
-                            }
-
-                            //detrmine if the param is Flow Control Param or not based on it value and agreed sign "$$_"
-                            if (paramSelectedValue.StartsWith("$$_"))
-                            {
-                                isflowControlParam = false;
-                                if (paramSelectedValue.StartsWith("$$_"))
-                                    paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
-                            }
-                            else if (paramSelectedValue != "<Empty>")
-                                isflowControlParam = true;
-
-                            //check if already exist param with that name
-                            VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
-                            if (stepActivityVar == null)
-                            {
-                                //#Param not exist so add it
-                                if (isflowControlParam == true)
-                                {
-                                    //add it as selection list param                               
-                                    stepActivityVar = new VariableSelectionList();
-                                    stepActivityVar.Name = param;
-                                    stepActivity.AddVariable(stepActivityVar);
-                                    stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
-                                }
-                                else
-                                {
-                                    //add as String param
-                                    stepActivityVar = new VariableString();
-                                    stepActivityVar.Name = param;
-                                    ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
-                                    stepActivity.AddVariable(stepActivityVar);
-                                }
-                            }
-                            else
-                            {
-                                //#param exist
-                                if (isflowControlParam == true)
-                                {
-                                    if (!(stepActivityVar is VariableSelectionList))
-                                    {
-                                        //flow control param must be Selection List so transform it
-                                        stepActivity.Variables.Remove(stepActivityVar);
-                                        stepActivityVar = new VariableSelectionList();
-                                        stepActivityVar.Name = param;
-                                        stepActivity.AddVariable(stepActivityVar);
-                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
-                                    }
-                                }
-                                else if (isflowControlParam == false)
-                                {
-                                    if (stepActivityVar is VariableSelectionList)
-                                    {
-                                        //change it to be string variable
-                                        stepActivity.Variables.Remove(stepActivityVar);
-                                        stepActivityVar = new VariableString();
-                                        stepActivityVar.Name = param;
-                                        ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
-                                        stepActivity.AddVariable(stepActivityVar);
-                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
-                                    }
-                                }
-                            }
-
-                            //add the variable selected value                          
-                            if (stepActivityVar is VariableSelectionList)
-                            {
-                                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == paramSelectedValue).FirstOrDefault();
-                                if (stepActivityVarOptionalVar == null)
-                                {
-                                    //no such variable value option so add it
-                                    stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
-                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                                    if (isflowControlParam == true)
-                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
-                                }
-                                //set the selected value
-                                ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
-                            }
-                            else
-                            {
-                                //try just to set the value
-                                try
-                                {
-                                    stepActivityVar.Value = paramSelectedValue;
-                                    if (stepActivityVar is VariableString)
-                                        ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
-                                }
-                                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
-                            }
-
-                            //add linked variable if needed
-                            if (string.IsNullOrEmpty(linkedVariable) == false)
-                            {
-                                stepActivityVar.LinkedVariableName = linkedVariable;
-                            }
-                            else
-                                stepActivityVar.LinkedVariableName = string.Empty;//clear old links
+                            ConvertJiraParameters(tc, stepActivity, param);
                         }
                     }
 
@@ -410,7 +215,221 @@ namespace GingerCore.ALM.JIRA
                 return null;
             }
         }
-        private static string StripHTML(string HTMLText, bool toDecodeHTML = true)
+
+        private static void ConvertJiraParameters(JiraTest tc, Activity stepActivity, string param)
+        {
+            //get the param value
+            string paramSelectedValue = string.Empty;
+            bool? isflowControlParam = null;
+            JiraTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+
+            //get the param value
+            if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
+                paramSelectedValue = tcParameter.Value;
+            else
+            {
+                isflowControlParam = null;//empty value
+                paramSelectedValue = "<Empty>";
+            }
+
+            //check if parameter is part of a link
+            string linkedVariable = null;
+            if (paramSelectedValue.StartsWith("#$#"))
+            {
+                string[] valueParts = paramSelectedValue.Split(new string[] { "#$#" }, StringSplitOptions.None);
+                if (valueParts.Count() == 3)
+                {
+                    linkedVariable = valueParts[1];
+                    paramSelectedValue = "$$_" + valueParts[2];//so it still will be considered as non-flow control
+                }
+            }
+
+            //detrmine if the param is Flow Control Param or not based on it value and agreed sign "$$_"
+            if (paramSelectedValue.StartsWith("$$_"))
+            {
+                isflowControlParam = false;
+                if (paramSelectedValue.StartsWith("$$_"))
+                    paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
+            }
+            else if (paramSelectedValue != "<Empty>")
+                isflowControlParam = true;
+
+            //check if already exist param with that name
+            VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+            if (stepActivityVar == null)
+            {
+                //#Param not exist so add it
+                if (isflowControlParam == true)
+                {
+                    //add it as selection list param                               
+                    stepActivityVar = new VariableSelectionList();
+                    stepActivityVar.Name = param;
+                    stepActivity.AddVariable(stepActivityVar);
+                    stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
+                }
+                else
+                {
+                    //add as String param
+                    stepActivityVar = new VariableString();
+                    stepActivityVar.Name = param;
+                    ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
+                    stepActivity.AddVariable(stepActivityVar);
+                }
+            }
+            else
+            {
+                //#param exist
+                if (isflowControlParam == true)
+                {
+                    if (!(stepActivityVar is VariableSelectionList))
+                    {
+                        //flow control param must be Selection List so transform it
+                        stepActivity.Variables.Remove(stepActivityVar);
+                        stepActivityVar = new VariableSelectionList();
+                        stepActivityVar.Name = param;
+                        stepActivity.AddVariable(stepActivityVar);
+                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
+                    }
+                }
+                else if (isflowControlParam == false)
+                {
+                    if (stepActivityVar is VariableSelectionList)
+                    {
+                        //change it to be string variable
+                        stepActivity.Variables.Remove(stepActivityVar);
+                        stepActivityVar = new VariableString();
+                        stepActivityVar.Name = param;
+                        ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
+                        stepActivity.AddVariable(stepActivityVar);
+                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
+                    }
+                }
+            }
+
+            //add the variable selected value                          
+            if (stepActivityVar is VariableSelectionList)
+            {
+                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == paramSelectedValue).FirstOrDefault();
+                if (stepActivityVarOptionalVar == null)
+                {
+                    //no such variable value option so add it
+                    stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
+                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
+                    if (isflowControlParam == true)
+                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
+                }
+                //set the selected value
+                ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
+            }
+            else
+            {
+                //try just to set the value
+                try
+                {
+                    stepActivityVar.Value = paramSelectedValue;
+                    if (stepActivityVar is VariableString)
+                        ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
+                }
+                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+            }
+
+            //add linked variable if needed
+            if (string.IsNullOrEmpty(linkedVariable) == false)
+            {
+                stepActivityVar.LinkedVariableName = linkedVariable;
+            }
+            else
+                stepActivityVar.LinkedVariableName = string.Empty;//clear old links
+        }
+
+        private void ConvertJiraStepToActivity(BusinessFlow busFlow, JiraTest tc, ActivitiesGroup tcActivsGroup, JiraTestStep step, out Activity stepActivity, out bool toAddStepActivity)
+        {
+            toAddStepActivity = false;
+
+            //check if mapped activity exist in repository
+            Activity repoStepActivity = GingerActivitiesRepo.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
+            if (repoStepActivity != null)
+            {
+                //check if it is part of the Activities Group
+                ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                if (groupStepActivityIdent != null)
+                {
+                    //already in Activities Group so get link to it
+                    stepActivity = busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                    // in any case update description/expected/name - even if "step" was taken from repository
+                    stepActivity.Description = StripHTML(step.Description);
+                    //stepActivity.Expected = StripHTML(step.Expected);
+                    stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
+                }
+                else//not in ActivitiesGroup so get instance from repo
+                {
+                    stepActivity = (Activity)repoStepActivity.CreateInstance();
+                    toAddStepActivity = true;
+                }
+            }
+            else//Step not exist in Ginger repository so create new one
+            {
+                stepActivity = new Activity();
+                stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
+                stepActivity.ExternalID = step.StepID;
+                stepActivity.Description = StripHTML(step.Description);
+                //stepActivity.Expected = StripHTML(step.Expected);
+
+                toAddStepActivity = true;
+            }
+        }
+
+        private ActivitiesGroup ConvertJiraTestToAG(BusinessFlow busFlow, JiraTest tc)
+        {
+            //check if the TC is already exist in repository
+            ActivitiesGroup tcActivsGroup;
+            ActivitiesGroup repoActivsGroup = null;
+            if (repoActivsGroup == null)
+                repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.TestKey).FirstOrDefault();
+            if (repoActivsGroup != null)
+            {
+                List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
+                                                                               .Where(x => !tc.Steps.Select(y => y.StepID).ToList().Contains(x.ExternalID)).ToList();
+
+                tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance(true);
+
+                var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID));
+                for (int indx = tcActivsGroup.ActivitiesIdentifiers.Count - 1; indx >= 0; indx--)
+                {
+                    if ((indx < tcActivsGroup.ActivitiesIdentifiers.Count) && (ActivitySIdentifiersToRemove.Contains(tcActivsGroup.ActivitiesIdentifiers[indx])))
+                    {
+                        tcActivsGroup.ActivitiesIdentifiers.Remove(tcActivsGroup.ActivitiesIdentifiers[indx]);
+                    }
+                }
+
+                tcActivsGroup.ExternalID2 = tc.Labels;
+                busFlow.AddActivitiesGroup(tcActivsGroup);
+                busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
+                busFlow.AttachActivitiesGroupsAndActivities();
+            }
+            else //TC not exist in Ginger repository so create new one
+            {
+                tcActivsGroup = new ActivitiesGroup();
+                tcActivsGroup.Name = tc.TestName;
+                if (tc.LinkedTestID == null || tc.LinkedTestID == string.Empty)
+                {
+                    tcActivsGroup.ExternalID = tc.TestKey;
+                    tcActivsGroup.ExternalID2 = tc.Labels;
+                    tcActivsGroup.Description = tc.Description;
+                }
+                else
+                {
+                    tcActivsGroup.ExternalID = tc.LinkedTestID;
+                    tcActivsGroup.ExternalID2 = tc.TestID; //original TC ID will be used for uploading the execution details back to QC
+                    tcActivsGroup.Description = tc.Description;
+                }
+                busFlow.AddActivitiesGroup(tcActivsGroup);
+            }
+
+            return tcActivsGroup;
+        }
+
+        private string StripHTML(string HTMLText, bool toDecodeHTML = true)
         {
             try
             {
@@ -467,26 +486,26 @@ namespace GingerCore.ALM.JIRA
                     if (item.fields.ContainsKey(tsKey.key))
                     {
                         List<string> fieldValue = getSelectedFieldValue(item.fields[tsKey.key], tsKey.name, ResourceType.TEST_SET);
-                        if (fieldValue != null && fieldValue.Count > 0)
+                        if (fieldValue != null && fieldValue.Count > 0 && tsKey.name != null)
                         {
-                            switch (tsKey.key)
+                            switch (tsKey.name)
                             {
                                 case "created":
                                     issue.DateCreated = fieldValue.First();
                                     break;
-                                case "summary":
+                                case "Summary":
                                     issue.Name = fieldValue.First();
                                     break;
-                                case "reporter":
+                                case "Reporter":
                                     issue.CreatedBy = fieldValue.First();
                                     break;
-                                case "project":
+                                case "Project":
                                     issue.Project = fieldValue.First();
                                     break;
-                                case "description":
+                                case "Description":
                                     issue.Description = fieldValue.First();
                                     break;
-                                case "customfield_15611":
+                                case "Test Cases":
                                     issue.Tests = new List<JiraTest>();
                                     foreach (var val in fieldValue)
                                     {
@@ -551,7 +570,7 @@ namespace GingerCore.ALM.JIRA
                                         {
                                             var stepAnonymous = Newtonsoft.Json.JsonConvert.DeserializeAnonymousType(val, stepAnonymousTypeDef);
                                             string[] stepDescription = new[] { "", "" };
-                                            if (stepAnonymous.data != string.Empty)
+                                            if (!string.IsNullOrEmpty(stepAnonymous.data) && stepAnonymous.data.Contains("=>"))
                                             {
                                                 string[] getStepData = (stepAnonymous.data).Split(new[] { "=>" }, StringSplitOptions.None);
                                                 if (getStepData.Count() > 1 && getStepData[1].Contains("Description:"))
@@ -559,7 +578,11 @@ namespace GingerCore.ALM.JIRA
                                                     stepDescription = getStepData[1].Split(new[] { "Description:" }, StringSplitOptions.None);
                                                 }
                                             }
-                                            test.Steps.Add(new JiraTestStep() { StepID = stepAnonymous.id.ToString(), StepName = stepAnonymous.step, Description = stepDescription[1] });
+                                            else
+                                            {
+                                                stepDescription[1] = stepAnonymous.data;
+                                            }
+                                            test.Steps.Add(new JiraTestStep() { StepID = stepAnonymous.id.ToString(), StepName = stepAnonymous.step, Description = StripHTML(stepDescription[1]) });
                                         }
                                         break;
                                 }
@@ -572,8 +595,8 @@ namespace GingerCore.ALM.JIRA
         public ObservableList<JiraTestSet> GetJiraTestSets()
         {
             WhereDataList filterData = new WhereDataList();
-            List<string> testSetKeys = new List<string> {"reporter", "created", "summary", "project"};
-            filterData.Add(new WhereData() { Name = "fields", Values = testSetKeys , Operator = WhereOperator.Ampersand });
+            List<string> testSetKeys = new List<string> { "reporter", "created", "summary", "project" };
+            filterData.Add(new WhereData() { Name = "fields", Values = testSetKeys, Operator = WhereOperator.Ampersand });
             AlmResponseWithData<List<JiraIssue>> getTestsSet = jiraRepObj.GetJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMDomain, ResourceType.TEST_SET, filterData);
 
             ObservableList<JiraTestSet> jiratestset = new ObservableList<JiraTestSet>();
@@ -661,6 +684,292 @@ namespace GingerCore.ALM.JIRA
 
             }
             return valuesList;
+        }
+        public void UpdateBFSelectedAG(ref BusinessFlow busFlow, Dictionary<string, JiraTest> activitiesGroupToUpdatedData)
+        {
+            if ((busFlow == null) || (activitiesGroupToUpdatedData.Count == 0)) return;
+            Dictionary<string, string> busVariables = new Dictionary<string, string>();
+
+            int startGroupActsIndxInBf = 0;
+            Dictionary<string, int> activityGroupsToRemoveIndexes = new Dictionary<string, int>();
+            foreach (JiraTest tc in activitiesGroupToUpdatedData.Values)
+            {
+                var activitiesToRemove = busFlow.Activities.Where(x => tc.Steps.Any(stepid => stepid.StepID.Equals(x.ExternalID))).ToList();
+                foreach (Activity activityToRemove in activitiesToRemove)
+                {
+                    if (startGroupActsIndxInBf < busFlow.Activities.IndexOf(activityToRemove))
+                        startGroupActsIndxInBf = busFlow.Activities.IndexOf(activityToRemove);
+                    busFlow.Activities.Remove(activityToRemove);
+                }
+                var activityGroupsToRemove = busFlow.ActivitiesGroups.Where(x => x.ExternalID == tc.TestKey).ToList();
+                foreach (ActivitiesGroup activityGroupToRemove in activityGroupsToRemove)
+                {
+                    activityGroupsToRemoveIndexes.Add(activityGroupToRemove.ExternalID, busFlow.ActivitiesGroups.IndexOf(activityGroupToRemove));
+                }
+                foreach (ActivitiesGroup activityGroupToRemove in activityGroupsToRemove)
+                {
+                    busFlow.ActivitiesGroups.Remove(activityGroupToRemove);
+                }
+            }
+
+            int activityGroupToRemoveIndex;
+            foreach (JiraTest tc in activitiesGroupToUpdatedData.Values)
+            {
+                activityGroupsToRemoveIndexes.TryGetValue(tc.TestKey, out activityGroupToRemoveIndex);
+
+                //check if the TC is already exist in repository
+                ActivitiesGroup tcActivsGroup = new ActivitiesGroup();
+
+                tcActivsGroup = new ActivitiesGroup();
+                tcActivsGroup.Name = tc.TestName;
+                tcActivsGroup.ExternalID = tc.TestKey;
+                tcActivsGroup.Description = tc.Description;
+                busFlow.InsertActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
+
+                //Add the TC steps as Activities if not already on the Activities group
+                foreach (JiraTestStep step in tc.Steps)
+                {
+                    Activity stepActivity;
+                    bool toAddStepActivity = false;
+
+                    //check if mapped activity exist in repository
+                    Activity repoStepActivity = (Activity)GingerActivitiesRepo.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
+                    if (repoStepActivity != null)
+                    {
+                        //check if it is part of the Activities Group
+                        ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                        if (groupStepActivityIdent != null)
+                        {
+                            //already in Activities Group so get link to it
+                            stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                        }
+                        else//not in ActivitiesGroup so get instance from repo
+                        {
+                            stepActivity = (Activity)repoStepActivity.CreateInstance();
+                            toAddStepActivity = true;
+                        }
+                        stepActivity.IsSharedRepositoryInstance = true;
+                    }
+                    else//Step not exist in Ginger repository so create new one
+                    {
+                        stepActivity = new Activity();
+                        stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
+                        stepActivity.ExternalID = step.StepID;
+                        stepActivity.Description = StripHTML(step.Description);
+                        stepActivity.Expected = StripHTML(step.Expected);
+
+                        toAddStepActivity = true;
+                    }
+
+                    if (toAddStepActivity)
+                    {
+                        //not in group- need to add it
+                        busFlow.InsertActivity(stepActivity, startGroupActsIndxInBf++);
+                        tcActivsGroup.AddActivityToGroup(stepActivity);
+                    }
+
+                    //pull TC-Step parameters and add them to the Activity level
+                    List<string> stepParamsList = new List<string>();
+                    GetStepParameters(StripHTML(step.Description), ref stepParamsList);
+                    GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
+                    foreach (string param in stepParamsList)
+                    {
+                        //get the param value
+                        string paramSelectedValue = string.Empty;
+                        bool? isflowControlParam = null;
+                        JiraTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+
+                        //get the param value
+                        if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
+                            paramSelectedValue = tcParameter.Value;
+                        else
+                        {
+                            isflowControlParam = null;//empty value
+                            paramSelectedValue = "<Empty>";
+                        }
+
+                        //check if parameter is part of a link
+                        string linkedVariable = null;
+                        if (paramSelectedValue.StartsWith("#$#"))
+                        {
+                            string[] valueParts = paramSelectedValue.Split(new string[] { "#$#" }, StringSplitOptions.None);
+                            if (valueParts.Count() == 3)
+                            {
+                                linkedVariable = valueParts[1];
+                                paramSelectedValue = "$$_" + valueParts[2];//so it still will be considered as non-flow control
+
+                                if (busVariables.Keys.Contains(linkedVariable) == false)
+                                {
+                                    busVariables.Add(linkedVariable, valueParts[2]);
+                                }
+                            }
+                        }
+
+                        //detrmine if the param is Flow Control Param or not based on it value and agreed sign "$$_"
+                        if (paramSelectedValue.StartsWith("$$_"))
+                        {
+                            isflowControlParam = false;
+                            if (paramSelectedValue.StartsWith("$$_"))
+                                paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
+                        }
+                        else if (paramSelectedValue != "<Empty>")
+                            isflowControlParam = true;
+
+                        //check if already exist param with that name
+                        VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                        if (stepActivityVar == null)
+                        {
+                            //#Param not exist so add it
+                            if (isflowControlParam == true)
+                            {
+                                //add it as selection list param                               
+                                stepActivityVar = new VariableSelectionList();
+                                stepActivityVar.Name = param;
+                                stepActivity.AddVariable(stepActivityVar);
+                                stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
+                            }
+                            else
+                            {
+                                //add as String param
+                                stepActivityVar = new VariableString();
+                                stepActivityVar.Name = param;
+                                ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
+                                stepActivity.AddVariable(stepActivityVar);
+                            }
+                        }
+                        else
+                        {
+                            //#param exist
+                            if (isflowControlParam == true)
+                            {
+                                if (!(stepActivityVar is VariableSelectionList))
+                                {
+                                    //flow control param must be Selection List so transform it
+                                    stepActivity.Variables.Remove(stepActivityVar);
+                                    stepActivityVar = new VariableSelectionList();
+                                    stepActivityVar.Name = param;
+                                    stepActivity.AddVariable(stepActivityVar);
+                                    stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
+                                }
+                            }
+                            else if (isflowControlParam == false)
+                            {
+                                if (stepActivityVar is VariableSelectionList)
+                                {
+                                    //change it to be string variable
+                                    stepActivity.Variables.Remove(stepActivityVar);
+                                    stepActivityVar = new VariableString();
+                                    stepActivityVar.Name = param;
+                                    ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
+                                    stepActivity.AddVariable(stepActivityVar);
+                                    stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
+                                }
+                            }
+                        }
+
+                        //add the variable selected value                          
+                        if (stepActivityVar is VariableSelectionList)
+                        {
+                            OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == paramSelectedValue).FirstOrDefault();
+                            if (stepActivityVarOptionalVar == null)
+                            {
+                                //no such variable value option so add it
+                                stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
+                                ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
+                                if (isflowControlParam == true)
+                                    stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
+                            }
+                            //set the selected value
+                            ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
+                        }
+                        else
+                        {
+                            //try just to set the value
+                            try
+                            {
+                                stepActivityVar.Value = paramSelectedValue;
+                                if (stepActivityVar is VariableString)
+                                    ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
+                            }
+                            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                        }
+
+                        //add linked variable if needed
+                        if (string.IsNullOrEmpty(linkedVariable) == false)
+                        {
+                            stepActivityVar.LinkedVariableName = linkedVariable;
+                        }
+                        else
+                            stepActivityVar.LinkedVariableName = string.Empty;//clear old links
+                    }
+                }
+
+                //order the Activities Group activities according to the order of the matching steps in the TC
+                try
+                {
+                    foreach (JiraTestStep step in tc.Steps)
+                    {
+                        int stepIndx = tc.Steps.IndexOf(step) + 1;
+                        ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                        if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
+                        Activity act = (Activity)actIdent.IdentifiedActivity;
+                        int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
+                        int bfActIndx = busFlow.Activities.IndexOf(act);
+
+                        //set it in the correct place in the group
+                        int numOfSeenSteps = 0;
+                        int groupIndx = -1;
+                        foreach (ActivityIdentifiers ident in tcActivsGroup.ActivitiesIdentifiers)
+                        {
+                            groupIndx++;
+                            if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
+                                    tc.Steps.Where(x => x.StepID == ident.ActivityExternalID).FirstOrDefault() == null)
+                                continue;//activity which not originaly came from the TC
+                            numOfSeenSteps++;
+
+                            if (numOfSeenSteps >= stepIndx) break;
+                        }
+                        ActivityIdentifiers identOnPlace = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                        if (identOnPlace.ActivityGuid != act.Guid)
+                        {
+                            //replace places in group
+                            tcActivsGroup.ActivitiesIdentifiers.Move(groupActIndx, groupIndx);
+                            //replace places in business flow
+                            busFlow.Activities.Move(bfActIndx, startGroupActsIndxInBf + groupIndx);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
+                }
+            }
+            return;
+        }
+        public void UpdateBussinessFlow(ref BusinessFlow busFlow)
+        {
+            JiraTestSet testSet = GetTestSetData(new JiraTestSet { Key = busFlow.ExternalID });
+            Dictionary<string, JiraTest> activitiesGroupToUpdatedData = GetJiraSelectedTestsData(busFlow.ExternalID, busFlow.ActivitiesGroups.Select(actid => actid.ExternalID).ToList());
+            if (busFlow == null) return;
+            busFlow.Name = testSet.Name;
+            busFlow.Description = testSet.Description;
+            UpdateBFSelectedAG(ref busFlow, activitiesGroupToUpdatedData);
+        }
+        public Dictionary<string,JiraTest> GetJiraSelectedTestsData(string testSetID, List<string> TCsIds = null)
+        {
+            Dictionary<string,JiraTest> existsTestInJira = new Dictionary<string, JiraTest>();
+
+            JiraTestSet testSet = GetTestSetData(new JiraTestSet { Key = testSetID });
+            if (testSet != null && testSet.Tests.Count > 0)
+            {
+                foreach(string tc in TCsIds)
+                {
+                    existsTestInJira.Add(tc,testSet.Tests.Where(tst => tst.TestKey.Equals(tc)).FirstOrDefault());
+                }
+            }
+
+            return existsTestInJira;
         }
     }
 }

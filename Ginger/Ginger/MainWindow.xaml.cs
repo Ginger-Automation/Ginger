@@ -633,7 +633,7 @@ namespace Ginger
             if ( WorkSpace.UserProfile.Solution != null)
             {
                 Solution sol =  WorkSpace.UserProfile.Solution;
-                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(Solution.SolutionFiles(sol.Folder), SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
+                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(SolutionUpgrade.GetSolutionFilesWithVersion(Solution.SolutionFiles(sol.Folder)), SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
                 if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
                 {
                     UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, sol.Folder, sol.Name, lowerVersionFiles.ToList());

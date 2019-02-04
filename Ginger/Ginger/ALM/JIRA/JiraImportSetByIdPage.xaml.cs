@@ -96,18 +96,5 @@ namespace Ginger.ALM.JIRA
         {
             ImportSelectedTestSet();
         }
-        private void ImportTestSet(JiraTestSet testSet)
-        {
-            if (testSet == null)
-            {
-                importStatus = false;
-                UpdateStatus("Failed To Import Test Plan");
-                return;
-            }
-
-            if (ALMIntegration.Instance.ShowImportReviewPage(mImportDestinationPath, testSet) == true)
-            {
-            }
-        }
     }
 }

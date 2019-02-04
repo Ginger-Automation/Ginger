@@ -10,7 +10,7 @@
       d:DesignHeight="30" d:DesignWidth="1035"
 	Title="LocateByPOMElementPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="xPOMGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="30*"/>
         </Grid.RowDefinitions>
@@ -23,11 +23,11 @@
             <ColumnDefinition Width="35"/>
             <ColumnDefinition Width="35"/>
         </Grid.ColumnDefinitions>
-        <Label Style="{StaticResource $LabelStyle}" Grid.Column="0" Content="Page Objects Model:" VerticalAlignment="Top"/>
-        <TextBox x:Name="xSelectedPOMTextBox" Grid.Column="1" Style="{StaticResource $TextBoxStyle}" Height="25" IsReadOnly="True" VerticalAlignment="Top" Margin="2,0,0,3"></TextBox>
+        <Label x:Name="xPOMTitleLbl" Style="{StaticResource $LabelStyle}" Grid.Column="0" Content="Page Objects Model:" VerticalAlignment="Top"/>
+        <TextBox x:Name="xHTMLReportFolderTextBox" Grid.Column="1" Style="{StaticResource $TextBoxStyle}" Height="25" IsReadOnly="True" VerticalAlignment="Top" Margin="2,0,2,3"></TextBox>
         <Button Style="{StaticResource $InputButtonStyle}" Grid.Column="2" Height="25" Width="25" VerticalAlignment="Top" Click="SelectPOM_Click">...</Button>
-        <Label Style="{StaticResource $LabelStyle}" HorizontalContentAlignment="Right" Grid.Column="3" Content="Model Element:" VerticalAlignment="Top" />
-        <TextBox x:Name="xSelectedElementTextBox" Grid.Column="4" Style="{StaticResource $TextBoxStyle}" Height="25" IsReadOnly="True"  VerticalAlignment="Top" Margin="2,0,2,3" MouseDoubleClick="XPOMElementTextBox_MouseClick"></TextBox>
+        <Label x:Name="xPOMElementsLbl" Style="{StaticResource $LabelStyle}" HorizontalContentAlignment="Right" Grid.Column="3" Content="Model Element:" VerticalAlignment="Top" />
+        <TextBox x:Name="xPOMElementTextBox" Grid.Column="4" Style="{StaticResource $TextBoxStyle}" Height="25" IsReadOnly="True"  VerticalAlignment="Top" Margin="2,0,2,3" MouseDoubleClick="XPOMElementTextBox_MouseClick"></TextBox>
         <StackPanel Orientation="Vertical" Grid.Row="0"  Grid.Column="4">
             <Ginger:ucGrid x:Name="xPOMElementsGrid" Height="150" Visibility="Collapsed" Title="POM Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" RowDoubleClick="XPOMElementsGrid_RowDoubleClick" />
             <usercontrols:ucButton x:Name="xSelectElement" Visibility="Collapsed" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Center"  ButtonText="Select Element" ButtonImageType="Check" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="SelectElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" />
