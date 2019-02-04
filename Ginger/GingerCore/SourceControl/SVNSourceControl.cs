@@ -170,7 +170,8 @@ namespace GingerCore.SourceControl
 
                     SourceControlFileInfo SCFI = new SourceControlFileInfo();
                     SCFI.Path = arg.FullPath;
-                    SCFI.SolutionPath = arg.FullPath.Replace(SolutionFolder, @"~\");
+                    SCFI.SolutionPath = arg.FullPath.Replace(SolutionFolder, @"~\");                  
+
                     SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Unknown;
                     SCFI.Selected = true;
                     SCFI.Diff = "";

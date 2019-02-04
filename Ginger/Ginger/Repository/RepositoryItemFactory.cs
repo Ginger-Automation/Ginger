@@ -844,7 +844,8 @@ namespace Ginger.Repository
         {
             //TODO: Remove from here and execute it in actual RunSetActionScript.cs (Not perticularly tested)
             ActScript act = new ActScript();
-            string FileName = ScriptFileName.Replace(@"~\", SolutionFolder);
+            //string FileName = ScriptFileName.Replace(@"~\", SolutionFolder);
+            string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScriptFileName);
 
             Ginger.Run.RunSetActions.RunSetActionScript actionScript = new RunSetActionScript();
             actionScript.VerifySolutionFloder(SolutionFolder, FileName);
