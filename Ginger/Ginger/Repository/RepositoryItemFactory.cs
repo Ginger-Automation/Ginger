@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.AnalyzerLib;
 using Ginger.GeneralLib;
@@ -753,12 +754,12 @@ namespace Ginger.Repository
             return true;
         }
 
-        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening)
+        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
         {
             Dictionary<Guid, string> defectsOpeningResults;
             if ((defectsForOpening != null) && (defectsForOpening.Count > 0))
             {
-                defectsOpeningResults = ALMIntegration.Instance.CreateNewALMDefects(defectsForOpening);
+                defectsOpeningResults = ALMIntegration.Instance.CreateNewALMDefects(defectsForOpening, defectsFields);
             }
             else
                 return;

@@ -483,12 +483,12 @@ namespace Ginger.ALM
             return latestALMFieldsREST;
         }
 
-        public Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening)
+        public Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening,List<ExternalItemFieldBase> defectsFields)
         {
             Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
             if (ALMIntegration.Instance.AutoALMProjectConnect())
             {
-                defectsOpeningResults = AlmCore.CreateNewALMDefects(defectsForOpening, true);
+                defectsOpeningResults = AlmCore.CreateNewALMDefects(defectsForOpening, defectsFields, true);
             }
             return defectsOpeningResults;
         }

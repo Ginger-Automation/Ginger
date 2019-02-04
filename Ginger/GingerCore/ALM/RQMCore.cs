@@ -97,7 +97,7 @@ namespace GingerCore.ALM
             return UpdatedAlmFields(ImportFromRQM.GetALMItemFields(bw, online));
         }
 
-        public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST)
+        public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST)
         {
             return null;
         }
