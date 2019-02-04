@@ -46,6 +46,8 @@ using System.IO;
 using System.Dynamic;
 using Newtonsoft.Json.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
+using System.Linq;
+using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 
 namespace Ginger
 {
@@ -62,7 +64,7 @@ namespace Ginger
         static List<HighlightingRule> mHighlightingRules = null;
 
         bool mHideBusinessFlowAndActivityVariables= false;
-
+        private Dictionary<string, TreeViewItem> Categories = new Dictionary<string, TreeViewItem>();
         public ValueExpressionEditorPage(object obj, string AttrName, bool hideBusinessFlowAndActivityVariables = false)
         {
             InitializeComponent();
@@ -132,6 +134,7 @@ namespace Ginger
             AddVariables();
             AddEnvParams();
             AddGlobalParameters();
+            AddRosylynFunctions();
             AddVBSFunctions();
             AddRegexFunctions();
             AddVBSIfFunctions();
@@ -151,6 +154,8 @@ namespace Ginger
                 }                
             }
         }
+
+    
 
         private void AddGlobalParameters()
         {
@@ -208,6 +213,35 @@ namespace Ginger
             AddVBSIfEval(tviVars, "Actual SubString from char in position 2 length 3 is 'ABC'", "Mid({Actual},2,3)=\"ABC\"");
             AddVBSIfEval(tviVars, "Actual to Upper Case = 'ABC'", "UCase({Actual})=\"ABC\"");
         }
+
+        private void AddRosylynFunctions()
+        {
+            TreeViewItem tviVars = new TreeViewItem();
+            SetItemView(tviVars, "C# Expressions", "", "VBS16x16.png");
+            xObjectsTreeView.Items.Add(tviVars);
+
+            foreach (ValueExpressionReference VER in WorkSpace.VERefrences.Refrences)
+            {
+                TreeViewItem Parent;
+                if (!Categories.TryGetValue(VER.Category, out Parent))
+                {
+                    Parent = new TreeViewItem();
+                    SetItemView(Parent, VER.Category, "", "VBS16x16.png");
+                    tviVars.Items.Add(Parent);
+                    Categories.Add(VER.Category, Parent);
+                }
+
+                TreeViewItem tvi = new TreeViewItem();
+
+                SetItemView(tvi, VER.Description, VER.Expression, "VBS16x16.png");
+                Parent.Items.Add(tvi);
+                tvi.MouseDoubleClick += tvi_MouseDoubleClick;
+
+            }
+
+
+        }
+   
 
         private void AddVBSFunctions()
         {

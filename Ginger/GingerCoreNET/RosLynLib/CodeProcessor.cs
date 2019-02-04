@@ -27,11 +27,12 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
-
+using System.Text.RegularExpressions;
 namespace GingerCoreNET.RosLynLib
 {
     public class CodeProcessor
     {
+      static  Regex Pattern = new Regex(@"\<\?[^\<\?]*\?\>",RegexOptions.Compiled);
         public object EvalExpression(string expression)
         {
            
@@ -42,6 +43,31 @@ namespace GingerCoreNET.RosLynLib
             st.Stop();
             Reporter.ToLog(eLogLevel.DEBUG, "Executed CodeProcessor - Elapsed: " + st.ElapsedMilliseconds + " ,Expression: " + expression + " ,Result: " + task.Result);
             return task.Result;
+        }
+
+        public static string GetResult(string Expression)
+        {
+           
+
+            foreach (Match M in Pattern.Matches(Expression))
+            {
+                string match = M.Value;
+                //not doing string replacement to
+                string exp = match.Substring(2, match.Length - 4);
+                string Evalresult = exp;
+                try
+                {
+                    Evalresult = CSharpScript.EvaluateAsync(exp).Result.ToString();
+                }
+
+                catch(Exception e)
+                {
+                    Console.Write(e.Message);
+                }
+                Expression = Expression.Replace(match, Evalresult);
+            }
+
+            return Expression;
         }
 
         

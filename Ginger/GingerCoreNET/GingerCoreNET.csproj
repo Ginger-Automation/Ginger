@@ -88,6 +88,9 @@
     <None Update="Images\%40ItemPrev.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="RosLynLib\ValueExpressionRefrences.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

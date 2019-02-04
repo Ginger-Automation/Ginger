@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.Repository;
+using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
@@ -484,7 +485,7 @@ namespace Ginger
             phase = "Application was loaded and ready";
             Reporter.ToLog(eLogLevel.INFO, phase);
             mIsReady = true;
-
+            WorkSpace.VERefrences = VERefrenceList.LoadFromJson(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ValueExpressionRefrences.json"));
         }
 
         private static void StandAloneThreadExceptionHandler(object sender, UnhandledExceptionEventArgs e)

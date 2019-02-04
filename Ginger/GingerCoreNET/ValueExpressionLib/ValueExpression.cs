@@ -24,6 +24,7 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
+using GingerCoreNET.RosLynLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -191,12 +192,18 @@ namespace GingerCore
             ReplaceDataSources();
 
             CalculateFunctions();
-
+            EvaluateCSharpFunctions();
             if (!string.IsNullOrEmpty(SolutionFolder))
             {
                 mValueCalculated = mValueCalculated.Replace(@"~\", SolutionFolder);
             }
 
+        }
+
+        private void EvaluateCSharpFunctions()
+        {
+            mValueCalculated= CodeProcessor.GetResult(mValueCalculated);
+        
         }
 
         private void ReplaceGlobalParameters()
@@ -645,6 +652,7 @@ namespace GingerCore
 
             }
             ProcessGeneralFuncations();
+
         }
 
         private void ProcessGeneralFuncations()

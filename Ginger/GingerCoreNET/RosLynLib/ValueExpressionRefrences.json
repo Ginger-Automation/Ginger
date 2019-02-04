@@ -1,0 +1,39 @@
+﻿{
+  "Refrences": [
+    {
+      "Category": "String Functions",
+      "Description": "Replace Text",
+      "Expression": "<?\"abc\".Replace(\"b\",\"d\")?>"
+    },
+    {
+      "Category": "String Functions",
+      "Description": "Text Contains",
+      "Expression": "<?\"abc\".Contains(\"b\")?>"
+    },
+    {
+      "Category": "Math",
+      "Description": "Add",
+      "Expression": "<?5+3?>"
+    },
+    {
+      "Category": "String Functions",
+      "Description": "Starts With",
+      "Expression": "<?\"Abc\".StartsWith(\"A\")?>"
+    },
+    {
+      "Category": "String Functions",
+      "Description": "Ends With",
+      "Expression": "<?\"Abc\".EndsWith(\"c\")?>"
+    },
+    {
+      "Category": "String Functions",
+      "Description": "Get String Length",
+      "Expression": "<?\"Abc\".Length?>"
+    },
+    {
+      "Category": "String Functions",
+      "Description": "Get Substring",
+      "Expression": "<?\"Abcdefgh\".Substring(1,3)?>"
+    }
+  ]
+}
