@@ -109,10 +109,13 @@ namespace Ginger
         {
             InitializeComponent();
 
-            if (App.BusinessFlow == null) //Not supposed to happen because now Automate is done from BF itself           
+            if (App.BusinessFlow == null)          
             {
-                App.SetDefaultBusinessFlow();
+                //App.SetDefaultBusinessFlow();
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Failed to find {0} to load into Automate page.", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)));
+                return;
             }
+
             AddRunnerListeners();
             //Ribbon
             btnRunActivity.Label = "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity);

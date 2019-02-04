@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -36,26 +37,48 @@ namespace GingerCore.Repository.UpgradeLib
         }
 
         /// <summary>
-        /// Return list of the Solution files paths which were created with higher Ginger version
+        /// Return list of Solution files path with their version compare result
         /// </summary>
         /// <param name="solutionFiles"></param>
+        /// <param name="addInfoExtention"></param>
         /// <returns></returns>
-        public static ConcurrentBag<string> GetSolutionFilesCreatedWithRequiredGingerVersion(IEnumerable<string> solutionFiles, eGingerVersionComparisonResult requiredVersion, bool addInfoExtention = true)
+        public static ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> GetSolutionFilesWithVersion(IEnumerable<string> solutionFiles, bool addInfoExtention = true)
         {
+            ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = new ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>>();
             // read all XMLs and check for version
-            ConcurrentBag<string> requiredFiles = new ConcurrentBag<string>();
-
             Parallel.ForEach(solutionFiles, FileName =>
             {
                 string fileVer = string.Empty;
-                if (CompareSolutionFileGingerVersionToCurrent(FileName, ref fileVer) == requiredVersion)
-                {
-                    if (addInfoExtention)
-                        requiredFiles.Add(FileName + "--> File Version: " + fileVer);
-                    else
-                        requiredFiles.Add(FileName);
-                }
+                eGingerVersionComparisonResult versionRes = CompareSolutionFileGingerVersionToCurrent(FileName, ref fileVer);
+                
+                if (addInfoExtention)
+                    solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName + "--> File Version: " + fileVer));
+                else
+                    solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName));
             });
+
+            return solutionFilesWithVersion;
+        }
+
+        /// <summary>
+        /// Return list of the Solution files paths which match to specific result type
+        /// </summary>
+        /// <param name="solutionFiles"></param>
+        /// <returns></returns>
+        public static ConcurrentBag<string> GetSolutionFilesCreatedWithRequiredGingerVersion(ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersionCompare, eGingerVersionComparisonResult requiredVersion)
+        {
+            // read all XMLs and check for version
+            
+                ConcurrentBag<string> requiredFiles = new ConcurrentBag<string>();
+
+                Parallel.ForEach(solutionFilesWithVersionCompare, solFile =>
+                {
+                    if (solFile.Item1 == requiredVersion)
+                    {
+                        requiredFiles.Add(solFile.Item2);
+                    }
+                });
+            
             return requiredFiles;
         }
 

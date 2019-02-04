@@ -411,7 +411,7 @@ namespace Ginger.Actions
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;                    
                 }
-            }
+            }           
         }
 
         private void AddReturnValue(object sender, RoutedEventArgs e)
