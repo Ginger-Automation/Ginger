@@ -6,7 +6,7 @@ using static Amdocs.Ginger.Common.UIElement.ElementInfo;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
-    public class HTMLElementProperty : ControlProperty
+    public class POMElementProperty : ControlProperty
     {
 
 

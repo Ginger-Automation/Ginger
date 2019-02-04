@@ -88,13 +88,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
             foreach (ControlProperty property in EI.Properties)
             {
-                if (property is HTMLElementProperty)
+                if (property is POMElementProperty)
                 {
                     return;
                 }
                 else
                 {
-                    HTMLElementProperty hTMLElementProperety = new HTMLElementProperty() { Name = property.Name, Value = property.Value };
+                    POMElementProperty hTMLElementProperety = new POMElementProperty() { Name = property.Name, Value = property.Value };
                     newProperties.Add(hTMLElementProperety);
                 }
             }
@@ -267,19 +267,19 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 ControlProperty ExistingCP = originalElelemnt.Properties.Where(x => x.Name == latestCP.Name).FirstOrDefault();
                 if (originalModifiedCP != null)
                 {
-                    ((HTMLElementProperty)originalModifiedCP).DeltaStatus = ElementInfo.eDeltaStatus.Modified;
-                    ((HTMLElementProperty)originalModifiedCP).DeltaExtraDetails = "Property value changed to: " + latestCP.Value;
-                    ((HTMLElementProperty)originalModifiedCP).UpdatedValue = latestCP.Value;
+                    ((POMElementProperty)originalModifiedCP).DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                    ((POMElementProperty)originalModifiedCP).DeltaExtraDetails = "Property value changed to: " + latestCP.Value;
+                    ((POMElementProperty)originalModifiedCP).UpdatedValue = latestCP.Value;
                 }
                 else if (ExistingCP == null)
                 {
-                    ((HTMLElementProperty)latestCP).DeltaStatus = ElementInfo.eDeltaStatus.New;
+                    ((POMElementProperty)latestCP).DeltaStatus = ElementInfo.eDeltaStatus.New;
                     originalElelemnt.Properties.Add(latestCP);
                 }
                 else
                 {
 
-                    ((HTMLElementProperty)ExistingCP).DeltaStatus = ElementInfo.eDeltaStatus.Unchanged;
+                    ((POMElementProperty)ExistingCP).DeltaStatus = ElementInfo.eDeltaStatus.Unchanged;
                 }
             }
 
@@ -289,13 +289,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
                 if (latestExistedEL == null)
                 {
-                    ((HTMLElementProperty)originalEL).DeltaStatus = ElementInfo.eDeltaStatus.Deleted;
+                    ((POMElementProperty)originalEL).DeltaStatus = ElementInfo.eDeltaStatus.Deleted;
                 }
             }
 
 
             List<ElementLocator> ModifiedElementsLocatorsList = originalElelemnt.Locators.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Unchanged).ToList();
-            List<ControlProperty> ModifiedControlPropertiesList = originalElelemnt.Properties.Where(x => ((HTMLElementProperty)x).DeltaStatus != ElementInfo.eDeltaStatus.Unchanged).ToList();
+            List<ControlProperty> ModifiedControlPropertiesList = originalElelemnt.Properties.Where(x => ((POMElementProperty)x).DeltaStatus != ElementInfo.eDeltaStatus.Unchanged).ToList();
             if (ModifiedElementsLocatorsList.Count > 0 && ModifiedControlPropertiesList.Count > 0)
             {
                 originalElelemnt.DeltaStatus = ElementInfo.eDeltaStatus.Modified;

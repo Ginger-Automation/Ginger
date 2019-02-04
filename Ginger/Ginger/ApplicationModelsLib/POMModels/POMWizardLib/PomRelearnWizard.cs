@@ -103,7 +103,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 }
 
                 //Deleting deleted properties
-                List<ControlProperty> PropertiesToRemove = EI.Properties.Where(x => ((HTMLElementProperty)x).DeltaStatus == ElementInfo.eDeltaStatus.Deleted).ToList();
+                List<ControlProperty> PropertiesToRemove = EI.Properties.Where(x => ((POMElementProperty)x).DeltaStatus == ElementInfo.eDeltaStatus.Deleted).ToList();
                 for (int i = 0; i < PropertiesToRemove.Count; i++)
                 {
                     EI.Properties.Remove(PropertiesToRemove[i]);
@@ -121,9 +121,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 //Updating modified properties
                 foreach (ControlProperty CP in EI.Properties)
                 {
-                    if (((HTMLElementProperty)CP).DeltaStatus == ElementInfo.eDeltaStatus.Modified)
+                    if (((POMElementProperty)CP).DeltaStatus == ElementInfo.eDeltaStatus.Modified)
                     {
-                        CP.Value = ((HTMLElementProperty)CP).UpdatedValue;
+                        CP.Value = ((POMElementProperty)CP).UpdatedValue;
                     }
                 }
 
