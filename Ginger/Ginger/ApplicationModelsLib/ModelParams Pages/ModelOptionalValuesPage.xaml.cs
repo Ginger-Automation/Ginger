@@ -55,7 +55,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 }
                 else if (mParentObject.GetType().Name == typeof(HTMLElementInfo).Name)
                 {
-                    mOptionalVal = ((HTMLElementInfo)mParentObject).OptionalVals;
+                    mOptionalVal = ((HTMLElementInfo)mParentObject).OptionalValuesObjectsList;
                 }
             }
             mSelectionModePage = selectionModePage;
@@ -228,7 +228,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             }
             else if (mParentObject.GetType().Name == typeof(HTMLElementInfo).Name)
             {
-                ((HTMLElementInfo)mParentObject).OnPropertyChanged(nameof(HTMLElementInfo.OpValsString));
+                ((HTMLElementInfo)mParentObject).OnPropertyChanged(nameof(HTMLElementInfo.OptionalValuesObjectsListAsString));
             }
         }
 

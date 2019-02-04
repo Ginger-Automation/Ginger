@@ -210,7 +210,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             List<GingerCore.General.ComboEnumItem> ElementTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(eElementType));
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 15, AllowSorting = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList });
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.OpValsString), Header = "Possible Values", WidthWeight = 40, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.OptionalValuesObjectsListAsString), Header = "Possible Values", WidthWeight = 40, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["OpenEditOptionalValuesPage"] });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
@@ -307,8 +307,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                         AppParameters par = new AppParameters();
                         par.ItemName = parName;
-                        par.OptionalValuesList = prms.OptionalVals;
-                        par.OptionalValuesString = prms.OpValsString;
+                        par.OptionalValuesList = prms.OptionalValuesObjectsList;
+                        par.OptionalValuesString = prms.OptionalValuesObjectsListAsString;
                         par.Description = prms.Description;
                         parameters.Add(par); 
                     }

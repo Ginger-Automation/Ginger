@@ -575,9 +575,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             List<string> optionalValues = new List<string>();
             ElementInfo selectedPOMElement = GetElementInfoFromCurerentPOMSelected();
-            if (selectedPOMElement != null && selectedPOMElement.OptionalVals.Count > 0)        //For new implementation
+            if (selectedPOMElement != null && selectedPOMElement.OptionalValuesObjectsList.Count > 0)        //For new implementation
             {
-                optionalValues = selectedPOMElement.OptionalVals.Select(s => (string)s.ItemName).ToList();
+                optionalValues = selectedPOMElement.OptionalValuesObjectsList.Select(s => (string)s.ItemName).ToList();
             }
             return optionalValues;
         }
@@ -587,9 +587,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
             List<string> indexes = new List<string>();
             int count = 0;
             ElementInfo selectedPOMElement = GetElementInfoFromCurerentPOMSelected();
-            if (selectedPOMElement != null && selectedPOMElement.OptionalVals.Count > 0)        //For new implementation
+            if (selectedPOMElement != null && selectedPOMElement.OptionalValuesObjectsList.Count > 0)        //For new implementation
             {
-                count = selectedPOMElement.OptionalVals.Count;
+                count = selectedPOMElement.OptionalValuesObjectsList.Count;
             }
             for (int i = 0; i < count; i++)
             {
@@ -602,9 +602,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             string defaultValue = string.Empty;
             ElementInfo selectedPOMElement = GetElementInfoFromCurerentPOMSelected();
-            if (selectedPOMElement != null && selectedPOMElement.OptionalVals.Count > 0)        //For new implementation
+            if (selectedPOMElement != null && selectedPOMElement.OptionalValuesObjectsList.Count > 0)        //For new implementation
             {
-                defaultValue = selectedPOMElement.OptionalVals.Where(s => s.IsDefault == true).Select(s => (string)s.ItemName).FirstOrDefault();
+                defaultValue = selectedPOMElement.OptionalValuesObjectsList.Where(s => s.IsDefault == true).Select(s => (string)s.ItemName).FirstOrDefault();
             }
             return defaultValue;
         }

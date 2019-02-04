@@ -219,6 +219,9 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
+        /// <summary>
+        /// Please dont use this property it is obselet use the below property "OptionalValuesObjectsList"
+        /// </summary>
         List<String> mOptionalValues = new List<string>();
         public List<String> OptionalValues
         {
@@ -234,17 +237,20 @@ namespace Amdocs.Ginger.Common.UIElement
 
         ObservableList<OptionalValue> mOptionalVals = new ObservableList<OptionalValue>();
         [IsSerializedForLocalRepository]
-        public ObservableList<OptionalValue> OptionalVals
+        public ObservableList<OptionalValue> OptionalValuesObjectsList
         {
             get
             {
                 if(mOptionalVals.Count == 0 && mOptionalValues.Count > 0)
                 {
-                    bool isDefault = false;
                     foreach (string opVal in mOptionalValues)
                     {
-                        mOptionalVals.Add(new OptionalValue() { ItemName = opVal, IsDefault = !isDefault });
-                        isDefault = true;
+                        mOptionalVals.Add(new OptionalValue() { ItemName = opVal, IsDefault = false });
+                    }
+
+                    if(mOptionalVals.Count > 0)
+                    {
+                        mOptionalVals[0].IsDefault = true;
                     }
                     mOptionalValues = new List<string>();
                 }
@@ -256,12 +262,12 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
-        public string OpValsString
+        public string OptionalValuesObjectsListAsString
         {
             get
             {
                 StringBuilder opValsString = new StringBuilder();
-                foreach (OptionalValue value in OptionalVals)
+                foreach (OptionalValue value in OptionalValuesObjectsList)
                 {
                     if (value.IsDefault)
                     {
@@ -274,23 +280,6 @@ namespace Amdocs.Ginger.Common.UIElement
                 }
                 opValsString.ToString().TrimEnd(',');
                 return opValsString.ToString();
-            }
-        }
-
-        private void SetOptionalValuesFromOldObject()
-        {
-            if (OptionalVals.Count <= 0)
-            {
-                bool isDefault = false;
-                foreach (string vl in OptionalValues)
-                {
-                    OptionalVals.Add(new OptionalValue()
-                    {
-                        ItemName = vl,
-                        IsDefault = !isDefault
-                    });
-                    isDefault = true;
-                } 
             }
         }
                

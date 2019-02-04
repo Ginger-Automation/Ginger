@@ -4395,7 +4395,6 @@ namespace GingerCore.Drivers
                     ElementInfo.ElementTypeEnum == eElementType.ComboBox || ElementInfo.ElementTypeEnum == eElementType.ComboBoxOption ||
                     ElementInfo.ElementTypeEnum == eElementType.List || ElementInfo.ElementTypeEnum == eElementType.ListItem)
                 {
-                    bool isDefault = false;
                     foreach (IWebElement val in el.FindElements(By.XPath("*")))
                     {
                         if (!string.IsNullOrEmpty(val.Text))
@@ -4405,18 +4404,21 @@ namespace GingerCore.Drivers
                             {
                                 foreach (string cuVal in tempOpVals)
                                 {
-                                    ElementInfo.OptionalVals.Add(new OptionalValue() { Value = cuVal, IsDefault = !isDefault });
-                                    isDefault = true;
+                                    ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
                                 }
                             }
                             else
                             {
-                                ElementInfo.OptionalVals.Add(new OptionalValue() { Value = val.Text, IsDefault = !isDefault });
-                                isDefault = true; 
+                                ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = val.Text, IsDefault = false });
                             }
                         }
                     }
-                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OpValsString });
+
+                    if (ElementInfo.OptionalValuesObjectsList.Count > 0)
+                    {
+                        ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
+                    }
+                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString });
                 }
 
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
