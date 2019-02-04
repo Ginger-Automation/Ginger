@@ -30,15 +30,15 @@ namespace GingerTest.POMs
 
         public SingleItemTreeViewExplorerPagePOM POMsTree { get { return mTreeView; } }
 
-        public ApplicationPOMModel CreatePOM(string POMName, string POMDescription, string targetApp, Agent ChromeAgent, string URL, List<eElementType> elementTypeCheckBoxToClickList)
+        public ApplicationPOMModel CreatePOM(string POMName, string POMDescription, string targetApp, Agent ChromeAgent, string URL, List<eElementType> elementTypeCheckBoxToClickList, List<ElementLocator> prioritizedLocatorsList)
         {
             mTreeView.AddButton.Click();
             SleepWithDoEvents(100);
 
-            return CreatePOMOnWizard(POMName, POMDescription, targetApp, ChromeAgent, URL, elementTypeCheckBoxToClickList);
+            return CreatePOMOnWizard(POMName, POMDescription, targetApp, ChromeAgent, URL, elementTypeCheckBoxToClickList, prioritizedLocatorsList);
         }
 
-        private ApplicationPOMModel CreatePOMOnWizard(string POMName,string POMDescription, string targetApp, Agent agent, string URL,List<eElementType> elementTypeCheckBoxToClickList)
+        private ApplicationPOMModel CreatePOMOnWizard(string POMName,string POMDescription, string targetApp, Agent agent, string URL,List<eElementType> elementTypeCheckBoxToClickList, List<ElementLocator> prioritizedLocatorsList)
         {
             WizardPOM wizard = WizardPOM.CurrentWizard;
             wizard.NextButton.Click();
@@ -47,11 +47,27 @@ namespace GingerTest.POMs
             ucAgentControlPOM.SelectValueUCAgentControl(agent);
             ucAgentControlPOM.UCAgentControlStatusButtonClick();
             SleepWithDoEvents(10000);
-            ucGrid ucGrid = (ucGrid)wizard.CurrentPage["AutoMapElementTypesGrid AID"].dependencyObject;
-            ucGridPOM gridPOM = new ucGridPOM(ucGrid);
+
+            //Process AutoMap Element Locators Grid
+            ucGrid ucElementLocatorsGrid = (ucGrid)wizard.CurrentPage["AutoMapElementLocatorsGrid AID"].dependencyObject;
+            ucGridPOM ucElementLocatorsGridPOM = new ucGridPOM(ucElementLocatorsGrid);
+            int locatorIndex = 0;
+            foreach (ElementLocator elemLocator in prioritizedLocatorsList)
+            {
+                if(!elemLocator.Active)
+                    ucElementLocatorsGridPOM.ClickOnCheckBox(nameof(ElementLocator.Active), nameof(ElementLocator.LocateBy), elemLocator.LocateBy.ToString());
+
+                ucElementLocatorsGridPOM.ReOrderGridRows(nameof(ElementLocator.LocateBy), elemLocator.LocateBy.ToString(), locatorIndex);
+
+                locatorIndex++;
+            }
+
+            //Process AutoMap Element Types Grid
+            ucGrid ucElementTypesGrid = (ucGrid)wizard.CurrentPage["AutoMapElementTypesGrid AID"].dependencyObject;
+            ucGridPOM ucElementTypesGridPOM = new ucGridPOM(ucElementTypesGrid);
             foreach (eElementType elementType in elementTypeCheckBoxToClickList)
             {
-                gridPOM.ClickOnCheckBox(nameof(UIElementFilter.Selected), nameof(UIElementFilter.ElementType), elementType.ToString());
+                ucElementTypesGridPOM.ClickOnCheckBox(nameof(UIElementFilter.Selected), nameof(UIElementFilter.ElementType), elementType.ToString());
             }
             string html = TestResources.GetTestResourcesFile(URL);
             agent.Driver.RunAction(new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, ValueForDriver = html });
