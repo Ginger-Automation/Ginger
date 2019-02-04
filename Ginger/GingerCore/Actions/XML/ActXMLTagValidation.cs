@@ -149,7 +149,11 @@ namespace GingerCore.Actions.XML
                 //{
                 //    FilePath = FilePath.Replace("~\\", SolutionFolder);
                 //}
-                FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+                if (FilePath.Contains("~"))
+                {
+                    FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+                }
+                
 
                 docTxt = System.IO.File.ReadAllText(FilePath);
             }
