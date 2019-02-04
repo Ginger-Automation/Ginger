@@ -346,23 +346,23 @@ namespace Ginger.SolutionGeneral
             }
         }
         
-        [IsSerializedForLocalRepository]
-        public string LastBusinessFlowFileName { get; set; }
+        //[IsSerializedForLocalRepository]
+        public string LastBusinessFlowFileName { get; set; }//Not needed anymore keeping for allowing to load UserProfile xml
 
         MRUManager mRecentUsedBusinessFlows;
 
-        public MRUManager RecentlyUsedBusinessFlows
-        {
-            get
-            {
-                if (mRecentUsedBusinessFlows == null)
-                {
-                    mRecentUsedBusinessFlows = new MRUManager();
-                    mRecentUsedBusinessFlows.Init(Path.Combine(Folder, "RecentlyUsed.dat"));
-                }
-                return mRecentUsedBusinessFlows;
-            }
-        }
+        //public MRUManager RecentlyUsedBusinessFlows
+        //{
+        //    get
+        //    {
+        //        if (mRecentUsedBusinessFlows == null)
+        //        {
+        //            mRecentUsedBusinessFlows = new MRUManager();
+        //            mRecentUsedBusinessFlows.Init(Path.Combine(Folder, "RecentlyUsed.dat"));
+        //        }
+        //        return mRecentUsedBusinessFlows;
+        //    }
+        //}
 
         // Need to be tree view
         public override string GetNameForFileName() { return Name; }
