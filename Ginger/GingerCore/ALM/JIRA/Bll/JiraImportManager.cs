@@ -153,7 +153,7 @@ namespace GingerCore.ALM.JIRA
 
                         //pull TC-Step parameters and add them to the Activity level
                         List<string> stepParamsList = new List<string>();
-                        GetStepParameters(StripHTML(step.Description), ref stepParamsList);
+                        GetStepParameters(StripHTML(step.Variables), ref stepParamsList);
                         //GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
                         foreach (string param in stepParamsList)
                         {
@@ -454,13 +454,12 @@ namespace GingerCore.ALM.JIRA
         {
             try
             {
-                MatchCollection stepParams = Regex.Matches(stepText, @"\<<<([^>]*)\>>>");
+                string[] stepParams = stepText.Split(new[] { ';' });
 
-                foreach (var param in stepParams)
+                foreach (string param in stepParams)
                 {
-                    string strParam = param.ToString().TrimStart(new char[] { '<' });
-                    strParam = strParam.TrimEnd(new char[] { '>' });
-                    stepParamsList.Add(strParam);
+                    string[] strParam = param.Split(new[] { '=' });
+                    stepParamsList.Add(strParam[0].Trim());
                 }
             }
             catch (Exception ex)
@@ -570,6 +569,7 @@ namespace GingerCore.ALM.JIRA
                                         {
                                             var stepAnonymous = Newtonsoft.Json.JsonConvert.DeserializeAnonymousType(val, stepAnonymousTypeDef);
                                             string[] stepDescription = new[] { "", "" };
+                                            string[] stepVariables = new[] { "", "" };
                                             if (!string.IsNullOrEmpty(stepAnonymous.data) && stepAnonymous.data.Contains("=>"))
                                             {
                                                 string[] getStepData = (stepAnonymous.data).Split(new[] { "=>" }, StringSplitOptions.None);
@@ -577,12 +577,16 @@ namespace GingerCore.ALM.JIRA
                                                 {
                                                     stepDescription = getStepData[1].Split(new[] { "Description:" }, StringSplitOptions.None);
                                                 }
+                                                if (getStepData.Count() > 2 && getStepData[2].Contains("Variables:"))
+                                                {
+                                                    stepVariables = getStepData[2].Split(new[] { "Variables:" }, StringSplitOptions.None);
+                                                }
                                             }
                                             else
                                             {
                                                 stepDescription[1] = stepAnonymous.data;
                                             }
-                                            test.Steps.Add(new JiraTestStep() { StepID = stepAnonymous.id.ToString(), StepName = stepAnonymous.step, Description = StripHTML(stepDescription[1]) });
+                                            test.Steps.Add(new JiraTestStep() { StepID = stepAnonymous.id.ToString(), StepName = stepAnonymous.step, Description = StripHTML(stepDescription[1]) , Variables = stepVariables[1]});
                                         }
                                         break;
                                 }

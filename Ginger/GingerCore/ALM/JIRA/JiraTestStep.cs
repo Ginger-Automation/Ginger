@@ -24,6 +24,7 @@ namespace GingerCore.ALM.JIRA
         public string StepID { get; set; }
         public string StepName { get; set; }
         public string Description { get; set; }
+        public string Variables { get; set; }
         public string Expected { get; set; }
     }
 }
