@@ -291,7 +291,7 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateBusinessFlow(ref BusinessFlow businessFlow)
         {
-            throw new NotImplementedException();
+            ((JiraCore)ALMIntegration.Instance.AlmCore).UpdateBussinessFlow(ref businessFlow);
         }
     }
 }
