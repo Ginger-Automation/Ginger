@@ -220,32 +220,7 @@ namespace Ginger.ALM.Repository
                 //import test set data
                 Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, importedTS.Name);
                 BusinessFlow tsBusFlow = ((JiraCore)ALMIntegration.Instance.AlmCore).ConvertJiraTestSetToBF(importedTS);
-                if (WorkSpace.UserProfile.Solution.MainApplication != null)
-                {
-                    //add the applications mapped to the Activities
-                    foreach (Activity activ in tsBusFlow.Activities)
-                        if (string.IsNullOrEmpty(activ.TargetApplication) == false)
-                            if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
-                            {
-                                ApplicationPlatform appAgent = WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
-                                if (appAgent != null)
-                                    tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
-                            }
-                    //handle non mapped Activities
-                    if (tsBusFlow.TargetApplications.Count == 0)
-                        tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.UserProfile.Solution.MainApplication });
-                    foreach (Activity activ in tsBusFlow.Activities)
-                    {
-                        if (string.IsNullOrEmpty(activ.TargetApplication))
-                            activ.TargetApplication = tsBusFlow.MainApplication;
-                        activ.Active = true;
-                    }
-                }
-                else
-                {
-                    foreach (Activity activ in tsBusFlow.Activities)
-                        activ.TargetApplication = null; // no app configured on solution level
-                }
+                SetBFPropertiesAfterImport(tsBusFlow);
 
                 //save bf
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);
@@ -253,6 +228,36 @@ namespace Ginger.ALM.Repository
             }
             catch { }
             
+        }
+
+        private void SetBFPropertiesAfterImport(BusinessFlow tsBusFlow)
+        {
+            if (WorkSpace.UserProfile.Solution.MainApplication != null)
+            {
+                //add the applications mapped to the Activities
+                foreach (Activity activ in tsBusFlow.Activities)
+                    if (string.IsNullOrEmpty(activ.TargetApplication) == false)
+                        if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
+                        {
+                            ApplicationPlatform appAgent = WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                            if (appAgent != null)
+                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
+                        }
+                //handle non mapped Activities
+                if (tsBusFlow.TargetApplications.Count == 0)
+                    tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.UserProfile.Solution.MainApplication });
+                foreach (Activity activ in tsBusFlow.Activities)
+                {
+                    if (string.IsNullOrEmpty(activ.TargetApplication))
+                        activ.TargetApplication = tsBusFlow.MainApplication;
+                    activ.Active = true;
+                }
+            }
+            else
+            {
+                foreach (Activity activ in tsBusFlow.Activities)
+                    activ.TargetApplication = null; // no app configured on solution level
+            }
         }
 
         public override bool LoadALMConfigurations()
@@ -286,12 +291,14 @@ namespace Ginger.ALM.Repository
             {
                 Dictionary<string,JiraTest> getActivitiesGroupUpdatedData = ((JiraCore)ALMIntegration.Instance.AlmCore).GetJiraTestsUpdatedData(businessFlow.ExternalID, TCsIDs.Select(x => x.Item1.ToString()).ToList());
                 ((JiraCore)ALMIntegration.Instance.AlmCore).UpdateBFSelectedAG(ref businessFlow, getActivitiesGroupUpdatedData);
+                SetBFPropertiesAfterImport(businessFlow);
             }
         }
 
         public override void UpdateBusinessFlow(ref BusinessFlow businessFlow)
         {
             ((JiraCore)ALMIntegration.Instance.AlmCore).UpdateBussinessFlow(ref businessFlow);
+            SetBFPropertiesAfterImport(businessFlow);
         }
     }
 }

@@ -446,7 +446,7 @@ namespace GingerCore.ALM.JIRA
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while stripping the HTML from Jira TC Step Description/Expected", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while stripping the HTML from Jira TC Step Description/Expected", ex);
                 return HTMLText;
             }
         }
@@ -760,7 +760,7 @@ namespace GingerCore.ALM.JIRA
                         stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
                         stepActivity.ExternalID = step.StepID;
                         stepActivity.Description = StripHTML(step.Description);
-                        stepActivity.Expected = StripHTML(step.Expected);
+                        //stepActivity.Expected = StripHTML(step.Expected);
 
                         toAddStepActivity = true;
                     }
@@ -774,8 +774,8 @@ namespace GingerCore.ALM.JIRA
 
                     //pull TC-Step parameters and add them to the Activity level
                     List<string> stepParamsList = new List<string>();
-                    GetStepParameters(StripHTML(step.Description), ref stepParamsList);
-                    GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
+                    GetStepParameters(StripHTML(step.Variables), ref stepParamsList);
+                    //GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
                     foreach (string param in stepParamsList)
                     {
                         //get the param value
