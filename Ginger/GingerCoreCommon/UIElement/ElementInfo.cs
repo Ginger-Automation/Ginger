@@ -297,36 +297,6 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
-        //public enum eElementGroup
-        //{
-        //    Mapped,
-        //    Unmapped
-        //}
-
-
-        //public eElementGroup ElementGroup { get; set; }
-
-
-        //public ObservableList<string> ElementGroupList
-        //{
-        //    get
-        //    {
-
-        //        ObservableList<string> elementGroupList = new ObservableList<string>();
-        //        elementGroupList.Add(ElementInfo.eElementGroup.Mapped.ToString());
-        //        elementGroupList.Add(ElementInfo.eElementGroup.Unmapped.ToString());
-
-        //        return elementGroupList;
-        //    }
-        //    set
-        //    {
-        //        ElementGroupList = value;
-        //        OnPropertyChanged(nameof(ElementGroupList));
-        //    }
-        //}
-
-
-
 
         public enum eDeltaStatus
         {

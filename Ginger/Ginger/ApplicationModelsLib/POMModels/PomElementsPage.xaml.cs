@@ -361,16 +361,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void ComperisonStatusFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //ComboEnumItem comboEnumItem = (ComboEnumItem)e.AddedItems[0];
-            //mCurrentDeltaStatusFilter = (ElementInfo.eDeltaStatus)comboEnumItem.Value;
             mCurrentDeltaStatusFilter = (ComboEnumItem)e.AddedItems[0];
             FilterListByFiltersCreteria();
         }
 
         private void GroupFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //ComboEnumItem comboEnumItem = (ComboEnumItem)e.AddedItems[0];
-            //mCurrentGroupByFilter =(ElementInfo.eElementGroup)comboEnumItem.Value;
             mCurrentGroupByFilter = (ComboEnumItem)e.AddedItems[0];
             FilterListByFiltersCreteria();
         }
