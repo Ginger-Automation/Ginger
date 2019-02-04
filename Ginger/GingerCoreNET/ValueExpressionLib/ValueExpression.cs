@@ -194,7 +194,10 @@ namespace GingerCore
 
             if (!string.IsNullOrEmpty(SolutionFolder))
             {
-                mValueCalculated = mValueCalculated.Replace(@"~\", SolutionFolder);
+                if (mValueCalculated.Contains("~\\"))
+                {
+                    mValueCalculated = Path.Combine(SolutionFolder, mValueCalculated.Replace("~\\", "")); 
+                }
             }
 
         }
