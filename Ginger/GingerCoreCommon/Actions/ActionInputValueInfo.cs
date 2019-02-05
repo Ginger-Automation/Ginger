@@ -52,8 +52,7 @@ namespace Amdocs.Ginger.Common.Actions
                 if (ParamType == typeof(IGingerAction)) return "IGingerAction";
                 if (ParamType == typeof(bool)) return "bool";
                 if (ParamType.IsEnum)
-                {
-                    
+                {                    
                     string vals = "";
                     foreach (object o in Enum.GetValues(ParamType))
                     {
