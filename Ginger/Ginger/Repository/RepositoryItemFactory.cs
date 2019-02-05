@@ -775,7 +775,7 @@ namespace Ginger.Repository
             }
         }
 
-        public void HTMLReportAttachment(string extraInformationCalculated, string emailReadyHtml, string reportsResultFolder, string runSetFolder, object Report, object conf)
+        public void HTMLReportAttachment(string extraInformationCalculated, ref string emailReadyHtml, ref string reportsResultFolder, string runSetFolder, object Report, object conf)
         {
             EmailHtmlReportAttachment rReport = (EmailHtmlReportAttachment)Report;
             HTMLReportsConfiguration currentConf = (HTMLReportsConfiguration)conf;
