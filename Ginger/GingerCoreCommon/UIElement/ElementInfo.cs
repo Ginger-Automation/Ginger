@@ -278,8 +278,8 @@ namespace Amdocs.Ginger.Common.UIElement
                         opValsString.Append(value.ItemName + ",");
                     }
                 }
-                opValsString.ToString().TrimEnd(',');
-                return opValsString.ToString();
+                
+                return opValsString.ToString().TrimEnd(',');
             }
         }
                

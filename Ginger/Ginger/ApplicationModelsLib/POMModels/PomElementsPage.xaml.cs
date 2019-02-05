@@ -232,6 +232,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 xMainElementsGrid.AddToolbarTool(eImageType.MapSigns, "Remove elements from mapped list", new RoutedEventHandler(RemoveElementsToMappedBtnClicked));
                 xMainElementsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddMappedElementRow));
                 xMainElementsGrid.ShowDelete = Visibility.Collapsed;
+
+                xMainElementsGrid.AddToolbarTool(eImageType.DataSource, "Export Possible Values to DataSource", new RoutedEventHandler(ExportPossibleValuesToDataSource));
             }
             else
             {
@@ -239,12 +241,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 xMainElementsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddUnMappedElementRow));
                 xMainElementsGrid.SetbtnDeleteHandler(DeleteUnMappedElementRow);
             }
-
-            if (mContext == PomAllElementsPage.eElementsContext.Mapped)
-            {
-                xMainElementsGrid.AddToolbarTool(eImageType.DataSource, "Export Possible Values to DataSource", new RoutedEventHandler(ExportPossibleValuesToDataSource)); 
-            }
-
+            
             xMainElementsGrid.grdMain.PreparingCellForEdit += MainElementsGrid_PreparingCellForEdit;
             xMainElementsGrid.PasteItemEvent += PasteElementEvent;
 
