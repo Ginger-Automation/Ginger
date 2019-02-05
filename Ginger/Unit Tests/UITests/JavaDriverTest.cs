@@ -1310,5 +1310,30 @@ namespace UnitTests.UITests.JavaDriverTest
         }
         #endregion
 
+        #region Unit Test For ActBrowser Action
+        [TestMethod]
+        [Timeout(60000)]
+        public void ActBrowserInitilizeBrowserTest()
+        {
+            ActBrowserElement action = new ActBrowserElement();
+            action.LocateBy = eLocateBy.ByXPath;
+            action.LocateValue = "//[@id='test']";
+            action.ControlAction = ActBrowserElement.eControlAction.InitializeBrowser;
+            action.Active = true;
+            action.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+
+            //Act
+            //mGR.RunAction(action, false);
+
+            //Assert
+            
+           // Assert.AreEqual(1, action.ReturnValues.Count);
+            //Assert.AreEqual("true", action.ReturnValues[0].Actual);
+           // Assert.AreEqual(action.Error, null, "Act.Error");
+        }
+
+        #endregion
     }
 }
