@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -105,7 +106,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
             }
         }
-
+        
         public PomElementsPage(ApplicationPOMModel pom, PomAllElementsPage.eElementsContext context)
         {
             InitializeComponent();
@@ -323,8 +324,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void OpenEditOptionalValuesPageButton_Click(object sender, RoutedEventArgs e)
         {
-            HTMLElementInfo SelectedControl = (HTMLElementInfo)xMainElementsGrid.CurrentItem;
-            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(SelectedControl, SelectedControl.ElementName);
+            IParentOptionalValuesObject parObj = (IParentOptionalValuesObject)(xMainElementsGrid.CurrentItem);
+            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(parObj);
             MDPVP.ShowAsWindow();
         }
 
@@ -668,6 +669,5 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 Reporter.ToLog(eLogLevel.ERROR, "Error in POM Edit Page tabs style", ex);
             }
         }
-
     }
 }

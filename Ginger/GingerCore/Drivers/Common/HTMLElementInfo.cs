@@ -16,12 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using HtmlAgilityPack;
 
 namespace GingerCore.Drivers.Common
 {
-    public class HTMLElementInfo : ElementInfo
+    public class HTMLElementInfo : ElementInfo, IParentOptionalValuesObject
     {       
         // add special HTML elem info here
         public static class Fields
@@ -103,6 +106,23 @@ namespace GingerCore.Drivers.Common
         {
             if (WindowExplorer == null) return null;
             return ((IXPath)WindowExplorer).GetXPathHelper(this).GetElementXpathAbsulote(this);
+        }
+
+        public ObservableList<OptionalValue> OptionalValuesList
+        {
+            get
+            {
+                return OptionalValuesObjectsList;
+            }
+            set
+            {
+                OptionalValuesObjectsList = value;
+            }
+        }
+
+        public void PropertyChangedEventHandler()
+        {
+            OnPropertyChanged(nameof(OptionalValuesObjectsListAsString));
         }
     }
 }

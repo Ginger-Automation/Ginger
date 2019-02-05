@@ -17,13 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using System.Linq;
 
 namespace Amdocs.Ginger.Repository
 {
-
-
-    public class AppModelParameter : RepositoryItemBase
+    public class AppModelParameter : RepositoryItemBase, IParentOptionalValuesObject
     {
         
         public virtual string ParamLevel { get { return "Local"; } set { } }
@@ -139,8 +138,19 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        ObservableList<OptionalValue> mOptionalValuesList = new ObservableList<OptionalValue>();
         [IsSerializedForLocalRepository]
-        public ObservableList<OptionalValue> OptionalValuesList = new ObservableList<OptionalValue>();
+        public ObservableList<OptionalValue> OptionalValuesList
+        {
+            get
+            {
+                return mOptionalValuesList;
+            }
+            set
+            {
+                mOptionalValuesList = value;
+            }
+        }
 
 
 
@@ -189,5 +199,18 @@ namespace Amdocs.Ginger.Repository
         /// Added for backward support- do not use
         /// </summary>
         public string DataType { get; set; }
+
+        public string ElementName
+        {
+            get
+            {
+                return ItemName;
+            }
+        }
+
+        public void PropertyChangedEventHandler()
+        {
+            OnPropertyChanged(nameof(AppModelParameter.OptionalValuesString));
+        }
     }   
 }
