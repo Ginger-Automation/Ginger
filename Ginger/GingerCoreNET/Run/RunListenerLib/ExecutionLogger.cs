@@ -1183,7 +1183,6 @@ namespace Ginger.Run
                         continue;
                     }
                     
-                    businessFlow.ExecutionLogActivityCounter++;
                     mCurrentActivity = activity;
                     activity.ExecutionLogFolder = businessFlow.ExecutionLogFolder + @"\" + businessFlow.ExecutionLogActivityCounter + " " + folderNameNormalazing(activity.ActivityName);
                     System.IO.Directory.CreateDirectory(activity.ExecutionLogFolder);
@@ -1202,6 +1201,7 @@ namespace Ginger.Run
                         ActionEnd(meventtime, action, true);
                     }
                     ActivityEnd(meventtime, activity, true);
+                    businessFlow.ExecutionLogActivityCounter++;
                 }
                 Gr.SetActivityGroupsExecutionStatus(businessFlow, true, this);
                 Gr.CalculateBusinessFlowFinalStatus(businessFlow);
