@@ -5,6 +5,14 @@ VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerWebNg", "GingerWebNg.csproj", "{DC24B216-828B-4293-9D4B-D8D70B7559D7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerCoreCommon", "..\GingerCoreCommon\GingerCoreCommon.csproj", "{DD6268AC-34CB-4CE4-8057-49E01D1379C2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerCoreNET", "..\GingerCoreNET\GingerCoreNET.csproj", "{8B6CC374-F378-4013-A66A-7BF7BC183873}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerPluginCore", "..\GingerPluginCore\GingerPluginCore.csproj", "{45785A70-C7C3-4DC3-BEB9-A79457410410}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerUtils", "..\GingerUtils\GingerUtils.csproj", "{7EC7D36C-3D36-4FE9-B6C7-5B3E7E45DCEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +23,22 @@ Global
 		{DC24B216-828B-4293-9D4B-D8D70B7559D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC24B216-828B-4293-9D4B-D8D70B7559D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC24B216-828B-4293-9D4B-D8D70B7559D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD6268AC-34CB-4CE4-8057-49E01D1379C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD6268AC-34CB-4CE4-8057-49E01D1379C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD6268AC-34CB-4CE4-8057-49E01D1379C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD6268AC-34CB-4CE4-8057-49E01D1379C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B6CC374-F378-4013-A66A-7BF7BC183873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B6CC374-F378-4013-A66A-7BF7BC183873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B6CC374-F378-4013-A66A-7BF7BC183873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B6CC374-F378-4013-A66A-7BF7BC183873}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45785A70-C7C3-4DC3-BEB9-A79457410410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45785A70-C7C3-4DC3-BEB9-A79457410410}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45785A70-C7C3-4DC3-BEB9-A79457410410}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45785A70-C7C3-4DC3-BEB9-A79457410410}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EC7D36C-3D36-4FE9-B6C7-5B3E7E45DCEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EC7D36C-3D36-4FE9-B6C7-5B3E7E45DCEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EC7D36C-3D36-4FE9-B6C7-5B3E7E45DCEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EC7D36C-3D36-4FE9-B6C7-5B3E7E45DCEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
