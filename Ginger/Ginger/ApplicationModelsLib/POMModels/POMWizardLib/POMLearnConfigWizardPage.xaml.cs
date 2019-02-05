@@ -97,7 +97,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                     AddValidations();
                     ClearAutoMapElementTypesSection();
-                    SetAutoMapElementTypesGridView();                    
+
+                    SetAutoMapElementTypesGridView();
+                    SetAutoMapElementLocatorsGridView();
                     break;
             }
         }
@@ -128,8 +130,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
-
-
         private void SetAutoMapElementTypesGridView()
         {
             //tool bar
@@ -147,6 +147,21 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAutoMapElementTypesGrid.InitViewItems();
         }
 
+        private void SetAutoMapElementLocatorsGridView()
+        {
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
+            defView.GridColsView = new ObservableList<GridColView>();
+
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly=true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25, ReadOnly = true });
+
+            xAutoMapElementLocatorsGrid.SetAllColumnsDefaultView(defView);
+            xAutoMapElementLocatorsGrid.InitViewItems();
+
+            xAutoMapElementLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
+        }
+
         private void CheckUnCheckAllElements(object sender, RoutedEventArgs e)
         {
             if (mWizard.AutoMapElementTypesList.Count > 0)
@@ -162,30 +177,44 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (e.PropertyName == nameof(ucAgentControl.AgentIsRunning))
             {
                 if (xAgentControlUC.AgentIsRunning)
+                {
                     SetAutoMapElementTypesSection();
+                    SetAutoMapElementLocatorssSection();
+                }
                 else
+                {
                     ClearAutoMapElementTypesSection();
+                }
+                xAutoMapElementTypesExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
+                xAutoMapElementTypesExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
+                xAutoMapElementLocatorsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
+                xAutoMapElementLocatorsExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
             }
         }
 
-
         private void ClearAutoMapElementTypesSection()
         {
-            xAutoMapElementTypesExpander.IsExpanded = false;
-            xAutoMapElementTypesExpander.IsEnabled = false;
             mWizard.AutoMapElementTypesList = new ObservableList<UIElementFilter>();
             xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
         }
 
         private void SetAutoMapElementTypesSection()
         {
-            xAutoMapElementTypesExpander.IsExpanded = true;
-            xAutoMapElementTypesExpander.IsEnabled = true;
             xAgentControlUC.xAgentConfigsExpander.IsExpanded = false;
 
             SetAutoMapElementTypes();
             xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
         }
+
+        private void SetAutoMapElementLocatorssSection()
+        {
+            if (mWizard.AutoMapElementLocatorsList.Count == 0)
+            {
+                mWizard.AutoMapElementLocatorsList = new WebPlatform().GetLearningLocators();
+            }
+            xAutoMapElementLocatorsGrid.DataSourceList = mWizard.AutoMapElementLocatorsList;
+        }
+
         private void xAutomaticElementConfigurationRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             if (mWizard != null)
@@ -196,6 +225,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     RemoveValidations();
                     xAgentControlUC.Visibility = Visibility.Hidden;
                     xAutoMapElementTypesExpander.Visibility = Visibility.Hidden;
+                    xAutoMapElementLocatorsExpander.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
@@ -203,6 +233,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     AddValidations();
                     xAgentControlUC.Visibility = Visibility.Visible;
                     xAutoMapElementTypesExpander.Visibility = Visibility.Visible;
+                    xAutoMapElementLocatorsExpander.Visibility = Visibility.Visible;
                 }
             }
         }

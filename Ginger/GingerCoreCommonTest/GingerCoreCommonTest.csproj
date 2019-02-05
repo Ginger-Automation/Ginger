@@ -25,4 +25,8 @@
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TestResources\" />
+  </ItemGroup>
+
 </Project>
