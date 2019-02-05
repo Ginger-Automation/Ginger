@@ -371,14 +371,16 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         public string ConvertSolutionRelativePath(string relativePath)
         {
-            string fullPath = relativePath.TrimStart();
-            if (fullPath.StartsWith("~"))
+            if (relativePath.TrimStart().StartsWith("~"))
             {
-                fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
+                string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
                 fullPath = Path.Combine(mSolutionFolderPath, fullPath);
+                return fullPath;
             }
-
-            return fullPath;
+            else
+            {
+                return relativePath;
+            }
         }
 
         /// <summary>
