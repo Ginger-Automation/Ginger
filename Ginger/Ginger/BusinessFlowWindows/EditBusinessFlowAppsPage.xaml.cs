@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.UserControls;
 using GingerCore;
@@ -36,14 +37,16 @@ namespace Ginger.BusinessFlowWindows
          BusinessFlow mBusinessFlow;
          ObservableList<ApplicationPlatform> mApplicationsPlatforms = new ObservableList<ApplicationPlatform>();
          GenericWindow _pageGenericWin = null;
-
-         public EditBusinessFlowAppsPage(BusinessFlow BizFlow)
+         private bool IsNewBusinessflow = false;
+        public EditBusinessFlowAppsPage(BusinessFlow BizFlow, bool IsNewBF = false)
          {
+            
              InitializeComponent();
 
              this.Title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Target Application(s)";
 
              mBusinessFlow = BizFlow;
+            IsNewBusinessflow = IsNewBF;
              SetGridView();
          }
 
@@ -59,14 +62,14 @@ namespace Ginger.BusinessFlowWindows
              AppsGrid.SetAllColumnsDefaultView(view);
              AppsGrid.InitViewItems();
 
-             foreach (ApplicationPlatform AP in App.UserProfile.Solution.ApplicationPlatforms)
+             foreach (ApplicationPlatform AP in  WorkSpace.UserProfile.Solution.ApplicationPlatforms)
              {
                  ApplicationPlatform AP1 = new ApplicationPlatform();
                  AP1.AppName = AP.AppName;
                  AP1.Platform = AP.Platform;
 
                  // If this App was selected before then mark it 
-                 TargetApplication APS = (from x in mBusinessFlow.TargetApplications where x.AppName == AP.AppName select x).FirstOrDefault();
+                 TargetApplication APS = (TargetApplication)(from x in mBusinessFlow.TargetApplications where x.Name == AP.AppName select x).FirstOrDefault();
 
                  if (APS != null)
                  {
@@ -80,32 +83,34 @@ namespace Ginger.BusinessFlowWindows
          }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
-        {
-            int SelectedPlatformCount = 0;
-            mBusinessFlow.TargetApplications.Clear();
-            foreach (ApplicationPlatform TA in mApplicationsPlatforms)
+       {
+            if (IsNewBusinessflow == true)
             {
-                if (TA.Selected)
+                SetTargetApplications();
+                mBusinessFlow.CurrentActivity.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
+            }
+            else
+            {               
+                SetTargetApplications();
+                if (mBusinessFlow.TargetApplications.Count == 1)
                 {
-                    TargetApplication tt = new TargetApplication();
-                    tt.AppName = TA.AppName;
-                    tt.Selected = true;
-                    mBusinessFlow.TargetApplications.Add(tt);
-                    SelectedPlatformCount++;
+                    foreach (Activity activity in mBusinessFlow.Activities)
+                    {
+                        activity.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
+                    }
                 }
             }
-
             if (App.BusinessFlow == mBusinessFlow)
             {
                 App.UpdateApplicationsAgentsMapping();
             }
-            if (SelectedPlatformCount > 0|| mApplicationsPlatforms.Count==0)
+            if (mBusinessFlow.TargetApplications.Count > 0|| mApplicationsPlatforms.Count==0)
             {
                 _pageGenericWin.Close();
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.BusinessFlowNeedTargetApplication);
+                Reporter.ToUser(eUserMsgKey.BusinessFlowNeedTargetApplication);
             }
         }
 
@@ -125,6 +130,22 @@ namespace Ginger.BusinessFlowWindows
             foreach (var item in mApplicationsPlatforms)
             {
                 item.Selected=false;
+            }
+        }
+
+        public void SetTargetApplications()
+        {
+            mBusinessFlow.TargetApplications.Clear();
+
+            foreach (ApplicationPlatform TA in mApplicationsPlatforms)
+            {
+                TargetApplication tt = new TargetApplication();
+                if (TA.Selected)
+                {
+                    tt.AppName = TA.AppName;
+                    tt.Selected = true;
+                    mBusinessFlow.TargetApplications.Add(tt);
+                }
             }
         }
     }

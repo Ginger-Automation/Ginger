@@ -70,7 +70,7 @@ namespace Ginger.DataSource
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             //validate details
-            if (cmbDataSourceName.Text.Trim() == string.Empty || cmbDataSourceTableName.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKeys.InvalidDataSourceDetails); return; }            
+            if (cmbDataSourceName.Text.Trim() == string.Empty || cmbDataSourceTableName.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.InvalidDataSourceDetails); return; }            
 
             okClicked = true;
             _pageGenericWin.Close();
@@ -127,7 +127,7 @@ namespace Ginger.DataSource
                     if (ds.FilePath.StartsWith("~"))
                     {
                         ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
-                        ds.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, ds.FileFullPath);
+                        ds.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, ds.FileFullPath);
                     }
                     ds.Init(ds.FileFullPath);                    
                     List<string> dsTableNames = new List<string>();

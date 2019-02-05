@@ -78,18 +78,18 @@ namespace GingerCore.Drivers.Common
             }
             catch (COMException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "COM Exception when GetActElement Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "COM Exception when GetActElement Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 throw e;
 
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Element not available Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 throw e;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Argument Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Argument Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 throw e;
             }
             return CurAE;
@@ -308,7 +308,7 @@ namespace GingerCore.Drivers.Common
             }
             else
             {                
-                Reporter.ToUser(eUserMsgKeys.ObjectUnavailable, "Selected Object is not available, cannot highlight the element");
+                Reporter.ToUser(eUserMsgKey.ObjectUnavailable, "Selected Object is not available, cannot highlight the element");
             }
         }
 
@@ -378,7 +378,7 @@ namespace GingerCore.Drivers.Common
         public  void StartRecording()
         {
             //TODO : make available recording function for PBDriver and Windows Driver            
-            Reporter.ToUser(eUserMsgKeys.MissingImplementation, "Recording");
+            Reporter.ToUser(eUserMsgKey.MissingImplementation, "Recording");
         }
     }
 }

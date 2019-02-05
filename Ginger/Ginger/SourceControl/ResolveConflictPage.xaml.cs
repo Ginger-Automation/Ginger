@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Helpers;
@@ -96,17 +97,17 @@ namespace Ginger.SourceControl
 
         private void resolve_Click(object sender, EventArgs e)
         {
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ResolveSourceControlConflicts);
+            Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
             switch (mResolveOperation)
             {
                 case eResolveOperations.AcceptServer:
-                    SourceControlIntegration.ResolveConflicts(App.UserProfile.Solution.SourceControl,mConflictPath, eResolveConflictsSide.Server );
+                    SourceControlIntegration.ResolveConflicts( WorkSpace.UserProfile.Solution.SourceControl,mConflictPath, eResolveConflictsSide.Server );
                     break;
                 case eResolveOperations.KeepLocal:
-                    SourceControlIntegration.ResolveConflicts(App.UserProfile.Solution.SourceControl, mConflictPath, eResolveConflictsSide.Local);
+                    SourceControlIntegration.ResolveConflicts( WorkSpace.UserProfile.Solution.SourceControl, mConflictPath, eResolveConflictsSide.Local);
                     break;
             }
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
             CloseWindow();
         }
 

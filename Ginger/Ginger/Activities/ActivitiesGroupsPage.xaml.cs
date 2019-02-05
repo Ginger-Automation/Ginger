@@ -32,6 +32,7 @@ using System.Windows.Data;
 using Ginger.Repository;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Activities
 {
@@ -114,7 +115,7 @@ namespace Ginger.Activities
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                    Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 }
             }
         }
@@ -156,7 +157,7 @@ namespace Ginger.Activities
             Activity previousActivity = null;
             if ((ActivitiesGroup)grdActivitiesGroups.CurrentItem != null && ((ActivitiesGroup)grdActivitiesGroups.CurrentItem).ActivitiesIdentifiers.Count > 0)
             {
-                previousActivity = ((ActivitiesGroup)grdActivitiesGroups.CurrentItem).ActivitiesIdentifiers[((ActivitiesGroup)grdActivitiesGroups.CurrentItem).ActivitiesIdentifiers.Count - 1].IdentifiedActivity;
+                previousActivity =(Activity)(((ActivitiesGroup)grdActivitiesGroups.CurrentItem).ActivitiesIdentifiers[((ActivitiesGroup)grdActivitiesGroups.CurrentItem).ActivitiesIdentifiers.Count - 1].IdentifiedActivity);
             }
             if (droppedItem.GetType() == typeof(ActivitiesGroup))
             {
@@ -242,8 +243,8 @@ namespace Ginger.Activities
             foreach (RepositoryItemBase group in listOfGroups)
             {
                 foreach (ActivityIdentifiers AI in ((ActivitiesGroup)group).ActivitiesIdentifiers)
-                {
-                   itemsToUpload.Add(AI.IdentifiedActivity);                 
+                {                    
+                    itemsToUpload.Add(AI.IdentifiedActivity);                 
                 }
             }
             itemsToUpload.AddRange(listOfGroups);
@@ -259,7 +260,7 @@ namespace Ginger.Activities
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
 
@@ -272,7 +273,7 @@ namespace Ginger.Activities
                 ALMIntegration.Instance.ExportBfActivitiesGroupsToALM(mBusinessFlow, selectedAGs);
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
 
         private void RefreshActivitiesGroupsGrid()

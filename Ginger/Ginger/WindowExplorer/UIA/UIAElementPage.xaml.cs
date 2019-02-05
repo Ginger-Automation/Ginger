@@ -22,6 +22,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common;
 using Ginger.Drivers.WindowsAutomation;
 using GingerCore;
 using GingerCore.Actions;
@@ -73,7 +74,7 @@ namespace Ginger.Drivers.UIA
             int selCount = SupportedPatternsGrid.SelectedItems.Count;
             if (selCount == 0)
             {                
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "No Pattern selected for testing");
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "No Pattern selected for testing");
                 return;
             }
 

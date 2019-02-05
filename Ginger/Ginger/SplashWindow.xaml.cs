@@ -95,7 +95,7 @@ namespace Ginger
 
         public void LoadingInfo(string txt)
         {
-            lblLoadingInfo.Content = txt;            
+          //  lblLoadingInfo.Content = txt;            
         }
     }
 }

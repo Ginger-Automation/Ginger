@@ -47,7 +47,7 @@ namespace UnitTests.UITests
         //    mGR = new GingerRunner();
 
         //}
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void LaunchJNLPAndAttachJavaAgent()
         //{
         //    ActLaunchJavaWSApplication LJA = new ActLaunchJavaWSApplication();
@@ -70,7 +70,7 @@ namespace UnitTests.UITests
 
         //Launching and attaching to  jar
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void LaunchJARAndAttachJavaAgent()
         //{
         //    ActLaunchJavaWSApplication LJA = new ActLaunchJavaWSApplication();
@@ -113,7 +113,7 @@ namespace UnitTests.UITests
         //Launching and attaching  to exe
 
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void LaunchEXEAndAttachJavaAgent()
         //{
         //    ActLaunchJavaWSApplication LJA = new ActLaunchJavaWSApplication();

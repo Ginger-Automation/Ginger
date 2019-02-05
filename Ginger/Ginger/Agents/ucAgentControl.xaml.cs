@@ -1,4 +1,23 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore;
 using System;
@@ -191,14 +210,14 @@ namespace Ginger.Agents
             {
                 case Agent.eStatus.FailedToStart:
                 case Agent.eStatus.NotStarted:
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgent, null, SelectedAgent.Name, "");
+                    Reporter.ToStatus(eStatusMsgKey.StartAgent, null, SelectedAgent.Name, "");
                     if (SelectedAgent.Status == Agent.eStatus.Running) SelectedAgent.Close();
-                    SelectedAgent.SolutionFolder = App.UserProfile.Solution.Folder;
+                    SelectedAgent.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
                     SelectedAgent.ProjEnvironment = null;// App.AutomateTabEnvironment;
                     SelectedAgent.BusinessFlow = null; //App.BusinessFlow; ;                    
                     SelectedAgent.DSList = null; //WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                     SelectedAgent.StartDriver();
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                     //If there is errorMessageFromDriver is populated then do not wait. 
                     if (SelectedAgent.Driver != null && String.IsNullOrEmpty(SelectedAgent.Driver.ErrorMessageFromDriver))
                         SelectedAgent.WaitForAgentToBeReady();
@@ -208,7 +227,7 @@ namespace Ginger.Agents
                         string errorMessage = SelectedAgent.Driver.ErrorMessageFromDriver;
                         if (String.IsNullOrEmpty(errorMessage))
                             errorMessage = "Failed to Connect the agent";
-                        Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgentFailed, null, errorMessage);
+                        Reporter.ToStatus(eStatusMsgKey.StartAgentFailed, null, errorMessage);
                     }
                     SelectedAgent.Tag = "Started with Agent Control";
                     AgentStartedEvent();

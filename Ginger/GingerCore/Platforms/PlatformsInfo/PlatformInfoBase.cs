@@ -35,6 +35,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         static AndroidPlatform mAndroidPlatform = new AndroidPlatform();
         static PowerBuilderPlatform mPowerBuilderPlatform = new PowerBuilderPlatform();
         static WindowsPlatform mWindowsPlatform = new WindowsPlatform();
+        static MobilePlatform mMobilePlatform = new MobilePlatform();
         internal List<eElementType> mElementsTypeList = null;
         internal List<ElementTypeData> mPlatformElementTypeOperations = null;
         internal List<eLocateBy> mElementLocatorsTypeList = null;
@@ -49,6 +50,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         public abstract List<ActUIElement.eElementAction> GetPlatformUIClickTypeList();
         public abstract List<ActUIElement.eElementDragDropType> GetPlatformDragDropTypeList();
 
+        public abstract ObservableList<ElementLocator> GetLearningLocators();
         public static PlatformInfoBase GetPlatformImpl(ePlatformType Platform)
         {
             switch (Platform)
@@ -63,6 +65,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                     return mPowerBuilderPlatform;
                 case ePlatformType.Windows:
                     return mWindowsPlatform;
+                case ePlatformType.Mobile:
+                    return mMobilePlatform;
                 //TODO: add the rest
 
                 default:

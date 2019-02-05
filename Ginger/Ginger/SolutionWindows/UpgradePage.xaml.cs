@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Environments;
@@ -69,7 +70,7 @@ namespace Ginger.SolutionWindows
                     string BackupFolder = Path.Combine(mSolutionFolder, @"Backups\Backup_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm"));
                     BackupFolderTextBox.Text = BackupFolder;
                     FilesListBox.ItemsSource = mFilesToShow;
-                    App.ObjFieldBinding(DoNotAskAgainChkbox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
+                    App.ObjFieldBinding(DoNotAskAgainChkbox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
                     break;
 
                 case SolutionUpgradePageViewMode.FailedUpgradeSolution:
@@ -170,27 +171,27 @@ namespace Ginger.SolutionWindows
                     {
 
 
-                        Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to upgrade the solution file '{0}'", filePath), ex);
+                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to upgrade the solution file '{0}'", filePath), ex);
                         mFailedFiles.Add(filePathToConvert);
                     }
                 }
 
                 if (mFailedFiles.Count == 0)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Upgrade ended successfully.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Upgrade ended successfully.");
                     _pageGenericWin.Close();
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Upgrade failed for some of the files.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Upgrade failed for some of the files.");
                     mViewMode = SolutionUpgradePageViewMode.FailedUpgradeSolution;
                     SetControls();
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to upgrade the solution files", ex);
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error occurred during upgrade, details: " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to upgrade the solution files", ex);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error occurred during upgrade, details: " + ex.Message);
                 _pageGenericWin.Close();
             }
             finally

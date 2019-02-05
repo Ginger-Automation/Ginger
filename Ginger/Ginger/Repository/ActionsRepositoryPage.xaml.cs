@@ -31,6 +31,7 @@ using System.Windows;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Repository
 {
@@ -87,7 +88,7 @@ namespace Ginger.Repository
                    if (dragedItemInGrid != null)
                        xActionsGrid.Grid.SelectedItem = dragedItemInGrid;
                }
-               catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+               catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }
         }
 
@@ -122,7 +123,7 @@ namespace Ginger.Repository
                 }
                 
                 int selectedActIndex = -1;
-                ObservableList<Act> actsList = App.BusinessFlow.CurrentActivity.Acts;
+                ObservableList<IAct> actsList = App.BusinessFlow.CurrentActivity.Acts;
                 if (actsList.CurrentItem != null)
                 {
                     selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
@@ -134,7 +135,7 @@ namespace Ginger.Repository
                 }
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);                      
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);                      
         }
         
         private void EditAction(object sender, RoutedEventArgs e)
@@ -147,7 +148,7 @@ namespace Ginger.Repository
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 
@@ -159,7 +160,7 @@ namespace Ginger.Repository
                 usagePage.ShowAsWindow();
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);             
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);             
         }
         
         private void grdActions_grdMain_MouseDoubleClick(object sender, EventArgs e)

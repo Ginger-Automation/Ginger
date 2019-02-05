@@ -18,6 +18,7 @@ limitations under the License.
 
 using System.Windows;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
 using GingerCore.Actions;
 namespace Ginger.Actions
 {
@@ -36,7 +37,7 @@ namespace Ginger.Actions
             DestinationFolderTextBox.Init(mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder),true,true,UCValueExpression.eBrowserType.File);
             xRunArgumentsTextBox.Init(mAct.GetOrCreateInputParam(nameof(ActFileOperations.Arguments)), true, false);
 
-            mAct.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
             App.FillComboFromEnumVal(FileActionMode, mAct.FileOperationMode);
             App.ObjFieldBinding(FileActionMode, ComboBox.SelectedValueProperty, mAct, "FileOperationMode");
@@ -46,7 +47,7 @@ namespace Ginger.Actions
         {
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
             
-            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 string FileName = dlg.FileName.ToUpper();

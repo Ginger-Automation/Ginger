@@ -47,8 +47,8 @@ namespace Ginger.DataSource
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             //validate details
-            if (DSColumnName.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKeys.MissingNewColumn, "name"); return; }
-            if (DSColumnName.Text.ToLower() == "no" || DSColumnName.Text.ToLower() == "key") { Reporter.ToUser(eUserMsgKeys.InvalidColumnName); return; }
+            if (DSColumnName.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.MissingNewColumn, "name"); return; }
+            if (DSColumnName.Text.ToLower() == "no" || DSColumnName.Text.ToLower() == "key") { Reporter.ToUser(eUserMsgKey.InvalidColumnName); return; }
 
             okClicked = true;
             _pageGenericWin.Close();

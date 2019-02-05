@@ -16,28 +16,28 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.UIElement;
+using Ginger.Actions;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Variables;
-using System.Data;
-using System.Text.RegularExpressions;
-using System.IO;
-using System.Windows.Media.Imaging;
-using System;
-using System.Diagnostics;
-using Ginger.Actions;
-using System.Windows.Data;
 using GingerCore.Platforms;
+using GingerCore.Variables;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Media.Imaging;
 using System.Xml;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Imports.UFT
 {
@@ -64,7 +64,7 @@ namespace Ginger.Imports.UFT
         public List<ObjectRepositoryItem> Objectlist_ORI = new List<ObjectRepositoryItem>();
         public List<BusFunction> BusList = new List<BusFunction>();
         public List<string> ListOfSelectedGuis = new List<string>();
-        public ObservableList<TargetApplication> TargetApplicationsList = new ObservableList<TargetApplication>();
+        public ObservableList<TargetBase> TargetApplicationsList = new ObservableList<TargetBase>();
         public CommonFunctionConvertor Convertor = new CommonFunctionConvertor();
 
         // Data Table
@@ -97,7 +97,7 @@ namespace Ginger.Imports.UFT
             InitCommonFunctionMappingUCGrid();
 
             TargetApplication sTarget = new TargetApplication();
-            sTarget.AppName = App.UserProfile.Solution.MainApplication.ToString();
+            sTarget.AppName =  WorkSpace.UserProfile.Solution.MainApplication.ToString();
             sTarget.Selected = true;
             TargetApplicationsList.Add(sTarget);
             mBusinessFlow.TargetApplications = TargetApplicationsList;
@@ -170,12 +170,12 @@ namespace Ginger.Imports.UFT
         private void SaveCommonFunctionMapping(object sender, RoutedEventArgs e)
         {
             //temp TODO: fix me to select file
-            mCommonFunctionConvertor.SaveToFile(@"c:\temp\CommonFunctionConvertor.xml");
+            //mCommonFunctionConvertor.SaveToFile(@"c:\temp\CommonFunctionConvertor.xml");
         }
 
         private void AddAction(object sender, RoutedEventArgs e)
         {
-            ObservableList<Act> ActionsList = new ObservableList<Act>();
+            ObservableList<IAct> ActionsList = new ObservableList<IAct>();
 
             // We create one dummy activity in case we convert code without function
             mBusinessFlow.Activities = new ObservableList<Activity>();
@@ -183,14 +183,14 @@ namespace Ginger.Imports.UFT
             at.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + "1";
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
-            mBusinessFlow.CurrentActivity.TargetApplication = App.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
+            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
             App.BusinessFlow = mBusinessFlow;
            
             AddActionPage addAction = new AddActionPage();
             addAction.ShowAsWindow(ActionsList);
 
             // We will get only one action currently
-            Act a = ActionsList[0];
+            Act a = (Act)ActionsList[0];
             CommonFunctionMapping CFM = new CommonFunctionMapping();                        
             CFM.TargetAction = a;
             mCommonFunctionConvertor.CommonFunctionMappingList.Add(CFM);
@@ -287,7 +287,7 @@ namespace Ginger.Imports.UFT
             }
             else
             {                
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Please Enter a Valid Calendar path !!");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please Enter a Valid Calendar path !!");
             }
         }
 
@@ -327,7 +327,7 @@ namespace Ginger.Imports.UFT
         {
             if (mCCL.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
+                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
                 return;
             }
             else
@@ -420,12 +420,12 @@ namespace Ginger.Imports.UFT
                 }
                 else
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "No GUI functions fetched, Click CONVERT, to convert other actions in BUS function");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No GUI functions fetched, Click CONVERT, to convert other actions in BUS function");
                 }
             }
             else
             {                
-                Reporter.ToUser(eUserMsgKeys.EnterValidBusinessflow);
+                Reporter.ToUser(eUserMsgKey.EnterValidBusinessflow);
             }
         }
 
@@ -436,7 +436,7 @@ namespace Ginger.Imports.UFT
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);            
 
             //TODO: open the new BF in Automate tab + make sure it is added to the tree
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ScriptImported_RefreshSolution);
+            Reporter.ToStatus(eStatusMsgKey.ScriptImported_RefreshSolution);
             _pageGenericWin.Close();
         }
 
@@ -1179,7 +1179,7 @@ namespace Ginger.Imports.UFT
 
         private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Process wordProcess = new Process();
+            System.Diagnostics.Process wordProcess = new System.Diagnostics.Process();
             wordProcess.StartInfo.FileName = Directory.GetCurrentDirectory() + @"\Help\Import_From_ASAP.pdf";
             wordProcess.StartInfo.UseShellExecute = true;
             wordProcess.Start();
@@ -1193,7 +1193,7 @@ namespace Ginger.Imports.UFT
         {
             if (mCommonFunctionConvertor.CommonFunctionMappingList.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
+                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
                 return;
             }
             else
