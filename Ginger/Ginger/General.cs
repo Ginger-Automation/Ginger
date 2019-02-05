@@ -60,19 +60,21 @@ namespace Ginger
 
         public static string ConvertSolutionRelativePath(string fileName)
         {
-            string s = fileName;
-            s= s.ToUpper().Replace( WorkSpace.UserProfile.Solution.Folder.ToUpper(), @"~\");
-            return s;          
+            //string s = fileName;
+            //s= s.ToUpper().Replace( WorkSpace.UserProfile.Solution.Folder.ToUpper(), @"~\");
+            //return s;
+            return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(fileName);
         }
 
         public static string GetFullFilePath(string filename)
         {
-            string s = filename;
-            if (s.StartsWith(@"~\"))
-            {
-                s = s.Replace(@"~\",  WorkSpace.UserProfile.Solution.Folder);
-            }
-            return s;            
+            //string s = filename;
+            //if (s.StartsWith(@"~\"))
+            //{
+            //    s = s.Replace(@"~\",  WorkSpace.UserProfile.Solution.Folder);
+            //}
+            //return s;
+            return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(filename);
         }
 
         public static string OpenSelectFolderDialog(string Title)

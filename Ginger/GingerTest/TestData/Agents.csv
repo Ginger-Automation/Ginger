@@ -5,7 +5,6 @@ Selenium FF,Web,SeleniumFireFox
 Selenium Chrome,Web,SeleniumChrome
 Selenium Remote Web driver,Web,SeleniumRemoteWebDriver
 Selenium Edge,Web,SeleniumEdge
-Phantom JS,Web,SeleniumPhantomJS
 Appium IOS,Mobile,MobileAppiumIOS
 Android Browser,Mobile,MobileAppiumAndroidBrowser
 IOS Browser,Mobile,MobileAppiumIOSBrowser
