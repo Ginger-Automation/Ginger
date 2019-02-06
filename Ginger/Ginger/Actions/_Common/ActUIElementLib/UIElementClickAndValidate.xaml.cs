@@ -105,18 +105,19 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private Page GetLocateValueEditPage(eLocateBy SelectedLocType)
         {
+            ActInputValue objValidationElementType = mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElement, string.Empty);
+            ActInputValue objValidationElementLocatorValue = mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocatorValue, "");
+
             switch (SelectedLocType)
             {
                 case eLocateBy.POMElement:
-                    xValidationElementTypeComboBox.IsEnabled = false;
-                    ActInputValue objValidationElementType = mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElement, string.Empty);
-                    ActInputValue objValidationElementLocatorValue = mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocatorValue, "");
+                    xValidationElementTypeComboBox.IsEnabled = false;                    
                     LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(objValidationElementType, nameof(ActInputValue.Value), objValidationElementLocatorValue, nameof(ActInputValue.Value));
                     return locateByPOMElementPage;
                 case eLocateBy.ByXY:
-                    return new LocateByXYEditPage(mAct);
+                    return new LocateByXYEditPage(mAct, objValidationElementLocatorValue, nameof(ActInputValue.Value));
                 default:
-                    return new LocateValueEditPage(mAct);
+                    return new LocateValueEditPage(objValidationElementLocatorValue, nameof(ActInputValue.Value));
             }
         }
 
