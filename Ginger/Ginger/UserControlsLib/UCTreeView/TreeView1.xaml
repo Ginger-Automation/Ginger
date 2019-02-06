@@ -58,6 +58,7 @@
                    Foreground="Gray" Visibility="Visible"  VerticalAlignment="Center" HorizontalAlignment="Left" />
             
             <usercontrols:ucButton x:Name="xSearchClearBtn" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="xSearchClearBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
+            <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" Visibility="Collapsed" Click="xSearchBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
         </Grid>
 
         <!-- Tree Section-->

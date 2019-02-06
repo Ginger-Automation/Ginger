@@ -21,6 +21,7 @@ using GingerCoreNET.SolutionRepositoryLib;
 using GingerWPF.TreeViewItemsLib;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -31,7 +32,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
     /// </summary>
     public partial class TreeView1 : UserControl, ITreeView
     {
-        public UCTreeView Tree => xTreeViewTree;
+        public UCTreeView Tree => xTreeViewTree;        
 
         public string TreeTitle
         {
@@ -111,16 +112,18 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         }
 
         private void xSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {             
+        {            
             if (xSearchTextBox.Text.Length > 0)
             {
                 xSearchNullText.Visibility= Visibility.Collapsed;
-                xSearchClearBtn.Visibility = Visibility.Visible;
+                //xSearchClearBtn.Visibility = Visibility.Visible;
+                xSearchBtn.Visibility = Visibility.Visible;
             }
             else
             {
                 xSearchNullText.Visibility = Visibility.Visible;
-                xSearchClearBtn.Visibility = Visibility.Collapsed;
+                //xSearchClearBtn.Visibility = Visibility.Collapsed;
+                xSearchBtn.Visibility = Visibility.Visible;
                 List<TreeViewItem> pathNodes = new List<TreeViewItem>();
                 if (xTreeViewTree.MlastSelectedTVI!=null)
                 {
@@ -130,8 +133,13 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 return;
             }
 
-            string txt = xSearchTextBox.Text;            
-            xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, txt);
+            //string txt = xSearchTextBox.Text;
+            //Task thisTask = null;
+            //thisTask = _draw.RunAsync(async (token) =>
+            //{
+                //xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, txt);
+            //}, CancellationToken.None);
+            //await thisTask;
         }
         
         private static void CollapseUnselectedTreeNodes(ItemCollection itemCollection,List<TreeViewItem> pathNodes)
@@ -171,6 +179,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         }        
         private void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
         {
+            xSearchClearBtn.Visibility = Visibility.Collapsed;
+            xSearchBtn.Visibility = Visibility.Visible;
             xSearchTextBox.Text = "";
         }
 
@@ -191,6 +201,30 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public void AddToolbarTool(eImageType imageType, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, object CommandParameter = null)
         {
             //no tool bar to add to in this View type
+        }
+      
+        private async void xSearchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            xSearchClearBtn.Visibility = Visibility.Visible;
+            xSearchBtn.Visibility = Visibility.Collapsed;
+            await Search();
+        }
+
+        private async Task Search()
+        {
+            string txt = xSearchTextBox.Text;
+
+            await Task.Run(() =>
+            {
+                //await Dispatcher.BeginInvoke(
+                // System.Windows.Threading.DispatcherPriority.Normal,
+                // new Action(
+                //  delegate ()
+                //  {
+                        xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, txt);
+                // }
+                //));
+             });
         }
     }
 }

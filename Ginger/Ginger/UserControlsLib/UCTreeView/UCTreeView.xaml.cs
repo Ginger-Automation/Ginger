@@ -27,6 +27,7 @@ using Amdocs.Ginger.Repository;
 using GingerWPF.DragDropLib;
 using System.Reflection;
 using System.Linq;
+using System.Threading.Tasks;
 
 
 namespace GingerWPF.UserControlsLib.UCTreeView
@@ -478,60 +479,59 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         /// </summary>
         /// <param name="itemCollection"></param>
         /// <param name="txt"></param>
-        public void FilterItemsByText(ItemCollection itemCollection, string txt)
-        {
-            // Filter not working for new TVI            
-            foreach (TreeViewItem tvi in itemCollection)
-            {
-                // Need to expand to get all lazy loading
-                tvi.IsExpanded = true;
+        public async Task FilterItemsByText(ItemCollection itemCollection, string txt)
+        {            
+                     // Filter not working for new TVI            
+                     foreach (TreeViewItem tvi in itemCollection)
+                     {
+                         // Need to expand to get all lazy loading
+                         tvi.IsExpanded = true;
 
-                ITreeViewItem ITVI = (ITreeViewItem)tvi.Tag;
+                         ITreeViewItem ITVI = (ITreeViewItem)tvi.Tag;
 
-                // Find the label in the header, this is label child of the Header Stack Panel
-                StackPanel SP = (StackPanel)tvi.Header;                     
+                         // Find the label in the header, this is label child of the Header Stack Panel
+                         StackPanel SP = (StackPanel)tvi.Header;
 
-                //Combine text of all label child's of the header Stack panel
-                string HeaderTXT = "";
-                foreach (var v in SP.Children)
-                {
-                    if (v.GetType() == typeof(Label))
-                    {
-                        Label l = (Label)v;
-                        if (l.Content != null)
-                        {
-                            HeaderTXT += l.Content.ToString();
-                        }
-                    }
-                }
+                         //Combine text of all label child's of the header Stack panel
+                         string HeaderTXT = "";
+                         foreach (var v in SP.Children)
+                         {
+                             if (v.GetType() == typeof(Label))
+                             {
+                                 Label l = (Label)v;
+                                 if (l.Content != null)
+                                 {
+                                     HeaderTXT += l.Content.ToString();
+                                 }
+                             }
+                         }
 
-                bool bFound = HeaderTXT.ToUpper().Contains(txt.ToUpper());
-                if (bFound || txt.Length == 0)
-                {
-                    tvi.Visibility = System.Windows.Visibility.Visible;
+                         bool bFound = HeaderTXT.ToUpper().Contains(txt.ToUpper());
+                         if (bFound || txt.Length == 0)
+                         {
+                             tvi.Visibility = System.Windows.Visibility.Visible;
 
-                    // go over all parents to make them visible
-                    TreeViewItem tviParent = tvi;
-                    while (tviParent.Parent is TreeViewItem)
-                    {
-                        tviParent = (TreeViewItem)tviParent.Parent;
-                        tviParent.Visibility = System.Windows.Visibility.Visible;
-                    }                    
-                }
-                else
-                {
-                    tvi.Visibility = System.Windows.Visibility.Collapsed;                    
-                }
+                             // go over all parents to make them visible
+                             TreeViewItem tviParent = tvi;
+                             while (tviParent.Parent is TreeViewItem)
+                             {
+                                 tviParent = (TreeViewItem)tviParent.Parent;
+                                 tviParent.Visibility = System.Windows.Visibility.Visible;
+                             }
+                         }
+                         else
+                         {
+                             tvi.Visibility = System.Windows.Visibility.Collapsed;
+                         }
 
-                // Goto sub items
-                if (tvi.HasItems)
-                {                    
-                    FilterItemsByText(tvi.Items, txt);
-                }
-            }
-            //Show the root item
-                ((TreeViewItem)Tree.Items[0]).Visibility = System.Windows.Visibility.Visible;
-            
+                         // Goto sub items
+                         if (tvi.HasItems)
+                         {
+                            await FilterItemsByText(tvi.Items, txt);
+                         }
+                     }
+                    //Show the root item
+                    ((TreeViewItem)Tree.Items[0]).Visibility = System.Windows.Visibility.Visible;                
         }       
                 
         public void SetBtnImage(Button btn, string imageName)
