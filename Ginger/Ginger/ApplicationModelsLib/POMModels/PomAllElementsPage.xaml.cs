@@ -19,27 +19,18 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.UserControls;
 using Ginger.ApplicationModelsLib.POMModels.POMWizardLib;
 using Ginger.UserControls;
 using GingerCore;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.ApplicationModelsLib.POMModels
 {
@@ -69,14 +60,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
         }
 
         public Agent mAgent;
-
-        public enum eElementsContext
-        {
-            Mapped,
-            Unmapped,
-            AllDeltaElements
-        }
-
 
         public enum eAllElementsPageContext
         {
@@ -462,7 +445,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
 
-            WizardWindow.ShowWizard(new PomRelearnWizard(mPOM, mAgent),1600,800, true);
+            WizardWindow.ShowWizard(new PomDeltaWizard(mPOM, mAgent),1600,800, true);
         }
 
 

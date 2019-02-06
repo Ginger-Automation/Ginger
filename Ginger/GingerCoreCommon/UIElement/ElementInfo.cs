@@ -260,12 +260,6 @@ namespace Amdocs.Ginger.Common.UIElement
             return mValue;
         }
 
-
-
-
-
-
-
         private bool mIsSelected = false;
         public bool IsSelected
         {
@@ -283,7 +277,7 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
-        public bool firstAssignmentOfElementGroup = true;
+        //public bool firstAssignmentOfElementGroup = true;
 
         public object mElementGroup;
         public object ElementGroup
@@ -294,117 +288,29 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set
             {
-                if (!firstAssignmentOfElementGroup)
+                //if (!firstAssignmentOfElementGroup)
+                //{
+                //    if (DeltaStatus == eDeltaStatus.Unchanged)
+                //    {
+                //        DeltaStatus = eDeltaStatus.Modified;
+                //        IsSelected = true;
+                //    }
+                //}
+                //else
+                //{
+                //    firstAssignmentOfElementGroup = false;
+                //}
+                if (mElementGroup != value)
                 {
-                    if (DeltaStatus == eDeltaStatus.Unchanged)
-                    {
-                        DeltaStatus = eDeltaStatus.Modified;
-                        IsSelected = true;
-                    }
-                }
-                else
-                {
-                    firstAssignmentOfElementGroup = false;
-                }
-                
-                mElementGroup = value;
-            }
-        }
-
-
-        public enum eDeltaStatus
-        {
-            Unchanged,
-            Deleted,
-            Modified,
-            New
-        }
-
-
-        private eDeltaStatus mDeltaStatus;
-
-        public eDeltaStatus DeltaStatus
-        {
-            get
-            {
-                return mDeltaStatus;
-            }
-            set
-            {
-                mDeltaStatus = value;
-                OnPropertyChanged(nameof(DeltaStatus));
-                OnPropertyChanged(nameof(IsNotEqual));
-                OnPropertyChanged(nameof(DeltaStatusIcon));
-            }
-        }
-
-        public eImageType DeltaStatusIcon
-        {
-            get
-            {
-                switch (DeltaStatus)
-                {
-                    case eDeltaStatus.Deleted:
-                        return eImageType.Deleted;
-                    case eDeltaStatus.Modified:
-                        return eImageType.Modified;
-                    case eDeltaStatus.New:
-                        return eImageType.Added;
-                    case eDeltaStatus.Unchanged:
-                    default:
-                        return eImageType.UnModified;
+                    mElementGroup = value;
+                    OnPropertyChanged(nameof(ElementGroup));
                 }
             }
         }
 
-        public bool IsNotEqual
-        {
-            get
-            {
-                if (DeltaStatus == eDeltaStatus.Unchanged)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-
-        }
-
-        public enum eDeltaExtraDetails
-        {
-            [EnumValueDescription("")]
-            NA,
-            [EnumValueDescription("Locators Changed")]
-            LocatorsChanged,
-            [EnumValueDescription("Properties Changed")]
-            PropertiesChanged,
-            [EnumValueDescription("Locators And Properties Changed")]
-            LocatorsAndPropertiesChanged
-        }
-
-        private eDeltaExtraDetails mDeltaExtraDetails;
-
-        public eDeltaExtraDetails DeltaExtraDetails
-        {
-            get
-            {
-                return mDeltaExtraDetails;
-            }
-            set
-            {
-                mDeltaExtraDetails = value;
-                OnPropertyChanged(nameof(DeltaExtraDetails));
-            }
-        }
 
         [IsSerializedForLocalRepository]
         public string Path { get; set; }
-
-        //  AbsoluteXPath
-
 
         private string mXPath;
 

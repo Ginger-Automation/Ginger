@@ -543,13 +543,13 @@
     </Compile>
     <Compile Include="ApplicationModelsLib\APIModels\NodeToDelete.cs" />
     <Compile Include="ApplicationModelsLib\ModelOptionalValue\ParameterValues.cs" />
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\PomRelearnWizard.cs" />
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMDeltaWizardPage.xaml.cs">
-      <DependentUpon>POMDeltaWizardPage.xaml</DependentUpon>
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaWizard.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaElementComparePage.xaml.cs">
+      <DependentUpon>PomDeltaElementComparePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMNameValidationRule.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMNameValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMTAValidationRule.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMTAValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\UnmappedElementsPage.xaml.cs">
       <DependentUpon>UnmappedElementsPage.xaml</DependentUpon>
     </Compile>
@@ -704,17 +704,17 @@
     <Compile Include="ApplicationModelsLib\ModelParams Pages\ModelsGlobalParamsPage.xaml.cs">
       <DependentUpon>ModelsGlobalParamsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\AddPOMWizard.cs" />
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMLearnConfigWizardPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMWizard.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMLearnConfigWizardPage.xaml.cs">
       <DependentUpon>POMLearnConfigWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMObjectsMappingWizardPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMObjectsMappingWizardPage.xaml.cs">
       <DependentUpon>POMObjectsMappingWizardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\ScanPageWizardPage.xaml.cs">
       <DependentUpon>ScanPageWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMGeneralDetailsWizardPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMGeneralDetailsWizardPage.xaml.cs">
       <DependentUpon>POMGeneralDetailsWizardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\NavigationsPage.xaml.cs">
@@ -2032,7 +2032,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Resource Include="PluginsLibNew\AddPluginWizardLib\AddPluginIntro.md" />
-    <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\AddPOMIntro.md" />
+    <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
     <None Include="Ginger.ruleset" />
     <None Include="Resources\VBSTemplate.bmp" />
@@ -2725,15 +2725,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMDeltaWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaElementComparePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMLearnConfigWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMLearnConfigWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMObjectsMappingWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMObjectsMappingWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2741,7 +2741,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMGeneralDetailsWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMGeneralDetailsWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

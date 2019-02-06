@@ -56,49 +56,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public int? Count { get { return mCount; } set { mCount = value; OnPropertyChanged(nameof(Count)); } }
 
 
-        public ElementInfo.eDeltaStatus DeltaStatus { get; set; }
-
-
-        public eImageType DeltaStatusIcon
-        {
-            get
-            {
-                switch (DeltaStatus)
-                {
-                    case ElementInfo.eDeltaStatus.Deleted:
-                        return eImageType.Deleted;
-                    case ElementInfo.eDeltaStatus.Modified:
-                        return eImageType.Modified;
-                    case ElementInfo.eDeltaStatus.New:
-                        return eImageType.Added;
-                    case ElementInfo.eDeltaStatus.Unchanged:
-                    default:
-                        return eImageType.UnModified;
-                }
-            }
-        }
-
-
-
-        public bool IsNotEqual
-        {
-            get
-            {
-                if (DeltaStatus == ElementInfo.eDeltaStatus.Unchanged)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-
-        }
-
-        public string UpdatedValue { get; set; }
-
-        public string DeltaExtraDetails { get; set; }
+        
 
         private string mItemName;
 

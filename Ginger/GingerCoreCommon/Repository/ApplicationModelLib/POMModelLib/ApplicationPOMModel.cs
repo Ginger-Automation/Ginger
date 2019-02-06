@@ -68,10 +68,6 @@ namespace Amdocs.Ginger.Repository
             Unmapped
         }
 
-
-
-
-
         string mScreenShotImage;
         [IsSerializedForLocalRepository]
         public string ScreenShotImage { get { return mScreenShotImage; } set { if (mScreenShotImage != value) { mScreenShotImage = value; OnPropertyChanged(nameof(ScreenShotImage)); } } }

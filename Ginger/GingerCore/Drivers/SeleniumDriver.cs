@@ -4370,15 +4370,15 @@ namespace GingerCore.Drivers
             ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
 
             //Base properties 
-            list.Add(new POMElementProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
-            list.Add(new POMElementProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
-            list.Add(new POMElementProperty() { Name = "XPath", Value = ElementInfo.XPath });
-            list.Add(new POMElementProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
-            list.Add(new POMElementProperty() { Name = "Height", Value = ElementInfo.Height.ToString() });
-            list.Add(new POMElementProperty() { Name = "Width", Value = ElementInfo.Width.ToString() });
-            list.Add(new POMElementProperty() { Name = "X", Value = ElementInfo.X.ToString() });
-            list.Add(new POMElementProperty() { Name = "Y", Value = ElementInfo.Y.ToString() });
-            list.Add(new POMElementProperty() { Name = "Value", Value = ElementInfo.Value });
+            list.Add(new DeltaControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
+            list.Add(new DeltaControlProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
+            list.Add(new DeltaControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
+            list.Add(new DeltaControlProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
+            list.Add(new DeltaControlProperty() { Name = "Height", Value = ElementInfo.Height.ToString() });
+            list.Add(new DeltaControlProperty() { Name = "Width", Value = ElementInfo.Width.ToString() });
+            list.Add(new DeltaControlProperty() { Name = "X", Value = ElementInfo.X.ToString() });
+            list.Add(new DeltaControlProperty() { Name = "Y", Value = ElementInfo.Y.ToString() });
+            list.Add(new DeltaControlProperty() { Name = "Value", Value = ElementInfo.Value });
 
             IWebElement el = null;
             if (ElementInfo.ElementObject != null)
@@ -4402,7 +4402,7 @@ namespace GingerCore.Drivers
                 {
                     foreach (IWebElement value in el.FindElements(By.XPath("*")))
                         ElementInfo.OptionalValues.Add(value.Text);
-                    list.Add(new POMElementProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
+                    list.Add(new DeltaControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
                 }
 
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
@@ -4414,7 +4414,7 @@ namespace GingerCore.Drivers
                         {
                             string PName = kvp.Key;
                             string PValue = kvp.Value.ToString();
-                            list.Add(new POMElementProperty() { Name = PName, Value = PValue });
+                            list.Add(new DeltaControlProperty() { Name = PName, Value = PValue });
                         }
                     }
             }
@@ -4425,10 +4425,10 @@ namespace GingerCore.Drivers
 
                 foreach (HtmlAttribute htmlAttribute in htmlAttributes)
                 {
-                    POMElementProperty existControlProperty = (POMElementProperty)list.Where(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value).FirstOrDefault();
+                    DeltaControlProperty existControlProperty = (DeltaControlProperty)list.Where(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value).FirstOrDefault();
                     if (existControlProperty == null)
                     {
-                        POMElementProperty controlProperty = new POMElementProperty() { Name = htmlAttribute.Name, Value = htmlAttribute.Value };
+                        DeltaControlProperty controlProperty = new DeltaControlProperty() { Name = htmlAttribute.Name, Value = htmlAttribute.Value };
                         list.Add(controlProperty);
                     }
                 }

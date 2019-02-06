@@ -2,44 +2,37 @@
 using System.Collections.Generic;
 using System.Text;
 using Amdocs.Ginger.Common.Enums;
-using static Amdocs.Ginger.Common.UIElement.ElementInfo;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
-    public class POMElementProperty : ControlProperty
+    public class DeltaElementLocator: ElementLocator
     {
-
-
-        public eDeltaStatus DeltaElementProperty { get; set; }
+        public eDeltaStatus DeltaStatus { get; set; }
 
         public eImageType DeltaStatusIcon
         {
             get
             {
-                switch (DeltaElementProperty)
+                switch (DeltaStatus)
                 {
-                    case ElementInfo.eDeltaStatus.Deleted:
+                    case eDeltaStatus.Deleted:
                         return eImageType.Deleted;
-                    case ElementInfo.eDeltaStatus.Modified:
+                    case eDeltaStatus.Changed:
                         return eImageType.Modified;
-                    case ElementInfo.eDeltaStatus.New:
+                    case eDeltaStatus.New:
                         return eImageType.Added;
-                    case ElementInfo.eDeltaStatus.Unchanged:
+                    case eDeltaStatus.Unchanged:
                     default:
                         return eImageType.UnModified;
                 }
             }
         }
 
-        public string DeltaExtraDetails { get; set; }
-
-        public string UpdatedValue { get; set; }
-
         public bool IsNotEqual
         {
             get
             {
-                if (DeltaElementProperty == eDeltaStatus.Unchanged)
+                if (DeltaStatus == eDeltaStatus.Unchanged)
                 {
                     return false;
                 }
@@ -48,8 +41,10 @@ namespace Amdocs.Ginger.Common.UIElement
                     return true;
                 }
             }
-
         }
 
+        public string UpdatedValue { get; set; }
+
+        public string DeltaExtraDetails { get; set; }
     }
 }
