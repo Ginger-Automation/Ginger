@@ -853,7 +853,7 @@ namespace GingerCore.Actions
 
         public String GetGingerAgentsDefaultFolder()
         {
-            return Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\ExternalAgents\";
+            return Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\StaticDrivers\";
         }
 
 

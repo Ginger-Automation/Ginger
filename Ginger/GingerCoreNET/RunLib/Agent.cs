@@ -62,7 +62,7 @@ namespace GingerCore
 
         public enum eDriverType
         {
-            // web
+            //Web
             [Description("Internal Browser")]
             InternalBrowser,
             [Description("Internet Explorer Browser(Selenium)")]
@@ -76,41 +76,39 @@ namespace GingerCore
             [Description("Edge Browser(Selenium)")]
             SeleniumEdge,
             [Description("PhantomJS Browser(Selenium)")]
-            SeleniumPhantomJS,
+            SeleniumPhantomJS,//Not been used any more, leaving here to avoid exception on solution load
 
-            // ASCF - Java
+            //Java
             [Description("Amdocs Smart Client Framework(ASCF)")]
             ASCF,
-            //QTP = 6,
-            //QTP_ASAP = 7,
-            //QTP_ANIS = 8,
+            [Description("Java")]
+            JavaDriver,
 
-            // UXF = 9,
-            //SeleniumFireFoxAppliTools = 10,
+            //Console
             [Description("DOS Console")]
             DOSConsole,
-            //SeleniumAppiumChrome = 12,
-            //SeleniumAppiumGoogleDialer = 13,            
             [Description("Unix Shell")]
             UnixShell,
-            //TODO: all enums should have description and this is what the user should see
+
+            //Web Service
             [Description("Web Services")]
             WebServices,
             [Description("Windows (UIAutomation)")]
+
+            //Windows
             WindowsAutomation,
-            //SeleniumAppiumHTCLauncher = 17,
-            [Description("Mobile Appium Android")]
-            MobileAppiumAndroid,
-            //VBScript = 19,
             [Description("Windows (FlaUI)")]
             FlaUIWindow,
+
+            //PowerBuilder
             [Description("Power Builder (FlaUI)")]
             FlaUIPB,
-            //PB
             [Description("Power Builder")]
             PowerBuilder,
 
             //Mobile
+            [Description("Mobile Appium Android")]
+            MobileAppiumAndroid,
             [Description("Mobile Appium IOS")]
             MobileAppiumIOS,
             [Description("Mobile Appium Android Browser")]
@@ -125,19 +123,14 @@ namespace GingerCore
             PerfectoMobileIOS,
             [Description("Mobile Perfecto IOS Browser")]
             PerfectoMobileIOSWeb,
-
-            //Java
-            [Description("Java")]
-            JavaDriver,
+            [Description("Android ADB")]
+            AndroidADB,
 
             //MF
             [Description("MainFrame 3270")]
             MainFrame3270,
 
-            //Android
-            [Description("Android ADB")]
-            AndroidADB,
-            NA    
+            NA
         }
 
         public enum eStatus
@@ -643,8 +636,7 @@ namespace GingerCore
                     return ePlatformType.Web;
                 case eDriverType.SeleniumEdge:
                     return ePlatformType.Web;
-                case eDriverType.SeleniumPhantomJS:
-                    return ePlatformType.Web;
+               
                 case eDriverType.ASCF:
                     return ePlatformType.ASCF;
                 case eDriverType.DOSConsole:
@@ -694,8 +686,7 @@ namespace GingerCore
                 driverTypes.Add(Agent.eDriverType.SeleniumFireFox);
                 driverTypes.Add(Agent.eDriverType.SeleniumIE);
                 driverTypes.Add(Agent.eDriverType.SeleniumRemoteWebDriver);
-                driverTypes.Add(Agent.eDriverType.SeleniumEdge);
-                driverTypes.Add(Agent.eDriverType.SeleniumPhantomJS);
+                driverTypes.Add(Agent.eDriverType.SeleniumEdge);               
             }
             else if (platformType == ePlatformType.Java.ToString())
             {
@@ -841,8 +832,10 @@ namespace GingerCore
             try
             {
                 StartDriver();
-
-                WaitForAgentToBeReady();
+                if (Driver != null)
+                {
+                    WaitForAgentToBeReady();
+                }
 
                 if (Status == Agent.eStatus.Running)
                 {                    
@@ -850,13 +843,12 @@ namespace GingerCore
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Name, "Invalid Agent Configuration");
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Name, "Invalid Agent Configurations");
                 }
             }
-
             catch (Exception AgentStartException)
             {                
-                Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Name, "Agent Launch failed due to " + AgentStartException.Message);
+                Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Name, "Agent Test failed due to: " + AgentStartException.Message);
             }
             finally
             {

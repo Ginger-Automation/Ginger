@@ -306,20 +306,21 @@ namespace Ginger.AnalyzerLib
 
         public void ReportUnusedVariables(object obj, List<string> usedVariables)
         {
-            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();            
-            BusinessFlow BusinessFlow = App.BusinessFlow;
-            Activity activity = (Activity)BusinessFlow.Activities[0];
+            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
+            Solution solution = null;
+            BusinessFlow businessFlow = null;
+            Activity activity = null;
             string variableSourceType = "";
             string variableSourceName = "";
             ObservableList<VariableBase> AvailableAllVariables = new ObservableList<VariableBase>();
             if (typeof(BusinessFlow).Equals(obj.GetType()))
             {
-                BusinessFlow = (BusinessFlow)obj;
-                if (BusinessFlow.Variables.Count > 0)
+                businessFlow = (BusinessFlow)obj;
+                if (businessFlow.Variables.Count > 0)
                 {
-                    AvailableAllVariables = BusinessFlow.Variables;
-                    variableSourceType = "BusinessFlow";
-                    variableSourceName = BusinessFlow.Name;                    
+                    AvailableAllVariables = businessFlow.Variables;
+                    variableSourceType = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                    variableSourceName = businessFlow.Name;                    
                 }
             }
             else if (typeof(Activity).Equals(obj.GetType()))
@@ -328,20 +329,17 @@ namespace Ginger.AnalyzerLib
                 if (activity.Variables.Count > 0)
                 {
                     AvailableAllVariables = activity.Variables;
-                    variableSourceType = "Activity";
+                    variableSourceType = GingerDicser.GetTermResValue(eTermResKey.Activity);
                     variableSourceName = activity.ActivityName;                    
                 }
             }
             else if(typeof(Solution).Equals(obj.GetType()))
             {
-                Solution solution = (Solution)obj;
+                solution = (Solution)obj;
                 AvailableAllVariables = solution.Variables;
                 variableSourceType = "Solution";
-                variableSourceName = solution.Name;                
-                activity = (Activity)BusinessFlow.Activities[0];
+                variableSourceName = solution.Name;                                
             }
-
-
 
             foreach (VariableBase var in AvailableAllVariables)
             {
@@ -352,12 +350,11 @@ namespace Ginger.AnalyzerLib
                         AnalyzeBusinessFlow aa = new AnalyzeBusinessFlow();
                         aa.Status = AnalyzerItemBase.eStatus.NeedFix;
                         aa.ItemName = var.Name;
-                        aa.Description = var + " is Unused in Business Flow : " + BusinessFlow.Name;
+                        aa.Description = var + " is Unused in " + variableSourceType + ": " + businessFlow.Name;
                         aa.Details = variableSourceType;                        
-                        aa.mBusinessFlow = BusinessFlow;
+                        aa.mBusinessFlow = businessFlow;
                         aa.ItemParent = variableSourceName;
-
-                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;    // we can autofix by delete, but don't want to                
+                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;                   
                         aa.IssueType = eType.Error;
                         aa.FixItHandler = DeleteUnusedVariables;
                         aa.Severity = eSeverity.Medium;
@@ -371,8 +368,7 @@ namespace Ginger.AnalyzerLib
                         aa.Description = var + " is Unused in Solution";
                         aa.Details = variableSourceType;                       
                         aa.ItemParent = variableSourceName;
-
-                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;    // we can autofix by delete, but don't want to                
+                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;                  
                         aa.IssueType = eType.Error;
                         aa.FixItHandler = DeleteUnusedVariables;
                         aa.Severity = eSeverity.Medium;
@@ -383,13 +379,12 @@ namespace Ginger.AnalyzerLib
                         AnalyzeActivity aa = new AnalyzeActivity();                        
                         aa.Status = AnalyzerItemBase.eStatus.NeedFix;
                         aa.ItemName = var.Name;
-                        aa.Description = var + " is Unused in Activity : " + activity.ActivityName;
+                        aa.Description = var + " is Unused in " + variableSourceType + ": " + activity.ActivityName;
                         aa.Details = variableSourceType;
                         aa.mActivity = activity;
-                        aa.mBusinessFlow = BusinessFlow;
+                        //aa.mBusinessFlow = businessFlow;
                         aa.ItemParent = variableSourceName;
-
-                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;    // we can autofix by delete, but don't want to                
+                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;                  
                         aa.IssueType = eType.Error;
                         aa.FixItHandler = DeleteUnusedVariables;
                         aa.Severity = eSeverity.Medium;

@@ -78,7 +78,10 @@ namespace Ginger.Actions._Common.ActUIElementLib
             DataContext = this;
 
             SetControlsGridView();
-            AllowElementSelection();
+            if(mOnlyPOMRequest)
+            {
+                HideElementSelection();
+            }
             mLocateValue = (string)mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).GetValue(mObjectLocateValue);
             if (!string.IsNullOrWhiteSpace(mLocateValue))
             {
@@ -109,9 +112,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
                                 xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
 
                                 xPOMElementsGrid.Grid.SelectedItem = selectedPOMElement;
-                                SetElementTypeProperty(selectedPOMElement.ElementTypeEnum);
-
-                                xPOMElementTextBox.Text = selectedPOMElement.ElementName;
+                                //SetElementTypeProperty(selectedPOMElement.ElementTypeEnum); //we don't want it to overwrite user type selection in case it is diffrent from element type
+                                
+                                SetElementViewText(selectedPOMElement.ElementName, selectedPOMElement.ElementTypeEnum.ToString());
                                 HighlightButton.IsEnabled = true;
                             }
                         }
@@ -124,6 +127,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     SelectPOM_Click(null, null);
                 }
             }
+        }
+
+        private void SetElementViewText(string elementName, string elementType)
+        {
+            xPOMElementTextBox.Text = string.Format("{0} [{1}]", elementName, elementType);
         }
 
         private ObservableList<ElementInfo> GenerateElementsDataSourseList()
@@ -186,18 +194,19 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
+        private void HideElementSelection()
+        {
+            xPOMElementsLbl.Visibility = Visibility.Collapsed;
+            ArrowDownButton.Visibility = Visibility.Collapsed;
+            HighlightButton.Visibility = Visibility.Collapsed;
+            xPOMElementTextBox.Visibility = Visibility.Collapsed;
+            xPOMTitleLbl.Visibility = Visibility.Collapsed;
+            xPOMGrid.ColumnDefinitions[0].Width = new GridLength(0);
+        }
+
         private void AllowElementSelection()
         {
-            if (mOnlyPOMRequest)
-            {
-                xPOMElementsLbl.Visibility = Visibility.Collapsed;
-                ArrowDownButton.Visibility = Visibility.Collapsed;
-                HighlightButton.Visibility = Visibility.Collapsed;
-                xPOMElementTextBox.Visibility = Visibility.Collapsed;
-                xPOMTitleLbl.Visibility = Visibility.Collapsed;
-                xPOMGrid.ColumnDefinitions[0].Width = new GridLength(0);
-            }
-            else
+            if (!mOnlyPOMRequest)
             {
                 xPOMElementsLbl.Visibility = Visibility.Visible;
                 ArrowDownButton.Visibility = Visibility.Visible;
@@ -233,17 +242,16 @@ namespace Ginger.Actions._Common.ActUIElementLib
             xPOMElementTextBox.Visibility = Visibility.Visible;
             xPOMElementsGrid.Visibility = Visibility.Collapsed;
             xSelectElement.Visibility = Visibility.Collapsed;
-            ArrowExpended = false;
-            if ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem != null)
+            ArrowExpended = false;            
+            if (xPOMElementsGrid.Grid.SelectedItem != null)
             {
-                xPOMElementTextBox.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
-                string POMAndElementGuids = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
-                mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, POMAndElementGuids);
-                SetElementTypeProperty(((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum);
-            }
-
-
-            HighlightButton.IsEnabled = true;
+                ElementInfo selectedElement = (ElementInfo)xPOMElementsGrid.Grid.SelectedItem;
+                string pomAndElementGuids = mSelectedPOM.Guid.ToString() + "_" + selectedElement.Guid.ToString();
+                mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, pomAndElementGuids);
+                SetElementTypeProperty(selectedElement.ElementTypeEnum);
+                SetElementViewText(selectedElement.ElementName, selectedElement.ElementTypeEnum.ToString());
+                HighlightButton.IsEnabled = true;
+            }            
         }
 
         private void SetControlsGridView()
