@@ -53,6 +53,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
         }
 
+        
+
         private async void Learn()
         {
             if (!mWizard.IsLearningWasDone)
@@ -65,11 +67,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     xStopLoadButton.IsEnabled = true;
                     ((DriverBase)mWizard.Agent.Driver).mStopProcess = false;
                     xStopLoadButton.Visibility = Visibility.Visible;
-
                     mWizard.IWindowExplorerDriver.UnHighLightElements();
 
-                    await Task.Run(() => CollectOriginalElementsData());
-
+                    await Task.Run(() => GetUnifiedPomElementsListForDeltaUse());
+                    await Task.Run(() => mWizard.IWindowExplorerDriver.CollectOriginalElementsDataForDeltaCheck(mWizard.mPOMCurrentElements));
                     await Task.Run(() => mWizard.IWindowExplorerDriver.GetVisibleControls(null, mWizard.mPOMLatestElements, true));
 
                     SetDeletedElementDeltaDetails();
@@ -90,10 +91,49 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
         }
 
-        private async void CollectOriginalElementsData()
+        public void GetUnifiedPomElementsListForDeltaUse()
         {
-            await Task.Run(() => mWizard.IWindowExplorerDriver.CollectOriginalElementsDataForDeltaCheck(mWizard.mPOMCurrentElements));
+            mWizard.mPOMCurrentElements.Clear();
+            //TODO: check if should be done using Parallel.ForEach
+            foreach (ElementInfo mappedElement in mWizard.mPOM.MappedUIElements)
+            {
+                DeltaElementInfo deltaElement = ConvertElementInfoToDelta(mappedElement);
+                deltaElement.ElementGroup = ApplicationPOMModel.eElementGroup.Mapped;
+                mWizard.mPOMCurrentElements.Add(deltaElement);
+            }
+            foreach (ElementInfo unmappedElement in mWizard.mPOM.UnMappedUIElements)
+            {
+                DeltaElementInfo deltaElement = ConvertElementInfoToDelta(unmappedElement);
+                deltaElement.ElementGroup = ApplicationPOMModel.eElementGroup.Unmapped;
+                mWizard.mPOMCurrentElements.Add(deltaElement);
+            }
         }
+
+        private DeltaElementInfo ConvertElementInfoToDelta(ElementInfo element)
+        {
+            //copy element and convert it to Delta
+            DeltaElementInfo deltaElement = (DeltaElementInfo)element.CreateCopy(false);//keeping original GUI            
+            //convert Locators to Delta
+            List<DeltaElementLocator> deltaLocators = deltaElement.Locators.Cast<DeltaElementLocator>().ToList();
+            deltaElement.Locators.Clear();
+            foreach (DeltaElementLocator deltaLocator in deltaLocators)
+            {
+                deltaElement.Locators.Add(deltaLocator);
+            }
+            //convert properties to Delta
+            List<DeltaControlProperty> deltaProperties = deltaElement.Properties.Cast<DeltaControlProperty>().ToList();
+            deltaElement.Properties.Clear();
+            foreach (DeltaControlProperty deltaPropery in deltaProperties)
+            {
+                deltaElement.Properties.Add(deltaPropery);
+            }
+            return deltaElement;
+        }
+
+        //private async void CollectOriginalElementsData()
+        //{
+        //    await Task.Run(() => mWizard.IWindowExplorerDriver.CollectOriginalElementsDataForDeltaCheck(mWizard.mPOMCurrentElements));
+        //}
 
         private void StopButtonClicked(object sender, RoutedEventArgs e)
         {

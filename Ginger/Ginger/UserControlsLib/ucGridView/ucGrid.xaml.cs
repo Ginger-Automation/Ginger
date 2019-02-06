@@ -1408,7 +1408,7 @@ public void RemoveCustomView(string viewName)
 
 
         public static DataTemplate GetGridComboBoxTemplate(List<GingerCore.General.ComboEnumItem> valuesList, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false,
-         string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null)
+                                        string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));
@@ -1445,7 +1445,7 @@ public void RemoveCustomView(string viewName)
         }
 
         public static DataTemplate GetGridComboBoxTemplate(string valuesListField, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false, 
-            string readonlyfield ="", bool isreadonly=false)
+                                                            string readonlyfield ="", bool isreadonly=false)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));         
@@ -1764,7 +1764,6 @@ public void RemoveCustomView(string viewName)
 
             comboBox.Width = 100;
             List<GingerCore.General.ComboEnumItem> itemsList = GingerCore.General.GetEnumValuesForCombo(enumType);
-            //List<GingerCore.General.ComboEnumItem> itemsSourceList = new List<GingerCore.General.ComboEnumItem>();
             if (defaultOptionText != null)
             {
                 GingerCore.General.ComboEnumItem existingDefaultItem = itemsList.Where(x => x.text == defaultOptionText).FirstOrDefault();
@@ -1792,22 +1791,21 @@ public void RemoveCustomView(string viewName)
             Label label = new Label();
             label.Content = lableContent;
 
-            toolbar.Items.Remove(lblSearch);
-            toolbar.Items.Remove(txtSearch);
-            toolbar.Items.Remove(btnClearSearch);
-            toolbar.Items.Remove(lblView);
-            toolbar.Items.Remove(comboView);
-            toolbar.Items.Remove(TagsViewer);
-            toolbar.Items.Add(label);
+            //toolbar.Items.Remove(lblSearch);
+            //toolbar.Items.Remove(txtSearch);
+            //toolbar.Items.Remove(btnClearSearch);
+            //toolbar.Items.Remove(lblView);
+            //toolbar.Items.Remove(comboView);
+            //toolbar.Items.Remove(TagsViewer);
+            //toolbar.Items.Add(label);
+            //toolbar.Items.Add(comboBox);
+            //toolbar.Items.Add(lblSearch);
+            //toolbar.Items.Add(txtSearch);
+            //toolbar.Items.Add(btnClearSearch);
+            //toolbar.Items.Add(TagsViewer);
+            //toolbar.Items.Add(lblView);
             toolbar.Items.Add(comboBox);
-            toolbar.Items.Add(lblSearch);
-            toolbar.Items.Add(txtSearch);
-            toolbar.Items.Add(btnClearSearch);
-            toolbar.Items.Add(TagsViewer);
-            toolbar.Items.Add(lblView);
-            toolbar.Items.Add(comboView);
         }
-
 
 
         /// <summary>

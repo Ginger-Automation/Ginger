@@ -55,52 +55,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             mPOM = pom;
             mAgent = agent;
-            GetUnifiedPomElementsListForDeltaUse();
+            
             AddPage(Name: "Elements Compare", Title: "Elements Compare", SubTitle: "Comparison Status of Elements with Latest", Page: new PomDeltaElementComparePage());
         }
 
 
-        public void GetUnifiedPomElementsListForDeltaUse()
-        {
-            mPOMCurrentElements.Clear();
-            //TODO: check if should be done using Parallel.ForEach
-            foreach (ElementInfo mappedElement in mPOM.MappedUIElements)
-            {
-                DeltaElementInfo deltaElement = ConvertElementInfoToDelta(mappedElement);
-                deltaElement.ElementGroup = ApplicationPOMModel.eElementGroup.Mapped;
-                mPOMCurrentElements.Add(deltaElement);
-            }
-            foreach (ElementInfo unmappedElement in mPOM.UnMappedUIElements)
-            {
-                DeltaElementInfo deltaElement = ConvertElementInfoToDelta(unmappedElement);
-                deltaElement.ElementGroup = ApplicationPOMModel.eElementGroup.Unmapped;
-                mPOMCurrentElements.Add(deltaElement);
-            }
-        }
-
-        private DeltaElementInfo ConvertElementInfoToDelta(ElementInfo element)
-        {
-            //copy element and convert it to Delta
-            DeltaElementInfo deltaElement = (DeltaElementInfo)element.CreateCopy(false);//keeping original GUI            
-
-            //convert Locators to Delta
-            List<DeltaElementLocator> deltaLocators = deltaElement.Locators.Cast<DeltaElementLocator>().ToList();
-            deltaElement.Locators.Clear();
-            foreach (DeltaElementLocator deltaLocator in deltaLocators)
-            {
-                deltaElement.Locators.Add(deltaLocator);
-            }
-
-            //convert properties to Delta
-            List<DeltaControlProperty> deltaProperties = deltaElement.Properties.Cast<DeltaControlProperty>().ToList();
-            deltaElement.Properties.Clear();
-            foreach (DeltaControlProperty deltaPropery in deltaProperties)
-            {
-                deltaElement.Properties.Add(deltaPropery);
-            }
-
-            return deltaElement;
-        }
+        
 
 
         public override void Finish()
