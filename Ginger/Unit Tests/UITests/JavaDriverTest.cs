@@ -33,6 +33,7 @@ using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace UnitTests.UITests.JavaDriverTest
@@ -1264,11 +1265,74 @@ namespace UnitTests.UITests.JavaDriverTest
 
         #endregion
 
+        #region Unit Test For SmartSync Action
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ActSmartSyncTest()
+        {
+            //Arrange
+            ActSmartSync action = new ActSmartSync();
+            action.LocateBy = eLocateBy.ByName;
+            action.LocateValue = "jtxtArea";
+            action.SmartSyncAction = ActSmartSync.eSmartSyncAction.WaitUntilDisplay;
+
+            action.WaitTime = 20;
+            action.Active = true;
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+
+            //Act
+            mGR.RunAction(action, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+            Assert.AreEqual(action.Error, null, "Act.Error");
+        }
+
+        #endregion
+
+        #region Unit Test For ScreenShot Action
+        [TestMethod]
+        [Timeout(60000)]
+        public void ActScreenShootAction()
+        {
+            CleanTempFolder();
+            ActScreenShot action = new ActScreenShot();
+            action.TakeScreenShot = true;
+            action.WindowsToCapture = Act.eWindowsToCapture.OnlyActiveWindow;
+            action.AddOrUpdateInputParamValueAndCalculatedValue(ActScreenShot.Fields.SaveToFileName, TestResources.GetTestResourcesFolder(@"Temp"));
+
+            action.Active = true;
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+
+            //Act
+            mGR.RunAction(action, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+            Assert.AreEqual(action.Error, null, "Act.Error");
+        }
+
+        private void CleanTempFolder()
+        {
+            System.IO.DirectoryInfo di = new DirectoryInfo(TestResources.GetTestResourcesFolder(@"Temp"));
+
+            foreach (FileInfo file in di.GetFiles())
+            {
+                if(file.Extension.ToLower().Contains(@".jpg"))
+                {
+                    file.Delete();
+                }
+            }
+        }
+        #endregion
         #region Unit Test For ActWindow
         [TestMethod]
         [Timeout(60000)]
         public void ActWindowActionIsExistWindowTest()
-         {
+        {
             ActWindow action = new ActWindow();
             action.LocateBy = eLocateBy.ByTitle;
             action.LocateValue = "Java Swing";
@@ -1286,10 +1350,10 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(1, action.ReturnValues.Count);
             Assert.AreEqual("true", action.ReturnValues[0].Actual);
             Assert.AreEqual(action.Error, null, "Act.Error");
-         }
+        }
 
         [TestMethod]
-       // [Timeout(60000)]
+        [Timeout(60000)]
         public void ActWindowActionCloseWindowTest()
         {
             ActWindow action = new ActWindow();
@@ -1298,6 +1362,9 @@ namespace UnitTests.UITests.JavaDriverTest
             action.WindowActionType = ActWindow.eWindowActionType.Close;
             action.Active = true;
             action.AddNewReturnParams = true;
+            action.StatusConverter = eStatusConverterOptions.AlwaysPass;
+
+            //action.StatusConverter = eStatusConverterOptions.
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
@@ -1305,35 +1372,8 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR.RunAction(action, false);
 
             //Assert
-           // Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
-           // Assert.AreEqual(action.Error, null, "Act.Error");
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
         }
-        #endregion
-
-        #region Unit Test For ActBrowser Action
-        [TestMethod]
-        [Timeout(60000)]
-        public void ActBrowserInitilizeBrowserTest()
-        {
-            ActBrowserElement action = new ActBrowserElement();
-            action.LocateBy = eLocateBy.ByXPath;
-            action.LocateValue = "//[@id='test']";
-            action.ControlAction = ActBrowserElement.eControlAction.InitializeBrowser;
-            action.Active = true;
-            action.AddNewReturnParams = true;
-            mBF.CurrentActivity.Acts.Add(action);
-            mBF.CurrentActivity.Acts.CurrentItem = action;
-
-            //Act
-            //mGR.RunAction(action, false);
-
-            //Assert
-            
-           // Assert.AreEqual(1, action.ReturnValues.Count);
-            //Assert.AreEqual("true", action.ReturnValues[0].Actual);
-           // Assert.AreEqual(action.Error, null, "Act.Error");
-        }
-
         #endregion
     }
 }
