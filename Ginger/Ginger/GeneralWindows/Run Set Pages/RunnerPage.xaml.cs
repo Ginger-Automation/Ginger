@@ -561,6 +561,10 @@ namespace Ginger.Run
             App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
             mRunner.ResetRunnerExecutionDetails();
             App.RunsetExecutor.ConfigureRunnerForExecution(mRunner);
+            ExecutionLoggerConfiguration ELC = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+
+            ExecutionLogger EL = (ExecutionLogger)mRunner.RunListeners.Where(x => x.GetType() == typeof(ExecutionLogger)).FirstOrDefault();
+            EL.Configuration = ELC;
             await mRunner.RunRunnerAsync();
 
             GingerCore.General.DoEvents();   //needed?                 
