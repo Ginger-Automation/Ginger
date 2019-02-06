@@ -51,6 +51,19 @@ namespace Ginger.Reports.Tests
             }
         }
 
-       
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void GenrateLastExecutionHTMLReportTest()
+        {
+            string BusinessFlowReportFolder = GingerTestHelper.TestResources.GetTestResourcesFolder(@"Reports\AutomationTab_LastExecution\");
+            ReportInfo RI = new ReportInfo(BusinessFlowReportFolder);
+            Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(RI);
+            string Folder = string.Empty;
+            //Ginger.Reports.GingerExecutionReport.ExtensionMethods.NewFunctionCreateGingerExecutionReport(RI, Folder);
+
+        }
+
+
     }
 }
