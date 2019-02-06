@@ -2,18 +2,65 @@
 # .NET
 
 jobs:
+
+# ------------------------------------------------------------------------------------------------------
+# Request Linux Ubunto 16.04 VM 
+# ------------------------------------------------------------------------------------------------------
 - job: Linux
   pool:
     vmImage: 'Ubuntu 16.04'
+
+# ------------------------------------------------------------------------------------------------------
+# Job Variables
+# ------------------------------------------------------------------------------------------------------
   variables:  
+    solution: '**/*.sln'     # = D:\a\1\s\Ginger\Ginger.sln
     buildConfiguration: 'Release'
-    solutionDIrectory:  'Ginger-Automation/Ginger'
+    solutionDirectory:  'Ginger-Automation/Ginger'
+    testDLLs: |
+      **\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll
+      **\GingerCoreNETUnitTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreNETUnitTest.dll
+      **\GingerConsoleTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerConsoleTest.dll
+      **\GingerAutoPilotTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerAutoPilotTest.dll
+      **\GingerPluginCoreTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerPluginCoreTest.dll           
+     
+    artifactsFolder: 'D:\a\1\a' 
+  
   steps:
-  - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
-  - task: PublishTestResults@2
-    condition: succeededOrFailed()
-    inputs:
-      testRunner: VSTest
-      testResultsFiles: '**/*.trx'
+  # - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
+  #- task: PublishTestResults@2
+  #  condition: succeededOrFailed()
+  #  inputs:
+  #    testRunner: VSTest
+  #    testResultsFiles: '**/*.trx'
+
+  #- task: PublishBuildArtifacts@1
+
+
+# ------------------------------------------------------------------------------------------------------
+# Run Unit Test Level 1,2,3 for .NET Core testDLLs
+# ------------------------------------------------------------------------------------------------------
+    
+    # TODO: run unit test by level 1,2,3 continue on sucess only
+
+  - task: VSTest@2
+    displayName: 'Run Unit tests Level for .Net Core test DLLs'
+    inputs:      
+      testAssemblyVer2: $(testDLLs)
+      runInParallel: True
+      codeCoverageEnabled: True
+      
+
+  
+  #- task: PublishTestResults@2
+  #  condition: succeededOrFailed()
+  #  inputs:
+  #    testRunner: VSTest
+  #    testResultsFiles: '**/*.trx'
+
 
   - task: PublishBuildArtifacts@1
+
+
+ # failTaskOnFailedTests: true
+
