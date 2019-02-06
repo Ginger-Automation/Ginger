@@ -53,20 +53,12 @@ jobs:
     displayName: Restore Ginger Solution Nuget Packages
   
 # ------------------------------------------------------------------------------------------------------
-# Build Ginger Solution
+# Build Ginger DLLs .Net Core only
 # ------------------------------------------------------------------------------------------------------
 
-  - task: VSBuild@1
-    inputs:
-      solution: '$(solution)'          # = D:\a\1\s\Ginger\Ginger.sln
-      # platform: 'x86'   
-      # clean: true
-      configuration: '$(buildConfiguration)'
-      msbuildArgs: /NoLogo /m      
-      # /TargetFrameworkVersion /TargetCompactFramework
-      # msbuildArchitecture: 'x86' # Optional. Options: x86, x64
-      # TreatWarningsAsErrors / NoWarn   -- do not allow warnings - do it later when we have zero warnings
-    displayName: Build Ginger solution
+  - script: dotnet build # Include additional options such as --configuration to meet your need  
+    displayName: Build Ginger DLLs
+
 # ------------------------------------------------------------------------------------------------------
 # Run Unit Test Level 1,2,3 for .NET Core testDLLs
 # ------------------------------------------------------------------------------------------------------
@@ -79,7 +71,11 @@ jobs:
       testAssemblyVer2: $(testDLLs)
       runInParallel: True
       codeCoverageEnabled: True
-      
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: test
+      projects: '**/*Test/*.csproj'
+      arguments: '--configuration $(buildConfiguration)  --collect "Code coverage"'
 
   
   #- task: PublishTestResults@2
@@ -89,7 +85,7 @@ jobs:
   #    testResultsFiles: '**/*.trx'
 
 
-  - task: PublishBuildArtifacts@1
+ # - task: PublishBuildArtifacts@1
 
 
  # failTaskOnFailedTests: true
