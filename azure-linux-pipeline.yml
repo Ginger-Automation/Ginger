@@ -36,7 +36,37 @@ jobs:
 
   #- task: PublishBuildArtifacts@1
 
-  #blabla
+  
+# ------------------------------------------------------------------------------------------------------
+# Install Nuget tool
+# ------------------------------------------------------------------------------------------------------
+  - task: NuGetToolInstaller@0  
+    displayName: NuGet Tool Installer
+
+# ------------------------------------------------------------------------------------------------------
+# Restore Ginger solution NuGet packages
+# ------------------------------------------------------------------------------------------------------
+  - task: NuGetCommand@2
+    inputs:
+      command: restore  
+      restoreSolution: '$(solution)'       
+    displayName: Restore Ginger Solution Nuget Packages
+  
+# ------------------------------------------------------------------------------------------------------
+# Build Ginger Solution
+# ------------------------------------------------------------------------------------------------------
+
+  - task: VSBuild@1
+    inputs:
+      solution: '$(solution)'          # = D:\a\1\s\Ginger\Ginger.sln
+      # platform: 'x86'   
+      # clean: true
+      configuration: '$(buildConfiguration)'
+      msbuildArgs: /NoLogo /m      
+      # /TargetFrameworkVersion /TargetCompactFramework
+      # msbuildArchitecture: 'x86' # Optional. Options: x86, x64
+      # TreatWarningsAsErrors / NoWarn   -- do not allow warnings - do it later when we have zero warnings
+    displayName: Build Ginger solution
 # ------------------------------------------------------------------------------------------------------
 # Run Unit Test Level 1,2,3 for .NET Core testDLLs
 # ------------------------------------------------------------------------------------------------------
