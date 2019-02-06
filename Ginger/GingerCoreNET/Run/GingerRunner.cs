@@ -2480,6 +2480,7 @@ namespace Ginger.Run
                 Activity sharedActivityInstance = (Activity)sharedActivity.CreateInstance();
                 sharedActivityInstance.Active = true;
                 sharedActivityInstance.AddDynamicly = true;
+                sharedActivityInstance.VariablesDependencies = CurrentBusinessFlow.CurrentActivity.VariablesDependencies;
                 CurrentBusinessFlow.SetActivityTargetApplication(sharedActivityInstance);
                 CurrentBusinessFlow.AddActivity(sharedActivityInstance);
 
