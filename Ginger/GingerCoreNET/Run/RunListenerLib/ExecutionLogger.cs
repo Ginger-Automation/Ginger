@@ -107,8 +107,11 @@ namespace Ginger.Run
             set
             {
                 mConfiguration = value;
-
-                if(!CheckOrCreateDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder))
+                if (mConfiguration.ExecutionLoggerConfigurationExecResultsFolder.StartsWith(@"~\"))
+                {
+                    mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder.Replace(@"~\", WorkSpace.Instance.Solution.Folder);
+                }
+                if (!CheckOrCreateDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder))
                 {
                     mConfiguration.ExecutionLoggerConfigurationExecResultsFolder= mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\"; 
                 }
