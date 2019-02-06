@@ -32,6 +32,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static GingerCore.Actions.Common.ActUIElement;
 using static GingerCore.General;
 
 namespace Ginger.Actions._Common.ActUIElementLib
@@ -99,55 +100,41 @@ namespace Ginger.Actions._Common.ActUIElementLib
             Page p = GetLocateValueEditPage(SelectedLocType);
             LocateValueEditFrame.Content = p;
             UpdateActionInfo(mAction.ElementAction);
-            if (SelectedLocType != eLocateBy.POMElement)
-            {
-                ElementTypeComboBox.IsEnabled = true;
-            }
+            //if (SelectedLocType != eLocateBy.POMElement)
+            //{
+            //    ElementTypeComboBox.IsEnabled = true;
+            //}
         }
 
         List<ActUIElement.eElementAction> mElementActionsList = new List<ActUIElement.eElementAction>();
 
         private void ElementTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ElementLocateByComboBox.IsEnabled = true;
-            if (!String.IsNullOrEmpty(ElementTypeComboBox.SelectionBoxItem.ToString()))
-            {
-                if (ElementTypeComboBox.SelectedValue != null && !String.IsNullOrEmpty(ElementTypeComboBox.SelectedValue.ToString()))
-                {
-                    if (ElementTypeComboBox.SelectedValue.ToString() != ElementTypeComboBox.SelectionBoxItem.ToString())
-                    {
-                        ResetActUIFields();
-                    }
-                }
-            }
-            ElementTypeImage.Source = GetImageSource(mAction.Image);
             mElementActionsList = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
+
+            ElementActionComboBox.SelectionChanged -= ElementActionComboBox_SelectionChanged;
             ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
-            UpdateActionInfo(mAction.ElementAction);
-            UIElementActionEditPageFrame.Visibility = Visibility.Collapsed;
-            if (mAction.ElementType != eElementType.Unknown && mAction.ElementAction != ActUIElement.eElementAction.Unknown)
+            ElementActionComboBox.SelectedValue = mAction.ElementAction;//need to fix binding to avoid it
+            ElementActionComboBox.SelectionChanged += ElementActionComboBox_SelectionChanged;
+
+            if(mElementActionsList.Count == 0)
             {
-                ShowControlSpecificPage();
+                mAction.ElementAction = eElementAction.Unknown;
             }
-            ElementTypeComboBox.Refresh();
+            else if(mAction.ElementType != eElementType.Unknown && !mElementActionsList.Contains(mAction.ElementAction))
+            {
+                mAction.ElementAction = mElementActionsList[0];//defualt operation for element type should be first one
+            }
+
+            ElementTypeImage.Source = GetImageSource(mAction.Image);
+            UpdateActionInfo(mAction.ElementAction);
         }
 
         private void ElementActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!String.IsNullOrEmpty(ElementActionComboBox.SelectionBoxItem.ToString()))
-            {
-                if (ElementActionComboBox.SelectedValue != null && !String.IsNullOrEmpty(ElementActionComboBox.SelectedValue.ToString()))
-                {
-                    if (ElementActionComboBox.SelectedValue.ToString() != ElementActionComboBox.SelectionBoxItem.ToString())
-                    {
-                        ResetActUIFields();
-                    }
-                }
-                else
-                    // will reset the action combobox to unknown whenever element type is changes
-                    ElementActionComboBox.SelectedValue = ActUIElement.eElementAction.Unknown;
-            }
-            if (ElementActionComboBox.SelectedValue == null)
+            UIElementActionEditPageFrame.Visibility = Visibility.Collapsed;
+            ResetActUIFields();
+            if (ElementActionComboBox.SelectedItem == null)
             {
                 return;
             }
@@ -456,16 +443,15 @@ namespace Ginger.Actions._Common.ActUIElementLib
             switch (SelectedLocType)
             {
                 case eLocateBy.POMElement:                 
-                    ElementTypeComboBox.IsEnabled = false;
-
+                    //ElementTypeComboBox.IsEnabled = false;
                     LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAction, nameof(ActUIElement.ElementType), mAction, nameof(ActUIElement.ElementLocateValue));
                     locateByPOMElementPage.ElementChangedPageEvent -= POMElementChanged;
                     locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
                     return locateByPOMElementPage;
                 case eLocateBy.ByXY:                   
-                    return new LocateByXYEditPage(mAction);
+                    return new LocateByXYEditPage(mAction, mAction, ActUIElement.Fields.ElementLocateValue);
                 default:                 
-                    return new LocateValueEditPage(mAction);
+                    return new LocateValueEditPage(mAction, ActUIElement.Fields.ElementLocateValue);
             }
         }
 

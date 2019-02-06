@@ -752,7 +752,7 @@
 
     <Style TargetType="Label" x:Key="$MainListViewItemLabelStyle">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="DarkGray" />
+        <Setter Property="Foreground" Value="{StaticResource $Color_DarkBlue}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="FontSize" Value="15" />
         <Setter Property="FontWeight" Value="Bold" />
@@ -761,7 +761,7 @@
 
     <Style TargetType="Label" x:Key="$SubListViewItemLabelStyle">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="Gray" />
+        <Setter Property="Foreground" Value="{StaticResource $Color_DarkBlue}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="FontWeight" Value="Normal" />

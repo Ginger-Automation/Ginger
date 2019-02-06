@@ -527,11 +527,19 @@ namespace GingerCore.Actions.Common
             }
         }
 
+        eElementAction mElementAction;
         [IsSerializedForLocalRepository]
         public eElementAction ElementAction
         {
-            get;
-            set;
+            get { return mElementAction; }
+            set
+            {
+                if (mElementAction != value)
+                {
+                    mElementAction = value;
+                    OnPropertyChanged(nameof(ActUIElement.ElementAction));
+                }
+            }
         }
 
         [IsSerializedForLocalRepository]
@@ -768,18 +776,20 @@ namespace GingerCore.Actions.Common
         }
 
         //Pack
-        public void GetLocateByXYValues(out double X, out double Y)
+        public void GetLocateByXYValues(out double X, out double Y, object locateValueParentObject, string locateValueField)
         {
+            string locateValue = locateValueParentObject.GetType().GetProperty(locateValueField).GetValue(locateValueParentObject).ToString();//to support diffrent LocateValue fields we have on Act
+
             // split the Value, do not create new param
             // all locate value need to be combined into string
-            if (string.IsNullOrEmpty(ElementLocateValue))
+            if (string.IsNullOrEmpty(locateValue))
             {
                 X = 0;
                 Y = 0;
             }
             else
             {
-                string[] xy = ElementLocateValue.Split(',');
+                string[] xy = locateValue.Split(',');
                 if ((xy != null) && (xy.Count() > 1))
                 {
                     if (!double.TryParse(xy[0].Split('=')[1], out X))
@@ -796,9 +806,9 @@ namespace GingerCore.Actions.Common
         }
 
         //Parse
-        public void SetLocateByXYValues(double X, double Y)
+        public void SetLocateByXYValues(double X, double Y, object locateValueParentObject, string locateValueField)
         {
-            ElementLocateValue = "X=" + X + ",Y=" + Y;
+            locateValueParentObject.GetType().GetProperty(locateValueField).SetValue(locateValueParentObject, "X=" + X + ",Y=" + Y);//to support diffrent LocateValue fields we have on Act
         }
 
         //TOOD: impl in ActionEditPage to show the output grid or show no output values

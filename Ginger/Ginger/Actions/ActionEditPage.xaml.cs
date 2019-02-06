@@ -183,6 +183,7 @@ namespace Ginger.Actions
             App.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, Act.Fields.AddNewReturnParams);
             App.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, Act.Fields.SupportSimulation);
             OutputValuesGrid.AddToolbarTool("@Reset_16x16.png", "Clear Un-used Parameters", new RoutedEventHandler(ClearUnusedParameter));
+            OutputValuesGrid.AllowHorizentalScroll = true;
             SetActReturnValuesGrid();
             SetActInputValuesGrid();
 
@@ -410,7 +411,7 @@ namespace Ginger.Actions
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;                    
                 }
-            }
+            }           
         }
 
         private void AddReturnValue(object sender, RoutedEventArgs e)
@@ -473,7 +474,7 @@ namespace Ginger.Actions
 
             ObservableList<GlobalAppModelParameter> appsModelsGlobalParamsList = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
 
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(ActReturnValue.Fields.StoreTo, ActReturnValue.Fields.StoreToValue, varsCollc, mAppGlobalParamList: appsModelsGlobalParamsList) });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 300, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(ActReturnValue.Fields.StoreTo, ActReturnValue.Fields.StoreToValue, varsCollc, mAppGlobalParamList: appsModelsGlobalParamsList) });
 
             //Default mode view
             GridViewDef defView = new GridViewDef(eGridView.NonSimulation.ToString());
@@ -1499,11 +1500,13 @@ namespace Ginger.Actions
                 if (ds.Name == cmbDataSourceName.SelectedValue.ToString())
                 {
                     mDataSourceName = cmbDataSourceName.SelectedValue.ToString();
-                    if (ds.FilePath.StartsWith("~"))
-                    {
-                        ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
-                        ds.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, ds.FileFullPath);
-                    }
+                    //if (ds.FilePath.StartsWith("~"))
+                    //{
+                    //    ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
+                    //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, ds.FileFullPath);
+                    //}
+                    ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
+
                     ds.Init(ds.FileFullPath);
                     List<string> dsTableNames = new List<string>();
                     mDSTableList.Clear();

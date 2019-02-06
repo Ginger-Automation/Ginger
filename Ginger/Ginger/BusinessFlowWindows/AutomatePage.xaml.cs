@@ -109,10 +109,13 @@ namespace Ginger
         {
             InitializeComponent();
 
-            if (App.BusinessFlow == null) //Not supposed to happen because now Automate is done from BF itself           
+            if (App.BusinessFlow == null)          
             {
-                App.SetDefaultBusinessFlow();
+                //App.SetDefaultBusinessFlow();
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Failed to find {0} to load into Automate page.", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)));
+                return;
             }
+
             AddRunnerListeners();
             //Ribbon
             btnRunActivity.Label = "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity);
@@ -456,6 +459,7 @@ namespace Ginger
                 }
                 App.UpdateApplicationsAgentsMapping();
                 BindEnvsCombo();
+                AddRunnerListeners();
             }
         }
 
@@ -813,6 +817,7 @@ namespace Ginger
         {
             if (e.PropertyName == nameof(App.BusinessFlow))
             {
+                StopAutomateRun();
                 SetExpanders();
                 SetGherkinOptions();
             }
@@ -979,6 +984,7 @@ namespace Ginger
                 SetAutomateTabRunnerForExecution();
 
                 mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
+                
                 RunActivity();
                 AutoLogProxy.UserOperationEnd();
             }
@@ -997,8 +1003,8 @@ namespace Ginger
         {
             App.AutomateTabGingerRunner.ProjEnvironment = App.AutomateTabEnvironment;
             App.AutomateTabGingerRunner.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
-            App.AutomateTabGingerRunner.DSList = new ObservableList<DataSourceBase>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().ListItems.ConvertAll(x => (DataSourceBase)x).ToList());
-            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<IAgent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x).ToList());
+            App.AutomateTabGingerRunner.DSList = new ObservableList<DataSourceBase>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<Agent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>());
             App.AutomateTabGingerRunner.SolutionApplications =  WorkSpace.UserProfile.Solution.ApplicationPlatforms;
 
             SetGingerRunnerSpeed();
@@ -1126,6 +1132,7 @@ namespace Ginger
             SetAutomateTabRunnerForExecution();
             App.AutomateTabGingerRunner.ResetRunnerExecutionDetails(true);
             mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
+            
         }
 
         private void EnableDisableAutomateTabGrids(bool enableGrids)

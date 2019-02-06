@@ -205,7 +205,7 @@ namespace Ginger.Run
         public ObservableList<Guid> FilterExecutionTags = new ObservableList<Guid>();
 
 
-        public ObservableList<IAgent> SolutionAgents { get; set; } = new ObservableList<IAgent>();
+        public ObservableList<Agent> SolutionAgents { get; set; } = new ObservableList<Agent>();
 
         public ObservableList<ApplicationPlatform> SolutionApplications { get; set; }
 
@@ -1055,11 +1055,13 @@ namespace Ginger.Run
                 if (DataSource == null)
                     return;
 
-                if (DataSource.FilePath.StartsWith("~"))
-                {
-                    DataSource.FileFullPath = DataSource.FilePath.Replace(@"~\", "").Replace("~", "");
-                    DataSource.FileFullPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, DataSource.FileFullPath);
-                }
+                //if (DataSource.FilePath.StartsWith("~"))
+                //{
+                //    DataSource.FileFullPath = DataSource.FilePath.Replace(@"~\", "").Replace("~", "");
+                //    DataSource.FileFullPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, DataSource.FileFullPath);
+                //}
+                DataSource.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FilePath);
+
                 DataSource.Init(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dstTables = DataSource.DSC.GetTablesList();
                 foreach(DataSourceTable dst in dstTables)
@@ -1649,6 +1651,7 @@ namespace Ginger.Run
                             }
                             catch(Exception ex)
                             {
+                                Console.WriteLine(ex.Message);
                                 string errorMessage = "";
                                 if (GNI == null)
                                 {
@@ -1915,11 +1918,15 @@ namespace Ginger.Run
 
         private GingerNodeInfo GetGingerNodeInfoForPluginAction(ActPlugIn actPlugin)
         {
+            Console.WriteLine("In GetGingerNodeInfoForPluginAction..");
+
             bool DoStartSession = false;
             bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, actPlugin.ServiceId);
             GingerNodeInfo gingerNodeInfo;
             string key = actPlugin.PluginId + "." + actPlugin.ServiceId;
-            
+
+            Console.WriteLine("Plugin Key:" + key);
+
             if (IsSessionService)
             {
                 bool found = dic.TryGetValue(key, out gingerNodeInfo);
@@ -1936,40 +1943,49 @@ namespace Ginger.Run
                 }
             }
 
-            gingerNodeInfo = GetGingerNode(actPlugin);
-
-            if (gingerNodeInfo == null)
+            // !!!!!!!!!!!!!!!!!
+            // Need to lock the grid until we get GNI
+            // temo for now we lock all
+            // TODO: improve to do it but without StartService which might be long
+            // for now it is working and safe
+            lock (WorkSpace.Instance.LocalGingerGrid)
             {
-                // call plugin to start service and wait for ready
-                WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId, actPlugin.ServiceId);
+                gingerNodeInfo = GetGingerNode(actPlugin);
 
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                while (gingerNodeInfo == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
-                {
-                    Thread.Sleep(500);
-                    gingerNodeInfo = GetGingerNode(actPlugin);
-                }
                 if (gingerNodeInfo == null)
                 {
-                    actPlugin.Error = "GNI not found, Timeout waiting for service to be available in GingerGrid";
-                    return null;
+                    // call plugin to start service and wait for ready
+                    WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId, actPlugin.ServiceId);
+
+                    Stopwatch stopwatch = Stopwatch.StartNew();
+                    while (gingerNodeInfo == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
+                    {
+                        Thread.Sleep(500);
+                        gingerNodeInfo = GetGingerNode(actPlugin);
+                    }
+                    if (gingerNodeInfo == null)
+                    {
+                        actPlugin.Error = "GNI not found, Timeout waiting for service to be available in GingerGrid";
+                        return null;
+                    }
+                }
+
+
+                if (IsSessionService)
+                {
+                    DoStartSession = true;
+                }
+                else
+                {
+                    gingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
                 }
             }
-
-            
-            if (IsSessionService)
-            {
-                DoStartSession = true;
-            }
-            else
-            {
-                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
-            }
-            
 
             // keep the proxy on agent
             GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
             GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
+
+            Console.WriteLine("Checking for DoStartSession..");
 
             //TODO: check if service is session start session only once
             if (DoStartSession)
@@ -2059,12 +2075,34 @@ namespace Ginger.Run
 
         private GingerNodeInfo GetGingerNode(ActPlugIn actPlugin)
         {
+            // TODO: create round robin algorithm or something smarter
+
+            // Menahwile we can the first ready node with least amount of actions so balance across same service
             GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
+
+            Console.WriteLine("Number of Nodes found in GingerGrid:" + gingerGrid.NodeList.Count);
+
+            foreach(GingerNodeInfo gingerNodeInfo in gingerGrid.NodeList)
+            {
+                Console.WriteLine("Name:" + gingerNodeInfo.Name);
+                Console.WriteLine("ServiceId:" + gingerNodeInfo.ServiceId);
+                Console.WriteLine("Status:" + gingerNodeInfo.Status);
+                Console.WriteLine("Host:" + gingerNodeInfo.Host);
+                Console.WriteLine("IP:" + gingerNodeInfo.IP);
+            }
+
+            Console.WriteLine("Searching for ServiceID=" + actPlugin.ServiceId);
 
             GingerNodeInfo GNI = (from x in gingerGrid.NodeList
                                     where x.ServiceId == actPlugin.ServiceId
                                          && x.Status == GingerNodeInfo.eStatus.Ready
+                                         orderby x.ActionCount
                                     select x).FirstOrDefault();
+
+            if (GNI is null)
+            {
+                Console.WriteLine("GNI is null");
+            }
 
             return GNI;
         }
@@ -2925,10 +2963,10 @@ namespace Ginger.Run
                 }
                 PostScopeVariableHandling(activity.Variables);
                 
-                    NotifyActivityEnd(activity);
+                NotifyActivityEnd(activity);
                
                 mLastExecutedActivity = activity;
-                GiveUserFeedback();                
+                GiveUserFeedback();
 
                 // handling ActivityGroup execution 
                 if (currentActivityGroup != null)
@@ -3100,7 +3138,10 @@ namespace Ginger.Run
                     else
                         return false;//can't do continue
                     if (mExecutedActivityWhenStopped != null && mExecutedBusinessFlowWhenStopped.Activities.Contains(mExecutedActivityWhenStopped))
+                    {
                         CurrentBusinessFlow.CurrentActivity = mExecutedActivityWhenStopped;
+                        CurrentBusinessFlow.ExecutionLogActivityCounter--;
+                    }
                     else
                         return false;//can't do continue
                     if (mExecutedActionWhenStopped != null && mExecutedActivityWhenStopped.Acts.Contains(mExecutedActionWhenStopped))
@@ -3217,7 +3258,7 @@ namespace Ginger.Run
                 //Start execution
                 if (doContinueRun == false)
                 {
-                    CurrentBusinessFlow.ExecutionLogActivityCounter = 0;
+                    CurrentBusinessFlow.ExecutionLogActivityCounter = 1;
                     // ((ExecutionLogger)ExecutionLogger).BusinessFlowStart(CurrentBusinessFlow);
                 }
 
@@ -3815,7 +3856,7 @@ namespace Ginger.Run
 
                     //Map agent to the application
                     ApplicationPlatform ap = null;
-                    if (CurrentSolution.ApplicationPlatforms != null)
+                    if (CurrentSolution!= null && CurrentSolution.ApplicationPlatforms != null)
                     {
                         ap = CurrentSolution.ApplicationPlatforms.Where(x => x.AppName == ag.AppName).FirstOrDefault();
                     }

@@ -128,10 +128,13 @@ namespace Ginger.Actions
                 System.IO.File.Copy(FileName, destFile, true);
                 QueryFile.ValueTextBox.Text = @"~\Documents\SQL\" + System.IO.Path.GetFileName(destFile);
             }
-            if (FileName != "" && File.Exists(FileName.Replace(@"~\", SolutionFolder)))
+            //if (FileName != "" && File.Exists(FileName.Replace(@"~\", SolutionFolder)))
+            if (FileName != "" && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName)))
             {   
-                mValidationDB.QueryParams.Clear();                
-                string[] script = File.ReadAllLines(FileName.Replace(@"~\",SolutionFolder));                
+                mValidationDB.QueryParams.Clear();
+                //string[] script = File.ReadAllLines(FileName.Replace(@"~\",SolutionFolder));  
+                string[] script = File.ReadAllLines(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName));
+
                 parseScriptHeader(script);               
                 if (mValidationDB.QueryParams.Count > 0)
                     QueryParamsPanel.Visibility = Visibility.Visible;
@@ -265,6 +268,16 @@ namespace Ginger.Actions
                 {
                     KeySpaceComboBox.Items.Add(s);
                 }
+            }else if (db.DBType == Database.eDBTypes.Couchbase)
+            {
+                NoSqlBase NoSqlDriver = null;
+                NoSqlDriver = new GingerCouchbase(db);
+
+                List<string> keyspace = NoSqlDriver.GetKeyspaceList();
+                foreach (string s in keyspace)
+                {
+                    KeySpaceComboBox.Items.Add(s);
+                }
             }
         }
 
@@ -276,10 +289,14 @@ namespace Ginger.Actions
             if (db == null) return;
             string KeySpace = KeySpaceComboBox.Text;
             List<string> Tables = db.GetTablesList(KeySpace);
-                foreach (string s in Tables)
-                {
-                    TablesComboBox.Items.Add(s);
-                }
+            if (Tables == null)
+            { 
+                return;
+            }
+            foreach (string s in Tables)
+            {
+                TablesComboBox.Items.Add(s);
+            }
         }
         
         private void ColumnComboBox_DropDownOpened(object sender, EventArgs e)
@@ -298,6 +315,10 @@ namespace Ginger.Actions
                 table = TablesComboBox.Text;
             }
             List<string> Columns = db.GetTablesColumns(table);
+            if (Columns == null)
+            {
+                return;
+            }                
             foreach (string s in Columns)
             {
                 ColumnComboBox.Items.Add(s);

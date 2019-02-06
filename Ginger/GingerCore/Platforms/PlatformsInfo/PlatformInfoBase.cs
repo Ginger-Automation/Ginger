@@ -50,6 +50,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         public abstract List<ActUIElement.eElementAction> GetPlatformUIClickTypeList();
         public abstract List<ActUIElement.eElementDragDropType> GetPlatformDragDropTypeList();
 
+        public abstract ObservableList<ElementLocator> GetLearningLocators();
         public static PlatformInfoBase GetPlatformImpl(ePlatformType Platform)
         {
             switch (Platform)

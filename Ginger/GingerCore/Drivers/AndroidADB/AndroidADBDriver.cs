@@ -1381,7 +1381,7 @@ namespace GingerCore.Drivers.AndroidADB
             //identify by X,Y as last option 
             elemntAct.ElementLocateBy = eLocateBy.ByXY;
 
-            elemntAct.SetLocateByXYValues(pointOnMobile_X, pointOnMobile_Y);            
+            elemntAct.SetLocateByXYValues(pointOnMobile_X, pointOnMobile_Y, elemntAct, nameof(elemntAct.ElementLocateValue));            
 
             return elemntAct;                       
         }
@@ -1600,6 +1600,11 @@ namespace GingerCore.Drivers.AndroidADB
         }
 
         public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartSpying()
         {
             throw new NotImplementedException();
         }

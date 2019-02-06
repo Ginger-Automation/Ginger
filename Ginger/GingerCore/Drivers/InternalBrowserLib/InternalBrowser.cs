@@ -1326,5 +1326,10 @@ namespace GingerCore.Drivers.InternalBrowserLib
         {
             throw new NotImplementedException();
         }
+
+        public void StartSpying()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

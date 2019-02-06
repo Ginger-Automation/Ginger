@@ -311,13 +311,13 @@ namespace GingerCore.Actions
                             //else
                             //{
 
-                            if (sPCPath.StartsWith(@"~\"))
-                            {
+                            //if (sPCPath.StartsWith(@"~\"))
+                            //{
+                            //    sPCPath = System.IO.Path.Combine(this.SolutionFolder, sPCPath.Remove(0, 2));
+                            //}
+                            sPCPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(sPCPath);
 
-
-                                sPCPath = System.IO.Path.Combine(this.SolutionFolder, sPCPath.Remove(0, 2));
-                            }
-                            sPCPath=sPCPath.Replace(Environment.NewLine, "");
+                            sPCPath =sPCPath.Replace(Environment.NewLine, "");
                             
                             //}
 
@@ -365,12 +365,12 @@ namespace GingerCore.Actions
                                 UnixTargetFilePath +="/";
                             }
 
-                            if (sPCPath.StartsWith(@"~\"))
-                             {
+                            //if (sPCPath.StartsWith(@"~\"))
+                            //{
+                            //    sPCPath = System.IO.Path.Combine(this.SolutionFolder, sPCPath.Remove(0, 2));
+                            //}
+                            sPCPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(sPCPath);
 
-
-                                 sPCPath = System.IO.Path.Combine(this.SolutionFolder, sPCPath.Remove(0,2));
-                             }
                             if (!IsDir(sPCPath))
 	                        {
                                 using (var f = File.OpenRead(sPCPath))

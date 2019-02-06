@@ -24,7 +24,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using Oracle.ManagedDataAccess.Client;
 using System.ComponentModel;
 using Microsoft.Win32;
 using System.Reflection;
@@ -33,7 +32,6 @@ using GingerCore.DataSource;
 using GingerCore.NoSqlBase;
 using MySql.Data.MySqlClient;
 using Amdocs.Ginger.Common.InterfacesLib;
-
 namespace GingerCore.Environments
 {
     public class Database : RepositoryItemBase, IDatabase
@@ -48,6 +46,7 @@ namespace GingerCore.Environments
             Cassandra,
             PostgreSQL,
             MySQL,
+            Couchbase,
         }
 
         public enum eConfigType
@@ -317,7 +316,7 @@ namespace GingerCore.Environments
 
             try
             {
-                
+
                 switch (DBType)
                 {
                     case eDBTypes.MSSQL:
@@ -330,10 +329,13 @@ namespace GingerCore.Environments
                         //Try Catch for Connecting DB Which having Oracle Version Less then 10.2                         
                         try
                         {
-                            OracleConnection oc = new OracleConnection();
-                            oc.ConnectionString = connectConnectionString;
-                            oc.Open();
-                            oConn = oc;
+                            var DLL = Assembly.LoadFile(AppDomain.CurrentDomain.BaseDirectory + @"Oracle.ManagedDataAccess.dll");
+                            var class1Type = DLL.GetType("Oracle.ManagedDataAccess.Client.OracleConnection");
+                            object[] param = new object[1];
+                            param[0] = connectConnectionString;
+                            dynamic c = Activator.CreateInstance(class1Type, param);
+                            oConn = (DbConnection)c;
+                            oConn.Open();
                             break;
                         }
                         catch (Exception e)
@@ -404,6 +406,16 @@ namespace GingerCore.Environments
                         isConnection= CassandraDriver.Connect();
                         if (isConnection == true)
                             LastConnectionUsedTime = DateTime.Now;
+                        return true;
+                        break;
+                    case eDBTypes.Couchbase:
+                        GingerCouchbase CouchbaseDriver = new GingerCouchbase(this);
+                        bool isConnectionCB;
+                        isConnectionCB = CouchbaseDriver.Connect();
+                        if (isConnectionCB == true)
+                        { 
+                            LastConnectionUsedTime = DateTime.Now;
+                        }
                         return true;
                         break;
 
@@ -477,6 +489,11 @@ namespace GingerCore.Environments
                         NoSqlBase.NoSqlBase NoSqlDriver = null;
                         NoSqlDriver = new GingerCassandra(this);
                         rc = NoSqlDriver.GetTableList(Keyspace);
+                    } else if (DBType == Database.eDBTypes.Couchbase)
+                    {
+                        NoSqlBase.NoSqlBase NoSqlDriver = null;
+                        NoSqlDriver = new GingerCouchbase(this);
+                        rc = NoSqlDriver.GetTableList(Keyspace);
                     }
                     else
                     {
@@ -529,6 +546,11 @@ namespace GingerCore.Environments
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerCassandra(this);
+                rc = NoSqlDriver.GetColumnList(table);
+            }else if (DBType == Database.eDBTypes.Couchbase)
+            {
+                NoSqlBase.NoSqlBase NoSqlDriver = null;
+                NoSqlDriver = new GingerCouchbase(this);
                 rc = NoSqlDriver.GetColumnList(table);
             }
             else 

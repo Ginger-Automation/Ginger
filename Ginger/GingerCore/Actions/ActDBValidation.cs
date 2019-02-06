@@ -133,7 +133,7 @@ namespace GingerCore.Actions
             get
             {try
                 {
-                    if (DB.DBType == Database.eDBTypes.Cassandra)
+                    if (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase)
                         return eDatabaseTye.NoSQL;
                     else return eDatabaseTye.Relational;
                 }
@@ -274,6 +274,11 @@ namespace GingerCore.Actions
                     NoSqlDriver.PerformDBAction();
                    
                     break;
+                case Database.eDBTypes.Couchbase:
+                    NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
+                    NoSqlDriver.PerformDBAction();
+
+                    break;
             }
         }
 
@@ -317,7 +322,9 @@ namespace GingerCore.Actions
             {
                 if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
-                    string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
+                    //string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
+                    string filePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
+
                     FileInfo scriptFile = new FileInfo(filePath);
                    SQL = scriptFile.OpenText().ReadToEnd();
                 }
@@ -357,7 +364,9 @@ namespace GingerCore.Actions
             {
                 if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
-                    string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
+                    //string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
+                    string filePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
+
                     FileInfo scriptFile = new FileInfo(filePath);
                     SQL = scriptFile.OpenText().ReadToEnd();
                 }

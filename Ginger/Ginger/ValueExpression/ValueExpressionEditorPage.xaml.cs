@@ -441,11 +441,13 @@ namespace Ginger
 
             foreach (DataSourceBase ds in DataSources)
             {
-                if (ds.FilePath.StartsWith("~"))
-                {
-                    ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
-                    ds.FileFullPath = Path.Combine( WorkSpace.UserProfile.Solution.Folder , ds.FileFullPath);
-                }
+                //if (ds.FilePath.StartsWith("~"))
+                //{
+                //    ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
+                //    ds.FileFullPath = Path.Combine( WorkSpace.UserProfile.Solution.Folder , ds.FileFullPath);
+                //}
+                ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
+
                 ds.Init(ds.FileFullPath);
                 TreeViewItem tviDataSource = new TreeViewItem();
                 if (ds.DSType == DataSourceBase.eDSType.MSAccess)

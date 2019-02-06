@@ -101,7 +101,9 @@ namespace GingerCore.Actions.XML
                 string txt = PrepareFile();
 
                 // Write to out file
-                string FileName = TargetFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
+                //string FileName = TargetFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
+                string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TargetFileName.ValueForDriver);
+
                 System.IO.File.WriteAllText(FileName, txt);
 
                 WaitForProcessedFile();
@@ -110,7 +112,9 @@ namespace GingerCore.Actions.XML
 
             private void ReadProcessedFile()
             {
-                string FileName = ProcessedFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
+                //string FileName = ProcessedFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
+                string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ProcessedFileName.ValueForDriver);
+
                 string xml = System.IO.File.ReadAllText(FileName);
                 XMLProcessor XMLP = new XMLProcessor();
                 XMLP.ParseToReturnValues(xml, this);
@@ -118,9 +122,10 @@ namespace GingerCore.Actions.XML
 
             private void WaitForProcessedFile()
             {
-                string FileName = ProcessedFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
+                //string FileName = ProcessedFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
+                string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ProcessedFileName.ValueForDriver);
 
-                while (!System.IO.File.Exists(FileName))
+            while (!System.IO.File.Exists(FileName))
                 {
                     Thread.Sleep(100);
                     General.DoEvents();
@@ -129,8 +134,10 @@ namespace GingerCore.Actions.XML
 
             private string PrepareFile()
             {
-                string FileName = TemplateFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
-                string txt = System.IO.File.ReadAllText(FileName);
+                //string FileName = TemplateFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
+                string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TemplateFileName.ValueForDriver);
+
+            string txt = System.IO.File.ReadAllText(FileName);
                 foreach (ActInputValue AIV in DynamicElements)
                 {
                     txt = txt.Replace(AIV.Param, AIV.ValueForDriver);
