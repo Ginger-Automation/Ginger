@@ -49,15 +49,15 @@ jobs:
   - task: NuGetCommand@2
     inputs:
       command: restore  
-      restoreSolution: '$(solution)'       
-    displayName: Restore Ginger Solution Nuget Packages
+      restoreSolution: '$(**\GingerCoreCommonTest\GingerCoreCommonTest.csproj)'       
+    displayName: Restore Ginger .net core projects Nuget Packages
   
 # ------------------------------------------------------------------------------------------------------
 # Build Ginger DLLs .Net Core only
 # ------------------------------------------------------------------------------------------------------
 
-  - script: dotnet build # Include additional options such as --configuration to meet your need  
-    displayName: Build Ginger DLLs
+  #- script: dotnet build '$(**\GingerCoreCommonTest\GingerCoreCommonTest.csproj)'
+  #  displayName: Build Ginger DLLs
 
 # ------------------------------------------------------------------------------------------------------
 # Run Unit Test Level 1,2,3 for .NET Core testDLLs
@@ -65,16 +65,18 @@ jobs:
     
     # TODO: run unit test by level 1,2,3 continue on sucess only
 
-  - task: VSTest@2
-    displayName: 'Run Unit tests Level for .Net Core test DLLs'
-    inputs:      
-      testAssemblyVer2: $(testDLLs)
-      runInParallel: True
-      codeCoverageEnabled: True
+  #- task: VSTest@2
+  #  displayName: 'Run Unit tests Level for .Net Core test DLLs'
+  #  inputs:      
+  #    testAssemblyVer2: $(testDLLs)
+  #    runInParallel: True
+  #    codeCoverageEnabled: True
+
   - task: DotNetCoreCLI@2
+    displayName: 'Run Unit tests Level for .Net Core test DLLs'
     inputs:
       command: test
-      projects: '**/*Test/*.csproj'
+      projects: '**/GingerCoreCommonTest/GingerCoreCommonTest.csproj'
       arguments: '--configuration $(buildConfiguration)  --collect "Code coverage"'
 
   
