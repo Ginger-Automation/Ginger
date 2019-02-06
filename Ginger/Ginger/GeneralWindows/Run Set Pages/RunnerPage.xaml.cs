@@ -565,6 +565,10 @@ namespace Ginger.Run
 
             ExecutionLogger EL = (ExecutionLogger)mRunner.RunListeners.Where(x => x.GetType() == typeof(ExecutionLogger)).FirstOrDefault();
             EL.Configuration = ELC;
+            EL.GingerData.GingerName = mRunner.Name;
+            EL.GingerData.GingerEnv = mRunner.ProjEnvironment.Name;
+            EL.GingerData.Seq = 1;
+            EL.GingerData.Ginger_GUID = mRunner.Guid;
             await mRunner.RunRunnerAsync();
 
             GingerCore.General.DoEvents();   //needed?                 

@@ -115,10 +115,7 @@ namespace Ginger.Run
                         mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
                     }
                 mConfiguration = value;
-                if (mConfiguration.ExecutionLoggerConfigurationExecResultsFolder.StartsWith(@"~\"))
-                {
-                    mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder.Replace(@"~\", WorkSpace.Instance.Solution.Folder);
-                }
+
                 if (!CheckOrCreateDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder))
                 {
                     mConfiguration.ExecutionLoggerConfigurationExecResultsFolder= mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\"; 
@@ -192,14 +189,18 @@ namespace Ginger.Run
         private static void CleanDirectory(string folderName, bool isCleanFile= true)
         {
             System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(folderName);
-            if (isCleanFile)
-                foreach (System.IO.FileInfo file in di.GetFiles())
-                {
-                    file.Delete();
-                }
-            foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
+
+            if (di.Exists)
             {
-                dir.Delete(true);
+                if (isCleanFile)
+                    foreach (System.IO.FileInfo file in di.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
+                {
+                    dir.Delete(true);
+                }
             }
         }
         private static void CreateTempDirectory()
@@ -233,7 +234,7 @@ namespace Ginger.Run
                 else
                 {
                     //If the path configured by user in the logger is not accessible, we set the logger path to default path
-                    logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults\");
+                    logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults");
                     System.IO.Directory.CreateDirectory(logsFolder);
                     
                     WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
@@ -249,6 +250,7 @@ namespace Ginger.Run
 
         private static Boolean CheckOrCreateDirectory(string directoryPath)
         {
+            directoryPath=directoryPath.Replace(@"~/", WorkSpace.Instance.Solution.Folder);
             try
             {
                 if (System.IO.Directory.Exists(directoryPath))
@@ -269,6 +271,11 @@ namespace Ginger.Run
 
         private static void SaveObjToJSonFile(object obj, string FileName, bool toAppend = false)
         {
+            string mDirectoryName = Path.GetDirectoryName(FileName);
+            if (!Directory.Exists(mDirectoryName))
+            {
+                Directory.CreateDirectory(mDirectoryName);
+            }
             //TODO: for speed we can do it async on another thread...
             using (StreamWriter SW = new StreamWriter(FileName, toAppend))
             using (JsonWriter writer = new JsonTextWriter(SW))
@@ -535,7 +542,7 @@ namespace Ginger.Run
                 else
                 {
                     // use Path.cOmbine
-                    SaveObjToJSonFile(BFR, ExecutionLogfolder + businessFlow.ExecutionLogFolder + @"\BusinessFlow.txt");
+                    SaveObjToJSonFile(BFR, Path.Combine(new string[]{ ExecutionLogfolder,businessFlow.ExecutionLogFolder,@"BusinessFlow.txt"}));
                     businessFlow.ExecutionFullLogFolder = ExecutionLogfolder + businessFlow.ExecutionLogFolder;
                 }
                 if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
