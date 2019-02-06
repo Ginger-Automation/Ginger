@@ -224,7 +224,7 @@ namespace Ginger.Run
         }
         public static string GetLoggerDirectory(string logsFolder)
         {
-            logsFolder = logsFolder.Replace(@"~", WorkSpace.Instance.Solution.Folder);
+            logsFolder = logsFolder.Replace(@"~/", WorkSpace.Instance.Solution.Folder);
             try
             {
                 if(CheckOrCreateDirectory(logsFolder))
@@ -542,7 +542,7 @@ namespace Ginger.Run
                 else
                 {
                     // use Path.cOmbine
-                    SaveObjToJSonFile(BFR, Path.Combine(new string[]{ ExecutionLogfolder,businessFlow.ExecutionLogFolder,@"BusinessFlow.txt"}));
+                    SaveObjToJSonFile(BFR, Path.Combine(new string[]{ ExecutionLogfolder,businessFlow.ExecutionLogFolder==null?string.Empty: businessFlow.ExecutionLogFolder, @"BusinessFlow.txt"}));
                     businessFlow.ExecutionFullLogFolder = ExecutionLogfolder + businessFlow.ExecutionLogFolder;
                 }
                 if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
