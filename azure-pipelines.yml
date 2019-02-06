@@ -59,22 +59,9 @@ jobs:
   - task: NuGetCommand@2
     inputs:
       command: restore  
-      restoreSolution: '$(solution)'  
-     # restoreSolution: 'D:\a\1\s\Ginger\GingerCoreCommonTest\GingerCoreCommonTest.csproj'  
-      # configuration: '$(BuildConfiguration)'
+      restoreSolution: '$(solution)'       
     displayName: Restore Ginger Solution Nuget Packages
   
-  #- task: VSBuild@1
-  #  inputs:
-  #    solution: 'D:\a\1\s\Ginger\GingerUtilsTest\GingerUtilsTest.csproj'          
-  #    # platform: 'x86'
-  #    # clean: true
-  #  #  restoreNugetPackages: true
-  #    # msbuildArchitecture: 'x86' # Optional. Options: x86, x64
-  #    # configuration: '$(buildConfiguration)'
-  #  displayName: Build GingerUtilsTest Project
-
-
 # ------------------------------------------------------------------------------------------------------
 # Build Ginger Solution
 # ------------------------------------------------------------------------------------------------------
@@ -88,13 +75,15 @@ jobs:
       msbuildArgs: /NoLogo /m      
       # /TargetFrameworkVersion /TargetCompactFramework
       # msbuildArchitecture: 'x86' # Optional. Options: x86, x64
-      # TreatWarningsAsErrors / NoWarn   -- do not aloow warnings
+      # TreatWarningsAsErrors / NoWarn   -- do not allow warnings - do it later when we have zero warnings
     displayName: Build Ginger solution
 
 # ------------------------------------------------------------------------------------------------------
-# Run Unit Test Level 1 for .NET Core testDLLs: 
+# Run Unit Test Level 1,2,3 for .NET Core testDLLs
 # ------------------------------------------------------------------------------------------------------
     
+    # TODO: run unit test by level 1,2,3 continue on sucess only
+
   - task: VSTest@2
     displayName: 'Run Unit tests Level for .Net Core test DLLs'
     inputs:      
@@ -119,6 +108,8 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Run Unit Test Level 1 for .NET Framework
 # ------------------------------------------------------------------------------------------------------
+
+# We run .Net Framework tests 
 
   - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" 
     displayName: UnitTest tests
