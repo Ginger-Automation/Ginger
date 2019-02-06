@@ -116,7 +116,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             if (mPomElementsPage == null)
             {
-                mPomElementsPage = new PomElementsPage(mWizard.mPOM, eElementsContext.AllDeltaElements, mWizard.mPOMCurrentElements);
+                mPomElementsPage = new PomElementsPage(mWizard.mPOM, eElementsContext.DeltaElements, mWizard.mPOMCurrentElements);
                 xPomElementsMappingPageFrame.Content = mPomElementsPage;
             }
         }

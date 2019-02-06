@@ -82,7 +82,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             //copy element and convert it to Delta
             DeltaElementInfo deltaElement = (DeltaElementInfo)element.CreateCopy(false);//keeping original GUI            
-            
+
             //convert Locators to Delta
             List<DeltaElementLocator> deltaLocators = deltaElement.Locators.Cast<DeltaElementLocator>().ToList();
             deltaElement.Locators.Clear();
@@ -116,15 +116,16 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     {
                         mPOM.MappedUIElements.Add(elementToUpdate.LatestMatchingElementInfo);
                     }
-                    else if ((ApplicationPOMModel.eElementGroup)elementToUpdate.ElementGroup == ApplicationPOMModel.eElementGroup.Unmapped)
+                    else
                     {
                         mPOM.UnMappedUIElements.Add(elementToUpdate.LatestMatchingElementInfo);
                     }
                     continue;
                 }
 
-                ObservableList<ElementInfo> originalGroup;
-                ElementInfo originalElementInfo = mPOM.MappedUIElements.Where(x => x.Guid == elementToUpdate.Guid).FirstOrDefault();
+                ElementInfo originalElementInfo = null;
+                ObservableList<ElementInfo> originalGroup = null;
+                originalElementInfo = mPOM.MappedUIElements.Where(x => x.Guid == elementToUpdate.Guid).FirstOrDefault();
                 if (originalElementInfo != null)
                 {
                     originalGroup = mPOM.MappedUIElements;
@@ -133,6 +134,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 {
                     originalElementInfo = mPOM.UnMappedUIElements.Where(x => x.Guid == elementToUpdate.Guid).FirstOrDefault();
                     originalGroup = mPOM.UnMappedUIElements;
+                }
+                if (originalElementInfo == null || originalGroup == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("POM Delta- failed to find the element '{0}' in POM original existing items", elementToUpdate.ElementName));
+                    continue;
                 }
 
                 //Deleting deleted elements
@@ -144,105 +150,72 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
                 //Replacing Modified elements
                 if (elementToUpdate.DeltaStatus == eDeltaStatus.Changed)
-                {                    
+                {
                     ElementInfo latestMatchingElement = elementToUpdate.LatestMatchingElementInfo;
                     //copy possible customized fields from original
+                    latestMatchingElement.Guid = originalElementInfo.Guid;
                     latestMatchingElement.ElementName = originalElementInfo.ElementName;
-
-                }
-
-
-                //Deleting deleted locators
-                List<ElementLocator> LocatorrsToRemove = elementToUpdate.Locators.Where(x => x.DeltaStatus == ElementInfo.eDeltaStatus.Deleted).ToList();
-                for (int i = 0; i < LocatorrsToRemove.Count; i++)
-                {
-                    elementToUpdate.Locators.Remove(LocatorrsToRemove[i]);
-                }
-
-                //Deleting deleted properties
-                List<ControlProperty> PropertiesToRemove = elementToUpdate.Properties.Where(x => ((DeltaControlProperty)x).DeltaStatus == ElementInfo.eDeltaStatus.Deleted).ToList();
-                for (int i = 0; i < PropertiesToRemove.Count; i++)
-                {
-                    elementToUpdate.Properties.Remove(PropertiesToRemove[i]);
-                }
-
-                //Updating modified locators
-                foreach (ElementLocator EL in elementToUpdate.Locators)
-                {
-                    if (EL.DeltaStatus == ElementInfo.eDeltaStatus.Modified)
+                    latestMatchingElement.Description = originalElementInfo.Description;
+                    //Locators customizations
+                    foreach (ElementLocator originalLocator in originalElementInfo.Locators)
                     {
-                        EL.LocateValue = EL.UpdatedValue;
+                        int originalLocatorIndex = originalLocatorIndex = originalElementInfo.Locators.IndexOf(originalLocator);
+
+                        if (originalLocator.IsAutoLearned)
+                        {
+                            ElementLocator matchingLatestLocatorType = latestMatchingElement.Locators.Where(x => x.LocateBy == originalLocator.LocateBy).FirstOrDefault();
+                            if (matchingLatestLocatorType != null)
+                            {
+                                matchingLatestLocatorType.Active = originalLocator.Active;
+                                if (originalLocatorIndex <= originalElementInfo.Locators.Count)
+                                {
+                                    latestMatchingElement.Locators.Move(latestMatchingElement.Locators.IndexOf(matchingLatestLocatorType), originalLocatorIndex);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (originalLocatorIndex <= originalElementInfo.Locators.Count)
+                            {
+                                latestMatchingElement.Locators.Insert(originalLocatorIndex, originalLocator);
+                            }
+                            else
+                            {
+                                latestMatchingElement.Locators.Add(originalLocator);
+                            }
+                        }
+                    }
+                    //enter it to POM elements instead of existing one
+                    int originalItemIndex = originalGroup.IndexOf(originalElementInfo);
+                    originalGroup.Remove(originalElementInfo);
+                    if ((ApplicationPOMModel.eElementGroup)elementToUpdate.ElementGroup == ApplicationPOMModel.eElementGroup.Mapped)
+                    {
+                        if (originalItemIndex <= mPOM.MappedUIElements.Count)
+                        {
+                            mPOM.MappedUIElements.Insert(originalItemIndex, latestMatchingElement);
+                        }
+                        else
+                        {
+                            mPOM.MappedUIElements.Add(latestMatchingElement);
+                        }
+                    }
+                    else
+                    {
+                        if (originalItemIndex <= mPOM.UnMappedUIElements.Count)
+                        {
+                            mPOM.UnMappedUIElements.Insert(originalItemIndex, latestMatchingElement);
+                        }
+                        else
+                        {
+                            mPOM.UnMappedUIElements.Add(latestMatchingElement);
+                        }
                     }
                 }
 
-                //Updating modified properties
-                foreach (ControlProperty CP in elementToUpdate.Properties)
-                {
-                    if (((DeltaControlProperty)CP).DeltaStatus == ElementInfo.eDeltaStatus.Modified)
-                    {
-                        CP.Value = ((DeltaControlProperty)CP).UpdatedValue;
-                    }
-                }
+                //TODO: to allow move of unchanged elements to diffrent group
 
-                //Updating original element
-                ReplaceOldElementWithNewOnce(elementToUpdate);
-            }
-
-            //Performing replace to all equals because ElementGroup can be changed
-            List<ElementInfo> EqualElementsToUpdate = mPOMCurrentElements.Where(x => x.DeltaStatus == ElementInfo.eDeltaStatus.Unchanged).ToList();
-            foreach (ElementInfo EI in EqualElementsToUpdate)
-            {
-                //Updating original element
-                ReplaceOldElementWithNewOnce(EI);
             }
         }
 
-        private void ReplaceOldElementWithNewOnce(ElementInfo EI)
-        {
-            bool MappedOriginaly = false;
-            ElementInfo CorrespondingMappedElementInfo = mPOM.MappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault();
-
-            if (CorrespondingMappedElementInfo != null)
-            {
-                MappedOriginaly = true;
-                int mappedElementIndex = mPOM.MappedUIElements.IndexOf(CorrespondingMappedElementInfo);
-                mPOM.MappedUIElements.Remove(CorrespondingMappedElementInfo);
-                InsertElementPerGroup(EI, mappedElementIndex, MappedOriginaly);
-            }
-            else
-            {
-                CorrespondingMappedElementInfo = mPOM.UnMappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault();
-                int unMappedElementIndex = mPOM.UnMappedUIElements.IndexOf(CorrespondingMappedElementInfo);
-                mPOM.UnMappedUIElements.Remove(CorrespondingMappedElementInfo);
-                InsertElementPerGroup(EI, unMappedElementIndex, MappedOriginaly);
-            }
-        }
-
-        private void InsertElementPerGroup(ElementInfo EI, int Index,bool MappedOriginaly)
-        {
-            if ((ApplicationPOMModel.eElementGroup)EI.ElementGroup == ApplicationPOMModel.eElementGroup.Mapped)
-            {
-                if (MappedOriginaly)
-                {
-                    mPOM.MappedUIElements.Insert(Index, EI);
-                }
-                else
-                {
-                    mPOM.MappedUIElements.Add(EI);
-                }
-
-            }
-            else
-            {
-                if (!MappedOriginaly)
-                {
-                    mPOM.UnMappedUIElements.Insert(Index, EI);
-                }
-                else
-                {
-                    mPOM.UnMappedUIElements.Add(EI);
-                }
-            }
-        }
     }
 }

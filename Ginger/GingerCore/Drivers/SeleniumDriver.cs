@@ -6834,14 +6834,13 @@ namespace GingerCore.Drivers
                             EI.ElementStatus = ElementInfo.eElementStatus.Passed;
                         }
                         else
-                        {
-                            EI.DeltaStatus = ElementInfo.eDeltaStatus.Deleted;
+                        {                            
                             EI.ElementStatus = ElementInfo.eElementStatus.Failed;
                         }
                     }
                     catch (Exception ex)
                     {
-                        EI.DeltaStatus = ElementInfo.eDeltaStatus.Deleted;
+                        EI.ElementStatus = ElementInfo.eElementStatus.Failed;
                     }
                 }
             }
@@ -6853,11 +6852,9 @@ namespace GingerCore.Drivers
             }
         }
 
-        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        public ElementInfo GetMatchingElement(ElementInfo element, ObservableList<ElementInfo> existingElemnts)
         {
-
-            ElementInfo OriginalElementInfo = originalElements.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Deleted && x.ElementObject.Equals(latestElement.ElementObject)).FirstOrDefault();
-
+            ElementInfo OriginalElementInfo = existingElemnts.Where(x => x.ElementObject.Equals(element.ElementObject)).FirstOrDefault();
             return OriginalElementInfo;
         }
 
