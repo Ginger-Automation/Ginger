@@ -12,9 +12,7 @@ namespace Ginger.ApplicationModelsLib
             if(value != null)
             {
                 eElementType eType = (eElementType)value;
-                if (eType == eElementType.TextBox || eType == eElementType.Text ||
-                    eType == eElementType.ComboBox || eType == eElementType.ComboBoxOption ||
-                    eType == eElementType.List || eType == eElementType.ListItem)
+                if (ElementInfo.PossibleValuesSupportedFortype(eType))
                 {
                     isEnabled = true;
                 }

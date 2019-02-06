@@ -4391,9 +4391,7 @@ namespace GingerCore.Drivers
 
             if (el != null)
             {
-                if (ElementInfo.ElementTypeEnum == eElementType.TextBox || ElementInfo.ElementTypeEnum == eElementType.Text ||
-                    ElementInfo.ElementTypeEnum == eElementType.ComboBox || ElementInfo.ElementTypeEnum == eElementType.ComboBoxOption ||
-                    ElementInfo.ElementTypeEnum == eElementType.List || ElementInfo.ElementTypeEnum == eElementType.ListItem)
+                if (ElementInfo.PossibleValuesSupportedFortype(ElementInfo.ElementTypeEnum))
                 {
                     foreach (IWebElement val in el.FindElements(By.XPath("*")))
                     {

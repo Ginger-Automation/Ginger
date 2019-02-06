@@ -291,9 +291,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 List<string> lstParName = new List<string>();
                 foreach (var prms in mElements)
                 {
-                    if (prms.ElementTypeEnum == eElementType.TextBox || prms.ElementTypeEnum == eElementType.Text ||
-                        prms.ElementTypeEnum == eElementType.ComboBox || prms.ElementTypeEnum == eElementType.ComboBoxOption ||
-                        prms.ElementTypeEnum == eElementType.List || prms.ElementTypeEnum == eElementType.ListItem)
+                    if (ElementInfo.PossibleValuesSupportedFortype(prms.ElementTypeEnum))
                     {
                         string parName = prms.ItemName.Replace("\r", "").Split('\n')[0];
                         int count = lstParName.Where(p => p == parName).Count();

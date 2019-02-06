@@ -200,6 +200,9 @@ namespace Amdocs.Ginger.Repository
         /// </summary>
         public string DataType { get; set; }
 
+        /// <summary>
+        /// Gets and sets ElementName for title on modeloption page
+        /// </summary>
         public string ElementName
         {
             get
@@ -208,6 +211,9 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        /// <summary>
+        /// OnPropertyChanged Event Handler to raise the dirtystatus
+        /// </summary>
         public void PropertyChangedEventHandler()
         {
             OnPropertyChanged(nameof(AppModelParameter.OptionalValuesString));

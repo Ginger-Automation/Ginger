@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.Enums;
 using System.Text;
+using Amdocs.Ginger.Common.Repository;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
@@ -31,7 +32,7 @@ namespace Amdocs.Ginger.Common.UIElement
     /// </summary>
     /// 
     // We can persist ElementInfo - for example when saving DOR Page UIElements, but when used in Window Explorer there is no save
-    public class ElementInfo : RepositoryItemBase
+    public class ElementInfo : RepositoryItemBase, IParentOptionalValuesObject
     {
         [IsSerializedForLocalRepository]
         public ObservableList<ElementLocator> Locators = new ObservableList<ElementLocator>();
@@ -366,6 +367,46 @@ namespace Amdocs.Ginger.Common.UIElement
             return mData;
         }
 
+        /// <summary>
+        /// Gets and sets optionvalues list from modeloption page
+        /// </summary>
+        public ObservableList<OptionalValue> OptionalValuesList
+        {
+            get
+            {
+                return OptionalValuesObjectsList;
+            }
+            set
+            {
+                OptionalValuesObjectsList = value;
+            }
+        }
+
+        /// <summary>
+        /// OnPropertyChanged Event Handler to raise the dirtystatus
+        /// </summary>
+        public void PropertyChangedEventHandler()
+        {
+            OnPropertyChanged(nameof(OptionalValuesObjectsList));
+            OnPropertyChanged(nameof(OptionalValuesObjectsListAsString));
+        }
+
+        /// <summary>
+        /// This method is used to check the PossibleValues Supported for any type
+        /// </summary>
+        /// <param name="ei"></param>
+        /// <returns></returns>
+        public static bool PossibleValuesSupportedFortype(eElementType ei)
+        {
+            bool supported = false;
+            if (ei == eElementType.TextBox || ei == eElementType.Text ||
+                ei == eElementType.ComboBox || ei == eElementType.ComboBoxOption ||
+                ei == eElementType.List || ei == eElementType.ListItem)
+            {
+                supported = true;
+            }
+            return supported;
+        }
     }
 
     public enum eLocateBy

@@ -164,10 +164,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     elemLoc.Active = mWizard.AutoMapElementLocatorsList.Where(m => m.LocateBy == elemLoc.LocateBy).FirstOrDefault().Active;
                 }
                 EI.Locators = new ObservableList<ElementLocator>(orderedLocatorsList);
-
-                UpdateElementInfoName(EI);
+                                
                 if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
                 {
+                    if (ElementInfo.PossibleValuesSupportedFortype(EI.ElementTypeEnum))
+                    {
+                        UpdateElementInfoName(EI); 
+                    }
                     mWizard.POM.MappedUIElements.Add(EI);
                 }
                 else
@@ -181,6 +184,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
+        /// <summary>
+        /// This method is used to update the element name by filtering the specia characters and checking the duplicate names
+        /// </summary>
+        /// <param name="curElement"></param>
         private void UpdateElementInfoName(ElementInfo curElement)
         {
             try
@@ -192,6 +199,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     {
                         name = name.Substring(0, 60);
                     }
+
+                    int count = mWizard.POM.MappedUIElements.Where(p => p.ElementName.StartsWith(name)).Count();
+                    if (count > 0)
+                    {
+                        name += "_" + Convert.ToString(count); 
+                    }
+
                     curElement.ElementName = name;
                 }
             }
