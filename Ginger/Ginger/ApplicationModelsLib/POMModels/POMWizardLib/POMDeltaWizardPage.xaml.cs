@@ -34,9 +34,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
     {
         PomRelearnWizard mWizard;
         private ePlatformType mAppPlatform;
-        ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();
-        ObservableList<ElementInfo> mOriginalList = new ObservableList<ElementInfo>();
-        ApplicationPOMModel mPOM;
+        ObservableList<ElementInfo> mLatestPageElements = new ObservableList<ElementInfo>();
         PomElementsPage mPomElementsPage = null;
         List<eElementType> mSelectedElementTypesList = new List<eElementType>();
 
@@ -50,62 +48,18 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             if (WizardEventArgs.EventType == EventType.Init)
             {
                 mWizard = (PomRelearnWizard)WizardEventArgs.Wizard;
-                mPOM = mWizard.mOriginalPOM;
-                mElementsList.CollectionChanged += ElementsListCollectionChanged;
+                mLatestPageElements.CollectionChanged += ElementsListCollectionChanged;
                 InitilizePomElementsMappingPage();
-                mAppPlatform = WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
-                SetAutoMapElementTypes();
                 mPomElementsPage.SetAgent(mWizard.Agent);
-                PopulateDuplicatedUnienedElementsList();
-                mOriginalList = mWizard.CopiedUnienedList;
+ 
                 xReLearnButton.Visibility = Visibility.Visible;
                 Learn();
             }
         }
 
-        public void PopulateDuplicatedUnienedElementsList()
-        {
-            mWizard.CopiedUnienedList.Clear();
-            foreach (ElementInfo EI in mPOM.MappedUIElements)
-            {
-                ElementInfo DuplicatedEI = (ElementInfo)EI.CreateCopy(false);
-                DuplicatedEI.ElementGroup = ApplicationPOMModel.eElementGroup.Mapped;
-                CorrectControlPropertyTypes(DuplicatedEI);
-                mWizard.CopiedUnienedList.Add(DuplicatedEI);
-            }
-            foreach (ElementInfo EI in mPOM.UnMappedUIElements)
-            {
-                ElementInfo DuplicatedEI = (ElementInfo)EI.CreateCopy(false);
-                DuplicatedEI.ElementGroup = ApplicationPOMModel.eElementGroup.Unmapped;
-                CorrectControlPropertyTypes(DuplicatedEI);
-                mWizard.CopiedUnienedList.Add(DuplicatedEI);
-            }
-        }
-
-        private void CorrectControlPropertyTypes(ElementInfo EI)
-        {
-            ObservableList<ControlProperty> newProperties = new ObservableList<ControlProperty>();
-
-            foreach (ControlProperty property in EI.Properties)
-            {
-                if (property is POMElementProperty)
-                {
-                    return;
-                }
-                else
-                {
-                    POMElementProperty hTMLElementProperety = new POMElementProperty() { Name = property.Name, Value = property.Value };
-                    newProperties.Add(hTMLElementProperety);
-                }
-            }
-
-            EI.Properties = newProperties;
-        }
-
-
         private async void CollectOriginalElementsData()
         {
-            await Task.Run(() => mWizard.IWindowExplorerDriver.CollectOriginalElementsDataForDeltaCheck(mOriginalList));
+            await Task.Run(() => mWizard.IWindowExplorerDriver.CollectOriginalElementsDataForDeltaCheck(mWizard.mPOMAllCurrentElements));
         }
 
 
@@ -126,7 +80,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
                     await Task.Run(() => CollectOriginalElementsData());
 
-                    await Task.Run(() => mWizard.IWindowExplorerDriver.GetVisibleControls(null, mElementsList, true));
+                    await Task.Run(() => mWizard.IWindowExplorerDriver.GetVisibleControls(null, mLatestPageElements, true));
 
                     mWizard.IsLearningWasDone = true;
                     mPomElementsPage.DoEndOfRelearnElementsSorting();
@@ -167,28 +121,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             if (mPomElementsPage == null)
             {
-                mPomElementsPage = new PomElementsPage(mPOM,eElementsContext.AllDeltaElements,mWizard.CopiedUnienedList);
+                mPomElementsPage = new PomElementsPage(mWizard.mOriginalPOM, eElementsContext.AllDeltaElements,mWizard.mPOMAllCurrentElements);
                 xPomElementsMappingPageFrame.Content = mPomElementsPage;
             }
         }
 
-        private void SetAutoMapElementTypes()
-        {
-            if (mSelectedElementTypesList.Count == 0)
-            {
 
-                if (mAppPlatform == ePlatformType.Web)
-                {
-                    foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in new WebPlatform().GetPlatformElementTypesData().ToList())
-                    {
-                        if (elementTypeOperation.IsCommonElementType)
-                        {
-                            mSelectedElementTypesList.Add(elementTypeOperation.ElementType);
-                        }
-                    }
-                }
-            }
-        }
 
 
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -198,7 +136,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 
 
                 ElementInfo latestElementInfo = ((ObservableList<ElementInfo>)sender).Last();
-                ElementInfo originalElementInfo = mWizard.IWindowExplorerDriver.GetMatchingElement(latestElementInfo, mOriginalList);
+                ElementInfo originalElementInfo = mWizard.IWindowExplorerDriver.GetMatchingElement(latestElementInfo, mWizard.mPOMAllCurrentElements);
 
                 if (originalElementInfo == null)
                 {
@@ -206,7 +144,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     latestElementInfo.DeltaStatus = ElementInfo.eDeltaStatus.New;
                     latestElementInfo.ElementGroup = ApplicationPOMModel.eElementGroup.Mapped;
                     latestElementInfo.IsSelected = true;
-                    mWizard.CopiedUnienedList.Add(latestElementInfo);
+                    mWizard.mPOMAllCurrentElements.Add(latestElementInfo);
                 }
                 else
                 {
@@ -267,19 +205,19 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 ControlProperty ExistingCP = originalElelemnt.Properties.Where(x => x.Name == latestCP.Name).FirstOrDefault();
                 if (originalModifiedCP != null)
                 {
-                    ((POMElementProperty)originalModifiedCP).DeltaStatus = ElementInfo.eDeltaStatus.Modified;
+                    ((POMElementProperty)originalModifiedCP).DeltaElementProperty = ElementInfo.eDeltaStatus.Modified;
                     ((POMElementProperty)originalModifiedCP).DeltaExtraDetails = "Property value changed to: " + latestCP.Value;
                     ((POMElementProperty)originalModifiedCP).UpdatedValue = latestCP.Value;
                 }
                 else if (ExistingCP == null)
                 {
-                    ((POMElementProperty)latestCP).DeltaStatus = ElementInfo.eDeltaStatus.New;
+                    ((POMElementProperty)latestCP).DeltaElementProperty = ElementInfo.eDeltaStatus.New;
                     originalElelemnt.Properties.Add(latestCP);
                 }
                 else
                 {
 
-                    ((POMElementProperty)ExistingCP).DeltaStatus = ElementInfo.eDeltaStatus.Unchanged;
+                    ((POMElementProperty)ExistingCP).DeltaElementProperty = ElementInfo.eDeltaStatus.Unchanged;
                 }
             }
 
@@ -289,13 +227,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
                 if (latestExistedEL == null)
                 {
-                    ((POMElementProperty)originalEL).DeltaStatus = ElementInfo.eDeltaStatus.Deleted;
+                    ((POMElementProperty)originalEL).DeltaElementProperty = ElementInfo.eDeltaStatus.Deleted;
                 }
             }
 
 
             List<ElementLocator> ModifiedElementsLocatorsList = originalElelemnt.Locators.Where(x => x.DeltaStatus != ElementInfo.eDeltaStatus.Unchanged).ToList();
-            List<ControlProperty> ModifiedControlPropertiesList = originalElelemnt.Properties.Where(x => ((POMElementProperty)x).DeltaStatus != ElementInfo.eDeltaStatus.Unchanged).ToList();
+            List<ControlProperty> ModifiedControlPropertiesList = originalElelemnt.Properties.Where(x => ((POMElementProperty)x).DeltaElementProperty != ElementInfo.eDeltaStatus.Unchanged).ToList();
             if (ModifiedElementsLocatorsList.Count > 0 && ModifiedControlPropertiesList.Count > 0)
             {
                 originalElelemnt.DeltaStatus = ElementInfo.eDeltaStatus.Modified;

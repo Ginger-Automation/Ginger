@@ -10,13 +10,13 @@ namespace Amdocs.Ginger.Common.UIElement
     {
 
 
-        public eDeltaStatus DeltaStatus { get; set; }
+        public eDeltaStatus DeltaElementProperty { get; set; }
 
         public eImageType DeltaStatusIcon
         {
             get
             {
-                switch (DeltaStatus)
+                switch (DeltaElementProperty)
                 {
                     case ElementInfo.eDeltaStatus.Deleted:
                         return eImageType.Deleted;
@@ -39,7 +39,7 @@ namespace Amdocs.Ginger.Common.UIElement
         {
             get
             {
-                if (DeltaStatus == eDeltaStatus.Unchanged)
+                if (DeltaElementProperty == eDeltaStatus.Unchanged)
                 {
                     return false;
                 }

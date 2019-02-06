@@ -270,13 +270,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (mContext == PomAllElementsPage.eElementsContext.AllDeltaElements)
             {
                 view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.IsSelected), Header = "Update", WidthWeight = 50, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["FieldUpdate"] });
-                ObservableList<object> elementGroupList = new ObservableList<object>();
-                elementGroupList.Add(ApplicationPOMModel.eElementGroup.Mapped);
-                elementGroupList.Add(ApplicationPOMModel.eElementGroup.Unmapped);
 
                 List<GingerCore.General.ComboEnumItem> GroupTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(ApplicationPOMModel.eElementGroup));
 
-                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementGroup), Header = "Elements Group", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(GroupTypeList, nameof(ElementInfo.ElementGroup), true,false,string.Empty,false, GroupComboboxSelectionChanged), WidthWeight = 200 });
+                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementGroup), Header = "Elements Group", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(GroupTypeList, nameof(ElementInfo.ElementGroup), true), WidthWeight = 200 });
 
             }
 
@@ -349,15 +346,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xMainElementsGrid.Grid.SelectionChanged += Grid_SelectionChanged;
         }
 
-        private void GroupComboboxSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ElementInfo EI = (ElementInfo)xMainElementsGrid.CurrentItem;
-            if (EI != null)
-            {
-                EI.DeltaStatus = ElementInfo.eDeltaStatus.Modified;
-                EI.IsSelected = true;
-            }
-        }
+        
+
+
 
         private void ComperisonStatusFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

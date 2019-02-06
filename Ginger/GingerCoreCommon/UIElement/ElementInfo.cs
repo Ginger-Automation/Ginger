@@ -283,8 +283,9 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
-        public object mElementGroup;
+        public bool firstAssignmentOfElementGroup = true;
 
+        public object mElementGroup;
         public object ElementGroup
         {
             get
@@ -293,6 +294,19 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set
             {
+                if (!firstAssignmentOfElementGroup)
+                {
+                    if (DeltaStatus == eDeltaStatus.Unchanged)
+                    {
+                        DeltaStatus = eDeltaStatus.Modified;
+                        IsSelected = true;
+                    }
+                }
+                else
+                {
+                    firstAssignmentOfElementGroup = false;
+                }
+                
                 mElementGroup = value;
             }
         }

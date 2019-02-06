@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 
 

@@ -49,28 +49,66 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
         }
 
-        private ObservableList<ElementInfo> mCopiedUnienedList = new ObservableList<ElementInfo>();
-
-        public ObservableList<ElementInfo> CopiedUnienedList
-        {
-            get
-            {
-                return mCopiedUnienedList;
-            }
-        }
+        public ObservableList<ElementInfo> mPOMAllCurrentElements = new ObservableList<ElementInfo>();
 
 
         public PomRelearnWizard(ApplicationPOMModel POM, Agent agent)
         {
             mOriginalPOM = POM;
             mAgent = agent;
+            PopulateDuplicatedUnienedElementsList();
             AddPage(Name: "Elements Compare", Title: "Elements Compare", SubTitle: "Comparison Status of Elements with Latest", Page: new POMDeltaWizardPage());
         }
+
+
+        public void PopulateDuplicatedUnienedElementsList()
+        {
+            mPOMAllCurrentElements.Clear();
+            foreach (ElementInfo EI in mOriginalPOM.MappedUIElements)
+            {
+                ElementInfo DuplicatedEI = (ElementInfo)EI.CreateCopy(false);
+                DuplicatedEI.DeltaStatus = ElementInfo.eDeltaStatus.Unchanged;
+                DuplicatedEI.DeltaExtraDetails = ElementInfo.eDeltaExtraDetails.NA;
+                DuplicatedEI.ElementGroup = ApplicationPOMModel.eElementGroup.Mapped;
+                CorrectControlPropertyTypes(DuplicatedEI);
+                mPOMAllCurrentElements.Add(DuplicatedEI);
+            }
+            foreach (ElementInfo EI in mOriginalPOM.UnMappedUIElements)
+            {
+                ElementInfo DuplicatedEI = (ElementInfo)EI.CreateCopy(false);
+                DuplicatedEI.ElementGroup = ApplicationPOMModel.eElementGroup.Unmapped;
+                DuplicatedEI.DeltaStatus = ElementInfo.eDeltaStatus.Unchanged;
+                DuplicatedEI.DeltaExtraDetails = ElementInfo.eDeltaExtraDetails.NA;
+                CorrectControlPropertyTypes(DuplicatedEI);
+                mPOMAllCurrentElements.Add(DuplicatedEI);
+            }
+        }
+
+        private void CorrectControlPropertyTypes(ElementInfo EI)
+        {
+            ObservableList<ControlProperty> newProperties = new ObservableList<ControlProperty>();
+
+            foreach (ControlProperty property in EI.Properties)
+            {
+                if (property is POMElementProperty)
+                {
+                    return;
+                }
+                else
+                {
+                   POMElementProperty hTMLElementProperety = new POMElementProperty() { Name = property.Name, Value = property.Value };
+                    newProperties.Add(hTMLElementProperety);
+                }
+            }
+
+            EI.Properties = newProperties;
+        }
+
 
         public override void Finish()
         {
             //Updating selected elements
-            List<ElementInfo> ElementsToUpdate = CopiedUnienedList.Where(x => x.IsSelected == true).ToList();
+            List<ElementInfo> ElementsToUpdate = mPOMAllCurrentElements.Where(x => x.IsSelected == true).ToList();
             foreach (ElementInfo EI in ElementsToUpdate)
             {
                 //Add the New onces to the last of the list
@@ -90,8 +128,17 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 //Deleting deleted elements
                 if (EI.DeltaStatus == ElementInfo.eDeltaStatus.Deleted)
                 {
-                    mOriginalPOM.MappedUIElements.Remove(EI);
-                    mOriginalPOM.UnMappedUIElements.Remove(EI);
+                    ElementInfo CorrespondingElementInfo = mOriginalPOM.MappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault();
+                    if (CorrespondingElementInfo != null)
+                    {
+                        mOriginalPOM.MappedUIElements.Remove(CorrespondingElementInfo);
+                    }
+                    else
+                    {
+                        CorrespondingElementInfo = mOriginalPOM.MappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault();
+                        mOriginalPOM.UnMappedUIElements.Remove(EI);
+                    }
+
                     continue;
                 }
 
@@ -103,7 +150,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 }
 
                 //Deleting deleted properties
-                List<ControlProperty> PropertiesToRemove = EI.Properties.Where(x => ((POMElementProperty)x).DeltaStatus == ElementInfo.eDeltaStatus.Deleted).ToList();
+                List<ControlProperty> PropertiesToRemove = EI.Properties.Where(x => ((POMElementProperty)x).DeltaElementProperty == ElementInfo.eDeltaStatus.Deleted).ToList();
                 for (int i = 0; i < PropertiesToRemove.Count; i++)
                 {
                     EI.Properties.Remove(PropertiesToRemove[i]);
@@ -121,7 +168,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 //Updating modified properties
                 foreach (ControlProperty CP in EI.Properties)
                 {
-                    if (((POMElementProperty)CP).DeltaStatus == ElementInfo.eDeltaStatus.Modified)
+                    if (((POMElementProperty)CP).DeltaElementProperty == ElementInfo.eDeltaStatus.Modified)
                     {
                         CP.Value = ((POMElementProperty)CP).UpdatedValue;
                     }
@@ -132,43 +179,54 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
 
             //Performing replace to all equals because ElementGroup can be changed
-            List<ElementInfo> EqualElementsToUpdate = CopiedUnienedList.Where(x => x.DeltaStatus == ElementInfo.eDeltaStatus.Unchanged).ToList();
+            List<ElementInfo> EqualElementsToUpdate = mPOMAllCurrentElements.Where(x => x.DeltaStatus == ElementInfo.eDeltaStatus.Unchanged).ToList();
             foreach (ElementInfo EI in EqualElementsToUpdate)
             {
                 //Updating original element
                 ReplaceOldElementWithNewOnce(EI);
             }
-
-            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mOriginalPOM);
         }
 
         private void ReplaceOldElementWithNewOnce(ElementInfo EI)
         {
+            bool MappedOriginaly = false;
             ElementInfo CorrespondingMappedElementInfo = mOriginalPOM.MappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault();
-            int mappedElementIndex = mOriginalPOM.MappedUIElements.IndexOf(CorrespondingMappedElementInfo);
 
-            ElementInfo CorrespondingUnMappedElementInfo = mOriginalPOM.UnMappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault();
-            int unMappedElementIndex = mOriginalPOM.UnMappedUIElements.IndexOf(CorrespondingUnMappedElementInfo);
-
-            mOriginalPOM.MappedUIElements.Remove(CorrespondingMappedElementInfo);
-            mOriginalPOM.UnMappedUIElements.Remove(CorrespondingUnMappedElementInfo);
-
-            if (EI.ElementGroup.ToString() == ApplicationPOMModel.eElementGroup.Mapped.ToString())
+            if (CorrespondingMappedElementInfo != null)
             {
-                if (mappedElementIndex != -1)
+                MappedOriginaly = true;
+                int mappedElementIndex = mOriginalPOM.MappedUIElements.IndexOf(CorrespondingMappedElementInfo);
+                mOriginalPOM.MappedUIElements.Remove(CorrespondingMappedElementInfo);
+                InsertElementPerGroup(EI, mappedElementIndex, MappedOriginaly);
+            }
+            else
+            {
+                CorrespondingMappedElementInfo = mOriginalPOM.UnMappedUIElements.Where(x => x.Guid == EI.Guid).FirstOrDefault();
+                int unMappedElementIndex = mOriginalPOM.UnMappedUIElements.IndexOf(CorrespondingMappedElementInfo);
+                mOriginalPOM.UnMappedUIElements.Remove(CorrespondingMappedElementInfo);
+                InsertElementPerGroup(EI, unMappedElementIndex, MappedOriginaly);
+            }
+        }
+
+        private void InsertElementPerGroup(ElementInfo EI, int Index,bool MappedOriginaly)
+        {
+            if ((ApplicationPOMModel.eElementGroup)EI.ElementGroup == ApplicationPOMModel.eElementGroup.Mapped)
+            {
+                if (MappedOriginaly)
                 {
-                    mOriginalPOM.MappedUIElements.Insert(mappedElementIndex, EI);
+                    mOriginalPOM.MappedUIElements.Insert(Index, EI);
                 }
                 else
                 {
                     mOriginalPOM.MappedUIElements.Add(EI);
                 }
+
             }
             else
             {
-                if (unMappedElementIndex != -1)
+                if (!MappedOriginaly)
                 {
-                    mOriginalPOM.UnMappedUIElements.Insert(unMappedElementIndex, EI);
+                    mOriginalPOM.UnMappedUIElements.Insert(Index, EI);
                 }
                 else
                 {

@@ -69,26 +69,6 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public ObservableList<string> ElementGroupList
-        {
-            get
-            {
-
-                ObservableList<string> elementGroupList = new ObservableList<string>();
-                elementGroupList.Add(ApplicationPOMModel.eElementGroup.Mapped.ToString());
-                elementGroupList.Add(ApplicationPOMModel.eElementGroup.Unmapped.ToString());
-
-                return elementGroupList;
-            }
-            set
-            {
-                ElementGroupList = value;
-                OnPropertyChanged(nameof(ElementGroupList));
-            }
-        }
-
-
-
 
 
 
