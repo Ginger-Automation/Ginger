@@ -770,6 +770,7 @@ namespace GingerCore
 
         private void ReplaceVBSCalcWithValue(string p, string[] a)
         {
+            bool FailonUnix = false;
             try
             {      
                 string Expr = p.Replace("\r\n", "vbCrLf");
@@ -778,6 +779,9 @@ namespace GingerCore
                 //check whether the Expr contains Split.If yes the take user entered number and decreased it to -1
                 if (p.Contains("{VBS Eval=Split("))
                 {
+
+
+                     FailonUnix = true;
                     Expr = DecreaseVBSSplitFunIndexNumber(Expr);
                 }
                 string v = VBS.ExecuteVBSEval(@"" + Expr);
@@ -787,6 +791,12 @@ namespace GingerCore
             {
                 //TODO: err
                 mValueCalculated = mValueCalculated.Replace(p, "ERROR: " + e.Message);
+            }
+            if (FailonUnix && System.Environment.OSVersion.Platform.ToString().StartsWith("Win"))
+            {
+
+
+                throw new PlatformNotSupportedException("VBS functions are not supported on Unix/Mac systems");
             }
         }
 
