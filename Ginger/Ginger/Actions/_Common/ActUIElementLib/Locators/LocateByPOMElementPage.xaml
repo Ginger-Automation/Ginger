@@ -26,8 +26,8 @@
         </Grid.ColumnDefinitions>
         <Label x:Name="xPOMTitleLbl" Style="{StaticResource $LabelStyle}" Grid.Column="0" Content="Page Objects Model:" VerticalAlignment="Top"/>
         <TextBox x:Name="xHTMLReportFolderTextBox" Grid.Column="1" Style="{StaticResource $TextBoxStyle}" Height="25" IsReadOnly="True" VerticalAlignment="Top" Margin="2,0,2,3"></TextBox>
-        <usercontrols:ucButton Grid.Column="2" ToolTip="Open/View POM" ButtonType="ImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Edit" Click="SelectPOM_Click" VerticalAlignment="Top" Margin="0,-5,0,0"  />
-        <usercontrols:ucButton x:Name="xViewPOMBtn" Grid.Column="3" ToolTip="Open/View POM" ButtonType="ImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="EditWindow" Click="XViewPOMBtn_Click" VerticalAlignment="Top" Margin="0,-5,0,0" Visibility="Collapsed" />
+        <usercontrols:ucButton Grid.Column="2" ToolTip="Select POM" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="View" Click="SelectPOM_Click" VerticalAlignment="Top" Margin="0,-8,0,0"  />
+        <usercontrols:ucButton x:Name="xViewPOMBtn" Grid.Column="3" ToolTip="View/Edit POM" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Edit" Click="XViewPOMBtn_Click" VerticalAlignment="Top" Margin="0,-8,0,0" Visibility="Collapsed" />
         <Label x:Name="xPOMElementsLbl" Style="{StaticResource $LabelStyle}" HorizontalContentAlignment="Right" Grid.Column="4" Content="Model Element:" VerticalAlignment="Top" />
         <TextBox x:Name="xPOMElementTextBox" Grid.Column="5" Style="{StaticResource $TextBoxStyle}" Height="25" IsReadOnly="True"  VerticalAlignment="Top" Margin="2,0,2,3" MouseDoubleClick="XPOMElementTextBox_MouseClick"></TextBox>
         <StackPanel Orientation="Vertical" Grid.Row="0"  Grid.Column="5">
