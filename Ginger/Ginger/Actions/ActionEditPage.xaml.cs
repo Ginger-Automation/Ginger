@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -62,6 +63,8 @@ namespace Ginger.Actions
         public ActionsPage ap;
 
         bool IsPageClosing = false;
+
+        private static  readonly List<GingerCore.General.ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForCombo(typeof(eOperator));
 
         ObservableList<DataSourceBase> mDSList = new ObservableList<DataSourceBase>();
         ObservableList<DataSourceTable> mDSTableList = new ObservableList<DataSourceTable>();
@@ -416,7 +419,7 @@ namespace Ginger.Actions
 
         private void AddReturnValue(object sender, RoutedEventArgs e)
         {
-            mAction.ReturnValues.Add(new ActReturnValue() { Active = true });
+            mAction.ReturnValues.Add(new ActReturnValue() { Active = true ,Operator=eOperator.Equals});
         }
 
         private void AddInputValue(object sender, RoutedEventArgs e)
@@ -460,6 +463,10 @@ namespace Ginger.Actions
 
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Actual, Header = "Actual Value", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["AddActualToExpectButton"] });
+
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Operator, Header = "Operator", WidthWeight = 150, BindingMode = BindingMode.TwoWay, StyleType= GridColView.eGridColStyleType.ComboBox, CellValuesList = OperatorList });
+           // viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["AddActualToExpectButton"] });
+            
 
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Expected, Header = "Expected Value", WidthWeight = 150 });
             viewCols.Add(new GridColView() { Field = ".....", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ValueExpressionButton"] });

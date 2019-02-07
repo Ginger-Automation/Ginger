@@ -71,9 +71,9 @@ namespace GingerCoreNET.RosLynLib
         }
 
         
-        public bool EvalCondition(string condition)
+        public static bool EvalCondition(string condition)
         {
-            bool result = EvalConditionAsync(condition).Result;
+            bool result =(bool) CSharpScript.EvaluateAsync(condition).Result;
             return result;
         }
 

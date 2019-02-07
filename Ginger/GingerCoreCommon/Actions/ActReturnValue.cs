@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Expressions;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -55,6 +56,8 @@ namespace Amdocs.Ginger.Repository
             public static string StoreToDataSource = "StoreToDataSource";
             public static string StoreTo = "StoreTo";
             public static string StoreToValue = "StoreToValue";
+            public static string Operator = "Operator";
+            
         }
 
         [IsSerializedForLocalRepository]
@@ -89,6 +92,25 @@ namespace Amdocs.Ginger.Repository
         public string ExpectedCalculatedValue { get; set; }
         private eStatus mStatus { get; set; }
         public eStatus Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(Fields.Status); } }
+
+        private eOperator? mOperator;
+        [IsSerializedForLocalRepository]
+        public eOperator Operator {
+            get
+            {
+                if(mOperator==null)
+                {
+                    return eOperator.Legacy;
+                }
+
+                return mOperator.Value;
+            }
+
+            set
+            {
+                mOperator = value;
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public bool AddedAutomatically { get; set; }
