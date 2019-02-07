@@ -49,7 +49,7 @@ jobs:
   - task: NuGetCommand@2
     inputs:
       command: restore  
-      restoreSolution: '$(**\GingerCoreCommonTest\GingerCoreCommonTest.csproj)'       
+      restoreSolution: '$(**\GingerCoreCommonTest\GingerCoreCommonTest.csproj **\GingerCoreNetTest\GingerCoreNetTest.csproj)'       
     displayName: Restore Ginger .net core projects Nuget Packages
   
 # ------------------------------------------------------------------------------------------------------
@@ -76,8 +76,8 @@ jobs:
     displayName: 'Run Unit tests Level for .Net Core test DLLs'
     inputs:
       command: test
-      projects: '**/GingerCoreCommonTest/GingerCoreCommonTest.csproj'
-      arguments: '--configuration $(buildConfiguration)  --collect "Code coverage"'
+      projects: '**/GingerCoreCommonTest/GingerCoreCommonTest.csproj **/GingerCoreNetTest/GingerCoreNetTest.csproj'
+      arguments: '--configuration $(buildConfiguration)'    #   --collect "Code coverage" not working on Linux !?
 
   
   #- task: PublishTestResults@2
