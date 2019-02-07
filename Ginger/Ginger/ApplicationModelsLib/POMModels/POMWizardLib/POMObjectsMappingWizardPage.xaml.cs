@@ -164,13 +164,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     elemLoc.Active = mWizard.AutoMapElementLocatorsList.Where(m => m.LocateBy == elemLoc.LocateBy).FirstOrDefault().Active;
                 }
                 EI.Locators = new ObservableList<ElementLocator>(orderedLocatorsList);
-                                
+
+                UpdateElementInfoName(EI);
                 if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
                 {
-                    if (ElementInfo.PossibleValuesSupportedFortype(EI.ElementTypeEnum))
-                    {
-                        UpdateElementInfoName(EI); 
-                    }
                     mWizard.POM.MappedUIElements.Add(EI);
                 }
                 else
@@ -200,12 +197,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         name = name.Substring(0, 60);
                     }
 
-                    int count = mWizard.POM.MappedUIElements.Where(p => p.ElementName.StartsWith(name)).Count();
-                    if (count > 0)
+                    if (mSelectedElementTypesList.Contains(curElement.ElementTypeEnum))
                     {
-                        name += "_" + Convert.ToString(count); 
+                        name = GetUniqueName(mWizard.POM.MappedUIElements, name);
                     }
-
+                    else
+                    {
+                        name = GetUniqueName(mWizard.POM.UnMappedUIElements, name);
+                    }
+                    
                     curElement.ElementName = name;
                 }
             }
@@ -213,6 +213,44 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error in Updating POM Elements Name", ex);
             }
+        }
+
+        /// <summary>
+        /// This method is used to get the uniquename for the element
+        /// </summary>
+        /// <param name="UIElements"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private string GetUniqueName(ObservableList<ElementInfo> UIElements, string name)
+        {
+            string uname = name;
+            try
+            {
+                if (UIElements.Where(p => p.ElementName == name).Count() > 0)
+                {
+                    bool isFound = false;
+                    int count = 2;
+                    while (!isFound)
+                    {
+                        string postfix = string.Format("{0}_{1}", name, count);
+                        if (UIElements.Where(p => p.ElementName == postfix).Count() > 0)
+                        {
+                            count++;
+                        }
+                        else
+                        {
+                            uname = postfix;
+                            isFound = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Updating POM Elements Name", ex);
+            }
+            return uname;
         }
 
         private void InitilizePomElementsMappingPage()

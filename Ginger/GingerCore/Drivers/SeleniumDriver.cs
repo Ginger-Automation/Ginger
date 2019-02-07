@@ -4416,7 +4416,7 @@ namespace GingerCore.Drivers
                     {
                         ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
                     }
-                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString });
+                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
                 }
 
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;

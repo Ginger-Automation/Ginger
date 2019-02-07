@@ -293,7 +293,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
                     if (mAction.ElementLocateBy == eLocateBy.POMElement)
                     {
-                        comboBox.ComboBoxObject.Style = this.FindResource("@InputComboBoxStyle") as Style; 
+                        comboBox.ComboBoxObject.Style = this.FindResource("$FlatEditInputComboBoxStyle") as Style; 
                     }
 
                     comboBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
@@ -429,7 +429,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (mAction.ElementLocateBy == eLocateBy.POMElement)
             {
                 possibleValues = GetPomElementOptionalValues();
-                defaultValue = GetPomElementOptionalValuesDefaultValue();
+                defaultValue = !String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? 
+                                mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) : GetPomElementOptionalValuesDefaultValue();
             }
             else
             {

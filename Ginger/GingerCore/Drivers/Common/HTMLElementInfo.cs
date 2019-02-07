@@ -17,9 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 using HtmlAgilityPack;
 
 namespace GingerCore.Drivers.Common
