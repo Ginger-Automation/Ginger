@@ -343,6 +343,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65 });
+            defView.GridColsView.Add(new GridColView() { Field = "🖉", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xLocateValueVETemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
@@ -593,5 +594,22 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
+        private void XLocateValueVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            ElementLocator selectedVarb = (ElementLocator)xLocatorsGrid.CurrentItem;
+            if (selectedVarb.IsAutoLearned)
+            {
+                if (!disabeledLocatorsMsgShown)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You can not edit Locator which was auto learned, please duplicate it and create customized Locator.");
+                    disabeledLocatorsMsgShown = true;
+                }
+            }
+            else
+            {
+                ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedVarb, nameof(ElementLocator.LocateValue), true);
+                VEEW.ShowAsWindow();
+            }
+        }
     }
 }
