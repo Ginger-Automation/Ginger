@@ -1,29 +1,15 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
+﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Drivers;
-using GingerCore.Drivers.Common;
-using GingerCore.Platforms.PlatformsInfo;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static Ginger.ApplicationModelsLib.POMModels.PomAllElementsPage;
 
 namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 {
@@ -33,7 +19,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
     public partial class PomDeltaElementComparePage : Page, IWizardPage
     {
         PomDeltaWizard mWizard;
-        PomElementsPage mPomElementsPage = null;       
+        PomDeltaViewPage mPomDeltaViewPage = null;       
 
         public PomDeltaElementComparePage()
         {
@@ -47,13 +33,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 mWizard = (PomDeltaWizard)WizardEventArgs.Wizard;
                 mWizard.mPOMLatestElements.CollectionChanged += ElementsListCollectionChanged;
                 InitilizePomElementsMappingPage();
-                mPomElementsPage.SetAgent(mWizard.Agent);
+                mPomDeltaViewPage.SetAgent(mWizard.Agent);
                 xReLearnButton.Visibility = Visibility.Visible;
                 Learn();
             }
         }
-
-        
 
         private async void Learn()
         {
@@ -69,12 +53,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     xStopLoadButton.Visibility = Visibility.Visible;
                     mWizard.IWindowExplorerDriver.UnHighLightElements();
 
-                    await Task.Run(() => GetUnifiedPomElementsListForDeltaUse());
-                    await Task.Run(() => mWizard.IWindowExplorerDriver.CollectOriginalElementsDataForDeltaCheck(mWizard.mPOMCurrentElements));
+                    //await Task.Run(() => GetUnifiedPomElementsListForDeltaUse());
+                    await Task.Run(() => mWizard.IWindowExplorerDriver.CollectOriginalElementsDataForDeltaCheck(mWizard.mPOMAllOriginalElements));
                     await Task.Run(() => mWizard.IWindowExplorerDriver.GetVisibleControls(null, mWizard.mPOMLatestElements, true));
 
-                    SetDeletedElementDeltaDetails();
-                    DoEndOfRelearnElementsSorting();
+                    SetDeletedElementsDeltaDetails();//TODO:also do async?
+                    DoEndOfRelearnElementsSorting();//TODO:also do async?
                     mWizard.IsLearningWasDone = true;
                 }
                 catch (Exception ex)
@@ -91,44 +75,44 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
         }
 
-        public void GetUnifiedPomElementsListForDeltaUse()
-        {
-            mWizard.mPOMCurrentElements.Clear();
-            //TODO: check if should be done using Parallel.ForEach
-            foreach (ElementInfo mappedElement in mWizard.mPOM.MappedUIElements)
-            {
-                DeltaElementInfo deltaElement = ConvertElementInfoToDelta(mappedElement);
-                deltaElement.ElementGroup = ApplicationPOMModel.eElementGroup.Mapped;
-                mWizard.mPOMCurrentElements.Add(deltaElement);
-            }
-            foreach (ElementInfo unmappedElement in mWizard.mPOM.UnMappedUIElements)
-            {
-                DeltaElementInfo deltaElement = ConvertElementInfoToDelta(unmappedElement);
-                deltaElement.ElementGroup = ApplicationPOMModel.eElementGroup.Unmapped;
-                mWizard.mPOMCurrentElements.Add(deltaElement);
-            }
-        }
+        //public void GetUnifiedPomElementsListForDeltaUse()
+        //{
+        //    mWizard.mDeltaViewElements.Clear();
+        //    //TODO: check if should be done using Parallel.ForEach
+        //    foreach (ElementInfo mappedElement in mWizard.mPOM.MappedUIElements)
+        //    {
+        //        DeltaElementInfo deltaElement = ConvertElementInfoToDelta(mappedElement);
+        //        deltaElement.ElementGroup = ApplicationPOMModel.eElementGroup.Mapped;
+        //        mWizard.mDeltaViewElements.Add(deltaElement);
+        //    }
+        //    foreach (ElementInfo unmappedElement in mWizard.mPOM.UnMappedUIElements)
+        //    {
+        //        DeltaElementInfo deltaElement = ConvertElementInfoToDelta(unmappedElement);
+        //        deltaElement.ElementGroup = ApplicationPOMModel.eElementGroup.Unmapped;
+        //        mWizard.mDeltaViewElements.Add(deltaElement);
+        //    }
+        //}
 
-        private DeltaElementInfo ConvertElementInfoToDelta(ElementInfo element)
-        {
-            //copy element and convert it to Delta
-            DeltaElementInfo deltaElement = (DeltaElementInfo)element.CreateCopy(false);//keeping original GUI            
-            //convert Locators to Delta
-            List<DeltaElementLocator> deltaLocators = deltaElement.Locators.Cast<DeltaElementLocator>().ToList();
-            deltaElement.Locators.Clear();
-            foreach (DeltaElementLocator deltaLocator in deltaLocators)
-            {
-                deltaElement.Locators.Add(deltaLocator);
-            }
-            //convert properties to Delta
-            List<DeltaControlProperty> deltaProperties = deltaElement.Properties.Cast<DeltaControlProperty>().ToList();
-            deltaElement.Properties.Clear();
-            foreach (DeltaControlProperty deltaPropery in deltaProperties)
-            {
-                deltaElement.Properties.Add(deltaPropery);
-            }
-            return deltaElement;
-        }
+        //private DeltaElementInfo ConvertElementInfoToDelta(ElementInfo element)
+        //{
+        //    //copy element and convert it to Delta
+        //    DeltaElementInfo deltaElement = (DeltaElementInfo)element.CreateCopy(false);//keeping original GUI            
+        //    //convert Locators to Delta
+        //    List<DeltaElementLocator> deltaLocators = deltaElement.Locators.Cast<DeltaElementLocator>().ToList();
+        //    deltaElement.Locators.Clear();
+        //    foreach (DeltaElementLocator deltaLocator in deltaLocators)
+        //    {
+        //        deltaElement.Locators.Add(deltaLocator);
+        //    }
+        //    //convert properties to Delta
+        //    List<DeltaControlProperty> deltaProperties = deltaElement.Properties.Cast<DeltaControlProperty>().ToList();
+        //    deltaElement.Properties.Clear();
+        //    foreach (DeltaControlProperty deltaPropery in deltaProperties)
+        //    {
+        //        deltaElement.Properties.Add(deltaPropery);
+        //    }
+        //    return deltaElement;
+        //}
 
         //private async void CollectOriginalElementsData()
         //{
@@ -142,7 +126,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             ((DriverBase)mWizard.Agent.Driver).mStopProcess = true;
         }
 
-
         private void ReLearnButtonClicked(object sender, RoutedEventArgs e)
         {
             if (Reporter.ToUser(eUserMsgKey.POMDeltaWizardReLearnWillEraseModification) == eUserMsgSelection.Yes)
@@ -154,10 +137,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void InitilizePomElementsMappingPage()
         {
-            if (mPomElementsPage == null)
+            if (mPomDeltaViewPage == null)
             {
-                mPomElementsPage = new PomElementsPage(mWizard.mPOM, eElementsContext.DeltaElements, mWizard.mPOMCurrentElements);
-                xPomElementsMappingPageFrame.Content = mPomElementsPage;
+                mPomDeltaViewPage = new PomDeltaViewPage(mWizard.mDeltaViewElements);
+                xPomElementsMappingPageFrame.Content = mPomDeltaViewPage;
             }
         }
 
@@ -166,38 +149,40 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             try
             {                
                 ElementInfo latestElement = ((ObservableList<ElementInfo>)sender).Last();
-                DeltaElementInfo CurrentElement = (DeltaElementInfo)mWizard.IWindowExplorerDriver.GetMatchingElement(latestElement, mWizard.mPOMCurrentElements);
+                ElementInfo matchingOriginalElement = (ElementInfo)mWizard.IWindowExplorerDriver.GetMatchingElement(latestElement, mWizard.mPOMAllOriginalElements);
 
-                if (CurrentElement == null)//New element
+                if (matchingOriginalElement == null)//New element
                 {
                     //copy element and convert it to Delta
-                    DeltaElementInfo newDeltaElement = (DeltaElementInfo)latestElement.CreateCopy(false);
-                    newDeltaElement.ElementStatus = ElementInfo.eElementStatus.Passed;
+                    DeltaElementInfo newDeltaElement = new DeltaElementInfo();
+                    newDeltaElement.OriginalElementInfo = latestElement;//setting to Original because it is new
+                    //newDeltaElement.LatestMatchingElementInfo = latestElement;
+                    latestElement.ElementStatus = ElementInfo.eElementStatus.Passed;
                     newDeltaElement.DeltaStatus = eDeltaStatus.New;
-                    newDeltaElement.ElementGroup = ApplicationPOMModel.eElementGroup.Mapped;
+                    newDeltaElement.SelectedElementGroup = ApplicationPOMModel.eElementGroup.Mapped;
                     newDeltaElement.IsSelected = true;
-                    List<DeltaElementLocator> deltaLocators = newDeltaElement.Locators.Cast<DeltaElementLocator>().ToList();
-                    newDeltaElement.Locators.Clear();
-                    foreach (DeltaElementLocator deltaLocator in deltaLocators)
+                    foreach (ElementLocator locator in latestElement.Locators)
                     {
-                        deltaLocator.LocateStatus = ElementLocator.eLocateStatus.Passed;
+                        DeltaElementLocator deltaLocator = new DeltaElementLocator();
+                        deltaLocator.OriginalElementLocator= locator;//setting to Original because it is new
+                        //deltaLocator.LatestMatchingElementLocator = locator;
+                        deltaLocator.OriginalElementLocator.LocateStatus = ElementLocator.eLocateStatus.Passed;
                         deltaLocator.DeltaStatus = eDeltaStatus.New;
                         newDeltaElement.Locators.Add(deltaLocator);                        
                     }
-                    List<DeltaControlProperty> deltaProperties = newDeltaElement.Properties.Cast<DeltaControlProperty>().ToList();
-                    newDeltaElement.Properties.Clear();
-                    foreach (DeltaControlProperty deltaPropery in deltaProperties)
+                    foreach (ControlProperty propery in latestElement.Properties)
                     {
+                        DeltaControlProperty deltaPropery = new DeltaControlProperty();
+                        deltaPropery.OriginalElementProperty = propery;//setting to Original because it is new
+                        //deltaPropery.LatestMatchingElementProperty = propery;
                         deltaPropery.DeltaStatus = eDeltaStatus.New;
                         newDeltaElement.Properties.Add(deltaPropery);
                     }
-                    newDeltaElement.LatestMatchingElementInfo = latestElement;
-                    mWizard.mPOMCurrentElements.Add(newDeltaElement);
+                    mWizard.mDeltaViewElements.Add(newDeltaElement);
                 }
                 else
-                {
-                    CurrentElement.LatestMatchingElementInfo = latestElement;
-                    SetMatchingElementDeltaDetails(CurrentElement, latestElement);
+                {                    
+                    SetMatchingElementDeltaDetails(matchingOriginalElement, latestElement);
                 }
             }
             catch (Exception ex)
@@ -208,125 +193,148 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void SetMatchingElementDeltaDetails(ElementInfo existingElement, ElementInfo latestElement)
         {
+            DeltaElementInfo matchedDeltaElement = new DeltaElementInfo();
+            matchedDeltaElement.OriginalElementInfo = existingElement;
+            matchedDeltaElement.LatestMatchingElementInfo = latestElement;
+
             ////////------------------ Locators
             foreach (ElementLocator latestLocator in latestElement.Locators)
-            {               
+            {
+                DeltaElementLocator deltaLocator = new DeltaElementLocator();
                 ElementLocator matchingExistingLocator = existingElement.Locators.Where(x => x.IsAutoLearned == true && x.LocateBy == latestLocator.LocateBy).FirstOrDefault();
                 if (matchingExistingLocator != null)
                 {
+                    deltaLocator.OriginalElementLocator = matchingExistingLocator;
+                    deltaLocator.LatestMatchingElementLocator = latestLocator;
                     if (matchingExistingLocator.LocateValue == latestLocator.LocateValue)//Unchanged
                     {
-                        ((DeltaElementLocator)matchingExistingLocator).DeltaStatus = eDeltaStatus.Unchanged;
+                        deltaLocator.DeltaStatus = eDeltaStatus.Unchanged;                        
                     }
                     else//Changed
                     {
-                        ((DeltaElementLocator)matchingExistingLocator).DeltaStatus = eDeltaStatus.Changed;
-                        ((DeltaElementLocator)matchingExistingLocator).DeltaExtraDetails = string.Format("Previous value was '{0}'", matchingExistingLocator.LocateValue);
+                        deltaLocator.DeltaStatus = eDeltaStatus.Changed;
+                        deltaLocator.DeltaExtraDetails = string.Format("Previous value was '{0}'", matchingExistingLocator.LocateValue);
                         matchingExistingLocator.LocateValue = latestLocator.LocateValue;
                     }
                 }
                 else//new locator
                 {
-                    DeltaElementLocator newElementLocator = (DeltaElementLocator)latestLocator.CreateCopy(false);
-                    newElementLocator.DeltaStatus = eDeltaStatus.New;
-                    existingElement.Locators.Add(newElementLocator);
-                }                
+                    deltaLocator.OriginalElementLocator = latestLocator;
+                    //deltaLocator.LatestMatchingElementLocator = latestLocator;
+                    deltaLocator.DeltaStatus = eDeltaStatus.New;                    
+                }
+                matchedDeltaElement.Locators.Add(deltaLocator);
             }
-            List<ElementLocator> deletedLocators= existingElement.Locators.Where(x => x.IsAutoLearned == true && ((DeltaElementLocator)x).DeltaStatus== eDeltaStatus.Unknown).ToList();
-            foreach (ElementLocator deletedLocator in deletedLocators)
+            //deleted Locators
+            List<ElementLocator> deletedLocators= existingElement.Locators.Where(x => x.IsAutoLearned == true && matchedDeltaElement.Locators.Where(y=>y.OriginalElementLocator.Guid == x.Guid).FirstOrDefault() == null).ToList();
+            foreach (ElementLocator deletedlocator in deletedLocators)
             {
-                ((DeltaElementLocator)deletedLocator).DeltaStatus = eDeltaStatus.Deleted;
+                DeltaElementLocator deltaLocator = new DeltaElementLocator();
+                deltaLocator.OriginalElementLocator = deletedlocator;
+                deltaLocator.DeltaStatus = eDeltaStatus.Deleted;
+                matchedDeltaElement.Locators.Add(deltaLocator);
             }
 
             ////////--------------- Properties
             foreach (ControlProperty latestProperty in latestElement.Properties)
             {
+                DeltaControlProperty deltaProperty = new DeltaControlProperty();
                 ControlProperty matchingExistingProperty = existingElement.Properties.Where(x => x.Name == latestProperty.Name).FirstOrDefault();
                 if (matchingExistingProperty != null)
                 {
+                    deltaProperty.OriginalElementProperty = matchingExistingProperty;
+                    deltaProperty.LatestMatchingElementProperty = latestProperty;
                     if (matchingExistingProperty.Value == latestProperty.Value)//Unchanged
                     {
-                        ((DeltaControlProperty)matchingExistingProperty).DeltaStatus = eDeltaStatus.Unchanged;
+                        deltaProperty.DeltaStatus = eDeltaStatus.Unchanged;
                     }
                     else//Changed
                     {
-                        ((DeltaControlProperty)matchingExistingProperty).DeltaStatus = eDeltaStatus.Changed;
-                        ((DeltaControlProperty)matchingExistingProperty).DeltaExtraDetails = string.Format("Previous value was '{0}'", matchingExistingProperty.Value);
+                        deltaProperty.DeltaStatus = eDeltaStatus.Changed;
+                        deltaProperty.DeltaExtraDetails = string.Format("Previous value was '{0}'", matchingExistingProperty.Value);
                         matchingExistingProperty.Value = latestProperty.Value;
                     }
                 }
-                else//new property
+                else//new locator
                 {
-                    DeltaControlProperty newElementProperty = (DeltaControlProperty)latestProperty.CreateCopy(false);
-                    newElementProperty.DeltaStatus = eDeltaStatus.New;
-                    existingElement.Properties.Add(newElementProperty);
+                    deltaProperty.OriginalElementProperty = latestProperty;
+                    //deltaLocator.LatestMatchingElementLocator = latestLocator;
+                    deltaProperty.DeltaStatus = eDeltaStatus.New;
                 }
+                matchedDeltaElement.Properties.Add(deltaProperty);
             }
-            List<ControlProperty> deletedProperties = existingElement.Properties.Where(x => ((DeltaControlProperty)x).DeltaStatus == eDeltaStatus.Unknown).ToList();
+            //deleted Properties
+            List<ControlProperty> deletedProperties = existingElement.Properties.Where(x => matchedDeltaElement.Properties.Where(y => y.OriginalElementProperty.Guid == x.Guid).FirstOrDefault() == null).ToList();
             foreach (ControlProperty deletedProperty in deletedProperties)
             {
-                ((DeltaControlProperty)deletedProperty).DeltaStatus = eDeltaStatus.Deleted;
+                DeltaControlProperty deltaProp = new DeltaControlProperty();
+                deltaProp.OriginalElementProperty = deletedProperty;
+                deltaProp.DeltaStatus = eDeltaStatus.Deleted;
+                matchedDeltaElement.Properties.Add(deltaProp);
             }
 
-            //------------ General Status set
-            DeltaElementInfo deltaExistingElement = (DeltaElementInfo)existingElement;         
-            List<ElementLocator> modifiedLocatorsList = existingElement.Locators.Where(x => ((DeltaElementLocator)x).DeltaStatus != eDeltaStatus.Unchanged && ((DeltaElementLocator)x).DeltaStatus != eDeltaStatus.Unknown).ToList();
-            List<ControlProperty> modifiedPropertiesList = existingElement.Properties.Where(x => ((DeltaControlProperty)x).DeltaStatus != eDeltaStatus.Unchanged && ((DeltaControlProperty)x).DeltaStatus != eDeltaStatus.Unknown).ToList();
+            //------------ General Status set     
+            List<DeltaElementLocator> modifiedLocatorsList = matchedDeltaElement.Locators.Where(x => x.DeltaStatus != eDeltaStatus.Unchanged && x.DeltaStatus != eDeltaStatus.Unknown).ToList();
+            List<DeltaControlProperty> modifiedPropertiesList = matchedDeltaElement.Properties.Where(x => x.DeltaStatus != eDeltaStatus.Unchanged && x.DeltaStatus != eDeltaStatus.Unknown).ToList();
             if (modifiedLocatorsList.Count > 0 || modifiedPropertiesList.Count > 0)
             {
-                deltaExistingElement.DeltaStatus = eDeltaStatus.Changed;
-                existingElement.IsSelected = true;
+                matchedDeltaElement.DeltaStatus = eDeltaStatus.Changed;
+                matchedDeltaElement.IsSelected = true;
                 if (modifiedLocatorsList.Count > 0 && modifiedPropertiesList.Count > 0)
                 {
-                    deltaExistingElement.DeltaExtraDetails = DeltaElementInfo.eDeltaExtraDetails.LocatorsAndPropertiesChanged;
+                    matchedDeltaElement.DeltaExtraDetails = DeltaElementInfo.eDeltaExtraDetails.LocatorsAndPropertiesChanged;
                 }
                 else if (modifiedLocatorsList.Count > 0)
                 {
-                    deltaExistingElement.DeltaExtraDetails = DeltaElementInfo.eDeltaExtraDetails.LocatorsChanged;
+                    matchedDeltaElement.DeltaExtraDetails = DeltaElementInfo.eDeltaExtraDetails.LocatorsChanged;
                 }
                 else if (modifiedPropertiesList.Count > 0)
                 {
-                    deltaExistingElement.DeltaExtraDetails = DeltaElementInfo.eDeltaExtraDetails.PropertiesChanged;
+                    matchedDeltaElement.DeltaExtraDetails = DeltaElementInfo.eDeltaExtraDetails.PropertiesChanged;
                 }
             }
             else
             {
-                deltaExistingElement.DeltaStatus = eDeltaStatus.Unchanged;
-                existingElement.IsSelected = false;
+                matchedDeltaElement.DeltaStatus = eDeltaStatus.Unchanged;
+                matchedDeltaElement.IsSelected = false;
             }
+
+            mWizard.mDeltaViewElements.Add(matchedDeltaElement);
         }
 
-        private void SetDeletedElementDeltaDetails()
+        private void SetDeletedElementsDeltaDetails()
         {
-            List<ElementInfo> deletedElements = mWizard.mPOMCurrentElements.Where(x => ((DeltaElementInfo)x).DeltaStatus == eDeltaStatus.Unknown).ToList();
+            List<ElementInfo> deletedElements = mWizard.mPOMAllOriginalElements.Where(x => mWizard.mDeltaViewElements.Where(y=>y.OriginalElementInfo.Guid == x.Guid).FirstOrDefault() == null).ToList();
             foreach(ElementInfo deletedElement in deletedElements)
             {
-                ((DeltaElementInfo)deletedElement).DeltaStatus = eDeltaStatus.Deleted;
-                deletedElement.IsSelected = false;
+                DeltaElementInfo deletedDeltaElement = new DeltaElementInfo();
+                deletedDeltaElement.OriginalElementInfo = deletedElement;
+                deletedDeltaElement.DeltaStatus = eDeltaStatus.Deleted;
+                deletedDeltaElement.IsSelected = true;
             }
         }
 
         private void DoEndOfRelearnElementsSorting()
         {            
-            List<ElementInfo> deletedMappedElements = mWizard.mPOMCurrentElements.Where(x => ((DeltaElementInfo)x).DeltaStatus == eDeltaStatus.Deleted && (ApplicationPOMModel.eElementGroup)x.ElementGroup == ApplicationPOMModel.eElementGroup.Mapped).ToList();
-            List<ElementInfo> modifiedMappedElements = mWizard.mPOMCurrentElements.Where(x => ((DeltaElementInfo)x).DeltaStatus == eDeltaStatus.Changed && x.ElementGroup.ToString() == ApplicationPOMModel.eElementGroup.Mapped.ToString()).ToList();
-            List<ElementInfo> newMappedElements = mWizard.mPOMCurrentElements.Where(x => ((DeltaElementInfo)x).DeltaStatus == eDeltaStatus.New && (ApplicationPOMModel.eElementGroup)x.ElementGroup == ApplicationPOMModel.eElementGroup.Mapped).ToList();
+            List<DeltaElementInfo> deletedMappedElements = mWizard.mDeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Deleted && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Mapped).ToList();
+            List<DeltaElementInfo> modifiedMappedElements = mWizard.mDeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Changed && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Mapped).ToList();
+            List<DeltaElementInfo> newMappedElements = mWizard.mDeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.New && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Mapped).ToList();
 
-            List<ElementInfo> deletedUnMappedElements = mWizard.mPOMCurrentElements.Where(x => ((DeltaElementInfo)x).DeltaStatus == eDeltaStatus.Deleted && (ApplicationPOMModel.eElementGroup)x.ElementGroup == ApplicationPOMModel.eElementGroup.Unmapped).ToList();
-            List<ElementInfo> modifiedUnMappedElements = mWizard.mPOMCurrentElements.Where(x => ((DeltaElementInfo)x).DeltaStatus == eDeltaStatus.Changed && (ApplicationPOMModel.eElementGroup)x.ElementGroup == ApplicationPOMModel.eElementGroup.Unmapped).ToList();
-            List<ElementInfo> newUnMappedElements = mWizard.mPOMCurrentElements.Where(x => ((DeltaElementInfo)x).DeltaStatus == eDeltaStatus.New && (ApplicationPOMModel.eElementGroup)x.ElementGroup == ApplicationPOMModel.eElementGroup.Unmapped).ToList();
+            List<DeltaElementInfo> deletedUnMappedElements = mWizard.mDeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Deleted && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Unmapped).ToList();
+            List<DeltaElementInfo> modifiedUnMappedElements = mWizard.mDeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Changed && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Unmapped).ToList();
+            List<DeltaElementInfo> newUnMappedElements = mWizard.mDeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.New && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Unmapped).ToList();
 
-            List<ElementInfo> unchangedMapped = mWizard.mPOMCurrentElements.Where(x => (((DeltaElementInfo)x).DeltaStatus == eDeltaStatus.Unchanged) && (ApplicationPOMModel.eElementGroup)x.ElementGroup == ApplicationPOMModel.eElementGroup.Mapped).ToList();
-            List<ElementInfo> unchangedUnmapped = mWizard.mPOMCurrentElements.Where(x => (((DeltaElementInfo)x).DeltaStatus == eDeltaStatus.Unchanged) && (ApplicationPOMModel.eElementGroup)x.ElementGroup == ApplicationPOMModel.eElementGroup.Unmapped).ToList();
+            List<DeltaElementInfo> unchangedMapped = mWizard.mDeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Unchanged && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Mapped).ToList();
+            List<DeltaElementInfo> unchangedUnmapped = mWizard.mDeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Unchanged && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Unmapped).ToList();
 
-            List<List<ElementInfo>> ElementsLists = new List<List<ElementInfo>>() { deletedMappedElements, modifiedMappedElements, newMappedElements, deletedUnMappedElements, modifiedUnMappedElements, newUnMappedElements, unchangedMapped, unchangedUnmapped };
-            mWizard.mPOMCurrentElements.Clear();
+            List<List<DeltaElementInfo>> ElementsLists = new List<List<DeltaElementInfo>>() { deletedMappedElements, modifiedMappedElements, newMappedElements, deletedUnMappedElements, modifiedUnMappedElements, newUnMappedElements, unchangedMapped, unchangedUnmapped };
+            mWizard.mDeltaViewElements.Clear();
 
-            foreach (List<ElementInfo> elementsList in ElementsLists)
+            foreach (List<DeltaElementInfo> elementsList in ElementsLists)
             {
-                foreach (ElementInfo EI in elementsList)
+                foreach (DeltaElementInfo EI in elementsList)
                 {
-                    mWizard.mPOMCurrentElements.Add(EI);
+                    mWizard.mDeltaViewElements.Add(EI);
                 }
             }
         }

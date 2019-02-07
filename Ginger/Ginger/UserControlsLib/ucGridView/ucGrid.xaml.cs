@@ -1804,6 +1804,7 @@ public void RemoveCustomView(string viewName)
             //toolbar.Items.Add(btnClearSearch);
             //toolbar.Items.Add(TagsViewer);
             //toolbar.Items.Add(lblView);
+            toolbar.Items.Add(label);
             toolbar.Items.Add(comboBox);
         }
 

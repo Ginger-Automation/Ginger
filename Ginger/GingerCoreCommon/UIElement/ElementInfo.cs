@@ -260,24 +260,6 @@ namespace Amdocs.Ginger.Common.UIElement
             return mValue;
         }
 
-        private bool mIsSelected = false;
-        public bool IsSelected
-        {
-            get
-            {
-                return mIsSelected;
-            }
-            set
-            {
-                if (mIsSelected != value)
-                {
-                    mIsSelected = value;
-                    OnPropertyChanged(nameof(IsSelected));
-                }
-            }
-        }
-
-        //public bool firstAssignmentOfElementGroup = true;
 
         public object mElementGroup;
         public object ElementGroup
@@ -288,18 +270,6 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set
             {
-                //if (!firstAssignmentOfElementGroup)
-                //{
-                //    if (DeltaStatus == eDeltaStatus.Unchanged)
-                //    {
-                //        DeltaStatus = eDeltaStatus.Modified;
-                //        IsSelected = true;
-                //    }
-                //}
-                //else
-                //{
-                //    firstAssignmentOfElementGroup = false;
-                //}
                 if (mElementGroup != value)
                 {
                     mElementGroup = value;

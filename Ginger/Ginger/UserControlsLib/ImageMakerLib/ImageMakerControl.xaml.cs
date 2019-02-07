@@ -675,7 +675,7 @@ namespace Amdocs.Ginger.UserControls
                 #endregion
 
                 #region Comparison Status Images
-                case eImageType.UnModified:
+                case eImageType.Unchanged:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, (SolidColorBrush)FindResource("$RunningStatusColor"), 0, "UnModified");
                     break;
                 case eImageType.Modified:

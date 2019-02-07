@@ -61,6 +61,21 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> MappedUIElements = new ObservableList<ElementInfo>();
 
+        public ObservableList<ElementInfo> GetUnifiedElementsList()
+        {
+            ObservableList<ElementInfo> unifiedList = new ObservableList<ElementInfo>();
+            foreach (ElementInfo element in MappedUIElements)
+            {
+                element.ElementGroup = ApplicationPOMModel.eElementGroup.Mapped;
+                unifiedList.Add(element);
+            }
+            foreach (ElementInfo element in UnMappedUIElements)
+            {
+                element.ElementGroup = ApplicationPOMModel.eElementGroup.Unmapped;
+                unifiedList.Add(element);
+            }
+            return unifiedList;
+        }
 
         public enum eElementGroup
         {

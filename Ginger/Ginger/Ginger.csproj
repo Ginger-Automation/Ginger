@@ -543,6 +543,12 @@
     </Compile>
     <Compile Include="ApplicationModelsLib\APIModels\NodeToDelete.cs" />
     <Compile Include="ApplicationModelsLib\ModelOptionalValue\ParameterValues.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\DeltaControlProperty.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\DeltaElementInfo.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\DeltaElementLocator.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaViewPage.xaml.cs">
+      <DependentUpon>PomDeltaViewPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaWizard.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaElementComparePage.xaml.cs">
       <DependentUpon>PomDeltaElementComparePage.xaml</DependentUpon>
@@ -2726,6 +2732,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaElementComparePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

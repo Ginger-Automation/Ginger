@@ -246,7 +246,7 @@ namespace Amdocs.Ginger.Common.Enums
         DataTable,
 
         #region Comparison Status Images
-        UnModified,
+        Unchanged,
         Modified,
         Deleted,
         Added

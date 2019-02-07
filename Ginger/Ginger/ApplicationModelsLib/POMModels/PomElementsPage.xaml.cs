@@ -28,7 +28,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Media;
 using static GingerCore.General;
 
@@ -38,7 +37,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
     {
         Mapped,
         Unmapped,
-        DeltaElements
     }
 
     public partial class PomElementsPage : Page
@@ -46,9 +44,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public eElementsContext mContext;
         ApplicationPOMModel mPOM;
         ObservableList<ElementInfo> mElements;
-
-        ComboEnumItem mCurrentGroupByFilter;
-        ComboEnumItem mCurrentDeltaStatusFilter;
 
         bool IsFirstSelection = true;
 
@@ -110,7 +105,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        public PomElementsPage(ApplicationPOMModel pom, eElementsContext context,ObservableList<ElementInfo> elements = null)
+        public PomElementsPage(ApplicationPOMModel pom, eElementsContext context)
         {
             InitializeComponent();
             mPOM = pom;
@@ -123,23 +118,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 mElements = mPOM.UnMappedUIElements;
             }
-            else if (mContext == eElementsContext.DeltaElements)
-            {
-                mElements = elements;
-            }
 
-            if (mContext != eElementsContext.DeltaElements)
-            {
-                SetElementsGridView();
-                SetLocatorsGridView();
-                SetControlPropertiesGridView();
-            }
-            else
-            {
-                SetDeltaElementsGridView();
-                SetDeltaLocatorsGridView();
-                SetDeltaControlPropertiesGridView();
-            }
+            SetElementsGridView();
+            SetLocatorsGridView();
+            SetControlPropertiesGridView();
+
             xMainElementsGrid.DataSourceList = mElements;
 
             if (mElements.Count > 0)
@@ -287,96 +270,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xMainElementsGrid.Grid.SelectionChanged += Grid_SelectionChanged;
         }
 
-        private void SetDeltaElementsGridView()
-        {
-            xMainElementsGrid.SetTitleLightStyle = true;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.IsSelected), Header = "Update", WidthWeight = 60, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["FieldUpdate"] });
-            List<GingerCore.General.ComboEnumItem> GroupTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(ApplicationPOMModel.eElementGroup));
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementGroup), Header = "Group", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(GroupTypeList, nameof(ElementInfo.ElementGroup), true), WidthWeight = 200 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 200, AllowSorting = true, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), Header = "Description", WidthWeight = 250, AllowSorting = true, ReadOnly = true });
-            List<GingerCore.General.ComboEnumItem> ElementTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(eElementType));
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.IsAutoLearned), Header = "Auto Learned", WidthWeight = 250, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.StatusIcon), Header = "Identification Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
-            List<GingerCore.General.ComboEnumItem> deltaExtraDetailsList = GingerCore.General.GetEnumValuesForCombo(typeof(DeltaElementInfo.eDeltaExtraDetails));
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.DeltaExtraDetails), WidthWeight = 200, Header = "Comparison Details", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = deltaExtraDetailsList, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = "", Header = "Highlight", WidthWeight = 80, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xHighlightButtonTemplate"] });
-            xMainElementsGrid.SetAllColumnsDefaultView(view);
-            xMainElementsGrid.InitViewItems();
-
-            xMainElementsGrid.ShowPaste = Visibility.Collapsed;
-            xMainElementsGrid.ShowAdd = Visibility.Collapsed;
-            xMainElementsGrid.ShowDelete = Visibility.Collapsed;
-            xMainElementsGrid.ShowCopy = Visibility.Collapsed;
-            xMainElementsGrid.btnMarkAll.Visibility = Visibility.Visible;
-            xMainElementsGrid.MarkUnMarkAllActive += MarkUnMarkAllDeltaUpdates;
-            xMainElementsGrid.AddComboBoxToolbarTool("Group Filter:", typeof(ApplicationPOMModel.eElementGroup), GroupFilter_SelectionChanged, "All");
-            xMainElementsGrid.AddComboBoxToolbarTool("Status Filter:", typeof(eDeltaStatus), ComperisonStatusFilter_SelectionChanged, "All");
-
-            xMainElementsGrid.SelectedItemChanged += XMainElementsGrid_SelectedItemChanged;
-            xMainElementsGrid.Grid.SelectionChanged += Grid_SelectionChanged;
-        }
-
-
-        private void ComperisonStatusFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            mCurrentDeltaStatusFilter = (ComboEnumItem)e.AddedItems[0];
-            FilterListByFiltersCreteria();
-        }
-
-        private void GroupFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            mCurrentGroupByFilter = (ComboEnumItem)e.AddedItems[0];
-            FilterListByFiltersCreteria();
-        }
-
-        private void FilterListByFiltersCreteria()
-        {
-            if ((mCurrentGroupByFilter == null || mCurrentGroupByFilter.text == "All") && (mCurrentDeltaStatusFilter == null || mCurrentDeltaStatusFilter.text == "All"))
-            {
-                xMainElementsGrid.DataSourceList = mElements;
-            }
-            else if (mCurrentGroupByFilter == null || mCurrentGroupByFilter.text == "All")
-            {
-                xMainElementsGrid.DataSourceList = GingerCore.General.ConvertListToObservableList(mElements.Where(x => ((DeltaElementInfo)x).DeltaStatus == (eDeltaStatus)mCurrentDeltaStatusFilter.Value).ToList());
-            }
-            else if (mCurrentDeltaStatusFilter == null || mCurrentDeltaStatusFilter.text == "All")
-            {
-                xMainElementsGrid.DataSourceList = GingerCore.General.ConvertListToObservableList(mElements.Where(x => x.ElementGroup.ToString() == mCurrentGroupByFilter.Value.ToString()).ToList());
-            }
-            else
-            {
-                xMainElementsGrid.DataSourceList = GingerCore.General.ConvertListToObservableList(mElements.Where(x => x.ElementGroup.ToString() == mCurrentGroupByFilter.Value.ToString() && ((DeltaElementInfo)x).DeltaStatus == (eDeltaStatus)mCurrentDeltaStatusFilter.Value).ToList());
-            }
-        }
-
-        private void MarkUnMarkAllDeltaUpdates(bool Status)
-        {
-            if (mElements.Count <= 0)
-            {
-                return;
-            }
-
-            if (mElements.Count > 0)
-            {
-                foreach (DeltaElementInfo EI in mElements)
-                {
-                    if (EI.DeltaStatus != eDeltaStatus.Unchanged)
-                    {
-                        EI.IsSelected = Status;
-                    }
-                }
-            }
-        }
-
-  
-
         private void XMainElementsGrid_SelectedItemChanged(object selectedItem)
         {
             HandelElementSelectionChange();
@@ -475,37 +368,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
         }
 
-        private void SetDeltaLocatorsGridView()
-        {
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 50, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox, ReadOnly = true});
-            List<GingerCore.General.ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
-            GingerCore.General.ComboEnumItem comboItem = locateByList.Where(x => ((eLocateBy)x.Value) == eLocateBy.POMElement).FirstOrDefault();
-            if (comboItem != null)
-            {
-                locateByList.Remove(comboItem);
-            }
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 200, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 50, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 100, ReadOnly = true });           
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Identification Status", WidthWeight = 100, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.DeltaExtraDetails), Header = "Comparison Details", WidthWeight = 250, AllowSorting = true, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 50, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
-            xLocatorsGrid.SetAllColumnsDefaultView(defView);
-            xLocatorsGrid.InitViewItems();
-
-            xLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
-            xLocatorsGrid.ShowCopy = Visibility.Collapsed;
-            xLocatorsGrid.ShowPaste = Visibility.Collapsed;
-            xLocatorsGrid.ShowAdd = Visibility.Collapsed;
-            xLocatorsGrid.ShowDelete = Visibility.Collapsed;
-            xLocatorsGrid.ShowUpDown = Visibility.Collapsed;
-            xLocatorsGrid.AddToolbarTool(eImageType.Play, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
-        }
-
         private void DeleteLocatorClicked(object sender, RoutedEventArgs e)
         {
             bool msgShowen = false;
@@ -564,20 +426,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xPropertiesGrid.InitViewItems();
             xPropertiesGrid.SetTitleLightStyle = true;
             xPropertiesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPropertyHandler));
-        }
-
-        private void SetDeltaControlPropertiesGridView()
-        {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Name), WidthWeight = 150, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 250, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaControlProperty.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaControlProperty.DeltaExtraDetails), Header = "Comparison Details", WidthWeight = 250, AllowSorting = true, ReadOnly = true });
-            xPropertiesGrid.SetAllColumnsDefaultView(view);
-            xPropertiesGrid.InitViewItems();
-            xPropertiesGrid.SetTitleLightStyle = true;
         }
 
         private void AddPropertyHandler(object sender, RoutedEventArgs e)
