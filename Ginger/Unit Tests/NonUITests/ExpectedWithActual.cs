@@ -16,19 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
-using GingerCore;
-using GingerCore.Actions;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests.NonUITests
 {
+    // This class will run only on windows since it uses VBS
+
     [TestClass]
     [Level1]
     public class ExpectedWithActual 
