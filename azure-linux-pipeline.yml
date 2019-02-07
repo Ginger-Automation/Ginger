@@ -14,7 +14,7 @@ jobs:
 # Job Variables
 # ------------------------------------------------------------------------------------------------------
   variables:  
-    solution: '**/*.sln'     # = D:\a\1\s\Ginger\Ginger.sln
+    solution: '**/*.sln'     # = /home/vsts/work/1/s/Ginger
     buildConfiguration: 'Release'
     solutionDirectory:  'Ginger-Automation/Ginger'
     testDLLs: |
@@ -76,7 +76,9 @@ jobs:
     displayName: 'Run Unit tests Level for .Net Core test DLLs'
     inputs:
       command: test
-      projects: '**/GingerCoreCommonTest/GingerCoreCommonTest.csproj **/GingerCoreNetTest/GingerCoreNetTest.csproj'
+      projects: |
+        **/GingerCoreCommonTest/GingerCoreCommonTest.csproj 
+        **/GingerCoreNetTest/GingerCoreNetTest.csproj
       arguments: '--configuration $(buildConfiguration)'    #   --collect "Code coverage" not working on Linux !?
 
   
@@ -92,3 +94,9 @@ jobs:
 
  # failTaskOnFailedTests: true
 
+ #- task: PublishBuildArtifacts@1
+ # displayName: "Publish artifacts"
+ # inputs:
+ #   PathtoPublish: '$(Build.ArtifactStagingDirectory)/app'
+ #   ArtifactName: app
+ #   publishLocation: Container
