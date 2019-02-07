@@ -404,7 +404,7 @@ namespace Ginger
             //Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
 
             AutomateTabGingerRunner = new GingerRunner(eExecutedFrom.Automation);
-           
+
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
 
@@ -431,7 +431,7 @@ namespace Ginger
             phase = "Loading User Profile";
             Reporter.ToLog(eLogLevel.DEBUG, phase);
             AppSplashWindow.LoadingInfo(phase);
-             WorkSpace.UserProfile = UserProfile.LoadUserProfile();
+            WorkSpace.UserProfile = UserProfile.LoadUserProfile();
 
             phase = "Configuring User Type";
             Reporter.ToLog(eLogLevel.DEBUG, phase);
@@ -442,8 +442,8 @@ namespace Ginger
             phase = "Loading User Selected Resource Dictionaries";
             Reporter.ToLog(eLogLevel.DEBUG, phase);
             AppSplashWindow.LoadingInfo(phase);
-            if ( WorkSpace.UserProfile != null)
-                LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default,  WorkSpace.UserProfile.TerminologyDictionaryType);
+            if (WorkSpace.UserProfile != null)
+                LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, WorkSpace.UserProfile.TerminologyDictionaryType);
             else
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
 
@@ -469,15 +469,15 @@ namespace Ginger
             {
                 HandleAutoRunMode();
             }
-            
+
             //AppSplashWindow.LoadingInfo("Ready!");
             App.AppSplashWindow = null;
 
             AutoLogProxy.LogAppOpened();
 
-            if (( WorkSpace.UserProfile.Solution != null) && ( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null))
+            if ((WorkSpace.UserProfile.Solution != null) && (WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null))
             {
-                }
+            }
 
             // Register our own Ginger tool tip handler
             //--Canceling customize tooltip for now due to many issues and no real added value            
@@ -485,7 +485,7 @@ namespace Ginger
             phase = "Application was loaded and ready";
             Reporter.ToLog(eLogLevel.INFO, phase);
             mIsReady = true;
-            WorkSpace.VERefrences = VERefrenceList.LoadFromJson(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ValueExpressionRefrences.json"));
+            WorkSpace.VERefrences = VERefrenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json"}));
         }
 
         private static void StandAloneThreadExceptionHandler(object sender, UnhandledExceptionEventArgs e)

@@ -464,16 +464,16 @@ namespace Ginger.Actions
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Actual, Header = "Actual Value", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["AddActualToExpectButton"] });
 
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Operator, Header = "Operator", WidthWeight = 150, BindingMode = BindingMode.TwoWay, StyleType= GridColView.eGridColStyleType.ComboBox, CellValuesList = OperatorList });
-           // viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["AddActualToExpectButton"] });
-            
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Operator, Header = "Operator", WidthWeight = 150, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = OperatorList });
+            // viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["AddActualToExpectButton"] });
+
 
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Expected, Header = "Expected Value", WidthWeight = 150 });
             viewCols.Add(new GridColView() { Field = ".....", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ValueExpressionButton"] });
             viewCols.Add(new GridColView() { Field = "Clear Expected Value", Header = "X", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ClearExpectedValueBtnTemplate"] });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.ExpectedCalculated, Header = "Calculated Expected", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Status, WidthWeight = 70, BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new ActReturnValueStatusConverter(), TextBlock.ForegroundProperty)) });
-            
+
             List<String> varsCollc = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
             varsCollc.Sort();
             if (varsCollc.Count > 0)
@@ -501,7 +501,7 @@ namespace Ginger.Actions
 
             OutputValuesGrid.ShowViewCombo = Visibility.Collapsed;
             OutputValuesGrid.ShowEdit = Visibility.Collapsed;
-        }
+                    }
 
         private void SetActInputValuesGrid()
         {

@@ -49,13 +49,13 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
             ValueExpressionReference VER = new ValueExpressionReference();
             VER.Category = "math";
-            VER.Description = "abc";
+            VER.Name = "abc";
             ValueExpressionReference VER2 = new ValueExpressionReference();
             VER2.Category = "math";
-            VER2.Description = "eee";
+            VER2.Name = "eee";
             ValueExpressionReference VER3 = new ValueExpressionReference();
             VER3.Category = "math";
-            VER3.Description = "ewee";
+            VER3.Name = "ewee";
             VEL.Refrences.Add(VER);
             VEL.Refrences.Add(VER2);
 

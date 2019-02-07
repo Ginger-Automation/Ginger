@@ -32,7 +32,7 @@ namespace GingerCoreNET.RosLynLib
 {
     public class CodeProcessor
     {
-      static  Regex Pattern = new Regex(@"\<\?[^\<\?]*\?\>",RegexOptions.Compiled);
+      static  Regex Pattern = new Regex("{CS(\\s)*Exp(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\((\")*([^\\)}\\({])*(\")*\\)}", RegexOptions.Compiled);
         public object EvalExpression(string expression)
         {
            
@@ -47,20 +47,23 @@ namespace GingerCoreNET.RosLynLib
 
         public static string GetResult(string Expression)
         {
-           
+            Pattern =   new Regex("{CS(\\s)*Exp(\\s)*=(\\s)*[^}]*}");
+            Regex Clean =new  Regex("{CS(\\s)*Exp(\\s)*=");
 
             foreach (Match M in Pattern.Matches(Expression))
             {
                 string match = M.Value;
+                string exp = match;
+                exp = exp.Replace(Clean.Match(exp).Value, "");
                 //not doing string replacement to
-                string exp = match.Substring(2, match.Length - 4);
+                exp = exp.Remove(exp.Length-1);
                 string Evalresult = exp;
                 try
                 {
                     Evalresult = CSharpScript.EvaluateAsync(exp).Result.ToString();
                 }
 
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Console.Write(e.Message);
                 }
@@ -68,9 +71,10 @@ namespace GingerCoreNET.RosLynLib
             }
 
             return Expression;
+
         }
 
-        
+   
         public static bool EvalCondition(string condition)
         {
             bool result =(bool) CSharpScript.EvaluateAsync(condition).Result;

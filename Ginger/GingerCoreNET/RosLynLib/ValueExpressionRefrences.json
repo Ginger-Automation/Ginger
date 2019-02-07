@@ -2,38 +2,52 @@
   "Refrences": [
     {
       "Category": "String Functions",
-      "Description": "Replace Text",
-      "Expression": "<?\"abc\".Replace(\"b\",\"d\")?>"
+      "Name": "Replace Text",
+      "Expression": "{CS Exp=\"\"abc\".Replace(\"b\",\"d\")\"}",
+      "UseCase": "Replcaes Text in String",
+      "Sample": "{CS Exp=\"\"abc\".Replace(\"b\",\"d\")\"} will  change abc to adc"
     },
     {
       "Category": "String Functions",
-      "Description": "Text Contains",
-      "Expression": "<?\"abc\".Contains(\"b\")?>"
+      "Name": "Text Contains",
+      "Expression": "{CS Exp=\"\"abc\".Contains(\"b\")\"}",
+      "UseCase": "Check if provided text is present in string",
+      "Sample":  "{CS Exp=\"\"abc\".Contains(\"b\")\"} will return true if b is present in abc"
     },
     {
       "Category": "Math",
-      "Description": "Add",
-      "Expression": "<?5+3?>"
+      "Name": "Add",
+      "Expression": "{CS Exp=\"5+3\"}",
+      "UseCase": "Perfrom Mathematical operations",
+      "Sample": "{CS Exp=\"5+3\"} will return 8 for 5+3. It will return 2.5 for 5/2.0 but will return 2 for 5/2 "
+    },
+      {
+        "Category": "String Functions",
+        "Name": "Starts With",
+        "Expression": "{CS Exp=\"\"Abc\".StartsWith(\"A\")\"}",
+        "UseCase": "Check if provided string Starts with provided characters",
+        "Sample": "{CS Exp=\"\"Abc\".StartsWith(\"A\")\"} will return true as Abc Starts with A"
+      },
+    {
+      "Category": "String Functions",
+      "Name": "Ends With",
+      "Expression": "{CS Exp=\"\"Abc\".EndsWith(\"c\")\"}",
+      "UseCase": "Check if provided string Ends with provided characters",
+      "Sample": "{CS Exp=\"\"Abc\".EndsWith(\"c\")\"} will return true as Abc Ends with B"
     },
     {
       "Category": "String Functions",
-      "Description": "Starts With",
-      "Expression": "<?\"Abc\".StartsWith(\"A\")?>"
+      "Name": "Get String Length",
+      "Expression": "{CS Exp=\"\"Abc\".Length\"}",
+      "UseCase": "Calculates length of string",
+      "Sample": "{CS Exp=\"\"Abc\".Length\"} will return 3 as length of string"
     },
     {
       "Category": "String Functions",
-      "Description": "Ends With",
-      "Expression": "<?\"Abc\".EndsWith(\"c\")?>"
-    },
-    {
-      "Category": "String Functions",
-      "Description": "Get String Length",
-      "Expression": "<?\"Abc\".Length?>"
-    },
-    {
-      "Category": "String Functions",
-      "Description": "Get Substring",
-      "Expression": "<?\"Abcdefgh\".Substring(1,3)?>"
+      "Name": "Get Substring",
+      "Expression": "{CS Exp=\"\"Abcdefgh\".Substring(1,3)\"}",
+      "UseCase": "Get sub strings from provided starting index(base 0) of specified ",
+      "Sample":  "{CS Exp=\"\"Abcdefgh\".Substring(1,3)\"}  will return bcd from starting index 1(base 0) of length r "
     }
   ]
 }

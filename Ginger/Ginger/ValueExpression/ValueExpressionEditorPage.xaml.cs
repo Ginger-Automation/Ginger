@@ -233,7 +233,7 @@ namespace Ginger
 
                 TreeViewItem tvi = new TreeViewItem();
 
-                SetItemView(tvi, VER.Description, VER.Expression, "VBS16x16.png");
+                SetItemView(tvi, VER.Name, VER.Expression, "VBS16x16.png");
                 Parent.Items.Add(tvi);
                 tvi.MouseDoubleClick += tvi_MouseDoubleClick;
 

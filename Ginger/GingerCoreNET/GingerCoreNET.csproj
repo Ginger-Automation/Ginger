@@ -35,6 +35,13 @@
   <ItemGroup>
     <None Remove="Reports\HTMLTemplates\SkeletonHTMLReport.html" />
     <None Remove="Reports\HTMLTemplates\SummaryHTMLReport.html" />
+    <None Remove="RosLynLib\ValueExpressionRefrences.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="RosLynLib\ValueExpressionRefrences.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -76,6 +83,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="RosLynLib\ValueExpressionReference.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Images\%40BeatLogo.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -87,9 +100,6 @@
     </None>
     <None Update="Images\%40ItemPrev.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="RosLynLib\ValueExpressionRefrences.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
