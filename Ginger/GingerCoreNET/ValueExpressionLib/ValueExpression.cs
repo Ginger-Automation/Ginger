@@ -199,21 +199,22 @@ namespace GingerCore
             {
                 mValueCalculated = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mValueCalculated);
             }
+            else if (!string.IsNullOrWhiteSpace(SolutionFolder))
+                {
+                    if (mValueCalculated.StartsWith("~"))
+                    {
+                        mValueCalculated = mValueCalculated.TrimStart(new char[] { '~', '\\', '/' });
+                        mValueCalculated = Path.Combine(SolutionFolder, mValueCalculated);
+                    }
+                }
 
         }
 
         private void EvaluateCSharpFunctions()
         {
-            mValueCalculated= CodeProcessor.GetResult(mValueCalculated);
-        
-            else if(!string.IsNullOrWhiteSpace(SolutionFolder)) 
-            {                
-                if (mValueCalculated.StartsWith("~"))
-                {
-                    mValueCalculated = mValueCalculated.TrimStart(new char[] { '~', '\\', '/' });
-                    mValueCalculated = Path.Combine(SolutionFolder, mValueCalculated);
-                }
-            }
+            mValueCalculated = CodeProcessor.GetResult(mValueCalculated);
+
+
         }
 
         private void ReplaceGlobalParameters()
