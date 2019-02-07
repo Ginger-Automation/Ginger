@@ -776,7 +776,7 @@ namespace Ginger.Repository
             }
         }
 
-        public void HTMLReportAttachment(string extraInformationCalculated, string emailReadyHtml, string reportsResultFolder, string runSetFolder, object Report, object conf)
+        public void HTMLReportAttachment(string extraInformationCalculated, ref string emailReadyHtml, ref string reportsResultFolder, string runSetFolder, object Report, object conf)
         {
             EmailHtmlReportAttachment rReport = (EmailHtmlReportAttachment)Report;
             HTMLReportsConfiguration currentConf = (HTMLReportsConfiguration)conf;
@@ -845,7 +845,8 @@ namespace Ginger.Repository
         {
             //TODO: Remove from here and execute it in actual RunSetActionScript.cs (Not perticularly tested)
             ActScript act = new ActScript();
-            string FileName = ScriptFileName.Replace(@"~\", SolutionFolder);
+            //string FileName = ScriptFileName.Replace(@"~\", SolutionFolder);
+            string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScriptFileName);
 
             Ginger.Run.RunSetActions.RunSetActionScript actionScript = new RunSetActionScript();
             actionScript.VerifySolutionFloder(SolutionFolder, FileName);

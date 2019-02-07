@@ -248,9 +248,13 @@ namespace GingerCore.Actions
             string DataFilePath;
             if (DataFileName.StartsWith("~"))
             {
-                DataFilePath = System.IO.Path.Combine(SolutionFolder, DataFileName.Replace("~\\", ""));
+                //DataFilePath = System.IO.Path.Combine(SolutionFolder, DataFileName.Replace("~\\", ""));
+                DataFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataFileName);
             }
-            else DataFilePath = DataFileName;
+            else
+            {
+                DataFilePath = DataFileName;
+            }
 
             // TODO: process params VE
             // Process Data for each line use l as template

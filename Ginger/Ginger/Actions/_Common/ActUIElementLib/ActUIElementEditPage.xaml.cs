@@ -100,10 +100,10 @@ namespace Ginger.Actions._Common.ActUIElementLib
             Page p = GetLocateValueEditPage(SelectedLocType);
             LocateValueEditFrame.Content = p;
             UpdateActionInfo(mAction.ElementAction);
-            if (SelectedLocType != eLocateBy.POMElement)
-            {
-                ElementTypeComboBox.IsEnabled = true;
-            }
+            //if (SelectedLocType != eLocateBy.POMElement)
+            //{
+            //    ElementTypeComboBox.IsEnabled = true;
+            //}
         }
 
         List<ActUIElement.eElementAction> mElementActionsList = new List<ActUIElement.eElementAction>();
@@ -443,8 +443,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             switch (SelectedLocType)
             {
                 case eLocateBy.POMElement:                 
-                    ElementTypeComboBox.IsEnabled = false;
-
+                    //ElementTypeComboBox.IsEnabled = false;
                     LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAction, nameof(ActUIElement.ElementType), mAction, nameof(ActUIElement.ElementLocateValue));
                     locateByPOMElementPage.ElementChangedPageEvent -= POMElementChanged;
                     locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
