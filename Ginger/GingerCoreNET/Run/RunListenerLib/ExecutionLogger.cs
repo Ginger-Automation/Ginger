@@ -117,6 +117,12 @@ namespace Ginger.Run
                     {
                         mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
                     }
+                mConfiguration = value;
+
+                if (!CheckOrCreateDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder))
+                {
+                    mConfiguration.ExecutionLoggerConfigurationExecResultsFolder= mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\"; 
+                }
 
 
                     switch (this.ExecutedFrom)
@@ -186,14 +192,18 @@ namespace Ginger.Run
         private static void CleanDirectory(string folderName, bool isCleanFile= true)
         {
             System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(folderName);
-            if (isCleanFile)
-                foreach (System.IO.FileInfo file in di.GetFiles())
-                {
-                    file.Delete();
-                }
-            foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
+
+            if (di.Exists)
             {
-                dir.Delete(true);
+                if (isCleanFile)
+                    foreach (System.IO.FileInfo file in di.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
+                {
+                    dir.Delete(true);
+                }
             }
         }
         private static void CreateTempDirectory()
@@ -227,7 +237,7 @@ namespace Ginger.Run
                 else
                 {
                     //If the path configured by user in the logger is not accessible, we set the logger path to default path
-                    logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults\");
+                    logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults");
                     System.IO.Directory.CreateDirectory(logsFolder);
                     
                     WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
@@ -243,6 +253,7 @@ namespace Ginger.Run
 
         private static Boolean CheckOrCreateDirectory(string directoryPath)
         {
+            directoryPath=directoryPath.Replace(@"~/", WorkSpace.Instance.Solution.Folder);
             try
             {
                 if (System.IO.Directory.Exists(directoryPath))
@@ -263,6 +274,11 @@ namespace Ginger.Run
 
         private static void SaveObjToJSonFile(object obj, string FileName, bool toAppend = false)
         {
+            string mDirectoryName = Path.GetDirectoryName(FileName);
+            if (!Directory.Exists(mDirectoryName))
+            {
+                Directory.CreateDirectory(mDirectoryName);
+            }
             //TODO: for speed we can do it async on another thread...
             using (StreamWriter SW = new StreamWriter(FileName, toAppend))
             using (JsonWriter writer = new JsonTextWriter(SW))
@@ -506,7 +522,7 @@ namespace Ginger.Run
                 {
                     if (mVE == null)
                     {
-                        mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
+                        mVE = new ValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
                     }
                     mVE.Value = businessFlow.RunDescription;
                     BFR.RunDescription = mVE.ValueCalculated;
@@ -529,7 +545,7 @@ namespace Ginger.Run
                 else
                 {
                     // use Path.cOmbine
-                    SaveObjToJSonFile(BFR, ExecutionLogfolder + businessFlow.ExecutionLogFolder + @"\BusinessFlow.txt");
+                    SaveObjToJSonFile(BFR, Path.Combine(new string[]{ ExecutionLogfolder,businessFlow.ExecutionLogFolder,@"BusinessFlow.txt"}));
                     businessFlow.ExecutionFullLogFolder = ExecutionLogfolder + businessFlow.ExecutionLogFolder;
                 }
                 if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
@@ -620,7 +636,8 @@ namespace Ginger.Run
                 {
                     if (mVE == null)
                     {
-                        mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
+                        mVE = new ValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
+
                     }
                     mVE.Value = activity.RunDescription;
                     AR.RunDescription = mVE.ValueCalculated;
@@ -732,7 +749,7 @@ namespace Ginger.Run
                         {
                             if (mVE == null)
                             {
-                                mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
+                                mVE =new ValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
                             }
                             mVE.Value = action.RunDescription;
                             AR.RunDescription = mVE.ValueCalculated;
@@ -1185,7 +1202,6 @@ namespace Ginger.Run
                         continue;
                     }
                     
-                    businessFlow.ExecutionLogActivityCounter++;
                     mCurrentActivity = activity;
                     activity.ExecutionLogFolder = businessFlow.ExecutionLogFolder + @"\" + businessFlow.ExecutionLogActivityCounter + " " + folderNameNormalazing(activity.ActivityName);
                     System.IO.Directory.CreateDirectory(activity.ExecutionLogFolder);
@@ -1204,6 +1220,7 @@ namespace Ginger.Run
                         ActionEnd(meventtime, action, true);
                     }
                     ActivityEnd(meventtime, activity, true);
+                    businessFlow.ExecutionLogActivityCounter++;
                 }
                 Gr.SetActivityGroupsExecutionStatus(businessFlow, true, this);
                 Gr.CalculateBusinessFlowFinalStatus(businessFlow);

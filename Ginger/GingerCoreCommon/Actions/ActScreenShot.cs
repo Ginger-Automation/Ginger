@@ -111,8 +111,8 @@ namespace GingerCore.Actions
 
             if (DirectoryPath.StartsWith(@"~\"))
             {
-                DirectoryPath = DirectoryPath.Replace(@"~\", SolutionFolder);
-            }
+                DirectoryPath = Path.Combine(SolutionFolder, DirectoryPath.Replace(@"~\", string.Empty));
+            }            
 
             if (!Directory.Exists(DirectoryPath))
             {

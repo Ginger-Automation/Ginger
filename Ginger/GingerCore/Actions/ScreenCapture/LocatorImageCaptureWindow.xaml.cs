@@ -238,18 +238,15 @@ namespace GingerCore.Actions.ScreenCapture
 
             using (Bitmap bitmap = new Bitmap(SelectionRectangle.Width, SelectionRectangle.Height))
             {
-
                 using (Graphics g = Graphics.FromImage(bitmap))
                 {
-
-                    g.CopyFromScreen(SourcePoint, System.Drawing.Point.Empty, SelectionRectangle.Size);
-                  
+                    g.CopyFromScreen(SourcePoint, System.Drawing.Point.Empty, SelectionRectangle.Size);                  
                 }
-
-                //if (FilePath.StartsWith("~\\") == true) FilePath = FilePath.Replace("~\\", "");
-                FilePath = FilePath.Replace("~\\", f.SolutionFolder);
-                bitmap.Save(FilePath, ImageFormat.Png);               
                 
+                //FilePath = FilePath.Replace("~\\", f.SolutionFolder);
+                FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+
+                bitmap.Save(FilePath, ImageFormat.Png);                               
             }
 
         }

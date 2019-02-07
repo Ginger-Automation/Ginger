@@ -238,14 +238,12 @@ namespace Ginger.AnalyzerLib
             {
                 foreach (ActReturnValue ARV in a.ActReturnValues)
                 {
-
                     if (ARV.StoreTo != ActReturnValue.eStoreTo.None)
                     {
                         string StoreToValue = ARV.StoreToValue;
                         ActReturnValue.eStoreTo StoreToType = ARV.StoreTo;
                         if (StoreToType == ActReturnValue.eStoreTo.Variable)
-                        {
-                            ObservableList<VariableBase> bfInputVariables = App.BusinessFlow.GetAllVariables(parentActivity);
+                        {                           
                             if (BusinessFlow.GetAllVariables(parentActivity).Where(x => x.Name == StoreToValue).Select(x => x.Name).FirstOrDefault() == null)
                             {
                                 AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);

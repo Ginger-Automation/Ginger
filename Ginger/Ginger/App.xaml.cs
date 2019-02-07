@@ -294,29 +294,32 @@ namespace Ginger
                     {
                         mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
                     }
-                   WorkSpace.UserProfile.RecentBusinessFlow = App.BusinessFlow.Guid;
-                    WorkSpace.UserProfile.Solution.LastBusinessFlowFileName = mBusinessFlow.FileName;
-                    AddLastUsedBusinessFlow(mBusinessFlow);
+                    //WorkSpace.UserProfile.RecentBusinessFlow = App.BusinessFlow.Guid;
+                    //WorkSpace.UserProfile.Solution.LastBusinessFlowFileName = mBusinessFlow.FileName;
+                    //AddLastUsedBusinessFlow(mBusinessFlow);
                 }
 
+                //Set Business Flow on AutomateTabGingerRunner
                 App.AutomateTabGingerRunner.BusinessFlows.Clear();
                 if (App.BusinessFlow != null)
+                {
                     App.AutomateTabGingerRunner.BusinessFlows.Add(App.BusinessFlow);
+                }
                 App.AutomateTabGingerRunner.CurrentBusinessFlow = App.BusinessFlow;
-
                 UpdateApplicationsAgentsMapping();
+
                 OnPropertyChanged(nameof(BusinessFlow));
             }
         }
 
-        private static void AddLastUsedBusinessFlow(BusinessFlow BF)
-        {
-            if (BF != null)
-            {
-                 WorkSpace.UserProfile.Solution.RecentlyUsedBusinessFlows.AddItem(BF.FileName);
-                 WorkSpace.UserProfile.SaveUserProfile();
-            }
-        }
+        //private static void AddLastUsedBusinessFlow(BusinessFlow BF)
+        //{
+        //    if (BF != null)
+        //    {
+        //         WorkSpace.UserProfile.Solution.RecentlyUsedBusinessFlows.AddItem(BF.FileName);
+        //         WorkSpace.UserProfile.SaveUserProfile();
+        //    }
+        //}
 
 
         //public static string LocalApplicationData
@@ -733,8 +736,18 @@ namespace Ginger
         }
 
         private static void SolutionCleanup()
-        {            
-             WorkSpace.UserProfile.Solution = null;
+        {
+            if (WorkSpace.Instance.SolutionRepository != null)
+            {
+                WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
+            }
+
+            if (!WorkSpace.RunningInExecutionMode)
+            {
+                AppSolutionAutoSave.SolutionAutoSaveEnd();
+            }
+
+            WorkSpace.UserProfile.Solution = null;
             App.AutomateTabGingerRunner.ClearAgents();
             App.BusinessFlow = null;
             AutoLogProxy.SetAccount("");
@@ -743,45 +756,33 @@ namespace Ginger
         }
 
         public static bool SetSolution(string SolutionFolder)
-        {
-            //clear existing solution data
+        {            
             try
             {
-                
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", SolutionFolder));
                 mLoadingSolution = true;
                 OnPropertyChanged(nameof(LoadingSolution));
 
-               
-                // Cleanup last loaded solution Plugins 
-                // WorkSpace.Instance.LocalGingerGrid.Reset();  //Clear the grid
-
-                if (WorkSpace.Instance.SolutionRepository != null)
-                {
-                    WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
-                }
-
-
-                if (!WorkSpace.RunningInExecutionMode)
-                {
-                    AppSolutionAutoSave.SolutionAutoSaveEnd();
-                }
-
                 //Cleanup
                 SolutionCleanup();
-                // !!!!!!!!!!!!! '\' is not good
-                if (!SolutionFolder.EndsWith(@"\")) SolutionFolder += @"\";
+
+                //Load new Solution
                 string SolFile = System.IO.Path.Combine(SolutionFolder, @"Ginger.Solution.xml");
                 if (File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(SolFile)))
                 {
                     //get Solution files
                     IEnumerable<string> solutionFiles = Solution.SolutionFiles(SolutionFolder);
+                    ConcurrentBag<Tuple<SolutionUpgrade.eGingerVersionComparisonResult, string>> solutionFilesWithVersion = null; 
 
                     //check if Ginger Upgrade is needed for loading this Solution
                     try
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "Checking if Ginger upgrade is needed for loading the Solution");
-                        ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
+                        if (solutionFilesWithVersion == null)
+                        {
+                            solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
+                        }
+                        ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
                         if (higherVersionFiles.Count > 0)
                         {
                             if (WorkSpace.RunningInExecutionMode == false && RunningFromUnitTest == false)
@@ -815,12 +816,11 @@ namespace Ginger
 
                         WorkSpace.UserProfile.Solution = sol;
 
-       
                         WorkSpace.UserProfile.Solution.SetReportsConfigurations();
-                         WorkSpace.UserProfile.LoadRecentAppAgentMapping();
+                        WorkSpace.UserProfile.LoadRecentAppAgentMapping();
                         AutoLogProxy.SetAccount(sol.Account);
-                       
-                        SetDefaultBusinessFlow();
+
+                        //SetDefaultBusinessFlow();
 
                         if (!WorkSpace.RunningInExecutionMode)
                         {
@@ -830,9 +830,13 @@ namespace Ginger
                         //Offer to upgrade Solution items to current version
                         try
                         {
-                            if ( WorkSpace.UserProfile.DoNotAskToUpgradeSolutions == false && WorkSpace.RunningInExecutionMode == false && RunningFromUnitTest == false)
+                            if (WorkSpace.UserProfile.DoNotAskToUpgradeSolutions == false && WorkSpace.RunningInExecutionMode == false && RunningFromUnitTest == false)
                             {
-                                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
+                                if (solutionFilesWithVersion == null)
+                                {
+                                    solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
+                                }
+                                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
                                 if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
                                 {
                                     UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, sol.Folder, sol.Name, lowerVersionFiles.ToList());
@@ -845,7 +849,7 @@ namespace Ginger
                             Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution files should be Upgraded", ex);
                         }
 
-                         WorkSpace.UserProfile.AddSolutionToRecent(sol);
+                        WorkSpace.UserProfile.AddSolutionToRecent(sol);
                     }
                     else
                     {
@@ -858,7 +862,6 @@ namespace Ginger
                     Reporter.ToUser(eUserMsgKey.BeginWithNoSelectSolution);
                     return false;
                 }
-
 
                 return true;
             }
@@ -984,57 +987,47 @@ namespace Ginger
             e.Handled = true;
         }
 
-        public static BusinessFlow SetDefaultBusinessFlow()
+        //public static BusinessFlow SetDefaultBusinessFlow()
+        //{
+        //    BusinessFlow defualtBF;
+
+        //    ObservableList<BusinessFlow> allBizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+        //    if (allBizFlows.Count > 0)
+        //    {
+        //        defualtBF = allBizFlows[0];
+        //    }
+        //    else
+        //    {
+        //        defualtBF = CreateNewBizFlow(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " 1");
+        //        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(defualtBF);
+        //    }
+
+        //    defualtBF.SaveBackup();
+        //    App.BusinessFlow = defualtBF;
+        //    return defualtBF;
+        //}
+
+        public static BusinessFlow GetNewBusinessFlow(string Name, bool setTargetApp=false)
         {
-            BusinessFlow defualtBF;
-
-            ObservableList<BusinessFlow> allBizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            if (allBizFlows.Count > 0)
-            {
-                defualtBF = allBizFlows[0];
-            }
-            else
-            {
-                defualtBF = CreateNewBizFlow(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " 1");
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(defualtBF);
-            }
-
-            defualtBF.SaveBackup();
-            App.BusinessFlow = defualtBF;
-            return defualtBF;
-        }
-
-        public static BusinessFlow CreateNewBizFlow(string Name)
-        {
-
             BusinessFlow biz = new BusinessFlow();
             biz.Name = Name;
             biz.Activities = new ObservableList<Activity>();
             biz.Variables = new ObservableList<VariableBase>();
-            // Set the new BF to be same like main app
-            if ( WorkSpace.UserProfile.Solution.MainApplication != null)
-            {
-                biz.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.UserProfile.Solution.MainApplication });
-            }
-
             Activity a = new Activity() { Active = true };
             a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
             a.Acts = new ObservableList<IAct>();
-            if (biz.TargetApplications.Count > 0)
-            {
-                a.TargetApplication = biz.TargetApplications[0].Name;
-            }                
             biz.Activities.Add(a);
-
             biz.Activities.CurrentItem = a;
             biz.CurrentActivity = a;
+
+            if (setTargetApp == true && WorkSpace.UserProfile.Solution.ApplicationPlatforms.Count > 0)
+            {
+                biz.TargetApplications.Add(new TargetApplication() {AppName = WorkSpace.UserProfile.Solution.MainApplication});
+                biz.CurrentActivity.TargetApplication = biz.TargetApplications[0].Name;
+            }
+
             return biz;
         }
-
-
-
-
-
 
         internal static void CheckIn(string Path)
         {
