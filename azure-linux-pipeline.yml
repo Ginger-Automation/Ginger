@@ -76,7 +76,7 @@ jobs:
     displayName: 'Run Unit tests Level for .Net Core test DLLs'
     inputs:
       command: test
-      projects: **/**/*Test.csproj         
+      projects: '**/**/*Test.csproj'          # test all csproj
       arguments: '--configuration $(buildConfiguration)'    #   --collect "Code coverage" not working on Linux !?
 
   
