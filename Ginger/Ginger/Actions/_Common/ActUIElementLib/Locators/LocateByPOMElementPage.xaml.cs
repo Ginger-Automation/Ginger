@@ -34,6 +34,7 @@ using System;
 using System.Linq;
 using GingerCore.Platforms;
 using GingerCore.Actions;
+using Ginger.ApplicationModelsLib.POMModels;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -225,6 +226,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             string pathToShow;
             pathToShow = mSelectedPOM.FilePath.Substring(0, mSelectedPOM.FilePath.LastIndexOf("\\")).Substring(mPOMModelFolder.FolderFullPath.Length) + @"\" + mSelectedPOM.ItemName;
             xHTMLReportFolderTextBox.Text = pathToShow;
+            xViewPOMBtn.Visibility = Visibility.Visible;
         }
 
         private void POMElementComboBox_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
@@ -312,6 +314,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private void XPOMElementTextBox_MouseClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             AllowElementSelection();
+        }
+
+        private void XViewPOMBtn_Click(object sender, RoutedEventArgs e)
+        {
+            POMEditPage mPOMEditPage = new POMEditPage(mSelectedPOM, General.RepositoryItemPageViewMode.ChildWithSave);
+            mPOMEditPage.ShowAsWindow(eWindowShowStyle.Dialog);
         }
     }
 }

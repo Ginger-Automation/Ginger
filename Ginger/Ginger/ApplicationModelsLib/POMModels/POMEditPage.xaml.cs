@@ -35,8 +35,10 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static Ginger.General;
 
 namespace Ginger.ApplicationModelsLib.POMModels
 {
@@ -47,8 +49,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
     {
         ApplicationPOMModel mPOM;
         ScreenShotViewPage mScreenShotViewPage;
-
-
+        GenericWindow mWin;
+        bool IsPageSaved = false;
+        public RepositoryItemPageViewMode mEditMode { get; set; }
         private Agent mAgent;
         public Agent Agent
         {
@@ -86,10 +89,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
         ScreenShotViewPage pd;
 
         readonly PomAllElementsPage mPomAllElementsPage;
-        public POMEditPage(ApplicationPOMModel POM)
+        public POMEditPage(ApplicationPOMModel POM, RepositoryItemPageViewMode editMode = RepositoryItemPageViewMode.View)
         {
             InitializeComponent();
             mPOM = POM;
+
+            if (editMode == General.RepositoryItemPageViewMode.ChildWithSave)
+            {
+                mPOM.SaveBackup();
+            }
+
+            mEditMode = editMode;
+
             ControlsBinding.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             ControlsBinding.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
             ControlsBinding.ObjFieldBinding(xPageURLTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.PageURL));
@@ -271,6 +282,62 @@ namespace Ginger.ApplicationModelsLib.POMModels
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error in POM Edit Page tabs style", ex);
+            }
+        }
+
+        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.FreeMaximized)
+        {
+            Title = mPOM.Name + " Edit Page";
+
+            Button saveButton = new Button();
+            saveButton.Content = "Save";
+            saveButton.Click += SaveButton_Click;
+
+            Button undoButton = new Button();
+            undoButton.Content = "Undo & Close";
+            undoButton.Click += UndoButton_Click;
+
+            GingerCore.General.LoadGenericWindow(ref mWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { saveButton, undoButton }, true, "Close", CloseButton_Click);
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            IsPageSaved = true;
+            //mPOM.SaveBackup();
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mPOM);
+        }
+
+        private void UndoButton_Click(object sender, RoutedEventArgs e)
+        {
+            UndoChangesAndClose();
+            // Logic to be added
+            mWin.Close();
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsPageSaved)
+            {
+                if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                {
+                    UndoChangesAndClose();
+                }
+            }
+            else
+                mWin.Close();
+        }
+
+        private void UndoChangesAndClose()
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                mPOM.RestoreFromBackup(true);                   //     mAction.RestoreFromBackup(true);
+                mWin.Close();
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
             }
         }
     }
