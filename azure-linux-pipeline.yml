@@ -65,19 +65,13 @@ jobs:
     
     # TODO: run unit test by level 1,2,3 continue on sucess only
 
-  #- task: VSTest@2
-  #  displayName: 'Run Unit tests Level for .Net Core test DLLs'
-  #  inputs:      
-  #    testAssemblyVer2: $(testDLLs)
-  #    runInParallel: True
-  #    codeCoverageEnabled: True
-
   - task: DotNetCoreCLI@2
     displayName: 'Run Unit tests Level for .Net Core test DLLs'
     inputs:
       command: test
       projects: '**/**/*Test.csproj'          # test all csproj
       arguments: '--configuration $(buildConfiguration)'    #   --collect "Code coverage" not working on Linux !?
+      
 
   
   #- task: PublishTestResults@2
