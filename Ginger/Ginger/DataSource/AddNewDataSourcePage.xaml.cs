@@ -194,10 +194,13 @@ namespace Ginger.DataSource
                 string FilePath = FilePathTextBox.Text;
                 if(FilePath == "" || FilePath.StartsWith(@"~DataSources\") || FilePath.StartsWith(@"~\DataSources\"))
                 {
-                    if (DSName.Text != "")                
-                        FilePathTextBox.Text = mTargetFolder.FolderRelativePath + @"\" + DSName.Text + ".mdb";                
-                    else               
-                            FilePathTextBox.Text = "";                        
+                    if (DSName.Text != "")
+                    {
+                        string FileName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(DSName.Text);
+                        FilePathTextBox.Text = mTargetFolder.FolderRelativePath + @"\" + FileName + ".mdb";
+                    }
+                    else
+                        FilePathTextBox.Text = "";                        
                 }               
             }            
         }

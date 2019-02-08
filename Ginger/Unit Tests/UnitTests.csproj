@@ -882,6 +882,9 @@
     <Content Include="TestResources\Plugins\PluginDriverExample4\PluginDriverExample4.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestResources\Temp\sample.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\WindowsApp\WindowsTestApplication.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
