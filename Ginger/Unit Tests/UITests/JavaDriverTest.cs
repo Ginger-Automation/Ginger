@@ -482,6 +482,187 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actJavaElement.Error, null, "Act.Error");
         }
 
+
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ClickTreeNodeWithSlash()
+        {         
+            //Arrange
+            ActJavaElement actJavaElement = new ActJavaElement();
+            actJavaElement.LocateBy = eLocateBy.ByName;
+            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+            actJavaElement.LocateValueCalculated = "countriesTree";
+            actJavaElement.Value= "US/California//Texas";
+            actJavaElement.Active = true;
+            actJavaElement.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(actJavaElement);
+            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+
+            //Act
+            mGR.RunAction(actJavaElement, false);
+
+                                 
+           //Assert
+            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+                       
+            PayLoad PLClick = new PayLoad("ElementAction");
+            PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
+            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+            PLClick.AddValue(eLocateBy.ByName.ToString());
+            PLClick.AddValue("countriesTree");
+            PLClick.ClosePackage();
+            PayLoad response = mDriver.Send(PLClick);
+
+            Assert.IsFalse(response.IsErrorPayLoad());
+            Assert.AreEqual("California/Texas", response.GetListString().FirstOrDefault(), "Selected node value");
+        }
+
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ClickTreeNodeNegativeTest()
+        {
+            //Arrange
+            ActJavaElement actJavaElement = new ActJavaElement();
+            actJavaElement.LocateBy = eLocateBy.ByName;
+            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+            actJavaElement.LocateValueCalculated = "countriesTree";
+            actJavaElement.Value = "Canada/Texas";
+            actJavaElement.Active = true;
+            actJavaElement.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(actJavaElement);
+            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+
+            //Act
+            mGR.RunAction(actJavaElement, false);
+
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");
+            Assert.AreEqual("Node: Texas was not found", actJavaElement.Error, "Node not found validation");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ClickTreeNodeExactMatchTest()
+        {
+            // There are 2 nodes matching the substring
+            //1. Texas & Florida
+            //2. Texas
+            //Texas should be selected and not the first one
+
+            //Arrange
+            ActJavaElement actJavaElement = new ActJavaElement();
+            actJavaElement.LocateBy = eLocateBy.ByName;
+            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+            actJavaElement.LocateValueCalculated = "countriesTree";
+            actJavaElement.Value = "Us/Texas";
+            actJavaElement.Active = true;
+            actJavaElement.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(actJavaElement);
+            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+
+            //Act
+            mGR.RunAction(actJavaElement, false);
+            
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+
+            PayLoad PLClick = new PayLoad("ElementAction");
+            PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
+            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+            PLClick.AddValue(eLocateBy.ByName.ToString());
+            PLClick.AddValue("countriesTree");
+            PLClick.ClosePackage();
+            PayLoad response = mDriver.Send(PLClick);
+
+            Assert.IsFalse(response.IsErrorPayLoad());
+            Assert.AreEqual("Texas", response.GetListString().FirstOrDefault(), "Selected node value");
+        }
+
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ClickTreeNodeSingleNodeValueTest()
+        {
+            //Arrange
+            
+            ActJavaElement actJavaElement = new ActJavaElement();
+            actJavaElement.LocateBy = eLocateBy.ByName;
+            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+            actJavaElement.LocateValueCalculated = "countriesTree";
+            actJavaElement.Value = "US";
+            actJavaElement.Active = true;
+            actJavaElement.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(actJavaElement);
+            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+
+            //Act
+            mGR.RunAction(actJavaElement, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+
+            PayLoad PLClick = new PayLoad("ElementAction");
+            PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
+            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+            PLClick.AddValue(eLocateBy.ByName.ToString());
+            PLClick.AddValue("countriesTree");
+            PLClick.ClosePackage();
+            PayLoad response = mDriver.Send(PLClick);
+
+            Assert.IsFalse(response.IsErrorPayLoad());
+            Assert.AreEqual("US", response.GetListString().FirstOrDefault(), "Selected node value");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ClickChildTreeNodeSingleNodeValueTest()
+        {
+            //Arrange
+
+            PayLoad PLClick = new PayLoad("ElementAction");
+            PLClick.AddValue(ActJavaElement.eControlAction.Click.ToString());
+            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+            PLClick.AddValue(eLocateBy.ByName.ToString());
+            PLClick.AddValue("countriesTree");
+            PLClick.AddValue("Canada");
+            PLClick.ClosePackage();
+            mDriver.Send(PLClick);
+
+
+           
+            ActJavaElement actJavaElement = new ActJavaElement();
+            actJavaElement.LocateBy = eLocateBy.ByName;
+            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+            actJavaElement.LocateValueCalculated = "countriesTree";
+            actJavaElement.Value = "Ontario";
+            actJavaElement.Active = true;
+            actJavaElement.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(actJavaElement);
+            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+
+            //Act
+            mGR.RunAction(actJavaElement, false);
+                                 
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+
+            PLClick = new PayLoad("ElementAction");
+            PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
+            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+            PLClick.AddValue(eLocateBy.ByName.ToString());
+            PLClick.AddValue("countriesTree");
+            PLClick.ClosePackage();
+            PayLoad response = mDriver.Send(PLClick);
+
+            Assert.IsFalse(response.IsErrorPayLoad());
+            Assert.AreEqual("Ontario", response.GetListString().FirstOrDefault(), "Selected node value");
+        }
+
+
         [TestMethod]  [Timeout(60000)]
         public void DoubleClickTreeNode()
         {
