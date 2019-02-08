@@ -282,6 +282,9 @@
     <Compile Include="NonUITests\GingerRunnerTests\GingerVariableTests.cs" />
     <Compile Include="NonUITests\OutputSimulation.cs" />
     <Compile Include="NonUITests\RepositoryTest.cs" />
+    <Compile Include="NonUITests\Script\VBSDateTimeTests.cs" />
+    <Compile Include="NonUITests\Script\VBSNumericTests.cs" />
+    <Compile Include="NonUITests\Script\VBSStringTests.cs" />
     <Compile Include="NonUITests\StatusResultTest.cs" />
     <Compile Include="NonUITests\UsedVariablesTest.cs" />
     <Compile Include="TestAssemblyInit.cs" />
