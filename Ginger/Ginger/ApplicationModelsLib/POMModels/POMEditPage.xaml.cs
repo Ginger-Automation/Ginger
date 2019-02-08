@@ -303,7 +303,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             IsPageSaved = true;
-            //mPOM.SaveBackup();
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mPOM);
         }
 
@@ -332,7 +331,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
-                mPOM.RestoreFromBackup(true);                   //     mAction.RestoreFromBackup(true);
+                mPOM.RestoreFromBackup(true);
                 mWin.Close();
             }
             finally
