@@ -490,9 +490,6 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.EditWindow:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Edit);
                     break;
-                case eImageType.UserDefined:
-//                    SetAsFontAwesomeIcon(FontAwesomeIcon.Edit);
-                    break;
                 #endregion
 
 
