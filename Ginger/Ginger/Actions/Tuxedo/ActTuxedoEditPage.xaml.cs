@@ -104,10 +104,11 @@ namespace Ginger.Actions.Tuxedo
         private void ProcessUDFile()
         {
             string FileName = PCPath.Text;
-            if (FileName.Contains("~\\"))
-            {
-                FileName = FileName.Replace("~",  WorkSpace.UserProfile.Solution.ContainingFolderFullPath);
-            }
+            //if (FileName.Contains("~\\"))
+            //{
+            //    FileName = FileName.Replace("~",  WorkSpace.UserProfile.Solution.ContainingFolderFullPath);
+            //}
+            FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName);
 
             mAct.DynamicUDElements.Clear();
             string[] lines = System.IO.File.ReadAllLines(FileName);

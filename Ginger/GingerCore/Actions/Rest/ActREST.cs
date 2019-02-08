@@ -665,10 +665,11 @@ namespace GingerCore.Actions.REST
             var DirectoryPath = string.Empty;
             DirectoryPath = SaveRequestResponseFolderPath.ValueForDriver;
 
-            if (DirectoryPath.StartsWith(@"~\"))
-            {
-                DirectoryPath = DirectoryPath.Replace(@"~\", SolutionFolder);
-            }
+            //if (DirectoryPath.StartsWith(@"~\"))
+            //{
+            //    DirectoryPath = DirectoryPath.Replace(@"~\", SolutionFolder);
+            //}
+            DirectoryPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DirectoryPath);
 
             DirectoryPath = Path.Combine(DirectoryPath,fileType);
 
@@ -744,7 +745,8 @@ namespace GingerCore.Actions.REST
         private byte[] GetBodyFromFile()
         {
             string ReqString = string.Empty;
-            FileStream ReqStream = System.IO.File.OpenRead(TemplateFile.ValueForDriver.Replace(@"~\", this.SolutionFolder));
+            //FileStream ReqStream = System.IO.File.OpenRead(TemplateFile.ValueForDriver.Replace(@"~\", this.SolutionFolder));
+            FileStream ReqStream = System.IO.File.OpenRead(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TemplateFile.ValueForDriver));
 
             using (StreamReader reader = new StreamReader(ReqStream))
             {

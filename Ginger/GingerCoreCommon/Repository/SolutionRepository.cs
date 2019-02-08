@@ -365,6 +365,36 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
+        /// Convert Solution Relative Path to Full path
+        /// </summary>
+        /// <param name="relativePath">Path like "~\Documents\Scripts\aa.vbs"</param>
+        /// <returns></returns>
+        public string ConvertSolutionRelativePath(string relativePath)
+        {
+            if (relativePath.TrimStart().StartsWith("~"))
+            {
+                string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
+                fullPath = Path.Combine(mSolutionFolderPath, fullPath);
+                return fullPath;
+            }
+            else
+            {
+                return relativePath;
+            }
+        }
+
+        /// <summary>
+        /// Converts path of file inside the Solution to be relative
+        /// </summary>
+        /// <param name="fullPath"></param>
+        /// <returns></returns>
+        public string ConvertFullPathToBeRelative(string fullPath)
+        {
+            string relative = fullPath.ToLower().Replace(mSolutionFolderPath.ToLower(), cSolutionRootFolderSign);            
+            return relative;
+        }
+
+        /// <summary>
         ///  Return enumerator of all valid files in solution, only repo items no junk
         /// </summary>
         /// <param name="solutionFolder"></param>
@@ -559,8 +589,13 @@ namespace Amdocs.Ginger.Repository
                 {
                     fileName = fileName.Replace(invalidChar.ToString(), "");
                 }
+
+                // Remove also other chars we do not want in file name
                 fileName = fileName.Replace(@".", "");
-                
+                fileName = fileName.Replace(@"?", "");  // on Linux it is valid but we do not want it
+                // !!!!!!!!!!!!!!!!!
+                //TODO: add more chars remove - see https://blog.josephscott.org/2007/02/12/things-that-shouldnt-be-in-file-names-for-1000-alex/
+
                 string fullName = v.Pattern.Replace("*", fileName);
 
 
