@@ -15,42 +15,25 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
   variables:  
     solution: '**/*.sln'     # = /home/vsts/work/1/s/Ginger
-    buildConfiguration: 'Release'
-    solutionDirectory:  'Ginger-Automation/Ginger'
-    testDLLs: |
-      **\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll
-      **\GingerCoreNETUnitTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreNETUnitTest.dll
-      **\GingerConsoleTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerConsoleTest.dll
-      **\GingerAutoPilotTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerAutoPilotTest.dll
-      **\GingerPluginCoreTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerPluginCoreTest.dll           
-     
-    artifactsFolder: 'D:\a\1\a' 
+    buildConfiguration: 'Release'     
+    # artifactsFolder: 'D:\a\1\a' 
   
   steps:
-  # - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
-  #- task: PublishTestResults@2
-  #  condition: succeededOrFailed()
-  #  inputs:
-  #    testRunner: VSTest
-  #    testResultsFiles: '**/*.trx'
-
-  #- task: PublishBuildArtifacts@1
-
   
 # ------------------------------------------------------------------------------------------------------
 # Install Nuget tool
 # ------------------------------------------------------------------------------------------------------
-  - task: NuGetToolInstaller@0  
-    displayName: NuGet Tool Installer
+  #- task: NuGetToolInstaller@0  
+  #  displayName: NuGet Tool Installer
 
 # ------------------------------------------------------------------------------------------------------
 # Restore Ginger solution NuGet packages
 # ------------------------------------------------------------------------------------------------------
-  - task: NuGetCommand@2
-    inputs:
-      command: restore  
-      restoreSolution: '$(**\GingerCoreCommonTest\GingerCoreCommonTest.csproj **\GingerCoreNetTest\GingerCoreNetTest.csproj)'       
-    displayName: Restore Ginger .net core projects Nuget Packages
+  #- task: NuGetCommand@2
+  #  inputs:
+  #    command: restore  
+  #    restoreSolution: '$(**\GingerCoreCommonTest\GingerCoreCommonTest.csproj **\GingerCoreNetTest\GingerCoreNetTest.csproj)'       
+  #  displayName: Restore Ginger .net core projects Nuget Packages
   
 # ------------------------------------------------------------------------------------------------------
 # Build Ginger DLLs .Net Core only
@@ -72,6 +55,15 @@ jobs:
       projects: '**/**/*Test.csproj'          # test all csproj, it will skip .Net Framework
       arguments: '--configuration $(buildConfiguration)'   # not working on Linux !?  --collect "Code coverage"
       
+
+      # - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
+  #- task: PublishTestResults@2
+  #  condition: succeededOrFailed()
+  #  inputs:
+  #    testRunner: VSTest
+  #    testResultsFiles: '**/*.trx'
+
+  #- task: PublishBuildArtifacts@1
 
   
   #- task: PublishTestResults@2
