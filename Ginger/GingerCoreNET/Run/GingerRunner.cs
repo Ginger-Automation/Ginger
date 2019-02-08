@@ -2480,6 +2480,7 @@ namespace Ginger.Run
                 Activity sharedActivityInstance = (Activity)sharedActivity.CreateInstance();
                 sharedActivityInstance.Active = true;
                 sharedActivityInstance.AddDynamicly = true;
+                sharedActivityInstance.VariablesDependencies = CurrentBusinessFlow.CurrentActivity.VariablesDependencies;
                 CurrentBusinessFlow.SetActivityTargetApplication(sharedActivityInstance);
                 CurrentBusinessFlow.AddActivity(sharedActivityInstance);
 
@@ -3698,9 +3699,12 @@ namespace Ginger.Run
         {
             mStopRun = true;
             
-            mExecutedActivityWhenStopped = (Activity)CurrentBusinessFlow.CurrentActivity;
-            mExecutedActionWhenStopped = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
-            mExecutedBusinessFlowWhenStopped = (BusinessFlow)CurrentBusinessFlow;
+            if(CurrentBusinessFlow != null)
+            {
+                mExecutedActivityWhenStopped = (Activity)CurrentBusinessFlow.CurrentActivity;
+                mExecutedActionWhenStopped = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                mExecutedBusinessFlowWhenStopped = (BusinessFlow)CurrentBusinessFlow;
+            }            
         }
 
         public void ResetRunnerExecutionDetails(bool doNotResetBusFlows=false)

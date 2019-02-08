@@ -589,8 +589,13 @@ namespace Amdocs.Ginger.Repository
                 {
                     fileName = fileName.Replace(invalidChar.ToString(), "");
                 }
+
+                // Remove also other chars we do not want in file name
                 fileName = fileName.Replace(@".", "");
-                
+                fileName = fileName.Replace(@"?", "");  // on Linux it is valid but we do not want it
+                // !!!!!!!!!!!!!!!!!
+                //TODO: add more chars remove - see https://blog.josephscott.org/2007/02/12/things-that-shouldnt-be-in-file-names-for-1000-alex/
+
                 string fullName = v.Pattern.Replace("*", fileName);
 
 
