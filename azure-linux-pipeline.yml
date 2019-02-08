@@ -58,11 +58,11 @@ jobs:
 
   - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
 
-  #- task: PublishTestResults@2
-  #  condition: succeededOrFailed()
-  #  inputs:
-  #    testRunner: VSTest
-  #    testResultsFiles: '**/*.trx'
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testRunner: VSTest
+      testResultsFiles: '**/*.trx'
 
   #- task: PublishBuildArtifacts@1
 
