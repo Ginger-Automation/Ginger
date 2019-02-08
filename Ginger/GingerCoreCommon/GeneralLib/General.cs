@@ -224,14 +224,18 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
-        public static string RemoveInvalidFileNameChars(string FileName)
+        public static string RemoveInvalidFileNameChars(string fileName)
         {
             foreach (char invalidChar in Path.GetInvalidFileNameChars())
             {
-                FileName = FileName.Replace(invalidChar.ToString(), "");
+                fileName = fileName.Replace(invalidChar.ToString(), "");
             }
-            FileName = FileName.Replace(@".", "");
-            return FileName;
+            fileName = fileName.Replace(@".", "");
+            fileName = fileName.Replace(@"?", "");  // on Linux it is valid but we do not want it
+            // !!!!!!!!!!!!!!!!!
+            //TODO: add more chars remove - see https://blog.josephscott.org/2007/02/12/things-that-shouldnt-be-in-file-names-for-1000-alex/
+
+            return fileName;
         }
     }
 }
