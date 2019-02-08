@@ -57,8 +57,10 @@ jobs:
       
 
   - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
+    displayName: 'Run tests on Ginger solution'
 
   - task: PublishTestResults@2
+    displayName: Publish test result
     condition: succeededOrFailed()
     inputs:
       testRunner: VSTest
