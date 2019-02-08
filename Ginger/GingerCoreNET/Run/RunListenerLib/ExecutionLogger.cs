@@ -334,33 +334,37 @@ namespace Ginger.Run
 
         public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner)
         {
-            gingerReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
-            gingerReport.Watch.Start();
-            gingerReport.LogFolder = string.Empty;
-
-            switch (this.ExecutedFrom)
+            if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
-                case Amdocs.Ginger.Common.eExecutedFrom.Automation:
-                    gingerReport.LogFolder = ExecutionLogfolder;
-                    break;
-                default:
-                    gingerReport.LogFolder = ExecutionLogfolder;
-                    break;
-            }
-            System.IO.Directory.CreateDirectory(gingerReport.LogFolder);
+                gingerReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
+                gingerReport.Watch.Start();
+                gingerReport.LogFolder = string.Empty;
 
-            
-            ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Runner", gingerRunner.Name, null);
+                switch (this.ExecutedFrom)
+                {
+                    case Amdocs.Ginger.Common.eExecutedFrom.Automation:
+                        gingerReport.LogFolder = ExecutionLogfolder;
+                        break;
+                    default:
+                        gingerReport.LogFolder = ExecutionLogfolder;
+                        break;
+                }
+                System.IO.Directory.CreateDirectory(gingerReport.LogFolder);
+
+
+                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Runner", gingerRunner.Name, null);
+            }
         }
 
 
 
         public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0)
         {
-            if (gingerRunner == null)
+            if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
-                if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
+                if (gingerRunner == null)
                 {
+
                     gingerReport.Seq = this.GingerData.Seq;
                     gingerReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
                     gingerReport.GUID = this.GingerData.Ginger_GUID.ToString();
@@ -372,34 +376,33 @@ namespace Ginger.Run
                     this.ExecutionLogBusinessFlowsCounter = 0;
                     this.BFCounter = 0;
                 }
-            }
-            else
-            {
-                if (runnerCount != 0)
-                {
-                    gingerReport.Seq = runnerCount;
-                }
                 else
                 {
-                    gingerReport.Seq = this.GingerData.Seq;  //!!!
-                }
-                gingerReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
-                gingerReport.GUID = gingerRunner.Guid.ToString();
-                gingerReport.Name = gingerRunner.Name;
-                gingerReport.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
-                gingerReport.EnvironmentName = gingerRunner.ProjEnvironment != null ? gingerRunner.ProjEnvironment.Name : string.Empty;
-                gingerReport.Elapsed = (double)gingerRunner.Elapsed / 1000;
-                if (gingerReport.LogFolder == null && !(string.IsNullOrEmpty(filename)))
+                    if (runnerCount != 0)
                     {
-                    gingerReport.LogFolder = filename;
-                }
-                
-                SaveObjToJSonFile(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");
-                this.ExecutionLogBusinessFlowsCounter = 0;
-                this.BFCounter = 0;
-            }
+                        gingerReport.Seq = runnerCount;
+                    }
+                    else
+                    {
+                        gingerReport.Seq = this.GingerData.Seq;  //!!!
+                    }
+                    gingerReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
+                    gingerReport.GUID = gingerRunner.Guid.ToString();
+                    gingerReport.Name = gingerRunner.Name;
+                    gingerReport.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
+                    gingerReport.EnvironmentName = gingerRunner.ProjEnvironment != null ? gingerRunner.ProjEnvironment.Name : string.Empty;
+                    gingerReport.Elapsed = (double)gingerRunner.Elapsed / 1000;
+                    if (gingerReport.LogFolder == null && !(string.IsNullOrEmpty(filename)))
+                    {
+                        gingerReport.LogFolder = filename;
+                    }
 
-            ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Runner", gingerRunner.Name, gingerReport);
+                    SaveObjToJSonFile(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");
+                    this.ExecutionLogBusinessFlowsCounter = 0;
+                    this.BFCounter = 0;                    
+                }
+                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Runner", gingerRunner.Name, gingerReport);
+            }
         }
 
         public static void RunSetStart(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline = false)
