@@ -15,7 +15,7 @@ namespace GingerWeb.Controllers
         };
 
         [HttpGet("[action]")]
-        public IEnumerable<WeatherForecast> WeatherForecasts()
+        public IEnumerable<object> WeatherForecasts()
         {
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
@@ -25,7 +25,7 @@ namespace GingerWeb.Controllers
                 Summary = Summaries[rng.Next(Summaries.Length)]
             });
         }
-
+      
         public class WeatherForecast
         {
             public string DateFormatted { get; set; }
