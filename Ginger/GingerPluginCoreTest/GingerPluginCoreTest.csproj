@@ -1,14 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-    <AssemblyVersion>2.2</AssemblyVersion>
-    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-    <RuntimeIdentifiers>win7-x64;win-7x86;ubuntu.16.10-x64</RuntimeIdentifiers>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RuntimeFrameworkVersion>2.1</RuntimeFrameworkVersion>
     <IsPackable>false</IsPackable>
-    <ApplicationIcon />
-    <OutputType>Library</OutputType>
-    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>

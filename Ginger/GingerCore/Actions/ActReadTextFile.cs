@@ -141,7 +141,8 @@ namespace GingerCore.Actions
         {
             string FileText = String.Empty;
             string calculatedFilePath = GetInputParamCalculatedValue(Fields.TextFilePath);
-            calculatedFilePath = calculatedFilePath.Replace(@"~\", SolutionFolder);
+            //calculatedFilePath = calculatedFilePath.Replace(@"~\", SolutionFolder);
+            calculatedFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedFilePath);
             string filePath = Path.GetDirectoryName(calculatedFilePath);
             bool isRootedPath = Path.IsPathRooted(filePath);
             if (!isRootedPath)

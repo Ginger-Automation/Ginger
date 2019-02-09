@@ -817,6 +817,7 @@ namespace Ginger
         {
             if (e.PropertyName == nameof(App.BusinessFlow))
             {
+                StopAutomateRun();
                 SetExpanders();
                 SetGherkinOptions();
             }

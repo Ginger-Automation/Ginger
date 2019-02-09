@@ -114,10 +114,11 @@ namespace GingerCore.Actions.JSON
                     throw new System.ArgumentException("Please provide a valid file name");
                 }
 
-                if (FilePath.Contains("~\\"))
-                {
-                    FilePath = FilePath.Replace("~\\", SolutionFolder);
-                }
+                //if (FilePath.Contains("~\\"))
+                //{
+                //    FilePath = FilePath.Replace("~\\", SolutionFolder);
+                //}
+                FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
 
                 jsonContent = System.IO.File.ReadAllText(FilePath);
             }

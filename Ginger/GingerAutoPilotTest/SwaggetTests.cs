@@ -23,6 +23,7 @@ using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace UnitTests.NonUITests.AutoPilot
         {
             //Arrange
             SwaggerParser parserForBillingAccount = new SwaggerParser();
-            string createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"Swagger\petstore_swagger.json");
+            string createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"Swagger" + Path.DirectorySeparatorChar + "petstore_swagger.json");
             ObservableList<ApplicationAPIModel> requests = new ObservableList<ApplicationAPIModel>();
 
             //Act   
