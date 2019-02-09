@@ -182,6 +182,10 @@ namespace Amdocs.Ginger.Repository
         public void LoadInfoFromDLL()
         {
             LoadGingerPluginsDLL();
+            if (mPluginPackageInfo == null)
+            {
+                LoadInfoFromJSON();
+            }
             string startupDLLFileName = Path.Combine(mFolder, mPluginPackageInfo.StartupDLL);            
             PluginAssemblyInfo PAI = new PluginAssemblyInfo();
             PAI.Name = startupDLLFileName;

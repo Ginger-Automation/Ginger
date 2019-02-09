@@ -131,6 +131,7 @@ namespace GingerWeb.Controllers
 
             Console.WriteLine("Execution Completed");
             Console.WriteLine("----------------------------");
+            Console.WriteLine("Elapsed: " + businessFlow.Elapsed);
             Console.WriteLine("Business Flow: " + businessFlow.Name);
             Console.WriteLine("Business Flow Description: " + businessFlow.Description);
             Console.WriteLine("Business Flow Status: " + businessFlow.RunStatus);

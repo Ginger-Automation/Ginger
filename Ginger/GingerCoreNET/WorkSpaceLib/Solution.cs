@@ -344,10 +344,7 @@ namespace Ginger.SolutionGeneral
                     return null;
                 }
             }
-        }
-        
-        //[IsSerializedForLocalRepository]
-        public string LastBusinessFlowFileName { get; set; }//Not needed anymore keeping for allowing to load UserProfile xml
+        }       
 
         MRUManager mRecentUsedBusinessFlows;
 

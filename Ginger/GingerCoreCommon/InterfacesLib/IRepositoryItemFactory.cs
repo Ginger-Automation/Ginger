@@ -81,7 +81,7 @@ namespace Amdocs.Ginger.Common
 
         void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening);
 
-        void HTMLReportAttachment(string report, string reportsResultFolder, string reportresultfolder, string runsetfolder, object Attachment, object conf);
+        void HTMLReportAttachment(string report, ref string emailReadyHtml, ref string reportresultfolder, string runsetfolder, object Attachment, object conf);
 
         object CreateNewReportTemplate();
 

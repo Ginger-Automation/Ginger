@@ -128,10 +128,13 @@ namespace Ginger.Actions
                 System.IO.File.Copy(FileName, destFile, true);
                 QueryFile.ValueTextBox.Text = @"~\Documents\SQL\" + System.IO.Path.GetFileName(destFile);
             }
-            if (FileName != "" && File.Exists(FileName.Replace(@"~\", SolutionFolder)))
+            //if (FileName != "" && File.Exists(FileName.Replace(@"~\", SolutionFolder)))
+            if (FileName != "" && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName)))
             {   
-                mValidationDB.QueryParams.Clear();                
-                string[] script = File.ReadAllLines(FileName.Replace(@"~\",SolutionFolder));                
+                mValidationDB.QueryParams.Clear();
+                //string[] script = File.ReadAllLines(FileName.Replace(@"~\",SolutionFolder));  
+                string[] script = File.ReadAllLines(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName));
+
                 parseScriptHeader(script);               
                 if (mValidationDB.QueryParams.Count > 0)
                     QueryParamsPanel.Visibility = Visibility.Visible;
