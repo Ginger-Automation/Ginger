@@ -6,6 +6,7 @@ using System.Text;
 using GingerTestHelper;
 using System.Globalization;
 using Ginger.Reports.GingerExecutionReport;
+using System.IO;
 
 namespace Ginger.Reports.Tests
 {
@@ -61,7 +62,7 @@ namespace Ginger.Reports.Tests
             ReportInfo RI = new ReportInfo(BusinessFlowReportFolder);
             //Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(RI);
 
-            string templatesFolder = (ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
+            string templatesFolder = (ExtensionMethods.getGingerEXEFileName() + @"Reports"+ Path.DirectorySeparatorChar  + "GingerExecutionReport" + Path.DirectorySeparatorChar).Replace("Ginger.exe", "");
             HTMLReportConfiguration selectedHTMLReportConfiguration = HTMLReportConfiguration.SetHTMLReportConfigurationWithDefaultValues("DefaultTemplate", true);
 
             HTMLReportsConfiguration hTMLReportsConfiguration = new HTMLReportsConfiguration();
@@ -69,8 +70,9 @@ namespace Ginger.Reports.Tests
             string hTMLOutputFolder = @"C:\HTMLReports\";
 
 
-            string report = Ginger.Reports.GingerExecutionReport.ExtensionMethods.NewFunctionCreateGingerExecutionReport(RI,false,selectedHTMLReportConfiguration, templatesFolder:templatesFolder, hTMLReportsConfiguration: hTMLReportsConfiguration,hTMLOutputFolder: hTMLOutputFolder);
+            // string report = Ginger.Reports.GingerExecutionReport.ExtensionMethods.NewFunctionCreateGingerExecutionReport(RI,false,selectedHTMLReportConfiguration, templatesFolder:templatesFolder, hTMLReportsConfiguration: hTMLReportsConfiguration,hTMLOutputFolder: hTMLOutputFolder);
 
+            string report = Ginger.Reports.GingerExecutionReport.ExtensionMethods.NewFunctionCreateGingerExecutionReport(RI, selectedHTMLReportConfiguration, hTMLOutputFolder, templatesFolder);
         }
 
     }
