@@ -18,7 +18,7 @@ namespace Ginger.Reports.Tests
         {
 
 
-            string ActivityReportFile = GingerTestHelper.TestResources.GetTestResourcesFile(@"Reports\Activity.txt");
+            string ActivityReportFile = GingerTestHelper.TestResources.GetTestResourcesFile(@"Reports" + Path.DirectorySeparatorChar + "Activity.txt");
             try
             {
 
@@ -38,7 +38,7 @@ namespace Ginger.Reports.Tests
         {
 
 
-            string BusinessFlowReportFile = GingerTestHelper.TestResources.GetTestResourcesFile(@"Reports\BusinessFlow.txt");
+            string BusinessFlowReportFile = GingerTestHelper.TestResources.GetTestResourcesFile(@"Reports" + Path.DirectorySeparatorChar + "BusinessFlow.txt");
             try
             {
 
