@@ -22,7 +22,7 @@ namespace GingerWeb.Controllers
 
         public class RunBusinessFlowRequest
         {
-            public string name { get; set; }            
+            public string name { get; set; }
         }
 
         public class RunBusinessFlowResult
@@ -35,7 +35,7 @@ namespace GingerWeb.Controllers
         }
 
         [HttpGet("[action]")]
-        public IEnumerable<object> BusinessFlows()        
+        public IEnumerable<object> BusinessFlows()
         {
             if (!bDone)
             {
@@ -43,8 +43,8 @@ namespace GingerWeb.Controllers
                 bDone = true;
             }
 
-            IEnumerable<BusinessFlow> BusinessFlows = General.SR.GetAllRepositoryItems<BusinessFlow>().OrderBy(x => x.Name) ;
-            var data = BusinessFlows.Select(x => 
+            IEnumerable<BusinessFlow> BusinessFlows = General.SR.GetAllRepositoryItems<BusinessFlow>().OrderBy(x => x.Name);
+            var data = BusinessFlows.Select(x =>
                                     new
                                     {
                                         name = x.Name,
@@ -57,7 +57,7 @@ namespace GingerWeb.Controllers
         }
 
 
-        [HttpPost("[action]")]        
+        [HttpPost("[action]")]
         public RunBusinessFlowResult RunBusinessFlow([FromBody] RunBusinessFlowRequest runBusinessFlowRequest)
         {
             RunBusinessFlowResult runBusinessFlowResult = new RunBusinessFlowResult();
@@ -79,13 +79,16 @@ namespace GingerWeb.Controllers
 
             runBusinessFlowResult.Status = BF.RunStatus.ToString();
             runBusinessFlowResult.Elapsed = (int)BF.Elapsed;
-            runBusinessFlowResult.Report = "ahhhh";
+            runBusinessFlowResult.Report = "ahhhh !!!!!!!!!!!!";
+
+
+
             return runBusinessFlowResult;
         }
 
         void GenerateReport()
         {
-            ExecutionLoggerConfiguration executionLoggerConfiguration = new ExecutionLoggerConfiguration();            
+            ExecutionLoggerConfiguration executionLoggerConfiguration = new ExecutionLoggerConfiguration();
             // HTMLReportsConfiguration currentConf = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             //get logger files
             string exec_folder = Ginger.Run.ExecutionLogger.GetLoggerDirectory(executionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLogger.defaultAutomationTabLogName);
@@ -133,6 +136,7 @@ namespace GingerWeb.Controllers
 
             Console.WriteLine("Execution Completed");
             Console.WriteLine("----------------------------");
+            Console.WriteLine("Elapsed: " + businessFlow.Elapsed);
             Console.WriteLine("Business Flow: " + businessFlow.Name);
             Console.WriteLine("Business Flow Description: " + businessFlow.Description);
             Console.WriteLine("Business Flow Status: " + businessFlow.RunStatus);
@@ -157,7 +161,7 @@ namespace GingerWeb.Controllers
                 }
                 Console.WriteLine("----------");
             }
-            
+
 
             //TODO: create report
 
