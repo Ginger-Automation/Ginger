@@ -45,7 +45,7 @@ namespace Amdocs.Ginger.Common.Actions
 
             get
             {
-                // return only know types else throw
+                // return only known types else throw
                 if (ParamType == typeof(string)) return "string";
                 if (ParamType == typeof(Int32)) return "int";
                 if (ParamType == typeof(List<string>)) return "List<string>";
