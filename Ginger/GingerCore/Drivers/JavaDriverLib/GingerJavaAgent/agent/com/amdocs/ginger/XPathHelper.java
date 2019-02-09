@@ -248,7 +248,7 @@ public class XPathHelper
 	
 	
 	
-	// Staring with simple XPath - need to handle array and comp without names
+	// Starting with simple XPath - need to handle array and comp without names
 	public String GetComponentXPath(Component CurrentWindow, Component comp) 
 	{		
 		String XPath = "";

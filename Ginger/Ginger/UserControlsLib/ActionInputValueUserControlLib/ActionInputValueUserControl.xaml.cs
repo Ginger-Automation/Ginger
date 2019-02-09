@@ -98,10 +98,17 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             {
                 xComboBoxInputPnl.Visibility = Visibility.Visible;
                 xComboBoxInputLabel.Content = string.Format("{0}:", GetInputFieldformatedName());
-                //FIXME to get enum vals from plugin service action info
-                xComboBoxInputComboBox.Items.Add("not impl yet! 1");
-                xComboBoxInputComboBox.Items.Add("not impl yet! 2");
-                // xComboBoxInputComboBox.BindControl(mActInputValue, nameof(ActInputValue.Value));
+                // temp quick fix for split ParamEX, TODO: convert to JSON !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                string vv = mActInputValue.ParamTypeEX.Replace("enum{", "");
+                vv = vv.Replace("}", "");
+
+                string[] avv = vv.Split(',');
+                foreach(string v in avv)
+                {
+                    xComboBoxInputComboBox.Items.Add(v);
+                }
+                
+                xComboBoxInputComboBox.BindControl(mActInputValue, nameof(ActInputValue.Value));
                 return;
             }
 
