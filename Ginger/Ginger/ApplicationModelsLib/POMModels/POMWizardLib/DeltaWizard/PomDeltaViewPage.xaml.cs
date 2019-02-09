@@ -160,7 +160,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             List<GingerCore.General.ComboEnumItem> ElementTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(eElementType));
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList, ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.IsAutoLearned), Header = "Auto Learned", WidthWeight = 250, MaxWidth = 100, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.StatusIcon), Header = "Identification Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
+            //view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.StatusIcon), Header = "Identification Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
             List<GingerCore.General.ComboEnumItem> deltaExtraDetailsList = GingerCore.General.GetEnumValuesForCombo(typeof(DeltaElementInfo.eDeltaExtraDetails));
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.DeltaExtraDetails), WidthWeight = 200, Header = "Comparison Details", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = deltaExtraDetailsList, ReadOnly = true, BindingMode = BindingMode.OneWay });
@@ -255,11 +255,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateBy), Header = "Locate By", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, ReadOnly = true, BindingMode = BindingMode.OneWay });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 200, ReadOnly = true, BindingMode = BindingMode.OneWay });            
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 100, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.StatusIcon), Header = "Identification Status", WidthWeight = 100, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 100, ReadOnly = true, BindingMode = BindingMode.OneWay });           
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaExtraDetails), Header = "Comparison Details", WidthWeight = 250, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
             defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 50, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.StatusIcon), Header = "Identification Status", WidthWeight = 100, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
             xLocatorsGrid.SetAllColumnsDefaultView(defView);
             xLocatorsGrid.InitViewItems();
 

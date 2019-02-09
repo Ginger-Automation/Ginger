@@ -6854,7 +6854,7 @@ namespace GingerCore.Drivers
 
         public ElementInfo GetMatchingElement(ElementInfo element, ObservableList<ElementInfo> existingElemnts)
         {
-            ElementInfo OriginalElementInfo = existingElemnts.Where(x => x.ElementObject.Equals(element.ElementObject)).FirstOrDefault();
+            ElementInfo OriginalElementInfo = existingElemnts.Where(x => x.ElementObject.ToString() == element.ElementObject.ToString()).FirstOrDefault();//comparing IWebElement ID's
             return OriginalElementInfo;
         }
 

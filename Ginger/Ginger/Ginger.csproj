@@ -543,9 +543,6 @@
     </Compile>
     <Compile Include="ApplicationModelsLib\APIModels\NodeToDelete.cs" />
     <Compile Include="ApplicationModelsLib\ModelOptionalValue\ParameterValues.cs" />
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\DeltaControlProperty.cs" />
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\DeltaElementInfo.cs" />
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\DeltaElementLocator.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaViewPage.xaml.cs">
       <DependentUpon>PomDeltaViewPage.xaml</DependentUpon>
     </Compile>
