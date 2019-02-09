@@ -98,11 +98,11 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             {
                 xComboBoxInputPnl.Visibility = Visibility.Visible;
                 xComboBoxInputLabel.Content = string.Format("{0}:", GetInputFieldformatedName());
-                // temp quick fix for split ParamEX, TODO: convert to JSON !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                string vv = mActInputValue.ParamTypeEX.Replace("enum{", "");
-                vv = vv.Replace("}", "");
+                
+                string enumValues = mActInputValue.ParamTypeEX.Replace("enum{", "");
+                enumValues = enumValues.Replace("}", "");
 
-                string[] avv = vv.Split(',');
+                string[] avv = enumValues.Split(',');
                 foreach(string v in avv)
                 {
                     xComboBoxInputComboBox.Items.Add(v);
