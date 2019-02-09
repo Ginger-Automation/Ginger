@@ -365,6 +365,36 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
+        /// Convert Solution Relative Path to Full path
+        /// </summary>
+        /// <param name="relativePath">Path like "~\Documents\Scripts\aa.vbs"</param>
+        /// <returns></returns>
+        public string ConvertSolutionRelativePath(string relativePath)
+        {
+            if (relativePath.TrimStart().StartsWith("~"))
+            {
+                string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
+                fullPath = Path.Combine(mSolutionFolderPath, fullPath);
+                return fullPath;
+            }
+            else
+            {
+                return relativePath;
+            }
+        }
+
+        /// <summary>
+        /// Converts path of file inside the Solution to be relative
+        /// </summary>
+        /// <param name="fullPath"></param>
+        /// <returns></returns>
+        public string ConvertFullPathToBeRelative(string fullPath)
+        {
+            string relative = fullPath.ToLower().Replace(mSolutionFolderPath.ToLower(), cSolutionRootFolderSign);            
+            return relative;
+        }
+
+        /// <summary>
         ///  Return enumerator of all valid files in solution, only repo items no junk
         /// </summary>
         /// <param name="solutionFolder"></param>
@@ -552,15 +582,8 @@ namespace Amdocs.Ginger.Repository
                     fileFolderPath = Path.Combine(A, B);
                 }
 
-                //FILE
-                string fileName = name;
-                //Removing all possible invalid path chars and checking the file name length is legal (<= 255)                      
-                foreach (char invalidChar in Path.GetInvalidFileNameChars())
-                {
-                    fileName = fileName.Replace(invalidChar.ToString(), "");
-                }
-                fileName = fileName.Replace(@".", "");
-                
+                string fileName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(name);
+                                
                 string fullName = v.Pattern.Replace("*", fileName);
 
 

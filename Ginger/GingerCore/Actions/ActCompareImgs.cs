@@ -101,12 +101,14 @@ namespace GingerCore.Actions
                 targetWin = UIAutomationGetWindowByTitle(WindowName);
 
             string ExpectedImgFile1 = ExpectedImgFile;
-            if (ExpectedImgFile1.StartsWith("~"))
-            {
-                string SolutionFolder1 = SolutionFolder.ToString();
-                ExpectedImgFile1 = ExpectedImgFile1.Replace("~\\", "");
-                ExpectedImgFile1 = System.IO.Path.Combine(SolutionFolder1, ExpectedImgFile1);
-            }
+            //if (ExpectedImgFile1.StartsWith("~"))
+            //{
+            //    string SolutionFolder1 = SolutionFolder.ToString();
+            //    ExpectedImgFile1 = ExpectedImgFile1.Replace("~\\", "");
+            //    ExpectedImgFile1 = System.IO.Path.Combine(SolutionFolder1, ExpectedImgFile1);
+            //}
+            ExpectedImgFile1 = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ExpectedImgFile1);
+
             if (WindowName == "FULLSCREEN")
             {
                 List<AutomationElement> wins = UIAutomationGetFirstLevelWindows();

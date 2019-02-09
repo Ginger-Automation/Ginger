@@ -1,15 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Globals">
     <SccProjectName>SAK</SccProjectName>
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
+    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
   </PropertyGroup>
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-
+    <RuntimeFrameworkVersion>2.1</RuntimeFrameworkVersion>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

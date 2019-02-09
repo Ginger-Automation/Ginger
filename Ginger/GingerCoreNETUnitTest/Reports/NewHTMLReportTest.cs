@@ -84,7 +84,7 @@ namespace GingerCoreNETUnitTest.Reports
         public void CreateReportFromFolder()
         {
             // Arrange
-            string folder = TestResources.GetTestResourcesFolder("Reports" + Path.PathSeparator + "AutomationTab_LastExecution");
+            string folder = TestResources.GetTestResourcesFolder("Reports" + Path.DirectorySeparatorChar + "AutomationTab_LastExecution");
 
             //Act
             ReportInfo reportInfo = new ReportInfo(folder);
