@@ -78,13 +78,16 @@ namespace Ginger
             else
             {
                 LinkStatusImage.Source = General.GetResourceImage("@Star_24x24.png");
+
+                string ItemName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(mLinkedRepoItem.ItemName);
+                
                 if (mLinkIsByParentID || mLinkIsByExternalID)
                 {
-                    LinkStatusImage.ToolTip = "The item is linked to the Shared Repository item: '" + Path.Combine(mLinkedRepoItem.ContainingFolder,mLinkedRepoItem.ItemName) + "'." + Environment.NewLine + "Click to un-link it.";
+                    LinkStatusImage.ToolTip = "The item is linked to the Shared Repository item: '" + Path.Combine(mLinkedRepoItem.ContainingFolder,ItemName) + "'." + Environment.NewLine + "Click to un-link it.";
                 }
                 else
                 {
-                    LinkStatusImage.ToolTip = "The item is linked to the Shared Repository item: '" + Path.Combine(mLinkedRepoItem.ContainingFolder, mLinkedRepoItem.ItemName) + "'.";
+                    LinkStatusImage.ToolTip = "The item is linked to the Shared Repository item: '" + Path.Combine(mLinkedRepoItem.ContainingFolder, ItemName) + "'.";
                 }
                 UpdateRepoBtn.ToolTip = "Overwrite Shared Repository linked item";
             }
