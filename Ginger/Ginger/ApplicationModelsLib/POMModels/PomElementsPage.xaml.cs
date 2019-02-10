@@ -148,7 +148,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void Properties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            UpdatePropertiesHeader();
+            if (mSelectedElement != null)
+                UpdatePropertiesHeader();
         }
         private void UpdatePropertiesHeader()
         {
@@ -160,7 +161,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void Locators_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            UpdateLocatorsHeader();
+            if(mSelectedElement != null)
+                UpdateLocatorsHeader();
         }
         private void UpdateLocatorsHeader()
         {
@@ -173,20 +175,44 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void AddElementsToMappedBtnClicked(object sender, RoutedEventArgs e)
         {
             List<ElementInfo> ItemsToAddList = xMainElementsGrid.Grid.SelectedItems.Cast<ElementInfo>().ToList();
-            foreach (ElementInfo EI in ItemsToAddList)
+            if (ItemsToAddList != null && ItemsToAddList.Count > 0)
             {
-                mPOM.MappedUIElements.Add(EI);
-                mPOM.UnMappedUIElements.Remove(EI);
+                //remove
+                for (int indx = 0; indx < ItemsToAddList.Count; indx++)
+                {
+                    mPOM.UnMappedUIElements.Remove(ItemsToAddList[indx]);
+                }
+                //add
+                foreach (ElementInfo EI in ItemsToAddList)
+                {
+                    mPOM.MappedUIElements.Add(EI);
+                }
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
 
         private void RemoveElementsToMappedBtnClicked(object sender, RoutedEventArgs e)
         {
             List<ElementInfo> ItemsToRemoveList = xMainElementsGrid.Grid.SelectedItems.Cast<ElementInfo>().ToList();
-            foreach (ElementInfo EI in ItemsToRemoveList)
+            if (ItemsToRemoveList != null && ItemsToRemoveList.Count > 0)
             {
-                mPOM.MappedUIElements.Remove(EI);
-                mPOM.UnMappedUIElements.Add(EI);
+                //remove
+                for (int indx = 0; indx < ItemsToRemoveList.Count; indx++)
+                {
+                    mPOM.MappedUIElements.Remove(ItemsToRemoveList[indx]);
+                }
+                //add
+                foreach (ElementInfo EI in ItemsToRemoveList)
+                {
+                    mPOM.UnMappedUIElements.Add(EI);
+                }
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
 

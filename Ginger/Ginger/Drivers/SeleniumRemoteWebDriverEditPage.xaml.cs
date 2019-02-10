@@ -91,7 +91,7 @@ namespace Ginger.Drivers
             //Getting the Ginger execution path
             string exeLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
             string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string sourcePath = exeLocation.Replace("Ginger.exe", "ExternalAgents");
+            string sourcePath = exeLocation.Replace("Ginger.exe", "StaticDrivers");
             string targetPath = userFolder + "\\Temp\\GingerTemp";
             
             string jarFileName = "selenium-server-standalone.jar";
@@ -168,7 +168,7 @@ namespace Ginger.Drivers
             //Getting the Ginger execution path
             string exeLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
             string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string sourcePath = exeLocation.Replace("Ginger.exe", "ExternalAgents");
+            string sourcePath = exeLocation.Replace("Ginger.exe", "StaticDrivers");
             string targetPath = userFolder + "\\Temp\\GingerTemp";
             string jarFileName = "selenium-server-standalone.jar";
             string sourceFile = System.IO.Path.Combine(sourcePath, jarFileName);

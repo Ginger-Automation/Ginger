@@ -42,7 +42,7 @@ namespace GingerCore.Actions.Communication
 
         public override string ActionEditPage { get { return "Communication.ActeMailEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
-        public override bool ValueConfigsNeeded { get { return true; } }
+        public override bool ValueConfigsNeeded { get { return false; } }
         
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
@@ -63,113 +63,101 @@ namespace GingerCore.Actions.Communication
         }
 
         public new static partial class Fields
-        {
-            public static string Host = "Host";
-            public static string Port = "Port";
-            public static string MailFrom = "MailFrom";
-            public static string Mailto = "Mailto";
-            public static string Mailcc = "Mailcc";
-            public static string Subject = "Subject";
-            public static string Body = "Body";
-            public static string AttachmentFileName = "AttachmentFileName";
-            public static string eMailActionType = "eMailActionType";
-            public static string User = "User";
-            public static string Pass = "Passed";
-            public static string MailOption = "MailOption";
+        {            
             public static string EnableSSL = "EnableSSL";
+            public static string ConfigureCredential = "ConfigureCredential";
         }
 
+        #region Action Fields 
+        //These fields were serialized earlier, do not remove it.
         public override string ActionType
         {
             get { return "Email" + eMailActionType.ToString(); }
         }
-
-        [IsSerializedForLocalRepository]
+        
         public eEmailActionType eMailActionType { get; set; }
-
-        [IsSerializedForLocalRepository]
+        
         public string Host
         {
             get
             {                
-                return GetOrCreateInputParam(Fields.Host, "").Value;
+                return GetOrCreateInputParam(nameof(Host), "").Value;
             }
-            set { AddOrUpdateInputParamValue(Fields.Host, value); }
+            set { AddOrUpdateInputParamValue(nameof(Host), value); }
         }
-
-        [IsSerializedForLocalRepository]
+        
         public string Port
         {
             get
             {               
-                return GetOrCreateInputParam(Fields.Port, "25").Value;
+                return GetOrCreateInputParam(nameof(Port), "25").Value;
             }
-            set { AddOrUpdateInputParamValue(Fields.Port, value); }
+            set { AddOrUpdateInputParamValue(nameof(Port), value); }
         }
-        [IsSerializedForLocalRepository]
+        
         public string User
         {
-            get { return GetInputParamValue(Fields.User); }
-            set { AddOrUpdateInputParamValue(Fields.User, value); }
+            get { return GetInputParamValue(nameof(User)); }
+            set { AddOrUpdateInputParamValue(nameof(User), value); }
         }
-        [IsSerializedForLocalRepository]
+        
         public string Pass
         {
-            get { return GetInputParamValue(Fields.Pass); }
-            set { AddOrUpdateInputParamValue(Fields.Pass, value); }
+            get { return GetInputParamValue(nameof(Pass)); }
+            set { AddOrUpdateInputParamValue(nameof(Pass), value); }
         }
-        [IsSerializedForLocalRepository]
+        
         public string MailFrom
         {
-            get { return GetInputParamValue(Fields.MailFrom); }
-            set { AddOrUpdateInputParamValue(Fields.MailFrom, value); }
+            get { return GetInputParamValue(nameof(MailFrom)); }
+            set { AddOrUpdateInputParamValue(nameof(MailFrom), value); }
         }
 
-        [IsSerializedForLocalRepository]
+        
         public string Mailto
         {
-            get { return GetInputParamValue(Fields.Mailto); }
-            set { AddOrUpdateInputParamValue(Fields.Mailto, value); }
+            get { return GetInputParamValue(nameof(Mailto)); }
+            set { AddOrUpdateInputParamValue(nameof(Mailto), value); }
         }
 
-        [IsSerializedForLocalRepository]
+        
         public string Mailcc
         {
-            get { return GetInputParamValue(Fields.Mailcc); }
-            set { AddOrUpdateInputParamValue(Fields.Mailcc, value); }
+            get { return GetInputParamValue(nameof(Mailcc)); }
+            set { AddOrUpdateInputParamValue(nameof(Mailcc), value); }
         }
 
-        [IsSerializedForLocalRepository]
+        
         public string Subject
         {
-            get { return GetInputParamValue(Fields.Subject); }
-            set { AddOrUpdateInputParamValue(Fields.Subject, value); }
+            get { return GetInputParamValue(nameof(Subject)); }
+            set { AddOrUpdateInputParamValue(nameof(Subject), value); }
         }
 
-        [IsSerializedForLocalRepository]
+        
         public string Body
         {
-            get { return GetInputParamValue(Fields.Body); }
-            set { AddOrUpdateInputParamValue(Fields.Body, value); }
+            get { return GetInputParamValue(nameof(Body)); }
+            set { AddOrUpdateInputParamValue(nameof(Body), value); }
         }
 
-        [IsSerializedForLocalRepository]
+        
         public string AttachmentFileName
         {
-            get { return GetInputParamValue(Fields.AttachmentFileName); }
-            set { AddOrUpdateInputParamValue(Fields.AttachmentFileName, value);
+            get { return GetInputParamValue(nameof(AttachmentFileName)); }
+            set { AddOrUpdateInputParamValue(nameof(AttachmentFileName), value);
                 OnPropertyChanged(nameof(AttachmentFileName));
             }
         }
 
-        [IsSerializedForLocalRepository]
+        
         public string MailOption
         {
-            get { return GetInputParamValue(Fields.MailOption); }
-            set { AddOrUpdateInputParamValue(Fields.MailOption, value); }
+            get { return GetInputParamValue(nameof(MailOption)); }
+            set { AddOrUpdateInputParamValue(nameof(MailOption), value); }
         }
 
-        [IsSerializedForLocalRepository]
+        
         public bool EnableSSL_Value
         {
             get
@@ -183,6 +171,7 @@ namespace GingerCore.Actions.Communication
                     return false;
             }
         }
+        #endregion  
 
         public override void Execute()
         {
@@ -190,16 +179,19 @@ namespace GingerCore.Actions.Communication
             bool isSuccess;
             if (!string.IsNullOrEmpty(Host))
                 e.SMTPMailHost = Host;
-            try { e.SMTPPort = Convert.ToInt32(this.GetInputParamCalculatedValue(Fields.Port)); }
+            try { e.SMTPPort = Convert.ToInt32(this.GetInputParamCalculatedValue(nameof(Port))); }
             catch { e.SMTPPort = 25; }
 
-            e.Subject = this.GetInputParamCalculatedValue(Fields.Subject);
-            e.Body = this.GetInputParamCalculatedValue(Fields.Body);
-            e.MailFrom = this.GetInputParamCalculatedValue(Fields.MailFrom);
-            e.MailTo = this.GetInputParamCalculatedValue(Fields.Mailto);
-            e.MailCC = this.GetInputParamCalculatedValue(Fields.Mailcc);
-            e.Attachments.Add(this.GetInputParamCalculatedValue(Fields.AttachmentFileName));
-            e.EnableSSL = EnableSSL_Value;
+            e.Subject = this.GetInputParamCalculatedValue(nameof(Subject));
+            e.Body = this.GetInputParamCalculatedValue(nameof(Body));
+            e.MailFrom = this.GetInputParamCalculatedValue(nameof(MailFrom));
+            e.MailTo = this.GetInputParamCalculatedValue(nameof(Mailto));
+            e.MailCC = this.GetInputParamCalculatedValue(nameof(Mailcc));
+            e.Attachments.Add(this.GetInputParamCalculatedValue(nameof(AttachmentFileName)));
+            e.EnableSSL = (bool)this.GetInputParamValue<bool>(Fields.EnableSSL);
+            e.ConfigureCredential = (bool)this.GetInputParamValue<bool>(Fields.ConfigureCredential);
+            e.SMTPUser = this.GetInputParamCalculatedValue(nameof(User));
+            e.SMTPPass = this.GetInputParamCalculatedValue(nameof(Pass));
             if (string.IsNullOrEmpty(e.MailTo))
             {
                 Error = "Failed: Please provide TO email address.";
@@ -210,7 +202,7 @@ namespace GingerCore.Actions.Communication
                 Error = "Failed: Please provide email subject.";
                 return;
             }
-            if (this.GetInputParamCalculatedValue(Fields.MailOption) == Email.eEmailMethod.OUTLOOK.ToString())
+            if (this.GetInputParamCalculatedValue(nameof(MailOption)) == Email.eEmailMethod.OUTLOOK.ToString())
                 e.EmailMethod = Email.eEmailMethod.OUTLOOK;
             else
             {

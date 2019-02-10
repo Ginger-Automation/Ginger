@@ -270,7 +270,7 @@ namespace Ginger.Run.RunSetActions
                         {
                             if ((rReport.IsAlternameFolderUsed) && (extraInformationCalculated != null) && (extraInformationCalculated != string.Empty))
                             {
-                                RepositoryItemHelper.RepositoryItemFactory.HTMLReportAttachment(extraInformationCalculated, reportsResultFolder, reportsResultFolder, runSetFolder, rReport, currentConf);
+                                RepositoryItemHelper.RepositoryItemFactory.HTMLReportAttachment(extraInformationCalculated, ref emailReadyHtml, ref reportsResultFolder, runSetFolder, rReport, currentConf);
                             }
                             else
                             {

@@ -276,11 +276,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NonUITests\AutoPilot\APILearningTests.cs" />
+    <Compile Include="NonUITests\ExpectedWithActual.cs" />
     <Compile Include="NonUITests\GingerRunnerTests\GingerRunnerActionLogTest.cs" />
     <Compile Include="NonUITests\GingerRunnerTests\GingerRunnerPluginDriverTest.cs" />
     <Compile Include="NonUITests\GingerRunnerTests\GingerVariableTests.cs" />
     <Compile Include="NonUITests\OutputSimulation.cs" />
     <Compile Include="NonUITests\RepositoryTest.cs" />
+    <Compile Include="NonUITests\Script\VBSDateTimeTests.cs" />
+    <Compile Include="NonUITests\Script\VBSNumericTests.cs" />
+    <Compile Include="NonUITests\Script\VBSStringTests.cs" />
     <Compile Include="NonUITests\StatusResultTest.cs" />
     <Compile Include="NonUITests\UsedVariablesTest.cs" />
     <Compile Include="TestAssemblyInit.cs" />
@@ -411,6 +415,9 @@
   <ItemGroup>
     <Content Include="Documents\delayedstockquote.xml" />
     <Content Include="TestResources\APlusB.vbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\XML\calculator_soapui_project.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="TestResources\AutoPilot\JSONTemplates\login.json">
@@ -873,6 +880,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\Plugins\PluginDriverExample4\PluginDriverExample4.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Temp\sample.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\WindowsApp\WindowsTestApplication.exe">

@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using GingerCore;
 using GingerCore.Actions.Communication;
 using GingerCore.GeneralLib;
 
@@ -40,24 +41,22 @@ namespace Ginger.Actions.Communication
 
         private void Bind()
         {
-            App.FillComboFromEnumVal(EmailActionComboBox, mAct.eMailActionType);
-            App.ObjFieldBinding(EmailActionComboBox, ComboBox.TextProperty, mAct, ActeMail.Fields.eMailActionType);
-            App.ObjFieldBinding(MailFromTextBox, TextBox.TextProperty, mAct, ActeMail.Fields.MailFrom);
-            App.ObjFieldBinding(MailToTextBox, TextBox.TextProperty, mAct, ActeMail.Fields.Mailto);
-            App.ObjFieldBinding(MailCCTextBox, TextBox.TextProperty, mAct, ActeMail.Fields.Mailcc);
-            App.ObjFieldBinding(SubjectTextBox, TextBox.TextProperty, mAct, ActeMail.Fields.Subject);
-            App.ObjFieldBinding(BodyTextBox, TextBox.TextProperty, mAct, ActeMail.Fields.Body);
-            App.ObjFieldBinding(AttachmentFilename, TextBox.TextProperty, mAct, ActeMail.Fields.AttachmentFileName);
-            App.ObjFieldBinding(MailHost, TextBox.TextProperty, mAct, ActeMail.Fields.Host);
-            App.ObjFieldBinding(Port, TextBox.TextProperty, mAct, ActeMail.Fields.Port);
-            App.ObjFieldBinding(User, TextBox.TextProperty, mAct, ActeMail.Fields.User);
-            App.ObjFieldBinding(Pass, TextBox.TextProperty, mAct, ActeMail.Fields.Pass);            
-            GingerCore.General.ActInputValueBinding(cbEnableSSL, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.EnableSSL,"true"));
-        
+            MailFromTextBox.Init(mAct, nameof(ActeMail.MailFrom));
+            MailToTextBox.Init(mAct, nameof(ActeMail.Mailto));
+            MailCCTextBox.Init(mAct, nameof(ActeMail.Mailcc));
+            SubjectTextBox.Init(mAct, nameof(ActeMail.Subject));
+            BodyTextBox.Init(mAct, nameof(ActeMail.Body));
+            App.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.Port));
+            App.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.Pass));       
+            xSMTPMailHostTextBox.Init(mAct, nameof(ActeMail.Host));
+            xSMTPUserTextBox.Init(mAct, nameof(ActeMail.User));                                           
+            GingerCore.General.ActInputValueBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.EnableSSL, "true"));
+            GingerCore.General.ActInputValueBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.ConfigureCredential,"false"));
+            App.ObjFieldBinding(AttachmentFilename, TextBox.TextProperty, mAct, nameof(ActeMail.AttachmentFileName));
             if (mAct.MailOption!=null && mAct.MailOption == Email.eEmailMethod.OUTLOOK.ToString())
                 RadioOutlookMailOption.IsChecked = true;
             else
-                RadioSMTPMailOption.IsChecked = true;                      
+                RadioSMTPMailOption.IsChecked = true;            
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -69,7 +68,6 @@ namespace Ginger.Actions.Communication
                 mAct.AttachmentFileName = dlg.FileName;
             }
         }
-
         //update screen on select of Outlook Radio Button
         private void RadioOutlookMailOption_Checked(object sender, RoutedEventArgs e)
         {
@@ -77,21 +75,7 @@ namespace Ginger.Actions.Communication
             {
                 mAct.MailOption = Email.eEmailMethod.OUTLOOK.ToString();
 
-                LabelFrom.Visibility = System.Windows.Visibility.Collapsed;
-                MailFromTextBox.Visibility = System.Windows.Visibility.Collapsed;
-                             
-                MailHost.Visibility = System.Windows.Visibility.Collapsed;
-                LabelMailHost.Visibility = System.Windows.Visibility.Collapsed;
-
-                Port.Visibility = System.Windows.Visibility.Collapsed;
-                LabelPort.Visibility = System.Windows.Visibility.Collapsed;
-
-                User.Visibility = System.Windows.Visibility.Collapsed;
-                LabelUser.Visibility = System.Windows.Visibility.Collapsed;
-
-                Pass.Visibility = System.Windows.Visibility.Collapsed;
-                LabelPass.Visibility = System.Windows.Visibility.Collapsed;
-                cbEnableSSL.Visibility = System.Windows.Visibility.Collapsed;
+                xSMTPConfig.Visibility = Visibility.Collapsed;
             }
             catch(Exception ex)
             {
@@ -107,29 +91,34 @@ namespace Ginger.Actions.Communication
             {
                 mAct.MailOption = Email.eEmailMethod.SMTP.ToString();
 
-                MailFromTextBox.IsEnabled = true;
-
-                MailFromTextBox.Visibility = System.Windows.Visibility.Visible;
-                LabelFrom.Visibility = System.Windows.Visibility.Visible;
-
-                MailHost.Visibility = System.Windows.Visibility.Visible;
-                LabelMailHost.Visibility = System.Windows.Visibility.Visible;
-
-                Port.Visibility = System.Windows.Visibility.Visible;
-                LabelPort.Visibility = System.Windows.Visibility.Visible;
-
-                User.Visibility = System.Windows.Visibility.Visible;
-                LabelUser.Visibility = System.Windows.Visibility.Visible;
-
-                Pass.Visibility = System.Windows.Visibility.Visible;
-                LabelPass.Visibility = System.Windows.Visibility.Visible;
-                cbEnableSSL.Visibility = System.Windows.Visibility.Visible;
+                xSMTPConfig.Visibility = Visibility.Visible;
             }
             catch (Exception ex)
             {
                 String err = ex.Message;
             }
         }
-                
+        private void xcbConfigureCredential_Checked(object sender, RoutedEventArgs e)
+        {
+            xUserDetails.Visibility = Visibility.Visible;           
+        }
+
+        private void xcbConfigureCredential_Unchecked(object sender, RoutedEventArgs e)
+        {
+            xUserDetails.Visibility = Visibility.Collapsed;            
+        }
+
+        private void xSMTPPassTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            bool res = false;
+            if (!EncryptionHandler.IsStringEncrypted(xSMTPPassTextBox.Text))
+            {
+                xSMTPPassTextBox.Text = EncryptionHandler.EncryptString(xSMTPPassTextBox.Text, ref res);
+                if (res == false)
+                {
+                    xSMTPPassTextBox.Text = string.Empty;
+                }
+            }
+        }
     }
 }
