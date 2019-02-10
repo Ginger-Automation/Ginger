@@ -22,17 +22,20 @@ namespace GingerWeb.Controllers
 
         public class RunBusinessFlowRequest
         {
-            public string name { get; set; }            
+            public string name { get; set; }
         }
 
         public class RunBusinessFlowResult
-        {
-            public string name { get; set; }
+        {            
             public string Status { get; internal set; }
+
+            public int Elapsed { get; internal set; }
+
+            public string Report { get; internal set; }
         }
 
         [HttpGet("[action]")]
-        public IEnumerable<object> BusinessFlows()        
+        public IEnumerable<object> BusinessFlows()
         {
             if (!bDone)
             {
@@ -40,8 +43,8 @@ namespace GingerWeb.Controllers
                 bDone = true;
             }
 
-            IEnumerable<BusinessFlow> BusinessFlows = General.SR.GetAllRepositoryItems<BusinessFlow>().OrderBy(x => x.Name) ;
-            var data = BusinessFlows.Select(x => 
+            IEnumerable<BusinessFlow> BusinessFlows = General.SR.GetAllRepositoryItems<BusinessFlow>().OrderBy(x => x.Name);
+            var data = BusinessFlows.Select(x =>
                                     new
                                     {
                                         name = x.Name,
@@ -54,7 +57,7 @@ namespace GingerWeb.Controllers
         }
 
 
-        [HttpPost("[action]")]        
+        [HttpPost("[action]")]
         public RunBusinessFlowResult RunBusinessFlow([FromBody] RunBusinessFlowRequest runBusinessFlowRequest)
         {
             Directory.Delete(jsonDumpFolder, true);
@@ -76,7 +79,9 @@ namespace GingerWeb.Controllers
 
             RunFlow(BF);
 
-            runBusinessFlowResult.Status = "Executed - BF.Status=" + BF.RunStatus;
+            runBusinessFlowResult.Status = BF.RunStatus.ToString();
+            runBusinessFlowResult.Elapsed = (int)BF.Elapsed;
+            runBusinessFlowResult.Report = "ahhhh !!!!!!!!!!!!";
 
 
 
@@ -160,7 +165,6 @@ namespace GingerWeb.Controllers
             Console.WriteLine("----------------------------");
             Console.WriteLine("Elapsed: " + businessFlow.Elapsed);
             Console.WriteLine("Business Flow: " + businessFlow.Name);
-            Console.WriteLine("Business Elasped: " + businessFlow.Elapsed);
             Console.WriteLine("Business Flow Description: " + businessFlow.Description);
             Console.WriteLine("Business Flow Status: " + businessFlow.RunStatus);
             Console.WriteLine("Activities Count: " + businessFlow.Activities.Count);
