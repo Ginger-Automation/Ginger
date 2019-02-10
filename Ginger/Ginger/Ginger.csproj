@@ -551,6 +551,7 @@
       <DependentUpon>PomDeltaElementComparePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMNameValidationRule.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\ButtonToDisableConverter.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMTAValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\UnmappedElementsPage.xaml.cs">

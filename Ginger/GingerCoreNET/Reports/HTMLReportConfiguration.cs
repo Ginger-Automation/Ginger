@@ -16,11 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using System;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -175,7 +178,69 @@ namespace Ginger.Reports
             }
         }
 
+        public static HTMLReportConfiguration SetHTMLReportConfigurationWithDefaultValues(string name = null, bool RunStandalon = false)
+        {
+            int ConfigID = 1;
+            HTMLReportConfiguration newHTMLReportConfiguration = new HTMLReportConfiguration();
+            if (!RunStandalon)
+            {
+                if (WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq == 0)
+                {
+                    WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = 1;
+                }
 
+                newHTMLReportConfiguration = new HTMLReportConfiguration();
+                ConfigID = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq;
+                newHTMLReportConfiguration.ID = ConfigID;
+            }
+
+            if ((name != null) && (name != string.Empty))
+            {
+                newHTMLReportConfiguration.Name = name;
+            }
+            else
+            {
+                newHTMLReportConfiguration.Name = "Template #" + ConfigID;
+            }
+
+
+            newHTMLReportConfiguration.ReportLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActionLevel.ToString();
+            if (!RunStandalon)
+            {
+                if (Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations().Count == 0)
+                    newHTMLReportConfiguration.IsDefault = true;
+                else
+                    newHTMLReportConfiguration.IsDefault = false;
+            }
+
+            newHTMLReportConfiguration.ShowAllIterationsElements = false;
+            newHTMLReportConfiguration.UseLocalStoredStyling = false;
+            newHTMLReportConfiguration.RunSetFieldsToSelect = GetReportLevelMembers(typeof(RunSetReport));
+            newHTMLReportConfiguration.EmailSummaryViewFieldsToSelect = GetReportLevelMembers(typeof(RunSetReport));
+            newHTMLReportConfiguration.GingerRunnerFieldsToSelect = GetReportLevelMembers(typeof(GingerReport));
+            newHTMLReportConfiguration.BusinessFlowFieldsToSelect = GetReportLevelMembers(typeof(BusinessFlowReport));
+            newHTMLReportConfiguration.ActivityGroupFieldsToSelect = GetReportLevelMembers(typeof(ActivityGroupReport));
+            newHTMLReportConfiguration.ActivityFieldsToSelect = GetReportLevelMembers(typeof(ActivityReport));
+            newHTMLReportConfiguration.ActionFieldsToSelect = GetReportLevelMembers(typeof(ActionReport));
+            newHTMLReportConfiguration.Description = string.Empty;
+            using (var ms = new MemoryStream())
+            {
+                string file = Ginger.Reports.GingerExecutionReport.ExtensionMethods.getGingerEXEFileName().Replace("Ginger.exe", @"Images\@amdocs_logo.jpg");
+                Bitmap bitmap = new Bitmap(file);
+                newHTMLReportConfiguration.LogoBase64Image = BitmapToBase64(bitmap);
+            }
+            return newHTMLReportConfiguration;
+        }
+
+        public static string BitmapToBase64(Bitmap bImage)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                byte[] byteImage = ms.ToArray();
+                return Convert.ToBase64String(byteImage); //Get Base64
+            }
+        }
 
         public static HTMLReportConfiguration EnchancingLoadedFieldsWithDataAndValidating(HTMLReportConfiguration HTMLReportConfiguration)
         {

@@ -128,7 +128,7 @@ namespace Ginger.SolutionWindows
 
         private void AddDeafultReportTemplate()
         {
-            HTMLReportConfiguration r =  HTMLReportTemplatePage.SetHTMLReportConfigurationWithDefaultValues("Default");
+            HTMLReportConfiguration r = HTMLReportConfiguration.SetHTMLReportConfigurationWithDefaultValues("Default");
             r.Name = "Default";
             r.IsDefault = true;
                         

@@ -100,7 +100,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void UnMappedUIElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             UnMappedUIElementsUpdate();
-        }
+        }        
 
         private void UnMappedUIElementsUpdate()
         {

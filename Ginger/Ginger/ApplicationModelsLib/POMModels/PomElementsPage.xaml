@@ -6,12 +6,20 @@
       xmlns:local="clr-namespace:Ginger.ApplicationModelsLib.POMModels"
       xmlns:Ginger="clr-namespace:Ginger"
       xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:local1="clr-namespace:Ginger.ApplicationModelsLib"
       mc:Ignorable="d" 
       d:DesignHeight="800" d:DesignWidth="1200"
       Title="PomElementsPage">
 
     <Grid x:Name="PageGrid">
         <Grid.Resources>
+            <local1:ButtonToDisableConverter x:Key="ButtonToDisableConverter"/>
+
+            <DataTemplate x:Key="OpenEditOptionalValuesPage">
+                <Button x:Name="OpenEditOptionalValuesPageButton" Content="..." Click="OpenEditOptionalValuesPageButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"
+                        IsEnabled="{Binding ElementTypeEnum, Converter={StaticResource ButtonToDisableConverter}}" />
+            </DataTemplate>
+            
             <DataTemplate x:Key="FieldUpdate">
                 <CheckBox x:Name="xElementsGrid_FieldUpdate"  Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotEqual, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Center"/>
             </DataTemplate>
