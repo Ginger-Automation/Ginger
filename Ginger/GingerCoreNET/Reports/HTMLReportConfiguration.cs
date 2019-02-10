@@ -188,7 +188,10 @@ namespace Ginger.Reports
                 {
                     WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = 1;
                 }
-
+                else
+                {
+                    WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
+                }
                 newHTMLReportConfiguration = new HTMLReportConfiguration();
                 ConfigID = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq;
                 newHTMLReportConfiguration.ID = ConfigID;
