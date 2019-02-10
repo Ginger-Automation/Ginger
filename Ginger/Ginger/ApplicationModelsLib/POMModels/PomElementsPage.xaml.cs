@@ -138,7 +138,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void Properties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            UpdatePropertiesHeader();
+            if (mSelectedElement != null)
+                UpdatePropertiesHeader();
         }
         private void UpdatePropertiesHeader()
         {
@@ -150,7 +151,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void Locators_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            UpdateLocatorsHeader();
+            if(mSelectedElement != null)
+                UpdateLocatorsHeader();
         }
         private void UpdateLocatorsHeader()
         {
