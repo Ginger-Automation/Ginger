@@ -57,6 +57,8 @@ namespace GingerWeb.Controllers
         [HttpPost("[action]")]        
         public RunBusinessFlowResult RunBusinessFlow([FromBody] RunBusinessFlowRequest runBusinessFlowRequest)
         {
+            Directory.Delete(jsonDumpFolder, true);
+            Directory.CreateDirectory(jsonDumpFolder);
             RunBusinessFlowResult runBusinessFlowResult = new RunBusinessFlowResult();
 
             if (string.IsNullOrEmpty(runBusinessFlowRequest.name))
@@ -81,39 +83,64 @@ namespace GingerWeb.Controllers
             return runBusinessFlowResult;
         }
 
-        void GenerateReport()
-        {
-            ExecutionLoggerConfiguration executionLoggerConfiguration = new ExecutionLoggerConfiguration();            
-            // HTMLReportsConfiguration currentConf = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            //get logger files
-            string exec_folder = Ginger.Run.ExecutionLogger.GetLoggerDirectory(executionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLogger.defaultAutomationTabLogName);
-            //create the report
-            string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), true, null, null, false, 100000);
 
-            if (reportsResultFolder == string.Empty)
-            {
-                Reporter.ToUser(eUserMsgKey.AutomationTabExecResultsNotExists);
-            }
-            else
-            {
-                foreach (string txt_file in System.IO.Directory.GetFiles(reportsResultFolder))
-                {
-                    string fileName = Path.GetFileName(txt_file);
-                    if (fileName.Contains(".html"))
-                    {
-                        System.Diagnostics.Process.Start(reportsResultFolder);
-                        System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
-                    }
-                }
-            }
+        string jsonDumpFolder = @"c:\temp\Ginger\Dump\";  // !!!!!!!!!!!!!!!!!!!temp FIXME
+        void GenerateReport(BusinessFlow businessFlow)    // temp remove BF from param
+        {
+
+            string BusinessFlowReportFolder = jsonDumpFolder + "1 " + businessFlow.GetNameForFileName();   // !!!!!!!!!!!!!!!! temp remove
+            ReportInfo RI = new ReportInfo(BusinessFlowReportFolder);
+            //Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(RI);
+
+            string templatesFolder = @"C:\Users\yaronwe\source\repos\Ginger\Ginger\Ginger\Reports\GingerExecutionReport\"; // !!!!!!!!!!!!!!!!!!!!!!! temp fix me
+            HTMLReportConfiguration selectedHTMLReportConfiguration = HTMLReportConfiguration.SetHTMLReportConfigurationWithDefaultValues("DefaultTemplate", true);
+
+            HTMLReportsConfiguration hTMLReportsConfiguration = new HTMLReportsConfiguration();
+
+            string hTMLOutputFolder = @"C:\Temp\Ginger\Report"; // !!!!!!!!!!!!!!!!!!!!!!! temp fix me
+            Directory.Delete(hTMLOutputFolder,true);
+            Directory.CreateDirectory(hTMLOutputFolder);
+
+            string report = Ginger.Reports.GingerExecutionReport.ExtensionMethods.NewFunctionCreateGingerExecutionReport(RI, true, selectedHTMLReportConfiguration, templatesFolder: templatesFolder, hTMLReportsConfiguration: hTMLReportsConfiguration, hTMLOutputFolder: hTMLOutputFolder);
+
+
+
+            //ExecutionLoggerConfiguration executionLoggerConfiguration = new ExecutionLoggerConfiguration();
+            //// HTMLReportsConfiguration currentConf = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            ////get logger files
+            //string exec_folder = @"c:\temp\hh"; // Ginger.Run.ExecutionLogger.GetLoggerDirectory(executionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLogger.defaultAutomationTabLogName);string templatesFolder = @"C:\Users\yaronwe\source\repos\Ginger\Ginger\Ginger\Reports\GingerExecutionReport\";
+            //string templatesFolder = @"C:\Users\yaronwe\source\repos\Ginger\Ginger\Ginger\Reports\GingerExecutionReport\";
+            ////create the report
+            //HTMLReportConfiguration hTMLReportConfiguration = new HTMLReportConfiguration("DefaultTemplate", true); 
+            //string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.NewFunctionCreateGingerExecutionReport(new ReportInfo(exec_folder), true, hTMLReportConfiguration, templatesFolder, false, 100000);
+
+            //if (reportsResultFolder == string.Empty)
+            //{
+            //    Reporter.ToUser(eUserMsgKey.AutomationTabExecResultsNotExists);
+            //}
+            //else
+            //{
+            //    foreach (string txt_file in System.IO.Directory.GetFiles(reportsResultFolder))
+            //    {
+            //        string fileName = Path.GetFileName(txt_file);
+            //        if (fileName.Contains(".html"))
+            //        {
+            //            System.Diagnostics.Process.Start(reportsResultFolder);
+            //            System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
+            //        }
+            //    }
+            //}
         }
 
         //ExecutionLogger executionLogger;
         void RunFlow(BusinessFlow businessFlow)
         {
-            GingerRunner gingerRunner = new GingerRunner();
-            gingerRunner.RunListeners.Clear();  // temp until we get clean GR 
-
+            GingerRunner gingerRunner = new GingerRunner();            
+            ExecutionLogger ex = (ExecutionLogger)gingerRunner.RunListeners[0];  // temp until we remove it from GR constructor and add manually
+            ex.ExecutionLogfolder = jsonDumpFolder;
+            ex.Configuration.ExecutionLoggerConfigurationIsEnabled = true;
+            //ex.exec
+            // ex.Configuration.exe
             // TODO: add dumper
 
             ProjEnvironment projEnvironment = new ProjEnvironment();
@@ -133,6 +160,7 @@ namespace GingerWeb.Controllers
             Console.WriteLine("----------------------------");
             Console.WriteLine("Elapsed: " + businessFlow.Elapsed);
             Console.WriteLine("Business Flow: " + businessFlow.Name);
+            Console.WriteLine("Business Elasped: " + businessFlow.Elapsed);
             Console.WriteLine("Business Flow Description: " + businessFlow.Description);
             Console.WriteLine("Business Flow Status: " + businessFlow.RunStatus);
             Console.WriteLine("Activities Count: " + businessFlow.Activities.Count);
@@ -156,7 +184,8 @@ namespace GingerWeb.Controllers
                 }
                 Console.WriteLine("----------");
             }
-            
+
+            GenerateReport(businessFlow);
 
             //TODO: create report
 
