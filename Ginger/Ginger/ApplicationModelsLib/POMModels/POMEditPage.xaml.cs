@@ -50,7 +50,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         ApplicationPOMModel mPOM;
         ScreenShotViewPage mScreenShotViewPage;
         GenericWindow mWin;
-        bool IsPageSaved = false;
+        public bool IsPageSaved = false;
         public RepositoryItemPageViewMode mEditMode { get; set; }
         private Agent mAgent;
         public Agent Agent
@@ -93,12 +93,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             InitializeComponent();
             mPOM = POM;
-
-            if (editMode == General.RepositoryItemPageViewMode.ChildWithSave)
-            {
-                mPOM.SaveBackup();
-            }
-
             mEditMode = editMode;
 
             ControlsBinding.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
@@ -286,8 +280,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.FreeMaximized)
-        {
-            Title = mPOM.Name + " Edit Page";
+        {            
+            mPOM.SaveBackup();            
+            IsPageSaved = false;
+            if (mPOM.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+            {
+                mPOM.StartDirtyTracking();
+            }
 
             Button saveButton = new Button();
             saveButton.Content = "Save";
@@ -297,7 +296,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
             undoButton.Content = "Undo & Close";
             undoButton.Click += UndoButton_Click;
 
-            GingerCore.General.LoadGenericWindow(ref mWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { saveButton, undoButton }, true, "Close", CloseButton_Click);
+            this.Height = 800;
+            this.Width = 800;
+            GingerCore.General.LoadGenericWindow(ref mWin, App.MainWindow, windowStyle, mPOM.Name + " Edit Page", this, new ObservableList<Button> { saveButton, undoButton });
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -313,18 +314,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mWin.Close();
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!IsPageSaved)
-            {
-                if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-                {
-                    UndoChangesAndClose();
-                }
-            }
-            else
-                mWin.Close();
-        }
+        //private void CloseButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (!IsPageSaved)
+        //    {
+        //        if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+        //        {
+        //            UndoChangesAndClose();
+        //        }
+        //    }
+        //    else
+        //        mWin.Close();
+        //}
 
         private void UndoChangesAndClose()
         {
