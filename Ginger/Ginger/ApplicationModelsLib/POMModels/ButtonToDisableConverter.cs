@@ -12,7 +12,7 @@ namespace Ginger.ApplicationModelsLib
             if(value != null)
             {
                 eElementType eType = (eElementType)value;
-                if (ElementInfo.PossibleValuesSupportedFortype(eType))
+                if (ElementInfo.IsElementTypeSupportingOptionalValues(eType))
                 {
                     isEnabled = true;
                 }

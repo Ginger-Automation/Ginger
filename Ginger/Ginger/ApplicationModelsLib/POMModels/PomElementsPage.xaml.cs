@@ -317,7 +317,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 List<string> lstParName = new List<string>();
                 foreach (var prms in mElements)
                 {
-                    if (ElementInfo.PossibleValuesSupportedFortype(prms.ElementTypeEnum))
+                    if (ElementInfo.IsElementTypeSupportingOptionalValues(prms.ElementTypeEnum))
                     {
                         string parName = prms.ItemName.Replace("\r", "").Split('\n')[0];
                         int count = lstParName.Where(p => p == parName).Count();

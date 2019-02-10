@@ -25,6 +25,7 @@ using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -166,6 +167,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 EI.Locators = new ObservableList<ElementLocator>(orderedLocatorsList);
 
                 UpdateElementInfoName(EI);
+
                 if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
                 {
                     mWizard.POM.MappedUIElements.Add(EI);
@@ -191,49 +193,50 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 if (curElement != null)
                 {
+                    //remove invalid chars
                     string name = curElement.ElementName.Trim().Replace(".", "").Replace("?", "").Replace("\n", "").Replace("\r", "").Replace("#", "").Replace("!", " ").Replace(",", " ").Replace("   ", "");
+                    foreach (char chr in Path.GetInvalidFileNameChars())
+                    {
+                        name = name.Replace(chr.ToString(), string.Empty);
+                    }
+
+                    //set max name length to 60
                     if (name.Length > 60)
                     {
                         name = name.Substring(0, 60);
                     }
 
-                    if (mSelectedElementTypesList.Contains(curElement.ElementTypeEnum))
-                    {
-                        name = GetUniqueName(mWizard.POM.MappedUIElements, name);
-                    }
-                    else
-                    {
-                        name = GetUniqueName(mWizard.POM.UnMappedUIElements, name);
-                    }
-                    
+                    //make sure name is unique                    
+                    name = GetUniqueName(mWizard.POM.MappedUIElements, name);
+                    name = GetUniqueName(mWizard.POM.UnMappedUIElements, name);
                     curElement.ElementName = name;
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Updating POM Elements Name", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Updating POM Element Name", ex);
             }
         }
 
         /// <summary>
         /// This method is used to get the uniquename for the element
         /// </summary>
-        /// <param name="UIElements"></param>
+        /// <param name="elements"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        private string GetUniqueName(ObservableList<ElementInfo> UIElements, string name)
+        private string GetUniqueName(ObservableList<ElementInfo> elements, string name)
         {
             string uname = name;
             try
             {
-                if (UIElements.Where(p => p.ElementName == name).Count() > 0)
+                if (elements.Where(p => p.ElementName == name).Count() > 0)
                 {
                     bool isFound = false;
                     int count = 2;
                     while (!isFound)
                     {
                         string postfix = string.Format("{0}_{1}", name, count);
-                        if (UIElements.Where(p => p.ElementName == postfix).Count() > 0)
+                        if (elements.Where(p => p.ElementName == postfix).Count() > 0)
                         {
                             count++;
                         }
@@ -248,7 +251,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Updating POM Elements Name", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Updating POM Element Name", ex);
             }
             return uname;
         }

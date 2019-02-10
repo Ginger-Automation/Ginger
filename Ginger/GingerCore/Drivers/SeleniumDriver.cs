@@ -4385,7 +4385,7 @@ namespace GingerCore.Drivers
 
             if (el != null)
             {
-                if (ElementInfo.PossibleValuesSupportedFortype(ElementInfo.ElementTypeEnum))
+                if (ElementInfo.IsElementTypeSupportingOptionalValues(ElementInfo.ElementTypeEnum))
                 {
                     foreach (IWebElement val in el.FindElements(By.XPath("*")))
                     {
