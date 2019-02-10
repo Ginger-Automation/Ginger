@@ -62,8 +62,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
             // TODO: create a simple plugin for unit test which will download faster.
 
-            string PluginId = "PACT";
-            string PluginVersion = "1.6";
+            string PluginId = "PACT";            
             string path = TestResources.GetTestTempFolder(@"Solutions\PluginsManagerSR1");
             if (Directory.Exists(path))
             {

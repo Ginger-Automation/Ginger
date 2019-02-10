@@ -3698,9 +3698,12 @@ namespace Ginger.Run
         {
             mStopRun = true;
             
-            mExecutedActivityWhenStopped = (Activity)CurrentBusinessFlow.CurrentActivity;
-            mExecutedActionWhenStopped = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
-            mExecutedBusinessFlowWhenStopped = (BusinessFlow)CurrentBusinessFlow;
+            if(CurrentBusinessFlow != null)
+            {
+                mExecutedActivityWhenStopped = (Activity)CurrentBusinessFlow.CurrentActivity;
+                mExecutedActionWhenStopped = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                mExecutedBusinessFlowWhenStopped = (BusinessFlow)CurrentBusinessFlow;
+            }            
         }
 
         public void ResetRunnerExecutionDetails(bool doNotResetBusFlows=false)
