@@ -102,6 +102,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         SetPOMPathToShow();
                         if (!mOnlyPOMRequest)
                         {
+                            xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
+
                             Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
                             ElementInfo selectedPOMElement = (ElementInfo)mSelectedPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
                             if (selectedPOMElement == null)
@@ -109,12 +111,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
                                 Reporter.ToUser(eUserMsgKey.POMElementSearchByGUIDFailed);
                             }
                             else
-                            {
-                                xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
-
+                            {                                
                                 xPOMElementsGrid.Grid.SelectedItem = selectedPOMElement;
-                                //SetElementTypeProperty(selectedPOMElement.ElementTypeEnum); //we don't want it to overwrite user type selection in case it is diffrent from element type
-                                
+                                //SetElementTypeProperty(selectedPOMElement.ElementTypeEnum); //we don't want it to overwrite user type selection in case it is diffrent from element type                                
                                 SetElementViewText(selectedPOMElement.ElementName, selectedPOMElement.ElementTypeEnum.ToString());
                                 HighlightButton.IsEnabled = true;
                             }
@@ -161,21 +160,25 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (selectedPOMs != null && selectedPOMs.Count > 0)
             {
                 mSelectedPOM = (ApplicationPOMModel)selectedPOMs[0];
-                SetPOMPathToShow();
-
-                if (mOnlyPOMRequest)
-                {
-                    mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, mSelectedPOM.Guid.ToString());
-                }
-                else
-                {
-                    xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
-                    xPOMElementTextBox.Text = string.Empty;
-                    mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, string.Empty);
-                    SetElementTypeProperty(eElementType.Unknown);
-                }
-                AllowElementSelection();
+                UpdatePomSelection();
             }
+        }
+
+        private void UpdatePomSelection()
+        {
+            SetPOMPathToShow();
+            if (mOnlyPOMRequest)
+            {
+                mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, mSelectedPOM.Guid.ToString());
+            }
+            else
+            {
+                xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
+                xPOMElementTextBox.Text = string.Empty;
+                mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, string.Empty);
+                SetElementTypeProperty(eElementType.Unknown);
+            }
+            AllowElementSelection();
         }
 
         private void SetElementTypeProperty(eElementType elementType)
@@ -318,8 +321,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void XViewPOMBtn_Click(object sender, RoutedEventArgs e)
         {
-            POMEditPage mPOMEditPage = new POMEditPage(mSelectedPOM, General.RepositoryItemPageViewMode.ChildWithSave);
+            POMEditPage mPOMEditPage = new POMEditPage(mSelectedPOM, General.RepositoryItemPageViewMode.Standalone);
             mPOMEditPage.ShowAsWindow(eWindowShowStyle.Dialog);
+
+            //refresh Elements list
+            if(mSelectedPOM.DirtyStatus == eDirtyStatus.Modified || mPOMEditPage.IsPageSaved)
+            {
+                UpdatePomSelection();
+            }
         }
     }
 }
