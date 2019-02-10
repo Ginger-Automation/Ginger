@@ -390,7 +390,7 @@ namespace Amdocs.Ginger.Common.UIElement
             return mData;
         }
 
-
+    }
 
         public enum eLocateBy
         {
@@ -506,5 +506,5 @@ namespace Amdocs.Ginger.Common.UIElement
             Form
         }
 
-    }
+    
 }
