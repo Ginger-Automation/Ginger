@@ -1117,11 +1117,13 @@ namespace GingerCore
 
             if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
-                if (DataSource.FileFullPath.StartsWith("~"))
-                {
-                    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
-                    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
-                }
+                //if (DataSource.FileFullPath.StartsWith("~"))
+                //{
+                //    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
+                //    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
+                //}
+                DataSource.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
+
                 DataSource.Init(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();
                 foreach (DataSourceTable dst in dsTables)

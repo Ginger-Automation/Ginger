@@ -246,9 +246,10 @@ namespace GingerCore.Actions.ScreenCapture
                     g.CopyFromScreen(SourcePoint, System.Drawing.Point.Empty, SelectionRectangle.Size);
 
                 }
+                
+                //FilePath = FilePath.Replace("~\\", f.SolutionFolder);
+                FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
 
-                //if (FilePath.StartsWith("~\\") == true) FilePath = FilePath.Replace("~\\", "");
-                FilePath = FilePath.Replace("~\\", f.SolutionFolder);
                 bitmap.Save(FilePath, ImageFormat.Png);
             }
         }

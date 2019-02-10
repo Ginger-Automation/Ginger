@@ -75,17 +75,21 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             mTimestamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
             string SolutionFolder = mAct.SolutionFolder;
 
-            SoapUIDirectoryPath = SoapUIDirectoryPath.Replace(@"~\", SolutionFolder);
+            //SoapUIDirectoryPath = SoapUIDirectoryPath.Replace(@"~\", SolutionFolder);
+            SoapUIDirectoryPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SoapUIDirectoryPath);
 
             //Creating Directory to extract the reports.
-            string targetPath = ReportExportDirectoryPath.Replace(@"~\", SolutionFolder);
+            //string targetPath = ReportExportDirectoryPath.Replace(@"~\", SolutionFolder);
+            string targetPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ReportExportDirectoryPath);
 
             if (!System.IO.Directory.Exists(targetPath))
             {
                 System.IO.Directory.CreateDirectory(targetPath);
             }
             
-            ReportPathWithXMLFolder = System.IO.Path.Combine(ReportExportDirectoryPath.Replace(@"~\", SolutionFolder), mAct.Description + mTimestamp);
+            //ReportPathWithXMLFolder = System.IO.Path.Combine(ReportExportDirectoryPath.Replace(@"~\", SolutionFolder), mAct.Description + mTimestamp);
+            ReportPathWithXMLFolder = System.IO.Path.Combine(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ReportExportDirectoryPath), mAct.Description + mTimestamp);
+
             ReportPath = ReportPathWithXMLFolder;
             Directory.CreateDirectory(ReportPath);
             mAct.LastExecutionFolderPath = ReportPath;

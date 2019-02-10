@@ -1055,11 +1055,13 @@ namespace Ginger.Run
                 if (DataSource == null)
                     return;
 
-                if (DataSource.FilePath.StartsWith("~"))
-                {
-                    DataSource.FileFullPath = DataSource.FilePath.Replace(@"~\", "").Replace("~", "");
-                    DataSource.FileFullPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, DataSource.FileFullPath);
-                }
+                //if (DataSource.FilePath.StartsWith("~"))
+                //{
+                //    DataSource.FileFullPath = DataSource.FilePath.Replace(@"~\", "").Replace("~", "");
+                //    DataSource.FileFullPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, DataSource.FileFullPath);
+                //}
+                DataSource.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FilePath);
+
                 DataSource.Init(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dstTables = DataSource.DSC.GetTablesList();
                 foreach(DataSourceTable dst in dstTables)
@@ -2144,6 +2146,10 @@ namespace Ginger.Run
                 {
                     p.AddValue(AP.ValueForDriver.ToString());
                 }
+                else if (AP.ParamType == typeof(EnumParamWrapper))
+                {
+                    p.AddValue(AP.ValueForDriver.ToString());
+                }
                 else
                 {
                     throw new Exception("Unknown param typee to pack: " + AP.ParamType.FullName);
@@ -2478,6 +2484,7 @@ namespace Ginger.Run
                 Activity sharedActivityInstance = (Activity)sharedActivity.CreateInstance();
                 sharedActivityInstance.Active = true;
                 sharedActivityInstance.AddDynamicly = true;
+                sharedActivityInstance.VariablesDependencies = CurrentBusinessFlow.CurrentActivity.VariablesDependencies;
                 CurrentBusinessFlow.SetActivityTargetApplication(sharedActivityInstance);
                 CurrentBusinessFlow.AddActivity(sharedActivityInstance);
 
@@ -3696,9 +3703,12 @@ namespace Ginger.Run
         {
             mStopRun = true;
             
-            mExecutedActivityWhenStopped = (Activity)CurrentBusinessFlow.CurrentActivity;
-            mExecutedActionWhenStopped = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
-            mExecutedBusinessFlowWhenStopped = (BusinessFlow)CurrentBusinessFlow;
+            if(CurrentBusinessFlow != null)
+            {
+                mExecutedActivityWhenStopped = (Activity)CurrentBusinessFlow.CurrentActivity;
+                mExecutedActionWhenStopped = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                mExecutedBusinessFlowWhenStopped = (BusinessFlow)CurrentBusinessFlow;
+            }            
         }
 
         public void ResetRunnerExecutionDetails(bool doNotResetBusFlows=false)

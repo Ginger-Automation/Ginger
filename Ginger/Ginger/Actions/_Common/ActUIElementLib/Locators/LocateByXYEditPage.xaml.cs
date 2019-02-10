@@ -28,17 +28,22 @@ namespace Ginger.Actions._Common.ActUIElementLib
     public partial class LocateByXYEditPage : Page
     {
         ActUIElement mAction;
+        string mlocateValueField;
+        object mlocateValueParentObject;
 
-        public LocateByXYEditPage(ActUIElement Action)
+        public LocateByXYEditPage(ActUIElement Action, object locateValueParentObject, string locateValueField)
         {
             InitializeComponent();
 
             mAction = Action;
+            mlocateValueField = locateValueField;
+            mlocateValueParentObject = locateValueParentObject;
 
             double X;
             double Y;
 
-            mAction.GetLocateByXYValues(out X, out Y);
+
+            mAction.GetLocateByXYValues(out X, out Y, mlocateValueParentObject, mlocateValueField);
 
             txtLocateValueX.ValueTextBox.Text = X + "";
             txtLocateValueY.ValueTextBox.Text = Y + "";
@@ -54,7 +59,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             bool b2 = double.TryParse(txtLocateValueY.ValueTextBox.Text, out Y);
             if (!b2) Y = 0;
                         
-            mAction.SetLocateByXYValues(X, Y);
+            mAction.SetLocateByXYValues(X, Y, mlocateValueParentObject, mlocateValueField);
         }
     }
 }

@@ -363,12 +363,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             foreach (Part part in messagePartsList)
             {
 
-                string staringPartTagToAppend = GetStartingPartTypeToAppend(part, NameSpacesToInclude);
+                string startingPartTagToAppend = GetStartingPartTypeToAppend(part, NameSpacesToInclude);
                 string endingPartTagToAppend = GetEndingPartTypeToAppend(part, NameSpacesToInclude);
                 if (!(HeaderNamesList.Contains(part.PartName) && part.PartElementType == Part.ePartElementType.Element))
                 {
                     ComplexType ParametersComplexType = GetNextComplexTypeByElementNameAndNameSpace(part.ElementName, part.ElementNameSpace, NameSpacesToInclude);
-                    RequestBody.Append(staringPartTagToAppend);
+                    RequestBody.Append(startingPartTagToAppend);
                     if (ParametersComplexType != null)
                     {
                         string PathToPass = ParametersComplexType.Source + ":" + ParametersComplexType.Name + "/";
@@ -416,19 +416,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private string GetStartingPartTypeToAppend(Part part, Dictionary<string, string> NameSpacesToInclude)
         {
-            string staringPartTypeToAppend = string.Empty;
+            string startingPartTypeToAppend = string.Empty;
             if (part.PartElementType == Part.ePartElementType.Element)
             {
-                staringPartTypeToAppend = tab2 + "<" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.ElementName + ">" + Environment.NewLine;
+                startingPartTypeToAppend = tab2 + "<" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.ElementName + ">" + Environment.NewLine;
             }
             else
             {
                 if (!NameSpacesToInclude.ContainsKey("http://www.w3.org/2001/XMLSchema-instance"))
                     NameSpacesToInclude.Add("http://www.w3.org/2001/XMLSchema-instance", "xsi");
-                staringPartTypeToAppend = tab2 + "<" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.PartName + " xsi:type=\"" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.ElementName + "\" " + "xmlns:" + NameSpacesToInclude[part.ElementNameSpace] + "=\"" + part.ElementNameSpace + "\">" + Environment.NewLine;
+                startingPartTypeToAppend = tab2 + "<" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.PartName + " xsi:type=\"" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.ElementName + "\" " + "xmlns:" + NameSpacesToInclude[part.ElementNameSpace] + "=\"" + part.ElementNameSpace + "\">" + Environment.NewLine;
             }
 
-            return staringPartTypeToAppend;
+            return startingPartTypeToAppend;
         }
 
         private void AppendEnvelope(StringBuilder requestBody, List<Part> messagePartsList, string soapEnvelopeURL, Dictionary<string, string> NameSpacesToInclude)

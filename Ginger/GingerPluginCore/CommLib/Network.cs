@@ -13,6 +13,21 @@ namespace GingerPluginCore
 
         public static string GetFirstLocalHostIPAddress()
         {
+            string networkIP = string.Empty;
+            if (GingerUtils.OperatingSystem.IsWindows())
+            {
+                networkIP = GetFirstLocalHostIPAddress_Windows();
+            }
+            else if (GingerUtils.OperatingSystem.IsLinux())
+            {
+                networkIP = GetFirstLocalHostIPAddress_Linux();
+            }
+            return networkIP;
+        }
+
+
+        public static string GetFirstLocalHostIPAddress_Linux()
+        {
             List<UnicastIPAddressInformation> unicastIPAddressInformationList = GetIPAddressCollectionList().ToList();
 
             string network = unicastIPAddressInformationList.FirstOrDefault(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork)
@@ -21,8 +36,6 @@ namespace GingerPluginCore
                                                                         ?? string.Empty;
             return network;
         }
-
-
 
         public static List<string> GetLocalHostIPAddressesList()
         {
@@ -78,7 +91,7 @@ namespace GingerPluginCore
                 foreach (IPAddress ip in IPList)
                 {
                     i++;
-                    Console.WriteLine("IP Address [" + i + "] : " + ip.ToString() + " " + ip.AddressFamily.ToString() + " " + ip);
+                    Console.WriteLine("IP Address [" + i + "] : " + ip.ToString());
 
                     if (ip.AddressFamily == AddressFamily.InterNetwork)
                     {
