@@ -58,7 +58,7 @@ namespace Ginger.Actions.PlugIns
             {
                 // update the type based on the info json of the plugin
                 param.ParamType = (from x in actionInputsDetails where x.Param == param.Param select x.ParamType).SingleOrDefault();
-
+                
                 // Add ActionInputValueUserControl for the param value to edit
                 ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(param);
                 DockPanel.SetDock(actionInputValueUserControl, Dock.Top);
