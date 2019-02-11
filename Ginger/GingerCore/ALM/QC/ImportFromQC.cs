@@ -386,7 +386,6 @@ namespace GingerCore.ALM.QC
                         if (toAddStepActivity)
                         {
                             //not in group- need to add it
-                            //busFlow.CurrentActivity = stepActivity;
                             busFlow.AddActivity(stepActivity);
                             tcActivsGroup.AddActivityToGroup(stepActivity);
                             busFlow.CurrentActivity = stepActivity;
