@@ -206,15 +206,15 @@ namespace GingerCoreNET.Application_Models
                 matchedDeltaElement.IsSelected = true;
                 if (modifiedLocatorsList.Count > 0 && modifiedPropertiesList.Count > 0)
                 {
-                    matchedDeltaElement.DeltaExtraDetails = DeltaElementInfo.eDeltaExtraDetails.LocatorsAndPropertiesChanged;
+                    matchedDeltaElement.DeltaExtraDetails = "Locators & Properties Changed";
                 }
                 else if (modifiedLocatorsList.Count > 0)
                 {
-                    matchedDeltaElement.DeltaExtraDetails = DeltaElementInfo.eDeltaExtraDetails.LocatorsChanged;
+                    matchedDeltaElement.DeltaExtraDetails = "Locators Changed";
                 }
                 else if (modifiedPropertiesList.Count > 0)
                 {
-                    matchedDeltaElement.DeltaExtraDetails = DeltaElementInfo.eDeltaExtraDetails.PropertiesChanged;
+                    matchedDeltaElement.DeltaExtraDetails = "Properties Changed";
                 }
             }
             else
