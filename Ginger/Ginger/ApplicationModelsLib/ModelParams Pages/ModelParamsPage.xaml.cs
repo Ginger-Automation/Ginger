@@ -41,6 +41,7 @@ using System.Windows.Data;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using System;
 using Ginger.SolutionWindows.TreeViewItems;
+using Amdocs.Ginger.Common.Repository;
 
 namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 {
@@ -491,15 +492,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void OpenEditGlobalParamPossibleValuesPageButton_Click(object sender, RoutedEventArgs e)
         {
-            GlobalAppModelParameter SelectedAMGP = (GlobalAppModelParameter)xGlobalModelParametersGrid.CurrentItem;
-            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(SelectedAMGP, true);
+            IParentOptionalValuesObject parObj = (IParentOptionalValuesObject)xGlobalModelParametersGrid.CurrentItem;
+            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(parObj, true);
             MDPVP.ShowAsWindow();
         }
 
         private void OpenEditLocalParamPossibleValuesPageButton_Click(object sender, RoutedEventArgs e)
         {
-            AppModelParameter SelectedAMDP = (AppModelParameter)ModelParametersGrid.CurrentItem;
-            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(SelectedAMDP);
+            IParentOptionalValuesObject parObj = (IParentOptionalValuesObject)ModelParametersGrid.CurrentItem;
+            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(parObj);
             MDPVP.ShowAsWindow();
         }
 

@@ -159,8 +159,10 @@ namespace Amdocs.Ginger.Common.Enums
         Approve,
         Reject,
         Warn,
+        EditWindow,
+        UserDefined,
         #endregion
-        
+
         #region Items Images
         //############################## Items Images:
         /// <summary>
