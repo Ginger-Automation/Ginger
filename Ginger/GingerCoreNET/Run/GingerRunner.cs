@@ -2648,61 +2648,67 @@ namespace Ginger.Run
 
         public static void CalculateARCStatus(ActReturnValue ARC)
         {
-            string Expression=string.Empty;
-            bool InvertResult=false;
-            switch (ARC.Operator)
-            {
-                
-                case eOperator.Contains:
-                    Expression ="\""+ ARC.Actual + "\".Contains(\"" + ARC.ExpectedCalculated + "\")";
-                    break;
-                case eOperator.DoesNotContains:
-                    Expression = "\"" + ARC.Actual + "\".Contains(\"" + ARC.ExpectedCalculated + "\")";
-                    InvertResult = true;
-                    break;
-                case eOperator.Equals:
-                    Expression = ARC.Actual + "==" + ARC.ExpectedCalculated;
-                    break;
-                case eOperator.Evaluate:
-                    Expression = ARC.ExpectedCalculated;
-                    break;
-                case eOperator.GreaterThan:
-                    Expression = ARC.Actual + ">" + ARC.ExpectedCalculated;
-                    break;
-                case eOperator.GreaterThanEquals:
-                    Expression = ARC.Actual + ">=" + ARC.ExpectedCalculated;
-                    break;
-                case eOperator.LessThan:
-                    Expression = ARC.Actual + "<" + ARC.ExpectedCalculated;
-                    break;
-                case eOperator.LessThanEquals:
-                    Expression = ARC.Actual + "<=" + ARC.ExpectedCalculated;
-                    break;
-                case eOperator.NotEquals:
-                    Expression = ARC.Actual + "!=" + ARC.ExpectedCalculated;
 
-                    break;
-                case eOperator.Legacy:
-                    CalculateARCStatusLegacy(ARC);
-                    break;
+            if (ARC.Operator == eOperator.Legacy)
+            {
+                CalculateARCStatusLegacy(ARC);
             }
-            if (!string.IsNullOrEmpty(Expression))
+            else
             {
-                bool status = CodeProcessor.EvalCondition(Expression);
+                bool? status=null;
 
-                if(InvertResult)
+
+                string Expression = string.Empty;
+
+                switch (ARC.Operator)
                 {
-                    status = !status;
+
+                    case eOperator.Contains:
+                        status = ARC.Actual.Contains(ARC.ExpectedCalculated);
+                        break;
+                    case eOperator.DoesNotContains:
+                        status = ARC.Actual.Contains(ARC.ExpectedCalculated);
+                        break;
+                    case eOperator.Equals:
+                        status = string.Equals(ARC.Actual,ARC.ExpectedCalculated);
+                        break;
+                    case eOperator.Evaluate:
+                        Expression = ARC.ExpectedCalculated;
+                        break;
+                    case eOperator.GreaterThan:
+                        Expression = ARC.Actual + ">" + ARC.ExpectedCalculated;
+                        break;
+                    case eOperator.GreaterThanEquals:
+                        Expression = ARC.Actual + ">=" + ARC.ExpectedCalculated;
+                        break;
+                    case eOperator.LessThan:
+                        Expression = ARC.Actual + "<" + ARC.ExpectedCalculated;
+                        break;
+                    case eOperator.LessThanEquals:
+                        Expression = ARC.Actual + "<=" + ARC.ExpectedCalculated;
+                        break;
+                    case eOperator.NotEquals:
+                        Expression = ARC.Actual + "!=" + ARC.ExpectedCalculated;
+
+                        break;
+
+                }
+                if (status==null)
+                {
+
+                    status = CodeProcessor.EvalCondition(Expression);
                 }
 
-                if (status)
-                {
-                    ARC.Status = ActReturnValue.eStatus.Passed;
-                }
-                else
-                {
-                    ARC.Status = ActReturnValue.eStatus.Failed;
-                }
+
+                    if (status.Value)
+                    {
+                        ARC.Status = ActReturnValue.eStatus.Passed;
+                    }
+                    else
+                    {
+                        ARC.Status = ActReturnValue.eStatus.Failed;
+                    }
+                
             }
         }
             public static void CalculateARCStatusLegacy(ActReturnValue ARC)

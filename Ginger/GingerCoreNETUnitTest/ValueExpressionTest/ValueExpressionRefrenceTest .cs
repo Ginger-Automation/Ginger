@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using GingerCoreNET.RosLynLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -56,17 +57,40 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             ValueExpressionReference VER3 = new ValueExpressionReference();
             VER3.Category = "math";
             VER3.Name = "ewee";
+            VER3.Samples.Add("sample1");
+            VER3.Samples.Add("dcxgffc");
             VEL.Refrences.Add(VER);
             VEL.Refrences.Add(VER2);
 
+            VEL.Refrences.Add(VER3);
+
 
             VEL.SavetoJson(@"C:\Users\mohdkhan\Desktop\VEL.json");
+            foreach (ValueExpressionReference ver in WorkSpace.VERefrences.Refrences)
+            {
+                if (ver.Expression.StartsWith("{CS") && ver.ExpressionResult != null)
+                {
+                    string actualResult = CodeProcessor.GetResult(ver.Expression);
+
+                }
+
+            }
+
         }
-        [TestMethod]
-        [Timeout(60000)]
-        public void LoadOldFile()
+        [TestMethod]    
+        public void LoadandTestFile()
         {
-            VERefrenceList VEL = VERefrenceList.LoadFromJson(@"C:\Users\mohdkhan\Desktop\VEL.json"); ;
+           foreach(ValueExpressionReference ver in  WorkSpace.VERefrences.Refrences)
+            {
+                if (ver.Expression.StartsWith("{CS") && ver.ExpressionResult != null)
+                {
+                    string actualResult = CodeProcessor.GetResult(ver.Expression);
+                  
+                        Assert.AreEqual(ver.ExpressionResult, actualResult);
+                    
+                }
+
+            }
 
 
 

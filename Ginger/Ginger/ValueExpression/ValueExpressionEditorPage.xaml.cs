@@ -219,6 +219,7 @@ namespace Ginger
 
         private void AddRosylynFunctions()
         {
+            WorkSpace.VERefrences = VERefrenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json" }));
 
 
             foreach (ValueExpressionReference VER in WorkSpace.VERefrences.Refrences)

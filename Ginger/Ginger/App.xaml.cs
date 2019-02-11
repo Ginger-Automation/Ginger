@@ -488,7 +488,7 @@ namespace Ginger
             phase = "Application was loaded and ready";
             Reporter.ToLog(eLogLevel.INFO, phase);
             mIsReady = true;
-            WorkSpace.VERefrences = VERefrenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json"}));
+            WorkSpace.VERefrences =
         }
 
         private static void StandAloneThreadExceptionHandler(object sender, UnhandledExceptionEventArgs e)

@@ -49,6 +49,11 @@ namespace GingerCoreNET.RosLynLib
 
         public static string GetResult(string Expression)
         {
+            if (!Expression.Contains(@"{CS"))
+            {
+                return Expression;
+
+            }
             ScriptOptions SO = ScriptOptions.Default.WithReferences(new Assembly[] { Assembly.GetAssembly(typeof(string)), Assembly.GetAssembly(typeof(System.Net.Dns)) });
      
             SO.WithReferences(Assembly.GetAssembly(typeof(string)));
@@ -59,7 +64,10 @@ namespace GingerCoreNET.RosLynLib
                        "((?'Open'{)[^{}]*)+" +
                        "((?'Close-Open'})[^{}]*)+" +
                        ")*" +
-                       "(?(Open)(?!))$";
+                       "(?(Open)(?!))";
+             pattern = "{CS({|}|.)*}";
+
+
             Pattern =   new Regex(pattern);
             Regex Clean =new  Regex("{CS(\\s)*Exp(\\s)*=");
 
@@ -76,8 +84,17 @@ namespace GingerCoreNET.RosLynLib
 //TODO: Improve this and cache
                     System.Collections.Generic.List<String> Refrences = typeof(System.DateTime).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>();
                     Refrences.AddRange(typeof(string).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>());
-               
-                    Evalresult = CSharpScript.EvaluateAsync(exp, ScriptOptions.Default.WithImports(Refrences)).Result.ToString();
+
+               object Result=     CSharpScript.EvaluateAsync(exp, ScriptOptions.Default.WithImports(Refrences)).Result;
+                    //c# generate True/False for bool.tostring which fails in subsequent expressions 
+                    if(Result.GetType()==typeof(Boolean))
+                    {
+                        Evalresult = Result.ToString().ToLower();
+                    }
+                    else
+                    {
+                        Evalresult = Result.ToString();
+                    }
                 }
 
                 catch (Exception e)
@@ -91,10 +108,22 @@ namespace GingerCoreNET.RosLynLib
 
         }
 
-   
+
         public static bool EvalCondition(string condition)
         {
-            bool result =(bool) CSharpScript.EvaluateAsync(condition).Result;
+            try
+            {
+                bool Conditionparse;
+                if (bool.TryParse(condition, out Conditionparse))
+                {
+                    return Conditionparse;
+                }
+            }
+            catch(Exception Ex)
+            {
+                
+            }
+            bool result = (bool)CSharpScript.EvaluateAsync(condition).Result;
             return result;
         }
 

@@ -13,11 +13,16 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib.Refrences
         public string Name { get; set; }
         public string Expression { get; set; }
         public string UseCase { get; set; }
-        public string Sample { get; set; }
+        public List<string> Samples { get; set; }
         public string ReturnType { get; set; }
         public string ExpressionResult { get; set; }
         public string IconImageName { get; set; }
 
+        public ValueExpressionReference()
+        {
+            Samples = new List<string>();
+
+        }
     }
 
     public class VERefrenceList

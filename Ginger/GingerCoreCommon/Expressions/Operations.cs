@@ -7,9 +7,9 @@ namespace Amdocs.Ginger.Common.Expressions
 {
     public enum eOperator
     {
-        [EnumValueDescription("=")]
+        [EnumValueDescription("Equals")]
         Equals,
-        [EnumValueDescription("!=")]
+        [EnumValueDescription("Not Equals")]
         NotEquals,
         [EnumValueDescription(">")]
         GreaterThan,

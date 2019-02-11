@@ -31,7 +31,9 @@ using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -205,7 +207,25 @@ namespace amdocs.ginger.GingerCoreNET
                 mBetaFeatures = value;
             }
         }
-        public static VERefrenceList VERefrences { get; set; }
+        private static VERefrenceList mVERefrences;
+        public static VERefrenceList VERefrences
+        {
+            get
+            {
+                if (mVERefrences == null)
+                {
+
+                 mVERefrences=   VERefrenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json" }));
+                }
+
+                return mVERefrences;
+            }
+            set
+            {
+
+                mVERefrences = value;
+            }
+        }
         public static BusinessFlow Businessflow { get;  set; }
 
         public static bool RunningInExecutionMode = false;
