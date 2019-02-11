@@ -153,7 +153,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.IsSelected), Header = "Update", WidthWeight = 60, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["FieldUpdate"] });
+            //view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.IsSelected), Header = "Update", WidthWeight = 60, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["FieldUpdate"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.IsSelected), Header = "Update", WidthWeight = 60, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox});
             List<GingerCore.General.ComboEnumItem> GroupTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(ApplicationPOMModel.eElementGroup));
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.SelectedElementGroup), Header = "Group", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(GroupTypeList, nameof(DeltaElementInfo.SelectedElementGroup), true), WidthWeight = 200 });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.ElementName), Header = "Name", WidthWeight = 200, AllowSorting = true, ReadOnly = true, BindingMode=BindingMode.OneWay });
@@ -354,7 +355,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void DetailsGrid_Expanded(object sender, RoutedEventArgs e)
         {
-            Row2.Height = new GridLength(30, GridUnitType.Star);
+            Row2.Height = new GridLength(300, GridUnitType.Star);
         }
 
         private void DetailsGrid_Collapsed(object sender, RoutedEventArgs e)

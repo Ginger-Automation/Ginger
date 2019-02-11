@@ -4420,9 +4420,9 @@ namespace GingerCore.Drivers
 
                     if (ElementInfo.OptionalValuesObjectsList.Count > 0)
                     {
-                        ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
-                    }
-                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
+                        list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
+                        ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;                        
+                    }                                        
                 }
 
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
@@ -6874,7 +6874,15 @@ namespace GingerCore.Drivers
 
         public ElementInfo GetMatchingElement(ElementInfo element, ObservableList<ElementInfo> existingElemnts)
         {
+            //try using online IWebElement Objects comparison
             ElementInfo OriginalElementInfo = existingElemnts.Where(x => x.ElementObject.ToString() == element.ElementObject.ToString()).FirstOrDefault();//comparing IWebElement ID's
+            
+            if(OriginalElementInfo == null)
+            {
+                //try by type and Xpath comparison
+                OriginalElementInfo = existingElemnts.Where(x => (x.ElementTypeEnum == element.ElementTypeEnum) && (x.XPath == element.XPath) && (x.Path == element.Path || string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(element.Path))).FirstOrDefault();
+            }
+
             return OriginalElementInfo;
         }
 

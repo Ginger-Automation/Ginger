@@ -274,7 +274,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, (SolidColorBrush)FindResource("$PassedStatusColor"), 0, "Passed");
                     break;
                 case eImageType.Unknown:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Question,null, 0, "Unknown");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.QuestionCircle, null, 0, "Unknown");
                     break;
                 case eImageType.Failed:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle, (SolidColorBrush)FindResource("$FailedStatusColor"), 0, "Failed");
@@ -679,18 +679,21 @@ namespace Amdocs.Ginger.UserControls
 
                 #region Comparison Status Images
                 case eImageType.Unchanged:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, (SolidColorBrush)FindResource("$RunningStatusColor"), 0, "UnModified");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, toolTip: "Unchanged");
                     break;
-                case eImageType.Modified:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, (SolidColorBrush)FindResource("$RunningStatusColor"), 0, "Modified");
+                case eImageType.Changed:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, toolTip: "Changed");
                     break;
                 case eImageType.Deleted:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.MinusCircle, (SolidColorBrush)FindResource("$RunningStatusColor"), 0, "Deleted");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MinusCircle, toolTip: "Deleted");
                     break;
                 case eImageType.Added:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlusCircle, (SolidColorBrush)FindResource("$RunningStatusColor"), 0, "Added");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlusCircle, toolTip: "Added");
                     break;
-        #endregion
+                case eImageType.Avoided:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.EyeSlash, toolTip: "Avoided");
+                    break;
+                #endregion
 
                 default:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Question, Brushes.Red);

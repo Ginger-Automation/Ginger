@@ -12,11 +12,29 @@ namespace GingerCoreNET.Application_Models
         Unchanged,
         Changed,
         Deleted,
-        New
+        Added,
+        Avoided,
     }
 
     public class DeltaItemBase
     {
+        private bool mIsSelected = false;
+        public bool IsSelected
+        {
+            get
+            {
+                return mIsSelected;
+            }
+            set
+            {
+                if (mIsSelected != value)
+                {
+                    mIsSelected = value;
+                    OnPropertyChanged(nameof(IsSelected));
+                }
+            }
+        }
+
         private eDeltaStatus mDeltaStatus;
         public eDeltaStatus DeltaStatus
         {
@@ -39,17 +57,20 @@ namespace GingerCoreNET.Application_Models
             {
                 switch (DeltaStatus)
                 {
+                    case eDeltaStatus.Unknown:
+                        return eImageType.Unknown;
                     case eDeltaStatus.Deleted:
                         return eImageType.Deleted;
                     case eDeltaStatus.Changed:
-                        return eImageType.Modified;
-                    case eDeltaStatus.New:
+                        return eImageType.Changed;
+                    case eDeltaStatus.Added:
                         return eImageType.Added;
                     case eDeltaStatus.Unchanged:
                         return eImageType.Unchanged;
-                    case eDeltaStatus.Unknown:
+                    case eDeltaStatus.Avoided:
+                        return eImageType.Avoided;
                     default:
-                        return eImageType.Question;
+                        return eImageType.Unknown;
                 }
             }
         }

@@ -29,23 +29,6 @@ namespace GingerCoreNET.Application_Models
 
         public ObservableList<DeltaControlProperty> Properties = new ObservableList<DeltaControlProperty>();
 
-        private bool mIsSelected = false;
-        public bool IsSelected
-        {
-            get
-            {
-                return mIsSelected;
-            }
-            set
-            {
-                if (mIsSelected != value)
-                {
-                    mIsSelected = value;
-                    OnPropertyChanged(nameof(IsSelected));
-                }
-            }
-        }
-
         public object OriginalElementGroup { get { return OriginalElementInfo.ElementGroup; } }
 
         public object mElementGroup = null;

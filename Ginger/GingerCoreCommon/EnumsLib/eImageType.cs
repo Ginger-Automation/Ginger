@@ -249,9 +249,10 @@ namespace Amdocs.Ginger.Common.Enums
 
         #region Comparison Status Images
         Unchanged,
-        Modified,
+        Changed,
         Deleted,
-        Added
+        Added,
+        Avoided,
         #endregion
     }
 }
