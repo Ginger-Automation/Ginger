@@ -582,15 +582,8 @@ namespace Amdocs.Ginger.Repository
                     fileFolderPath = Path.Combine(A, B);
                 }
 
-                //FILE
-                string fileName = name;
-                //Removing all possible invalid path chars and checking the file name length is legal (<= 255)                      
-                foreach (char invalidChar in Path.GetInvalidFileNameChars())
-                {
-                    fileName = fileName.Replace(invalidChar.ToString(), "");
-                }
-                fileName = fileName.Replace(@".", "");
-                
+                string fileName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(name);
+                                
                 string fullName = v.Pattern.Replace("*", fileName);
 
 

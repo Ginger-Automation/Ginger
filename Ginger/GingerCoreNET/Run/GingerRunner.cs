@@ -2146,6 +2146,10 @@ namespace Ginger.Run
                 {
                     p.AddValue(AP.ValueForDriver.ToString());
                 }
+                else if (AP.ParamType == typeof(EnumParamWrapper))
+                {
+                    p.AddValue(AP.ValueForDriver.ToString());
+                }
                 else
                 {
                     throw new Exception("Unknown param typee to pack: " + AP.ParamType.FullName);
@@ -2480,6 +2484,7 @@ namespace Ginger.Run
                 Activity sharedActivityInstance = (Activity)sharedActivity.CreateInstance();
                 sharedActivityInstance.Active = true;
                 sharedActivityInstance.AddDynamicly = true;
+                sharedActivityInstance.VariablesDependencies = CurrentBusinessFlow.CurrentActivity.VariablesDependencies;
                 CurrentBusinessFlow.SetActivityTargetApplication(sharedActivityInstance);
                 CurrentBusinessFlow.AddActivity(sharedActivityInstance);
 

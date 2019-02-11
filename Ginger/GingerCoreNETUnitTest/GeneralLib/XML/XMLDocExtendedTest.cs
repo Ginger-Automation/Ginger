@@ -21,6 +21,7 @@ using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -36,7 +37,7 @@ namespace GingerCoreNETUnitTest.GeneralLib.XML
         public static void ClassInitialize(TestContext TestContext)
         {
 
-            string XmlfFilePath = TestResources.GetTestResourcesFile(@"XML\XmlDoc.xml");
+            string XmlfFilePath = TestResources.GetTestResourcesFile(@"XML" + Path.DirectorySeparatorChar + "XmlDoc.xml");
             XDoc = new XmlDocument();
             XDoc.Load(XmlfFilePath);
             XDE = new XMLDocExtended(XDoc);
