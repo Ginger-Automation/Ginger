@@ -488,7 +488,7 @@ namespace Ginger
             phase = "Application was loaded and ready";
             Reporter.ToLog(eLogLevel.INFO, phase);
             mIsReady = true;
-            WorkSpace.VERefrences =
+       
         }
 
         private static void StandAloneThreadExceptionHandler(object sender, UnhandledExceptionEventArgs e)
