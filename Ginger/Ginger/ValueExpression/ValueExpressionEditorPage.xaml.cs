@@ -57,6 +57,7 @@ namespace Ginger
     public partial class ValueExpressionEditorPage : Page
     {        
         ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, App.BusinessFlow,WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(),false,"",false);
+        VERefrenceList Tvel = new VERefrenceList();
         GenericWindow mWin;
         object mObj;
         string mAttrName;
@@ -135,9 +136,9 @@ namespace Ginger
             AddEnvParams();
             AddGlobalParameters();
             AddRosylynFunctions();
-            AddVBSFunctions();
-            AddRegexFunctions();
-            AddVBSIfFunctions();
+           //AddVBSFunctions();
+            //AddRegexFunctions();
+            //AddVBSIfFunctions();
             AddDataSources();
             AddSecurityConfiguration();
 
@@ -153,6 +154,8 @@ namespace Ginger
                     AddFlowControlConditions();
                 }                
             }
+
+
         }
 
     
@@ -216,9 +219,7 @@ namespace Ginger
 
         private void AddRosylynFunctions()
         {
-            TreeViewItem tviVars = new TreeViewItem();
-            SetItemView(tviVars, "C# Expressions", "", "VBS16x16.png");
-            xObjectsTreeView.Items.Add(tviVars);
+
 
             foreach (ValueExpressionReference VER in WorkSpace.VERefrences.Refrences)
             {
@@ -226,14 +227,14 @@ namespace Ginger
                 if (!Categories.TryGetValue(VER.Category, out Parent))
                 {
                     Parent = new TreeViewItem();
-                    SetItemView(Parent, VER.Category, "", "VBS16x16.png");
-                    tviVars.Items.Add(Parent);
+                    SetItemView(Parent, VER.Category, "",VER.IconImageName==null? "@Config3_16x16.png":VER.IconImageName);
+                    xObjectsTreeView.Items.Add(Parent);
                     Categories.Add(VER.Category, Parent);
                 }
 
                 TreeViewItem tvi = new TreeViewItem();
 
-                SetItemView(tvi, VER.Name, VER.Expression, "VBS16x16.png");
+                SetItemView(tvi, VER.Name, VER.Expression, VER.IconImageName == null ? "@Config3_16x16.png" : VER.IconImageName);
                 Parent.Items.Add(tvi);
                 tvi.MouseDoubleClick += tvi_MouseDoubleClick;
 
@@ -326,7 +327,8 @@ namespace Ginger
             SetItemView(tvi, Desc, VarExpression, "@Regex16x16.png");
             tviVars.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
-        }
+            Tvel.Refrences.Add(new ValueExpressionReference() { Category = "Regular Expressions", Name = Desc, Expression = Eval,IconImageName= "@Regex16x16.png"});
+            }
 
         private void AddVBSEval(TreeViewItem tviVars, string Desc, string Eval)
         {
@@ -334,7 +336,8 @@ namespace Ginger
             string VarExpression = "{VBS Eval=" + Eval + "}";
             SetItemView(tvi, Desc, VarExpression, "VBS16x16.png");
             tviVars.Items.Add(tvi);
-            tvi.MouseDoubleClick += tvi_MouseDoubleClick;                        
+            tvi.MouseDoubleClick += tvi_MouseDoubleClick;
+            Tvel.Refrences.Add(new ValueExpressionReference() { Category = "Date Time Functions", Name = Desc, Expression = Eval });
         }
 
         private void AddWSSecurityConfig(TreeViewItem tviSecSets, string Desc, string Eval)
@@ -344,6 +347,7 @@ namespace Ginger
             SetItemView(tviSecuritySettings, Desc, VarExpression, "@Config_16x16.png");
             tviSecSets.Items.Add(tviSecuritySettings);
             tviSecuritySettings.MouseDoubleClick += tvi_MouseDoubleClick;
+        
         }
 
         private void AddVBSIfEval(TreeViewItem tviVars, string Desc, string Eval)
@@ -353,6 +357,8 @@ namespace Ginger
             SetItemView(tvi, Desc, VarExpression, "VBS16x16.png");
             tviVars.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
+
+            Tvel.Refrences.Add(new ValueExpressionReference() {Category="Date Time Functions",Name=Desc,Expression=Eval });
         }
 
         private void AddEnvParams()
@@ -622,7 +628,9 @@ namespace Ginger
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
             mVE.Value = this.ValueUCTextEditor.textEditor.Text;
-            ValueCalculatedTextBox.Text = mVE.ValueCalculated;            
+            ValueCalculatedTextBox.Text = mVE.ValueCalculated;
+
+            Tvel.SavetoJson(@"C:\Users\mohdkhan\Desktop\ValueExpressionRefrences.json");
         }
                 
         private void OKButton_Click(object sender, RoutedEventArgs e)

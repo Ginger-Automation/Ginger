@@ -28,6 +28,8 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Linq;
+
 namespace GingerCoreNET.RosLynLib
 {
     public class CodeProcessor
@@ -47,7 +49,18 @@ namespace GingerCoreNET.RosLynLib
 
         public static string GetResult(string Expression)
         {
-            Pattern =   new Regex("{CS(\\s)*Exp(\\s)*=(\\s)*[^}]*}");
+            ScriptOptions SO = ScriptOptions.Default.WithReferences(new Assembly[] { Assembly.GetAssembly(typeof(string)), Assembly.GetAssembly(typeof(System.Net.Dns)) });
+     
+            SO.WithReferences(Assembly.GetAssembly(typeof(string)));
+
+
+            string pattern = "^[^{}]*" +
+                       "(" +
+                       "((?'Open'{)[^{}]*)+" +
+                       "((?'Close-Open'})[^{}]*)+" +
+                       ")*" +
+                       "(?(Open)(?!))$";
+            Pattern =   new Regex(pattern);
             Regex Clean =new  Regex("{CS(\\s)*Exp(\\s)*=");
 
             foreach (Match M in Pattern.Matches(Expression))
@@ -60,7 +73,11 @@ namespace GingerCoreNET.RosLynLib
                 string Evalresult = exp;
                 try
                 {
-                    Evalresult = CSharpScript.EvaluateAsync(exp).Result.ToString();
+//TODO: Improve this and cache
+                    System.Collections.Generic.List<String> Refrences = typeof(System.DateTime).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>();
+                    Refrences.AddRange(typeof(string).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>());
+               
+                    Evalresult = CSharpScript.EvaluateAsync(exp, ScriptOptions.Default.WithImports(Refrences)).Result.ToString();
                 }
 
                 catch (Exception e)
