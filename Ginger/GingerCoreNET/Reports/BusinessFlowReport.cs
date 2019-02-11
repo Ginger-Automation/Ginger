@@ -405,7 +405,7 @@ namespace Ginger.Reports
         {
             get
             {
-                if (variablesAfterExec == null)
+                if (mBusinessFlow.Variables != null && mBusinessFlow.Variables.Count > 0)
                 {
                     variablesAfterExec = mBusinessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();                    
                 }
