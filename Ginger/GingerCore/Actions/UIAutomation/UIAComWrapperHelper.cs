@@ -434,9 +434,7 @@ namespace GingerCore.Drivers
                         {
                             continue;
                         }
-
-                        Process currentProcess = Process.GetProcessById(window.Current.ProcessId);
-                        if (currentProcess.StartInfo.Environment["USERNAME"] != Environment.UserName)
+                        if(CheckUserSpecificProcess(window) == false)
                         {
                             continue;
                         }
@@ -483,6 +481,10 @@ namespace GingerCore.Drivers
 
                     foreach (AutomationElement window in AppWindows)
                     {
+                        if (CheckUserSpecificProcess(window) == false)
+                        {
+                            continue;
+                        }
                         if (!IsWindowValid(window))
                         {
                             continue;
@@ -530,6 +532,19 @@ namespace GingerCore.Drivers
 
             return list;
         }
+        private bool CheckUserSpecificProcess(AutomationElement window)
+        {
+            Process currentProcess = Process.GetProcessById(window.Current.ProcessId);
+            if (currentProcess.StartInfo.Environment["USERNAME"] != Environment.UserName)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+ 
 
         #endregion RECORDING DRIVER
 
