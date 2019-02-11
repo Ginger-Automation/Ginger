@@ -3834,6 +3834,31 @@ namespace GingerCore.Drivers
             return elementType;
         }
 
+        private ElementInfo LearnPOMElementInfoDetails(HTMLElementInfo EI, HtmlNode elNode, string path)
+        {
+
+            EI.WindowExplorer = this;
+            EI.ElementName = //GenerateElementTitle(el); Generate the name out of element Node
+            //EI.ID = //GenerateElementID(el); Not needed.
+            //EI.Value = // GenerateElementValue(el); Not needed.
+            //EI.Name = // GenerateElementName(el);Not needed.
+            //EI.ElementType = GenerateElementType(el);
+            //EI.ElementTypeEnum = GetElementTypeEnum(el);
+            EI.Path = path; // get in adnvanced
+            EI.XPath = elNode.XPath; // get in adnvanced
+
+           /* EI.ElementObject = el; */ // get in adnvanced
+            EI.HTMLElementObject = elNode;  // get in adnvanced
+
+            EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
+            EI.ElementName = GetBestElementName(EI); // use node for details
+            EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
+            ((IWindowExplorer)this).UpdateElementInfoFields(EI);
+            EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
+ 
+            return EI;
+        }
+
         private ElementInfo GetElementInfoWithIWebElement(IWebElement el, HtmlNode elNode, string path, bool setFullElementInfoDetails = false)
         {
             HTMLElementInfo EI = new HTMLElementInfo();
@@ -3860,9 +3885,9 @@ namespace GingerCore.Drivers
             {
                 EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
                 EI.ElementName = GetBestElementName(EI);
-                EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
-                ((IWindowExplorer)this).UpdateElementInfoFields(EI);
-                EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
+                EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI); // try node then el
+                ((IWindowExplorer)this).UpdateElementInfoFields(EI); // remove
+                EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI); // add the x y and highe width
             }
 
             return EI;
@@ -4382,6 +4407,7 @@ namespace GingerCore.Drivers
             }
 
             //Learn more properties
+            // IMROVE THIOS CODE BY TAKLIGN  IT FROM THE NODE
 
             if (el != null)
             {
