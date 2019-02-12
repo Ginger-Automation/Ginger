@@ -167,9 +167,6 @@ namespace GingerCore.ALM.JIRA.Bll
             RunStatus responseStatus = RunStatus.EXECUTING;
             switch (runStatus)
             {
-                case eRunStatus.Blocked:
-                    responseStatus = RunStatus.BLOCKED;
-                    break;
                 case eRunStatus.Failed:
                     responseStatus = RunStatus.FAIL;
                     break;
@@ -177,9 +174,11 @@ namespace GingerCore.ALM.JIRA.Bll
                     responseStatus = RunStatus.PASS;
                     break;
                 case eRunStatus.Skipped:
-                    responseStatus = RunStatus.ABORTED;
-                    break;
+                case eRunStatus.Blocked:
                 case eRunStatus.Pending:
+                    responseStatus = RunStatus.TODO;
+                    break;
+                default:
                     responseStatus = RunStatus.TODO;
                     break;
             }
