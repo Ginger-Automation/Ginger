@@ -1276,7 +1276,12 @@ namespace Ginger.Run
         {
             AutoLogProxy.UserOperationStart("xRunRunsetBtn_Click");
             ResetALMDefectsSuggestions();
-
+            //check runner is not empty
+            if (mCurrentSelectedRunner.Runner.BusinessFlows.Count <= 0)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one Business Flow to '"+mCurrentSelectedRunner.Name+"' to start run.");
+                return;
+            }
             //run analyzer
             int analyzeRes = await App.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
             if (analyzeRes == 1) return;//cancel run because issues found
