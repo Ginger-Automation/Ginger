@@ -89,7 +89,7 @@ namespace Ginger.Reports
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpression mVE=new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false,  WorkSpace.UserProfile.Solution.Variables);
+            ValueExpression mVE=new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
             string extraInformationCalculated = string.Empty;
             mVE.Value = mEmailAttachment.ExtraInformation;
             extraInformationCalculated = mVE.ValueCalculated;
