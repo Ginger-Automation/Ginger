@@ -6875,9 +6875,10 @@ namespace GingerCore.Drivers
         public ElementInfo GetMatchingElement(ElementInfo element, ObservableList<ElementInfo> existingElemnts)
         {
             //try using online IWebElement Objects comparison
-            ElementInfo OriginalElementInfo = existingElemnts.Where(x => x.ElementObject.ToString() == element.ElementObject.ToString()).FirstOrDefault();//comparing IWebElement ID's
-            
-            if(OriginalElementInfo == null)
+            ElementInfo OriginalElementInfo = existingElemnts.Where(x => (x.ElementObject != null) && (element.ElementObject != null) && (x.ElementObject.ToString() == element.ElementObject.ToString())).FirstOrDefault();//comparing IWebElement ID's
+
+
+            if (OriginalElementInfo == null)
             {
                 //try by type and Xpath comparison
                 OriginalElementInfo = existingElemnts.Where(x => (x.ElementTypeEnum == element.ElementTypeEnum) && (x.XPath == element.XPath) && (x.Path == element.Path || string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(element.Path))).FirstOrDefault();
