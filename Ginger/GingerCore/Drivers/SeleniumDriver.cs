@@ -3642,7 +3642,7 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnPartialElementInfoDetails = false)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
@@ -3676,17 +3676,32 @@ namespace GingerCore.Drivers
                         }
 
                         //filter element if needed
-                        eElementType foundElementType = GetElementTypeEnum(el);
+                        HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
+
+                        foundElemntInfo.ElementTypeEnum = GetElementTypeEnum(el);
                         if (filteredElementType != null && filteredElementType.Count > 0)
                         {
-                            if (!filteredElementType.Contains(foundElementType))
+                            if (!filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
                             {
                                 continue;
                             }
                         }
 
-                        ElementInfo foundElemntInfo = null;
-                        foundElemntInfo = GetElementInfoWithIWebElement(el, htmlNode, path, learnFullElementInfoDetails);
+                        if (learnPartialElementInfoDetails)
+                        {
+                            foundElemntInfo.ElementObject = el;
+                            foundElemntInfo.Path = path;
+                            foundElemntInfo.XPath = htmlNode.XPath;
+                            foundElemntInfo.HTMLElementObject = htmlNode;
+                            LearnPOMElementInfoDetails(foundElemntInfo);
+                        }
+                        else
+                        {
+                            foundElemntInfo = GetElementInfoWithIWebElement(el, htmlNode, path, learnPartialElementInfoDetails);
+                        }
+
+       
+                      
                         foundElemntInfo.IsAutoLearned = true;
                         foundElementsList.Add(foundElemntInfo);
                         allReadElem.Add(foundElemntInfo);
@@ -3703,7 +3718,7 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, learnFullElementInfoDetails);
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, learnPartialElementInfoDetails);
                             Driver.SwitchTo().ParentFrame();
                         }
 
@@ -3834,32 +3849,17 @@ namespace GingerCore.Drivers
             return elementType;
         }
 
-        private ElementInfo LearnPOMElementInfoDetails(HTMLElementInfo EI, HtmlNode elNode, string path)
+        private ElementInfo LearnPOMElementInfoDetails(HTMLElementInfo EI)
         {
-
-            EI.WindowExplorer = this;
-            EI.ElementName = //GenerateElementTitle(el); Generate the name out of element Node
-            //EI.ID = //GenerateElementID(el); Not needed.
-            //EI.Value = // GenerateElementValue(el); Not needed.
-            //EI.Name = // GenerateElementName(el);Not needed.
-            //EI.ElementType = GenerateElementType(el);
-            //EI.ElementTypeEnum = GetElementTypeEnum(el);
-            EI.Path = path; // get in adnvanced
-            EI.XPath = elNode.XPath; // get in adnvanced
-
-           /* EI.ElementObject = el; */ // get in adnvanced
-            EI.HTMLElementObject = elNode;  // get in adnvanced
-
+            EI.ElementName = GetBestElementName(EI);
             EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
-            EI.ElementName = GetBestElementName(EI); // use node for details
             EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
-            ((IWindowExplorer)this).UpdateElementInfoFields(EI);
-            EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
- 
+            EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);// improve code inside
+
             return EI;
         }
 
-        private ElementInfo GetElementInfoWithIWebElement(IWebElement el, HtmlNode elNode, string path, bool setFullElementInfoDetails = false)
+        private HTMLElementInfo GetElementInfoWithIWebElement(IWebElement el, HtmlNode elNode, string path, bool setFullElementInfoDetails = false)
         {
             HTMLElementInfo EI = new HTMLElementInfo();
             EI.WindowExplorer = this;
@@ -3885,19 +3885,19 @@ namespace GingerCore.Drivers
             {
                 EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
                 EI.ElementName = GetBestElementName(EI);
-                EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI); // try node then el
-                ((IWindowExplorer)this).UpdateElementInfoFields(EI); // remove
-                EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI); // add the x y and highe width
+                EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI); 
+                ((IWindowExplorer)this).UpdateElementInfoFields(EI); 
+                EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI); 
             }
 
             return EI;
         }
 
-        string GetBestElementName(ElementInfo EI)
+        string GetBestElementName(HTMLElementInfo EI)
         {
-            if (string.IsNullOrEmpty(EI.Value)) return null;
-            // temp need to be per elem etc... with smart naming for label text box etc...    need to be in the IWindowExplorer        
-            return EI.Value + " " + EI.ElementType;
+            string name = string.Empty;
+            name = (((HtmlNode)EI.HTMLElementObject).Name);
+            return name;
         }
 
         private ElementInfo GetElementInfoWithIWebElementWithXpath(IWebElement el, string path)
@@ -4382,17 +4382,6 @@ namespace GingerCore.Drivers
         {
             ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
 
-            //Base properties 
-            list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
-            list.Add(new ControlProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
-            list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
-            list.Add(new ControlProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
-            list.Add(new ControlProperty() { Name = "Height", Value = ElementInfo.Height.ToString() });
-            list.Add(new ControlProperty() { Name = "Width", Value = ElementInfo.Width.ToString() });
-            list.Add(new ControlProperty() { Name = "X", Value = ElementInfo.X.ToString() });
-            list.Add(new ControlProperty() { Name = "Y", Value = ElementInfo.Y.ToString() });
-            list.Add(new ControlProperty() { Name = "Value", Value = ElementInfo.Value });
-
             IWebElement el = null;
             if (ElementInfo.ElementObject != null)
             {
@@ -4405,6 +4394,17 @@ namespace GingerCore.Drivers
                 el = Driver.FindElement(By.XPath(ElementInfo.XPath));
                 ElementInfo.ElementObject = el;
             }
+
+            //Base properties 
+            list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
+            list.Add(new ControlProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
+            list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
+            list.Add(new ControlProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
+            list.Add(new ControlProperty() { Name = "Height", Value = ((IWebElement)ElementInfo.ElementObject).Size.Height.ToString() });
+            list.Add(new ControlProperty() { Name = "Width", Value = ((IWebElement)ElementInfo.ElementObject).Size.Width.ToString() });
+            list.Add(new ControlProperty() { Name = "X", Value = ((IWebElement)ElementInfo.ElementObject).Location.X.ToString() });
+            list.Add(new ControlProperty() { Name = "Y", Value = ((IWebElement)ElementInfo.ElementObject).Location.Y.ToString() });
+            list.Add(new ControlProperty() { Name = "Value", Value = ElementInfo.Value });
 
             //Learn more properties
             // IMROVE THIOS CODE BY TAKLIGN  IT FROM THE NODE
@@ -4559,7 +4559,15 @@ namespace GingerCore.Drivers
                 {
                     // Organize based on better locators at start
                     case eLocateBy.ByID:
-                        string id = e.GetAttribute("id");
+                        string id = string.Empty;
+                        if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).ID))
+                        {
+                            id = ((HTMLElementInfo)ElementInfo).ID;
+                        }
+                        else
+                        {
+                            id = e.GetAttribute("id");
+                        }
                         if (!string.IsNullOrWhiteSpace(id))
                         {
                             elemLocator.LocateValue = id;
@@ -4568,7 +4576,16 @@ namespace GingerCore.Drivers
                         break;
 
                     case eLocateBy.ByName:
-                        string name = e.GetAttribute("name");
+
+                        string name = string.Empty;
+                        if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).Name))
+                        {
+                            name = ((HTMLElementInfo)ElementInfo).Name;
+                        }
+                        else
+                        {
+                            name = e.GetAttribute("name");
+                        }
                         if (!string.IsNullOrWhiteSpace(name))
                         {
                             elemLocator.LocateValue = name;
