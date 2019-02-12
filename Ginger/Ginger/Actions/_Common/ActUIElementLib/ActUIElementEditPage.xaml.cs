@@ -290,10 +290,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         Width = 600,
                         Margin = new Thickness(10, 0, 0, 0)
                     };
-
                     comboBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
                     ((Ginger.UserControlsLib.UCComboBox)comboBox).ComboBox.ItemsSource = element.PossibleValues;
-
+                    if (mAction.ElementLocateBy == eLocateBy.POMElement)
+                    {
+                        ((Ginger.UserControlsLib.UCComboBox)comboBox).ComboBox.SelectedValue = element.DefaultValue;
+                        comboBox.ComboBoxObject.Style = this.FindResource("$FlatEditInputComboBoxStyle") as Style;
+                    }                    
                     dynamicPanel.Children.Add(elementLabel);
                     dynamicPanel.Children.Add(comboBox);
                 }
@@ -325,7 +328,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             dynamicPage.Content = dynamicPanel;
             return dynamicPage;
         }
-       
+
         public List<ElementConfigControl> GetRequiredConfigControls()
         {
             List<ElementConfigControl> elementList = new List<ElementConfigControl>();
@@ -341,50 +344,66 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 ActUIElement.eElementAction.GetAttrValue,
                 ActUIElement.eElementAction.RunJavaScript}.Contains(mAction.ElementAction))
             {
-                elementList.Add(new ElementConfigControl()
+                if (mAction.ElementLocateBy == eLocateBy.POMElement && (mAction.ElementAction == ActUIElement.eElementAction.SetValue ||
+                                                                        mAction.ElementAction == ActUIElement.eElementAction.SetText ||
+                                                                        mAction.ElementAction == ActUIElement.eElementAction.SelectByText ||
+                                                                        mAction.ElementAction == ActUIElement.eElementAction.SendKeys))
                 {
-                    Title = "Value",
-                    BindedString = ActUIElement.Fields.Value,
-                    ControlType = eElementType.TextBox,
-                    PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.Value)) ? new List<string>() { "" } :
-                    new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.Value) }
-                });
-            }
-            else if (mAction.ElementAction == ActUIElement.eElementAction.Select)
-            {
-                List<string> possibleValues;
-                if (mAction.ElementLocateBy == eLocateBy.POMElement)
-                {
-                    possibleValues = GetPomElementOptionalValues();
+                    elementList.Add(GetPomOptionalValuesComboBox(ActUIElement.Fields.Value, ePomElementValuesType.Values));
                 }
                 else
-                {
-                    possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "" } :
-                       new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) };
-                }
-                if (mAction.ElementType != eElementType.RadioButton)
                 {
                     elementList.Add(new ElementConfigControl()
                     {
                         Title = "Value",
-                        BindedString = ActUIElement.Fields.ValueToSelect,
-                        ControlType = eElementType.ComboBox,
-                        PossibleValues = possibleValues
+                        BindedString = ActUIElement.Fields.Value,
+                        ControlType = eElementType.TextBox,
+                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.Value)) ? new List<string>() { "" } :
+                                new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.Value) } 
                     });
+                }
+            }
+            else if (mAction.ElementAction == ActUIElement.eElementAction.Select)
+            {
+                if (mAction.ElementType != eElementType.RadioButton)
+                {
+                    if (mAction.ElementLocateBy == eLocateBy.POMElement)
+                    {
+                        elementList.Add(GetPomOptionalValuesComboBox(ActUIElement.Fields.ValueToSelect, ePomElementValuesType.Values));
+                    }
+                    else
+                    {
+                        elementList.Add(new ElementConfigControl()
+                        {
+                            Title = "Value",
+                            BindedString = ActUIElement.Fields.ValueToSelect,
+                            ControlType = eElementType.ComboBox,
+                            PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "" } :
+                                        new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) } 
+
+                        });
+                    }
                 }
             }
             else if ((mAction.ElementAction == ActUIElement.eElementAction.SelectByIndex || mAction.ElementAction == ActUIElement.eElementAction.SetSelectedValueByIndex))
             {
                 if (mAction.ElementType != eElementType.RadioButton)
                 {
-                    elementList.Add(new ElementConfigControl()
+                    if (mAction.ElementLocateBy == eLocateBy.POMElement)
                     {
-                        Title = "Value",
-                        BindedString = ActUIElement.Fields.ValueToSelect,
-                        ControlType = eElementType.ComboBox,
-                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "0", "1", "2", "3", "4","5","6","7","8","9","10" } :
-                        new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) }
-                });
+                        elementList.Add(GetPomOptionalValuesComboBox(ActUIElement.Fields.ValueToSelect, ePomElementValuesType.Indexs));
+                    }
+                    else
+                    {
+                        elementList.Add(new ElementConfigControl()
+                        {
+                            Title = "Value",
+                            BindedString = ActUIElement.Fields.ValueToSelect,
+                            ControlType = eElementType.ComboBox,
+                            PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" } :
+                                    new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) }
+                        });
+                    }
                 }
             }
             else if ((mAction.ElementAction == ActUIElement.eElementAction.Click))
@@ -398,9 +417,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         ControlType = eElementType.TextBox,
                         PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.Value)) ? new List<string>() { "" } :
                         new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.Value) }
-                });
+                    });
                 }
-            }           
+            }
             else if ((mAction.ElementAction == ActUIElement.eElementAction.GetControlProperty))
             {
                 //TODO: find a better way to bind list of enum with possible values.
@@ -420,6 +439,19 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 });
             }
             return elementList;
+        }
+
+        enum ePomElementValuesType { Values, Indexs}
+        private ElementConfigControl GetPomOptionalValuesComboBox(string Valuefield, ePomElementValuesType valuesType)
+        {
+            ElementConfigControl optionalValuesCombo = new ElementConfigControl();
+            optionalValuesCombo.Title = "Value";
+            optionalValuesCombo.ControlType = eElementType.ComboBox;
+            optionalValuesCombo.BindedString = Valuefield;           
+            optionalValuesCombo.PossibleValues = GetPomElementOptionalValues(valuesType);
+            optionalValuesCombo.DefaultValue = !String.IsNullOrEmpty(mAction.GetInputParamValue(Valuefield)) ?
+                                    mAction.GetInputParamValue(Valuefield) : GetPomElementOptionalValuesDefaultValue(valuesType);           
+            return optionalValuesCombo;
         }
 
         ImageSource GetImageSource(System.Drawing.Image image)
@@ -520,25 +552,67 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
-
-
-        private List<string> GetPomElementOptionalValues()
+        /// <summary>
+        /// This method is used to get the current selected POM
+        /// </summary>
+        /// <returns></returns>
+        private ElementInfo GetElementInfoFromCurerentPOMSelected()
         {
-            List<string> optionalValues = new List<string>();
+            ElementInfo selectedPOMElement = null;
             mExistingPOMAndElementGuidString = mAction.ElementLocateValue;
             string[] pOMandElementGUIDs = mAction.ElementLocateValue.Split('_');
             Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
             ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
             if (currentPOM != null)
-            {               
+            {
                 Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
-                if (selectedPOMElement != null)
+                selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+            }
+            return selectedPOMElement;
+        }
+
+        /// <summary>
+        /// This method is used to get the POM element Optional values
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetPomElementOptionalValues(ePomElementValuesType valuesType)
+        {
+            List<string> optionalValues = new List<string>();
+            ElementInfo selectedPOMElement = GetElementInfoFromCurerentPOMSelected();
+            if (selectedPOMElement != null && selectedPOMElement.OptionalValuesObjectsList.Count > 0)       
+            {
+                if (valuesType == ePomElementValuesType.Values)
                 {
-                    optionalValues = selectedPOMElement.OptionalValues;                    
+                    optionalValues = selectedPOMElement.OptionalValuesObjectsList.Select(s => s.Value).ToList();
+                }
+                else
+                {
+                    optionalValues = selectedPOMElement.OptionalValuesObjectsList.Select(s => selectedPOMElement.OptionalValuesObjectsList.IndexOf(s).ToString()).ToList();
                 }
             }
             return optionalValues;
+        }
+
+        private string GetPomElementOptionalValuesDefaultValue(ePomElementValuesType valuesType)
+        {
+            string defaultValue = string.Empty;
+            ElementInfo selectedPOMElement = GetElementInfoFromCurerentPOMSelected();
+            if (selectedPOMElement != null && selectedPOMElement.OptionalValuesObjectsList.Count > 0)        //For new implementation
+            {
+                OptionalValue defValue = selectedPOMElement.OptionalValuesObjectsList.Where(s => s.IsDefault == true).FirstOrDefault();
+                if (defValue != null)
+                {
+                    if (valuesType == ePomElementValuesType.Values)
+                    {
+                        defaultValue = defValue.Value;
+                    }
+                    else
+                    {
+                        defaultValue = selectedPOMElement.OptionalValuesObjectsList.IndexOf(defValue).ToString();
+                    }
+                }
+            }
+            return defaultValue;
         }
     }
 }
