@@ -24,6 +24,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common;
 
 namespace GingerWPF.WizardLib
 {
@@ -155,7 +157,7 @@ namespace GingerWPF.WizardLib
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantMoveNextWhileInProcess);
+                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Next");
             }
             else
             {
@@ -213,12 +215,13 @@ namespace GingerWPF.WizardLib
                         {
                             Ginger.Agents.ucAgentControl agentControl = (Ginger.Agents.ucAgentControl)child;
                             bindingExpression = agentControl.GetBindingExpression(Ginger.Agents.ucAgentControl.SelectedAgentProperty);
-                        }
+                        }                        
 
                         if (bindingExpression != null)
                         {
                             // do if there is validation bindingExpression.
-                            bindingExpression.UpdateSource();
+                            bindingExpression.UpdateSource();                            
+                            
                             if (bindingExpression.HasValidationError)
                             {
                                 errorsFound = true;
@@ -229,7 +232,13 @@ namespace GingerWPF.WizardLib
                         if (errorsFound == false)
                         {
                             if (child is ucGrid)
+                            { 
                                 errorsFound = ((ucGrid)child).HasValidationError();
+                            }
+                            else if (child is UCTreeView)
+                            { 
+                                errorsFound = ((UCTreeView)child).HasValidationError();
+                            }
                         }
                     }
 
@@ -271,7 +280,7 @@ namespace GingerWPF.WizardLib
         {
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantMovePrevWhileInProcess);
+                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Previous");
             }
             else
             {
@@ -288,7 +297,7 @@ namespace GingerWPF.WizardLib
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantFinishWhileInProcess);
+                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Finish");
             }
             else
             {
@@ -311,7 +320,7 @@ namespace GingerWPF.WizardLib
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantFinishWhileInProcess);
+                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Finish");
             }
             else
             {

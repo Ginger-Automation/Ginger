@@ -34,9 +34,11 @@ namespace UnitTests.UITests
     public class ActionEditPageTests
     {
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ActionEditPagesLoadTest()
         {
+
+            // !!!!remove hard code and use typeof
             AppDomain.CurrentDomain.Load("Ginger");
 
 

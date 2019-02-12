@@ -101,8 +101,10 @@ namespace GingerTest.POMs
         {
             mTreeView.SelectItem(name);
             Page p = mTreeView.GetSelectedItemEditPage();
-            Execute(() => { 
-                FindElementByName(p, "AgentNameTextBox").SetValue(TextBox.TextProperty, NewName);
+            Execute(() => 
+            {                
+                TextBox txt = (TextBox)FindElementByAutomationID<TextBox>(p, "AgentNameTextBox");
+                txt.Text = NewName;
             });
             Agent agent = (Agent)mTreeView.GetSelectedItemNodeObject();
             return agent;

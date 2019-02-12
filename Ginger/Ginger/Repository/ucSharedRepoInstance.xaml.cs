@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.Repository;
@@ -24,6 +25,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Variables;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -76,13 +78,16 @@ namespace Ginger
             else
             {
                 LinkStatusImage.Source = General.GetResourceImage("@Star_24x24.png");
+
+                string ItemName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(mLinkedRepoItem.ItemName);
+                
                 if (mLinkIsByParentID || mLinkIsByExternalID)
                 {
-                    LinkStatusImage.ToolTip = "The item is linked to the Shared Repository item: '" + mLinkedRepoItem.ContainingFolder + mLinkedRepoItem.ItemName + "'." + Environment.NewLine + "Click to un-link it.";
+                    LinkStatusImage.ToolTip = "The item is linked to the Shared Repository item: '" + Path.Combine(mLinkedRepoItem.ContainingFolder,ItemName) + "'." + Environment.NewLine + "Click to un-link it.";
                 }
                 else
                 {
-                    LinkStatusImage.ToolTip = "The item is linked to the Shared Repository item: '" + mLinkedRepoItem.ContainingFolder + mLinkedRepoItem.ItemName + "'.";
+                    LinkStatusImage.ToolTip = "The item is linked to the Shared Repository item: '" + Path.Combine(mLinkedRepoItem.ContainingFolder, ItemName) + "'.";
                 }
                 UpdateRepoBtn.ToolTip = "Overwrite Shared Repository linked item";
             }
@@ -122,7 +127,7 @@ namespace Ginger
             {
                 if (mLinkIsByParentID || mLinkIsByExternalID)
                 {
-                    if (Reporter.ToUser(eUserMsgKeys.AskIfSureWantToDeLink) == MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKey.AskIfSureWantToDeLink) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
                         mItem.ParentGuid = Guid.Empty;
                         mItem.ExternalID = string.Empty;

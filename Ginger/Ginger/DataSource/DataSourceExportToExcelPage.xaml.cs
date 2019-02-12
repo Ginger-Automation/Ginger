@@ -54,13 +54,13 @@ namespace Ginger.DataSource
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             //validate details
-            if (ExcelFilePath.ValueTextBox.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKeys.MissingExcelDetails); return; }
-            if (!ExcelFilePath.ValueTextBox.Text.ToLower().EndsWith(".xlsx")) { Reporter.ToUser(eUserMsgKeys.InvalidExcelDetails); return; }            
-            //else if (OutSheetName.Text.IndexOf(" ") > 0) { Reporter.ToUser(eUserMsgKeys.InValidExportSheetDetails); return; }
+            if (ExcelFilePath.ValueTextBox.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.MissingExcelDetails); return; }
+            if (!ExcelFilePath.ValueTextBox.Text.ToLower().EndsWith(".xlsx")) { Reporter.ToUser(eUserMsgKey.InvalidExcelDetails); return; }            
+            //else if (OutSheetName.Text.IndexOf(" ") > 0) { Reporter.ToUser(eUserMsgKey.InValidExportSheetDetails); return; }
 
             okClicked = true;
 
-            //App.UserProfile.Solution.Agents.Add(mNewAgent);
+            // WorkSpace.UserProfile.Solution.Agents.Add(mNewAgent);
 
             _pageGenericWin.Close();
         }

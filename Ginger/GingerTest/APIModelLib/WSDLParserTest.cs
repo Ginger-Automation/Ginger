@@ -23,7 +23,7 @@ using GingerWPF.ApplicationModelsLib.APIModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 
-namespace GingerWPFUnitTest.APIModelLib
+namespace GingerTest
 {
     [TestClass]
     public class WSDLParserTest
@@ -34,7 +34,7 @@ namespace GingerWPFUnitTest.APIModelLib
         [TestInitialize]
         public void TestInitialize()
         {
-            string TempSolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\WSDL");
+            string TempSolutionFolder = TestResources.GetTestTempFolder(@"Solutions\WSDL");
             if (Directory.Exists(TempSolutionFolder))
             {
                 Directory.Delete(TempSolutionFolder, true);
@@ -53,7 +53,7 @@ namespace GingerWPFUnitTest.APIModelLib
 
         [Ignore] // TODO: FIXME
         [Level2]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GenerateAPIfromWSDL()
         {
             // Arrange

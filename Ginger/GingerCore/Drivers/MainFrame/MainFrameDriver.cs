@@ -20,9 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using GingerCore.Actions.MainFrame;
-using GingerCore.Drivers.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Open3270;
 using Open3270.TN3270;
@@ -147,7 +145,7 @@ namespace GingerCore.Drivers.MainFrame
             IsServerAvailable = GingerCore.Common.Utility.IsServerListening(this.HostName, HostPort);
             if (!IsServerAvailable)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.MainframeIncorrectConfiguration);
+                Reporter.ToStatus(eStatusMsgKey.MainframeIncorrectConfiguration);
                 return;
             }
 
@@ -158,9 +156,12 @@ namespace GingerCore.Drivers.MainFrame
                 mDriverWindow = new MainFrameDriverWindow(this);
                 mDriverWindow.Show();
                 mDriverWindow.Refresh();
-                OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-                Dispatcher = mDriverWindow.Dispatcher;
+
+                Dispatcher = new DriverWindowDispatcher(mDriverWindow.Dispatcher);
+                Dispatcher.Invoke(new Action(() => OnDriverMessage(eDriverMessageType.DriverStatusChanged)));
                 System.Windows.Threading.Dispatcher.Run();
+
+                
             }
             else
             {
@@ -494,20 +495,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new NotImplementedException();
         }
 
-        public override List<Actions.ActButton> GetAllButtons()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override List<Actions.ActWindow> GetAllWindows()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override List<Actions.ActLink> GetAllLinks()
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public override void HighlightActElement(Actions.Act act)
         {
@@ -788,7 +776,12 @@ namespace GingerCore.Drivers.MainFrame
         }
 
 
-        public bool TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
+        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartSpying()
         {
             throw new NotImplementedException();
         }

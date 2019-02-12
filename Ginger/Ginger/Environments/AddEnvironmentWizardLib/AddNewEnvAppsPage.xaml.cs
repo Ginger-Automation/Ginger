@@ -47,7 +47,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
                 case EventType.Init:
                     mWizard = (AddEnvironmentWizard)WizardEventArgs.Wizard;
 
-                    foreach (ApplicationPlatform appPlat in App.UserProfile.Solution.ApplicationPlatforms)
+                    foreach (ApplicationPlatform appPlat in  WorkSpace.UserProfile.Solution.ApplicationPlatforms)
                     {
                         EnvApplication envApp = new EnvApplication() { Name = appPlat.AppName };
                         envApp.Active = true;
@@ -69,7 +69,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
         private void xAddAppBtn_Click(object sender, RoutedEventArgs e)
         {
             string newAppName = "NewApp";
-            if (GingerCore.General.GetInputWithValidation("Add Environment Application", "Application Name:", ref newAppName, new char[0]))
+            if (GingerCore.General.GetInputWithValidation("Add Environment Application", "Application Name:", ref newAppName))
             {
                 if (mWizard.apps.Where(x => x.Name == newAppName).FirstOrDefault() == null)
                 {

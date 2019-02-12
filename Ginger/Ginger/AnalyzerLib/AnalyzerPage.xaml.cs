@@ -125,7 +125,7 @@ namespace Ginger.AnalyzerLib
         {
             if (BusyInProcess)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                 return;
             }
 
@@ -222,7 +222,7 @@ namespace Ginger.AnalyzerLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -237,7 +237,7 @@ namespace Ginger.AnalyzerLib
                 // Check all GRs BFS
                 foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
                 {
-                    issues = AnalyzeGingerRunner.Analyze(GR, App.UserProfile.Solution.ApplicationPlatforms);
+                    issues = AnalyzeGingerRunner.Analyze(GR,  WorkSpace.UserProfile.Solution.ApplicationPlatforms);
                     AddIssues(issues);
 
                     //Code to analyze Runner Unique Businessflow with Source BF
@@ -273,23 +273,26 @@ namespace Ginger.AnalyzerLib
             SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name);
             List<AnalyzerItemBase> issues = AnalyzeBusinessFlow.Analyze(mSolution, businessFlow);
             AddIssues(issues);
-            foreach (Activity activity in businessFlow.Activities)
+            Parallel.ForEach(businessFlow.Activities, activity =>
             {
                 issues = AnalyzeActivity.Analyze(businessFlow, activity);
                 AddIssues(issues);
-                foreach (Act action in activity.Acts)
+                Parallel.ForEach(activity.Acts, iaction =>
                 {
+                    Act action = (Act)iaction;
                     List<AnalyzerItemBase> actionissues = AnalyzeAction.Analyze(businessFlow, activity, action, DSList);
                     AddIssues(actionissues);
                     List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
                     usedVariablesInActivity.AddRange(tempList);
-                }
+                });
+
                 List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
                 usedVariablesInActivity.AddRange(activityVarList);
-                ReportUnusedVariables(activity, usedVariablesInActivity);               
+                ReportUnusedVariables(activity, usedVariablesInActivity);
                 usedVariablesInBF.AddRange(usedVariablesInActivity);
-                usedVariablesInActivity.Clear();    
-            }            
+                usedVariablesInActivity.Clear();
+            });
+
             ReportUnusedVariables(businessFlow, usedVariablesInBF);
 
             if (markCompletion)
@@ -303,20 +306,21 @@ namespace Ginger.AnalyzerLib
 
         public void ReportUnusedVariables(object obj, List<string> usedVariables)
         {
-            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();            
-            BusinessFlow BusinessFlow = App.BusinessFlow;
-            Activity activity = BusinessFlow.Activities[0];
+            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
+            Solution solution = null;
+            BusinessFlow businessFlow = null;
+            Activity activity = null;
             string variableSourceType = "";
             string variableSourceName = "";
             ObservableList<VariableBase> AvailableAllVariables = new ObservableList<VariableBase>();
             if (typeof(BusinessFlow).Equals(obj.GetType()))
             {
-                BusinessFlow = (BusinessFlow)obj;
-                if (BusinessFlow.Variables.Count > 0)
+                businessFlow = (BusinessFlow)obj;
+                if (businessFlow.Variables.Count > 0)
                 {
-                    AvailableAllVariables = BusinessFlow.Variables;
-                    variableSourceType = "BusinessFlow";
-                    variableSourceName = BusinessFlow.Name;                    
+                    AvailableAllVariables = businessFlow.Variables;
+                    variableSourceType = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                    variableSourceName = businessFlow.Name;                    
                 }
             }
             else if (typeof(Activity).Equals(obj.GetType()))
@@ -325,20 +329,17 @@ namespace Ginger.AnalyzerLib
                 if (activity.Variables.Count > 0)
                 {
                     AvailableAllVariables = activity.Variables;
-                    variableSourceType = "Activity";
+                    variableSourceType = GingerDicser.GetTermResValue(eTermResKey.Activity);
                     variableSourceName = activity.ActivityName;                    
                 }
             }
             else if(typeof(Solution).Equals(obj.GetType()))
             {
-                Solution solution = (Solution)obj;
+                solution = (Solution)obj;
                 AvailableAllVariables = solution.Variables;
                 variableSourceType = "Solution";
-                variableSourceName = solution.Name;                
-                activity = BusinessFlow.Activities[0];
+                variableSourceName = solution.Name;                                
             }
-
-
 
             foreach (VariableBase var in AvailableAllVariables)
             {
@@ -349,12 +350,11 @@ namespace Ginger.AnalyzerLib
                         AnalyzeBusinessFlow aa = new AnalyzeBusinessFlow();
                         aa.Status = AnalyzerItemBase.eStatus.NeedFix;
                         aa.ItemName = var.Name;
-                        aa.Description = var + " is Unused in Business Flow : " + BusinessFlow.Name;
+                        aa.Description = var + " is Unused in " + variableSourceType + ": " + businessFlow.Name;
                         aa.Details = variableSourceType;                        
-                        aa.mBusinessFlow = BusinessFlow;
+                        aa.mBusinessFlow = businessFlow;
                         aa.ItemParent = variableSourceName;
-
-                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;    // we can autofix by delete, but don't want to                
+                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;                   
                         aa.IssueType = eType.Error;
                         aa.FixItHandler = DeleteUnusedVariables;
                         aa.Severity = eSeverity.Medium;
@@ -368,8 +368,7 @@ namespace Ginger.AnalyzerLib
                         aa.Description = var + " is Unused in Solution";
                         aa.Details = variableSourceType;                       
                         aa.ItemParent = variableSourceName;
-
-                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;    // we can autofix by delete, but don't want to                
+                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;                  
                         aa.IssueType = eType.Error;
                         aa.FixItHandler = DeleteUnusedVariables;
                         aa.Severity = eSeverity.Medium;
@@ -380,13 +379,12 @@ namespace Ginger.AnalyzerLib
                         AnalyzeActivity aa = new AnalyzeActivity();                        
                         aa.Status = AnalyzerItemBase.eStatus.NeedFix;
                         aa.ItemName = var.Name;
-                        aa.Description = var + " is Unused in Activity : " + activity.ActivityName;
+                        aa.Description = var + " is Unused in " + variableSourceType + ": " + activity.ActivityName;
                         aa.Details = variableSourceType;
                         aa.mActivity = activity;
-                        aa.mBusinessFlow = BusinessFlow;
+                        //aa.mBusinessFlow = businessFlow;
                         aa.ItemParent = variableSourceName;
-
-                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;    // we can autofix by delete, but don't want to                
+                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;                  
                         aa.IssueType = eType.Error;
                         aa.FixItHandler = DeleteUnusedVariables;
                         aa.Severity = eSeverity.Medium;
@@ -506,7 +504,7 @@ namespace Ginger.AnalyzerLib
                                 }
                                 if ((mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count()) > 0)
                                 {
-                                    CanAutoFixLable.Content = "Can Auto Fix: ";
+                                    CanAutoFixLable.Content = "Can be Auto Fixed: ";
                                     CanAutoFixLableCounter.Content = mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count();
                                     CanAutoFixLable.Visibility = Visibility.Visible;
                                 }
@@ -537,7 +535,7 @@ namespace Ginger.AnalyzerLib
             //view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Details, Header = "Details", WidthWeight = 10 });
             //view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Impact, Header = "Impact", WidthWeight = 5 });
             // view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.HowToFix, Header = "How To Fix", WidthWeight = 10, AllowSorting=true });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.CanAutoFix, Header = "Can Auto Fix", WidthWeight = 3, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.CanAutoFix, Header = "Auto Fixed?", WidthWeight = 3, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Status, Header = "Status", WidthWeight = 3, AllowSorting = true });
 
             AnalyzerItemsGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Select/UnSelect all issues which can be auto fixed", new RoutedEventHandler(MarkUnMark));
@@ -579,13 +577,13 @@ namespace Ginger.AnalyzerLib
             {
                 if (mIssues.Where(x=> x.Selected==true).ToList().Count == 0)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Please select issue to fix.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select issue to fix.");
                     return;
                 }
 
                 if (BusyInProcess)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                     return;
                 }
                 BusyInProcess = true;
@@ -633,12 +631,12 @@ namespace Ginger.AnalyzerLib
         {
             if (BusyInProcess)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                 return;
             }
             // TODO: click/use the same code on solution which will save all changed items...
             // Meanwhile the below is good start 
-            if (Reporter.ToUser(eUserMsgKeys.SaveAllItemsParentWarning) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.SaveAllItemsParentWarning) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 BusyInProcess = true;
                 SetStatus("Starting to Save Fixed Items...");
@@ -712,7 +710,7 @@ namespace Ginger.AnalyzerLib
                 {
                     if (AI.FixItHandler != null)
                     {
-                        //Reporter.ToGingerHelper(eGingerHelperMsgKey.AnalyzerFixingIssues, null, AI.ItemName);
+                        //Reporter.ToGingerHelper(eStatusMsgKey.AnalyzerFixingIssues, null, AI.ItemName);
                         SetStatus("Fixing: " + AI.ItemName);                      
                         AI.FixItHandler.Invoke(AI, null);
                         //Reporter.CloseGingerHelper();                        
@@ -732,7 +730,7 @@ namespace Ginger.AnalyzerLib
             {
                 AnalyzeAction currentAnalyzeAction = (AnalyzeAction)AnalyzerItemsGrid.CurrentItem;
                 Act actionIssue = currentAnalyzeAction.mAction;
-                actionIssue.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+                actionIssue.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
                 ActionEditPage actedit = new ActionEditPage(actionIssue, General.RepositoryItemPageViewMode.ChildWithSave, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
                 //setting the BusinessFlow on the Action in Order to save 
                 //actedit.mActParentBusinessFlow = ((AnalyzeAction)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
@@ -744,7 +742,7 @@ namespace Ginger.AnalyzerLib
             {
                 AnalyzeActivity currentAnalyzeActivity = (AnalyzeActivity)AnalyzerItemsGrid.CurrentItem;
                 Activity ActivityIssue = currentAnalyzeActivity.mActivity;
-                //ActivityIssue.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+                //ActivityIssue.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
                 ActivityEditPage ActivityEdit = new ActivityEditPage(ActivityIssue, General.RepositoryItemPageViewMode.ChildWithSave, currentAnalyzeActivity.mBusinessFlow);
                 //setting the BusinessFlow on the Activity in Order to save
                 //ActivityEdit.mBusinessFlow = ((AnalyzeActivity)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
@@ -766,7 +764,7 @@ namespace Ginger.AnalyzerLib
                 if (a.ItemClass != null)
                 {
                     TBH.AddLineBreak();
-                    TBH.AddHeader1("Item Type :");
+                    TBH.AddBoldText("Item Type:");
                     TBH.AddLineBreak();
                     TBH.AddText(a.ItemClass.ToString());
                     TBH.AddLineBreak();
@@ -775,7 +773,7 @@ namespace Ginger.AnalyzerLib
                 if (a.ItemName != null)
                 {
                     TBH.AddLineBreak();
-                    TBH.AddHeader1("Item Name :");
+                    TBH.AddBoldText("Item Name:");
                     TBH.AddLineBreak();
                     TBH.AddText(a.ItemName.ToString());
                     TBH.AddLineBreak();
@@ -784,7 +782,7 @@ namespace Ginger.AnalyzerLib
                 if (a.ItemParent != null)
                 {
                     TBH.AddLineBreak();
-                    TBH.AddHeader1("Item Parent :");
+                    TBH.AddBoldText("Item Parent:");
                     TBH.AddLineBreak();
                     TBH.AddText(a.ItemParent.ToString());
                     TBH.AddLineBreak();
@@ -793,7 +791,7 @@ namespace Ginger.AnalyzerLib
                 if (a.Description != null)
                 {
                     TBH.AddLineBreak();
-                    TBH.AddHeader1("Issue :");
+                    TBH.AddBoldText("Issue:");
                     TBH.AddLineBreak();
                     TBH.AddText(a.Description.ToString());
                     TBH.AddLineBreak();
@@ -802,7 +800,7 @@ namespace Ginger.AnalyzerLib
                 if (a.Details != null)
                 {
                     TBH.AddLineBreak();
-                    TBH.AddHeader1("Issue Details :");
+                    TBH.AddBoldText("Issue Details:");
                     TBH.AddLineBreak();
                     TBH.AddText(a.Details.ToString());
                     TBH.AddLineBreak();
@@ -811,7 +809,7 @@ namespace Ginger.AnalyzerLib
                 if (a.Impact != null)
                 {
                     TBH.AddLineBreak();
-                    TBH.AddBoldText("Issue Impact :");
+                    TBH.AddBoldText("Issue Impact:");
                     TBH.AddLineBreak();
                     TBH.AddText(a.Impact.ToString());
                     TBH.AddLineBreak();
@@ -820,14 +818,14 @@ namespace Ginger.AnalyzerLib
                 if (a.HowToFix != null)
                 {
                     TBH.AddLineBreak();
-                    TBH.AddBoldText("How To Fix :");
+                    TBH.AddBoldText("How To Fix:");
                     TBH.AddLineBreak();
                     TBH.AddText(a.HowToFix.ToString());
                     TBH.AddLineBreak();
                 }
 
                 TBH.AddLineBreak();
-                TBH.AddBoldText("Can Auto Fix :");
+                TBH.AddBoldText("Can be Auto Fixed:");
                 TBH.AddLineBreak();
                 TBH.AddText(a.CanAutoFix.ToString());
                 TBH.AddLineBreak();

@@ -1,4 +1,22 @@
-﻿using System;
+﻿#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Timers;
@@ -37,6 +55,44 @@ namespace GingerCore.Variables
         public override string GetFormula()
         {
             return "Timer unit="+ TimerUnit.ToString();
+        }
+
+        private string mValue;
+
+        public override string Value
+        {
+            get
+            {
+                if (RunWatch.IsRunning)
+                {
+                    switch (TimerUnit)
+                    {
+                        case eTimerUnit.MilliSeconds:
+                            mValue = Math.Round(RunWatch.Elapsed.TotalMilliseconds, 2).ToString();
+                            break;
+
+                        case eTimerUnit.Seconds:
+                            mValue =  Math.Round(RunWatch.Elapsed.TotalSeconds, 2).ToString();
+                            break;
+
+                        case eTimerUnit.Minutes:
+                            mValue = Math.Round(RunWatch.Elapsed.TotalMinutes, 2).ToString();
+                            break;
+
+                        case eTimerUnit.Hours:
+                            mValue =  Math.Round(RunWatch.Elapsed.TotalHours, 2).ToString();
+                            break;
+                    }
+                }
+                
+                return mValue;
+                
+            }
+            set
+            {
+                mValue = value;
+                OnPropertyChanged("Value");
+            }
         }
 
         public void StartTimer(bool isContinue=false)
@@ -86,8 +142,7 @@ namespace GingerCore.Variables
             {                
                 RunWatch.Reset();
                 timer.Stop();
-                timer.Elapsed -= dispatcherTimerElapsedTick;
-                UpdateTimervalue();
+                timer.Elapsed -= dispatcherTimerElapsedTick;                
             }
             else
             {
@@ -99,32 +154,11 @@ namespace GingerCore.Variables
         {
             if (RunWatch.IsRunning)
             {
-                UpdateTimervalue();
+                OnPropertyChanged(nameof(Value));
             }
         }
 
-        private void UpdateTimervalue()
-        {
-            switch (TimerUnit)
-            {
-                case eTimerUnit.MilliSeconds:
-                    Value = "" + Math.Round(RunWatch.Elapsed.TotalMilliseconds, 2);
-                    break;
-
-                case eTimerUnit.Seconds:
-                    Value = "" + Math.Round(RunWatch.Elapsed.TotalSeconds, 2);
-                    break;
-
-                case eTimerUnit.Minutes:
-                    Value = "" + Math.Round(RunWatch.Elapsed.TotalMinutes, 2);
-                    break;
-
-                case eTimerUnit.Hours:
-                    Value = "" + Math.Round(RunWatch.Elapsed.TotalHours, 2);
-                    break;
-            }
-        }
-
+       
         public override void GenerateAutoValue()
         {
             //NA

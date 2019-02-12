@@ -23,6 +23,7 @@ using System.Windows.Input;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Actions.ScreenCapture
 {
@@ -245,9 +246,10 @@ namespace GingerCore.Actions.ScreenCapture
                     g.CopyFromScreen(SourcePoint, System.Drawing.Point.Empty, SelectionRectangle.Size);
 
                 }
+                
+                //FilePath = FilePath.Replace("~\\", f.SolutionFolder);
+                FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
 
-                //if (FilePath.StartsWith("~\\") == true) FilePath = FilePath.Replace("~\\", "");
-                FilePath = FilePath.Replace("~\\", f.SolutionFolder);
                 bitmap.Save(FilePath, ImageFormat.Png);
             }
         }
@@ -263,7 +265,7 @@ namespace GingerCore.Actions.ScreenCapture
             }
             catch (Exception e)
             {                
-                Reporter.ToUser(eUserMsgKeys.FolderOperationError, e.Message);
+                Reporter.ToUser(eUserMsgKey.FolderOperationError, e.Message);
             }
             //return f.SolutionFolder + @"Documents\ExpectedImages\"+Guid.NewGuid().ToString()+".png";
             return @"~\Documents\ExpectedImages\" + Guid.NewGuid().ToString() + ".png";
@@ -287,7 +289,7 @@ namespace GingerCore.Actions.ScreenCapture
             }
             catch (Exception e)
             {                
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, e.Message);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, e.Message);
             }
             
             return (f.StartX + ", " + f.StartY + ", " + f.EndX + ", " + f.EndY); 

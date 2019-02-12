@@ -63,7 +63,7 @@ namespace GingerWPF.BusinessFlowsLib
             MainFrame.Dispatcher.Invoke(() =>
             {
                 //Since we might get event from Ginger runner which is running on another thread we need dispatcher
-                MainFrame.Content = new ActivityActionsPage(mGingerRunner.CurrentBusinessFlow.CurrentActivity);
+                MainFrame.Content = new ActivityActionsPage((Activity)mGingerRunner.CurrentBusinessFlow.CurrentActivity);
             });
         }
 

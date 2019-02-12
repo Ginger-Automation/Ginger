@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Text;
+using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Actions;
 
@@ -45,7 +46,7 @@ namespace Ginger.Export
             }
             catch(Exception e) 
             {
-                Reporter.ToUser(GingerCore.eUserMsgKeys.FailedToExportBF, e.Message);
+                Reporter.ToUser(eUserMsgKey.FailedToExportBF, e.Message);
             }
         }
 

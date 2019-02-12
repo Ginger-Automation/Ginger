@@ -1579,10 +1579,11 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			
 				if(c instanceof JTree)  
 				{
-					TreePath treePath = SearchTreeNodes((JTree)c,Value);
+					StringBuilder searchResult= new StringBuilder();
+					TreePath treePath = SearchTreeNodes((JTree)c,Value,searchResult);
 					if(treePath == null)				
 					{				
-						return PayLoad.Error("Path " + Value + " not found");
+						return PayLoad.Error(searchResult.toString());
 					}
 					((JTree)c).requestFocus();
 					try {
@@ -1704,20 +1705,32 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 		}
 	}
 	
-	private TreePath SearchTreeNodes(JTree tree,String locateValue) 
+	private TreePath SearchTreeNodes(JTree tree,String locateValue, StringBuilder searchResult) 
 	{
-		String[] nodes = locateValue.split("/");
 			
+		List<String> nodes= Utils.SplitStringWithForwardSlash(locateValue);		
+		
 		TreePath matchingNodePath=null;
 		int row =0;
 		int i=0;
 		String node;
-		while(i<nodes.length)
+		while(i<nodes.size())
 		{
-			node=nodes[i];
-			tree.expandRow(row);
+			node=nodes.get(i);
+			tree.expandRow(row);		
 			matchingNodePath = tree.getNextMatch(node.trim(), row, Position.Bias.Forward);
-	
+			
+			if(matchingNodePath==null)
+			{
+				searchResult.append("Node: "+ node +" was not found");
+				break;
+			}
+			else if(tree.getRowForPath(matchingNodePath)<row)
+			{	
+				searchResult.append("Node: "+ node +" was not found");
+				return null;
+			}
+			
 			Object matchingNode= matchingNodePath.getLastPathComponent();
 			String nodeText="";
 		
@@ -1733,12 +1746,12 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 		
 			if(node.equalsIgnoreCase(nodeText)) 
 			{			
-				row= tree.getRowForPath(matchingNodePath);
+				row= tree.getRowForPath(matchingNodePath);				
 				i++;
 			}
 			else
 			{
-				row= tree.getRowForPath(matchingNodePath)+1;
+				row= tree.getRowForPath(matchingNodePath)+1;				
 			}
 		}	
 
@@ -2453,7 +2466,7 @@ private PayLoad GetComponentValue(Component c)
 				
 				val.add(dateValue);
 			}
-			else
+			else if(val.size() == 0)
 			{
 				val.add("");
 			}
@@ -2635,7 +2648,10 @@ private PayLoad GetComponentState(Component c)
 		 if (c instanceof JTree)
 		 {
 			GingerAgent.WriteLog("c instanceof JTree");
-			TreePath nodePath = SearchTreeNodes(((JTree)c),value);
+			
+			StringBuilder searchResultMessage=new  StringBuilder();
+			
+			TreePath nodePath = SearchTreeNodes(((JTree)c),value,searchResultMessage);
 			if (nodePath != null)
 			{
 				GingerAgent.WriteLog("TreePath != null");
@@ -2649,7 +2665,7 @@ private PayLoad GetComponentState(Component c)
 			else
 			{
 				GingerAgent.WriteLog("ClickComponent - TreePath = null");
-				return PayLoad.Error(" There is no tree path for " + value);
+				return PayLoad.Error(searchResultMessage.toString());
 			}
 		    
 		 }
@@ -3326,11 +3342,11 @@ private PayLoad GetComponentState(Component c)
 		
 		if(componentClassName != null)
 		{
-			Date date=null;
+			Date dateValue=null;
 			Object o=null;
 			try 
 			{
-				date= Utils.parseDateValue(value);
+				dateValue= Utils.parseDateValue(value);
 				
 			} 
 			catch (Exception e) 
@@ -3341,7 +3357,7 @@ private PayLoad GetComponentState(Component c)
 			
 			if (componentClassName.contains("uif"))			
 			{				
-				Boolean result= mASCFHelper.SetComponentDate(c, date);
+				Boolean result= mASCFHelper.SetComponentDate(c, dateValue);
 				
 				if(result == false)
 				{
@@ -3356,7 +3372,7 @@ private PayLoad GetComponentState(Component c)
 			}
 			else if (componentClassName.contains("JDateField"))
 			{
-				Boolean result= mSwingHelper.SetComponentDate(c, date);
+				Boolean result= mSwingHelper.SetComponentDate(c, dateValue);
 				
 				if(result == false)
 				{
@@ -3372,14 +3388,13 @@ private PayLoad GetComponentState(Component c)
 			}
 			
 			
-			SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a"); 
-			String actualDateValue= formatter.format(date);  
-			//TODO: Below is ugly. Change it do compare 2 dates instead of string manipulations
-			String CurrentSelectedDate=actualDateValue.toString().substring(0, 11) + actualDateValue.toString().substring(20);
-			String ExpectedDate=value.toString().substring(0, 11) + actualDateValue.toString().substring(20);
+			SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy"); 
+			String actualDateValue= formatter.format(dateValue);  
 			
-			if(!CurrentSelectedDate.equalsIgnoreCase(ExpectedDate))
-				return PayLoad.Error("Current Selected Value::" + CurrentSelectedDate + " - Expected Value::" + ExpectedDate);
+			String expectedDateValue= formatter.format(o);
+						
+			if(actualDateValue.compareTo(expectedDateValue)!=0)
+				return PayLoad.Error("Current Selected Value::" + actualDateValue + " - Expected Value::" + expectedDateValue);
 			
 			return PayLoad.OK("Date value set to..." + value);
 			
@@ -3595,18 +3610,6 @@ private PayLoad SetComponentFocus(Component c)
 		}
 		// TODO: Add other type of controls + err if not known
 		
-	}
-	
-		
-	private Object getTreeNodeFromPathAndSet(JTree tr,String locate) {	
-		GingerAgent.WriteLog( "  getTreeNodeFromPathAndSet::locate  " +  locate);
-	    TreePath nodePath = SearchTreeNodes(tr,locate);
-		if (nodePath==null)
-			return null;
-		else
-			tr.setSelectionPath(nodePath);
-		return (nodePath.getLastPathComponent());
-
 	}
 	
 	List<PayLoad> GetComponentProperties(Component comp)	
@@ -3849,9 +3852,8 @@ private PayLoad SetComponentFocus(Component c)
 		
 		List<PayLoad> Elements = new ArrayList<PayLoad>(); 	
 		String PayLoadName="";
-		if(c instanceof JEditorPane)
+		if(c instanceof JEditorPane && (c.getClass().getName().contains("JEditorPane")))
 		{
-
 			PayLoadName="HTML Element Children";
 			Elements= getEditorComponents();
 		}
@@ -4554,11 +4556,20 @@ private PayLoad SetComponentFocus(Component c)
 			}
 			else if (CellComponent instanceof JTree)
 			{	
+				Object treeNode=null;
+				StringBuilder searchResult= new StringBuilder();
 				
-				Object treeNode=getTreeNodeFromPathAndSet((JTree) CellComponent, Value);
+				 TreePath nodePath = SearchTreeNodes((JTree)CellComponent,Value,searchResult);
+				 
+				if (nodePath!=null)
+				{
+					((JTree)CellComponent).setSelectionPath(nodePath);
+					treeNode=nodePath.getLastPathComponent();
+				}
+				
 				if(treeNode == null)				
 				{				
-					return PayLoad.Error("Path " + Value + " not found");
+					return PayLoad.Error(searchResult.toString());
 				}
 				((JTree)CellComponent).requestFocus();	
 				//already in EDT - this call will cues exception

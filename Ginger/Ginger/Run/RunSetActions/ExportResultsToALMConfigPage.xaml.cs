@@ -110,7 +110,7 @@ namespace Ginger.Run
                });
             IsProcessing = false;
             xExportToALMLoadingIcon.Visibility = Visibility.Collapsed;          
-            Reporter.ToUser(eUserMsgKeys.ExportedExecDetailsToALM, result);            
+            Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALM, result);            
         }
        
         private void UseVariableInTCRunNameCbx_Unchecked(object sender, RoutedEventArgs e)

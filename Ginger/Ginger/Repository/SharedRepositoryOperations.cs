@@ -44,7 +44,7 @@ namespace Ginger.Repository
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
 
@@ -106,7 +106,7 @@ namespace Ginger.Repository
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "failed to upload the repository item", e);
+                Reporter.ToLog(eLogLevel.ERROR, "failed to upload the repository item", e);
                 itemToUpload.ItemUploadStatus = UploadItemSelection.eItemUploadStatus.FailedToUpload;
                 return false;
             }
@@ -270,7 +270,7 @@ namespace Ginger.Repository
             usagePage = new RepositoryItemUsagePage(item, true);
             if (usagePage.RepoItemUsages.Count > 0)//TODO: check if only one instance exist for showing the pop up for better performance
             {
-                if (Reporter.ToUser(eUserMsgKeys.AskIfWantsToChangeeRepoItem, item.GetNameForFileName(), usagePage.RepoItemUsages.Count, changeType) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.AskIfWantsToChangeeRepoItem, item.GetNameForFileName(), usagePage.RepoItemUsages.Count, changeType) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     return true;
                 }                    

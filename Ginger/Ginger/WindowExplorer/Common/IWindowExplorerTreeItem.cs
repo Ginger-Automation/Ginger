@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using GingerCore.Drivers;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer
 {
@@ -27,5 +28,6 @@ namespace Ginger.WindowExplorer
         //TODO: clean remove, need to use ElementInfo       
         ObservableList<Act> GetElementActions();
         ObservableList<Amdocs.Ginger.Common.UIElement.ControlProperty> GetElementProperties();
+        ObservableList<ActInputValue> GetItemSpecificActionInputValues();
     }
 }

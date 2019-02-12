@@ -86,7 +86,7 @@ namespace UnitTests.NonUITests
             
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SimpleString()
         {
             //Arrange            
@@ -102,7 +102,25 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, s);
         }
 
+
         [TestMethod]
+        [Timeout(60000)]
+        public void SimpleStringWithSpace()
+        {
+            //Arrange            
+            string s = "  Simple string  ";
+
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = s;
+
+            //Act            
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, s);
+        }
+
+        [TestMethod]  [Timeout(60000)]
         public void GetVarV1()
         {
             //Arrange            
@@ -116,7 +134,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, v1Value);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetVBSNow()
         {
             //Arrange            
@@ -131,7 +149,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, DateTime.Now.ToString("M/d/yyyy"));
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetNowPlus1()
         {
             //Arrange            
@@ -144,7 +162,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, DateTime.Now.AddDays(1).ToString("M/d/yyyy"));
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetVarNowMinus1()
         {
             //Arrange            
@@ -157,7 +175,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, DateTime.Now.AddDays(-1).ToString());
         }
-        // [TestMethod]
+        // [TestMethod]  [Timeout(60000)]
         //public void GetVarNowNeg()
         //{
         //    ValueExpression VE = new ValueExpression(mEnv, mBF);
@@ -166,7 +184,7 @@ namespace UnitTests.NonUITests
 
         //   Assert.AreEqual(v, DateTime.Now.ToString());
         //}
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void GetVarNowFormat1()
         //{
         //    ValueExpression VE = new ValueExpression(mEnv, mBF);
@@ -175,7 +193,7 @@ namespace UnitTests.NonUITests
 
         //   Assert.AreEqual(v, DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
         //}
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void GetVarNowFormatP5()
         //{
         //    ValueExpression VE = new ValueExpression(mEnv, mBF);
@@ -184,7 +202,7 @@ namespace UnitTests.NonUITests
 
         //   Assert.AreEqual(v, DateTime.Now.AddDays(+3).ToString("MM/dd/yyyy HH:mm:ss"));
         //}
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void GetVarNowFormatM5()
         //{
         //    ValueExpression VE = new ValueExpression(mEnv, mBF);
@@ -193,7 +211,7 @@ namespace UnitTests.NonUITests
 
         //   Assert.AreEqual(v, DateTime.Now.AddDays(-3).ToString("MM/dd/yyyy HH:mm:ss"));
         //}
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VarV1WithPrefix()
         {
             //Arrange  
@@ -207,7 +225,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, "ABC " + v1Value);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VarV1WithPostfix()
         {
             //Arrange  
@@ -221,7 +239,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, v1Value + " ABC");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VarV1WithPreAndPostfix()
         {
             //Arrange  
@@ -235,7 +253,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, "ABC " + v1Value + " DEF");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VarV1WithPreAndPostfixUsedMany()
         {
             //Arrange  
@@ -249,7 +267,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, "ABC " + v1Value + " DEF " + v1Value + " GHI");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void MultiVars()
         {
             //Arrange  
@@ -262,7 +280,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, "ABC " + v1Value + " DEF " + v2Value + " GHI");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void MultiVarsCompact()
         {
             //Arrange  
@@ -275,7 +293,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, "A" + v1Value + "B" + v2Value + "C");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetVarNotExistWillFail()
         {
             //Arrange  
@@ -291,7 +309,7 @@ namespace UnitTests.NonUITests
             Assert.IsTrue(v.Contains("'v99' was not found"), "v.Contains 'v99' was not found");            
         }
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void GetVarV1x10000_LowerThan100ms()
         //{
         //    //first time valueexpression will take more time to setup regex operations
@@ -320,7 +338,7 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void EnvParam()
         {
             //Arrange  
@@ -335,7 +353,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void EnvAppURL()
         {
             //Arrange  
@@ -349,7 +367,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, "URL123");
 
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegMatch()
         {
             //Arrange  
@@ -362,7 +380,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "True");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegMatchNeg()
         {
 
@@ -376,7 +394,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "False");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegReplacesSurfix()
         {            
             ValueExpression VE = new ValueExpression(mEnv, mBF);
@@ -388,7 +406,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "new stringany string");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegReplacesPrefix()
         {
             ValueExpression VE = new ValueExpression(mEnv, mBF);
@@ -400,7 +418,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "any stringnew string");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegReplacesMulti()
         {
             ValueExpression VE = new ValueExpression(mEnv, mBF);
@@ -412,7 +430,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "any string");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegReplacesNeg()
         {
             ValueExpression VE = new ValueExpression(mEnv, mBF);
@@ -425,7 +443,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, "any string");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegGroup0()
         {
             //Arrange     
@@ -438,7 +456,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "212-555-6666");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegGroup1()
         {
             //Arrange  
@@ -452,7 +470,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "4gT3hDEh");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegGroup2()
         {
             //Arrange  
@@ -467,7 +485,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "555-6666");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegGroup3()
         {
             //Arrange  
@@ -480,7 +498,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "555");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegGroup4()
         {
             //Arrange  
@@ -493,7 +511,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "-6");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegGroup5()
         {
             //Arrange  
@@ -506,7 +524,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "66");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegGroup6()
         {
             //Arrange  
@@ -519,7 +537,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "6");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegGroupTMO()
         {
             //Arrange  
@@ -532,7 +550,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "In404-200-3848dex");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegQueryTMO()
         {
             //Arrange  
@@ -546,7 +564,7 @@ namespace UnitTests.NonUITests
 
 
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegGroupTMO2()
         {
             //Arrange  
@@ -559,7 +577,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "In404-200-3848dex");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegGroupTMO5()
         {
             //Arrange  
@@ -572,7 +590,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "5555555555");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegGroupTMO3()
         {
             //Arrange  
@@ -586,7 +604,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, "404-200-3848Your new brightspot Mobile Phone number is: 404-200-3848Your new brightspot Mobile Phone number is: 404-200-3848Your new brightspot Mobile Phone number is: 404-200-3848");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RegGroupTMO4()
         {
             //Arrange  
@@ -600,7 +618,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, "In404-200-3848Your new brightspot Mobile Phone number is: 404-200-3848Your new brightspot Mobile Phone number is: 404-200-3848Your new brightspot Mobile Phone number is: 404-200-3848");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VBS_2_Plus_2()
         {
             //Arrange  
@@ -614,7 +632,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, "12");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VBS_Substring_MID()
         {
             //Arrange  
@@ -628,7 +646,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, "he");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VBS_CalcWithVars()
         {
             //Arrange
@@ -646,7 +664,7 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, "8");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VBS_CalwithVBSSpecialfolder()
         {
             //Arrange
@@ -661,7 +679,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
         }
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VBS_NOW()
         {
             //Arrange
@@ -677,7 +695,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VBS_Split1()
         {
             //Arrange
@@ -694,7 +712,7 @@ namespace UnitTests.NonUITests
            // string date = DateTime.Now.ToString("b");
            Assert.AreEqual(v, "555-555-5555");
         }
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VBS_SpecialEnvVariable()
         {
             //Arrange
@@ -709,7 +727,7 @@ namespace UnitTests.NonUITests
             // string date = DateTime.Now.ToString("b");
            Assert.AreEqual(v, System.Environment.UserName);
         }
- [TestMethod]
+ [TestMethod]  [Timeout(60000)]
         public void VBS_Date2Epoch()
         {
             //Arrange

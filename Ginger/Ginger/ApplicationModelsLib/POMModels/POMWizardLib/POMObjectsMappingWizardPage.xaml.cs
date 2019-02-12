@@ -25,6 +25,7 @@ using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -37,11 +38,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     /// </summary>
     public partial class POMObjectsMappingWizardPage : Page, IWizardPage
     {
-        AddPOMWizard mWizard;
-        ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();                      
+        public AddPOMWizard mWizard;
+        public ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();                      
         PomAllElementsPage mPomAllElementsPage = null;
         List<eElementType> mSelectedElementTypesList = new List<eElementType>();
-        
+
         public POMObjectsMappingWizardPage()
         {
             InitializeComponent();                       
@@ -86,7 +87,28 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.LeavingForNextPage:
                 case EventType.Finish:
                     mPomAllElementsPage.FinishEditInAllGrids();
+                    if (mPomAllElementsPage != null)
+                    {
+                        mPomAllElementsPage.StopSpy();
+                    }
+                    ResetDriverStopProcess();
                     break;
+                case EventType.Cancel:
+                    if (mPomAllElementsPage != null)
+                    {
+                        mPomAllElementsPage.StopSpy();
+                    }
+                    ResetDriverStopProcess();
+
+                    break;
+            }
+        }
+
+        private void ResetDriverStopProcess()
+        {
+            if (mWizard.Agent != null && (DriverBase)mWizard.Agent.Driver != null)
+            {
+                ((DriverBase)mWizard.Agent.Driver).mStopProcess = false;
             }
         }
 
@@ -117,7 +139,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToUser(eUserMsgKeys.POMWizardFailedToLearnElement, ex.Message);
+                    Reporter.ToUser(eUserMsgKey.POMWizardFailedToLearnElement, ex.Message);
                     mWizard.IsLearningWasDone = false;
                 }
                 finally
@@ -135,6 +157,16 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             try
             {
                 ElementInfo EI = ((ObservableList<ElementInfo>)sender).Last();
+                List<eLocateBy> mElementLocatorsList = mWizard.AutoMapElementLocatorsList.Select(x => x.LocateBy).ToList();
+
+                List<ElementLocator> orderedLocatorsList = EI.Locators.OrderBy(m => mElementLocatorsList.IndexOf(m.LocateBy)).ToList();
+                foreach(ElementLocator elemLoc in orderedLocatorsList)
+                {
+                    elemLoc.Active = mWizard.AutoMapElementLocatorsList.Where(m => m.LocateBy == elemLoc.LocateBy).FirstOrDefault().Active;
+                }
+                EI.Locators = new ObservableList<ElementLocator>(orderedLocatorsList);
+
+                UpdateElementInfoName(EI);
 
                 if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
                 {
@@ -147,10 +179,83 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "POM: Learned Element Info from type was failed to be added to Page Elements", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "POM: Learned Element Info from type was failed to be added to Page Elements", ex);
             }
         }
-        
+
+        /// <summary>
+        /// This method is used to update the element name by filtering the specia characters and checking the duplicate names
+        /// </summary>
+        /// <param name="curElement"></param>
+        private void UpdateElementInfoName(ElementInfo curElement)
+        {
+            try
+            {
+                if (curElement != null)
+                {
+                    //remove invalid chars
+                    string name = curElement.ElementName.Trim().Replace(".", "").Replace("?", "").Replace("\n", "").Replace("\r", "").Replace("#", "").Replace("!", " ").Replace(",", " ").Replace("   ", "");
+                    foreach (char chr in Path.GetInvalidFileNameChars())
+                    {
+                        name = name.Replace(chr.ToString(), string.Empty);
+                    }
+
+                    //set max name length to 60
+                    if (name.Length > 60)
+                    {
+                        name = name.Substring(0, 60);
+                    }
+
+                    //make sure name is unique                    
+                    name = GetUniqueName(mWizard.POM.MappedUIElements, name);
+                    name = GetUniqueName(mWizard.POM.UnMappedUIElements, name);
+                    curElement.ElementName = name;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Updating POM Element Name", ex);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to get the uniquename for the element
+        /// </summary>
+        /// <param name="elements"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private string GetUniqueName(ObservableList<ElementInfo> elements, string name)
+        {
+            string uname = name;
+            try
+            {
+                if (elements.Where(p => p.ElementName == name).Count() > 0)
+                {
+                    bool isFound = false;
+                    int count = 2;
+                    while (!isFound)
+                    {
+                        string postfix = string.Format("{0}_{1}", name, count);
+                        if (elements.Where(p => p.ElementName == postfix).Count() > 0)
+                        {
+                            count++;
+                        }
+                        else
+                        {
+                            uname = postfix;
+                            isFound = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Updating POM Element Name", ex);
+            }
+            return uname;
+        }
+
         private void InitilizePomElementsMappingPage()
         {
             if (mPomAllElementsPage == null)
@@ -172,7 +277,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void ReLearnButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.POMWizardReLearnWillDeleteAllElements) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.POMWizardReLearnWillDeleteAllElements) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 mWizard.IsLearningWasDone = false;
                 Learn();

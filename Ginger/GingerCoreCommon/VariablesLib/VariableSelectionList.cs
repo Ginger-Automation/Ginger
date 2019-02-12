@@ -75,7 +75,7 @@ namespace GingerCore.Variables
             }
             catch
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Cannot Convert Optional Values String To List - " + valsString);
+                Reporter.ToLog(eLogLevel.ERROR, "Cannot Convert Optional Values String To List - " + valsString);
                 return new ObservableList<OptionalValue>();
             }
         }

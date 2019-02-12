@@ -55,13 +55,13 @@
 
                 <ComboBox x:Name="ElementTypeComboBox"  SelectionChanged="ElementTypeComboBox_SelectionChanged"  Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Row="2" Grid.Column="1" Height="Auto" Margin="0,4,-48,4"/>
                 <Label Content="Element Action:"  Name="ElementActionLabel" Grid.Row="3" Grid.Column="0" Style="{StaticResource $LabelStyle}" />
-                <ComboBox x:Name="ElementActionComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ElementActionComboBox_SelectionChanged" IsSynchronizedWithCurrentItem="True" Grid.Row="3" Grid.Column="1" Height="Auto" Margin="0,4,-48,13">
-                    <ComboBox.ItemTemplate>
+                <ComboBox x:Name="ElementActionComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ElementActionComboBox_SelectionChanged" IsSynchronizedWithCurrentItem="True" Grid.Row="3" Grid.Column="1" Height="Auto" Margin="0,4,-48,13"/>
+                <!--<ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding text}"/>
                         </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
+                    </ComboBox.ItemTemplate>-->
+
             </Grid>
         </StackPanel>
 
@@ -75,7 +75,7 @@
 
         <StackPanel Grid.Row="3"  Margin="0,20,0,0">
             <Label Content="Configurations Description:" Style="{StaticResource $LabelStyle}"></Label>
-            <TextBlock x:Name="ActionInfoLabel" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" DockPanel.Dock="Top" TextAlignment="Left"  FontSize="12" Margin="0,0,0,0"></TextBlock>
+            <TextBlock x:Name="xActionInfoLabel" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" DockPanel.Dock="Top" TextAlignment="Left"  FontSize="12" Margin="0,0,0,0"></TextBlock>
         </StackPanel>
     </Grid>
 </Page>

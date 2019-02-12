@@ -229,7 +229,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
             }
             if (ShowMessage)
-                Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParametersCounter);
+                Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParametersCounter);
         }
         /// <summary>
         /// Update optional values only for selected parameters  according to xml file
@@ -272,7 +272,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
             }
             if (ShowMessage)
-            { Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParametersCounter); }
+            { Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParametersCounter); }
         }
         #endregion
 
@@ -289,7 +289,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                    Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
                 }
             }
         }
@@ -338,7 +338,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
             }
             if (ShowMessage)
-                Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParametersCounter);
+                Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParametersCounter);
         }
         /// <summary>
         /// Update optional values only for selected parameter according to json file
@@ -366,7 +366,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
             }
             if (ShowMessage)
-                Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParametersCounter);
+                Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParametersCounter);
         }
         #endregion
 
@@ -398,7 +398,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 
                 IsUpdate = false;
-                if (tuple.x.RequiredAsInput)//selected
+                if (tuple.x.RequiredAsInput) //selected
                 {
                     var item = ParameterValuesByNameDic.FirstOrDefault(o => o.ParamName == tuple.y.ItemName);
                     if (item != null)
@@ -444,7 +444,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             
             if (ShowMessage)
-                Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParameters);
+                Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParameters);
         }
  
         public void PopulateExcelDBOptionalValuesForAPIParametersExcelDB(ObservableList<GlobalAppModelParameter> mGlobalParamterList, List<GlobalAppModelParameter> SelectedParametersGridList, List<ParameterValues> ParameterValuesByNameDic)
@@ -469,10 +469,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 IsUpdate = false;
                 if (tuple.x.RequiredAsInput)//selected
                 {
-                    var item = ParameterValuesByNameDic.FirstOrDefault(o => o.ParamName == tuple.y.ItemName);
+                    var item = ParameterValuesByNameDic.Find(o => o.ParamName == tuple.y.ItemName);
                     if (item != null)
                     {
-                        string str = ParameterValuesByNameDic.FirstOrDefault(x => x.ParamName == CURRENT_VAL_PARAMETER).ParamName;
+                        string str = ParameterValuesByNameDic.Where(x => x.ParamName == CURRENT_VAL_PARAMETER).Select(x => x.ParamName).FirstOrDefault();
                         tuple.y.OptionalValuesList = new ObservableList<OptionalValue>();
                         if (string.IsNullOrEmpty(str))
                         {
@@ -526,7 +526,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
 
             if (ShowMessage)
-                Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParameters);
+                Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParameters);
         }
         #endregion
 
@@ -614,11 +614,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 break;
                             case "No value given for one or more required parameters.":
                                 if (ShowMessage)
-                                    Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
+                                    Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
                                 break;
                             default:
                                 if (ShowMessage)
-                                    System.Windows.MessageBox.Show(ex.Message);
+                                   Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
                                 break;
                         }
                         return null;
@@ -649,7 +649,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return value;
         }
@@ -684,7 +684,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return cName.ToString();
         }
@@ -714,7 +714,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return res;
         }
@@ -787,7 +787,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return isValid;
         }
@@ -837,12 +837,12 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 break;
                             case "No value given for one or more required parameters.":
                                 if (ShowMessage)
-                                    Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
+                                    Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
                                 break;
                             default:
                                 if (ShowMessage)
                                 {
-                                    Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, ex.Message);
+                                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
                                 }
                                 break;
                         }
@@ -956,12 +956,12 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 bool isExportSuccess = ExportToExcel(dtTemplate, filePath, dtTemplate.TableName);
                 if (isExportSuccess && ShowMessage)
                 {
-                    Reporter.ToUser(eUserMsgKeys.ExportDetails, "Excel File");
+                    Reporter.ToUser(eUserMsgKey.ExportDetails, "Excel File");
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR,"Error while exporting Paramters to File", ex);
+                Reporter.ToLog(eLogLevel.ERROR,"Error while exporting Paramters to File", ex);
             }
 
             return filePath;
@@ -1046,7 +1046,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             bool IsExportSuccess = ExportToExcel(dtTemplate, PathToExport, dtTemplate.TableName);
             if (IsExportSuccess && ShowMessage)
-                Reporter.ToUser(eUserMsgKeys.ExportDetails , "Excel File");
+                Reporter.ToUser(eUserMsgKey.ExportDetails , "Excel File");
             return IsExportSuccess;
         }
 
@@ -1124,7 +1124,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             catch(Exception ex)
             {
                 if (ShowMessage)
-                    Reporter.ToUser(eUserMsgKeys.ExportFailed, "Excel File", ex.Message.ToString());
+                    Reporter.ToUser(eUserMsgKey.ExportFailed, "Excel File", ex.Message.ToString());
             }
             return false;
         }
@@ -1364,7 +1364,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error while exporting Paramters to File", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error while exporting Paramters to File", ex);
             }
         }
 
@@ -1461,11 +1461,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 break;
                             case "No value given for one or more required parameters.":
                                 if (ShowMessage)
-                                    Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
+                                    Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
                                 break;
                             default:
                                 if (ShowMessage)
-                                    System.Windows.MessageBox.Show(ex.Message);
+                                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
                                 break;
                         }
                         return null;
@@ -1520,18 +1520,18 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         dr["GINGER_USED"] = "False";
                     }                    
                     mDSDetails.SaveTable(dtTemplate);                    
-                    Reporter.ToUser(eUserMsgKeys.ExportDetails,"Data Source");
+                    Reporter.ToUser(eUserMsgKey.ExportDetails,"Data Source");
                 }                
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR,"Failed to Export to Data Source",ex);
-                Reporter.ToUser(eUserMsgKeys.ExportFailed, "Data Source");
+                Reporter.ToLog(eLogLevel.ERROR,"Failed to Export to Data Source",ex);
+                Reporter.ToUser(eUserMsgKey.ExportFailed, "Data Source");
             }
         }
 
         /// <summary>
-        /// This method is used to get the default columnList for exporting the parameters to datasource
+        /// This method is used to get the default columnList for exporting the parameters to datasource 
         /// </summary>
         /// <returns></returns>
         private List<string> GetDefaultColumnNameListForTableCreation()
@@ -1546,7 +1546,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return defColList;
         }
@@ -1567,7 +1567,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
         }
 
@@ -1588,12 +1588,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         Database db;
         List<object> SQLResult = new List<object>();
         DataTable dtDB = new DataTable();
-        public void SetDBDetails(string dbType, string host, string user, string password)
+        public void SetDBDetails(string dbType, string host, string user, string password, string connectionString = null)
         {
             db = new Database();
             db.TNS = host;
             db.User = user;
             db.Pass = password;
+            if(!string.IsNullOrEmpty(connectionString))
+                db.ConnectionString = connectionString;
             db.DBType = (Database.eDBTypes)Enum.Parse(typeof(Database.eDBTypes), dbType);
         }
         public List<string> GetDBTypeList()

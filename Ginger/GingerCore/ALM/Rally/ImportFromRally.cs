@@ -19,6 +19,7 @@ limitations under the License.
 using ALM_Common.Abstractions;
 using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.RQM;
@@ -76,7 +77,7 @@ namespace GingerCore.ALM.Rally
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RallyID : false).FirstOrDefault();
                     if (repoActivsGroup != null)
                     {
-                        tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance();
+                        tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)(repoActivsGroup)).CreateInstance();
                         busFlow.AddActivitiesGroup(tcActivsGroup);
                         busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
                         busFlow.AttachActivitiesGroupsAndActivities();
@@ -96,15 +97,15 @@ namespace GingerCore.ALM.Rally
                         bool toAddStepActivity = false;
 
                         // check if mapped activity exist in repository
-                        Activity repoStepActivity = GingerActivitiesRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == step.RallyIndex : false).FirstOrDefault();
+                        Activity repoStepActivity =  (Activity)GingerActivitiesRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == step.RallyIndex : false).FirstOrDefault();
                         if (repoStepActivity != null)
                         {
                             //check if it is part of the Activities Group
-                            ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RallyIndex).FirstOrDefault();
+                            ActivityIdentifiers groupStepActivityIdent =(ActivityIdentifiers) tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RallyIndex).FirstOrDefault();
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it
-                                stepActivity = busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                                stepActivity =(Activity) busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
                             }
                             else // not in ActivitiesGroup so get instance from repo
                             {
@@ -157,7 +158,7 @@ namespace GingerCore.ALM.Rally
                                     stepActivityVar = new VariableSelectionList();
                                     stepActivityVar.Name = param.Name;
                                     stepActivity.AddVariable(stepActivityVar);
-                                    stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new flow control param was added
+                                    stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
                                 }
                                 else
                                 {
@@ -180,7 +181,7 @@ namespace GingerCore.ALM.Rally
                                         stepActivityVar = new VariableSelectionList();
                                         stepActivityVar.Name = param.Name;
                                         stepActivity.AddVariable(stepActivityVar);
-                                        stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because flow control param was added
+                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                                     }
                                 }
                                 else if (isflowControlParam == false)
@@ -193,7 +194,7 @@ namespace GingerCore.ALM.Rally
                                         stepActivityVar.Name = param.Name;
                                         ((VariableString)stepActivityVar).InitialStringValue = param.Value;
                                         stepActivity.AddVariable(stepActivityVar);
-                                        stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because flow control param was removed
+                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
                                     }
                                 }
                             }
@@ -208,7 +209,7 @@ namespace GingerCore.ALM.Rally
                                     stepActivityVarOptionalVar = new OptionalValue(param.Value);
                                     ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);                                    
                                     if (isflowControlParam == true)
-                                        stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
+                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
                                 }
                                 //set the selected value
                                 ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
@@ -222,7 +223,7 @@ namespace GingerCore.ALM.Rally
                                     if (stepActivityVar is VariableString)
                                         ((VariableString)stepActivityVar).InitialStringValue = param.Value;
                                 }
-                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
                         }
                     }
@@ -233,7 +234,7 @@ namespace GingerCore.ALM.Rally
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to import Rally test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to import Rally test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return null;
             }
         }
@@ -253,7 +254,7 @@ namespace GingerCore.ALM.Rally
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while pulling the parameters names from Rally TC Step Description/Expected", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while pulling the parameters names from Rally TC Step Description/Expected", ex);
             }
         }
 
@@ -274,7 +275,7 @@ namespace GingerCore.ALM.Rally
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while stripping the HTML from Rally TC Step Description/Expected", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while stripping the HTML from Rally TC Step Description/Expected", ex);
                 return HTMLText;
             }
         }

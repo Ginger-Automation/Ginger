@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using GingerCoreNET.ReporterLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -364,12 +363,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             foreach (Part part in messagePartsList)
             {
 
-                string staringPartTagToAppend = GetStartingPartTypeToAppend(part, NameSpacesToInclude);
+                string startingPartTagToAppend = GetStartingPartTypeToAppend(part, NameSpacesToInclude);
                 string endingPartTagToAppend = GetEndingPartTypeToAppend(part, NameSpacesToInclude);
                 if (!(HeaderNamesList.Contains(part.PartName) && part.PartElementType == Part.ePartElementType.Element))
                 {
                     ComplexType ParametersComplexType = GetNextComplexTypeByElementNameAndNameSpace(part.ElementName, part.ElementNameSpace, NameSpacesToInclude);
-                    RequestBody.Append(staringPartTagToAppend);
+                    RequestBody.Append(startingPartTagToAppend);
                     if (ParametersComplexType != null)
                     {
                         string PathToPass = ParametersComplexType.Source + ":" + ParametersComplexType.Name + "/";
@@ -417,19 +416,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private string GetStartingPartTypeToAppend(Part part, Dictionary<string, string> NameSpacesToInclude)
         {
-            string staringPartTypeToAppend = string.Empty;
+            string startingPartTypeToAppend = string.Empty;
             if (part.PartElementType == Part.ePartElementType.Element)
             {
-                staringPartTypeToAppend = tab2 + "<" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.ElementName + ">" + Environment.NewLine;
+                startingPartTypeToAppend = tab2 + "<" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.ElementName + ">" + Environment.NewLine;
             }
             else
             {
                 if (!NameSpacesToInclude.ContainsKey("http://www.w3.org/2001/XMLSchema-instance"))
                     NameSpacesToInclude.Add("http://www.w3.org/2001/XMLSchema-instance", "xsi");
-                staringPartTypeToAppend = tab2 + "<" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.PartName + " xsi:type=\"" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.ElementName + "\" " + "xmlns:" + NameSpacesToInclude[part.ElementNameSpace] + "=\"" + part.ElementNameSpace + "\">" + Environment.NewLine;
+                startingPartTypeToAppend = tab2 + "<" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.PartName + " xsi:type=\"" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.ElementName + "\" " + "xmlns:" + NameSpacesToInclude[part.ElementNameSpace] + "=\"" + part.ElementNameSpace + "\">" + Environment.NewLine;
             }
 
-            return staringPartTypeToAppend;
+            return startingPartTypeToAppend;
         }
 
         private void AppendEnvelope(StringBuilder requestBody, List<Part> messagePartsList, string soapEnvelopeURL, Dictionary<string, string> NameSpacesToInclude)
@@ -1115,23 +1114,24 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 if (!string.IsNullOrEmpty(URLTuple.Item1))
                 {
                     string CompleteURL = GetCompleteURL(URLTuple.Item1, URLTuple.Item2);
-                    XmlTextReader reader = new XmlTextReader(CompleteURL);
-                    XmlSchema schema = XmlSchema.Read(reader, null);
-
-                    if (!string.IsNullOrEmpty(schema.TargetNamespace) && !AllNameSpaces.ContainsKey(schema.TargetNamespace))
+                    using (XmlReader reader = XmlReader.Create(CompleteURL))
                     {
-                        List<string> AllNameSpaceURLs = new List<string>();
-                        AllNameSpaceURLs.Add(CompleteURL);
-                        AllNameSpaces.Add(schema.TargetNamespace, AllNameSpaceURLs);
-                        AllSourcesNameSpaces.Add(AllNameSpaceURLs, schema.TargetNamespace);
+                        XmlSchema schema = XmlSchema.Read(reader, null);
+                        if (!string.IsNullOrEmpty(schema.TargetNamespace) && !AllNameSpaces.ContainsKey(schema.TargetNamespace))
+                        {
+                            List<string> AllNameSpaceURLs = new List<string>();
+                            AllNameSpaceURLs.Add(CompleteURL);
+                            AllNameSpaces.Add(schema.TargetNamespace, AllNameSpaceURLs);
+                            AllSourcesNameSpaces.Add(AllNameSpaceURLs, schema.TargetNamespace);
+                        }
+                        else if (schema.TargetNamespace != null && AllNameSpaces.ContainsKey(schema.TargetNamespace))
+                        {
+                            AllNameSpaces[schema.TargetNamespace].Add(CompleteURL);
+                            KeyValuePair<List<string>, string> KeyValue = AllSourcesNameSpaces.Where(x => x.Value == schema.TargetNamespace).FirstOrDefault();
+                            KeyValue.Key.Add(CompleteURL);
+                        }
+                        GetAllElementsAndComplexTypesFromImportedSchema(schema);
                     }
-                    else if (schema.TargetNamespace != null && AllNameSpaces.ContainsKey(schema.TargetNamespace))
-                    {
-                        AllNameSpaces[schema.TargetNamespace].Add(CompleteURL);
-                        KeyValuePair<List<string>, string> KeyValue = AllSourcesNameSpaces.Where(x => x.Value == schema.TargetNamespace).FirstOrDefault();
-                        KeyValue.Key.Add(CompleteURL);
-                    }
-                    GetAllElementsAndComplexTypesFromImportedSchema(schema);
                 }
             }
         }
@@ -1993,7 +1993,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             if (directory != containigFolder)
             {
                 int ContainingFolderLeanth = containigFolder.Length;
-                if (ContainingFolderLeanth < directory.Length)
+                if (ContainingFolderLeanth < directory.Length && !directory.StartsWith("http"))
                     relativeDirectories = directory.Substring(ContainingFolderLeanth).TrimStart('\\');
             }
             GetAllURLsFFromSchemaItems(Items, relativeDirectories, containigFolder);

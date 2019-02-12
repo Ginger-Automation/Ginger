@@ -29,7 +29,7 @@ using System.Data.OleDb;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 //TODO: add and use below with ReadCellDataNew - need to be tested
 // using DocumentFormat.OpenXml.Packaging;
 // using DocumentFormat.OpenXml.Spreadsheet;
@@ -41,7 +41,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Excel Action"; } }
         public override string ActionUserDescription { get { return "Read/Write Excel"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to Read/Write/etc. excel sheet from/on a system drives.");
             TBH.AddLineBreak();
@@ -412,8 +412,9 @@ namespace GingerCore.Actions
                     return returnList; 
 
                 }
-                catch 
+                catch (Exception ex)
                 {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get Excel Sheets", ex);
                     return new List<string>();
                 }
             }
@@ -433,7 +434,7 @@ namespace GingerCore.Actions
                 {
                     System.Threading.Thread.Sleep(3000);
                     Conn.Open();
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
                 }
 
                 OleDbCommand Cmd = new OleDbCommand();
@@ -566,7 +567,7 @@ namespace GingerCore.Actions
                 {
                     System.Threading.Thread.Sleep(3000);
                     Conn.Open();
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
                 }
 
                 OleDbCommand Cmd = new OleDbCommand();
@@ -636,10 +637,8 @@ namespace GingerCore.Actions
                             //keeping the translation of vars to support prevoius implementation
                             VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
                             if (var != null)
-                            {
-                                ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                                VE.Value = var.Value;
-                                var.Value = VE.ValueCalculated;
+                            {                                
+                                var.Value = ValueExpression.Calculate(var.Value);
                                 txt = var.Value;
                             }
 
@@ -678,9 +677,8 @@ namespace GingerCore.Actions
                             VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
                             if (var != null)
                             {
-                                ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                                VE.Value = var.Value;
-                                var.Value = VE.ValueCalculated;
+                                
+                                var.Value = ValueExpression.Calculate(var.Value);
                                 if (var != null)
                                     txt = var.Value;
                                 else
@@ -712,7 +710,7 @@ namespace GingerCore.Actions
                 }
                 catch (Exception ex)
                 {
-                    // Reporter.ToLog(eLogLevel.ERROR, "Wrting into excel got error " + ex.Message);
+                    // Reporter.ToLog(eAppReporterLogLevel.ERROR, "Wrting into excel got error " + ex.Message);
                     this.Error = "Error when trying to update the excel: " + ex.Message + Environment.NewLine + "UpdateSQL=" + updateSQL;
                 }
                 finally
@@ -773,10 +771,10 @@ namespace GingerCore.Actions
                         case "Syntax error in FROM clause.":
                             break;
                         case "No value given for one or more required parameters.":
-                            Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
+                            Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
                             break;
                         default:                            
-                            Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, ex.Message);
+                            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
                             break;
                     }
                     return null;
@@ -822,10 +820,12 @@ namespace GingerCore.Actions
 
             ExcelFileNameAbsolutue = ExcelFileNameAbsolutue.ToUpper();
 
-            if (ExcelFileNameAbsolutue.Contains(@"~\"))
-            {
-                ExcelFileNameAbsolutue = ExcelFileNameAbsolutue.Replace(@"~\", SolutionFolder);
-            }
+            //if (ExcelFileNameAbsolutue.Contains(@"~\"))
+            //{
+            //    ExcelFileNameAbsolutue = ExcelFileNameAbsolutue.Replace(@"~\", SolutionFolder);
+            //}
+            ExcelFileNameAbsolutue = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ExcelFileNameAbsolutue);
+
             return ExcelFileNameAbsolutue;
         }
 

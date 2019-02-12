@@ -24,6 +24,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.WebServices.WebAPI;
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -91,7 +92,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                                 {
                                     if (act is ActWebAPIModel && ((ActWebAPIModel)act).APImodelGUID == mModelItem.Guid)
                                     {
-                                        ModelItemUsage itemUsage = new ModelItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = BF.ContainingFolder + BF.Name, HostActivityName = activity.ActivityName, HostActivity = activity, Action = act, UsageItem = act, UsageItemName = act.Description, Selected = true/*, UsageExtraDetails = "Number of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": " + act.ActivitiesIdentifiers.Count().ToString()*/, Status = ModelItemUsage.eStatus.NotUpdated };
+                                        ModelItemUsage itemUsage = new ModelItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder,BF.Name), HostActivityName = activity.ActivityName, HostActivity = activity, Action = act, UsageItem = act, UsageItemName = act.Description, Selected = true/*, UsageExtraDetails = "Number of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": " + act.ActivitiesIdentifiers.Count().ToString()*/, Status = ModelItemUsage.eStatus.NotUpdated };
                                         if (mUsageUpdateType == ApplicationModelBase.eModelUsageUpdateType.SinglePart)
                                         {
                                             if (mModelPart == ApplicationModelBase.eModelParts.ReturnValues)
@@ -109,7 +110,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.GetModelItemUsagesFailed, mModelItem.GetNameForFileName(), ex.Message);
+                Reporter.ToUser(eUserMsgKey.GetModelItemUsagesFailed, mModelItem.GetNameForFileName(), ex.Message);
             }
             finally
             {
@@ -138,7 +139,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
 
@@ -186,7 +187,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to update the model item usage", ex);
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to update the model item usage", ex);
                             usage.Status = ModelItemUsage.eStatus.UpdateFailed;
                         }
                     }
@@ -289,8 +290,8 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                             catch (Exception ex)
                             {
                                 usage.Status = ModelItemUsage.eStatus.SaveFailed;
-                                Reporter.CloseGingerHelper();
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                Reporter.HideStatusMessage();
+                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                             }
                         }
                     }
