@@ -523,7 +523,7 @@ namespace GingerWPF.TreeViewItemsLib
         protected StackPanel NewTVItemHeaderStyle(RepositoryItemBase repoItem, eImageType imageType = eImageType.Null, string NameProperty = "")
         {
             //TODO: Move to biz flow page?
-            repoItem.StartDirtyTracking();
+            //repoItem.StartDirtyTracking();
 
             //The new item style with Source control
             StackPanel stack = new StackPanel();

@@ -72,6 +72,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mAgentEditPage == null)
             {
+                mAgent.StartDirtyTracking();
                 mAgentEditPage = new AgentEditPage(mAgent);
             }
             return mAgentEditPage;

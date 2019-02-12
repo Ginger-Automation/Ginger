@@ -59,8 +59,8 @@ namespace Ginger.BusinessFlowFolder
         public BusinessFlowPage(BusinessFlow BizFlow, bool showMiniView=false, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.SharedReposiotry)
         {
             InitializeComponent();
-
-            mBusinessFlow = BizFlow;
+            
+            mBusinessFlow = BizFlow;            
             RunDescritpion.Init(BizFlow, BusinessFlow.Fields.RunDescription);
             mEditMode = editMode;
             LoadBizFlowData();

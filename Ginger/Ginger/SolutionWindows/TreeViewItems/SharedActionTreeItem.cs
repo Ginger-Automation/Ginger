@@ -73,6 +73,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActionEditPage == null)
             {
+                mAct.StartDirtyTracking();
                 mActionEditPage = new ActionEditPage(mAct, General.RepositoryItemPageViewMode.SharedReposiotry);
             }
             return mActionEditPage;

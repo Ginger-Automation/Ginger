@@ -102,6 +102,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mDataSourcePage == null)
             {
+                DSDetails.StartDirtyTracking();
                 mDataSourcePage = new DataSourcePage(DSDetails);
             }
             return mDataSourcePage;

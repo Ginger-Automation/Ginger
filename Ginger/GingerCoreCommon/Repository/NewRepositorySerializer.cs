@@ -27,6 +27,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Amdocs.Ginger.Common;
+using GingerCore;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -454,8 +455,7 @@ namespace Amdocs.Ginger.Repository
                 //}    
 
                 // CP ERROR Commented
-                // XMLUpgrade.UpgradeXMLIfNeeded(xml, FileName);
-
+                // XMLUpgrade.UpgradeXMLIfNeeded(xml, FileName);                
                 return DeserializeFromText(xml, filePath: FileName);
             }
             else

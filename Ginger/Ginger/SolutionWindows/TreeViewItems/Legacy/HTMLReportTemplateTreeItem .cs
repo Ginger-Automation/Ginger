@@ -62,6 +62,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mHTMLReportDesignerPage == null)
             {
+                HTMLReportTemplate.StartDirtyTracking();
                 mHTMLReportDesignerPage = new HTMLReportTemplateDesignerPage(HTMLReportTemplate);
             }
             return mHTMLReportDesignerPage;

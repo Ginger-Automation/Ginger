@@ -76,6 +76,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActivitiesGroupPage == null)
             {
+                mActivitiesGroup.StartDirtyTracking();
                 mActivitiesGroupPage = new ActivitiesGroupPage(mActivitiesGroup, ActivitiesGroupPage.eEditMode.SharedRepository);
             }
             return mActivitiesGroupPage;

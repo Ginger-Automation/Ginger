@@ -62,7 +62,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         Page ITreeViewItem.EditPage()
         {
             if (mReportTemplatesPage == null)
-            {
+            {                
                 mReportTemplatesPage = new HTMLReportTemplatesPage();
             }
             return mReportTemplatesPage;
