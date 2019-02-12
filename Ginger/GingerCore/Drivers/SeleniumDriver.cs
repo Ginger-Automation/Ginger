@@ -4409,6 +4409,13 @@ namespace GingerCore.Drivers
             //Learn more properties
             // IMROVE THIOS CODE BY TAKLIGN  IT FROM THE NODE
 
+            foreach (HtmlAttribute attribute in ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes)
+            {
+                
+                    list.Add(new ControlProperty() { Name = attribute.Name, Value = attribute.Value });
+
+            }
+
             if (el != null)
             {
                 if (ElementInfo.IsElementTypeSupportingOptionalValues(ElementInfo.ElementTypeEnum))
@@ -4439,18 +4446,6 @@ namespace GingerCore.Drivers
                     list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
                 }
 
-                IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
-                Dictionary<string, object> attributes = javascriptDriver.ExecuteScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;", el) as Dictionary<string, object>;
-                if (!(attributes == null))
-                    foreach (KeyValuePair<string, object> kvp in attributes)
-                    {
-                        if (kvp.Key != "style" && (kvp.Value.ToString() != "border: 3px dashed red;" || kvp.Value.ToString() != "outline: 3px dashed red;"))
-                        {
-                            string PName = kvp.Key;
-                            string PValue = kvp.Value.ToString();
-                            list.Add(new ControlProperty() { Name = PName, Value = PValue });
-                        }
-                    }
             }
 
             if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
