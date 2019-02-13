@@ -3110,7 +3110,17 @@ namespace GingerCore.Drivers
 
             foreach (ElementLocator locator in Locators.Where(x => x.Active == true).ToList())
             {
-                elem = LocateElementByLocator(locator, true);
+                if(!locator.IsAutoLearned)
+                {
+                    ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+                    string expressionLocateValue = locator.LocateValue;
+                    locator.LocateValue = VE.Calculate(locator.LocateValue);
+                    elem = LocateElementByLocator(locator, true);
+                    locator.LocateValue = expressionLocateValue;
+                }
+                else
+                    elem = LocateElementByLocator(locator, true);
+
                 if (elem != null)
                 {
                     locator.StatusError = string.Empty;
