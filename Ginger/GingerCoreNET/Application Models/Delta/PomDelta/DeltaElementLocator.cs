@@ -8,33 +8,27 @@ using Amdocs.Ginger.Common.UIElement;
 namespace GingerCoreNET.Application_Models
 {
     public class DeltaElementLocator: DeltaItemBase
-    {
-        public ElementLocator OriginalElementLocator = null;
-        public ElementLocator LatestMatchingElementLocator = null;
-
-
-        ElementLocator mElementLocatorToShow = null;        
-        public ElementLocator ElementLocatorToShow
+    {        
+        ElementLocator mElementLocator = null;        
+        public ElementLocator ElementLocator
         {
             get
             {
-                return mElementLocatorToShow;
+                return mElementLocator;
             }
             set
             {
-                mElementLocatorToShow = value;
-                mElementLocatorToShow.PropertyChanged += MOriginalElementLocator_PropertyChanged;
+                mElementLocator = value;
+                mElementLocator.PropertyChanged += MOriginalElementLocator_PropertyChanged;
             }
         }
-
         
-
-        public bool Active { get { return ElementLocatorToShow.Active; } }
-        public eLocateBy LocateBy { get { return ElementLocatorToShow.LocateBy; } }
-        public string LocateValue { get { return ElementLocatorToShow.LocateValue; } }
-        public bool IsAutoLearned { get { return ElementLocatorToShow.IsAutoLearned; } }
-        public ElementLocator.eLocateStatus LocateStatus { get { return ElementLocatorToShow.LocateStatus; } }
-        public eImageType StatusIcon { get { return ElementLocatorToShow.StatusIcon; } }
+        public bool Active { get { return ElementLocator.Active; } }
+        public eLocateBy LocateBy { get { return ElementLocator.LocateBy; } }
+        public string LocateValue { get { return ElementLocator.LocateValue; } }
+        public bool IsAutoLearned { get { return ElementLocator.IsAutoLearned; } }
+        public ElementLocator.eLocateStatus LocateStatus { get { return ElementLocator.LocateStatus; } }
+        public eImageType StatusIcon { get { return ElementLocator.StatusIcon; } }
 
         //public string UpdatedValue { get; set; }   
 

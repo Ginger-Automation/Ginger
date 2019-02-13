@@ -350,7 +350,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.HighLightElement(mSelectedElement.OriginalElementInfo, true);
+                mWinExplorer.HighLightElement(mSelectedElement.ElementInfo, true);
             }
         }
 
@@ -375,7 +375,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedLocator != null)
             {
-                mWinExplorer.TestElementLocators(new ElementInfo() { Path = CurrentEI.OriginalElementInfo.Path, Locators = new ObservableList<ElementLocator>() { mSelectedLocator.OriginalElementLocator } });
+                mWinExplorer.TestElementLocators(new ElementInfo() { Path = CurrentEI.ElementInfo.Path, Locators = new ObservableList<ElementLocator>() { mSelectedLocator.ElementLocator } });
             }
         }
 
@@ -388,7 +388,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.TestElementLocators(mSelectedElement.OriginalElementInfo);
+                mWinExplorer.TestElementLocators(mSelectedElement.ElementInfo);
             }
         }
 

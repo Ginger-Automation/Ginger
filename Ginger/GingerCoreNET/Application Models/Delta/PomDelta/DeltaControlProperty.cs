@@ -18,12 +18,10 @@ namespace GingerCoreNET.Application_Models
             None
         }
 
-        public ControlProperty OriginalElementProperty = null;
-        public ControlProperty LatestMatchingElementProperty = null;
-        public ControlProperty ElementPropertyToShow = null;
+        public ControlProperty ElementProperty = null;
 
-        public string Name { get { return ElementPropertyToShow.Name; } }
-        public string Value { get { return ElementPropertyToShow.Value; } }
+        public string Name { get { return ElementProperty.Name; } }
+        public string Value { get { return ElementProperty.Value; } }
         
         //public string UpdatedValue { get; set; }        
 
