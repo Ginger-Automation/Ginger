@@ -5,6 +5,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
@@ -43,48 +44,51 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             {
                 case EventType.Init:
                     mWizard = (PomDeltaWizard)WizardEventArgs.Wizard;
-                    if (mWizard.mPomLearnUtils.POM.TargetApplicationKey != null)
+                    if (mWizard.mPomDeltaUtils.POM.TargetApplicationKey != null)
                     {
-                        mAppPlatform = WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(mWizard.mPomLearnUtils.POM.TargetApplicationKey);
+                        mAppPlatform = WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(mWizard.mPomDeltaUtils.POM.TargetApplicationKey);
                     }
 
                     SetAutoMapElementTypes();
                     SetAutoMapElementTypesGridView();
                     SetAutoMapElementLocatorssSection();                    
                     SetAutoMapElementLocatorsGridView();
+
+                    xAvoidPropertiesAllRadioButton.IsChecked = true;
+                    xKeepLocatorsOrderCheckBox.IsChecked = true;
                     break;
             }
         }
 
         private void SetAutoMapElementTypes()
         {
-            if (mWizard.mPomLearnUtils.AutoMapElementTypesList.Count == 0)
+            if (mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementTypesList.Count == 0)
             {
                 switch (mAppPlatform)
                 {
                     case ePlatformType.Web:
                         foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in new WebPlatform().GetPlatformElementTypesData().ToList())
                         {
-                            mWizard.mPomLearnUtils.AutoMapElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
+                            mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
                         }
                         break;
                 }
             }
-            xAutoMapElementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapElementTypesList;
+            xAutoMapElementTypesGrid.DataSourceList = mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementTypesList;
         }
 
         private void SetAutoMapElementLocatorssSection()
         {
-            if (mWizard.mPomLearnUtils.AutoMapElementLocatorsList.Count == 0)
+            if (mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementLocatorsList.Count == 0)
             {
                 switch (mAppPlatform)
                 {
                     case ePlatformType.Web:
-                        mWizard.mPomLearnUtils.AutoMapElementLocatorsList = new WebPlatform().GetLearningLocators();
+                        mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementLocatorsList = new WebPlatform().GetLearningLocators();
                         break;
                 }
             }
-            xAutoMapElementLocatorsGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapElementLocatorsList;
+            xAutoMapElementLocatorsGrid.DataSourceList = mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementLocatorsList;
         }
 
         private void SetAutoMapElementTypesGridView()
@@ -121,12 +125,38 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void CheckUnCheckAllElements(object sender, RoutedEventArgs e)
         {
-            if (mWizard.mPomLearnUtils.AutoMapElementTypesList.Count > 0)
+            if (mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementTypesList.Count > 0)
             {
-                bool valueToSet = !mWizard.mPomLearnUtils.AutoMapElementTypesList[0].Selected;
-                foreach (UIElementFilter elem in mWizard.mPomLearnUtils.AutoMapElementTypesList)
+                bool valueToSet = !mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementTypesList[0].Selected;
+                foreach (UIElementFilter elem in mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementTypesList)
                     elem.Selected = valueToSet;
             }
-        }       
+        }
+
+        private void xAvoidPropertiesAllRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (mWizard != null)
+            {
+                mWizard.mPomDeltaUtils.PropertiesChangesToAvoid = DeltaControlProperty.ePropertiesChangesToAvoid.All;
+            }
+        }
+
+        private void xAvoidPropertiesOnlyVisualPropRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mWizard.mPomDeltaUtils.PropertiesChangesToAvoid = DeltaControlProperty.ePropertiesChangesToAvoid.OnlySizeAndLocationProperties;
+        }
+
+        private void xAvoidPropertiesNoneRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mWizard.mPomDeltaUtils.PropertiesChangesToAvoid = DeltaControlProperty.ePropertiesChangesToAvoid.None;
+        }
+
+        private void XKeepLocatorsOrderCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (mWizard != null)
+            {
+                mWizard.mPomDeltaUtils.KeepOriginalLocatorsOrderAndActivation = xKeepLocatorsOrderCheckBox.IsChecked;
+            }
+        }
     }
 }

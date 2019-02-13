@@ -9,28 +9,32 @@ namespace GingerCoreNET.Application_Models
 {
     public class DeltaElementLocator: DeltaItemBase
     {
-        ElementLocator mOriginalElementLocator = null;
-        public ElementLocator OriginalElementLocator
+        public ElementLocator OriginalElementLocator = null;
+        public ElementLocator LatestMatchingElementLocator = null;
+
+
+        ElementLocator mElementLocatorToShow = null;        
+        public ElementLocator ElementLocatorToShow
         {
             get
             {
-                return mOriginalElementLocator;
+                return mElementLocatorToShow;
             }
             set
             {
-                mOriginalElementLocator = value;
-                mOriginalElementLocator.PropertyChanged += MOriginalElementLocator_PropertyChanged;
+                mElementLocatorToShow = value;
+                mElementLocatorToShow.PropertyChanged += MOriginalElementLocator_PropertyChanged;
             }
         }
 
-        public ElementLocator LatestMatchingElementLocator = null;
+        
 
-        public bool Active { get { return OriginalElementLocator.Active; } }
-        public eLocateBy LocateBy { get { return OriginalElementLocator.LocateBy; } }
-        public string LocateValue { get { return OriginalElementLocator.LocateValue; } }
-        public bool IsAutoLearned { get { return OriginalElementLocator.IsAutoLearned; } }
-        public ElementLocator.eLocateStatus LocateStatus { get { return OriginalElementLocator.LocateStatus; } }
-        public eImageType StatusIcon { get { return OriginalElementLocator.StatusIcon; } }
+        public bool Active { get { return ElementLocatorToShow.Active; } }
+        public eLocateBy LocateBy { get { return ElementLocatorToShow.LocateBy; } }
+        public string LocateValue { get { return ElementLocatorToShow.LocateValue; } }
+        public bool IsAutoLearned { get { return ElementLocatorToShow.IsAutoLearned; } }
+        public ElementLocator.eLocateStatus LocateStatus { get { return ElementLocatorToShow.LocateStatus; } }
+        public eImageType StatusIcon { get { return ElementLocatorToShow.StatusIcon; } }
 
         //public string UpdatedValue { get; set; }   
 

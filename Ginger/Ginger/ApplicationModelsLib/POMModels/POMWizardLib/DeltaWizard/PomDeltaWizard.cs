@@ -13,13 +13,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
     public class PomDeltaWizard : WizardBase
     {
         public PomDeltaUtils mPomDeltaUtils = null;
-        public PomLearnUtils mPomLearnUtils = null;        
+               
         public override string Title { get { return "POM Elements Update Wizard"; } }
 
         public PomDeltaWizard(ApplicationPOMModel pom, Agent agent)
         {            
-            mPomDeltaUtils = new PomDeltaUtils(pom, agent);
-            mPomLearnUtils = new PomLearnUtils(pom, agent);
+            mPomDeltaUtils = new PomDeltaUtils(pom, agent);            
 
             AddPage(Name: "Elements Update Settings", Title: "Elements Update Settings", SubTitle: "Elements Update Settings", Page: new PomDeltaSettingsWizardPage());
             AddPage(Name: "Elements Compare", Title: "Elements Compare", SubTitle: "Elements Comparison with Latest Status", Page: new PomDeltaElementCompareWizardPage());

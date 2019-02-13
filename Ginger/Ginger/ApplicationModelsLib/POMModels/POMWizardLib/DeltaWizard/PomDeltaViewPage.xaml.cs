@@ -154,11 +154,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
             view.GridColsView = new ObservableList<GridColView>();
 
             //view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.IsSelected), Header = "Update", WidthWeight = 60, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["FieldUpdate"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.IsSelected), Header = "Update", WidthWeight = 60, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox});
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.IsSelected), Header = "Update", WidthWeight = 60, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, AllowSorting = true});
             List<GingerCore.General.ComboEnumItem> GroupTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(ApplicationPOMModel.eElementGroup));
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.SelectedElementGroup), Header = "Group", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(GroupTypeList, nameof(DeltaElementInfo.SelectedElementGroup), true), WidthWeight = 200 });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.ElementName), Header = "Name", WidthWeight = 200, AllowSorting = true, ReadOnly = true, BindingMode=BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.Description), Header = "Description", WidthWeight = 250, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.Description), Header = "Description", WidthWeight = 200, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.OptionalValuesObjectsListAsString), Header = "Possible Values", WidthWeight = 200, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
             List<GingerCore.General.ComboEnumItem> ElementTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(eElementType));
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList, ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.IsAutoLearned), Header = "Auto Learned", WidthWeight = 250, MaxWidth = 100, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
@@ -190,7 +191,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void GroupFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mCurrentGroupByFilter = (ComboEnumItem)e.AddedItems[0];
+            mCurrentGroupByFilter = (ComboEnumItem)e.AddedItems[0];// ((ComboBox)sender).SelectedItem;
             FilterListByFiltersCreteria();
         }
 
@@ -355,7 +356,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void DetailsGrid_Expanded(object sender, RoutedEventArgs e)
         {
-            Row2.Height = new GridLength(300, GridUnitType.Star);
+            Row2.Height = new GridLength(300);
         }
 
         private void DetailsGrid_Collapsed(object sender, RoutedEventArgs e)

@@ -19,7 +19,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
     public partial class PomDeltaElementCompareWizardPage : Page, IWizardPage
     {
         PomDeltaWizard mWizard;
-        PomDeltaViewPage mPomDeltaViewPage = null;       
+        PomDeltaViewPage mPomDeltaViewPage = null;
+        bool mFirstLearnWasDone = false;
 
         public PomDeltaElementCompareWizardPage()
         {
@@ -28,13 +29,19 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            if (WizardEventArgs.EventType == EventType.Init)
+            switch (WizardEventArgs.EventType)
             {
-                mWizard = (PomDeltaWizard)WizardEventArgs.Wizard;               
-                InitilizePomElementsMappingPage();
-                mPomDeltaViewPage.SetAgent(mWizard.mPomDeltaUtils.Agent);
-                xReLearnButton.Visibility = Visibility.Visible;
-                LearnDelta();
+                case EventType.Init:
+                    mWizard = (PomDeltaWizard)WizardEventArgs.Wizard;                  
+                    break;
+
+                case EventType.Active:
+                    if (!mFirstLearnWasDone)
+                    {
+                        LearnDelta();
+                        mFirstLearnWasDone = true;
+                    }
+                    break;
             }
         }
 
@@ -45,12 +52,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 try
                 {
                     mWizard.ProcessStarted();
+                    InitilizePomElementsMappingPage();//we recreating page as workaround for clearing grid filters                    
                     xReLearnButton.Visibility = Visibility.Collapsed;
                     xStopLoadButton.ButtonText = "Stop";
                     xStopLoadButton.IsEnabled = true;                    
                     xStopLoadButton.Visibility = Visibility.Visible;                    
 
-                    await mWizard.mPomDeltaUtils.LearnDeltaAsync();
+                    await Task.Run(() => mWizard.mPomDeltaUtils.LearnDelta());
                 }
                 catch (Exception ex)
                 {
@@ -78,18 +86,18 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             if (Reporter.ToUser(eUserMsgKey.POMDeltaWizardReLearnWillEraseModification) == eUserMsgSelection.Yes)
             {
                 mWizard.mPomDeltaUtils.StopLearning();
+
                 LearnDelta();
             }
         }
 
         private void InitilizePomElementsMappingPage()
         {
-            if (mPomDeltaViewPage == null)
-            {
-                mPomDeltaViewPage = new PomDeltaViewPage(mWizard.mPomDeltaUtils.DeltaViewElements);
-                xPomElementsMappingPageFrame.Content = mPomDeltaViewPage;
-            }
+            mPomDeltaViewPage = new PomDeltaViewPage(mWizard.mPomDeltaUtils.DeltaViewElements);
+            mPomDeltaViewPage.SetAgent(mWizard.mPomDeltaUtils.Agent);
+            xPomElementsMappingPageFrame.Content = mPomDeltaViewPage;
         }
+
 
     }
 }

@@ -23,6 +23,6 @@
             <UserControls:ucButton x:Name="xReLearnButton" Grid.Row="0" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right" ButtonText="Re-Update Elements" ButtonImageType="Reply" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="ReLearnButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed"/>
         </StackPanel>
 
-        <Frame x:Name="xPomElementsMappingPageFrame" Grid.Row="1" />
+        <Frame x:Name="xPomElementsMappingPageFrame" Grid.Row="1" NavigationUIVisibility="Hidden" />
     </Grid>
 </Page>

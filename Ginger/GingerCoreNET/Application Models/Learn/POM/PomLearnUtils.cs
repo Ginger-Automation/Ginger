@@ -19,7 +19,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         RepositoryFolder<ApplicationPOMModel> mPomModelsFolder;
         public ApplicationPOMModel POM;
         public ObservableList<UIElementFilter> AutoMapElementTypesList = new ObservableList<UIElementFilter>();
-        List<eElementType> mSelectedElementTypesList = new List<eElementType>();
+        public List<eElementType> SelectedElementTypesList = new List<eElementType>();
         public ObservableList<ElementLocator> AutoMapElementLocatorsList = new ObservableList<ElementLocator>();
         List<eLocateBy> mElementLocatorsList = new List<eLocateBy>();
         public ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();
@@ -104,9 +104,8 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public void PrepareLearningConfigurations()
         {
-            mSelectedElementTypesList = AutoMapElementTypesList.Where(x => x.Selected == true).Select(x => x.ElementType).ToList();
-            List<eLocateBy> mElementLocatorsList = AutoMapElementLocatorsList.Select(x => x.LocateBy).ToList();
-           
+            SelectedElementTypesList = AutoMapElementTypesList.Where(x => x.Selected == true).Select(x => x.ElementType).ToList();
+            mElementLocatorsList = AutoMapElementLocatorsList.Select(x => x.LocateBy).ToList();           
         }
 
         public void LearnScreenShot()
@@ -139,7 +138,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                     SetLearnedElementDetails(learnedElement);
 
                     //add to relevent group
-                    if (mSelectedElementTypesList.Contains(learnedElement.ElementTypeEnum))
+                    if (SelectedElementTypesList.Contains(learnedElement.ElementTypeEnum))
                     {
                         POM.MappedUIElements.Add(learnedElement);
                     }

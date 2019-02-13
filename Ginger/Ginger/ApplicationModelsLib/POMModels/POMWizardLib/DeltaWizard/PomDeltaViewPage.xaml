@@ -1,21 +1,16 @@
 ﻿<Page x:Class="Ginger.ApplicationModelsLib.POMModels.PomDeltaViewPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Ginger.ApplicationModelsLib.POMModels"
-      xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:Ginger="clr-namespace:Ginger"
       mc:Ignorable="d" 
       d:DesignHeight="800" d:DesignWidth="1200"
       Title="PomDeltaViewPage">
 
     <Grid x:Name="PageGrid">
         <Grid.Resources>
-            <!--<DataTemplate x:Key="FieldUpdate">
-                <CheckBox x:Name="xElementsGrid_FieldUpdate"  Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotEqual, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Center"/>
-            </DataTemplate>-->
-
             <DataTemplate x:Key="xHighlightButtonTemplate">
                 <Button x:Name="HighlightButton" Click="HighlightElementClicked" ToolTip="Highlight Element" Style="{StaticResource @InputImageGridCellButtonStyle}">
                     <UserControls:ImageMakerControl ImageType="Pointer" SetAsFontImageWithSize="16"  Width="16" Height="16" />

@@ -1,12 +1,10 @@
 ﻿<Page x:Class="Ginger.ApplicationModelsLib.POMModels.POMWizardLib.PomDeltaSettingsWizardPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:Ginger="clr-namespace:Ginger"
-      xmlns:agents="clr-namespace:Ginger.Agents"
-      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PomDeltaSettingsPage">
@@ -17,7 +15,7 @@
                 <!--<agents:ucAgentControl x:Name="xAgentControlUC" AutomationProperties.AutomationId="ucAgentControl AID" DockPanel.Dock="Top" Margin="0,0,0,15"></agents:ucAgentControl>-->
 
                 <Label DockPanel.Dock="Top" HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}">New Elements Learning Settings:</Label>
-                <Expander x:Name="xAutoMapElementLocatorsExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" Margin="0,0,0,15">
+                <Expander x:Name="xAutoMapElementLocatorsExpander" DockPanel.Dock="Top" Visibility="Visible"  Margin="0,0,0,10">
                     <Expander.Header>
                         <Label x:Name="xLocatorsExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
                             <Label.Content>
@@ -29,8 +27,8 @@
                         <Ginger:ucGrid x:Name="xAutoMapElementLocatorsGrid" AutomationProperties.AutomationId="AutoMapElementLocatorsGrid AID" Title="Locators:" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Collapsed"/>
                     </Expander.Content>
                 </Expander>
-                
-                <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" >
+
+                <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" >
                     <Expander.Header>
                         <Label x:Name="xPropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
                             <Label.Content>
@@ -43,15 +41,19 @@
                     </Expander.Content>
                 </Expander>
 
-                <Label DockPanel.Dock="Top" HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}" Margin="0,10,0,0" >Elements Comparison Settings:</Label>
+                <Label DockPanel.Dock="Top" HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}" Margin="0,20,0,0" >Elements Comparison Settings:</Label>
                 <StackPanel x:Name="xAvoidPropertiesPanel" Orientation="Horizontal" DockPanel.Dock="Top">
-                    <Label Style="{StaticResource $LabelStyle}" Grid.Row="0">Properties changes to avoid:</Label>
+                    <Label Style="{StaticResource $LabelStyle}" Margin="0,0,0,0">Properties changes to avoid:</Label>
                     <StackPanel  Orientation="Horizontal" x:Name="xAvoidPropertiesRadioButtonsPnl">
-                        <UserControlsLib:UCRadioButtons x:Name="xAvoidPropertiesRadioButtons" Margin="-5,0,0,0"></UserControlsLib:UCRadioButtons>
+                        <RadioButton x:Name="xAvoidPropertiesAllRadioButton" Margin="5" Checked="xAvoidPropertiesAllRadioButton_Checked" IsChecked="True">All</RadioButton>
+                        <RadioButton x:Name="xAvoidPropertiesOnlyVisualPropRadioButton" Margin="5" Checked="xAvoidPropertiesOnlyVisualPropRadioButton_Checked">Only Size and Location Properties</RadioButton>
+                        <RadioButton x:Name="xAvoidPropertiesNoneRadioButton" Margin="5" Checked="xAvoidPropertiesNoneRadioButton_Checked">None</RadioButton>
                     </StackPanel>
                 </StackPanel>
-            </DockPanel>
 
+                <Label DockPanel.Dock="Top" HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}" Margin="0,20,0,0" >Elements Update Settings:</Label>
+                <CheckBox x:Name="xKeepLocatorsOrderCheckBox" Content="Keep original element locators order and activation settings on update" IsChecked="True" Style="{StaticResource @CheckBoxStyle}" Margin="5" Checked="XKeepLocatorsOrderCheckBox_Checked" Unchecked="XKeepLocatorsOrderCheckBox_Checked"/>
+            </DockPanel>
         </Grid>
     </ScrollViewer>
 </Page>

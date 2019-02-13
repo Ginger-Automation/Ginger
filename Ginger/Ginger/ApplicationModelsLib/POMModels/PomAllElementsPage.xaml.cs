@@ -214,7 +214,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mSpyElement = mWinExplorer.GetControlFromMousePosition();
                 if (mSpyElement != null)
                 {
-                    
+                    //TODO: replace below fields setting with signle function doing it on Driver
                     mWinExplorer.UpdateElementInfoFields(mSpyElement);
                     mSpyElement.Locators = mWinExplorer.GetElementLocators(mSpyElement);
                     mSpyElement.Properties = mWinExplorer.GetElementProperties(mSpyElement);
@@ -234,63 +234,54 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void FocusSpyItemOnElementsGrid()
         {
-            bool elementfocused = false;
             if (mSpyElement == null)
             {
                 return;
-            } 
-            foreach (ElementInfo EI in mPOM.MappedUIElements)
-            {
-                if (IsTheSameElement(EI, mSpyElement))
-                {
-                    xMappedElementsTab.Focus();
-                    elementfocused = true;
-                    mPOM.MappedUIElements.CurrentItem = EI;
-                    mappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
-                    break;
-                }
             }
 
-            foreach (ElementInfo EI in mPOM.UnMappedUIElements)
+            ElementInfo matchingOriginalElement = (ElementInfo)mWinExplorer.GetMatchingElement(mSpyElement, mPOM.GetUnifiedElementsList());
+
+            if (mPOM.MappedUIElements.Contains(matchingOriginalElement))
             {
-                if (IsTheSameElement(EI, mSpyElement))
-                {
-                    xUnmappedElementsTab.Focus();
-                    elementfocused = true;
-                    mPOM.UnMappedUIElements.CurrentItem = EI;
-                    unmappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
-                    break;
-                }
+                xMappedElementsTab.Focus();
+                mPOM.MappedUIElements.CurrentItem = matchingOriginalElement;
+                mappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
+                return;
             }
 
-            if (!elementfocused)
+            if (mPOM.UnMappedUIElements.Contains(matchingOriginalElement))
             {
-                xStatusLable.Content = "Found element is not included in below elements list, click here to add it ";
-                xCreateNewElement.Visibility = Visibility.Visible;
+                xUnmappedElementsTab.Focus();
+                mPOM.UnMappedUIElements.CurrentItem = matchingOriginalElement;
+                unmappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
+                return;
             }
+
+            xStatusLable.Content = "Found element is not included in below elements list, click here to add it ";
+            xCreateNewElement.Visibility = Visibility.Visible;
         }
 
-        public static bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
-        {
-            bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && (firstEI.Path == secondEI.Path || string.IsNullOrEmpty(firstEI.Path) && string.IsNullOrEmpty(secondEI.Path));
+        //public static bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
+        //{
+        //    bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && (firstEI.Path == secondEI.Path || string.IsNullOrEmpty(firstEI.Path) && string.IsNullOrEmpty(secondEI.Path));
 
-            bool HasSimilarLocators = true;
-            foreach (ElementLocator EL in firstEI.Locators)
-            {
-                ElementLocator SimilarLocator = secondEI.Locators.Where(x => x.LocateBy == EL.LocateBy && x.LocateValue == EL.LocateValue).FirstOrDefault();
-                if (SimilarLocator == null)
-                    HasSimilarLocators = false;
-            }
+        //    bool HasSimilarLocators = true;
+        //    foreach (ElementLocator EL in firstEI.Locators)
+        //    {
+        //        ElementLocator SimilarLocator = secondEI.Locators.Where(x => x.LocateBy == EL.LocateBy && x.LocateValue == EL.LocateValue).FirstOrDefault();
+        //        if (SimilarLocator == null)
+        //            HasSimilarLocators = false;
+        //    }
 
-            if (HasSimilarXpath && HasSimilarLocators)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        //    if (HasSimilarXpath && HasSimilarLocators)
+        //    {
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
 
 
         private void TestAllElementsClicked(object sender, RoutedEventArgs e)
