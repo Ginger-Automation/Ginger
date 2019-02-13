@@ -120,8 +120,7 @@ namespace GingerCore
         public bool DecryptFlag { get; set; } = false;
         private string mValueCalculated = null;
 
-        ObservableList<VariableBase> mSolutionVariables = null;
-
+        
         public string Value { get; set; }
 
         public string ValueCalculated
@@ -145,7 +144,7 @@ namespace GingerCore
             return Value;
         }
 
-        public ValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null)
+        public ValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true)
         {
             this.Env = Env;
             this.BF = BF;
@@ -153,7 +152,6 @@ namespace GingerCore
             this.bUpdate = bUpdate;
             this.updateValue = UpdateValue;
             this.bDone = bDone;
-            mSolutionVariables = solutionVariables;
         }
 
         /// <summary>
@@ -701,9 +699,14 @@ namespace GingerCore
 
             VariableBase vb = null;
             if (BF != null)
+            {
                 vb = BF.GetHierarchyVariableByName(VarName);
-            else if (mSolutionVariables != null)
-                vb = (from v1 in mSolutionVariables where v1.Name == VarName select v1).FirstOrDefault();
+            }
+            else
+            {
+                vb = (from v1 in WorkSpace.UserProfile.Solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
+            }
+                
             if (vb != null)
             {
                 if (DecryptFlag == true && vb is VariablePasswordString)
@@ -1014,7 +1017,16 @@ namespace GingerCore
             }
 
             string VarValue;
-            VariableBase vb = BF.GetHierarchyVariableByName(VarName);
+            VariableBase vb = null;
+            if (BF != null)
+            {
+                vb = BF.GetHierarchyVariableByName(VarName);
+            }
+            else
+            {
+                vb = (from v1 in WorkSpace.UserProfile.Solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
+            }
+
             if (vb != null)
             {
                 VarValue = vb.Value;
