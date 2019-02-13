@@ -868,10 +868,10 @@ namespace Ginger
             AutoLogProxy.UserOperationStart("btnConversionMechanism_Click");
             //ActionConverterPage gtb = new ActionConverterPage(App.BusinessFlow);
             //// combine in the abover constructor
-            //gtb.Init( WorkSpace.UserProfile.Solution, App.BusinessFlow);
+            //gtb.Init(WorkSpace.UserProfile.Solution, App.BusinessFlow);
             //gtb.ShowAsWindow();
 
-            WizardWindow.ShowWizard(new ActionsConversionWizard(App.BusinessFlow));
+            WizardWindow.ShowWizard(new ActionsConversionWizard(WorkSpace.UserProfile.Solution, App.BusinessFlow));
             AutoLogProxy.UserOperationEnd();
         }
 

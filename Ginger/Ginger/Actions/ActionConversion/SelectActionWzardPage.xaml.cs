@@ -39,7 +39,6 @@ namespace Ginger.Actions.ActionConversion
     /// </summary>
     public partial class SelectActionWzardPage : Page, IWizardPage
     {
-        ObservableList<ActionConversionHandler> lstActionToBeConverted = new ObservableList<ActionConversionHandler>();
         ActionsConversionWizard mWizard;
         
         public SelectActionWzardPage()
@@ -62,11 +61,11 @@ namespace Ginger.Actions.ActionConversion
                     break;
             }
         }
-
+        
         private void Init()
         {
             // clearing the list of actions to be converted before clicking on Convertible Actions buttons again to reflect the fresh list of convertible actions
-            lstActionToBeConverted.Clear();
+            mWizard.ActionToBeConverted.Clear();
 
             // fetching list of selected convertible activities from the first grid
             List<Activity> lstSelectedActivities = mWizard.BusinessFlow.Activities.Where(x => x.SelectedForConversion).ToList();
@@ -80,7 +79,7 @@ namespace Ginger.Actions.ActionConversion
                         if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
                             (act.Active))
                         {
-                            ActionConversionHandler existingConvertibleActionType = lstActionToBeConverted.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
+                            ActionConversionHandler existingConvertibleActionType = mWizard.ActionToBeConverted.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
                             if (existingConvertibleActionType == null)
                             {
                                 ActionConversionHandler newConvertibleActionType = new ActionConversionHandler();
@@ -93,7 +92,7 @@ namespace Ginger.Actions.ActionConversion
                                 newConvertibleActionType.ActionCount = 1;
                                 newConvertibleActionType.Actions.Add(act);
                                 newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
-                                lstActionToBeConverted.Add(newConvertibleActionType);
+                                mWizard.ActionToBeConverted.Add(newConvertibleActionType);
                             }
                             else
                             {
@@ -107,9 +106,9 @@ namespace Ginger.Actions.ActionConversion
                         }
                     }
                 }
-                if (lstActionToBeConverted.Count != 0)
+                if (mWizard.ActionToBeConverted.Count != 0)
                 {
-                    gridConvertibleActions.DataSourceList = lstActionToBeConverted;
+                    gridConvertibleActions.DataSourceList = mWizard.ActionToBeConverted;
                     SetGridView();
                     return;
                 }
@@ -152,6 +151,10 @@ namespace Ginger.Actions.ActionConversion
             gridConvertibleActions.SetAllColumnsDefaultView(view);
             gridConvertibleActions.InitViewItems();
             gridConvertibleActions.SetTitleLightStyle = true;
+            gridConvertibleActions.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
+            {
+                ucGrid.eUcGridValidationRules.CheckedRowCount
+            };
         }
     }
 }

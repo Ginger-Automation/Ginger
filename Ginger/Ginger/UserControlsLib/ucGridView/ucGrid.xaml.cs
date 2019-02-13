@@ -2084,6 +2084,20 @@ public void RemoveCustomView(string viewName)
                 ClearFloatingButtons();
         }
 
+        private int GetCheckedRowCount()
+        {
+            int count = 0;
+            for(int i = 0; i < Grid.Items.Count; i++)
+            {
+                var cItem = grdMain.Items[i];
+                var mycheckbox = grdMain.Columns[0].GetCellContent(cItem) as CheckBox;
+                if ((bool)mycheckbox.IsChecked)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
 
         public static readonly DependencyProperty RowsCountProperty = DependencyProperty.Register(
                     "RowsCount", typeof(int), typeof(ucGrid), new PropertyMetadata(0));        
@@ -2098,6 +2112,7 @@ public void RemoveCustomView(string viewName)
         {
             CantBeEmpty,
             OnlyOneItem,
+            CheckedRowCount
         }
 
         public List<eUcGridValidationRules> ValidationRules = new List<eUcGridValidationRules>();
@@ -2115,6 +2130,16 @@ public void RemoveCustomView(string viewName)
 
                     case eUcGridValidationRules.OnlyOneItem:
                         if (Grid.Items.Count != 1) validationRes= true;
+                        break;
+
+                    case eUcGridValidationRules.CheckedRowCount:
+                        {
+                            int count = GetCheckedRowCount();
+                            if (count <= 0)
+                            {
+                                validationRes = true; 
+                            }
+                        }
                         break;
                 }
             }

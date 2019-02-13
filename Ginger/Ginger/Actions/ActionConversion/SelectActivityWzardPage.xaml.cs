@@ -23,6 +23,7 @@ using GingerCore;
 using GingerCore.Environments;
 using GingerWPF.WizardLib;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Controls;
@@ -74,6 +75,10 @@ namespace Ginger.Actions.ActionConversion
             grdGroups.RowChangedEvent += grdGroups_RowChangedEvent;
             grdGroups.Title = "Name of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " in '" + mWizard.BusinessFlow.Name + "'";
             grdGroups.MarkUnMarkAllActive += MarkUnMarkAllActivities;
+            grdGroups.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
+            {
+                ucGrid.eUcGridValidationRules.CheckedRowCount
+            };
         }
 
         private void grdGroups_RowChangedEvent(object sender, EventArgs e)

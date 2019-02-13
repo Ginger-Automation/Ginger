@@ -421,6 +421,9 @@
       <DependentUpon>ActionConverterPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionConversion\ActionsConversionWizard.cs" />
+    <Compile Include="Actions\ActionConversion\ConversionConfigurationWzardPage.xaml.cs">
+      <DependentUpon>ConversionConfigurationWzardPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionConversion\SelectActionWzardPage.xaml.cs">
       <DependentUpon>SelectActionWzardPage.xaml</DependentUpon>
     </Compile>
@@ -2594,6 +2597,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ActionsNew\NewAddActionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ActionConversion\ConversionConfigurationWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
