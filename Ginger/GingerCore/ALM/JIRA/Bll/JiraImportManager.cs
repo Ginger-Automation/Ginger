@@ -131,6 +131,7 @@ namespace GingerCore.ALM.JIRA
                 busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
                 busFlow.Activities = new ObservableList<Activity>();
                 busFlow.Variables = new ObservableList<VariableBase>();
+                busFlow.IsAlmExported= testSet.Labels!=null&& testSet.Labels.ToLower()=="ginger"?true:false;
 
                 //Create Activities Group + Activities for each TC
                 foreach (JiraTest tc in testSet.Tests)
@@ -503,6 +504,9 @@ namespace GingerCore.ALM.JIRA
                                     break;
                                 case "Description":
                                     issue.Description = fieldValue.First();
+                                    break;
+                                case "Labels":
+                                    issue.Labels = fieldValue.First();
                                     break;
                                 case "Test Cases":
                                     issue.Tests = new List<JiraTest>();

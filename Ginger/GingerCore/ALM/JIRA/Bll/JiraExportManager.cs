@@ -78,6 +78,11 @@ namespace GingerCore.ALM.JIRA.Bll
             var bftestCases = businessFlow.ActivitiesGroups.ToList();
             foreach (var tc in bftestCases)
             {
+                if(!businessFlow.IsAlmExported)
+                {
+                    tc.ExternalID = null;
+                    tc.ExternalID2 = null;
+                }
                 this.ExportActivitesGrToJira(tc, testCaseFields, ref responseStr);
             }
             List<IJiraExportData> tcArray = CreateExportArrayFromActivites(bftestCases);
@@ -287,6 +292,8 @@ namespace GingerCore.ALM.JIRA.Bll
             jiraIssue.ExportFields.Add("description", new List<IJiraExportData>() { new JiraExportData() { value = businessFlow.Description } });
             jiraIssue.ExportFields.Add("issuetype", new List<IJiraExportData>() { new JiraExportData() { value = "Test Set" } });
             jiraIssue.ExportFields.Add("reporter", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.AlmConfig.ALMUserName } });
+            jiraIssue.ExportFields.Add("labels", new List<IJiraExportData>() { new JiraExportData() { value = "Ginger" } });
+
             foreach (var item in testSetFields)
             {
                 var issueTemplate = jiraRepObj.GetFieldFromTemplateByName(ALM_Common.DataContracts.ResourceType.TEST_SET, ALMCore.AlmConfig.ALMProjectKey, item.Name);
