@@ -83,6 +83,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 mBusinessFlow.StartDirtyTracking();
                 mBusinessFlowPage = new BusinessFlowPage(mBusinessFlow);
             }
+            App.BusinessFlow = mBusinessFlow;
             return mBusinessFlowPage;
         }
 

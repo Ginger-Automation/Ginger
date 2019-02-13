@@ -561,8 +561,7 @@ namespace Ginger.Run
             App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
             mRunner.ResetRunnerExecutionDetails();
             App.RunsetExecutor.ConfigureRunnerForExecution(mRunner);
-            await mRunner.RunRunnerAsync();
-
+       
             GingerCore.General.DoEvents();   //needed?                 
         }
         public void UpdateRunnerInfo()
