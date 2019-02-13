@@ -3895,9 +3895,56 @@ namespace GingerCore.Drivers
 
         string GetBestElementName(HTMLElementInfo EI)
         {
+
+            string bestElementName = string.Empty;
+            string tagName = EI.HTMLElementObject.Name;
             string name = string.Empty;
-            name = (((HtmlNode)EI.HTMLElementObject).Name);
-            return name;
+            string title = string.Empty;
+            string id = string.Empty;
+            string value = string.Empty;
+            string type = string.Empty;
+            foreach (HtmlAttribute att in EI.HTMLElementObject.Attributes)
+            {
+                if (att.Name == "name")
+                {
+                    name = att.Value;
+                }
+                else if (att.Name == "title")
+                {
+                    title = att.Value;
+                }
+                else if (att.Name == "type")
+                {
+                    type = att.Value;
+                }
+                else if (att.Name == "id")
+                {
+                    id = att.Value;
+                }
+                else if (att.Name == "value")
+                {
+                    value = att.Value;
+                }
+            }
+
+            string text = ((IWebElement)EI.ElementObject).Text;
+
+
+            if (text.Count() > 15)
+            {
+                text = string.Empty;
+            }
+
+            List<string> list = new List<string>() { tagName, text, type, name, title, title, id, value };
+
+            foreach (string att in list)
+            {
+                if (!string.IsNullOrEmpty(att) && !bestElementName.Contains(att))
+                    bestElementName = bestElementName + " " + att;
+            }
+
+
+            return bestElementName;
         }
 
         private ElementInfo GetElementInfoWithIWebElementWithXpath(IWebElement el, string path)
