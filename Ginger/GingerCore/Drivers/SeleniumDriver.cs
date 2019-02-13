@@ -3662,8 +3662,6 @@ namespace GingerCore.Drivers
                         {
                             return foundElementsList;
                         }
-                        if (htmlNode.Name.StartsWith("#"))
-                            continue;
 
                         IWebElement el = Driver.FindElement(By.XPath(htmlNode.XPath));
                         if (el == null)
