@@ -1,7 +1,10 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
@@ -19,17 +22,17 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.DeltaWizard
+namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 {
     /// <summary>
     /// Interaction logic for PomDeltaSettingsPage.xaml
     /// </summary>
-    public partial class PomDeltaSettingsPage : Page
+    public partial class PomDeltaSettingsWizardPage : Page, IWizardPage
     {
         private PomDeltaWizard mWizard;
         private ePlatformType mAppPlatform;
 
-        public PomDeltaSettingsPage()
+        public PomDeltaSettingsWizardPage()
         {
             InitializeComponent();
         }
@@ -40,39 +43,48 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.DeltaWizard
             {
                 case EventType.Init:
                     mWizard = (PomDeltaWizard)WizardEventArgs.Wizard;
+                    if (mWizard.mPomLearnUtils.POM.TargetApplicationKey != null)
+                    {
+                        mAppPlatform = WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(mWizard.mPomLearnUtils.POM.TargetApplicationKey);
+                    }
 
-
-
-                    
-                    ClearAutoMapElementTypesSection();
-
+                    SetAutoMapElementTypes();
                     SetAutoMapElementTypesGridView();
+                    SetAutoMapElementLocatorssSection();                    
                     SetAutoMapElementLocatorsGridView();
                     break;
             }
         }
 
-
-
-        private void RemoveValidations()
-        {
-            xAgentControlUC.RemoveValidations(ucAgentControl.SelectedAgentProperty);
-        }
-
         private void SetAutoMapElementTypes()
         {
-            if (mWizard.AutoMapElementTypesList.Count == 0)
+            if (mWizard.mPomLearnUtils.AutoMapElementTypesList.Count == 0)
             {
                 switch (mAppPlatform)
                 {
                     case ePlatformType.Web:
                         foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in new WebPlatform().GetPlatformElementTypesData().ToList())
                         {
-                            mWizard.AutoMapElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
+                            mWizard.mPomLearnUtils.AutoMapElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
                         }
                         break;
                 }
             }
+            xAutoMapElementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapElementTypesList;
+        }
+
+        private void SetAutoMapElementLocatorssSection()
+        {
+            if (mWizard.mPomLearnUtils.AutoMapElementLocatorsList.Count == 0)
+            {
+                switch (mAppPlatform)
+                {
+                    case ePlatformType.Web:
+                        mWizard.mPomLearnUtils.AutoMapElementLocatorsList = new WebPlatform().GetLearningLocators();
+                        break;
+                }
+            }
+            xAutoMapElementLocatorsGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapElementLocatorsList;
         }
 
         private void SetAutoMapElementTypesGridView()
@@ -109,78 +121,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.DeltaWizard
 
         private void CheckUnCheckAllElements(object sender, RoutedEventArgs e)
         {
-            if (mWizard.AutoMapElementTypesList.Count > 0)
+            if (mWizard.mPomLearnUtils.AutoMapElementTypesList.Count > 0)
             {
-                bool valueToSet = !mWizard.AutoMapElementTypesList[0].Selected;
-                foreach (UIElementFilter elem in mWizard.AutoMapElementTypesList)
+                bool valueToSet = !mWizard.mPomLearnUtils.AutoMapElementTypesList[0].Selected;
+                foreach (UIElementFilter elem in mWizard.mPomLearnUtils.AutoMapElementTypesList)
                     elem.Selected = valueToSet;
             }
-        }
-
-        private void XAgentControlUC_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(ucAgentControl.AgentIsRunning))
-            {
-                if (xAgentControlUC.AgentIsRunning)
-                {
-                    SetAutoMapElementTypesSection();
-                    SetAutoMapElementLocatorssSection();
-                }
-                else
-                {
-                    ClearAutoMapElementTypesSection();
-                }
-                xAutoMapElementTypesExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
-                xAutoMapElementTypesExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
-                xAutoMapElementLocatorsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
-                xAutoMapElementLocatorsExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
-            }
-        }
-
-        private void ClearAutoMapElementTypesSection()
-        {
-            mWizard.AutoMapElementTypesList = new ObservableList<UIElementFilter>();
-            xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
-        }
-
-        private void SetAutoMapElementTypesSection()
-        {
-            xAgentControlUC.xAgentConfigsExpander.IsExpanded = false;
-
-            SetAutoMapElementTypes();
-            xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
-        }
-
-        private void SetAutoMapElementLocatorssSection()
-        {
-            if (mWizard.AutoMapElementLocatorsList.Count == 0)
-            {
-                mWizard.AutoMapElementLocatorsList = new WebPlatform().GetLearningLocators();
-            }
-            xAutoMapElementLocatorsGrid.DataSourceList = mWizard.AutoMapElementLocatorsList;
-        }
-
-        private void xAutomaticElementConfigurationRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            if (mWizard != null)
-            {
-                if ((bool)xManualElementConfigurationRadioButton.IsChecked)
-                {
-                    mWizard.ManualElementConfiguration = true;
-                    RemoveValidations();
-                    xAgentControlUC.Visibility = Visibility.Hidden;
-                    xAutoMapElementTypesExpander.Visibility = Visibility.Hidden;
-                    xAutoMapElementLocatorsExpander.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    mWizard.ManualElementConfiguration = false;
-                    AddValidations();
-                    xAgentControlUC.Visibility = Visibility.Visible;
-                    xAutoMapElementTypesExpander.Visibility = Visibility.Visible;
-                    xAutoMapElementLocatorsExpander.Visibility = Visibility.Visible;
-                }
-            }
-        }
+        }       
     }
 }

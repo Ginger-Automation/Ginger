@@ -39,7 +39,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public AddPOMWizard(RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
         {
-            mPomLearnUtils = new PomLearnUtils(new ApplicationPOMModel(), pomModelsFolder);
+            mPomLearnUtils = new PomLearnUtils(new ApplicationPOMModel(), pomModelsFolder: pomModelsFolder);
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/POMModels/POMWizardLib/LearnWizard/AddPOMIntro.md"));
 

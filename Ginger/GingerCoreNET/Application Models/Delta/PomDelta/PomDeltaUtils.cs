@@ -20,14 +20,14 @@ namespace GingerCoreNET.Application_Models
         public ObservableList<ElementInfo> POMLatestElements = new ObservableList<ElementInfo>();
         public bool IsLearning { get; set; }
 
-        Agent mAgent;
+        public Agent Agent = null;
         IWindowExplorer mIWindowExplorerDriver
         {
             get
             {
-                if (mAgent != null)
+                if (Agent != null)
                 {
-                    return ((IWindowExplorer)(mAgent.Driver));
+                    return ((IWindowExplorer)(Agent.Driver));
                 }
                 else
                 {
@@ -39,7 +39,7 @@ namespace GingerCoreNET.Application_Models
         public PomDeltaUtils(ApplicationPOMModel pom, Agent agent)
         {
             POM = pom;            
-            mAgent = agent;
+            Agent = agent;
 
             POMLatestElements.CollectionChanged += ElementsListCollectionChanged;
         }
@@ -48,7 +48,7 @@ namespace GingerCoreNET.Application_Models
         {
             IsLearning = true;
             mIWindowExplorerDriver.UnHighLightElements();
-            ((DriverBase)mAgent.Driver).mStopProcess = false;
+            ((DriverBase)Agent.Driver).mStopProcess = false;
             POMElementsCopy.Clear();
             DeltaViewElements.Clear();
 
@@ -61,7 +61,7 @@ namespace GingerCoreNET.Application_Models
 
         public void StopLearning()
         {            
-            ((DriverBase)mAgent.Driver).mStopProcess = true;
+            ((DriverBase)Agent.Driver).mStopProcess = true;
             IsLearning = false;
         }
 
@@ -82,23 +82,26 @@ namespace GingerCoreNET.Application_Models
 
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            ElementInfo latestElement = ((ObservableList<ElementInfo>)sender).Last();
-            try
-            {                
-                ElementInfo matchingOriginalElement = (ElementInfo)mIWindowExplorerDriver.GetMatchingElement(latestElement, POMElementsCopy);
-
-                if (matchingOriginalElement == null)//New element
-                {
-                    DeltaViewElements.Add(ConvertElementToDelta(latestElement, eDeltaStatus.Added, ApplicationPOMModel.eElementGroup.Mapped, true, "New element"));                    
-                }
-                else//Existing Element
-                {
-                    SetMatchingElementDeltaDetails(matchingOriginalElement, latestElement);
-                }
-            }
-            catch (Exception ex)
+            if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("POM Delta- failed to compare new learned element '{0}' with existing elements", latestElement.ElementName), ex);
+                ElementInfo latestElement = (ElementInfo)e.NewItems[0];
+                try
+                {
+                    ElementInfo matchingOriginalElement = (ElementInfo)mIWindowExplorerDriver.GetMatchingElement(latestElement, POMElementsCopy);
+
+                    if (matchingOriginalElement == null)//New element
+                    {
+                        DeltaViewElements.Add(ConvertElementToDelta(latestElement, eDeltaStatus.Added, ApplicationPOMModel.eElementGroup.Mapped, true, "New element"));
+                    }
+                    else//Existing Element
+                    {
+                        SetMatchingElementDeltaDetails(matchingOriginalElement, latestElement);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("POM Delta- failed to compare new learned element '{0}' with existing elements", latestElement.ElementName), ex);
+                }
             }
         }
 

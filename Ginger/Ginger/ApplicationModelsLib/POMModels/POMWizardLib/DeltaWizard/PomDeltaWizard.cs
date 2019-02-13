@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCoreNET.Application_Models;
@@ -12,14 +13,16 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
     public class PomDeltaWizard : WizardBase
     {
         public PomDeltaUtils mPomDeltaUtils = null;
-        public Agent mAgent = null;
+        public PomLearnUtils mPomLearnUtils = null;        
         public override string Title { get { return "POM Elements Update Wizard"; } }
 
         public PomDeltaWizard(ApplicationPOMModel pom, Agent agent)
-        {
-            mAgent = agent;
-            mPomDeltaUtils = new PomDeltaUtils(pom, agent);           
-            AddPage(Name: "Elements Compare", Title: "Elements Compare", SubTitle: "Comparison Status of Elements with Latest", Page: new PomDeltaElementComparePage());
+        {            
+            mPomDeltaUtils = new PomDeltaUtils(pom, agent);
+            mPomLearnUtils = new PomLearnUtils(pom, agent);
+
+            AddPage(Name: "Elements Update Settings", Title: "Elements Update Settings", SubTitle: "Elements Update Settings", Page: new PomDeltaSettingsWizardPage());
+            AddPage(Name: "Elements Compare", Title: "Elements Compare", SubTitle: "Elements Comparison with Latest Status", Page: new PomDeltaElementCompareWizardPage());
         }
 
         public override void Finish()

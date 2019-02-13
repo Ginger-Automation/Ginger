@@ -191,7 +191,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (mWizard.mPomLearnUtils.AutoMapElementLocatorsList.Count == 0)
             {
-                mWizard.mPomLearnUtils.AutoMapElementLocatorsList = new WebPlatform().GetLearningLocators();
+                switch (mAppPlatform)
+                {
+                    case ePlatformType.Web:
+                        mWizard.mPomLearnUtils.AutoMapElementLocatorsList = new WebPlatform().GetLearningLocators();
+                        break;
+                }
             }
             xAutoMapElementLocatorsGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapElementLocatorsList;
         }

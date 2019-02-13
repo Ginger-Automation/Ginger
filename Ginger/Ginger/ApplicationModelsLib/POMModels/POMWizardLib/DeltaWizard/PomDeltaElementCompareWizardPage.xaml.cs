@@ -16,12 +16,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
     /// <summary>
     /// Interaction logic for POMDeltaPage.xaml
     /// </summary>
-    public partial class PomDeltaElementComparePage : Page, IWizardPage
+    public partial class PomDeltaElementCompareWizardPage : Page, IWizardPage
     {
         PomDeltaWizard mWizard;
         PomDeltaViewPage mPomDeltaViewPage = null;       
 
-        public PomDeltaElementComparePage()
+        public PomDeltaElementCompareWizardPage()
         {
             InitializeComponent();
         }
@@ -32,7 +32,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             {
                 mWizard = (PomDeltaWizard)WizardEventArgs.Wizard;               
                 InitilizePomElementsMappingPage();
-                mPomDeltaViewPage.SetAgent(mWizard.mAgent);
+                mPomDeltaViewPage.SetAgent(mWizard.mPomDeltaUtils.Agent);
                 xReLearnButton.Visibility = Visibility.Visible;
                 LearnDelta();
             }

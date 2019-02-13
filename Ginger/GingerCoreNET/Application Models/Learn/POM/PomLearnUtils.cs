@@ -3,15 +3,14 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models
 {
@@ -53,9 +52,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         public Bitmap ScreenShot { get; set; }
        
 
-        public PomLearnUtils(ApplicationPOMModel pom, RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
+        public PomLearnUtils(ApplicationPOMModel pom, Agent agent=null, RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
         {
             POM = pom;
+            mAgent = agent;
             mPomModelsFolder = pomModelsFolder;
 
             mElementsList.CollectionChanged += ElementsListCollectionChanged;
@@ -88,7 +88,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public void StopLearning()
         {
-            if (mAgent != null && mAgent.Driver != null && mAgent.Driver.IsDriverBusy)
+            if (mAgent != null && mAgent.Driver != null)
             {
                 mAgent.Driver.mStopProcess = true;
             }
@@ -96,7 +96,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public void ClearStopLearning()
         {
-            if (mAgent != null && mAgent.Driver != null && mAgent.Driver.IsDriverBusy)
+            if (mAgent != null && mAgent.Driver != null)
             {
                 mAgent.Driver.mStopProcess = false;
             }
@@ -112,18 +112,19 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         public void LearnScreenShot()
         {
             IWindowExplorerDriver.UnHighLightElements();
-            ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
+            ScreenShot = ((IVisualTestingDriver)Agent.Driver).GetScreenShot();
         }
 
         public void Learn()
         {
+            ClearStopLearning();
             PrepareLearningConfigurations();
             LearnScreenShot();
             POM.PageURL = ((DriverBase)Agent.Driver).GetURL();
             POM.Name = IWindowExplorerDriver.GetActiveWindow().Title;
             POM.MappedUIElements.Clear();
             POM.UnMappedUIElements.Clear();
-
+            mElementsList.Clear();
             IWindowExplorerDriver.GetVisibleControls(null, mElementsList, true);
         }
 
@@ -131,18 +132,21 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         {
             try
             {
-                ElementInfo learnedElement = ((ObservableList<ElementInfo>)sender).Last();
-
-                SetLearnedElementDetails(learnedElement);
-
-                //add to relevent group
-                if (mSelectedElementTypesList.Contains(learnedElement.ElementTypeEnum))
+                if (e.Action == NotifyCollectionChangedAction.Add)
                 {
-                    POM.MappedUIElements.Add(learnedElement);
-                }
-                else
-                {
-                    POM.UnMappedUIElements.Add(learnedElement);
+                    ElementInfo learnedElement = (ElementInfo)e.NewItems[0];
+
+                    SetLearnedElementDetails(learnedElement);
+
+                    //add to relevent group
+                    if (mSelectedElementTypesList.Contains(learnedElement.ElementTypeEnum))
+                    {
+                        POM.MappedUIElements.Add(learnedElement);
+                    }
+                    else
+                    {
+                        POM.UnMappedUIElements.Add(learnedElement);
+                    }
                 }
             }
             catch (Exception ex)

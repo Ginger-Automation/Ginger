@@ -39,10 +39,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     /// </summary>
     public partial class POMObjectsMappingWizardPage : Page, IWizardPage
     {
-        public AddPOMWizard mWizard;
-                            
-        PomAllElementsPage mPomAllElementsPage = null;
-        
+        public AddPOMWizard mWizard;                            
+        PomAllElementsPage mPomAllElementsPage = null;        
 
         public POMObjectsMappingWizardPage()
         {
