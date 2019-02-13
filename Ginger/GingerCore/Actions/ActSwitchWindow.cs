@@ -86,10 +86,24 @@ namespace GingerCore.Actions
             {
                 string val = GetInputParamValue("WaitTime");
                 Int32 intVal = -1;
+
                 if (String.IsNullOrEmpty(val))
+                {
                     intVal = -1;
+                }
+
+                if (int.TryParse(val, out intVal))
+                {
+                    if(intVal < 0)
+                    {
+                        intVal = 30;
+                    }
+                }
                 else
-                    Int32.TryParse(val, out intVal);
+                {
+                    intVal = 30;
+                }
+
                 return intVal;
             }
             set
