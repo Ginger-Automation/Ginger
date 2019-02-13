@@ -3650,7 +3650,7 @@ namespace GingerCore.Drivers
             string documentContents = Driver.PageSource;
             HtmlDocument HAPDocument = new HtmlDocument();
             HAPDocument.LoadHtml(documentContents);
-            IEnumerable<HtmlNode> tocChildren = HAPDocument.DocumentNode.Descendants();
+            IEnumerable<HtmlNode> tocChildren = HAPDocument.DocumentNode.Descendants().Where(x=>!x.Name.StartsWith("#"));
 
             if (tocChildren.Count() != 0)
             {
@@ -4463,27 +4463,26 @@ namespace GingerCore.Drivers
 
             }
 
+
+         
+
             if (el != null)
             {
                 if (ElementInfo.IsElementTypeSupportingOptionalValues(ElementInfo.ElementTypeEnum))
                 {
-                    foreach (IWebElement val in el.FindElements(By.XPath("*")))
+
+                    foreach (HtmlNode childNode in ((HTMLElementInfo)ElementInfo).HTMLElementObject.ChildNodes)
                     {
-                        if (!string.IsNullOrEmpty(val.Text))
+                        if (!childNode.Name.StartsWith("#") && !string.IsNullOrEmpty(childNode.InnerText))
                         {
-                            string[] tempOpVals = val.Text.Split('\n');
-                            if (tempOpVals != null && tempOpVals.Length > 1)
+                            string[] tempOpVals = childNode.InnerText.Split('\n');
+                            foreach (string cuVal in tempOpVals)
                             {
-                                foreach (string cuVal in tempOpVals)
-                                {
-                                    ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
-                                }
+                                ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
                             }
-                            else
-                            {
-                                ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = val.Text, IsDefault = false });
-                            }
+
                         }
+
                     }
 
                     if (ElementInfo.OptionalValuesObjectsList.Count > 0)
