@@ -101,7 +101,7 @@ namespace GingerTest.APIModelLib
         public void ValidateLearnedItems()
         {
             //Act
-            ElementInfo EI1 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "Mexico INPUT.RADIO" && x.ElementTypeEnum == eElementType.RadioButton).FirstOrDefault();
+            ElementInfo EI1 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "Mexico INPUTRADIO" && x.ElementTypeEnum == eElementType.RadioButton).FirstOrDefault();
             ElementInfo EI2 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "id123 input" && x.ElementTypeEnum == eElementType.TextBox).FirstOrDefault();
 
             //Assert  
@@ -144,10 +144,13 @@ namespace GingerTest.APIModelLib
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"X", "631"), "POM.property 6 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Y", "226"), "POM.property 7 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Value", "set to "), "POM.property 8 check");
-            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Optional Values", ",Ahhhh...,Got It!,Too far,OMG,"), "POM.property 9 check");
+            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Optional Values", "Ahhhh...,Got It!,Too far,OMG"), "POM.property 9 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "id", "sel1"), "POM.property 9 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "name", "sel1"), "POM.property 10 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "onchange", "if ($('#sel1').val() == 'Got It!') $('#test9').addClass('TestPass');"), "POM.property 11 check");
+            Assert.IsTrue(ComboBoxEI.OptionalValuesObjectsList[0].ItemName == "Ahhhh...");
+            Assert.IsTrue(ComboBoxEI.OptionalValuesObjectsList[1].ItemName == "Got It!");
+            Assert.IsTrue(ComboBoxEI.OptionalValuesObjectsList.Count == 4);
         }
 
         private bool IsPropertyExist(ObservableList<ControlProperty> Properties, string PropName, string PropValue)

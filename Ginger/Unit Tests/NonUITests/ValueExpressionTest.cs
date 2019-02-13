@@ -102,6 +102,24 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, s);
         }
 
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SimpleStringWithSpace()
+        {
+            //Arrange            
+            string s = "  Simple string  ";
+
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = s;
+
+            //Act            
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, s);
+        }
+
         [TestMethod]  [Timeout(60000)]
         public void GetVarV1()
         {

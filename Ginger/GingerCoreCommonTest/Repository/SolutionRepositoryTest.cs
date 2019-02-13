@@ -513,15 +513,18 @@ namespace GingerCoreCommonTest.Repository
         [TestMethod]
         public void ValidateInvlidCharsinFilename()
         {
-            //Arrange
-            MyRepositoryItem MRI = new MyRepositoryItem("MRI with invalid char for file name ???");
+            // This behaviour is different on Windows and Linux - some chars are allowed on Linux for example '?' 
+
+            //Arrange            
+            string invalidPathChars = "?";
+            MyRepositoryItem MRI = new MyRepositoryItem("MRI with invalid char for file name " + invalidPathChars);
 
             //Act
             mSolutionRepository.AddRepositoryItem(MRI);
 
             //Assert            
             Assert.IsTrue(File.Exists(MRI.FilePath));
-            Assert.IsFalse(MRI.FilePath.Contains("?"));
+            Assert.IsFalse(MRI.FilePath.Contains(invalidPathChars));
         }
 
 
