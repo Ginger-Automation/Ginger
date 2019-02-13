@@ -470,8 +470,7 @@ namespace Ginger.Run
                         ExecutionLogfolder = GetLoggerDirectory(ExecutionLogfolder);
                         CleanDirectory(ExecutionLogfolder);
                         // }
-
-                        return;
+                        
                         break;
                     case Amdocs.Ginger.Common.eExecutedFrom.Run:
                         if(ContinueRun==false)
