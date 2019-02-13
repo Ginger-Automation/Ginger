@@ -48,7 +48,9 @@ namespace GingerCore.Actions.XML
             {
                 //TODO: How the user will know? add check box?
                 if (actReturnValue.Param.IndexOf("AllDescOf") == 0)
+                {
                     DeParams.Add(actReturnValue.Param.Trim().Substring(9).Trim());
+                }
             }
 
             while (xmlReader.Read())
@@ -67,7 +69,6 @@ namespace GingerCore.Actions.XML
                             subXmlReader = xmlReader.ReadSubtree();
                             subXmlReader.ReadToFollowing(p);
                             act.AddOrUpdateReturnParamActualWithPath("AllDescOf" + p, subXmlReader.ReadInnerXml(), "/" + string.Join("/", elementArrayList.ToArray().Take(xmlReader.Depth)));
-                            subXmlReader = null;
                         }
                     }
                 }

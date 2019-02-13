@@ -105,7 +105,7 @@ namespace GingerCore.Actions.XML
                 
                 if(string.IsNullOrEmpty(fileName))
                 {
-                    throw new Exception("Target file name can't be empty.");
+                    Reporter.ToLog(eLogLevel.WARN, "Target file name can't be null.");
                 }
                 System.IO.File.WriteAllText(fileName, txt);
 
@@ -127,7 +127,7 @@ namespace GingerCore.Actions.XML
                 
                 if(string.IsNullOrEmpty(fileName))
                 {
-                    throw new Exception("Template file name can't be empty.");
+                    Reporter.ToLog(eLogLevel.WARN, "Template file name can't be empty.");
                 }
                 string txt = System.IO.File.ReadAllText(fileName);
                 foreach (ActInputValue AIV in DynamicElements)
