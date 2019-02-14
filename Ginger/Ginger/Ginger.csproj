@@ -543,6 +543,7 @@
     </Compile>
     <Compile Include="ApplicationModelsLib\APIModels\NodeToDelete.cs" />
     <Compile Include="ApplicationModelsLib\ModelOptionalValue\ParameterValues.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\ButtonToDisableConverter.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMNameValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMTAValidationRule.cs" />

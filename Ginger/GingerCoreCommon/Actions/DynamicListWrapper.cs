@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -63,7 +63,11 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             string props = GetStringBetween(mListType, "{Properties=", "}");
             string[] arr = props.Split(',');
             foreach (string prop in arr)
-            {                
+            {  
+                if (String.IsNullOrEmpty(prop))
+                {
+                    continue;
+                }
                 string[] pab = prop.Split(':');
                 string name = pab[0];
                 string type = pab[1];
