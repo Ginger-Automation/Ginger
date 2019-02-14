@@ -108,6 +108,3 @@ Ginger is leveraging on a variety of great open source libraries, like: Selenium
 | Hard disk space | 2GB   |  6GB+  |
 | .NET | 4.6.1 | 4.7.1 |
 
-
-# Coming soon
-Ginger is free to use and the open source code is in process of moving to Git from our TFS server it will be completed before the end of 2018
