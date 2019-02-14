@@ -1531,7 +1531,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
 
         /// <summary>
-        /// This method is used to get the default columnList for exporting the parameters to datasource
+        /// This method is used to get the default columnList for exporting the parameters to datasource 
         /// </summary>
         /// <returns></returns>
         private List<string> GetDefaultColumnNameListForTableCreation()

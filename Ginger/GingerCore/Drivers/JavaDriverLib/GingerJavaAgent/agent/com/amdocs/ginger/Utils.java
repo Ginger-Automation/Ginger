@@ -18,7 +18,12 @@ package com.amdocs.ginger;
 
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
@@ -117,5 +122,21 @@ public class Utils {
 			
 		return date;
 	}
-	
+	//Split the string with slash with escape sequence
+	// e.g. inputString= US/Canada/California//Texas
+	// Output ={US, Canada, Canada/Texas}
+	public static List<String> SplitStringWithForwardSlash(String inputString)
+	{
+		List<String> nodes= new ArrayList<String>();
+		
+		final String regex = "(?:[^\\/\\n]|\\/\\/)+";		
+		final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		final Matcher matcher = pattern.matcher(inputString);
+				
+		while (matcher.find()) 
+		{	
+			nodes.add(matcher.group().replaceAll("//", "/"));			
+		}
+		return nodes;
+	}		
 }

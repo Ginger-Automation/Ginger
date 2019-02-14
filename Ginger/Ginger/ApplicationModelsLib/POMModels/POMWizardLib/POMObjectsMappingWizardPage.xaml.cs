@@ -25,6 +25,7 @@ using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -165,6 +166,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 }
                 EI.Locators = new ObservableList<ElementLocator>(orderedLocatorsList);
 
+                UpdateElementInfoName(EI);
+
                 if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
                 {
                     mWizard.POM.MappedUIElements.Add(EI);
@@ -179,7 +182,80 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 Reporter.ToLog(eLogLevel.ERROR, "POM: Learned Element Info from type was failed to be added to Page Elements", ex);
             }
         }
-        
+
+        /// <summary>
+        /// This method is used to update the element name by filtering the specia characters and checking the duplicate names
+        /// </summary>
+        /// <param name="curElement"></param>
+        private void UpdateElementInfoName(ElementInfo curElement)
+        {
+            try
+            {
+                if (curElement != null)
+                {
+                    //remove invalid chars
+                    string name = curElement.ElementName.Trim().Replace(".", "").Replace("?", "").Replace("\n", "").Replace("\r", "").Replace("#", "").Replace("!", " ").Replace(",", " ").Replace("   ", "");
+                    foreach (char chr in Path.GetInvalidFileNameChars())
+                    {
+                        name = name.Replace(chr.ToString(), string.Empty);
+                    }
+
+                    //set max name length to 60
+                    if (name.Length > 60)
+                    {
+                        name = name.Substring(0, 60);
+                    }
+
+                    //make sure name is unique                    
+                    name = GetUniqueName(mWizard.POM.MappedUIElements, name);
+                    name = GetUniqueName(mWizard.POM.UnMappedUIElements, name);
+                    curElement.ElementName = name;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Updating POM Element Name", ex);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to get the uniquename for the element
+        /// </summary>
+        /// <param name="elements"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private string GetUniqueName(ObservableList<ElementInfo> elements, string name)
+        {
+            string uname = name;
+            try
+            {
+                if (elements.Where(p => p.ElementName == name).Count() > 0)
+                {
+                    bool isFound = false;
+                    int count = 2;
+                    while (!isFound)
+                    {
+                        string postfix = string.Format("{0}_{1}", name, count);
+                        if (elements.Where(p => p.ElementName == postfix).Count() > 0)
+                        {
+                            count++;
+                        }
+                        else
+                        {
+                            uname = postfix;
+                            isFound = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Updating POM Element Name", ex);
+            }
+            return uname;
+        }
+
         private void InitilizePomElementsMappingPage()
         {
             if (mPomAllElementsPage == null)
