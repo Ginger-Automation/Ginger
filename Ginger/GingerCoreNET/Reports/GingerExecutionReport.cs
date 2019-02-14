@@ -1073,7 +1073,7 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 BusinessFlowReport.ExecutionLoggerIsEnabled = true;
                 BusinessFlowReport.AllIterationElements = currentTemplate.ShowAllIterationsElements;
-                if (string.IsNullOrEmpty(HTMLReportMainFolder))
+                if (!string.IsNullOrEmpty(HTMLReportMainFolder))
                 {
                     HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(HTMLReportMainFolder.Replace("{name_to_replace}", ExtensionMethods.folderNameNormalazing(BusinessFlowReport.Name))
                                   .Replace("{date_to_replace}", DateTime.Now.ToString("MMddyyyy_HHmmss"))
