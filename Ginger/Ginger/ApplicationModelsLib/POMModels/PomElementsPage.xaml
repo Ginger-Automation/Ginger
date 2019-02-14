@@ -33,9 +33,7 @@
             </DataTemplate>
 
             <DataTemplate x:Key="xLocateValueVETemplate">
-                <Button x:Name="xLocateValueVEButton" Click="XLocateValueVEButton_Click" ToolTip="Locate Value Expression" Style="{StaticResource @InputImageGridCellButtonStyle}">
-                    <UserControls:ImageMakerControl ImageType="Edit" SetAsFontImageWithSize="16" Width="16" Height="16" />
-                </Button>
+                <Button x:Name="xLocateValueVEButton" Click="XLocateValueVEButton_Click" Content="..." ToolTip="Locate Value Expression" Style="{StaticResource DataGridCellButtonStyle}" ></Button>
             </DataTemplate>
 
             <DataTemplate  x:Key="xTestStatusIconTemplate">

@@ -3112,11 +3112,10 @@ namespace GingerCore.Drivers
             {
                 if(!locator.IsAutoLearned)
                 {
+                    ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
                     ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
-                    string expressionLocateValue = locator.LocateValue;
-                    locator.LocateValue = VE.Calculate(locator.LocateValue);
-                    elem = LocateElementByLocator(locator, true);
-                    locator.LocateValue = expressionLocateValue;
+                    evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
+                    elem = LocateElementByLocator(evaluatedLocator, true);
                 }
                 else
                     elem = LocateElementByLocator(locator, true);
