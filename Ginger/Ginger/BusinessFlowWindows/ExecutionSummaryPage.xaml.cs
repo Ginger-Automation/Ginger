@@ -195,7 +195,7 @@ namespace Ginger.BusinessFlowWindows
             bfs.Add(mBusinessFlow);           
             if(!ExportResultsToALMConfigPage.Instance.IsProcessing)
             {
-                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false,  WorkSpace.UserProfile.Solution.Variables));
+                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
                 ExportResultsToALMConfigPage.Instance.ShowAsWindow();
             }
             else
