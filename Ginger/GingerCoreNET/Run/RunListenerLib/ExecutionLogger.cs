@@ -470,8 +470,7 @@ namespace Ginger.Run
                         ExecutionLogfolder = GetLoggerDirectory(ExecutionLogfolder);
                         CleanDirectory(ExecutionLogfolder);
                         // }
-
-                        return;
+                        
                         break;
                     case Amdocs.Ginger.Common.eExecutedFrom.Run:
                         if(ContinueRun==false)
@@ -506,7 +505,7 @@ namespace Ginger.Run
                 {
                     if (mVE == null)
                     {
-                        mVE = new ValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
+                        mVE = new ValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
                     }
                     mVE.Value = businessFlow.RunDescription;
                     BFR.RunDescription = mVE.ValueCalculated;
@@ -620,7 +619,7 @@ namespace Ginger.Run
                 {
                     if (mVE == null)
                     {
-                        mVE = new ValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
+                        mVE = new ValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
 
                     }
                     mVE.Value = activity.RunDescription;
@@ -733,7 +732,7 @@ namespace Ginger.Run
                         {
                             if (mVE == null)
                             {
-                                mVE =new ValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false, WorkSpace.Instance.Solution.Variables);
+                                mVE =new ValueExpression(ExecutionEnvironment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
                             }
                             mVE.Value = action.RunDescription;
                             AR.RunDescription = mVE.ValueCalculated;
