@@ -289,6 +289,7 @@ namespace GingerCore.ALM.QCRestAPI
                             //not in group- need to add it
                             busFlow.AddActivity(stepActivity);
                             tcActivsGroup.AddActivityToGroup(stepActivity);
+                            busFlow.CurrentActivity = stepActivity;
                         }
 
                         //pull TC-Step parameters and add them to the Activity level
