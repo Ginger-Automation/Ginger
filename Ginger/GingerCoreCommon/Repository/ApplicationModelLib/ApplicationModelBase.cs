@@ -106,7 +106,8 @@ namespace Amdocs.Ginger.Repository
             {
                 RepositoryItemKey previousKey = mTargetApplicationKey;
                 mTargetApplicationKey = value;
-                if ((previousKey == null && value != null) || previousKey.Guid != value.Guid || previousKey.ItemName != value.ItemName)//workaround to make show as modified only when really needed
+                if ((previousKey == null && value != null)
+                    || ((previousKey != null && value != null) && (previousKey.Guid != value.Guid || previousKey.ItemName != value.ItemName)))//workaround to make show as modified only when really needed
                 {
                     OnPropertyChanged(nameof(this.TargetApplicationKey));
                 }
