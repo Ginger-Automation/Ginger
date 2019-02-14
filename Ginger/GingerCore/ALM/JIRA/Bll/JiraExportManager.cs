@@ -36,8 +36,8 @@ namespace GingerCore.ALM.JIRA.Bll
             var exportedDefects = jiraRepObj.ExportJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, defectsToExport);
             for (var a = 0; a < exportedDefects.Count; a++)
             {
-                if(defectsForOpening.Count>a)
-                defectsOpeningResults.Add(defectsForOpening.ElementAt(a).Key, exportedDefects[a].DataResult.key);
+                if (defectsForOpening.Count > a)
+                    defectsOpeningResults.Add(defectsForOpening.ElementAt(a).Key, exportedDefects[a].DataResult.key);
             }
             return defectsOpeningResults;
         }
@@ -59,7 +59,7 @@ namespace GingerCore.ALM.JIRA.Bll
 
         private void CreateDefectFields(List<ExternalItemFieldBase> defectsFields, JiraIssueExport exportData)
         {
-            foreach (var item in defectsFields.Where(a=>a.Mandatory||a.ToUpdate))
+            foreach (var item in defectsFields.Where(a => a.Mandatory || a.ToUpdate))
             {
                 var issueTemplate = jiraRepObj.GetFieldFromTemplateByName(ALM_Common.DataContracts.ResourceType.DEFECT, ALMCore.AlmConfig.ALMProjectKey, item.Name);
                 if (issueTemplate == null || exportData.ExportFields.ContainsKey(issueTemplate.key))
@@ -78,11 +78,6 @@ namespace GingerCore.ALM.JIRA.Bll
             var bftestCases = businessFlow.ActivitiesGroups.ToList();
             foreach (var tc in bftestCases)
             {
-                if(!businessFlow.IsAlmExported)
-                {
-                    tc.ExternalID = null;
-                    tc.ExternalID2 = null;
-                }
                 this.ExportActivitesGrToJira(tc, testCaseFields, ref responseStr);
             }
             List<IJiraExportData> tcArray = CreateExportArrayFromActivites(bftestCases);
@@ -128,7 +123,8 @@ namespace GingerCore.ALM.JIRA.Bll
                 foreach (var actGroup in bizFlow.ActivitiesGroups)
                 {
                     var testExecutionData = CreateTestRunData(actGroup);
-                    if (!string.IsNullOrEmpty(testExecutionData.TestCaseRunId))
+                    var relevantTcRun = testExecutionData.FirstOrDefault(a => a.TestExecutionId == bizFlow.AlmData);
+                    if (!string.IsNullOrEmpty(relevantTcRun.TestCaseRunId))
                     {
                         List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == actGroup.Name)).Select(a => a).ToList();
                         JiraRunStatus runs = new JiraRunStatus();
@@ -141,7 +137,7 @@ namespace GingerCore.ALM.JIRA.Bll
                             string comment = CreateCommentForRun(act.Acts.ToList());
                             stepColl.Add(new JiraRunStepStautus() { comment = comment, status = jiraStatus });
                         }
-                        resultFlag = jiraRepObj.ExecuteRunStatusBySteps(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, runs, testExecutionData.TestCaseRunId);
+                        resultFlag = jiraRepObj.ExecuteRunStatusBySteps(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, runs, relevantTcRun.TestCaseRunId);
                     }
                 }
             }
@@ -215,54 +211,70 @@ namespace GingerCore.ALM.JIRA.Bll
             var testCaseTemplate = jiraRepObj.GetFieldFromTemplateByName(ALM_Common.DataContracts.ResourceType.TEST_CASE_EXECUTION_RECORDS, ALMCore.AlmConfig.ALMProjectKey, "Test Cases");
             if (testCaseTemplate != null && tcArray.Count > 0)
                 jiraIssue.ExportFields.Add(testCaseTemplate.key, tcArray);
-            var testExecutionData = CreateTestRunData(businessFlow.ActivitiesGroups.FirstOrDefault());
-            jiraIssue.key = testExecutionData.TestExecutionId;
+            jiraIssue.key = businessFlow.AlmData;
             exportData.Add(jiraIssue);
             var exportExecutionResponse = jiraRepObj.ExportJiraIssues(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, exportData);
-            SetRunIdFromTestExecution(exportExecutionResponse, testCaseTemplate, businessFlow, testExecutionData.TestExecutionId);
+            SetBusinessFlowAlmData(exportExecutionResponse, businessFlow);
+            SetDataFromTestExecution(exportExecutionResponse, testCaseTemplate, businessFlow, businessFlow.AlmData);
             return result;
         }
 
-        private TestRunData CreateTestRunData(ActivitiesGroup activitiesGroup)
+        private void SetBusinessFlowAlmData(List<AlmResponseWithData<JiraIssue>> exportExecutionResponse, BusinessFlow businessFlow)
         {
-            TestRunData response = new TestRunData();
+            if (exportExecutionResponse.Count > 0 && exportExecutionResponse.First().AuthenticationResponseObj.ErrorCode == 0)
+            {
+                var testExecution = exportExecutionResponse.First();
+                if (testExecution.DataResult != null)
+                {
+                    businessFlow.AlmData = testExecution.DataResult.key;
+                }
+            }
+        }
+
+        private List<TestRunData> CreateTestRunData(ActivitiesGroup activitiesGroup)
+        {
+            List<TestRunData> response = new List<TestRunData>();
             if (!string.IsNullOrEmpty(activitiesGroup.ExternalID2))
             {
-                var resultArr = activitiesGroup.ExternalID2.Split(new string[] { "***" }, StringSplitOptions.RemoveEmptyEntries);
-                if (resultArr.Length == 2)
+                var tcRuns = activitiesGroup.ExternalID2.Split(new string[] { "||" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                foreach (var run in tcRuns)
                 {
-                    response.TestExecutionId = resultArr[0];
-                    response.TestCaseRunId = resultArr[1];
-
+                    var resultArr = run.Split(new string[] { "***" }, StringSplitOptions.RemoveEmptyEntries);
+                    if (resultArr.Length == 2)
+                    {
+                        response.Add(new TestRunData() { TestExecutionId = resultArr[0], TestCaseRunId = resultArr[1] });
+                    }
                 }
             }
             return response;
         }
 
-        private void SetRunIdFromTestExecution(List<AlmResponseWithData<JiraIssue>> exportExecutionResponse, FieldSchema testCaseTemplate, BusinessFlow businessFlow, string executionExisitingKey)
+        private void SetDataFromTestExecution(List<AlmResponseWithData<JiraIssue>> exportExecutionResponse, FieldSchema testCaseTemplate, BusinessFlow businessFlow, string testExecutionKey)
         {
-            if (exportExecutionResponse.Count > 0 && exportExecutionResponse.First().AuthenticationResponseObj.ErrorCode == 0)
+
+            var thisTestExecution = jiraRepObj.GetJiraIssueById(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMProjectKey, testExecutionKey, ALM_Common.DataContracts.ResourceType.TEST_CASE_EXECUTION_RECORDS);
+            if (thisTestExecution != null && thisTestExecution.fields != null)
             {
-                var testExecution = exportExecutionResponse.First();
-                string tExeckey = string.Empty;
-                if (testExecution.DataResult != null)
-                    tExeckey = testExecution.DataResult.key;
-                else
-                    tExeckey = executionExisitingKey;
-                var thisTestExecution = jiraRepObj.GetJiraIssueById(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMProjectKey, tExeckey, ALM_Common.DataContracts.ResourceType.TEST_CASE_EXECUTION_RECORDS);
-                if (thisTestExecution != null && thisTestExecution.fields != null)
+                dynamic dc = null;
+                thisTestExecution.fields.TryGetValue(testCaseTemplate.key, out dc);
+                if (dc != null)
                 {
-                    dynamic dc = null;
-                    thisTestExecution.fields.TryGetValue(testCaseTemplate.key, out dc);
-                    if (dc != null)
+                    foreach (var tc in dc)
                     {
-                        foreach (var tc in dc)
+                        businessFlow.ActivitiesGroups.Where(a => a.ExternalID == tc.b.Value).ToList().ForEach(b =>
                         {
-                            businessFlow.ActivitiesGroups.Where(a => a.ExternalID == tc.b.Value).ToList().ForEach(b => { b.ExternalID2 = (tExeckey + "***" + tc.c.Value); });
-                        }
+                            string patern = testExecutionKey + "***" + tc.c.Value;
+                            List<string> tcRuns = new List<string>();
+                            if (!string.IsNullOrEmpty(b.ExternalID2))
+                                tcRuns = b.ExternalID2.Split(new string[] { "||" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                            if (!tcRuns.Contains(patern))
+                                tcRuns.Add(patern);
+                            b.ExternalID2 = string.Join("||", tcRuns);
+                        });
                     }
                 }
             }
+
         }
 
         private List<IJiraExportData> CreateExportArrayFromActivites(List<ActivitiesGroup> bftestCases)
@@ -292,7 +304,6 @@ namespace GingerCore.ALM.JIRA.Bll
             jiraIssue.ExportFields.Add("description", new List<IJiraExportData>() { new JiraExportData() { value = businessFlow.Description } });
             jiraIssue.ExportFields.Add("issuetype", new List<IJiraExportData>() { new JiraExportData() { value = "Test Set" } });
             jiraIssue.ExportFields.Add("reporter", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.AlmConfig.ALMUserName } });
-            jiraIssue.ExportFields.Add("labels", new List<IJiraExportData>() { new JiraExportData() { value = "Ginger" } });
 
             foreach (var item in testSetFields)
             {

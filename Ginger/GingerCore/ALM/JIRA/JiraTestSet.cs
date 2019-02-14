@@ -45,7 +45,6 @@ namespace GingerCore.ALM.JIRA
         public string Key { get; set; }
         public string Description { get; set; }
         public List<JiraTest> Tests { get; set; }
-        public string Labels { get; set; }
 
     }
 }

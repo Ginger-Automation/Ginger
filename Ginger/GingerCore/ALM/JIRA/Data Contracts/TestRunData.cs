@@ -10,5 +10,7 @@ namespace GingerCore.ALM.JIRA.Data_Contracts
     {
         public string TestExecutionId { get; set; }
         public string TestCaseRunId { get; set; }
+        public string TestSetId { get; set; }
+
     }
 }
