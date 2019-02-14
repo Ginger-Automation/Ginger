@@ -62,6 +62,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         Page ITreeViewItem.EditPage()
         {
+            mApplicationPOM.StartDirtyTracking();
             if (mPOMEditPage == null)
             {
                 mPOMEditPage = new POMEditPage(mApplicationPOM);

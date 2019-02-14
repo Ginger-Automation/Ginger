@@ -59,11 +59,12 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         public Page EditPage()
         {
+            mApiModel.StartDirtyTracking();
             if(mAPIModelPage == null)
                 mAPIModelPage = new APIModelPage(mApiModel);            
             else
                 mAPIModelPage.BindUiControls();
-
+            
             return mAPIModelPage;
         }
 

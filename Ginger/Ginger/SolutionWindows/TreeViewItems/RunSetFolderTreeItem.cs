@@ -63,9 +63,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         public override ITreeViewItem GetTreeItem(object item)
-        {
+        {           
             if (item is RunSetConfig)
             {
+                ((RunSetConfig)item).StartDirtyTracking();
                 return new RunSetTreeItem((RunSetConfig)item);
             }
             else if (item is RepositoryFolderBase)

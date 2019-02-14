@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using GingerCoreNET.SolutionRepositoryLib;
 using GingerWPF.TreeViewItemsLib;
@@ -24,6 +25,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -116,13 +118,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (xSearchTextBox.Text.Length > 0)
             {
                 xSearchNullText.Visibility= Visibility.Collapsed;
-                //xSearchClearBtn.Visibility = Visibility.Visible;
                 xSearchBtn.Visibility = Visibility.Visible;
             }
             else
             {
                 xSearchNullText.Visibility = Visibility.Visible;
-                //xSearchClearBtn.Visibility = Visibility.Collapsed;
                 xSearchBtn.Visibility = Visibility.Visible;
                 List<TreeViewItem> pathNodes = new List<TreeViewItem>();
                 if (xTreeViewTree.MlastSelectedTVI!=null)
@@ -132,14 +132,6 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 CollapseUnselectedTreeNodes(xTreeViewTree.TreeItemsCollection, pathNodes);
                 return;
             }
-
-            //string txt = xSearchTextBox.Text;
-            //Task thisTask = null;
-            //thisTask = _draw.RunAsync(async (token) =>
-            //{
-                //xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, txt);
-            //}, CancellationToken.None);
-            //await thisTask;
         }
         
         private static void CollapseUnselectedTreeNodes(ItemCollection itemCollection,List<TreeViewItem> pathNodes)
@@ -204,27 +196,30 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         }
       
         private async void xSearchBtn_Click(object sender, RoutedEventArgs e)
-        {
-            xSearchClearBtn.Visibility = Visibility.Visible;
-            xSearchBtn.Visibility = Visibility.Collapsed;
-            await Search();
+        {            
+            if (!string.IsNullOrEmpty(xSearchTextBox.Text))
+            {
+                Reporter.ToStatus(eStatusMsgKey.Searching, null, xSearchTextBox.Text);
+                Mouse.OverrideCursor = Cursors.Wait;
+                xSearchClearBtn.Visibility = Visibility.Visible;
+                xSearchBtn.Visibility = Visibility.Collapsed;
+                await Search();
+                Mouse.OverrideCursor = null;
+                Reporter.HideStatusMessage();
+            }           
         }
+
 
         private async Task Search()
         {
-            string txt = xSearchTextBox.Text;
-
+            string txt = xSearchTextBox.Text;            
             await Task.Run(() =>
-            {
-                //await Dispatcher.BeginInvoke(
-                // System.Windows.Threading.DispatcherPriority.Normal,
-                // new Action(
-                //  delegate ()
-                //  {
-                        xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, txt);
-                // }
-                //));
-             });
+            {               
+                Dispatcher.Invoke(async () =>
+                {
+                   await xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, txt);
+                });                
+            });
         }
     }
 }

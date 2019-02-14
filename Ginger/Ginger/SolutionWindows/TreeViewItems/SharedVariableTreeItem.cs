@@ -73,6 +73,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mVariableEditPage == null)
             {
+                mVariableBase.StartDirtyTracking();
                 mVariableEditPage = new VariableEditPage(mVariableBase);
             }
             return mVariableEditPage;

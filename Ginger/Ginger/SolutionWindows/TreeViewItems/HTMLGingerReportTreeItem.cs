@@ -69,8 +69,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         Page ITreeViewItem.EditPage()
-        {   
+        {
             //TODO: to load page only once            
+            HTMLReportConfiguration.StartDirtyTracking();
             mHTMLReportTemplatePage = new HTMLReportTemplatePage(HTMLReportConfiguration);
             return mHTMLReportTemplatePage;
         }

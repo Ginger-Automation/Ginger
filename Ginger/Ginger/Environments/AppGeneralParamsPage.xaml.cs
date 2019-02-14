@@ -222,6 +222,7 @@ namespace Ginger.Environments
                     ObservableList<ProjEnvironment> envs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
                     foreach (ProjEnvironment env in envs)
                     {
+                        env.StartDirtyTracking();
                         EnvApplication matchingApp = env.Applications.Where(x => x.Name == AppOwner.Name).FirstOrDefault();
                         if (matchingApp != null && matchingApp != AppOwner)
                         {
