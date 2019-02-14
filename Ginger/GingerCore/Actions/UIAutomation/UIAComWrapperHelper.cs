@@ -481,11 +481,7 @@ namespace GingerCore.Drivers
 
                     foreach (AutomationElement window in AppWindows)
                     {
-                        if (CheckUserSpecificProcess(window) == false)
-                        {
-                            continue;
-                        }
-                        if (!IsWindowValid(window))
+                        if (!IsWindowValid(window) && CheckUserSpecificProcess(window) == false)
                         {
                             continue;
                         }
