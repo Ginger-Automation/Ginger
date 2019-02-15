@@ -59,9 +59,14 @@ namespace GingerCore.Actions.XML
                 {
                     xmlElement = xmlReader.Name;
                     if (elementArrayList.Count <= xmlReader.Depth)
+                    {
                         elementArrayList.Add(xmlElement);
+                    }
                     else
+                    {
                         elementArrayList[xmlReader.Depth] = xmlElement;
+                    }
+
                     foreach (var p in DeParams)
                     {
                         if (p == xmlReader.Name)
