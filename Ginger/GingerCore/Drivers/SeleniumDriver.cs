@@ -3691,7 +3691,7 @@ namespace GingerCore.Drivers
                             foundElemntInfo.Path = path;
                             foundElemntInfo.XPath = htmlNode.XPath;
                             foundElemntInfo.HTMLElementObject = htmlNode;
-                            LearnPOMElementInfoDetails(foundElemntInfo);
+                            LearnElementInfoDetails(foundElemntInfo);
                         }
                         else
                         {
@@ -3847,9 +3847,9 @@ namespace GingerCore.Drivers
             return elementType;
         }
 
-        private ElementInfo LearnPOMElementInfoDetails(HTMLElementInfo EI)
+        private ElementInfo LearnElementInfoDetails(HTMLElementInfo EI)
         {
-            EI.ElementName = GetBestElementName(EI);
+            EI.ElementName = GetElementName(EI);
             EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
             EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
             EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);// improve code inside
@@ -3882,7 +3882,7 @@ namespace GingerCore.Drivers
             if (setFullElementInfoDetails)
             {
                 EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
-                EI.ElementName = GetBestElementName(EI);
+                EI.ElementName = GetElementName(EI);
                 EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI); 
                 ((IWindowExplorer)this).UpdateElementInfoFields(EI); 
                 EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI); 
@@ -3891,7 +3891,7 @@ namespace GingerCore.Drivers
             return EI;
         }
 
-        string GetBestElementName(HTMLElementInfo EI)
+        string GetElementName(HTMLElementInfo EI)
         {
 
             string bestElementName = string.Empty;
@@ -4451,20 +4451,8 @@ namespace GingerCore.Drivers
             list.Add(new ControlProperty() { Name = "Y", Value = ((IWebElement)ElementInfo.ElementObject).Location.Y.ToString() });
             list.Add(new ControlProperty() { Name = "Value", Value = ElementInfo.Value });
 
-            //Learn more properties
-            // IMROVE THIOS CODE BY TAKLIGN  IT FROM THE NODE
 
-            foreach (HtmlAttribute attribute in ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes)
-            {
-                
-                    list.Add(new ControlProperty() { Name = attribute.Name, Value = attribute.Value });
-
-            }
-
-
-         
-
-            if (el != null)
+            if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
             {
                 if (ElementInfo.IsElementTypeSupportingOptionalValues(ElementInfo.ElementTypeEnum))
                 {
@@ -4490,22 +4478,70 @@ namespace GingerCore.Drivers
                     list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
                 }
 
-            }
-
-            if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
-            {
-                HtmlAttributeCollection htmlAttributes = ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes;
-
-                foreach (HtmlAttribute htmlAttribute in htmlAttributes)
+                if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
                 {
-                    ControlProperty existControlProperty = list.Where(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value).FirstOrDefault();
-                    if (existControlProperty == null)
+                    HtmlAttributeCollection htmlAttributes = ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes;
+
+                    foreach (HtmlAttribute htmlAttribute in htmlAttributes)
                     {
-                        ControlProperty controlProperty = new ControlProperty() { Name = htmlAttribute.Name, Value = htmlAttribute.Value };
-                        list.Add(controlProperty);
+                        ControlProperty existControlProperty = list.Where(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value).FirstOrDefault();
+                        if (existControlProperty == null)
+                        {
+                            ControlProperty controlProperty = new ControlProperty() { Name = htmlAttribute.Name, Value = htmlAttribute.Value };
+                            list.Add(controlProperty);
+                        }
                     }
                 }
+
+
             }
+            else if (el != null)
+            {
+                if (ElementInfo.IsElementTypeSupportingOptionalValues(ElementInfo.ElementTypeEnum))
+                {
+                    foreach (IWebElement val in el.FindElements(By.XPath("*")))
+                    {
+                        if (!string.IsNullOrEmpty(val.Text))
+                        {
+                            string[] tempOpVals = val.Text.Split('\n');
+                            if (tempOpVals != null && tempOpVals.Length > 1)
+                            {
+                                foreach (string cuVal in tempOpVals)
+                                {
+                                    ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
+                                }
+                            }
+                            else
+                            {
+                                ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = val.Text, IsDefault = false });
+                            }
+                        }
+                    }
+
+                    if (ElementInfo.OptionalValuesObjectsList.Count > 0)
+                    {
+                        ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
+                    }
+                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
+                }
+
+                IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
+                Dictionary<string, object> attributes = javascriptDriver.ExecuteScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;", el) as Dictionary<string, object>;
+                if (attributes != null)
+                {
+                    foreach (KeyValuePair<string, object> kvp in attributes)
+                    {
+                        if (kvp.Key != "style" && (kvp.Value.ToString() != "border: 3px dashed red;" || kvp.Value.ToString() != "outline: 3px dashed red;"))
+                        {
+                            string PName = kvp.Key;
+                            string PValue = kvp.Value.ToString();
+                            list.Add(new ControlProperty() { Name = PName, Value = PValue });
+                        }
+                    }
+                }
+
+            }
+
             return list;
         }
 
