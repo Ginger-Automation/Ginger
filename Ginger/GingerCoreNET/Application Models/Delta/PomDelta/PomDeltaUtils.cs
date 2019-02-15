@@ -164,21 +164,41 @@ namespace GingerCoreNET.Application_Models
             latestElement.ElementName = existingElement.ElementName;
             latestElement.Description = existingElement.Description;
             latestElement.ElementGroup = existingElement.ElementGroup;
+            if (existingElement.OptionalValuesObjectsList.Count > 0 && latestElement.OptionalValuesObjectsList.Count == 0)
+            {
+                latestElement.OptionalValuesObjectsList = existingElement.OptionalValuesObjectsList;
+            }
             matchedDeltaElement.ElementInfo = latestElement;
-            ////////------------------ Locators
+            ////////------------------ Delta Locators
             foreach (ElementLocator latestLocator in latestElement.Locators)
             {
                 latestLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
                 DeltaElementLocator deltaLocator = new DeltaElementLocator();
-
-                ElementLocator matchingExistingLocator = existingElement.Locators.Where(x => x.IsAutoLearned == true && x.LocateBy == latestLocator.LocateBy).FirstOrDefault();
+                latestLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
+                deltaLocator.ElementLocator = latestLocator;
+                ElementLocator matchingExistingLocator = existingElement.Locators.Where(x => x.LocateBy == latestLocator.LocateBy).FirstOrDefault();
                 if (matchingExistingLocator != null)
                 {
-                    matchingExistingLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
                     latestLocator.Guid = matchingExistingLocator.Guid;
-                    deltaLocator.ElementLocator = latestLocator;
+                    if (matchingExistingLocator.LocateBy == eLocateBy.ByXPath)
+                    {
+                        //fiting previous learned Xpath to latest structure to avoid false change indication
+                        if (matchingExistingLocator.LocateValue.StartsWith("/") == false)
+                        {
+                            string[] xpathVals = matchingExistingLocator.LocateValue.Split(new char[] { '/' });
+                            for (int indx = 0; indx < xpathVals.Count(); indx++)
+                            {
+                                if (indx == 0)
+                                {
+                                    xpathVals[0] = xpathVals[0] + "[1]";
+                                }
+                                matchingExistingLocator.LocateValue = "/" + xpathVals[indx];
+                            }
+                        }
+                    }
+                    //compare value
                     if ((string.IsNullOrWhiteSpace(matchingExistingLocator.LocateValue) == true && string.IsNullOrWhiteSpace(latestLocator.LocateValue) == true)
-                    || matchingExistingLocator.LocateValue.Equals(latestLocator.LocateValue, StringComparison.OrdinalIgnoreCase))//Unchanged
+                        || matchingExistingLocator.LocateValue.Equals(latestLocator.LocateValue, StringComparison.OrdinalIgnoreCase))//Unchanged
                     {
                         deltaLocator.DeltaStatus = eDeltaStatus.Unchanged;
                     }
@@ -189,22 +209,49 @@ namespace GingerCoreNET.Application_Models
                     }
                 }
                 else//new locator
-                {                                       
-                    deltaLocator.ElementLocator = latestLocator;
+                {
                     deltaLocator.DeltaStatus = eDeltaStatus.Added;
                 }
                 matchedDeltaElement.Locators.Add(deltaLocator);
             }
-            //deleted Locators
-            List<ElementLocator> deletedLocators = existingElement.Locators.Where(x => x.IsAutoLearned == true && matchedDeltaElement.Locators.Where(y => y.ElementLocator.Guid == x.Guid).FirstOrDefault() == null).ToList();
-            foreach (ElementLocator deletedlocator in deletedLocators)
+            //not Learned Locators
+            List<ElementLocator> notLearnedLocators = existingElement.Locators.Where(x => latestElement.Locators.Where(y => y.Guid == x.Guid).FirstOrDefault() == null).ToList();
+            foreach (ElementLocator notLearedLocator in notLearnedLocators)
             {
-                deletedlocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
-                DeltaElementLocator deltaLocator = new DeltaElementLocator();                
-                deltaLocator.ElementLocator = deletedlocator;
-                deltaLocator.DeltaStatus = eDeltaStatus.Deleted;
-                deltaLocator.DeltaExtraDetails = "Locator not exist on latest";
+                DeltaElementLocator deltaLocator = new DeltaElementLocator();
+                notLearedLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
+                deltaLocator.ElementLocator = notLearedLocator;
+                if (notLearedLocator.IsAutoLearned == true)//deleted
+                {
+                    deltaLocator.DeltaStatus = eDeltaStatus.Deleted;
+                    deltaLocator.DeltaExtraDetails = "Locator not exist on latest";                    
+                }
+                else//customized locator so avoid it
+                {
+                    deltaLocator.DeltaStatus = eDeltaStatus.Avoided;
+                    deltaLocator.DeltaExtraDetails = "Customized locator not exist on latest";
+                    latestElement.Locators.Add(notLearedLocator);
+                }
                 matchedDeltaElement.Locators.Add(deltaLocator);
+            }
+            if (KeepOriginalLocatorsOrderAndActivation == true)
+            {
+                //re-arrange Locators as in original item
+                foreach (ElementLocator locator in latestElement.Locators)
+                {
+                    ElementLocator originalLocator = existingElement.Locators.Where(x => x.Guid == locator.Guid).FirstOrDefault();
+
+                    if (originalLocator != null)
+                    {
+                        locator.Active = originalLocator.Active;
+                        int originalIndex = existingElement.Locators.IndexOf(originalLocator);
+                        if (originalIndex <= latestElement.Locators.Count)
+                        {
+                            latestElement.Locators.Move(latestElement.Locators.IndexOf(locator), originalIndex);
+                            matchedDeltaElement.Locators.Move(matchedDeltaElement.Locators.IndexOf(matchedDeltaElement.Locators.Where(x=>x.ElementLocator == locator).First()), originalIndex);
+                        }                        
+                    }                   
+                }
             }
 
             ////////--------------- Properties
@@ -286,6 +333,12 @@ namespace GingerCoreNET.Application_Models
             {
                 matchedDeltaElement.DeltaStatus = eDeltaStatus.Unchanged;
                 matchedDeltaElement.IsSelected = false;
+                List<DeltaElementLocator> minorLocatorsChangesList = matchedDeltaElement.Locators.Where(x => x.DeltaStatus != eDeltaStatus.Changed && x.DeltaStatus != eDeltaStatus.Deleted).ToList();
+                List<DeltaControlProperty> minorPropertiesChangesList = matchedDeltaElement.Properties.Where(x => x.DeltaStatus != eDeltaStatus.Changed && x.DeltaStatus != eDeltaStatus.Deleted).ToList();
+                if (modifiedLocatorsList.Count > 0 || modifiedPropertiesList.Count > 0)
+                {
+                    matchedDeltaElement.DeltaExtraDetails = "Unimportant differences exists";
+                }
             }
 
             DeltaViewElements.Add(matchedDeltaElement);
@@ -382,59 +435,19 @@ namespace GingerCoreNET.Application_Models
                     {
                         selectedGroup = POM.UnMappedUIElements;
                     }
-
-                    ElementInfo latestMatchingElement = elementToUpdate.ElementInfo;
-                    ElementInfo originalElementInfo = originalGroup.Where(x => x.Guid == latestMatchingElement.Guid).First();
-                    ////copy possible customized fields from original
-                    //latestMatchingElement.Guid = elementToUpdate.OriginalElementInfo.Guid;
-                    //latestMatchingElement.ElementName = elementToUpdate.OriginalElementInfo.ElementName;
-                    //latestMatchingElement.Description = elementToUpdate.OriginalElementInfo.Description;
-                    if (originalElementInfo.OptionalValuesObjectsList.Count>0 && latestMatchingElement.OptionalValuesObjectsList.Count == 0)
-                    {
-                        latestMatchingElement.OptionalValuesObjectsList = originalElementInfo.OptionalValuesObjectsList;
-                    }
-                    //Locators customizations
-                    foreach (ElementLocator originalLocator in originalElementInfo.Locators)
-                    {
-                        int originalLocatorIndex = originalElementInfo.Locators.IndexOf(originalLocator);
-
-                        if (originalLocator.IsAutoLearned)
-                        {
-                            if (KeepOriginalLocatorsOrderAndActivation == true)
-                            {
-                                ElementLocator matchingLatestLocatorType = latestMatchingElement.Locators.Where(x => x.LocateBy == originalLocator.LocateBy).FirstOrDefault();
-                                if (matchingLatestLocatorType != null)
-                                {
-                                    matchingLatestLocatorType.Active = originalLocator.Active;
-                                    if (originalLocatorIndex <= originalElementInfo.Locators.Count)
-                                    {
-                                        latestMatchingElement.Locators.Move(latestMatchingElement.Locators.IndexOf(matchingLatestLocatorType), originalLocatorIndex);
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (KeepOriginalLocatorsOrderAndActivation == true && originalLocatorIndex <= originalElementInfo.Locators.Count)
-                            {
-                                latestMatchingElement.Locators.Insert(originalLocatorIndex, originalLocator);
-                            }
-                            else
-                            {
-                                latestMatchingElement.Locators.Add(originalLocator);
-                            }
-                        }
-                    }
+                    
+                    ElementInfo originalElementInfo = originalGroup.Where(x => x.Guid == elementToUpdate.ElementInfo.Guid).First();
+                    
                     //enter it to POM elements instead of existing one
                     int originalItemIndex = GetOriginalItemIndex(originalGroup, originalElementInfo);
                     originalGroup.RemoveAt(originalItemIndex);
                     if (originalItemIndex <= selectedGroup.Count)
                     {
-                        selectedGroup.Insert(originalItemIndex, latestMatchingElement);
+                        selectedGroup.Insert(originalItemIndex, elementToUpdate.ElementInfo);
                     }
                     else
                     {
-                        selectedGroup.Add(latestMatchingElement);
+                        selectedGroup.Add(elementToUpdate.ElementInfo);
                     }
                 }
             }

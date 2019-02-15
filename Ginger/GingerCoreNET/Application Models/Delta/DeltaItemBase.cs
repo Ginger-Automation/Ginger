@@ -16,7 +16,7 @@ namespace GingerCoreNET.Application_Models
         Avoided,
     }
 
-    public class DeltaItemBase
+    public class DeltaItemBase: INotifyPropertyChanged
     {
         private bool mIsSelected = false;
         public bool IsSelected

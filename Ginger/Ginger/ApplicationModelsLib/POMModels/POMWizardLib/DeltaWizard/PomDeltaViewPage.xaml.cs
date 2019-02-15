@@ -217,20 +217,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void MarkUnMarkAllDeltaUpdates(bool Status)
         {
-            if (mDeltaElements.Count <= 0)
+           
+            foreach (DeltaElementInfo EI in mDeltaElements)
             {
-                return;
-            }
-
-            if (mDeltaElements.Count > 0)
-            {
-                foreach (DeltaElementInfo EI in mDeltaElements)
-                {
-                    if (EI.DeltaStatus != eDeltaStatus.Unchanged)
-                    {
-                        EI.IsSelected = Status;
-                    }
-                }
+                
+                    EI.IsSelected = Status;
+                
             }
         }
 
