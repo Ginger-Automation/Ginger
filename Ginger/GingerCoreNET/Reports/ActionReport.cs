@@ -424,7 +424,7 @@ namespace Ginger.Reports
         private string GetValueForDriverWithoutDescrypting(string value)
         {
             // !!!!!!!!!!!!!!!!!!!!!!!!! should not use WorkSpace.BF here 
-            ValueExpression VE = new ValueExpression(mExecutionEnviroment, WorkSpace.Businessflow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, new ObservableList<GingerCore.Variables.VariableBase>());
+            ValueExpression VE = new ValueExpression(mExecutionEnviroment, WorkSpace.Businessflow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
             VE.DecryptFlag = false;
             VE.Value = value;
 

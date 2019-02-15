@@ -3110,7 +3110,16 @@ namespace GingerCore.Drivers
 
             foreach (ElementLocator locator in Locators.Where(x => x.Active == true).ToList())
             {
-                elem = LocateElementByLocator(locator, true);
+                if(!locator.IsAutoLearned)
+                {
+                    ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
+                    ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+                    evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
+                    elem = LocateElementByLocator(evaluatedLocator, true);
+                }
+                else
+                    elem = LocateElementByLocator(locator, true);
+
                 if (elem != null)
                 {
                     locator.StatusError = string.Empty;
@@ -4385,12 +4394,32 @@ namespace GingerCore.Drivers
 
             if (el != null)
             {
-                //Learn optional values
-                if (ElementInfo.ElementTypeEnum == eElementType.ComboBox || ElementInfo.ElementTypeEnum == eElementType.List)
+                if (ElementInfo.IsElementTypeSupportingOptionalValues(ElementInfo.ElementTypeEnum))
                 {
-                    foreach (IWebElement value in el.FindElements(By.XPath("*")))
-                        ElementInfo.OptionalValues.Add(value.Text);
-                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
+                    foreach (IWebElement val in el.FindElements(By.XPath("*")))
+                    {
+                        if (!string.IsNullOrEmpty(val.Text))
+                        {
+                            string[] tempOpVals = val.Text.Split('\n');
+                            if (tempOpVals != null && tempOpVals.Length > 1)
+                            {
+                                foreach (string cuVal in tempOpVals)
+                                {
+                                    ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
+                                }
+                            }
+                            else
+                            {
+                                ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = val.Text, IsDefault = false });
+                            }
+                        }
+                    }
+
+                    if (ElementInfo.OptionalValuesObjectsList.Count > 0)
+                    {
+                        ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
+                    }
+                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
                 }
 
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;

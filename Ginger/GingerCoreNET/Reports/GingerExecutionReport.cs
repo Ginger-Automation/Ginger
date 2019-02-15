@@ -1073,9 +1073,12 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 BusinessFlowReport.ExecutionLoggerIsEnabled = true;
                 BusinessFlowReport.AllIterationElements = currentTemplate.ShowAllIterationsElements;
-                HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(HTMLReportMainFolder.Replace("{name_to_replace}", ExtensionMethods.folderNameNormalazing(BusinessFlowReport.Name))
-                                               .Replace("{date_to_replace}", DateTime.Now.ToString("MMddyyyy_HHmmss"))
-                                               .Replace("{objectType_to_replace}", typeof(BusinessFlowReport).Name.ToString()));
+                if (!string.IsNullOrEmpty(HTMLReportMainFolder))
+                {
+                    HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(HTMLReportMainFolder.Replace("{name_to_replace}", ExtensionMethods.folderNameNormalazing(BusinessFlowReport.Name))
+                                  .Replace("{date_to_replace}", DateTime.Now.ToString("MMddyyyy_HHmmss"))
+                                  .Replace("{objectType_to_replace}", typeof(BusinessFlowReport).Name.ToString()));
+                }
                 currentHTMLReportsFolder = HTMLReportMainFolder;
                 ReportLevel = "./";
                 StyleBundle = string.Empty;
@@ -2695,6 +2698,111 @@ namespace Ginger.Reports.GingerExecutionReport
 
             if (currentConf.LimitReportFolderSize)
             {
+                DeleteFolderContentBySizeLimit DeleteFolderContentBySizeLimit = new DeleteFolderContentBySizeLimit(Folder, maxFolderSize);
+            }
+
+            switch (RI.reportInfoLevel)
+            {
+                case ReportInfo.ReportInfoLevel.RunSetLevel:
+                    gingerExecutionReport.CreateSummaryViewReport(RI);
+                    break;
+                case ReportInfo.ReportInfoLevel.GingerLevel:
+                    gingerExecutionReport.CreateGingerLevelReport((GingerReport)((ReportInfo)RI).ReportInfoRootObject, "", true);
+                    break;
+                case ReportInfo.ReportInfoLevel.BussinesFlowLevel:
+                    gingerExecutionReport.CreateBusinessFlowLevelReport((BusinessFlowReport)((ReportInfo)RI).ReportInfoRootObject, "", "", true);
+                    break;
+                case ReportInfo.ReportInfoLevel.ActivityLevel:
+                    gingerExecutionReport.CreateActivityLevelReport((ActivityReport)((ReportInfo)RI).ReportInfoRootObject, "", "", true);
+                    break;
+                case ReportInfo.ReportInfoLevel.ActionLevel:
+                    gingerExecutionReport.CreateActionLevelReport((ActionReport)((ReportInfo)RI).ReportInfoRootObject, "", "", true);
+                    break;
+                default:
+                    return string.Empty;
+            }
+            return gingerExecutionReport.HTMLReportMainFolder;
+        }
+
+        public static string NewFunctionCreateGingerExecutionReport(ReportInfo RI, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null, bool isHTMLReportPermanentFolderNameUsed = false, long maxFolderSize = 0, string templatesFolder = null, HTMLReportsConfiguration hTMLReportsConfiguration = null, string hTMLOutputFolder = null)
+        {
+            GingerExecutionReport gingerExecutionReport = new GingerExecutionReport();
+            gingerExecutionReport.TemplatesFolder = templatesFolder;
+
+            if (SelectedHTMLReportConfiguration != null)
+            {
+                gingerExecutionReport.currentTemplate = SelectedHTMLReportConfiguration;
+            }
+            else
+            {
+                var HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+                HTMLReportConfiguration defualtConfig = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+                // TODO - need to delete, template always should be initialize with fields.
+                if (defualtConfig != null)
+                {
+                    gingerExecutionReport.currentTemplate = HTMLReportConfiguration.EnchancingLoadedFieldsWithDataAndValidating(defualtConfig);
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Missing report template configuration");
+                    return null;
+                }
+            }
+
+            if ((RI.ReportInfoRootObject == null) || (RI.ReportInfoRootObject.GetType() == typeof(Object)))
+            {
+                return string.Empty;
+            }
+
+            if (hTMLReportsConfiguration == null)
+            {
+                hTMLReportsConfiguration = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            }
+
+            if (hTMLOutputFolder == null)
+            {
+                if (!calledFromAutomateTab)
+                {
+                    if ((mHTMLReportsFolder != null) && (mHTMLReportsFolder != string.Empty))
+                    {
+                        if (isHTMLReportPermanentFolderNameUsed)
+                        {
+                            mHTMLReportsFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name));
+                        }
+                        gingerExecutionReport.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder);
+                    }
+                    else
+                    {
+                        if (!isHTMLReportPermanentFolderNameUsed)
+                        {
+                            gingerExecutionReport.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(hTMLReportsConfiguration.HTMLReportsFolder + "\\" + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).LogFolder));
+                        }
+                        else
+                        {
+                            gingerExecutionReport.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(hTMLReportsConfiguration.HTMLReportsFolder + "\\" + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name));
+                        }
+                    }
+                }
+                else
+                {
+                    gingerExecutionReport.HTMLReportMainFolder = hTMLReportsConfiguration.HTMLReportsFolder + "\\" + defaultAutomationTabReportName;
+                }
+            }
+            else
+            {
+                gingerExecutionReport.HTMLReportMainFolder = hTMLOutputFolder;
+            }
+            
+
+            if (Directory.Exists(gingerExecutionReport.HTMLReportMainFolder))
+            {
+                CleanDirectory(gingerExecutionReport.HTMLReportMainFolder);
+            }
+           
+
+            if (hTMLReportsConfiguration.LimitReportFolderSize)
+            {
+                 string Folder = WorkSpace.Instance.Solution.Folder.ToString() + "\\HTMLReports\\";
                 DeleteFolderContentBySizeLimit DeleteFolderContentBySizeLimit = new DeleteFolderContentBySizeLimit(Folder, maxFolderSize);
             }
 
