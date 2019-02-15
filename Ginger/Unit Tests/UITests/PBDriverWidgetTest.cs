@@ -1,22 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Platforms;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.UIElement;
-using GingerTestHelper;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace UnitTests.UITests.PBDriverTest
 {
@@ -25,7 +37,7 @@ namespace UnitTests.UITests.PBDriverTest
     public class PBDriverWidgetTest
     {
         public static BusinessFlow mBF;
-        static Process proc;
+        static System.Diagnostics.Process proc;
         // make it static for reuse so no need to init every time when running test by click test button
         static PBDriver mDriver = null;
         static GingerRunner mGR = null;
@@ -36,7 +48,7 @@ namespace UnitTests.UITests.PBDriverTest
             // launch PB Test App
             if (proc == null || proc.HasExited)
             {
-                proc = new Process();
+                proc = new System.Diagnostics.Process();
                 proc.StartInfo.FileName = @"pb_test_app.exe";
                 proc.StartInfo.WorkingDirectory = TestResources.GetTestResourcesFolder("PBTestApp");
                 Console.WriteLine(proc.StartInfo.WorkingDirectory);
@@ -48,14 +60,12 @@ namespace UnitTests.UITests.PBDriverTest
             }
 
             mGR = new GingerRunner();
-            mGR.CurrentSolution = new Ginger.Environments.Solution();
+            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test PB Driver";
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.PowerBuilder;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.PowerBuilder;            
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "PBTestAPP" });
             Activity activity = new Activity();
             activity.TargetApplication = "PBTestApp";
@@ -173,7 +183,8 @@ namespace UnitTests.UITests.PBDriverTest
             {
 
                 actBrowser.LocateBy = eLocateBy.ByXPath;
-                actBrowser.LocateValue = @"/[AutomationId:1000]/[LocalizedControlType:pane]/[LocalizedControlType:pane]/file:&#x2F&#x2FC:\Ginger workspace\Devs\GingerNextVer_Dev\UnitTests\bin\Debug\TestResources\PBTestApp\Browser.html";     //\Documents\PBTestApp\Browser.html";
+                actBrowser.LocateValue = @"/[AutomationId:1000]/[LocalizedControlType:pane]/[LocalizedControlType:pane]/[LocalizedControlType:pane]";
+                                                                                                                                                                                                                                                 
                 actBrowser.ControlAction = ActBrowserElement.eControlAction.InitializeBrowser;
                 actBrowser.Wait = 2;
                 actBrowser.Timeout = 10;
@@ -209,7 +220,7 @@ namespace UnitTests.UITests.PBDriverTest
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SetValue_textbox()
         {            
             ActGenElement act = new ActGenElement();
@@ -240,7 +251,7 @@ namespace UnitTests.UITests.PBDriverTest
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetValue_Textbox()
         {
             ActGenElement act = new ActGenElement();
@@ -313,7 +324,7 @@ namespace UnitTests.UITests.PBDriverTest
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SelectFromDropdown()
         {
             ActGenElement act = new ActGenElement();
@@ -342,7 +353,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void IsEnabled_Textbox()
         {
             ActGenElement act = new ActGenElement();
@@ -362,7 +373,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void IsVisible_Textbox()
         {
             ActGenElement act = new ActGenElement();
@@ -382,7 +393,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetInnerText_Dropdown()
         {
             ActGenElement act = new ActGenElement();
@@ -402,7 +413,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetStyle_Dropdown()
         {
             ActGenElement act = new ActGenElement();
@@ -442,7 +453,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ClickTest()
         {
             ActGenElement act = new ActGenElement();
@@ -609,7 +620,7 @@ namespace UnitTests.UITests.PBDriverTest
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetAttributeValue_Size()
         {
             ActGenElement act = new ActGenElement();
@@ -727,7 +738,7 @@ namespace UnitTests.UITests.PBDriverTest
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetURL_Testing()
         {
             ActBrowserElement act = new ActBrowserElement();
@@ -741,7 +752,8 @@ namespace UnitTests.UITests.PBDriverTest
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
-            string expected = @"file://C:\Ginger workspace\Devs\GingerNextVer_Dev\UnitTests\bin\Debug\TestResources\PBTestApp\Browser.html"; // Documents\PBTestApp\Browser.html";
+            string expected = @"file://" + TestResources.GetTestResourcesFolder("PBTestApp") + @"\Browser.html"; 
+
             Assert.AreEqual(actual, expected, "True");
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
@@ -763,7 +775,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void SwitchToDefaultFrame_Testing()
         {
             ActBrowserElement act = new ActBrowserElement();
@@ -779,7 +791,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetElementAttribute_Dropdown()
         {
             ActGenElement act = new ActGenElement();

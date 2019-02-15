@@ -33,6 +33,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Actions
 {
@@ -60,7 +61,7 @@ namespace Ginger.Actions
             else
             {
                 EditMode = General.RepositoryItemPageViewMode.Automation;               
-                //App.BusinessFlow daynamic Activity
+                //App.BusinessFlow dynamic Activity
                 UpdateActionGrid();
 
                 // Hook to Business flow properties changes
@@ -159,7 +160,7 @@ namespace Ginger.Actions
             mCurrentActivity.Acts.Add(instance);
             
             int selectedActIndex = -1;
-            ObservableList<Act> actsList = App.BusinessFlow.CurrentActivity.Acts;
+            ObservableList<IAct> actsList = App.BusinessFlow.CurrentActivity.Acts;
             if (actsList.CurrentItem != null)
             {
                 selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
@@ -192,7 +193,7 @@ namespace Ginger.Actions
             bool takeValue = false;
             if (mCurrentActivity.Acts.Count > 0)
             {
-                takeValue = !mCurrentActivity.Acts[0].TakeScreenShot;//decide if to take or not
+                takeValue = !((Act)mCurrentActivity.Acts[0]).TakeScreenShot;//decide if to take or not
                 foreach (Act a in mCurrentActivity.Acts)
                     a.TakeScreenShot = takeValue;
             }
@@ -219,14 +220,14 @@ namespace Ginger.Actions
             // Move the actions to the new activity
             for (int j = i; j < mCurrentActivity.Acts.Count; j++)
             {
-                Act a1 = mCurrentActivity.Acts[j];
+                IAct a1 = mCurrentActivity.Acts[j];
                 activity.Acts.Add(a1);                
             }
 
-            // remove the actions to from current activity - need to happen in 2 steps so the array count will not change while looping backwords
+            // remove the actions to from current activity - need to happen in 2 steps so the array count will not change while looping backwards
             for (int j = mCurrentActivity.Acts.Count - 1; j >= i; j--)
             {
-                Act a1 = mCurrentActivity.Acts[j];
+                IAct a1 = mCurrentActivity.Acts[j];
                mCurrentActivity.Acts.Remove(a1);
             }            
         }
@@ -235,7 +236,7 @@ namespace Ginger.Actions
         {
             if (mCurrentActivity == null)
             {
-                Reporter.ToUser(eUserMsgKeys.SelectItemToAdd);
+                Reporter.ToUser(eUserMsgKey.SelectItemToAdd);
             }
             else
             {
@@ -300,7 +301,7 @@ namespace Ginger.Actions
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
         
@@ -315,20 +316,22 @@ namespace Ginger.Actions
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.BreakPoint, Header="B. Point", WidthWeight = 2.5, MaxWidth = 55, StyleType = GridColView.eGridColStyleType.CheckBox });            
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.Description, WidthWeight = 20 });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.ActionDescription, Header = "Type", WidthWeight = 7, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = Act.Fields.Details, Header = "Details", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.getDataColActionDetailsTemplate("Details"), ReadOnly = true, BindingMode = BindingMode.OneWay });
+            //view.GridColsView.Add(new GridColView() { Field = Act.Fields.Details, Header = "Details", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.getDataColActionDetailsTemplate("Details"), ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(Act.WaitVE), WidthWeight = 3, Header = "Wait", MaxWidth = 50 });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.EnableRetryMechanism, WidthWeight = 2.5, Header = "Retry", MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.TakeScreenShot, WidthWeight = 6, MaxWidth = 100, Header = "Take S. Shot", StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = Act.Fields.FlowControls, Header = "Flow Control", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetDataColGridTemplate("ActFlowControls"), ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.SupportSimulation, Header = "S. Simulation", WidthWeight = 6, MaxWidth = 100, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = Act.Fields.ReturnValues, Header = "Output Values", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetDataColGridTemplate("ActReturnValues"), ReadOnly = true, BindingMode = BindingMode.OneWay });          
+            //view.GridColsView.Add(new GridColView() { Field = Act.Fields.FlowControls, Header = "Flow Control", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetDataColGridTemplate("ActFlowControls"), ReadOnly = true, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Act.FlowControlsInfo), Header = "Flow Controls", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            //view.GridColsView.Add(new GridColView() { Field = Act.Fields.ReturnValues, Header = "Output Values", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetDataColGridTemplate("ActReturnValues"), ReadOnly = true, BindingMode = BindingMode.OneWay });  
+            view.GridColsView.Add(new GridColView() { Field = nameof(Act.ReturnValuesInfo), Header = "Output Values", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay });  
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.Status, Header="Run Status", WidthWeight = 5, BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new StatusConverter(), TextBlock.ForegroundProperty)) });           
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.ElapsedSecs, Header="Elapsed", WidthWeight = 5, BindingMode = BindingMode.OneWay, HorizontalAlignment= System.Windows.HorizontalAlignment.Right});
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.Error, WidthWeight = 10, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.ExInfo, Header="Extra Info", WidthWeight = 10, BindingMode = BindingMode.OneWay });            
             grdActions.SetAllColumnsDefaultView(view);
 
-            //# Custome Views
+            //# Custom Views
             GridViewDef desView = new GridViewDef(eAutomatePageViewStyles.Design.ToString());
             desView.GridColsView = new ObservableList<GridColView>();
             desView.GridColsView.Add(new GridColView() { Field = Act.Fields.Status, Visible = false });
@@ -339,9 +342,9 @@ namespace Ginger.Actions
 
             GridViewDef execView = new GridViewDef(eAutomatePageViewStyles.Execution.ToString());
             execView.GridColsView = new ObservableList<GridColView>();
-            execView.GridColsView.Add(new GridColView() { Field = Act.Fields.Details, Visible = false });
-            execView.GridColsView.Add(new GridColView() { Field = Act.Fields.FlowControls, Visible = false });
-            execView.GridColsView.Add(new GridColView() { Field = Act.Fields.ReturnValues, Visible = false });
+            //execView.GridColsView.Add(new GridColView() { Field = Act.Fields.Details, Visible = false });
+            execView.GridColsView.Add(new GridColView() { Field = nameof(Act.FlowControlsInfo), Visible = false });
+            execView.GridColsView.Add(new GridColView() { Field = nameof(Act.ReturnValuesInfo), Visible = false });
             execView.GridColsView.Add(new GridColView() { Field = Act.Fields.TakeScreenShot, Visible = false });
             grdActions.AddCustomView(execView);
             
@@ -384,7 +387,7 @@ namespace Ginger.Actions
             {
                 if (mCurrentActivity != App.BusinessFlow.CurrentActivity)
                 {
-                    mCurrentActivity = App.BusinessFlow.CurrentActivity;
+                    mCurrentActivity = (Activity)App.BusinessFlow.CurrentActivity;
                     mCurrentActivity.PropertyChanged += Activity_PropertyChanged;
                     mCurrentActivity.Acts.PropertyChanged += ActsPropChanged;                    
                 }
@@ -433,7 +436,7 @@ namespace Ginger.Actions
         private void grdActions_grdMain_MouseDoubleClick(object sender, EventArgs e)
         {
             Act a = (Act)grdActions.CurrentItem;
-            a.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            a.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
             ActionEditPage actedit = new ActionEditPage(a, EditMode);
             actedit.ap = this;
             actedit.ShowAsWindow();

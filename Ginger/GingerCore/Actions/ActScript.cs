@@ -16,22 +16,20 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
+using GingerCore.Helpers;
 using GingerCore.Properties;
-using GingerCore.Repository;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using GingerCore.Platforms;
-using System.Runtime.InteropServices;
-using GingerCore.Helpers;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActScript : ActWithoutDriver
@@ -39,12 +37,12 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Script Action"; } }
         public override string ActionUserDescription { get { return "Performs Script Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform any script actions on web page.");
             TBH.AddLineBreak();
             TBH.AddLineBreak();
-            TBH.AddText("To perform a script action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property" +
+            TBH.AddText("To perform a script action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property " +
             "that you set in Locate By type then select script interpreter and script name to be execute on page and the enter the page url in value textbox and run the action.");
             TBH.AddLineBreak();
            TBH.AddText("For using CMD.exe as the interpreter, select interpreter type as Other, put the full path of CMD.exe in the Interpreter drop down list; select either free command or script "+ 
@@ -52,7 +50,7 @@ namespace GingerCore.Actions
         }        
 
         public override string ActionEditPage { get { return "ActScriptEditPage"; } }
-        public override bool ObjectLocatorConfigsNeeded { get { return true; } }
+        public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 
         // return the list of platforms this action is supported on
@@ -77,6 +75,7 @@ namespace GingerCore.Actions
         {            
             VBS,
             JS,
+            BAT,
             Other,
         }
         [IsSerializedForLocalRepository]
@@ -88,8 +87,13 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public eScriptInterpreterType ScriptInterpreterType { get; set; }
 
+        
         [IsSerializedForLocalRepository]
-        public string ScriptName { get; set; }
+        public string ScriptName
+        {
+            get; set;
+        }
+
 
         [IsSerializedForLocalRepository]
         public string ScriptPath { get; set; }
@@ -137,7 +141,7 @@ namespace GingerCore.Actions
         {
             if (ScriptName == null)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Script file not Selected. Kindly select suitable file");
+                Reporter.ToLog(eLogLevel.ERROR, "Script file not Selected. Kindly select suitable file");
                 this.Error = "Script file not loaded. Kindly select suitable file";
                 return;
             }
@@ -152,6 +156,16 @@ namespace GingerCore.Actions
 
             switch (ScriptInterpreterType)
             {
+                case eScriptInterpreterType.BAT:
+                    if (File.Exists(GetSystemDirectory() + @"\cmd.exe"))
+                    {
+                        p.StartInfo.FileName = GetSystemDirectory() + @"\cmd.exe";
+                    }
+                    else
+                    {
+                        p.StartInfo.FileName = @"cmd";
+                    }
+                    break;
                 case eScriptInterpreterType.JS:
                 case eScriptInterpreterType.VBS:
                    if(File.Exists(GetSystemDirectory()+@"\cscript.exe"))
@@ -161,9 +175,9 @@ namespace GingerCore.Actions
                     break;
                 case eScriptInterpreterType.Other:
                     if (!string.IsNullOrEmpty(ScriptInterpreter))
-                    {
-                        
-                        p.StartInfo.FileName = ScriptInterpreter.Replace(@"~\", this.SolutionFolder);
+                    {                        
+                        //p.StartInfo.FileName = ScriptInterpreter.Replace(@"~\", this.SolutionFolder);
+                        p.StartInfo.FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScriptInterpreter);
                     }
                     break;
              }
@@ -198,7 +212,7 @@ namespace GingerCore.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
                 this.Error = "Failed to execute the script. Details: " + e.Message;
             }
             if (!string.IsNullOrEmpty(ErrorBuffer))
@@ -285,7 +299,7 @@ namespace GingerCore.Actions
                         return cmd;
                     }
                 default:
-                    Reporter.ToUser(eUserMsgKeys.UnknownConsoleCommand, act.ScriptCommand);
+                    Reporter.ToUser(eUserMsgKey.UnknownConsoleCommand, act.ScriptCommand);
                     return "Error - unknown command";
             }
         }

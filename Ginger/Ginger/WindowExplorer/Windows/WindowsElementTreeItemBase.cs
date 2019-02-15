@@ -31,11 +31,18 @@ using GingerCore.Drivers.Common;
 using Ginger.Drivers.UIA;
 using GingerCore.Actions.UIAutomation;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Drivers.Windows
 {
     public abstract class WindowsElementTreeItemBase : AutomationElementTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
-    {        
+    {
+        public ITreeView TreeView
+        {
+            get;
+            set;
+        }
+
         Object ITreeViewItem.NodeObject()
         {
             return base.UIAElementInfo;
@@ -48,7 +55,7 @@ namespace Ginger.Drivers.Windows
 
         StackPanel ITreeViewItem.Header()
         {
-            //TODO: ut better icon for generic control
+            //TODO: Put better icon for generic control
             string ImageFileName = "@Agent_16x16.png";
             string Title = UIAElementInfo.ElementTitle;
                 return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
@@ -100,6 +107,11 @@ namespace Ginger.Drivers.Windows
         ObservableList<ControlProperty> IWindowExplorerTreeItem.GetElementProperties()
         {
            return ((UIAutomationDriverBase) (UIAElementInfo.WindowExplorer)).mUIAutomationHelper.GetElementProperties(UIAElementInfo.ElementObject);
+        }
+
+        public ObservableList<ActInputValue> GetItemSpecificActionInputValues()
+        {
+            return null;
         }
     }
 }

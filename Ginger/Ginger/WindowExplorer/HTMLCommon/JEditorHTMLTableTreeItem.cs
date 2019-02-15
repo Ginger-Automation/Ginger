@@ -46,7 +46,7 @@ namespace Ginger.WindowExplorer.Java
 
             act.AddNewReturnParams = true;
             act.Description= "Get " + ElementInfo.ElementTitle + " Table RowCount";
-            
+
             act.ElementType = eElementType.EditorPane;
             act.ElementAction = ActUIElement.eElementAction.JEditorPaneElementAction;
             act.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementType, ActUIElement.eSubElementType.HTMLTable.ToString());
@@ -56,7 +56,7 @@ namespace Ginger.WindowExplorer.Java
             act.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateColTitle, "0");
             act.AddOrUpdateInputParamValue(ActUIElement.Fields.ByRowNum, "true");
             act.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, "0");
-            act.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Row Number");      
+            act.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Row Number");
             mAvailableActions.Add(act);
             return mAvailableActions;
         }
@@ -67,8 +67,12 @@ namespace Ginger.WindowExplorer.Java
 
         Page ITreeViewItem.EditPage()
         {
-            mHTMLTablePage = new UIElementTableConfigPage(ElementInfo, mAvailableActions);
+            
+            if (mHTMLTablePage == null)
+            {
+                mHTMLTablePage = new UIElementTableConfigPage(ElementInfo, mAvailableActions);
+            }
             return mHTMLTablePage;
-        }
+        }      
     }
 }

@@ -40,7 +40,7 @@
 //        }
 
 //        [Ignore]
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void VerifyActionConvertedHaveOldClassName()
 //        {
 //            //Arrange
@@ -62,7 +62,7 @@
 
 
 //            Assert.AreEqual("GingerCore.Actions.ActGotoURL", a0.OldClassName, "Verify OldClassName");
-//            Assert.AreEqual("URL", a0.InputValues[0].Param, "Verify Param name 'Value' changeed to 'URL'");
+//            Assert.AreEqual("URL", a0.InputValues[0].Param, "Verify Param name 'Value' changed to 'URL'");
 
 //            Assert.AreEqual("GingerCore.Actions.ActTextBox", a1.OldClassName, "Verify OldClassName");
 //            Assert.AreEqual("LocateBy", a1.InputValues[0].Param);

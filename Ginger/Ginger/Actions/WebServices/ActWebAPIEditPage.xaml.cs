@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
@@ -80,7 +81,7 @@ namespace Ginger.Actions.WebServices
                     break;
 
                 case ApplicationAPIUtils.eWebApiType.SOAP:
-                    //binding visibilty
+                    //binding visibility
                     RequestContent.Visibility = Visibility.Collapsed;
                     RestHeader.Visibility = Visibility.Collapsed;
                     UseWSSecurityHeader.Visibility = Visibility.Visible;
@@ -118,7 +119,7 @@ namespace Ginger.Actions.WebServices
             //Use Legacy JSON Parsing
             GingerCore.General.ObjFieldBinding(UseLegacyJSONParsingCheckBox, CheckBox.IsCheckedProperty, mAct, ActWebAPIBase.Fields.UseLegacyJSONParsing);
 
-            //Request Body fiedls:
+            //Request Body fields:
             RequestBodyUCValueExpression.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.RequestBody), true, false, UCValueExpression.eBrowserType.Folder, "*", null);
             RequestBodyUCValueExpression.AdjustHight(200);
             RequestBodyUCValueExpression.ValueTextBox.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
@@ -270,7 +271,7 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseTemplateFileButton_Click(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
             if (TemplateFileNameFileBrowser.ValueTextBox.Text != null)
             {
                 // replace Absolute file name with relative to solution
@@ -340,7 +341,7 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseSSLCertificate(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
             if (CertificatePath.ValueTextBox.Text != null)
             {
                 // replace Absolute file name with relative to solution
@@ -542,7 +543,7 @@ namespace Ginger.Actions.WebServices
 
                 dlg.DefaultExt = "*.*";
                 dlg.Filter = "All files (All Files)|*.*";
-                string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+                string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

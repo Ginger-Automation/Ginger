@@ -23,7 +23,9 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.Agents;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Drivers;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.BindingLib;
@@ -33,7 +35,10 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static Ginger.General;
 
 namespace Ginger.ApplicationModelsLib.POMModels
 {
@@ -44,8 +49,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
     {
         ApplicationPOMModel mPOM;
         ScreenShotViewPage mScreenShotViewPage;
-
-
+        GenericWindow mWin;
+        public bool IsPageSaved = false;
+        public RepositoryItemPageViewMode mEditMode { get; set; }
         private Agent mAgent;
         public Agent Agent
         {
@@ -70,6 +76,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
                 else
                 {
+                    if (mAgent != null)
+                    {
+                        mAgent.Close();
+                    }
                     return null;
                 }
             }
@@ -79,19 +89,22 @@ namespace Ginger.ApplicationModelsLib.POMModels
         ScreenShotViewPage pd;
 
         readonly PomAllElementsPage mPomAllElementsPage;
-        public POMEditPage(ApplicationPOMModel POM)
+        public POMEditPage(ApplicationPOMModel POM, RepositoryItemPageViewMode editMode = RepositoryItemPageViewMode.View)
         {
             InitializeComponent();
             mPOM = POM;
+            mEditMode = editMode;
+
             ControlsBinding.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             ControlsBinding.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
+            ControlsBinding.ObjFieldBinding(xPageURLTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.PageURL));
 
             xTargetApplicationComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             FillTargetAppsComboBox();
             xTargetApplicationComboBox.Init(mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
             xTagsViewer.Init(mPOM.TagsKeys);
 
-            ePlatformType mAppPlatform = App.UserProfile.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
+            ePlatformType mAppPlatform =  WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
             ObservableList<Agent>  optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
             xAgentControlUC.Init(optionalAgentsList);
             App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
@@ -112,28 +125,32 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         }
 
-
-
-
         private void FillTargetAppsComboBox()
         {
             //get key object 
             if (mPOM.TargetApplicationKey != null)
             {
-                RepositoryItemKey key = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == mPOM.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
+                RepositoryItemKey key =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == mPOM.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
                 if (key != null)
                 {
                     mPOM.TargetApplicationKey = key;
                 }
                 else
                 {                    
-                    Reporter.ToUser(eUserMsgKeys.MissingTargetApplication, "The mapped" + mPOM.Key.ItemName + "Target Application was not found, please select new Target Application");
+                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped" + mPOM.Key.ItemName + "Target Application was not found, please select new Target Application");
 
                 }
             }
-            xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms;
+            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x=> ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
             xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
+
+             WorkSpace.UserProfile.Solution.ApplicationPlatforms.CollectionChanged += ApplicationPlatforms_CollectionChanged;
+        }
+
+        private void ApplicationPlatforms_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
         }
 
         public static Bitmap BitmapFromSource(BitmapSource bitmapsource)
@@ -167,7 +184,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mWinExplorer == null)
             {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
                 return;
             }
 
@@ -188,22 +205,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 if (!string.IsNullOrEmpty(op.FileName))
                 {
                     var fileLength = new FileInfo(op.FileName).Length;
-                    if (fileLength <= 50000)
+                    if (fileLength <= 500000)
                     {
                         if ((op.FileName != null) && (op.FileName != string.Empty))
                         {
                             using (var ms = new MemoryStream())
                             {
                                 BitmapImage bi = new BitmapImage(new Uri(op.FileName));
-                                Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
-
-                                BitmapImage bi_resized = new BitmapImage();
-                                bi_resized.BeginInit();
-                                bi_resized.UriSource = new Uri(op.FileName);
-                                bi_resized.DecodePixelHeight = sizes.Item2;
-                                bi_resized.DecodePixelWidth = sizes.Item1;
-                                bi_resized.EndInit();
-                                Bitmap ScreenShotBitmap = Ginger.General.BitmapImage2Bitmap(bi_resized);
+                                Bitmap ScreenShotBitmap = Ginger.General.BitmapImage2Bitmap(bi);
                                 mPOM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShotBitmap);
                                 mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
                                 xScreenShotFrame.Content = mScreenShotViewPage;
@@ -212,13 +221,124 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKeys.ImageSize, "50");
+                        Reporter.ToUser(eUserMsgKey.ImageSize, "500");
                     }
                 }
             }
             
         }
 
+        private void xPageURLBtn_Click(object sender, RoutedEventArgs e)
+        {
+            GoToPageURL();
+        }
 
+        public void GoToPageURL()
+        {
+            if (mWinExplorer == null)
+            {
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
+                return;
+            }
+
+            ActGotoURL act = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = mPOM.PageURL, ValueForDriver = mPOM.PageURL, Active = true };
+            mAgent.Driver.RunAction(act);
+        }
+
+        private void AgentStartedHandler()
+        {
+            GoToPageURL();
+        }
+
+        private void xPomTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //set the selected tab text style
+            try
+            {
+                if (xPomTabs.SelectedItem != null)
+                {
+                    foreach (TabItem tab in xPomTabs.Items)
+                    {
+                        foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
+
+                            if (ctrl.GetType() == typeof(TextBlock))
+                            {
+                                if (xPomTabs.SelectedItem == tab)
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                else
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
+
+                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                            }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in POM Edit Page tabs style", ex);
+            }
+        }
+
+        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.FreeMaximized)
+        {            
+            mPOM.SaveBackup();            
+            IsPageSaved = false;
+            if (mPOM.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+            {
+                mPOM.StartDirtyTracking();
+            }
+
+            Button saveButton = new Button();
+            saveButton.Content = "Save";
+            saveButton.Click += SaveButton_Click;
+
+            Button undoButton = new Button();
+            undoButton.Content = "Undo & Close";
+            undoButton.Click += UndoButton_Click;
+
+            this.Height = 800;
+            this.Width = 800;
+            GingerCore.General.LoadGenericWindow(ref mWin, App.MainWindow, windowStyle, mPOM.Name + " Edit Page", this, new ObservableList<Button> { saveButton, undoButton });
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            IsPageSaved = true;
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mPOM);
+        }
+
+        private void UndoButton_Click(object sender, RoutedEventArgs e)
+        {
+            UndoChangesAndClose();
+            // Logic to be added
+            mWin.Close();
+        }
+
+        //private void CloseButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (!IsPageSaved)
+        //    {
+        //        if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+        //        {
+        //            UndoChangesAndClose();
+        //        }
+        //    }
+        //    else
+        //        mWin.Close();
+        //}
+
+        private void UndoChangesAndClose()
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                mPOM.RestoreFromBackup(true);
+                mWin.Close();
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
+        }
     }
 }

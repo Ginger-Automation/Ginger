@@ -24,7 +24,7 @@ using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     //This class is for Text Box actions
@@ -33,7 +33,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "TextBox Action"; } }
         public override string ActionUserDescription { get { return "Click on a TextBox object"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action when working with TextBox control");
             TBH.AddLineBreak();
@@ -171,10 +171,10 @@ namespace GingerCore.Actions
                 switch (this.TextBoxAction)
                 {
                     case eTextBoxAction.SetValueFast:
-                        newAct.ElementAction = ActUIElement.eElementAction.SendKeys;
+                        newAct.ElementAction = ActUIElement.eElementAction.SetValue;
                         break;
                     case eTextBoxAction.SetValue:
-                        newAct.ElementAction = ActUIElement.eElementAction.SendKeys;
+                        newAct.ElementAction = ActUIElement.eElementAction.SetText;
                         break;
                     case eTextBoxAction.Clear:
                         newAct.ElementAction = ActUIElement.eElementAction.ClearValue;

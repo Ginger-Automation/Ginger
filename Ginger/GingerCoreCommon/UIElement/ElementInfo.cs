@@ -22,15 +22,17 @@ using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.Enums;
+using System.Text;
+using Amdocs.Ginger.Common.Repository;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
     /// <summary>
-    /// Base class for differnet Control type for each driver, enable to show unified list in Window Explorer Grid
+    /// Base class for different Control type for each driver, enable to show unified list in Window Explorer Grid
     /// </summary>
     /// 
     // We can persist ElementInfo - for example when saving DOR Page UIElements, but when used in Window Explorer there is no save
-    public class ElementInfo : RepositoryItemBase
+    public class ElementInfo : RepositoryItemBase, IParentOptionalValuesObject
     {
         [IsSerializedForLocalRepository]
         public ObservableList<ElementLocator> Locators = new ObservableList<ElementLocator>();
@@ -60,9 +62,12 @@ namespace Amdocs.Ginger.Common.UIElement
         public bool IsAutoLearned { get; set; }
 
         public object ElementObject { get; set; }
+
+
+
         public Boolean IsExpandable { get; set; }
 
-        public IWindowExplorer WindowExplorer { get; set; }        
+        public IWindowExplorer WindowExplorer { get; set; }
 
         private string mElementTitle = null;
         [IsSerializedForLocalRepository]
@@ -78,6 +83,7 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public enum eElementStatus
         {
+            Unknown,
             Pending,
             Passed,
             Failed
@@ -109,8 +115,9 @@ namespace Amdocs.Ginger.Common.UIElement
                     case eElementStatus.Failed:
                         return eImageType.Failed;
                     case eElementStatus.Pending:
-                    default:
                         return eImageType.Pending;
+                    default:
+                        return eImageType.Unknown;
                 }
             }
         }
@@ -133,20 +140,31 @@ namespace Amdocs.Ginger.Common.UIElement
         public virtual string GetElementTitle()
         {
             // we return Name unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return mElementTitle;
         }
 
-
+        string mDescription;
         [IsSerializedForLocalRepository]
-        public string Description { get; set; }
+        public string Description
+        {
+            get
+            {
+                return mDescription;
+            }
+            set
+            {
+                mDescription = value;
+                OnPropertyChanged(nameof(Description));
+            }
+        }
 
-        
+
         public override string ItemName { get { return this.ElementName; } set { this.ElementName = value; } }
 
         private string mElementName = null;
         [IsSerializedForLocalRepository]
-        public string ElementName // elemnt name is given by the user when he maps UI elements and give them name to use in DOR
+        public string ElementName // element name is given by the user when he maps UI elements and give them name to use in DOR
         {
             get
             {
@@ -157,6 +175,7 @@ namespace Amdocs.Ginger.Common.UIElement
             set
             {
                 mElementName = value;
+                OnPropertyChanged(nameof(ElementName));
             }
         }
 
@@ -180,7 +199,11 @@ namespace Amdocs.Ginger.Common.UIElement
             {
                 return mElementTypeEnum;
             }
-            set { mElementTypeEnum = value; }
+            set
+            {
+                mElementTypeEnum = value;
+                OnPropertyChanged(nameof(ElementTypeEnum));
+            }
         }
 
         public string ElementTypeEnumDescription
@@ -197,25 +220,99 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public List<String> OptionalValues = new List<String>();
-
-        public string OptionalValuesAsString
+        /// <summary>
+        /// Please dont use this property it is obselet use the below property "OptionalValuesObjectsList"
+        /// </summary>
+        List<String> mOptionalValues = new List<string>();
+        public List<String> OptionalValues
         {
             get
             {
-                string listString = string.Empty;
-                foreach (string value in OptionalValues) listString += value + ",";
-                listString.TrimEnd(',');
-                return listString;
+                return mOptionalValues;
+            }
+            set
+            {
+                mOptionalValues = value;
             }
         }
+
+        ObservableList<OptionalValue> mOptionalValuesObjectsList = new ObservableList<OptionalValue>();
+        [IsSerializedForLocalRepository]
+        public ObservableList<OptionalValue> OptionalValuesObjectsList
+        {
+            get
+            {
+                if (mOptionalValuesObjectsList.Count == 0 && mOptionalValues.Count > 0)//backward support copying values from old list
+                {
+                    foreach (string opVal in mOptionalValues)
+                    {
+                        mOptionalValuesObjectsList.Add(new OptionalValue() { ItemName = opVal, IsDefault = false });
+                    }
+                    if (mOptionalValuesObjectsList.Count > 0)
+                    {
+                        mOptionalValuesObjectsList[0].IsDefault = true;
+                    }
+                    mOptionalValues = new List<string>();
+                }
+                return mOptionalValuesObjectsList;
+            }
+            set
+            {
+                mOptionalValuesObjectsList = value;
+            }
+        }
+
+        public string OptionalValuesObjectsListAsString
+        {
+            get
+            {
+                StringBuilder opValsString = new StringBuilder();
+                foreach (OptionalValue value in OptionalValuesObjectsList)
+                {
+                    if (value.IsDefault)
+                    {
+                        opValsString.Append(value.ItemName + "*,");
+                    }
+                    else
+                    {
+                        opValsString.Append(value.ItemName + ",");
+                    }
+                }
+                return opValsString.ToString().TrimEnd(',');
+            }
+        }
+
+        ObservableList<OptionalValue> IParentOptionalValuesObject.OptionalValuesList { get { return OptionalValuesObjectsList; } set { OptionalValuesObjectsList = value; } }
+
+        void IParentOptionalValuesObject.PropertyChangedEventHandler()
+        {
+            OnPropertyChanged(nameof(OptionalValuesObjectsList));
+            OnPropertyChanged(nameof(OptionalValuesObjectsListAsString));
+        }
+
+        /// <summary>
+        /// This method is used to check the PossibleValues Supported for any type
+        /// </summary>
+        /// <param name="ei"></param>
+        /// <returns></returns>
+        public static bool IsElementTypeSupportingOptionalValues(eElementType ei)
+        {
+            bool supported = false;
+            if (ei == eElementType.TextBox || ei == eElementType.Text ||
+                ei == eElementType.ComboBox || ei == eElementType.ComboBoxOption ||
+                ei == eElementType.List || ei == eElementType.ListItem)
+            {
+                supported = true;
+            }
+            return supported;
+        }
+
 
         // Used for Lazy loading when possible
         public virtual string GetElementType()
         {
             // we return ElementType unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return mElementType;
         }
 
@@ -234,7 +331,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public virtual string GetValue()
         {
             // we return XPath unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return mValue;
         }
 
@@ -267,7 +364,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public virtual string GetAbsoluteXpath()
         {
             // we return XPath unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return null;
         }
 
@@ -295,120 +392,119 @@ namespace Amdocs.Ginger.Common.UIElement
 
     }
 
-    public enum eLocateBy
-    {
-        [EnumValueDescription("NA")]
-        NA,
-        [EnumValueDescription("")]
-        Unknown,
-        [EnumValueDescription("By ID")]
-        ByID,
-        [EnumValueDescription("By Name")]
-        ByName,
-        [EnumValueDescription("By CSS")]
-        ByCSS,
-        [EnumValueDescription("By XPath")]
-        ByXPath,
-        [EnumValueDescription("By RelXPath")]
-        ByRelXPath,
-        [EnumValueDescription("By X,Y")]
-        ByXY,
-        [EnumValueDescription("By Container Name")]
-        ByContainerName,
-        [EnumValueDescription("By Href")]
-        ByHref,
-        [EnumValueDescription("By Link Text")]
-        ByLinkText,
-        [EnumValueDescription("By Value")]
-        ByValue,
-        [EnumValueDescription("By Index")]
-        ByIndex,
-        [EnumValueDescription("By Class name")]
-        ByClassName, //Android, UI Automation
-        [EnumValueDescription("By AutomationId")]
-        ByAutomationID,
-        [EnumValueDescription("By Localized Control Type")]
-        ByLocalizedControlType,
-        [EnumValueDescription("By Multiple Properties")]
-        ByMulitpleProperties,
-        [EnumValueDescription("By Bounding Rectangle")]
-        ByBoundingRectangle,
-        [EnumValueDescription("Is Enabled")]
-        IsEnabled,
-        [EnumValueDescription("Is Off Screen")]
-        IsOffscreen,
-        [EnumValueDescription("By Title")]
-        ByTitle,
-        [EnumValueDescription("By CaretPosition")]
-        ByCaretPosition,
-        [EnumValueDescription("By URL")]
-        ByUrl,
-        [EnumValueDescription("By ng-model")]
-        ByngModel,
-        [EnumValueDescription("By ng-Repeat")]
-        ByngRepeat,
-        [EnumValueDescription("By ng-Bind")]
-        ByngBind,
-        [EnumValueDescription("By ng-SelectedOption")]
-        ByngSelectedOption,
-        [EnumValueDescription("By Resource ID")]
-        ByResourceID,
-        [EnumValueDescription("By Content Description")]
-        ByContentDescription,
-        [EnumValueDescription("By Text")]
-        ByText,
-        [EnumValueDescription("By Elements Repository")]
-        ByElementsRepository,
-        [EnumValueDescription("By Model Name")]
-        ByModelName,
-        [EnumValueDescription("By CSS Selector")]
-        ByCSSSelector,
-        [EnumValueDescription("Page Objects Model Element")]
-        POMElement,
-    }
+        public enum eLocateBy
+        {
+            [EnumValueDescription("NA")]
+            NA,
+            [EnumValueDescription("")]
+            Unknown,
+            [EnumValueDescription("Page Objects Model Element")]
+            POMElement,
+            [EnumValueDescription("By ID")]
+            ByID,
+            [EnumValueDescription("By Name")]
+            ByName,
+            [EnumValueDescription("By CSS")]
+            ByCSS,
+            [EnumValueDescription("By XPath")]
+            ByXPath,
+            [EnumValueDescription("By Relative XPath")]
+            ByRelXPath,
+            [EnumValueDescription("By X,Y")]
+            ByXY,
+            [EnumValueDescription("By Container Name")]
+            ByContainerName,
+            [EnumValueDescription("By Href")]
+            ByHref,
+            [EnumValueDescription("By Link Text")]
+            ByLinkText,
+            [EnumValueDescription("By Value")]
+            ByValue,
+            [EnumValueDescription("By Index")]
+            ByIndex,
+            [EnumValueDescription("By Class name")]
+            ByClassName, //Android, UI Automation
+            [EnumValueDescription("By AutomationId")]
+            ByAutomationID,
+            [EnumValueDescription("By Localized Control Type")]
+            ByLocalizedControlType,
+            [EnumValueDescription("By Multiple Properties")]
+            ByMulitpleProperties,
+            [EnumValueDescription("By Bounding Rectangle")]
+            ByBoundingRectangle,
+            [EnumValueDescription("Is Enabled")]
+            IsEnabled,
+            [EnumValueDescription("Is Off Screen")]
+            IsOffscreen,
+            [EnumValueDescription("By Title")]
+            ByTitle,
+            [EnumValueDescription("By CaretPosition")]
+            ByCaretPosition,
+            [EnumValueDescription("By URL")]
+            ByUrl,
+            [EnumValueDescription("By ng-model")]
+            ByngModel,
+            [EnumValueDescription("By ng-Repeat")]
+            ByngRepeat,
+            [EnumValueDescription("By ng-Bind")]
+            ByngBind,
+            [EnumValueDescription("By ng-SelectedOption")]
+            ByngSelectedOption,
+            [EnumValueDescription("By Resource ID")]
+            ByResourceID,
+            [EnumValueDescription("By Content Description")]
+            ByContentDescription,
+            [EnumValueDescription("By Text")]
+            ByText,
+            [EnumValueDescription("By Elements Repository")]
+            ByElementsRepository,
+            [EnumValueDescription("By Model Name")]
+            ByModelName,
+            [EnumValueDescription("By CSS Selector")]
+            ByCSSSelector,
+        }
 
-    public enum eElementType
-    {
-        [EnumValueDescription("")]
-        Unknown,
-        [EnumValueDescription("Text Box")]
-        TextBox,
-        Button,
-        Dialog,
-        [EnumValueDescription("Combo Box/Drop Down")]
-        ComboBox,     // HTML Input Select
-        [EnumValueDescription("Combo Box Item/Drop Down Option")]
-        ComboBoxOption,    // HTML Input Select
-        List,
-        ListItem,
-        [EnumValueDescription("Table Item")]
-        TableItem,
-        [EnumValueDescription("Radio Button")]
-        RadioButton,
-        Table,
-        CheckBox,
-        Image,
-        Label,
-        [EnumValueDescription("Menu Item")]
-        MenuItem,
-        [EnumValueDescription("Menu Bar")]
-        MenuBar,
-        TreeView,
-        Window,
-        HyperLink,
-        ScrollBar,
-        Iframe,
-        Canvas,
-        Text,
-        Tab,
-        [EnumValueDescription("Editor Pane")]
-        EditorPane,
-        //HTML Elements
-        Div,
-        Span,
-        Form
-    }
+        public enum eElementType
+        {
+            [EnumValueDescription("")]
+            Unknown,
+            [EnumValueDescription("Text Box")]
+            TextBox,
+            Button,
+            Dialog,
+            [EnumValueDescription("Combo Box/Drop Down")]
+            ComboBox,     // HTML Input Select
+            [EnumValueDescription("Combo Box Item/Drop Down Option")]
+            ComboBoxOption,    // HTML Input Select
+            List,
+            ListItem,
+            [EnumValueDescription("Table Item")]
+            TableItem,
+            [EnumValueDescription("Radio Button")]
+            RadioButton,
+            Table,
+            CheckBox,
+            Image,
+            Label,
+            [EnumValueDescription("Menu Item")]
+            MenuItem,
+            [EnumValueDescription("Menu Bar")]
+            MenuBar,
+            TreeView,
+            Window,
+            HyperLink,
+            ScrollBar,
+            Iframe,
+            Canvas,
+            Text,
+            Tab,
+            [EnumValueDescription("Editor Pane")]
+            EditorPane,
+            //HTML Elements
+            Div,
+            Span,
+            Form
+        }
 
-
-   
+    
 }

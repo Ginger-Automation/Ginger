@@ -26,17 +26,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
     /// </summary>
     public partial class LocateValueEditPage : Page
     {
-        ActUIElement mAction;
-
-        public LocateValueEditPage(ActUIElement Action)
+        
+        public LocateValueEditPage(object locateValueParentObject, string locateValueField)
         {
             InitializeComponent();
-
-            mAction = Action;
-
-            // Bind LocateValue and init VE
-            App.ObjFieldBinding(txtLocateValue, TextBox.TextProperty, mAction, ActUIElement.Fields.ElementLocateValue);
-            txtLocateValue.Init(mAction, ActUIElement.Fields.ElementLocateValue);
+        
+            // Bind LocateValue and init VE            
+            txtLocateValue.Init(locateValueParentObject, locateValueField);
         }
     }
 }

@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     //This class is for Text Box actions
@@ -31,7 +31,7 @@ namespace GingerCore.Actions
         public override string ActionEditPage { get { return "ActUIAClickOnPointEditPage"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
         }        
 

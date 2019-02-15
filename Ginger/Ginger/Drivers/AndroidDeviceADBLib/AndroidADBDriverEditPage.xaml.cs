@@ -30,6 +30,7 @@ using GingerCore;
 using GingerCore.Drivers.AndroidADB;
 using GingerCore.Drivers.Common;
 using SharpAdbClient;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Drivers
 {
@@ -164,7 +165,7 @@ namespace Ginger.Drivers
 
         private void DeviceConfigFileCombo_DropDownOpened(object sender, EventArgs e)
         {
-            string DevicesFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"\Documents\Devices\");
+            string DevicesFolder = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\Devices\");
 
             DeviceConfigFolderComboBox.Items.Clear();            
 
@@ -189,7 +190,7 @@ namespace Ginger.Drivers
             string DeviceFolder = DeviceConfigFolderTextBox.Text;
             if (!string.IsNullOrEmpty(DeviceFolder))
             {
-                DeviceViewPage DVP = new DeviceViewPage(System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Devices", DeviceFolder + @"\"));
+                DeviceViewPage DVP = new DeviceViewPage(System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\Devices", DeviceFolder + @"\"));
                 DeviceFrame.Content = DVP;
             }
             else
@@ -206,7 +207,7 @@ namespace Ginger.Drivers
             // push the apk
 
             //TODO: removed hard coded path, use ginger folder
-            //  getting permsission denided - fix me
+            //  getting permission denied - fix me
 
             string GingerAPKPath = GingerCore.General.GetGingerEXEPath() + @"Drivers\AndroidADB\Java\GingerService\app\build\outputs\apk\";
 

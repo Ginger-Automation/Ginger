@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,12 +68,12 @@ namespace Ginger.Variables
             editMode = mode;
             mParent = parent;
 
-            App.ObjFieldBinding(txtVarName, TextBox.TextProperty, mVariable, VariableBase.Fields.Name);
-            App.ObjFieldBinding(txtVarDescritpion, TextBox.TextProperty, mVariable, VariableBase.Fields.Description);
-            App.ObjFieldBinding(txtFormula, TextBox.TextProperty, mVariable, VariableBase.Fields.Formula, BindingMode.OneWay);
-            App.ObjFieldBinding(txtCurrentValue, TextBox.TextProperty, mVariable, VariableBase.Fields.Value, BindingMode.OneWay);
-            App.ObjFieldBinding(cbSetAsInputValue, CheckBox.IsCheckedProperty, mVariable, VariableBase.Fields.SetAsInputValue);
-            App.ObjFieldBinding(cbSetAsOutputValue, CheckBox.IsCheckedProperty, mVariable, VariableBase.Fields.SetAsOutputValue);
+            App.ObjFieldBinding(txtVarName, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
+            App.ObjFieldBinding(txtVarDescritpion, TextBox.TextProperty, mVariable, nameof(VariableBase.Description));
+            App.ObjFieldBinding(txtFormula, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
+            App.ObjFieldBinding(txtCurrentValue, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
+            App.ObjFieldBinding(cbSetAsInputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsInputValue));
+            App.ObjFieldBinding(cbSetAsOutputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
 
             if (mode ==eEditMode.Global)
             {
@@ -98,11 +99,15 @@ namespace Ginger.Variables
             SetLinkedVarCombo();
 
             if (mVariable.Tags == null)
+            {
                 mVariable.Tags = new ObservableList<Guid>();
+            }
             TagsViewer.Init(mVariable.Tags);
 
             if (editMode == eEditMode.BusinessFlow || editMode == eEditMode.Activity)
+            {
                 SharedRepoInstanceUC.Init(mVariable, App.BusinessFlow);
+            }
             else
             {
                 SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
@@ -126,13 +131,13 @@ namespace Ginger.Variables
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to load the variable type configurations page", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the variable type configurations page", ex);
             }
         }
 
         private void mVariable_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == VariableBase.Fields.VariableEditPage)
+            if (e.PropertyName == nameof(VariableBase.VariableEditPage))
             {
                 LoadVarPage();
             }
@@ -203,7 +208,7 @@ namespace Ginger.Variables
 
             this.Height = 800;
             this.Width = 800;
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, "Undo & Close", CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
             return saveWasDone;
         }
 
@@ -218,7 +223,7 @@ namespace Ginger.Variables
                 }
                 catch
                 {
-                    Reporter.ToUser(eUserMsgKeys.Failedtosaveitems);
+                    Reporter.ToUser(eUserMsgKey.Failedtosaveitems);
                 }
                 _pageGenericWin.Close();
             }
@@ -235,16 +240,9 @@ namespace Ginger.Variables
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
-            }
-            else
-            {
-                if (editMode == eEditMode.SharedRepository)
-                    CheckIfUserWantToSave();
-                else
-                    _pageGenericWin.Close();
             }
         }
 
@@ -285,7 +283,7 @@ namespace Ginger.Variables
 
         private void SetLinkedVarCombo()
         {
-            App.ObjFieldBinding(linkedvariableCombo, ComboBox.SelectedValueProperty, mVariable, VariableBase.Fields.LinkedVariableName);
+            App.ObjFieldBinding(linkedvariableCombo, ComboBox.SelectedValueProperty, mVariable, nameof(VariableBase.LinkedVariableName));
 
             List<string> varsList = new List<string>();
             linkedvariableCombo.ItemsSource = varsList;
@@ -299,7 +297,9 @@ namespace Ginger.Variables
                     if (variable.GetType() == mVariable.GetType() && variable.Name != mVariable.Name)
                     {
                         if (varsList.Contains(variable.Name) == false)
+                        {
                             varsList.Add(variable.Name);
+                        }
                     }
                 }
                 varsList.Sort();
@@ -309,7 +309,9 @@ namespace Ginger.Variables
             if (string.IsNullOrEmpty(mVariable.LinkedVariableName)== false)
             {
                 if (varsList.Contains(mVariable.LinkedVariableName) == false)
-                    varsList.Add(mVariable.LinkedVariableName);                                
+                {
+                    varsList.Add(mVariable.LinkedVariableName);
+                }
                 linkedvariableCombo.SelectedValue = mVariable.LinkedVariableName;
                 linkedvariableCombo.Text = mVariable.LinkedVariableName;
             }
@@ -323,30 +325,30 @@ namespace Ginger.Variables
                 {
                     ActSetVariableValue setValueAct = new ActSetVariableValue();
                     setValueAct.VariableName = mVariable.LinkedVariableName;
-                    setValueAct.SetVariableValueOption = ActSetVariableValue.eSetValueOptions.SetValue;
+                    setValueAct.SetVariableValueOption = VariableBase.eSetValueOptions.SetValue;
                     setValueAct.Value = mVariable.Value;
                     setValueAct.RunOnBusinessFlow = App.BusinessFlow;
                     setValueAct.Execute();
 
                     if (string.IsNullOrEmpty(setValueAct.Error) == false)
                     {
-                        Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Failed to publish the value to linked variable.." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + setValueAct.Error);
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked variable.." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + setValueAct.Error);
                     }
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Failed to publish the value to linked variable." + System.Environment.NewLine + System.Environment.NewLine+ "Error: " + ex.Message );
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked variable." + System.Environment.NewLine + System.Environment.NewLine+ "Error: " + ex.Message );
                 }
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Missing linked variable, please configure.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Missing linked variable, please configure.");
             }
         }
 
         private void linkedvariableCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mVariable.OnPropertyChanged(VariableBase.Fields.LinkedVariableName);
+            mVariable.OnPropertyChanged(nameof(VariableBase.LinkedVariableName));
         }
     }
 }

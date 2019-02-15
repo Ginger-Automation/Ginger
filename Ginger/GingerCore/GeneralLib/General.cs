@@ -39,13 +39,14 @@ using System.Windows.Threading;
 using System.Xml;
 using GingerCore.DataSource;
 using System.Reflection;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore
 {
     public class General
     {
         public static void LoadGenericWindow(ref GenericWindow genWindow, System.Windows.Window owner, eWindowShowStyle windowStyle, string windowTitle, Page windowPage,
-                                            ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", EventHandler closeEventHandler = null, bool startupLocationWithOffset=false)
+                                            ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset=false)
         {
             genWindow = null;
             eWindowShowStyle winStyle;
@@ -168,8 +169,15 @@ namespace GingerCore
                 // Get the combo to be sorted
                 comboBox.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("text", System.ComponentModel.ListSortDirection.Ascending));
             }
-            
-            comboBox.SelectedItem = EnumObj;
+
+            //if ((values == null) && (valuesCollView != null))
+            //{
+                comboBox.SelectedItem = EnumObj;
+            //}
+            //else
+            //{
+            //    comboBox.SelectedValue = EnumObj;
+            //}
         }
 
         public static void FillComboFromEnumType(ComboBox comboBox, Type Etype, List<object> values = null)
@@ -479,7 +487,7 @@ namespace GingerCore
             return false;
         }
 
-        public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed, bool isMultiline = false)
+        public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed = null, bool isMultiline = false)
         {
             bool returnWindow = GingerCore.GeneralLib.InputBoxWindow.OpenDialog(header, label, ref resultValue, isMultiline);
 
@@ -488,10 +496,10 @@ namespace GingerCore
                 resultValue = resultValue.Trim();
                 if (string.IsNullOrEmpty(resultValue.Trim()))
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Value cannot be empty.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot be empty.");
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
-                if (!(resultValue.IndexOfAny(CharsNotAllowed) < 0))
+                if (CharsNotAllowed != null && !(resultValue.IndexOfAny(CharsNotAllowed) < 0))
                 {
                     System.Text.StringBuilder builder = new System.Text.StringBuilder();
                     foreach (char value in CharsNotAllowed)
@@ -499,7 +507,7 @@ namespace GingerCore
                         builder.Append(value);
                         builder.Append(" ");
                     }
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Value cannot contain charaters like:" + "\n" + builder.ToString());
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot contain charaters like:" + "\n" + builder.ToString());
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
             }
@@ -515,12 +523,12 @@ namespace GingerCore
                 resultValue = resultValue.Trim();
                 if (string.IsNullOrEmpty(resultValue.Trim()))
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Value cannot be empty.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot be empty.");
                     return SelectInputWithValidation(header, label, ref resultValue, mValues);
                 }
                 if (!(mValues.Contains(resultValue)))
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Value must be form the list");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value must be form the list");
                     return SelectInputWithValidation(header, label, ref resultValue, mValues);
                 }
             }
@@ -593,7 +601,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
                 return false;
             }
 
@@ -618,16 +626,11 @@ namespace GingerCore
             }
             catch(IOException ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
             }
             
         }
-        public static Bitmap FileToBitmapImage(String path)
-        {
-            if (string.IsNullOrEmpty(path)) return null;
-            Bitmap bmp = (Bitmap)Bitmap.FromFile(path);
-            return (bmp);
-        }
+        
 
         public static string GetGingerEXEPath()
         {
@@ -636,21 +639,7 @@ namespace GingerCore
             return exeLocation;
         }
 
-        public static bool IsNumeric(string sValue)
-        {
-            // simple method to check is strign is number
-            // there are many other alternatives, just keep it simple and make sure it run fast as it is going to be used a lot, for every return value calc   
-            // regec and other are more expensive
-
-        foreach (char c in sValue)
-            {
-                if (!char.IsDigit(c) && c != '.')
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        
 
         public static List<GingerCore.General.ComboEnumItem> GetEnumValuesForCombo(Type Etype)
         {
@@ -764,31 +753,7 @@ namespace GingerCore
                 }
             }
         }
-        public static Dictionary<string, object> DeserializeJson(string json)
-        {
-            if (json.StartsWith("["))
-            {
-                Dictionary<string, object> dictionary = new Dictionary<string, object>();
-
-                JArray a = JArray.Parse(json);
-
-                int ArrayCount = 1;
-                foreach (JObject o in a.Children<JObject>())
-                {
-                    dictionary.Add(ArrayCount.ToString(), o);
-                    ArrayCount++;
-
-                }
-                return dictionary;
-            }
-            else
-            {
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                Dictionary<string, object> dictionary =
-                    serializer.Deserialize<Dictionary<string, object>>(json);
-                return dictionary;
-            }
-        }
+       
 
         public static List<XmlNodeItem> GetXMLNodesItems(XmlDocument xmlDoc,bool DisableProhibitDtd = false)
         {
@@ -863,20 +828,13 @@ namespace GingerCore
 
         public static void ClearDirectoryContent(string DirPath)
         {
-            //clear directory
-            System.IO.DirectoryInfo di = new DirectoryInfo(DirPath);
-            foreach (FileInfo file in di.GetFiles())
-                file.Delete();
-            foreach (DirectoryInfo dir in di.GetDirectories())
-                dir.Delete(true);
+            Amdocs.Ginger.Common.GeneralLib.General.ClearDirectoryContent(DirPath);
         }
 
         //HTML Report related methods added here 
         public static string TimeConvert(string s)
         {
-            double seconds = Convert.ToDouble(s);
-            TimeSpan ts = TimeSpan.FromSeconds(seconds);
-            return ts.ToString(@"hh\:mm\:ss");
+            return Amdocs.Ginger.Common.GeneralLib.General.TimeConvert(s);
         }
 
         public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
@@ -1065,7 +1023,7 @@ namespace GingerCore
                     if (!RegistryFunctions.CheckRegistryValueExist(eRegistryRoot.HKEY_CURRENT_USER, registryKeyPath,
                                     requiredValueName, requiredValue, Microsoft.Win32.RegistryValueKind.DWord, true, true))
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_BROWSER_EMULATION' value to both Local Machine and User level");
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_BROWSER_EMULATION' value to both Local Machine and User level");
                     }
                 }
                 //End
@@ -1086,18 +1044,25 @@ namespace GingerCore
                     if (!RegistryFunctions.CheckRegistryValueExist(eRegistryRoot.HKEY_CURRENT_USER, registryKeyPath,
                                 requiredValueName, requiredValue, Microsoft.Win32.RegistryValueKind.DWord, true, true))
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_SCRIPTURL_MITIGATION' value to both Local Machine and User level");
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_SCRIPTURL_MITIGATION' value to both Local Machine and User level");
                     }
                 }
                 //End
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to complete the registry values check", ex);
-                Reporter.ToUser(eUserMsgKeys.RegistryValuesCheckFailed);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to complete the registry values check", ex);
+                Reporter.ToUser(eUserMsgKey.RegistryValuesCheckFailed);
             }
         }
 
+        public static string[] ReturnFilesWithDesiredExtension(string filepath, string extension)
+        {
+            string[] fileEntries = Directory.EnumerateFiles(filepath, "*.*", SearchOption.AllDirectories)
+                    .Where(s => s.ToLower().EndsWith(extension)).ToArray();
+            
+                return fileEntries;
+        }
         public static ObservableList<T> ConvertListToObservableList<T>(List<T> List)
         {
             ObservableList<T> ObservableList = new ObservableList<T>();
@@ -1152,11 +1117,13 @@ namespace GingerCore
 
             if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
-                if (DataSource.FileFullPath.StartsWith("~"))
-                {
-                    DataSource.FileFullPath = DataSource.FileFullPath.Replace("~", "");
-                    DataSource.FileFullPath = DataSource.ContainingFolderFullPath.Replace("DataSources", "") + DataSource.FileFullPath;
-                }
+                //if (DataSource.FileFullPath.StartsWith("~"))
+                //{
+                //    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
+                //    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
+                //}
+                DataSource.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
+
                 DataSource.Init(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();
                 foreach (DataSourceTable dst in dsTables)

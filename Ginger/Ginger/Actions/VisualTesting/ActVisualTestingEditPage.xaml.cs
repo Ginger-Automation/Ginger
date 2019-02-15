@@ -150,7 +150,7 @@ namespace Ginger.Actions.VisualTesting
 
                     ShowCompareResult();
 
-                    //TODO: this need to be done when the target is change, add prop change dedictaed to it
+                    //TODO: this need to be done when the target is change, add prop change dedicated to it
                     UpdateTargetImage();
                 });
             }
@@ -288,7 +288,7 @@ namespace Ginger.Actions.VisualTesting
         private IVisualTestingDriver GetVisualTestingDriver()
         {
             App.AutomateTabGingerRunner.SetCurrentActivityAgent();
-            Agent a = App.BusinessFlow.CurrentActivity.CurrentAgent;
+            Agent a = (Agent)App.BusinessFlow.CurrentActivity.CurrentAgent;
 
             if (a.Driver is IVisualTestingDriver)
             {
@@ -365,8 +365,8 @@ namespace Ginger.Actions.VisualTesting
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.VisualTestingFailedToDeleteOldBaselineImage);
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToUser(eUserMsgKey.VisualTestingFailedToDeleteOldBaselineImage);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
 
             mAct.CreateBaseline(GetVisualTestingDriver());

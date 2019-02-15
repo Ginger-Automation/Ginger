@@ -26,6 +26,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.SourceControl
 {
@@ -42,7 +43,7 @@ namespace Ginger.SourceControl
             DownloadProjectPage
         }
 
-        public SourceControlConnDetailsPage( )
+        public SourceControlConnDetailsPage()
         {
             InitializeComponent();
             Init();
@@ -50,55 +51,65 @@ namespace Ginger.SourceControl
 
         private void Init()
         {
-            Bind();            
+            Bind();
         }
 
         private void Bind()
         {
-            SourceControlClassTextBox.Text = SourceControlIntegration.GetSourceControlType(App.UserProfile.Solution.SourceControl);
+            SourceControlClassTextBox.Text = SourceControlIntegration.GetSourceControlType( WorkSpace.UserProfile.Solution.SourceControl);
             SourceControlClassTextBox.IsReadOnly = true;
             SourceControlClassTextBox.IsEnabled = false;
 
-            SourceControlURLTextBox.Text = SourceControlIntegration.GetRepositoryURL( App.UserProfile.Solution.SourceControl);
-                SourceControlURLTextBox.IsReadOnly = true;
-                SourceControlURLTextBox.IsEnabled = false;
+            SourceControlURLTextBox.Text = SourceControlIntegration.GetRepositoryURL( WorkSpace.UserProfile.Solution.SourceControl);
+            SourceControlURLTextBox.IsReadOnly = true;
+            SourceControlURLTextBox.IsEnabled = false;
 
-                App.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlUser);
-                App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlPass);
+            App.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlUser));
+            App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlPass));
+            if (SourceControlClassTextBox.Text == SourceControlBase.eSourceControlType.GIT.ToString())
+            {
+                xTimeoutPanel.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                App.ObjFieldBinding(xTextSourceControlConnectionTimeout, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlTimeout));
+                xTimeoutPanel.Visibility = Visibility.Visible;
+               
+              
+            }
+            App.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SolutionSourceControlAuthorName));
+            App.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SolutionSourceControlAuthorEmail));
 
-            App.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SolutionSourceControlAuthorName);
-            App.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SolutionSourceControlAuthorEmail);
-
-            if (App.UserProfile.Solution.SourceControl.IsSupportingLocks)
+            if ( WorkSpace.UserProfile.Solution.SourceControl.IsSupportingLocks)
             {
                 ShowIndicationkForLockedItems.Visibility = Visibility.Visible;
             }
-            App.ObjFieldBinding(ShowIndicationkForLockedItems, CheckBox.IsCheckedProperty, App.UserProfile.Solution, nameof(Solution.ShowIndicationkForLockedItems));
+            App.ObjFieldBinding(ShowIndicationkForLockedItems, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.ShowIndicationkForLockedItems));
 
-            SourceControlPassTextBox.Password = App.UserProfile.Solution.SourceControl.SourceControlPass;
+            SourceControlPassTextBox.Password =  WorkSpace.UserProfile.Solution.SourceControl.SourceControlPass;
 
             SourceControlPassTextBox.PasswordChanged += SourceControlPassTextBox_PasswordChanged;
 
-            if(String.IsNullOrEmpty(App.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorEmail))
+            if (String.IsNullOrEmpty( WorkSpace.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorEmail))
             {
-                App.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorEmail = App.UserProfile.Solution.SourceControl.SourceControlUser;
+                 WorkSpace.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorEmail =  WorkSpace.UserProfile.Solution.SourceControl.SourceControlUser;
             }
-            if (String.IsNullOrEmpty(App.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorName))
+            if (String.IsNullOrEmpty( WorkSpace.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorName))
             {
-                App.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorName = App.UserProfile.Solution.SourceControl.SourceControlUser;
+                 WorkSpace.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorName =  WorkSpace.UserProfile.Solution.SourceControl.SourceControlUser;
             }
         }
 
         private void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            App.UserProfile.Solution.SourceControl.SourceControlPass = ((PasswordBox)sender).Password;
-            App.UserProfile.SaveUserProfile();//todo: check if needed
-            SourceControlIntegration.Init(App.UserProfile.Solution.SourceControl);
+             WorkSpace.UserProfile.Solution.SourceControl.SourceControlPass = ((PasswordBox)sender).Password;
+             WorkSpace.UserProfile.SaveUserProfile();//todo: check if needed
+            SourceControlIntegration.Init( WorkSpace.UserProfile.Solution.SourceControl);
         }
 
         public bool TestSourceControlConnection()
         {
-            bool result =  SourceControlIntegration.TestConnection(App.UserProfile.Solution.SourceControl, eSourceControlContext.ConnectionDetailsPage, false);
+            bool result = SourceControlIntegration.TestConnection( WorkSpace.UserProfile.Solution.SourceControl, eSourceControlContext.ConnectionDetailsPage, false);
             Mouse.OverrideCursor = null;
             return result;
         }
@@ -109,20 +120,19 @@ namespace Ginger.SourceControl
         }
 
         private void SaveConfiguration_Click(object sender, RoutedEventArgs e)
-        {           
-            App.UserProfile.Solution.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);           
+        {
+             WorkSpace.UserProfile.Solution.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
         }
 
-        private void Close_Click(object sender, EventArgs e)
+        private void Close_Click(object sender, RoutedEventArgs e)
         {
-            if (App.UserProfile.Solution != null && App.UserProfile.Solution.SourceControl != null)
+            if ( WorkSpace.UserProfile.Solution != null &&  WorkSpace.UserProfile.Solution.SourceControl != null)
             {
-
-                App.UserProfile.SolutionSourceControlUser = App.UserProfile.Solution.SourceControl.SourceControlUser;
-                App.UserProfile.SolutionSourceControlPass = App.UserProfile.Solution.SourceControl.SourceControlPass;
-                App.UserProfile.SolutionSourceControlAuthorName = App.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorName;
-                App.UserProfile.SolutionSourceControlAuthorEmail = App.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorName;
-                SourceControlIntegration.Disconnect(App.UserProfile.Solution.SourceControl);
+                 WorkSpace.UserProfile.SolutionSourceControlUser =  WorkSpace.UserProfile.Solution.SourceControl.SourceControlUser;
+                 WorkSpace.UserProfile.SolutionSourceControlPass =  WorkSpace.UserProfile.Solution.SourceControl.SourceControlPass;
+                 WorkSpace.UserProfile.SolutionSourceControlAuthorName =  WorkSpace.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorName;
+                 WorkSpace.UserProfile.SolutionSourceControlAuthorEmail =  WorkSpace.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorName;
+                SourceControlIntegration.Disconnect( WorkSpace.UserProfile.Solution.SourceControl);
 
             }
             genWin.Close();
@@ -137,13 +147,20 @@ namespace Ginger.SourceControl
             Button SaveBtn = new Button();
             SaveBtn.Content = "Save Configuration";
             SaveBtn.Click += new RoutedEventHandler(SaveConfiguration_Click);
-     
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { testConnBtn, SaveBtn },true,"Close", new EventHandler(Close_Click));
+
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { testConnBtn, SaveBtn }, true, "Close", new RoutedEventHandler(Close_Click));
         }
-      
+
         private void SourceControlUserDetails_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SourceControlIntegration.Init(App.UserProfile.Solution.SourceControl);
+            SourceControlIntegration.Init( WorkSpace.UserProfile.Solution.SourceControl);
+            
+        }
+
+        private void txtSourceControlConnectionTimeout_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            SourceControlIntegration.Init( WorkSpace.UserProfile.Solution.SourceControl);
+             WorkSpace.UserProfile.SolutionSourceControlTimeout = Int32.Parse(xTextSourceControlConnectionTimeout.Text);
         }
     }
 }

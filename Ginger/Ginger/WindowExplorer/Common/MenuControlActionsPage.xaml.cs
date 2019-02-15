@@ -95,7 +95,7 @@ namespace Ginger.WindowExplorer.Common
             }
             catch (InvalidOperationException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 return;
             }
         }
@@ -109,7 +109,7 @@ namespace Ginger.WindowExplorer.Common
             }
             catch (InvalidOperationException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 return;
             }
         }
@@ -127,7 +127,7 @@ namespace Ginger.WindowExplorer.Common
             act.ValueForDriver = act.Value;
             act.Active = true;
             //TODO: remove hard coded selecting first agent
-            App.AutomateTabGingerRunner.ApplicationAgents[0].Agent.RunAction(act);
+            ((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).RunAction(act);
         }
 
         private void MenuItemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

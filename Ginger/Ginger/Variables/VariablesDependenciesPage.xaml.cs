@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
@@ -62,7 +63,7 @@ namespace Ginger.Variables
             InitializeComponent();
 
             mParentObject = parentObject;
-            ((RepositoryItem)mParentObject).SaveBackup();
+            ((RepositoryItemBase)mParentObject).SaveBackup();
 
             if (mParentObject is Activity)
             {
@@ -171,7 +172,7 @@ namespace Ginger.Variables
                             }
                             else
                             {
-                                Reporter.ToUser(eUserMsgKeys.DuplicateVariable, listVar.Name, varOptionalVal.Value);
+                                Reporter.ToUser(eUserMsgKey.DuplicateVariable, listVar.Name, varOptionalVal.Value);
                                 mParentListVars.Clear();
                                 mDependsDT.Clear();
                                 grdDependencies.UseGridWithDataTableAsSource(mDependsDT);
@@ -266,8 +267,8 @@ namespace Ginger.Variables
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to load the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Actions-Variables dependencies grid data", ex);
-                Reporter.ToUser(eUserMsgKeys.ActionsDependenciesLoadFailed, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Actions-Variables dependencies grid data", ex);
+                Reporter.ToUser(eUserMsgKey.ActionsDependenciesLoadFailed, ex.Message);
             }
         }
 
@@ -289,7 +290,7 @@ namespace Ginger.Variables
                             Style colStyle = new System.Windows.Style(typeof(DataGridColumnHeader));                          
                             SolidColorBrush backgroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString(variableColumnBackgroundColor[colorIndx % 8]);
                             colStyle.Setters.Add(new Setter(DataGridColumnHeader.BackgroundProperty, backgroundColor));
-                            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorA")).ToString());
+                            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
                             colStyle.Setters.Add(new Setter(DataGridColumnHeader.ForegroundProperty, foregroundColor));
                             colStyle.Setters.Add(new Setter(DataGridColumnHeader.FontWeightProperty, FontWeights.Bold));
                             colStyle.Setters.Add(new Setter(DataGridColumnHeader.BorderThicknessProperty, new Thickness(0.5, 0.5, 0.5, 0.5)));
@@ -305,7 +306,7 @@ namespace Ginger.Variables
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid columns", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid columns", ex);
                 }
                 grdDependencies.SetGridColumnsWidth();//fix columns width
 
@@ -322,7 +323,7 @@ namespace Ginger.Variables
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid data", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid data", ex);
             }
         }
 
@@ -477,7 +478,7 @@ namespace Ginger.Variables
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to set the " + mDepededItemType.ToString() + "-Variables dependencies helper text", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to set the " + mDepededItemType.ToString() + "-Variables dependencies helper text", ex);
             }
         }
 
@@ -606,10 +607,10 @@ namespace Ginger.Variables
                                 foreach (DataRow row in mDependsDT.Rows)
                                     row[selectedCol.DisplayIndex] = checkValue;
                             else
-                                Reporter.ToUser(eUserMsgKeys.SelectValidColumn);
+                                Reporter.ToUser(eUserMsgKey.SelectValidColumn);
                         }
                         else
-                            Reporter.ToUser(eUserMsgKeys.SelectValidColumn);
+                            Reporter.ToUser(eUserMsgKey.SelectValidColumn);
                         break;
 
                     case eAutoCheckArea.Row:
@@ -620,7 +621,7 @@ namespace Ginger.Variables
                                 selectedRow.Row[i] = checkValue;
                         }
                         else
-                            Reporter.ToUser(eUserMsgKeys.SelectValidRow);
+                            Reporter.ToUser(eUserMsgKey.SelectValidRow);
                         break;
                 }
 
@@ -629,12 +630,15 @@ namespace Ginger.Variables
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do Auto check in 'VariablesDependenciesPage' grid", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to do Auto check in 'VariablesDependenciesPage' grid", ex);
             }
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
+            RoutedEventHandler closeHandler = null;
+            string closeContent = string.Empty;
+
             Button okBtn = new Button();
             okBtn.Content = "Ok";
             okBtn.Click += new RoutedEventHandler(okBtn_Click);
@@ -650,10 +654,10 @@ namespace Ginger.Variables
             switch (mDepededItemType)
             {
                 case (eDependedItemsType.Actions):
-                    GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit '" + ((Activity)mParentObject).ActivityName + "' Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies", this, winButtons, false, string.Empty, CloseWinClicked);           
+                    GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit '" + ((Activity)mParentObject).ActivityName + "' Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies", this, winButtons, false, "Undo & Close" , CloseWinClicked);           
                     break;
                 case (eDependedItemsType.Activities):
-                    GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit '" + ((BusinessFlow)mParentObject).Name + "' " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies", this, winButtons, false, string.Empty, CloseWinClicked);            
+                    GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit '" + ((BusinessFlow)mParentObject).Name + "' " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies", this, winButtons, false, "Undo & Close", CloseWinClicked);            
                     break;
             }            
         }
@@ -661,7 +665,7 @@ namespace Ginger.Variables
         private void UndoChangesAndClose()
         {
             Mouse.OverrideCursor = Cursors.Wait;            
-            ((RepositoryItem)mParentObject).RestoreFromBackup(true);
+            ((RepositoryItemBase)mParentObject).RestoreFromBackup(true);
             Mouse.OverrideCursor = null;
 
             _pageGenericWin.Close();
@@ -669,12 +673,10 @@ namespace Ginger.Variables
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
             }
-            else
-                _pageGenericWin.Close();
         }
 
         private void undoBtn_Click(object sender, RoutedEventArgs e)
@@ -707,7 +709,7 @@ namespace Ginger.Variables
                         case (eDependedItemsType.Actions):
                             foreach (DataRowView row in grdDependencies.grdMain.Items)
                             {
-                                Act act = ((Activity)mParentObject).Acts[grdDependencies.grdMain.Items.IndexOf(row)];
+                                IAct act = ((Activity)mParentObject).Acts[grdDependencies.grdMain.Items.IndexOf(row)];
                                 int colsIndex = 2;
                                 foreach (VariableBase var in mParentListVars)
                                 {
@@ -735,7 +737,7 @@ namespace Ginger.Variables
                         case (eDependedItemsType.Activities):
                             foreach (DataRowView row in grdDependencies.grdMain.Items)
                             {
-                                Activity act = ((BusinessFlow)mParentObject).Activities[grdDependencies.grdMain.Items.IndexOf(row)];
+                                Activity act =(Activity)((BusinessFlow)mParentObject).Activities[grdDependencies.grdMain.Items.IndexOf(row)];
                                 int colsIndex = 2;
                                 foreach (VariableBase var in mParentListVars)
                                 {
@@ -769,8 +771,8 @@ namespace Ginger.Variables
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, ex.Message);
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to save the " + mDepededItemType.ToString() + "-Variables dependencies configurations", ex);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to save the " + mDepededItemType.ToString() + "-Variables dependencies configurations", ex);
                 _pageGenericWin.Close();
             }
         }

@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.Actions.XML
 {
@@ -50,7 +50,7 @@ namespace GingerCore.Actions.XML
         public override string ActionDescription { get { return "XML/JSON Tag Validation Action"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Validate tags in XML/JSON documents by path");
             TBH.AddLineBreak();
@@ -145,10 +145,15 @@ namespace GingerCore.Actions.XML
 
                 }
 
-                if (FilePath.Contains("~\\"))
+                //if (FilePath.Contains("~\\"))
+                //{
+                //    FilePath = FilePath.Replace("~\\", SolutionFolder);
+                //}
+                if (FilePath.Contains("~"))
                 {
-                    FilePath = FilePath.Replace("~\\", SolutionFolder);
+                    FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
                 }
+                
 
                 docTxt = System.IO.File.ReadAllText(FilePath);
             }
@@ -257,7 +262,7 @@ namespace GingerCore.Actions.XML
 
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 throw new System.ArgumentException("Node not found at provided path");
             }
         }

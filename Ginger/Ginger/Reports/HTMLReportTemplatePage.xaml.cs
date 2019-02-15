@@ -75,7 +75,7 @@ namespace Ginger.Reports
         {
             InitializeComponent();
 
-            _HTMLReportConfiguration = SetHTMLReportConfigurationWithDefaultValues();
+            _HTMLReportConfiguration = HTMLReportConfiguration.SetHTMLReportConfigurationWithDefaultValues();
             SetControlsNewTemplate();
             SetDefaultLogoImage();
             SetHTMLReportsConfigFieldsGridsView();
@@ -162,43 +162,6 @@ namespace Ginger.Reports
             grdEmailSummaryViewFields.InitViewItems();
         }      
 
-        public static HTMLReportConfiguration SetHTMLReportConfigurationWithDefaultValues(string name = null)
-        {
-            if (App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq == 0)
-            {
-                App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = 1;
-            }
-            HTMLReportConfiguration newHTMLReportConfiguration = new HTMLReportConfiguration();
-            newHTMLReportConfiguration.ID = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq;
-            if ((name != null) && (name != string.Empty))
-            {
-                newHTMLReportConfiguration.Name = name;
-            }
-            else
-            {
-                newHTMLReportConfiguration.Name = "Template #" + newHTMLReportConfiguration.ID;
-            }
-            newHTMLReportConfiguration.ReportLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActionLevel.ToString();
-            if (Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations().Count == 0)
-                newHTMLReportConfiguration.IsDefault = true;
-            else
-                newHTMLReportConfiguration.IsDefault = false;
-            newHTMLReportConfiguration.ShowAllIterationsElements = false;
-            newHTMLReportConfiguration.UseLocalStoredStyling = false;
-            newHTMLReportConfiguration.RunSetFieldsToSelect = GetReportLevelMembers(typeof(RunSetReport));
-            newHTMLReportConfiguration.EmailSummaryViewFieldsToSelect = GetReportLevelMembers(typeof(RunSetReport));
-            newHTMLReportConfiguration.GingerRunnerFieldsToSelect = GetReportLevelMembers(typeof(GingerReport));
-            newHTMLReportConfiguration.BusinessFlowFieldsToSelect = GetReportLevelMembers(typeof(BusinessFlowReport));
-            newHTMLReportConfiguration.ActivityGroupFieldsToSelect = GetReportLevelMembers(typeof(ActivityGroupReport));
-            newHTMLReportConfiguration.ActivityFieldsToSelect = GetReportLevelMembers(typeof(ActivityReport));
-            newHTMLReportConfiguration.ActionFieldsToSelect = GetReportLevelMembers(typeof(ActionReport));
-            newHTMLReportConfiguration.Description = string.Empty;
-            using (var ms = new MemoryStream())
-            {
-                newHTMLReportConfiguration.LogoBase64Image = Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@amdocs_logo.jpg"))));
-            }
-            return newHTMLReportConfiguration;
-        }
 
         private void SetHTMLReportsConfigFieldsGridsData(HTMLReportConfiguration HTMLReportConfiguration)
         {
@@ -213,81 +176,20 @@ namespace Ginger.Reports
 
         private static ObservableList<HTMLReportConfigFieldToSelect> GetReportLevelMembers(Type reportLevelType)
         {
-            ObservableList<HTMLReportConfigFieldToSelect> fieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
-            MemberInfo[] members = reportLevelType.GetMembers();
-            FieldParams token = null;
 
-            foreach (MemberInfo mi in members)
-            {
-                token = Attribute.GetCustomAttribute(mi, typeof(FieldParams), false) as FieldParams;
 
-                if (token == null)
-                    continue;
-
-                fieldsToSelect.Add(new HTMLReportConfigFieldToSelect(mi.Name.ToString(),
-                                                                     (Attribute.GetCustomAttribute(mi, typeof(FieldParamsNameCaption), false) as FieldParamsNameCaption).NameCaption,
-                                                                     (Attribute.GetCustomAttribute(mi, typeof(FieldParamsIsSelected), false) as FieldParamsIsSelected).IsSelected,
-                                                                     (Attribute.GetCustomAttribute(mi, typeof(FieldParamsIsNotMandatory), false) as FieldParamsIsNotMandatory).IsNotMandatory,
-                                                                     (Attribute.GetCustomAttribute(mi, typeof(FieldParamsFieldType), false) as FieldParamsFieldType).FieldType.ToString(),
-                                                                     false));
-            }
-            return fieldsToSelect;
+            return HTMLReportConfiguration.GetReportLevelMembers(reportLevelType);
         }
 
         public static HTMLReportConfiguration EnchancingLoadedFieldsWithDataAndValidating(HTMLReportConfiguration HTMLReportConfiguration)
         {
-            HTMLReportConfiguration.RunSetFieldsToSelect =
-                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.RunSetFieldsToSelect, typeof(RunSetReport), HTMLReportConfiguration);
-            HTMLReportConfiguration.EmailSummaryViewFieldsToSelect =
-               EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.EmailSummaryViewFieldsToSelect, typeof(RunSetReport), HTMLReportConfiguration);
-            HTMLReportConfiguration.GingerRunnerFieldsToSelect =
-                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.GingerRunnerFieldsToSelect, typeof(GingerReport), HTMLReportConfiguration);
-            HTMLReportConfiguration.BusinessFlowFieldsToSelect =
-                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.BusinessFlowFieldsToSelect, typeof(BusinessFlowReport), HTMLReportConfiguration);
-            HTMLReportConfiguration.ActivityGroupFieldsToSelect =
-                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.ActivityGroupFieldsToSelect, typeof(ActivityGroupReport), HTMLReportConfiguration);
-            HTMLReportConfiguration.ActivityFieldsToSelect =
-                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.ActivityFieldsToSelect, typeof(ActivityReport), HTMLReportConfiguration);
-            HTMLReportConfiguration.ActionFieldsToSelect =
-                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.ActionFieldsToSelect, typeof(ActionReport), HTMLReportConfiguration);
-
-            if (HTMLReportConfiguration.ReportLowerLevelToShow == null)
-            {
-                HTMLReportConfiguration.ReportLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActionLevel.ToString();
-            }
-
-            return HTMLReportConfiguration;
+      
+            return HTMLReportConfiguration.EnchancingLoadedFieldsWithDataAndValidating(HTMLReportConfiguration);
         }
 
         private static ObservableList<HTMLReportConfigFieldToSelect> EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames fieldsToSelectListName, Type reportType, HTMLReportConfiguration HTMLReportConfiguration)
         {
-            ObservableList<HTMLReportConfigFieldToSelect> savedFieldSelections = (ObservableList<HTMLReportConfigFieldToSelect>)HTMLReportConfiguration.GetType().GetField(fieldsToSelectListName.ToString()).GetValue(HTMLReportConfiguration);
-            ObservableList<HTMLReportConfigFieldToSelect> referenceFieldSelections = GetReportLevelMembers(reportType);
-            // swap should be done between two below lists. Previose saved selection should be performed on the referenceFieldSelections
-            foreach (var saved_item in savedFieldSelections)
-            {
-                var savedref_item = referenceFieldSelections.Where(x => x.FieldKey == saved_item.FieldKey).FirstOrDefault();
-                if (savedref_item != null)
-                {
-                    if (!savedref_item.IsNotMandatory)     // if field is mandatory
-                    {                                       // select it anyway
-                        saved_item.IsSelected = true;
-                    }
-                    saved_item.FieldName = savedref_item.FieldName;
-                    saved_item.FieldType = savedref_item.FieldType;
-                    saved_item.IsNotMandatory = savedref_item.IsNotMandatory;
-                }
-            }
-            //adding missing fields
-            foreach (var reference_item in referenceFieldSelections)
-            {
-                var savedref_item = savedFieldSelections.Where(x => x.FieldKey == reference_item.FieldKey).FirstOrDefault();
-                if (savedref_item == null)
-                {
-                    savedFieldSelections.Add(reference_item);
-                }
-            }
-            return savedFieldSelections;
+            return HTMLReportConfiguration.EnchancingLoadedFieldsWithDataAndValidatingPerLevel(fieldsToSelectListName, reportType, HTMLReportConfiguration);
         }
 
         private void SetControls()
@@ -378,14 +280,14 @@ namespace Ginger.Reports
             _newHTMLReportConfiguration = _HTMLReportConfiguration;
             _pageGenericWin.Hide();
 
-            App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
-            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportsSettings);
+             WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
+             WorkSpace.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
 
             if (_existingTemplatePage)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, _HTMLReportConfiguration.GetNameForFileName(), "item");                
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, _HTMLReportConfiguration.GetNameForFileName(), "item");                
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(_HTMLReportConfiguration);
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
         }
 
@@ -504,7 +406,7 @@ namespace Ginger.Reports
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.ImageSize, "30");
+                    Reporter.ToUser(eUserMsgKey.ImageSize, "30");
                 }
             }
         }
@@ -521,7 +423,7 @@ namespace Ginger.Reports
 
             grdGingersField.IsEnabled = true;
             bf_HeaderSelection.IsEnabled = true;
-            tbiBusinessFlowField.IsEnabled = true;
+            tbBusinessFlowField.IsEnabled = true;
 
             bf_HeaderSelection.Unchecked -= new RoutedEventHandler(bf_HeaderSelection_Unchecked);
             bf_HeaderSelection.IsChecked = false;
@@ -541,7 +443,7 @@ namespace Ginger.Reports
 
             bf_HeaderSelection.IsEnabled = false;
             grdBusinessFlowField.IsEnabled = false;
-            tbiBusinessFlowField.IsEnabled = false;
+            tbBusinessFlowField.IsEnabled = false;
 
             activities_HeaderSelection.Unchecked -= new RoutedEventHandler(activities_HeaderSelection_Unchecked);
             activities_HeaderSelection.IsChecked = false;
@@ -563,7 +465,7 @@ namespace Ginger.Reports
         private void bf_HeaderSelection_Checked(object sender, RoutedEventArgs e)
         {
             _HTMLReportConfiguration.ReportLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.BusinessFlowLevel.ToString();
-            tbiBusinessFlowField.IsSelected = true;
+            tbBusinessFlowField.IsSelected = true;
 
             grdBusinessFlowField.IsEnabled = true;
 
@@ -617,7 +519,7 @@ namespace Ginger.Reports
         private void activities_HeaderSelection_Unchecked(object sender, RoutedEventArgs e)
         {
             _HTMLReportConfiguration.ReportLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.BusinessFlowLevel.ToString();
-            tbiBusinessFlowField.IsSelected = true;
+            tbBusinessFlowField.IsSelected = true;
 
             grdActivitiesField.IsEnabled = false;
 
@@ -678,7 +580,7 @@ namespace Ginger.Reports
             _previousCursor = Mouse.OverrideCursor;
             Mouse.OverrideCursor = Cursors.Wait;
 
-            HTMLReportsConfiguration currentConf = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             
             //changing the solution because report should not be created in installtion folder due to permissions issues + it can be multiple users will run same Ginger on server
             if (Directory.Exists(mPreviewDummyReportPath))            
@@ -717,7 +619,7 @@ namespace Ginger.Reports
                     string unzippedDataTestPath= System.IO.Path.Combine(mPreviewDummyReportDataPath, "RunSet.txt");
                     if (File.Exists(unzippedDataTestPath) == false)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Missing HTML Report preview unzipped data on: " + unzippedDataTestPath);
+                        Reporter.ToLog(eLogLevel.ERROR, "Missing HTML Report preview unzipped data on: " + unzippedDataTestPath);
                         mPreviewDummyReportPath = string.Empty;
                     }
                     else
@@ -728,12 +630,12 @@ namespace Ginger.Reports
                 }
                 else
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Missing HTML Report preview Dummy report Zip file on: " + dummyReportOriginalZipFilePath);
+                    Reporter.ToLog(eLogLevel.ERROR, "Missing HTML Report preview Dummy report Zip file on: " + dummyReportOriginalZipFilePath);
                 }                
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to prepare the dummy report data for HTML Report Preview", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to prepare the dummy report data for HTML Report Preview", ex);
             }
         }
 

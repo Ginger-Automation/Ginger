@@ -31,6 +31,7 @@ using System.Drawing;
 using System.Windows.Automation;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.Actions
 {
@@ -39,7 +40,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Image search and click on screen"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
         }
 
@@ -119,7 +120,9 @@ namespace GingerCore.Actions
                 targetWin = UIAutomationGetWindowByTitle(WindowTitle);
             string locatorImgFilePath;
 
-            locatorImgFilePath = LocatorImgFile.Replace("~\\", SolutionFolder);
+            //locatorImgFilePath = LocatorImgFile.Replace("~\\", SolutionFolder);
+            locatorImgFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(LocatorImgFile);
+
             if (!File.Exists(LocatorImgFile))
             {
                 if (LocatorImgFile.Contains("Documents"))

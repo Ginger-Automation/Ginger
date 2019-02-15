@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActMobileDevice : Act
@@ -30,7 +30,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Mobile Device Action"; } }
         public override string ActionUserDescription { get { return "Run events which can be performed on mobile device"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
         }        
 
@@ -53,24 +53,55 @@ namespace GingerCore.Actions
 
         public enum eMobileDeviceAction
         {
-            PressXY = 1,
-            LongPressXY = 11,
-            TapXY = 12,
-            DragXYXY = 13,
-            PressBackButton = 2,
-            PressHomeButton = 3,
-            PressMenuButton = 4,
-            SwipeUp = 5,
-            SwipeDown = 6,
-            SwipeRight = 7,
-            SwipeLeft = 8,
-            Wait = 9,
-            TakeScreenShot = 10,
-            RefreshDeviceScreenImage = 14,
+            PressXY,
+            LongPressXY,
+            TapXY,
+            DragXYXY,
+            PressBackButton ,
+            PressHomeButton,
+            PressMenuButton,
+            PressCamera,
+            PressVolumeUp,
+            PressVolumeDown,
+            PressSwitchApp,
+            PressLongHome,
+            SwipeUp,
+            SwipeDown,
+            SwipeRight,
+            SwipeLeft,
+            Wait,
+            TakeScreenShot,
+            RefreshDeviceScreenImage,
+            PressKey,
+            OpenAppByName
+        }
+
+        public enum ePressKey
+        {
+            OK,
+            MENU,
+            HOME,
+            BACK,
+            LEFT,
+            RIGHT,
+            UP,
+            DOWN,
+            CLEAR,
+            KEYBOARD_GO,
+            KEYBOARD_SEARCH,
+            KEYBOARD_SEND,
+            KEYBOARD_NEXT,
+            KEYBOARD_DONE,
+            KEYBOARD_PREVIOUS,
+            KEYBOARD_ENTER,
+            KEYBOARD_SUBMIT
         }
 
         [IsSerializedForLocalRepository]
         public eMobileDeviceAction MobileDeviceAction { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public ePressKey MobilePressKey { get; set; }
 
         public override String ToString()
         {

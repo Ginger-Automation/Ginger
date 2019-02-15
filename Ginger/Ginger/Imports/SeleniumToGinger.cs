@@ -28,6 +28,7 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Import
 {
@@ -35,7 +36,7 @@ namespace Ginger.Import
     {
         public static BusinessFlow ConvertSeleniumScript(string FileName)
         {
-            //TODO: move code from here to convertor/import class
+            //TODO: move code from here to converter/import class
             var doc = new HtmlDocument();
             Activity result = new Activity() { Active = true };
             
@@ -151,7 +152,7 @@ namespace Ginger.Import
             }
             catch (Exception)
             {
-                Reporter.ToUser(eUserMsgKeys.ImportSeleniumScriptError);
+                Reporter.ToUser(eUserMsgKey.ImportSeleniumScriptError);
             }
             return null;
         }

@@ -16,17 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using GingerCore.Actions;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
-using System.IO;
-using System.Drawing;
-using System.Reflection;
-using System.Windows.Threading;
 using Amdocs.Ginger.Common;
+using GingerCore.Actions;
+using System;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -43,7 +43,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             return true;
         }
 
-        protected ConsoleDriverWindow mConsoleDriverWindow;
+        public ConsoleDriverWindow mConsoleDriverWindow;
 
         public abstract bool Connect();
         public abstract void Disconnect();
@@ -76,9 +76,9 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
             if (IsDriverConnected)
             {
-                Dispatcher = mConsoleDriverWindow.Dispatcher;
+                Dispatcher = new DriverWindowDispatcher(mConsoleDriverWindow.Dispatcher);
                 Dispatcher.Invoke(new Action(() => OnDriverMessage(eDriverMessageType.DriverStatusChanged)));
-                Dispatcher.Run();
+                System.Windows.Threading.Dispatcher.Run();                
             }
             else
             {
@@ -94,16 +94,18 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 if (mConsoleDriverWindow != null)
                 {
                     mConsoleDriverWindow.Close();
+                    Dispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
+                    Thread.Sleep(100);
                     mConsoleDriverWindow = null;
                 }
             }
             catch (InvalidOperationException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message, ex);
             }
             IsDriverConnected = false;
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
@@ -160,6 +162,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                             return;
                         }
 
+                        act.AddOrUpdateReturnParamActual("Result", sRC);
+
                         sRC =sRC.Replace("\r", "");
                         sRC = sRC.Replace("\t", "");
                         string[] RCValues = sRC.Split('\n');
@@ -169,7 +173,16 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                             {
                                 string Param;
                                 string Value;
-                                int i = RCValue.IndexOf('=');
+                                int i = -1;
+                                if (!string.IsNullOrEmpty(ACC.Delimiter))
+                                {
+                                    i = RCValue.IndexOf(ACC.Delimiter);
+                                }
+                                else
+                                {
+                                    i = RCValue.IndexOf('=');
+                                }
+                                
                                 if ((i > 0) && ( i != RCValue.IndexOf("==")) && (i != RCValue.IndexOf("!=") +1))
                                 {
                                     Param = (RCValue.Substring(0, i)).Trim();
@@ -218,7 +231,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             catch(Exception ex)
             {
                 act.Error = "Failed to create console window screenshot. Error= " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, act.Error, ex);
+                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
             }
         }
 
@@ -227,20 +240,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             return "TBD";
         }
 
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
-
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
-
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
+        
 
         public override void HighlightActElement(Act act)
         {
@@ -256,5 +256,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             mWait = null;
             mExpString = string.Empty;
         }
+
+        public override void ActionCompleted(Act act)
+        {
+            taskFinished = true;
+        }
+
     }
 }

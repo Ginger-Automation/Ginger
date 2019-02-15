@@ -24,7 +24,7 @@ using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 // This class is for Button actions
 namespace GingerCore.Actions
 {
@@ -33,7 +33,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Button Action"; } }
         public override string ActionUserDescription { get { return "Click on a button object"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate a click on an object from type Button."
                                         + Environment.NewLine + Environment.NewLine +
@@ -130,7 +130,7 @@ namespace GingerCore.Actions
             Type currentType = GetActionTypeByElementActionName(this.ButtonAction);
             if (currentType == typeof(ActUIElement))
             {
-                // check special cases, where neame should be changed. Than at default case - all names that have no change
+                // check special cases, where name should be changed. Than at default case - all names that have no change
                 switch (this.ButtonAction)
                 {
                     case eButtonAction.IsDisplayed:

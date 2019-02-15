@@ -17,37 +17,37 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.IO;
+using Amdocs.Ginger.UserControls;
 using Ginger.ALM;
 using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowWindows;
-using Ginger.SolutionGeneral;
+using Ginger.ConfigurationsLib;
 using Ginger.Functionalities;
 using Ginger.GeneralLib;
+using Ginger.MenusLib;
+using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows;
 using Ginger.SourceControl;
+using Ginger.User;
 using GingerCore;
 using GingerCore.Repository.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
 using System;
 using System.Collections.Concurrent;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
-using Amdocs.Ginger.IO;
-using Ginger.ConfigurationsLib;
-using Ginger.MenusLib;
-using Amdocs.Ginger;
-using Ginger.SolutionLibNew;
-using Ginger.User;
-using Amdocs.Ginger.UserControls;
-using System.Drawing;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common;
 
 namespace Ginger
 {
@@ -55,6 +55,8 @@ namespace Ginger
     {
         public enum eSolutionTabType { None, BusinessFlows, Run, Configurations, Resources };
         public eSolutionTabType SelectedSolutionTab;
+
+        
 
         private bool mAskUserIfToClose = true;
         private long _currentClickedTabIndex = -1;
@@ -69,32 +71,27 @@ namespace Ginger
             try
             {
                 //General
-                this.WindowState = System.Windows.WindowState.Maximized;
-                Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will apear running from Main Window STA
+                this.WindowState = System.Windows.WindowState.Maximized;                
 
                 //App
                 App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
 
                 //User Profile
                 App.PropertyChanged += App_PropertyChanged;
-                App.UserProfile.PropertyChanged += UserProfilePropertyChanged;
-                if (App.UserProfile.GingerStatus == eGingerStatus.Active)
+                 WorkSpace.UserProfile.PropertyChanged += UserProfilePropertyChanged;
+                if ( WorkSpace.UserProfile.GingerStatus == eGingerStatus.Active)
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.ExitMode);
+                    Reporter.ToStatus(eStatusMsgKey.ExitMode);
                 }
-                App.UserProfile.GingerStatus = eGingerStatus.Active;
-                App.UserProfile.SaveUserProfile();
-                App.UserProfile.RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
-
-                //Reporter                
-                Reporter.HandlerGingerHelperEvent += Reporter_HandlerGingerHelperEvent;
-                Reporter.ErrorReportedEvent += Reporter_ErrorReportedEvent;
+                 WorkSpace.UserProfile.GingerStatus = eGingerStatus.Active;
+                 WorkSpace.UserProfile.SaveUserProfile();
+                 WorkSpace.UserProfile.RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
 
                 //Main Menu                            
                 xGingerIconImg.ToolTip = App.AppFullProductName + Environment.NewLine + "Version " + App.AppVersion;
                 SetSolutionDependedUIElements();
                 UpdateUserDetails();
-                if (App.UserProfile.RecentSolutionsAsObjects.Count > 0)
+                if ( WorkSpace.UserProfile.RecentSolutionsAsObjects.Count > 0)
                 {
                     xRecentSolutionsMenuItem.Visibility = Visibility.Visible;
                 }
@@ -107,55 +104,56 @@ namespace Ginger
                 lblVersion.Content = "Version " + Ginger.App.AppVersion;
 
                 //Solution                                    
-                if (App.UserProfile.AutoLoadLastSolution && App.RunningFromConfigFile == false && App.RunningFromUnitTest == false)
+                if ( WorkSpace.UserProfile.AutoLoadLastSolution && WorkSpace.RunningInExecutionMode == false && App.RunningFromUnitTest == false)
                 {
                     AutoLoadLastSolution();
                 }
 
                 //Messages
-                if (App.UserProfile.NewHelpLibraryMessgeShown == false)
+                if ( WorkSpace.UserProfile.NewHelpLibraryMessgeShown == false)
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.GingerHelpLibrary);
-                    App.UserProfile.NewHelpLibraryMessgeShown = true;
+                    Reporter.ToStatus(eStatusMsgKey.GingerHelpLibrary);
+                     WorkSpace.UserProfile.NewHelpLibraryMessgeShown = true;
                 }
+
+
+                Reporter.ReporterData.PropertyChanged += ReporterDataChanged;                
+
             }
             catch (Exception ex)
             {
                 App.AppSplashWindow.Close();
-                Reporter.ToUser(eUserMsgKeys.ApplicationInitError, ex.Message);
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Init Main Window", ex);
+                Reporter.ToUser(eUserMsgKey.ApplicationInitError, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Init Main Window", ex);                
             }
         }
 
-        private int mErrorsNum = 0;
-        private void Reporter_ErrorReportedEvent()
+      private void ReporterDataChanged(object sender, PropertyChangedEventArgs e)
         {
-            try
-            {
-                UpdateErrorNotification();
-            }
-            catch(Exception ex)
-            {
-                //something went wrong
-            }
-        }
-
-        private void UpdateErrorNotification()
-        {
-            Task.Factory.StartNew(() =>
-            {
-                this.Dispatcher.Invoke(() =>
+            if (e.PropertyName == nameof(ReporterData.ErrorCounter))
                 {
-                    if (xLogErrorsPnl != null)
-                    {
-                        xLogErrorsPnl.Visibility = Visibility.Visible;
-                        xLogErrorsLbl.Content = "[" + ++mErrorsNum + "]";
-                        xLogErrorsPnl.ToolTip = mErrorsNum + " Errors were logged to Ginger log, click to view log file";
-                    }
-                });
-            });
-        }
+                this.Dispatcher.BeginInvoke(
+                System.Windows.Threading.DispatcherPriority.Normal,
+                new Action(
+                 delegate ()
+                 {
+                     if (Reporter.ReporterData.ErrorCounter == 0)
+                     {
+                         xLogErrorsPnl.Visibility = Visibility.Collapsed;
 
+                     }
+                     else
+                     {
+                         xLogErrorsPnl.Visibility = Visibility.Visible;
+                         xLogErrorsLbl.Content = "[" + Reporter.ReporterData.ErrorCounter + "]";
+                         xLogErrorsPnl.ToolTip = Reporter.ReporterData.ErrorCounter + " Errors were logged to Ginger log, click to view log file";
+                     }
+                 }
+              ));               
+            }
+        }
+      
+     
         private void BetaFeatures_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(WorkSpace.Instance.BetaFeatures.IsUsingBetaFeatures))
@@ -182,15 +180,15 @@ namespace Ginger
             {
                 if (App.LoadingSolution)
                 {
-                    xMainWindowFrame.Content = new LoadingSolutionPage();
-                    xMainWindowFrame.Visibility = Visibility.Visible;
-                    xUmbrellaImg.Visibility = Visibility.Collapsed;
+                    xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
+                    xMainWindowFrame.Content = new LoadingPage("Loading Solution...");
+                    xMainWindowFrame.Visibility = Visibility.Visible;                    
                     GingerCore.General.DoEvents();
                 }
-                else if (xMainWindowFrame.Content is LoadingSolutionPage && SelectedSolutionTab == eSolutionTabType.None)
+                else if (xMainWindowFrame.Content is LoadingPage && SelectedSolutionTab == eSolutionTabType.None)
                 {
                     xMainWindowFrame.Visibility = Visibility.Collapsed;
-                    xUmbrellaImg.Visibility = Visibility.Visible;
+                    xNoLoadedSolutionImg.Visibility = Visibility.Visible;
                 }
             }
         }
@@ -211,11 +209,11 @@ namespace Ginger
             {
                 //Insert
                 int insertIndex = xSolutionSelectionMainMenuItem.Items.IndexOf(xRecentSolutionsMenuItem) + 1;
-                if (App.UserProfile.RecentSolutionsAsObjects.Count > 0)
+                if ( WorkSpace.UserProfile.RecentSolutionsAsObjects.Count > 0)
                 {
                     xRecentSolutionsMenuItem.Visibility = Visibility.Visible;
 
-                    foreach (Solution sol in App.UserProfile.RecentSolutionsAsObjects)
+                    foreach (Solution sol in  WorkSpace.UserProfile.RecentSolutionsAsObjects)
                     {
                         AddSubMenuItem(xSolutionSelectionMainMenuItem, sol.Name, sol, RecentSolutionSelection_Click, insertIndex++, sol.Folder, eImageType.Solution);
                     }
@@ -249,55 +247,53 @@ namespace Ginger
             SetRecentSolutionsAsMenuItems();
         }
 
-        private DateTime mProcessMsgShowTime;
-        private async void Reporter_HandlerGingerHelperEvent(GingerHelperEventArgs e)
+
+        // New method to set staus bar text and icon
+        internal void ShowStatus(eStatusMsgType messageType, string statusText)
         {
-            this.Dispatcher.Invoke(() =>
-            {
-                if (e.GingerHelperEventActions == GingerHelperEventArgs.eGingerHelperEventActions.Show)
+            this.Dispatcher.Invoke(() => {
+                if (!string.IsNullOrEmpty(statusText))
                 {
-                    if (e.MessageType == eGingerHelperMsgType.PROCESS)
-                    {
-                        xProcessMsgIcon.ImageType = eImageType.Processing;
-                    }
-                    else
-                    {
-                        xProcessMsgIcon.ImageType = eImageType.Info;
-                    }
                     xProcessMsgPnl.Visibility = Visibility.Visible;
-                    xProcessMsgTxtBlock.Text = e.HelperMsg.MsgContent;
-                    xProcessMsgTxtBlock.ToolTip= e.HelperMsg.MsgContent;
-                    mProcessMsgShowTime = DateTime.Now;
-                    GingerCore.General.DoEvents();
+                    xProcessMsgTxtBlock.Text = statusText;
+                    xProcessMsgTxtBlock.ToolTip = statusText;
+
+                    switch(messageType)
+                    {
+                        case eStatusMsgType.PROCESS:
+                            xProcessMsgIcon.ImageType = eImageType.Processing;
+                            break;
+
+                        case eStatusMsgType.INFO:
+                            xProcessMsgIcon.ImageType = eImageType.Info;
+                            break;                                                
+                    }
+                    
+                    // GingerCore.General.DoEvents();
                 }
                 else
                 {
-                    if (xProcessMsgPnl.Visibility == Visibility.Visible)
-                    {
-                        while ((DateTime.Now - mProcessMsgShowTime).TotalSeconds < 1)
-                        {
-                            Task.Delay(100);
-                        }
-                        xProcessMsgPnl.Visibility = Visibility.Collapsed;
-                    }
+                    xProcessMsgPnl.Visibility = Visibility.Collapsed;
                 }
             });
+            
         }
+
 
         internal void AutoLoadLastSolution()
         {
             try
             {
-                if (App.UserProfile.RecentSolutionsAsObjects.Count > 0)
+                if ( WorkSpace.UserProfile.RecentSolutionsAsObjects.Count > 0)
                 {
-                    App.SetSolution(App.UserProfile.RecentSolutionsAsObjects[0].Folder);
+                    App.SetSolution( WorkSpace.UserProfile.RecentSolutionsAsObjects[0].Folder);
                     xSolutionTabsListView.SelectedItem = null;
                     xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.SolutionLoadError, ex);
+                Reporter.ToUser(eUserMsgKey.SolutionLoadError, ex);
             }
         }
 
@@ -308,16 +304,17 @@ namespace Ginger
             if (e.PropertyName == nameof(UserProfile.Solution))
             {
                 SetSolutionDependedUIElements();
-                if (App.UserProfile.Solution == null)
+                if ( WorkSpace.UserProfile.Solution == null)
                 {
                     xSolutionTabsListView.SelectedItem = null;
-                    xSolutionNameTextBlock.Text = "Please Load Solution";
+                    xSolutionNameTextBlock.Text = "Please Load Solution";                    
                 }
                 else
                 {
+                    xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
                     App.LastBusinessFlow = null;
-                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty, App.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
-                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty, App.UserProfile.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
+                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
+                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
                     xSolutionTabsListView.SelectedItem = null;
                     xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
                 }
@@ -341,7 +338,7 @@ namespace Ginger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to delete Auto Save folder", ex);
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to delete Auto Save folder", ex);
                 }
             }
             if (Directory.Exists(App.AppSolutionRecover.RecoverFolderPath))
@@ -352,10 +349,10 @@ namespace Ginger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to delete Recover folder", ex);
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to delete Recover folder", ex);
                 }
             }
-            if (mAskUserIfToClose == false || Reporter.ToUser(eUserMsgKeys.AskIfSureWantToClose) == MessageBoxResult.Yes)
+            if (mAskUserIfToClose == false || Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 AppCleanUp();
             }
@@ -372,17 +369,21 @@ namespace Ginger
             GingerCore.General.DoEvents();
             App.AutomateTabGingerRunner.CloseAgents();
             GingerCore.General.CleanDirectory(GingerCore.Actions.Act.ScreenshotTempFolder, true);
-            App.UserProfile.GingerStatus = eGingerStatus.Closed;
-            App.UserProfile.SaveUserProfile();
-            App.AppSolutionAutoSave.SolutionAutoSaveEnd();
-            try
+            
+            if (!WorkSpace.RunningInExecutionMode)
             {
-                //TODO: no need to to log if running from comamnd line
-                AutoLogProxy.LogAppClosed();
-            }
-            catch
-            {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
+                 WorkSpace.UserProfile.GingerStatus = eGingerStatus.Closed;
+                 WorkSpace.UserProfile.SaveUserProfile();
+                App.AppSolutionAutoSave.SolutionAutoSaveEnd();
+                try
+                {
+                    //TODO: no need to to log if running from comamnd line
+                    AutoLogProxy.LogAppClosed();
+                }
+                catch
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
+                }
             }
             CW.Close();
         }
@@ -395,10 +396,9 @@ namespace Ginger
             }
 
             SelectedSolutionTab = eSolutionTabType.None;
-            if (!(xMainWindowFrame.Content is LoadingSolutionPage))
+            if (!(xMainWindowFrame.Content is LoadingPage))
             {
                 xMainWindowFrame.Visibility = Visibility.Collapsed;
-                xUmbrellaImg.Visibility = Visibility.Visible;
             }
             ListViewItem selectedTopListItem = (ListViewItem)xSolutionTabsListView.SelectedItem;
 
@@ -439,7 +439,6 @@ namespace Ginger
 
                 xMainWindowFrame.Content = selectedTopListItem.Tag;
                 xMainWindowFrame.Visibility = Visibility.Visible;
-                xUmbrellaImg.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -455,7 +454,7 @@ namespace Ginger
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.SolutionFileNotFound, solutionFileName);
+                    Reporter.ToUser(eUserMsgKey.SolutionFileNotFound, solutionFileName);
                 }
             }
         }
@@ -469,10 +468,10 @@ namespace Ginger
 
         public void SetSolutionDependedUIElements()
         {
-            if (App.UserProfile.Solution != null)
+            if ( WorkSpace.UserProfile.Solution != null)
             {
                 xLoadedSolutionMenusPnl.Visibility = Visibility.Visible;
-                if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
+                if ( WorkSpace.UserProfile.UserTypeHelper.IsSupportAutomate)
                 {
                     xRunListItem.Visibility = Visibility.Visible;
                 }
@@ -480,7 +479,7 @@ namespace Ginger
                 {
                     xRunListItem.Visibility = Visibility.Collapsed;
                 }
-                if (App.UserProfile.Solution.SourceControl != null)
+                if ( WorkSpace.UserProfile.Solution.SourceControl != null)
                 {
                     xSolutionSourceControlMenu.Visibility = Visibility.Visible;
                 }
@@ -523,6 +522,11 @@ namespace Ginger
 
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
         {
+            if(!ALMIntegration.Instance.AlmConfigurations.UseRest)
+            {
+                Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
+                return;
+            }
             ALMIntegration.Instance.ALMDefectsProfilesPage();
         }
 
@@ -544,8 +548,8 @@ namespace Ginger
         private void ViewSolutionFiles_Click(object sender, RoutedEventArgs e)
         {
             //show solution folder files
-            if (App.UserProfile.Solution != null)
-                Process.Start(App.UserProfile.Solution.Folder);
+            if ( WorkSpace.UserProfile.Solution != null)
+                Process.Start( WorkSpace.UserProfile.Solution.Folder);
         }
 
         private void btnSourceControlConnectionDetails_Click(object sender, RoutedEventArgs e)
@@ -562,29 +566,29 @@ namespace Ginger
 
         private void btnSourceControlCheckIn_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.LoseChangesWarn) == MessageBoxResult.No) return;
+            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
 
             AutoLogProxy.UserOperationStart("btnSourceControlCheckIn_Click");
 
-            App.CheckIn(App.UserProfile.Solution.Folder);
+            App.CheckIn( WorkSpace.UserProfile.Solution.Folder);
 
             AutoLogProxy.UserOperationEnd();
         }
 
         private void btnSourceControlGetLatest_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.LoseChangesWarn) == MessageBoxResult.No) return;
+            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
 
             AutoLogProxy.UserOperationStart("btnSourceControlGetLatest_Click");
 
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.GetLatestFromSourceControl);
-            if (string.IsNullOrEmpty(App.UserProfile.Solution.Folder))
-                Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "Invalid Path provided");
+            Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
+            if (string.IsNullOrEmpty( WorkSpace.UserProfile.Solution.Folder))
+                Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
-                SourceControlIntegration.GetLatest(App.UserProfile.Solution.Folder, App.UserProfile.Solution.SourceControl);
+                SourceControlIntegration.GetLatest( WorkSpace.UserProfile.Solution.Folder,  WorkSpace.UserProfile.Solution.SourceControl);
 
             App.UpdateApplicationsAgentsMapping(false);
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
 
             AutoLogProxy.UserOperationEnd();
         }
@@ -593,7 +597,7 @@ namespace Ginger
         {
             AutoLogProxy.UserOperationStart("MainWindow.AnalyzerButton_Click");
             AnalyzerPage AP = new AnalyzerPage();
-            AP.Init(App.UserProfile.Solution);
+            AP.Init( WorkSpace.UserProfile.Solution);
             AP.ShowAsWindow();
             AutoLogProxy.UserOperationEnd();
         }
@@ -602,9 +606,9 @@ namespace Ginger
         {
             AutoLogProxy.UserOperationStart("ResolveConflictsBtn_Click");
 
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ResolveSourceControlConflicts);
-            SourceControlIntegration.ResolveConflicts(App.UserProfile.Solution.SourceControl, App.UserProfile.Solution.Folder, side);
-            Reporter.CloseGingerHelper();
+            Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
+            SourceControlIntegration.ResolveConflicts( WorkSpace.UserProfile.Solution.SourceControl,  WorkSpace.UserProfile.Solution.Folder, side);
+            Reporter.HideStatusMessage();
 
             AutoLogProxy.UserOperationEnd();
         }
@@ -626,10 +630,10 @@ namespace Ginger
 
         private void btnUpgrade_Click(object sender, RoutedEventArgs e)
         {
-            if (App.UserProfile.Solution != null)
+            if ( WorkSpace.UserProfile.Solution != null)
             {
-                Solution sol = App.UserProfile.Solution;
-                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(Solution.SolutionFiles(sol.Folder), SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
+                Solution sol =  WorkSpace.UserProfile.Solution;
+                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(SolutionUpgrade.GetSolutionFilesWithVersion(Solution.SolutionFiles(sol.Folder)), SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
                 if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
                 {
                     UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, sol.Folder, sol.Name, lowerVersionFiles.ToList());
@@ -637,14 +641,14 @@ namespace Ginger
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Upgrade is not needed, all solution items were created with latest version.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Upgrade is not needed, all solution items were created with latest version.");
                 }
             }
         }
 
         private void btnRecover_Click(object sender, RoutedEventArgs e)
         {
-            if (App.UserProfile.Solution != null)
+            if ( WorkSpace.UserProfile.Solution != null)
             {
                 App.AppSolutionRecover.SolutionRecoverStart(true);
             }
@@ -653,6 +657,12 @@ namespace Ginger
         private void btnViewLog_Click(object sender, RoutedEventArgs e)
         {
             ShowGingerLog();
+        }
+
+        private void btnViewLogDetails_Click(object sender, RoutedEventArgs e)
+        {
+            LogDetailsPage log = new LogDetailsPage();
+            log.ShowAsWindow();
         }
 
         private void ShowGingerLog()
@@ -664,14 +674,14 @@ namespace Ginger
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Ginger log file was not found in the Path:'" + mLogFilePath + "'");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Ginger log file was not found in the Path:'" + mLogFilePath + "'");
             }
         }
 
         private void btnSourceControlRepositoryDetails_Click(object sender, RoutedEventArgs e)
         {
 
-            SourceControlItemInfoDetails SCIInfoDetails = SourceControlIntegration.GetRepositoryInfo(App.UserProfile.Solution.SourceControl);
+            SourceControlItemInfoDetails SCIInfoDetails = SourceControlIntegration.GetRepositoryInfo( WorkSpace.UserProfile.Solution.SourceControl);
             SourceControlItemInfoPage SCIIP = new SourceControlItemInfoPage(SCIInfoDetails);
             SCIIP.ShowAsWindow();
         }
@@ -686,7 +696,7 @@ namespace Ginger
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Ginger log file folder was not found in the path: '" + folder + "'");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Ginger log file folder was not found in the path: '" + folder + "'");
             }
         }
 
@@ -703,11 +713,12 @@ namespace Ginger
         }
 
         private void xLogErrors_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            ShowGingerLog();
+        {            
+            LogDetailsPage logDetailsPage = new LogDetailsPage();
+            logDetailsPage.ShowAsWindow();
 
-            xLogErrorsPnl.Visibility = Visibility.Collapsed;
-            mErrorsNum = 0;
+            xLogErrorsPnl.Visibility = Visibility.Collapsed;            
+            Reporter.ReporterData.ResetErrorCounter();
         }
 
         private void xFindAndReplaceSolutionButton_Click(object sender, RoutedEventArgs e)
@@ -739,16 +750,15 @@ namespace Ginger
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-
             Application.Current.Shutdown();
         }
 
         private void xSolutionEditBtn_Click(object sender, RoutedEventArgs e)
         {
-            string newName = App.UserProfile.Solution.Name;
+            string newName =  WorkSpace.UserProfile.Solution.Name;
             if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Solution Rename", "New Solution Name:", ref newName, System.IO.Path.GetInvalidPathChars()))
             {
-                App.UserProfile.Solution.Name = newName;
+                 WorkSpace.UserProfile.Solution.Name = newName;
             }
         }
 
@@ -760,6 +770,11 @@ namespace Ginger
         private void xLoadForumSiteMenuItem_Click(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("http://ilrnaginger01:81/");
+        }
+
+        private void xGingerGithubMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/Ginger-Automation");
         }
 
         private void xOpenTicketMenuItem_Click(object sender, RoutedEventArgs e)
@@ -786,7 +801,7 @@ namespace Ginger
                 App.SetSolution(selectedSol.Folder);
             }
             else
-                Reporter.ToUser(eUserMsgKeys.SolutionLoadError, "Selected Solution was not found");
+                Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Selected Solution was not found");
 
             e.Handled = true;
         }
@@ -816,22 +831,22 @@ namespace Ginger
 
         private void UpdateUserDetails()
         {
-            if (string.IsNullOrEmpty(App.UserProfile.ProfileImage))
+            if (string.IsNullOrEmpty( WorkSpace.UserProfile.ProfileImage))
             {
                 xProfileImageImgBrush.ImageSource = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User, foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_LightGray"), width: 50);
             }
             else
             {
-                xProfileImageImgBrush.ImageSource = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(App.UserProfile.ProfileImage));
+                xProfileImageImgBrush.ImageSource = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage( WorkSpace.UserProfile.ProfileImage));
             }
 
-            if (String.IsNullOrEmpty(App.UserProfile.UserFirstName))
+            if (String.IsNullOrEmpty( WorkSpace.UserProfile.UserFirstName))
             {
-                xUserNameLbl.Content = App.UserProfile.UserName;
+                xUserNameLbl.Content =  WorkSpace.UserProfile.UserName;
             }
             else
             {
-                xUserNameLbl.Content = App.UserProfile.UserFirstName;
+                xUserNameLbl.Content =  WorkSpace.UserProfile.UserFirstName;
             }
         }
 
@@ -866,8 +881,9 @@ namespace Ginger
                 //Insert
                 int insertIndex = xUserOperationsMainMenuItem.Items.IndexOf(xLogOptionsMenuItem) + 1;
 
-                AddSubMenuItem(xUserOperationsMainMenuItem, "View Log", "Log", btnViewLog_Click, insertIndex++, iconType: eImageType.View);
-                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Log Location Folder", "Log", btnViewLogLocation_Click, insertIndex++, iconType: eImageType.OpenFolder);
+                AddSubMenuItem(xUserOperationsMainMenuItem, "View Current Log Details", "Log", btnViewLogDetails_Click, insertIndex++, iconType: eImageType.View);
+                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Full Log File", "Log", btnViewLog_Click, insertIndex++, iconType: eImageType.File);
+                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Log File Folder", "Log", btnViewLogLocation_Click, insertIndex++, iconType: eImageType.OpenFolder);
                 AddSubMenuItem(xUserOperationsMainMenuItem, "Open Debug Console", "Log", btnLaunchConsole_Click, insertIndex, iconType: eImageType.Screen);
             }
         }
@@ -925,9 +941,10 @@ namespace Ginger
                 //Insert
                 int insertIndex = xExtraOperationsMainMenuItem.Items.IndexOf(xSupportOptionsMenuItem) + 1;
 
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Public Site", "Support", xLoadPublicSiteMenuItem_Click, insertIndex++, iconType: eImageType.Website);               
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Support Site", "Support", xLoadSupportSiteMenuItem_Click, insertIndex++, iconType: eImageType.Website);
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Q&A Fourm Site", "Support", xLoadForumSiteMenuItem_Click, insertIndex++, iconType: eImageType.Forum);
-                AddSubMenuItem(xExtraOperationsMainMenuItem, "Raise Ticket to Core Team", "Support", xOpenTicketMenuItem_Click, insertIndex, iconType: eImageType.Ticket);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Raise Ticket to Core Team", "Support", xOpenTicketMenuItem_Click, insertIndex++, iconType: eImageType.Ticket);                
             }
         }
 
@@ -976,6 +993,16 @@ namespace Ginger
             }
 
             mSolutionPage.ShowAsWindow();
+        }
+
+        private void xCheckForUpgradeMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://ginger.amdocs.com/#downloads");
+        }
+
+        private void xLoadPublicSiteMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://ginger.amdocs.com/");
         }
     }
 }

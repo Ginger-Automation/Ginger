@@ -18,7 +18,7 @@ limitations under the License.
 
 using System.Windows;
 using System.Windows.Controls;
-
+using amdocs.ginger.GingerCoreNET;
 namespace Ginger.Run.RunSetActions
 {
     /// <summary>
@@ -42,11 +42,11 @@ namespace Ginger.Run.RunSetActions
 
             dlg.DefaultExt = "*.VBS";
             dlg.Filter = "Script File (*.VBS)|*.VBS";
-            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
             
             if(dlg.ShowDialog()==System.Windows.Forms.DialogResult.OK)
             {
-                // replace Absolulute file name with relative to solution
+                // replace Absolute file name with relative to solution
                 string FileName = dlg.FileName.ToUpper();
                 if (FileName.Contains(SolutionFolder))
                 {

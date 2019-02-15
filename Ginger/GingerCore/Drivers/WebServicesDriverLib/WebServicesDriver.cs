@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.WebAPI;
@@ -83,7 +84,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public bool RunSoapUIProcessAsAdmin { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("true")]
+        [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Related only to SoapUI | SoapUI Process Redirect Standard Error")]
         public bool SoapUIProcessRedirectStandardError { get; set; }
 
@@ -111,7 +112,12 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         [UserConfiguredDefault("")]
         [UserConfiguredDescription("Proxy Settings | Host:Port Example: genproxy.amdocs.com:8080")]
         public string WebServicesProxy { get; set; }
-        
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Use Proxy Server Settings | Set to true in order to use local Proxy Server settings, if set to true configured Agent 'Proxy Settings' will be avoided. ")]
+        public bool UseServerProxySettings { get; set; }
+
         private bool mIsDriverWindowLaunched
         {
             get
@@ -173,7 +179,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             mDriverWindow = new WebServicesDriverWindow(BusinessFlow);
             mDriverWindow.Show();
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-            Dispatcher = mDriverWindow.Dispatcher;
+            Dispatcher = new DriverWindowDispatcher(mDriverWindow.Dispatcher);
 
             System.Windows.Threading.Dispatcher.Run();
         }
@@ -182,12 +188,15 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             try
             {
-                mDriverWindow.Close();
-                mDriverWindow = null;
+                if (mDriverWindow != null)
+                {
+                    mDriverWindow.Close();
+                    mDriverWindow = null;
+                }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close Web Services Driver - " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Web Services Driver - " + ex.Message);
             }
         }
 
@@ -204,7 +213,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             {
                 mActWebService = (ActWebService)act;
                 string ReqXML = String.Empty;
-                FileStream ReqXMLStream = System.IO.File.OpenRead(mActWebService.XMLfileName.ValueForDriver.Replace(@"~\", mActWebService.SolutionFolder));
+                //FileStream ReqXMLStream = System.IO.File.OpenRead(mActWebService.XMLfileName.ValueForDriver.Replace(@"~\", mActWebService.SolutionFolder));
+                FileStream ReqXMLStream = System.IO.File.OpenRead(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mActWebService.XMLfileName.ValueForDriver));
+
                 using (StreamReader reader = new StreamReader(ReqXMLStream))
                 {
                     ReqXML = reader.ReadToEnd();
@@ -227,8 +238,10 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             else if (act is ActWebAPIModel)
             {
-                if (Reporter.CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "Start Execution");
+                if (Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Start Execution");
+                }
 
                 //pull pointed API Model
                 ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == ((ActWebAPIModel)act).APImodelGUID).FirstOrDefault();
@@ -242,12 +255,18 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 //init matching real WebAPI Action
                 ActWebAPIBase actWebAPI = null;
                 if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.REST)
+                {
                     actWebAPI = CreateActWebAPIREST((ApplicationAPIModel)AAMB, (ActWebAPIModel)act);
+                }
                 else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
+                {
                     actWebAPI = CreateActWebAPISOAP((ApplicationAPIModel)AAMB, (ActWebAPIModel)act);
+                }
 
-                if (Reporter.CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "ActWebAPIBase created successfully");
+                if (Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "ActWebAPIBase created successfully");
+                }
 
                 //Execution
                 mActWebAPI = actWebAPI;
@@ -389,16 +408,16 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             HttpWebClientUtils WebAPI = new HttpWebClientUtils();
 
             //Call for Request Construction
-            if (WebAPI.RequestContstructor(act, WebServicesProxy))
+            if (WebAPI.RequestContstructor(act, WebServicesProxy, UseServerProxySettings))
             {
 
                 WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
 
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "RequestContstructor passed successfully", null, true, true);
+                Reporter.ToLog(eLogLevel.DEBUG, "RequestContstructor passed successfully");
 
                 if (WebAPI.SendRequest() == true)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "SendRequest passed successfully", null, true, true);
+                    Reporter.ToLog(eLogLevel.DEBUG, "SendRequest passed successfully");
 
                     //Call for  response validation
                     bool dontFailActionOnBadResponse = false;
@@ -406,14 +425,14 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     if (!dontFailActionOnBadResponse)
                         WebAPI.ValidateResponse();
 
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "ValidateResponse passed successfully", null, true, true);
+                    Reporter.ToLog(eLogLevel.DEBUG, "ValidateResponse passed successfully");
 
                     WebAPI.SaveResponseToFile(SaveResponseXML, SavedXMLDirectoryPath);
                     WebAPI.HandlePostExecutionOperations();
                     //Parse response
                     WebAPI.ParseRespondToOutputParams();
 
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "ParseRespondToOutputParams passed successfully", null, true, true);
+                    Reporter.ToLog(eLogLevel.DEBUG, "ParseRespondToOutputParams passed successfully");
                 }
             }
         }
@@ -465,14 +484,27 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     act.AddOrUpdateReturnParamActual(kpr.Value[0] + "-Response", responseQouteFixed);
                     if (((ActSoapUI)act).AddXMLResponse_Value)
                     {
-                        XmlDocument xmlDoc = new XmlDocument();
-                        xmlDoc.LoadXml(kpr.Value[2]);
-
-                        List<GingerCore.General.XmlNodeItem> outputTagsList = new List<GingerCore.General.XmlNodeItem>();
-                        outputTagsList = General.GetXMLNodesItems(xmlDoc);
-                        foreach (GingerCore.General.XmlNodeItem outputItem in outputTagsList)
+                        string fileContent = kpr.Value[2];
+                        ObservableList<ActReturnValue> ReturnValues = null;
+                        if (APIConfigurationsDocumentParserBase.IsValidJson(fileContent))
                         {
-                            act.AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value, outputItem.path);
+                            ReturnValues = JSONTemplateParser.ParseJSONResponseSampleIntoReturnValues(fileContent);
+                            foreach (ActReturnValue ReturnValue in ReturnValues)
+                            {
+                                act.ReturnValues.Add(ReturnValue);
+                            }
+                        }
+                        else if (APIConfigurationsDocumentParserBase.IsValidXML(fileContent))
+                        {
+                            XmlDocument xmlDoc1 = new XmlDocument();
+                            xmlDoc1.LoadXml(kpr.Value[2]);
+
+                            List<GingerCore.General.XmlNodeItem> outputTagsList1 = new List<GingerCore.General.XmlNodeItem>();
+                            outputTagsList1 = General.GetXMLNodesItems(xmlDoc1);
+                            foreach (GingerCore.General.XmlNodeItem outputItem in outputTagsList1)
+                            {
+                                act.AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value, outputItem.path);
+                            }
                         }
                     }
                 }
@@ -673,7 +705,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             string xmlFilesDir = "";
             try
             {
-                xmlFilesDir = SavedXMLDirectoryPath.Replace(@"~\", mActWebService.SolutionFolder) + @"\" + fileType + "XMLs";
+                //xmlFilesDir = SavedXMLDirectoryPath.Replace(@"~\", mActWebService.SolutionFolder) + @"\" + fileType + "XMLs";
+                xmlFilesDir = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SavedXMLDirectoryPath) + @"\" + fileType + "XMLs";
+
                 if (!Directory.Exists(xmlFilesDir))
                     Directory.CreateDirectory(xmlFilesDir);
                 String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss") + "_" + Guid.NewGuid();
@@ -682,7 +716,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             catch (Exception e)
             {                
-                Reporter.ToUser(eUserMsgKeys.FailedToCreateRequestResponse, e.Message);
+                Reporter.ToUser(eUserMsgKey.FailedToCreateRequestResponse, e.Message);
             }
             return fileName;
         }
@@ -701,21 +735,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             return "TBD";
         }
 
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
-
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
-
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
-
+        
         public override void HighlightActElement(Act act)
         {
         }

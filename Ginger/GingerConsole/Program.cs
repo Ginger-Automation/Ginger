@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.GingerConsole.ReporterLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.CommandProcessorLib;
 // using GingerCoreNET.CommandProcessorLib;
@@ -51,7 +53,7 @@ namespace Amdocs.Ginger.GingerConsole
 
             //Enable cancel with CTRL-C
             Console.CancelKeyPress += (sender, eArgs) => {
-                Console.WriteLine("CTRL+C pressed Cancelling...");
+                Console.WriteLine("CTRL+C pressed Canceling...");
                 mCloseGingerConsoleEvent.Set();
                 eArgs.Cancel = true;
                 Keepalive = false;                      
@@ -61,7 +63,9 @@ namespace Amdocs.Ginger.GingerConsole
             Console.WriteLine("---------------------------------------------------");
             Console.WriteLine("-            Press CTRL+C to exit                 -");
             Console.WriteLine("---------------------------------------------------");
-            
+
+            Reporter.WorkSpaceReporter = new GingerConsoleWorkspaceReporter();
+
             // Init RepositorySerializer to use new Ginger classes
             NewRepositorySerializer RS = new NewRepositorySerializer();
             try
@@ -76,6 +80,8 @@ namespace Amdocs.Ginger.GingerConsole
                 else
                 {
                     InitWorkSpace();
+
+                    Console.WriteLine("Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);
 
                     InitMenu();
                     Keepalive = true;

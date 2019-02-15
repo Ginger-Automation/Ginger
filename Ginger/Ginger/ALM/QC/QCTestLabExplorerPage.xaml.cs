@@ -221,7 +221,7 @@ namespace Ginger.ALM.QC {
         private void Select(object sender, RoutedEventArgs e)
         {
             if (mCurrentSelectedTreeItem == null)
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             else
             {
                 if (mCurrentSelectedTreeItem is QCTestLabFolderTreeItem)
@@ -238,7 +238,7 @@ namespace Ginger.ALM.QC {
         private void SelectFolder(object sender, RoutedEventArgs e)
         {
             if (mCurrentSelectedTreeItem == null)
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Please select a folder item");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select a folder item");
             else
             {
                 _GenericWin.Close();
@@ -267,7 +267,7 @@ namespace Ginger.ALM.QC {
                 }
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
 
         private void Cancel_Clicked(object sender, EventArgs e)

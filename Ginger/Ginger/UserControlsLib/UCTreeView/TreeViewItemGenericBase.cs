@@ -43,7 +43,19 @@ namespace GingerWPF.TreeViewItemsLib
             return null;
         }
 
-        public ITreeView mTreeView;
+        protected ITreeView mTreeView;
+        public ITreeView TreeView
+        {
+            get
+            {
+                return mTreeView;
+            }
+            set
+            {
+                mTreeView = value;
+            }
+        }
+
         public ContextMenu mContextMenu;
         public static ITreeViewItem mNodeManipulationsSource = null;
         public bool IsGingerDefualtFolder = false;
@@ -144,7 +156,7 @@ namespace GingerWPF.TreeViewItemsLib
             else
             {
                 //implement for other item types
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "View item XML operation for this item type was not implemented yet.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "View item XML operation for this item type was not implemented yet.");
             }
         }
 
@@ -225,14 +237,14 @@ namespace GingerWPF.TreeViewItemsLib
             if (mNodeManipulationsSource == null || mCurrentFolderNodePastOperations == eFolderNodePastOperations.None)
             {
                 
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Please select Copy/Cut operation first.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select Copy/Cut operation first.");
                 return;
             }
 
             //make sure the source item and dest folder are from same item type
             if (this.NodeObjectType() != ((TreeViewItemGenericBase)mNodeManipulationsSource).NodeObjectType())
             {                
-                Reporter.ToUser(eUserMsgKeys.DifferentItemType);
+                Reporter.ToUser(eUserMsgKey.DifferentItemType);
                 return;
             }
 
@@ -251,7 +263,7 @@ namespace GingerWPF.TreeViewItemsLib
                     PasteCutTreeItems();
                     break;
                 default:                    
-                    Reporter.ToUser(eUserMsgKeys.CopyCutOperation);
+                    Reporter.ToUser(eUserMsgKey.CopyCutOperation);
                     break;
             }
 
@@ -307,7 +319,7 @@ namespace GingerWPF.TreeViewItemsLib
                     string path = Path.Combine(this.NodePath(), folderName);
                     if (System.IO.Directory.Exists(path) == true)
                     {                        
-                        Reporter.ToUser(eUserMsgKeys.FolderExistsWithName);
+                        Reporter.ToUser(eUserMsgKey.FolderExistsWithName);
                         mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
                     }
                     else
@@ -330,7 +342,7 @@ namespace GingerWPF.TreeViewItemsLib
                     string path = Path.Combine(Path.GetDirectoryName(this.NodePath().TrimEnd('\\', '/')), newFolderName);
                     if (System.IO.Directory.Exists(path) == true && originalName.ToUpper() != newFolderName.ToUpper())
                     {                        
-                        Reporter.ToUser(eUserMsgKeys.FolderExistsWithName);
+                        Reporter.ToUser(eUserMsgKey.FolderExistsWithName);
                         mTreeView.Tree.RefreshSelectedTreeNodeParent();
                         return;
                     }
@@ -340,14 +352,14 @@ namespace GingerWPF.TreeViewItemsLib
                         {
                             if (RenameTreeFolder(originalName, newFolderName, path) == false)
                             {                                
-                                Reporter.ToUser(eUserMsgKeys.RenameItemError, path);
+                                Reporter.ToUser(eUserMsgKey.RenameItemError, path);
                                 return;
                             }
                         }
                         catch (Exception ex)
                         {                            
-                            Reporter.ToUser(eUserMsgKeys.RenameItemError, ex.Message);
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                            Reporter.ToUser(eUserMsgKey.RenameItemError, ex.Message);
+                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                             return;
                         }
                     }

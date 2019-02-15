@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,8 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.Repository;
 using System;
+using System.Collections.Generic;
+using Amdocs.Ginger.Common;
+using Ginger.UserControlsLib.ActionInputValueUserControlLib;
+using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -95,6 +98,52 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        
+        DynamicListWrapper mDynamicListWrapper = null;
+
+        public List<string> GetListItemProperties()
+        {
+            return mDynamicListWrapper.GetListItemProperties();
+        }
+        
+        public ObservableList<dynamic> ListDynamicValue
+        {
+            get
+            {
+                if (mDynamicListWrapper == null)
+                {
+                    if (string.IsNullOrEmpty(mValue))
+                    {
+                        // Create empty list with one dummy item
+                        mDynamicListWrapper = new DynamicListWrapper(ParamTypeEX, true);
+                    }
+                    else
+                    {
+                        dynamic dynList = JsonConvert.DeserializeObject(mValue);
+                        mDynamicListWrapper = new DynamicListWrapper(ParamTypeEX);                        
+                        foreach (dynamic item in dynList)
+                        {
+                            mDynamicListWrapper.Items.Add(item);
+                        }
+                    }
+                }
+
+                return mDynamicListWrapper.Items;
+            }
+
+            set
+            {
+                // Keep the list as string
+                mValue = JsonConvert.SerializeObject(value, Formatting.None);
+                // Keep the actual list objects
+                mDynamicListWrapper.Items = value;
+                OnPropertyChanged(nameof(Value));
+            }
+        }
+
+      
+
+
         private string mValueForDriver;
 
         public string ValueForDriver { get { return mValueForDriver; } set { mValueForDriver = value; OnPropertyChanged(Fields.ValueForDriver); } }
@@ -116,6 +165,10 @@ namespace Amdocs.Ginger.Repository
                 this.Param = value;
             }
         }
+
+        // For List<T> keep the type of list item
+        [IsSerializedForLocalRepository]
+        public string ParamTypeEX { get; set; }
 
         public override string GetNameForFileName()
         {

@@ -25,10 +25,10 @@ using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
-    // This class is for UI link elemnet
+    // This class is for UI link element
     public class ActGenElement : Act, IObsoleteAction
     {
         // --------------------------------------------------------------------------------------------------------------
@@ -124,11 +124,13 @@ namespace GingerCore.Actions
                     case eGenElementAction.SelectFromListScr:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SelectByIndex;
                         NewActUIElement.ElementType = eElementType.List;
-                        uIElementTypeAssigned = true;
+                        uIElementTypeAssigned = true;                        
                         break;
                     case eGenElementAction.KeyboardInput:
-                    case eGenElementAction.KeyType:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SendKeys;
+                        break;
+                    case eGenElementAction.KeyType:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.SetText;
                         break;
                     case eGenElementAction.SelectFromDropDown:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SelectByText;
@@ -189,6 +191,7 @@ namespace GingerCore.Actions
                     NewActUIElement.Platform = ePlatformType.Web; // ??? to check
                 }
 
+                NewActUIElement.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, this.GetInputParamValue("Value"));
                 return NewActUIElement;
             }
 
@@ -263,7 +266,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Generic Element"; } }
         public override string ActionUserDescription { get { return "Click on a generic control object"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate a click on an object from type generic control.");
             TBH.AddLineBreak();
@@ -348,7 +351,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Start Browser")]
             StartBrowser=28,
             [EnumValueDescription("Async Click")]
-            AsyncClick = 27, //used for clicking on elemnts which opening Dialog window- because if using regular click then the driver get stuck till the dialog been closed
+            AsyncClick = 27, //used for clicking on elements which opening Dialog window- because if using regular click then the driver get stuck till the dialog been closed
             [EnumValueDescription("Scroll to Element")]
             ScrollToElement= 29,
             [EnumValueDescription("Simple Click")]
@@ -416,7 +419,9 @@ namespace GingerCore.Actions
             [EnumValueDescription("Scroll Down")]
             ScrollDown = 64,
             [EnumValueDescription("Scroll Up")]
-            ScrollUp = 65
+            ScrollUp = 65,
+            [EnumValueDescription("Set Attribute Value")]
+            SetAttributeValue = 66
         }
         
         [IsSerializedForLocalRepository]

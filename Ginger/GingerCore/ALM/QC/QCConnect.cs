@@ -51,7 +51,7 @@ namespace GingerCore.ALM.QC
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     return false;
                 }
             }
@@ -71,7 +71,7 @@ namespace GingerCore.ALM.QC
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     return false;
                 }
             }
@@ -102,6 +102,10 @@ namespace GingerCore.ALM.QC
         // Opening QC Connection 
         public static bool ConnectQCServer(string QCServerUrl, string QCUserName, string QCPassword)
         {
+            if (string.IsNullOrEmpty(QCServerUrl) || string.IsNullOrEmpty(QCUserName) || string.IsNullOrEmpty(QCPassword))
+            {
+                return false;
+            }
             bool qcConn = false;
             DisconnectQCServer();
             mTDConn.InitConnectionEx(QCServerUrl);
@@ -130,7 +134,7 @@ namespace GingerCore.ALM.QC
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
             if (mTDConn.Connected == true)
@@ -167,7 +171,7 @@ namespace GingerCore.ALM.QC
             }
             catch (Exception e)
             {
-                Reporter.ToUser(eUserMsgKeys.ALMOperationFailed, "disconnect from project", e.Message);
+                Reporter.ToUser(eUserMsgKey.ALMOperationFailed, "disconnect from project", e.Message);
                 return false;
             }
         }
@@ -185,7 +189,7 @@ namespace GingerCore.ALM.QC
             }
             catch (Exception e)
             {
-                Reporter.ToUser(eUserMsgKeys.ALMOperationFailed, "disconnect from project", e.Message);
+                Reporter.ToUser(eUserMsgKey.ALMOperationFailed, "disconnect from project", e.Message);
                 return false;
             }
         }
@@ -268,7 +272,7 @@ namespace GingerCore.ALM.QC
             catch (Exception e)
             {
                 tsFilter["CY_FOLDER_ID"] = "\"" + tsFolder.Path.ToString() + "\"";
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
 
             List TestsetList = TSetFact.NewList(tsFilter.Text);

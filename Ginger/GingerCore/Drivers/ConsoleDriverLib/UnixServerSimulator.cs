@@ -57,7 +57,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     msg.Send(buffer, 0, buffer.Length, 0);
                     buffer = new byte[255];
 
-                    // Read the sended command
+                    // Read the sent command
                     int rec = msg.Receive(buffer, 0, buffer.Length, 0);
                     byte[] bufferReaction = Encoding.Default.GetBytes(rec.ToString());
 
@@ -77,7 +77,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
      }

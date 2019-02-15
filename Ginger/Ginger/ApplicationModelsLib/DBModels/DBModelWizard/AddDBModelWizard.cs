@@ -45,7 +45,7 @@ namespace Ginger.ApplicationModels.DBModels.DBModelWizard
         {
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mApplicationDBModel);
 
-            // Save tables each one in seperate file - better handling, easy compare and more, less merges
+            // Save tables each one in separate file - better handling, easy compare and more, less merges
             foreach (ApplicationDBTableModel table in mApplicationDBModel.Tables.Where(x => x.Selected))
             {
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(table);

@@ -16,7 +16,7 @@
         </x:ArrayExtension>
     </Page.Resources>
 
-    <Grid Background="{StaticResource @Skin1_ColorC}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="150"/>
             <RowDefinition Height="100"/>
@@ -24,12 +24,12 @@
         </Grid.RowDefinitions>
         
         <Viewbox Grid.Row="0">
-            <Label x:Name="lblBizFlowName" Foreground="{StaticResource @Skin1_ColorB}" FontWeight="ExtraBold" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="Biz Flow Name"/>
+            <Label x:Name="lblBizFlowName" Foreground="{StaticResource $SelectionColor_Pink}" FontWeight="ExtraBold" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="Biz Flow Name"/>
         </Viewbox>
 
         <StackPanel Grid.Row="1" VerticalAlignment="Center">
             <Label x:Name="StatusLabel" Content="Status"  FontSize="30" FontWeight="ExtraBold" />
-            <Label x:Name="lblElapsed" Content="Elapsed" FontSize="15" Foreground="{StaticResource @Skin1_ColorA}"/>
+            <Label x:Name="lblElapsed" Content="Elapsed" FontSize="15" Foreground="{StaticResource $Color_DarkBlue}"/>
         </StackPanel>
         
         <DockPanel Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -62,9 +62,9 @@
             </StackPanel>
             <StackPanel Grid.Row="1" x:Name="stck" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal"  Height="300" Width="600" >
                 <chart:DoughnutChart x:Name="ActivityChart"  
-                             ChartTitle="Activities"
+                                 ChartTitle=""
                                  ChartSubTitle=""
-                             InnerRadiusRatio="0.80" Width="300" Height="300" Background="{StaticResource @Skin1_ColorC}" ChartTitleStyle="{StaticResource @GraphStyleActivity}" ChartLegendVisibility="Collapsed" Margin="0 0 0 20" IsEnabled="False">
+                             InnerRadiusRatio="0.80" Width="300" Height="300" Background="{StaticResource $BackgroundColor_LightGray}" ChartTitleStyle="{StaticResource @GraphStyleActivity}" ChartLegendVisibility="Collapsed" Margin="0 0 0 20" IsEnabled="False">
                     <chart:PieChart.Series>
                         <chart:ChartSeries DisplayMember="Description"
                                    ItemsSource="{Binding Path=SeriesData}"
@@ -75,7 +75,7 @@
                 <chart:DoughnutChart x:Name="ActionChart"  
                              ChartTitle="Actions"
                                  ChartSubTitle=""
-                             InnerRadiusRatio="0.80" Width="300" Height="300" Background="{StaticResource @Skin1_ColorC}" ChartTitleStyle="{StaticResource @GraphStyleAction}" ChartLegendVisibility="Collapsed" Margin="0 0 0 20" IsEnabled="False">
+                             InnerRadiusRatio="0.80" Width="300" Height="300" Background="{StaticResource $BackgroundColor_LightGray}" ChartTitleStyle="{StaticResource @GraphStyleAction}" ChartLegendVisibility="Collapsed" Margin="0 0 0 20" IsEnabled="False">
                     <chart:PieChart.Series>
                         <chart:ChartSeries DisplayMember="Description"
                                    ItemsSource="{Binding Path=SeriesData}"

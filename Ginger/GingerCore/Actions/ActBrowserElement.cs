@@ -23,7 +23,7 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using Amdocs.Ginger.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActBrowserElement : Act
@@ -36,39 +36,42 @@ namespace GingerCore.Actions
             public static string ElementLocateBy = "ElementLocateBy";
             public static string GotoURLType = "GotoURLType";
             public static string ImplicitWait = "ImplicitWait";
+            public static string URLSrc = "URLSrc";
+            public static string PomGUID = "PomGUID";
         }
 
         public override string ActionDescription { get { return "Browser Action"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
-            
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
-            {
-                TBH.AddText("Action to handle Browser and Widgets");
-                TBH.AddLineBreak();
-                TBH.AddText("Widget are Internet Explorer browser inside Java form, they contain their own HTML and can have many HTML controls like regular Web Page");
-                TBH.AddLineBreak();
-                TBH.AddText("For Java- This action enable you to set the current active browser control and then locate a specific HTML element and run action on this element");
-            }
-        
-            public override string ActionEditPage { get { return "ActBrowserElementEditPage"; } }
-            public override bool ObjectLocatorConfigsNeeded { get { return false; } }
-            public override bool ValueConfigsNeeded { get { return false; } }
 
-            // return the list of platforms this action is supported on
-            public override List<ePlatformType> Platforms
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
+        {
+            TBH.AddText("Action to handle Browser and Widgets");
+            TBH.AddLineBreak();
+            TBH.AddText("Widget are Internet Explorer browser inside Java form, they contain their own HTML and can have many HTML controls like regular Web Page");
+            TBH.AddLineBreak();
+            TBH.AddText("For Java- This action enable you to set the current active browser control and then locate a specific HTML element and run action on this element");
+        }
+
+        public override string ActionEditPage { get { return "ActBrowserElementEditPage"; } }
+        public override bool ObjectLocatorConfigsNeeded { get { return false; } }
+        public override bool ValueConfigsNeeded { get { return false; } }
+
+        // return the list of platforms this action is supported on
+        public override List<ePlatformType> Platforms
+        {
+            get
             {
-                get
+                if (mPlatforms.Count == 0)
                 {
-                    if (mPlatforms.Count == 0)
-                    {
-                        mPlatforms.Add(ePlatformType.Java);
-                        mPlatforms.Add(ePlatformType.Web);
-                        mPlatforms.Add(ePlatformType.PowerBuilder);
-                        mPlatforms.Add(ePlatformType.Windows);
+                    mPlatforms.Add(ePlatformType.Java);
+                    mPlatforms.Add(ePlatformType.Web);
+                    mPlatforms.Add(ePlatformType.Mobile);
+                    mPlatforms.Add(ePlatformType.PowerBuilder);
+                    mPlatforms.Add(ePlatformType.Windows);
                 }
-                    return mPlatforms;
-                }
+                return mPlatforms;
             }
+        }
 
         public enum eGotoURLType
         {
@@ -78,6 +81,14 @@ namespace GingerCore.Actions
             NewTab,
             [EnumValueDescription("New Window")]
             NewWindow,
+        }
+
+        public enum eURLSrc
+        {
+            [EnumValueDescription("Static")]
+            Static,
+            [EnumValueDescription("Page Objects Model URL")]
+            UrlPOM,
         }
 
         [IsSerializedForLocalRepository]
@@ -141,20 +152,8 @@ namespace GingerCore.Actions
             Refresh,
             [EnumValueDescription("Navigate Back")]
             NavigateBack,
-            [EnumValueDescription("Select From List Scr")]
-            SelectFromListScr,
-            [EnumValueDescription("Key Type")]
-            KeyType,
-            [EnumValueDescription("Get Inner Text")]
-            GetInnerText,
-            [EnumValueDescription("Close Browser")]
-            CloseBrowser,
             [EnumValueDescription("Dismiss Message Box")]
             DismissMessageBox,
-            [EnumValueDescription("Message Box")]
-            MsgBox,
-            [EnumValueDescription("Start Browser")]
-            StartBrowser,
             [EnumValueDescription("Delete All Cookies")]
             DeleteAllCookies,
             [EnumValueDescription("Accept Message Box")]
@@ -171,21 +170,34 @@ namespace GingerCore.Actions
 
 
         [IsSerializedForLocalRepository]
-            public eControlAction ControlAction { get; set; }
+        public eControlAction ControlAction { get; set; }
 
-            public override String ToString()
+        public override String ToString()
+        {
+            return "BrowserControl - " + ControlAction;
+        }
+
+        public override String ActionType
+        {
+            get
             {
-                return "BrowserControl - " + ControlAction;
+                return "BrowserControl: " + ControlAction.ToString();
             }
+        }
 
-            public override String ActionType
+        public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }
+        public string PomGUID
+        {
+            get
             {
-                get
-                {
-                    return "BrowserControl: " + ControlAction.ToString();
-                }
+                return GetOrCreateInputParam(Fields.PomGUID).Value;
             }
+            set
+            {
+                GetOrCreateInputParam(Fields.PomGUID).Value = value;
+                OnPropertyChanged(nameof(PomGUID));
+            }
+        }
 
-            public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }
     }
 }

@@ -1,6 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
 
 namespace Amdocs.Ginger.Common.Enums
 {
@@ -21,7 +35,11 @@ namespace Amdocs.Ginger.Common.Enums
         /// Ginger Icon image
         /// </summary>
         Ginger,
-        GingerIcon,
+        GingerLogo,
+        GingerLogoGray,
+        GingerIconWhite,
+        GingerIconGray,
+        GingerSplash,
         #endregion
 
 
@@ -41,27 +59,35 @@ namespace Amdocs.Ginger.Common.Enums
         Operations,
         Environment,
         HtmlReport,
-        Variable,
         SharedRepositoryItem,
         NonSharedRepositoryItem,
         Tag,
         DataSource,
         PluginPackage,
         #endregion
-
+        
+        #region Variable Items Images
+        Variable,
+        VariableList,
+        Password,
+        Random,
+        Sequence,
+        Timer,
+        #endregion
 
         #region Execution Status Images
+        Unknown,
         //############################## Execution Status Images:
         /// <summary>
         /// Show spinner 
         /// </summary>
         Processing,
         /// <summary>
-        ///  Show green flag, use when action, activity, businees flows execution pass
+        ///  Show green flag, use when action, activity, businessflows execution pass
         /// </summary>
         Passed,
         /// <summary>
-        ///  Show red flag, use when action, activity, businees flows execution fail
+        ///  Show red flag, use when action, activity, businessflows execution fail
         /// </summary>
         Failed,
         Pending,
@@ -71,8 +97,7 @@ namespace Amdocs.Ginger.Common.Enums
         Stopped,
         Running,
         #endregion
-
-
+        
         #region Operations Images
         //############################## Operations Images:        
         Refresh,
@@ -131,8 +156,12 @@ namespace Amdocs.Ginger.Common.Enums
         ImportFile,
         Upgrade,
         Recover,
+        Approve,
+        Reject,
+        Warn,
+        EditWindow,
+        UserDefined,
         #endregion
-
 
         #region Items Images
         //############################## Items Images:
@@ -183,9 +212,19 @@ namespace Amdocs.Ginger.Common.Enums
         Beta,
         Error,
         Coffee,
+        MapSigns,
+        Image,
+        Elements,
+        LocationPointer,
+        GitHub,
+        Ping,
         #endregion
 
-
+        #region Other Images
+        Database,
+        TextBox,
+        #endregion
+        
         #region Source control Images     
         SourceControl,
         SourceControlNew,
@@ -194,6 +233,7 @@ namespace Amdocs.Ginger.Common.Enums
         SourceControlEquel,
         SourceControlLockedByAnotherUser,
         SourceControlLockedByMe,
+        SourceControlError,
         #endregion
 
         Times_Red,
@@ -203,7 +243,8 @@ namespace Amdocs.Ginger.Common.Enums
         Application,
         OpenFolder,
         Check,
-        Bug,                
-        PlusSquare,
+        Bug,
+        PlusSquare,        
+        DataTable        
     }
 }

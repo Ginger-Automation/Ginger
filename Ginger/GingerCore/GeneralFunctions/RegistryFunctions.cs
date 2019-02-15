@@ -58,7 +58,7 @@ namespace GingerCore.GeneralFunctions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get the registry key for the RootType: '" + rootType +
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get the registry key for the RootType: '" + rootType +
                     "' and KeyPath: '" + keyPath + "'", ex);
                 regKey = null;
                 return regKey;
@@ -104,7 +104,7 @@ namespace GingerCore.GeneralFunctions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to create the registry key for the RootType: '" + rootType +
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to create the registry key for the RootType: '" + rootType +
                                                     "' and KeyPath: '" + keyPath + "'", ex);
                 return false;
             }
@@ -118,7 +118,7 @@ namespace GingerCore.GeneralFunctions
                 RegistryKey regKey = GetRegistryKey(rootType, keyPath);
                 if (regKey != null)
                 {
-                    //check if requied parameter exist
+                    //check if required parameter exist
                     if ((regKey.GetValueNames()).Contains(paramterName))
                     {
                         //return parameter value
@@ -126,8 +126,8 @@ namespace GingerCore.GeneralFunctions
                     }
                     else
                     {
-                        //requied parameter was not found
-                        Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to get the registry key value for the RootType: '" + rootType +
+                        //required parameter was not found
+                        Reporter.ToLog(eLogLevel.WARN, "Failed to get the registry key value for the RootType: '" + rootType +
                                       "', KeyPath: '" + keyPath + "' and ParameterName: '" + paramterName + "'- Parameter was not found");
                         return null;
                     }
@@ -140,7 +140,7 @@ namespace GingerCore.GeneralFunctions
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get the registry key value for the RootType: '" + rootType +
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get the registry key value for the RootType: '" + rootType +
                                       "', KeyPath: '" + keyPath + "' and ParameterName: '" + paramterName + "'", ex);
                 return null;
             }
@@ -167,7 +167,7 @@ namespace GingerCore.GeneralFunctions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to set the registry key value: '" + value + 
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to set the registry key value: '" + value + 
                     "' for the RootType: '" + rootType + "', KeyPath: '" + keyPath + "' and ParameterName: '" + paramterName + "'", ex);
                 return false;
             }
@@ -196,10 +196,14 @@ namespace GingerCore.GeneralFunctions
                         else
                         {
                             //ask user
-                            if ((Reporter.ToUser(eUserMsgKeys.AddRegistryValue, rootType + "\\" + keyPath)) == System.Windows.MessageBoxResult.Yes)
+                            if ((Reporter.ToUser(eUserMsgKey.AddRegistryValue, rootType + "\\" + keyPath)) == eUserMsgSelection.Yes)
+                            {
                                 addValue = true;
+                            }
                             else
+                            {
                                 return false;
+                            }
                         }
                     }
                     else
@@ -219,7 +223,7 @@ namespace GingerCore.GeneralFunctions
                                 if (!silentMode)
                                 {
                                     //show success to user
-                                    Reporter.ToUser(eUserMsgKeys.AddRegistryValueSucceed, rootType + "\\" + keyPath);
+                                    Reporter.ToUser(eUserMsgKey.AddRegistryValueSucceed, rootType + "\\" + keyPath);
                                 }
                                 return true;
                             }
@@ -229,7 +233,7 @@ namespace GingerCore.GeneralFunctions
                                 if (!silentMode)
                                 {
                                     //show failure to user
-                                    Reporter.ToUser(eUserMsgKeys.AddRegistryValueFailed, rootType + "\\" + keyPath);
+                                    Reporter.ToUser(eUserMsgKey.AddRegistryValueFailed, rootType + "\\" + keyPath);
                                 }
                                 return false;
                             }
@@ -239,7 +243,7 @@ namespace GingerCore.GeneralFunctions
                             if (!silentMode)
                             {
                                 //show failure to user
-                                Reporter.ToUser(eUserMsgKeys.AddRegistryValueFailed, rootType + "\\" + keyPath);
+                                Reporter.ToUser(eUserMsgKey.AddRegistryValueFailed, rootType + "\\" + keyPath);
                             }
                             return false;
                         }
@@ -249,11 +253,11 @@ namespace GingerCore.GeneralFunctions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to complete the registry value check for the key: " + 
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to complete the registry value check for the key: " + 
                                                                                         rootType + "\\" + keyPath, ex);                
                 if (!silentMode)
                 {
-                    Reporter.ToUser(eUserMsgKeys.RegistryValuesCheckFailed);
+                    Reporter.ToUser(eUserMsgKey.RegistryValuesCheckFailed);
                 }
                 return false;
             }

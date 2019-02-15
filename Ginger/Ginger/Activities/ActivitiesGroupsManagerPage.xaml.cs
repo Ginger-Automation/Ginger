@@ -32,6 +32,7 @@ using System.Windows.Input;
 using System.Linq;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Activities
 {
@@ -173,7 +174,7 @@ namespace Ginger.Activities
         {
             ActivitiesGroup selectedGroup = (ActivitiesGroup)grdGroups.Grid.SelectedItem;
             if (selectedGroup == null)
-                Reporter.ToUser(eUserMsgKeys.NoActivitiesGroupWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoActivitiesGroupWasSelected);
             else
             {
                 ActivitiesGroupsActivitiesSelectionPage actsSlecPage = new ActivitiesGroupsActivitiesSelectionPage(mBusinessFlow, selectedGroup);
@@ -203,7 +204,7 @@ namespace Ginger.Activities
             winButtons.Add(okBtn);
             winButtons.Add(undoBtn);
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "'" + mBusinessFlow.Name + "'- " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " Manager", this, winButtons, false, string.Empty, CloseWinClicked);             
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "'" + mBusinessFlow.Name + "'- " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " Manager", this, winButtons, false, "Undo & Close", CloseWinClicked);             
         }
 
         private void AddToRepository(object sender, RoutedEventArgs e)
@@ -211,9 +212,6 @@ namespace Ginger.Activities
             Repository.SharedRepositoryOperations.AddItemsToRepository(grdGroups.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
             //if (grdGroups.Grid.SelectedItems != null)
             //{
-
-               
-
             //    //foreach (ActivitiesGroup group in grdGroups.Grid.SelectedItems)
             //    //{
             //    //    //add the Group to repository
@@ -223,7 +221,7 @@ namespace Ginger.Activities
             //    //        foreach (ActivityIdentifiers actIdent in group.ActivitiesIdentifiers)
             //    //        {
             //    //            //check that all used variables exist in the Activity (and not taken from the BF)
-            //    //            if (actIdent.IdentifiedActivity.WarnFromMissingVariablesUse(App.UserProfile.Solution.Variables,mBusinessFlow.Variables, false) == true) continue;
+            //    //            if (actIdent.IdentifiedActivity.WarnFromMissingVariablesUse( WorkSpace.UserProfile.Solution.Variables,mBusinessFlow.Variables, false) == true) continue;
 
             //    //            App.LocalRepository.AddItemToRepository(actIdent.IdentifiedActivity, false);
             //    //        }
@@ -241,7 +239,7 @@ namespace Ginger.Activities
                 ALMIntegration.Instance.ExportBfActivitiesGroupsToALM(App.BusinessFlow, selectedAGs);
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
 
         private void grdGroups_PreviewDragItem(object sender, EventArgs e)
@@ -284,12 +282,10 @@ namespace Ginger.Activities
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
             }
-            else
-                _pageGenericWin.Close();
         }
 
         private void undoBtn_Click(object sender, RoutedEventArgs e)

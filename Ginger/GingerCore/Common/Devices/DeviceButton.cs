@@ -18,7 +18,7 @@ limitations under the License.
 
 namespace GingerCore.Drivers.Common.Devices
 {
-    // class for Device Button, can be ont the device itself - the phone/tablet etc, or on the remote controll, like Amazon Fire TV, each button on the real controller is one action
+    // class for Device Button, can be on the device itself - the phone/tablet etc, or on the remote control, like Amazon Fire TV, each button on the real controller is one action
     public class DeviceButton
     {
         public enum eButtonShape
@@ -34,7 +34,7 @@ namespace GingerCore.Drivers.Common.Devices
         public string SendCommand { get; set; }
         public eButtonShape ButtonShape { get; set; }
 
-        //Location where this control is lcoated 
+        //Location where this control is located 
         public double Top { get; set; }
         public double Left { get; set; }
         public double Width { get; set; }

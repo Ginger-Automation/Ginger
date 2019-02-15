@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using GingerCore.DataSource;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -60,6 +62,8 @@ namespace Amdocs.Ginger.Common
             : base(list)
         {
         }
+
+     
         void IObservableList.Move(int oldIndex, int newIndex)
         {
             //SaveUndoData();
@@ -106,7 +110,7 @@ namespace Amdocs.Ginger.Common
         /// Moving to next item in the list
         /// It is not possible to pass after the last item
         /// </summary>
-        /// <returns>True if move was successfull, False if no change or we are at the last item</returns>
+        /// <returns>True if move was successful, False if no change or we are at the last item</returns>
         public bool MoveNext()
         {
 
@@ -114,7 +118,7 @@ namespace Amdocs.Ginger.Common
             if (index > 0 && index <= Count)
             {
                 // Make sure last item remains active, do NOT put code to return null or alike, as all visible list need to have item mark in grid or it doesn't look good.
-                // Check if it is possobile to move next need to be in the calling function, can use the list check IsLastItem()
+                // Check if it is possible to move next need to be in the calling function, can use the list check IsLastItem()
                 CurrentItem = Items[index];
                 return true;                
             }
@@ -132,7 +136,7 @@ namespace Amdocs.Ginger.Common
             if (index > 0 && index <= Count)
             {
                 // Make sure last item remains active, do NOT put code to return null or alike, as all visible list need to have item mark in grid or it doesn't look good.
-                // Check if it is possobile to move next need to be in the calling function, can use the list check IsLastItem()
+                // Check if it is possible to move next need to be in the calling function, can use the list check IsLastItem()
                 CurrentItem = Items[index];
                 return true;                
             }
@@ -215,7 +219,7 @@ namespace Amdocs.Ginger.Common
         /// Return the list as IQueryable sorted based on orderByProperty
         /// </summary>
         /// <param name="orderByProperty">property name, example: nameof(BusinessFlow.Name)</param>
-        /// <param name="desc">default is ascending, set to true for descening order</param>
+        /// <param name="desc">default is ascending, set to true for descending order</param>
         /// <returns></returns>
         public IQueryable<T> OrderBy(string orderByProperty, bool desc = false)
         {
@@ -345,7 +349,14 @@ namespace Amdocs.Ginger.Common
                 // string s = StringCompressor.DecompressStringFromBytes(mMemoryStream, mDataLen);
 
                 ObservableList<T> l = new ObservableList<T>();
-                NewRepositorySerializer.DeserializeObservableListFromText(this, s);
+                try
+                {
+                    NewRepositorySerializer.DeserializeObservableListFromText(this, s);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Deserialize the lazy load section: '{0}'", s), ex);
+                }
 
                 mStringData = null;
                 //mMemoryStream.Dispose();
@@ -398,5 +409,9 @@ namespace Amdocs.Ginger.Common
             Move(Count - 1, 0);
         }
 
+        public static implicit operator ObservableList<T>(ObservableList<DataSourceBase> v)
+        {
+            throw new NotImplementedException();
+        }
     } 
 }

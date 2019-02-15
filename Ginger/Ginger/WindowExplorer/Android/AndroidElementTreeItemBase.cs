@@ -27,11 +27,18 @@ using GingerCore.Drivers.AndroidADB;
 using GingerCore.Drivers.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer.Android
 {
     public class AndroidElementTreeItemBase :  ITreeViewItem, IWindowExplorerTreeItem
     {
+        public ITreeView TreeView
+        {
+            get;
+            set;
+        }
+
         public AndroidElementInfo AndroidElementInfo { get; set; }
 
         public string Name { get { return AndroidElementInfo.ElementTitle; } }
@@ -62,7 +69,7 @@ namespace Ginger.WindowExplorer.Android
 
         StackPanel ITreeViewItem.Header()
         {
-            //TODO: ut better icon for generic control
+            //TODO: Pput better icon for generic control
             string ImageFileName = "@Agent_16x16.png";
             string Title = AndroidElementInfo.ElementTitle;
             return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
@@ -104,6 +111,11 @@ namespace Ginger.WindowExplorer.Android
         ObservableList<ControlProperty> IWindowExplorerTreeItem.GetElementProperties()
         {
             return AndroidElementInfo.WindowExplorer.GetElementProperties(AndroidElementInfo);
+        }
+
+        public ObservableList<ActInputValue> GetItemSpecificActionInputValues()
+        {
+            return null;
         }
     }
 }

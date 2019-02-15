@@ -17,7 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using GingerCoreNET.Dictionaries;
+using GingerCore;
 using GingerCoreNET.GeneralLib;
 using System;
 using System.Collections;
@@ -332,6 +332,12 @@ namespace GingerCoreNET.GeneralLib
         public static string ConvertInvalidXMLCharacters(string str)
         {
             return SecurityElement.Escape(str);
+        }
+        public static bool isDesignMode()
+        {
+            //TODO: move this func to General
+            bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+            return designMode;
         }
 
         public static ObservableList<T> ConvertListToObservableList<T>(List<T> List)

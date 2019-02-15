@@ -23,9 +23,9 @@ using GingerCore.Properties;
 using GingerCore.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 // This class is for dummy act - good for agile, and to be replace later on when real
-//  act is availble, so tester can write the step to be.
+//  act is available, so tester can write the step to be.
 namespace GingerCore.Actions
 {
     [Serializable]
@@ -34,7 +34,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Condition Validation Action"; } }
         public override string ActionUserDescription { get { return "use this action to perform validation using value expression edit"; } }
         string ConditionCalculated = String.Empty;
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action to perform validations Using Value Expression editor ");
 
@@ -91,13 +91,12 @@ namespace GingerCore.Actions
                 ConditionCalculated = "";
                 return;
             }
-
-            ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList);
-            VE.Value = Condition;
             
-            VE.Value = VE.Value.Replace("{ActionStatus}", act.Status.ToString());
+            ValueExpression.Value = Condition;
 
-            ConditionCalculated = VE.ValueCalculated;
+            ValueExpression.Value = ValueExpression.Value.Replace("{ActionStatus}", act.Status.ToString());
+
+            ConditionCalculated = ValueExpression.ValueCalculated;
         }
 
     }

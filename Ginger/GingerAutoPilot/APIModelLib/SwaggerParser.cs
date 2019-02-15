@@ -34,16 +34,14 @@ using Newtonsoft.Json;
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 {
     public class SwaggerParser : APIConfigurationsDocumentParserBase
-    {
-        string ResolvedJson = "";
+    {        
         SwaggerDocument Swaggerdoc = null;
 
-        public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, bool avoidDuplicatesNodes = false)
+        public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> SwaggerModels, bool avoidDuplicatesNodes = false)
         {
             string FinalFileName = "";
             Uri url = new Uri(FileName);
             
-            ObservableList<ApplicationAPIModel> SwaggerModels = new ObservableList<ApplicationAPIModel>();
             string orignaljson = "";
             if (url.IsFile)
             {
@@ -76,7 +74,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 
 
             Swaggerdoc = SwaggerDocument.FromJsonAsync(orignaljson).Result;
-           foreach (var paths in Swaggerdoc.Paths)
+            foreach (var paths in Swaggerdoc.Paths)
             {
                 SwaggerPathItem SPi = paths.Value;
                 foreach (KeyValuePair<SwaggerOperationMethod, SwaggerOperation> so in SPi.AsEnumerable())
@@ -234,6 +232,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                             ActReturnValue arv = new ActReturnValue();
                             arv.ItemName = currModel.ItemName;
                             arv.Path = currModel.XPath;
+                            arv.DoNotConsiderAsTemp = true;
                             basicModal.ReturnValues.Add(arv);
                         }
 
@@ -250,6 +249,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                             ActReturnValue arv = new ActReturnValue();
                             arv.ItemName = currModel.ItemName;
                             arv.Path = currModel.XPath;
+                            arv.DoNotConsiderAsTemp = true;
                             basicModal.ReturnValues.Add(arv);
                         }
 
@@ -348,7 +348,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
             string temppath = System.IO.Path.GetTempFileName();
             File.WriteAllText(temppath, xmlbody);
             XMLTemplateParser XTp = new XMLTemplateParser();
-            ApplicationAPIModel aam = XTp.ParseDocument(temppath).ElementAt(0);
+            ApplicationAPIModel aam = XTp.ParseDocument(temppath,new ObservableList<ApplicationAPIModel>()).ElementAt(0);
             object[] BodyandModelParameters = JSONTemplateParser.GenerateBodyANdModelParameters(SampleBody);
             aAM.RequestBody = aam.RequestBody;
             aAM.RequestBodyType = ApplicationAPIUtils.eRequestBodyType.FreeText;
@@ -358,12 +358,10 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 
         private ObservableList<AppModelParameter> GenerateJsonBody(ApplicationAPIModel aAM, JsonSchema4 operation)
         {
-
             string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation);
-
             object[] BodyandModelParameters = JSONTemplateParser.GenerateBodyANdModelParameters(SampleBody);
             aAM.RequestBody = (string)BodyandModelParameters[0];
-          return (ObservableList<AppModelParameter>)BodyandModelParameters[1];
+            return (ObservableList<AppModelParameter>)BodyandModelParameters[1];
         }
 
         private void GenerateFormParameters(ApplicationAPIModel aAM, SwaggerOperation operation, bool isMultiPartFormdata = false)

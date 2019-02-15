@@ -21,7 +21,7 @@ namespace GingerCore.ALM.QC
 {
     public class QCTSTestParameter
     {
-        //paramater Name
+        //parameter Name
         public string Name { get; set; }
         //Actual Value or check Default value if Actual is null
         public string Value { get; set; }

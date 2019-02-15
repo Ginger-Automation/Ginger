@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using System.Windows.Controls;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer.HTMLCommon
 {
@@ -37,34 +38,14 @@ namespace Ginger.WindowExplorer.HTMLCommon
         {
                 if (mHTMLCanvasElementPage == null)
                 {
-                    mHTMLCanvasElementPage = new HTMLCanvasElementPage(actList, ElementInfo);
+                    mHTMLCanvasElementPage = new HTMLCanvasElementPage(ElementInfo);
                 }
                 return mHTMLCanvasElementPage;
         }
-
-        ObservableList<Act> actList = new ObservableList<Act>();
-        ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
-        {
-            actList.Add(new ActGenElement()
-            {
-                Description = "Click by X Y inside the " + this.ElementInfo.ElementTitle + " Element",
-                GenElementAction = ActGenElement.eGenElementAction.XYClick
-            });
-
-            actList.Add(new ActGenElement()
-            {
-                Description = "DoubleClick by X Y inside the  " + this.ElementInfo.ElementTitle + " Element",
-                GenElementAction = ActGenElement.eGenElementAction.XYDoubleClick
-            });
-
-            actList.Add(new ActGenElement()
-            {
-                Description = "SendKeys by X Y inside the " + this.ElementInfo.ElementTitle + " TextBox",
-                GenElementAction = ActGenElement.eGenElementAction.XYSendKeys
-            });
-
-            AddGeneralHTMLActions(actList);
-            return actList;
+           
+        ObservableList<ActInputValue> IWindowExplorerTreeItem.GetItemSpecificActionInputValues()
+        {           
+            return mHTMLCanvasElementPage.GetTableRelatedInputValues();
         }
     }
 }

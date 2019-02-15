@@ -31,7 +31,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
     {
         public static IEnumerable<RepositoryFile> GetAllToUpgrade(IEnumerable<RepositoryFile> RepositoryFiles)
         {
-            // need ConcurrentBag - since it is thread safe when running in parllel then no need to use lock
+            // need ConcurrentBag - since it is thread safe when running in parallel then no need to use lock
             ConcurrentBag<RepositoryFile> filesToUpgrade = new ConcurrentBag<RepositoryFile>();            
             
             Parallel.ForEach(RepositoryFiles, RF =>
@@ -73,32 +73,11 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                 else if (currentVersion < fileXmlVersion)
                     return 1; //File is from newer version
                 else
-                    return -2;//failed to identify and compart the version
+                    return -2;//failed to identify and compare the version
             }
         }
 
-        public static string GetRepoFileVersion(string FileName)
-        {
-            string line1, line2;
-
-            using (StreamReader reader = new StreamReader(FileName))
-            {
-                line1 = reader.ReadLine();
-                line2 = reader.ReadLine();
-
-                //Expensive!!!
-                Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
-                Match match = regex.Match(line2);
-                if (match.Success)
-                {
-                    return match.Value;
-                }
-                else
-                {
-                    return "0.0.0.0";
-                }
-            }
-        }
+       
 
         public static long GetXMLVersionAsLong(string xml)
         {

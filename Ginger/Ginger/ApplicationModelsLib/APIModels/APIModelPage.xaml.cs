@@ -131,17 +131,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             //get key object 
             if (mApplicationAPIModel.TargetApplicationKey != null)
             {
-                RepositoryItemKey key = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == mApplicationAPIModel.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
+                RepositoryItemKey key =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == mApplicationAPIModel.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
                 if (key != null)
                 {
                     mApplicationAPIModel.TargetApplicationKey = key;
                 }
                 else
                 {                                        
-                    Reporter.ToUser(eUserMsgKeys.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
+                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
                 }
             }
-            xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms;
+            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.UserProfile.Solution.ApplicationPlatforms;
             xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
         }
@@ -212,10 +212,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     break;
             }
 
-            //Do Not Fail Action On Bad Respose
+            //Do Not Fail Action On Bad Response
             GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(DoNotFailActionOnBadRespose, CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.DoNotFailActionOnBadRespose));
 
-            //Request Body fiedls:
+            //Request Body fields:
             ControlsBinding.ObjFieldBinding(RequestBodyTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.RequestBody));
             RequestBodyTextBox.Height = 200;
 
@@ -631,9 +631,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (APIModelTabs.SelectedItem == tab)
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
@@ -642,7 +642,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
         }
 
@@ -765,7 +765,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.ToSaveChanges) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 UndoChangesAndClose();
             }

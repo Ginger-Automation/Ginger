@@ -8,7 +8,7 @@
 	Title="ActSmartSyncEditPage">
 
     <Grid>
-        <StackPanel Background="{StaticResource @Skin1_ColorC}">
+        <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
             <Label HorizontalAlignment="Left">Action Type</Label>
             <ComboBox x:Name="ActionNameComboBox" Width="300"  Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
         </StackPanel>

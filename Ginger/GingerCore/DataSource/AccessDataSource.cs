@@ -73,8 +73,8 @@ namespace GingerCore.DataSource
         }
 
         public override ObservableList<DataSourceTable> GetTablesList()
-        {            
-           
+        {         
+            
             ObservableList<DataSourceTable> mDataSourceTableDetails = new ObservableList<DataSourceTable>();
             try
             {
@@ -305,7 +305,7 @@ namespace GingerCore.DataSource
             }
             catch (Exception e)
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
             }
         }
              
@@ -332,7 +332,7 @@ namespace GingerCore.DataSource
                                 else if (row.Table.Columns[iRow].ColumnName == "GINGER_LAST_UPDATE_DATETIME")
                                     updateCommand = updateCommand + row.Table.Columns[iRow] + "='" + DateTime.Now.ToString() + "',";
                                 else
-                                    updateCommand = updateCommand + row.Table.Columns[iRow] + "='" + row.ItemArray[iRow].ToString().Replace("'", "''") + "',";
+                                    updateCommand = updateCommand  + "["+ row.Table.Columns[iRow] + "] ='" + row.ItemArray[iRow].ToString().Replace("'", "''") + "',";
                             }
                         updateCommand = updateCommand.Substring(0, updateCommand.Length - 1);
                         updateCommand = updateCommand + " where GINGER_ID = " + row["GINGER_ID", DataRowVersion.Original];
@@ -372,8 +372,8 @@ namespace GingerCore.DataSource
                         catch (Exception e)
                         {
                             dataTable.RejectChanges();
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
-                            //Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
+                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                            //Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
                         }
                     }
                 }
@@ -384,7 +384,7 @@ namespace GingerCore.DataSource
             catch (Exception e)
             {
                 dataTable.RejectChanges();
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
             }
         }
         private void ExportDSToExcel(DataTable table, string sFilePath,string sSheetName="")
@@ -399,6 +399,7 @@ namespace GingerCore.DataSource
             else
             {
                 workbook = SpreadsheetDocument.Create(sFilePath, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
+                workbook.AddWorkbookPart();
                 workbook.WorkbookPart.Workbook = new DocumentFormat.OpenXml.Spreadsheet.Workbook();
                 workbook.WorkbookPart.Workbook.Sheets = new DocumentFormat.OpenXml.Spreadsheet.Sheets();
             }

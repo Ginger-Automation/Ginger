@@ -23,9 +23,9 @@ using System.Linq;
 using GingerCore.Helpers;
 using System.IO;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 //This class is for dummy act - good for agile, and to be replace later on when real
-//  act is availble, so tester can write the step to be.
+//  act is available, so tester can write the step to be.
 namespace GingerCore.Actions
 {
     public class ActFileOperations : ActWithoutDriver
@@ -33,7 +33,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "File Operations"; } }
         public override string ActionUserDescription { get { return "Perform File operations like Check if File Exists, Execute a file "; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action to perform File operations ");
 
@@ -57,7 +57,9 @@ namespace GingerCore.Actions
             Copy,
             Move,
             ForceCopy,
-            RunCommand
+            RunCommand,
+            UnZip,
+            DeleteDirectoryFiles
         }
 
         private eFileoperations mFileOperation = eFileoperations.CheckFileExists;
@@ -144,11 +146,13 @@ namespace GingerCore.Actions
             calculatedSourceFilePath = GetInputParamCalculatedValue(Fields.SourceFilePath);
                       
             bool IsSorcePathRelative = false;
-            if (calculatedSourceFilePath.StartsWith(@"~\"))
+            if (calculatedSourceFilePath.StartsWith(@"~"))
             {
-                calculatedSourceFilePath = calculatedSourceFilePath.Replace(@"~\", SolutionFolder);
+                //calculatedSourceFilePath = calculatedSourceFilePath.Replace(@"~\", SolutionFolder);
+                calculatedSourceFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedSourceFilePath);
                 IsSorcePathRelative = true;
             }
+
             if (calculatedSourceFilePath.EndsWith("*"))
             {
                 string[] FileNameList = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath));
@@ -175,6 +179,18 @@ namespace GingerCore.Actions
                         return;
                     }
 
+                    break;
+                case eFileoperations.DeleteDirectoryFiles:
+                    if (!System.IO.Directory.Exists(calculatedSourceFilePath))
+                    {
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                        base.ExInfo = "Folder doesn't exists";
+                        return;
+                    }
+                    foreach (string file in System.IO.Directory.GetFiles(calculatedSourceFilePath))
+                    {
+                        System.IO.File.Delete(file);
+                    }
                     break;
                 case eFileoperations.Copy:
                     SetupDestinationfolders();
@@ -271,6 +287,31 @@ namespace GingerCore.Actions
                             ProcessStart(calculatedSourceFilePath);
                     }
                     break;
+                case eFileoperations.UnZip:
+                    SetupDestinationfolders();
+                    if(!calculatedSourceFilePath.ToLower().EndsWith(".zip"))
+                    {
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.ExInfo = "Not a valid Zip File";
+                        base.Error = "Not a valid Zip File";
+                        return;
+                    }
+                    if (System.IO.File.Exists(calculatedSourceFilePath))
+                    {
+                        if (!System.IO.Directory.Exists(DestinationFolder))
+                        {
+                            System.IO.Directory.CreateDirectory(DestinationFolder);
+                        }
+                        System.IO.Compression.ZipFile.ExtractToDirectory(calculatedSourceFilePath,DestinationFolder);                        
+                    }
+                    else
+                    {
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.ExInfo = "File doesn't exists";
+                        base.Error = "File doesn't exists";
+                        return;
+                    }
+                    break;
 
                 default:
                     break;
@@ -307,8 +348,9 @@ namespace GingerCore.Actions
         {
             string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
 
-            if (calculatedDestinationPath.StartsWith(@"~\"))
-                calculatedDestinationPath = calculatedDestinationPath.Replace(@"~\", SolutionFolder);
+            //if (calculatedDestinationPath.StartsWith(@"~\"))
+            //    calculatedDestinationPath = calculatedDestinationPath.Replace(@"~\", SolutionFolder);
+            calculatedDestinationPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedDestinationPath);
 
             DestinationFolder = System.IO.Path.GetDirectoryName(calculatedDestinationPath);
             if (String.IsNullOrEmpty(DestinationFolder))

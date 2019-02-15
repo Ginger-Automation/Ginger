@@ -37,11 +37,11 @@ namespace UnitTests.NonUITests
         {
 
         }
-        //test trigger unitest
+        //test trigger unit test
         /// <summary>
         /// Test the new solution been created successfully
         /// </summary>
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CreateNewSolution()
         {
             // Arrange
@@ -60,7 +60,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CreateNewSolutionWithMultiUnderscore()
         {
             // Arrange

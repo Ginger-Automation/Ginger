@@ -91,7 +91,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 AddAPIModelWizard = ((AddAPIModelWizard)WizardEventArgs.Wizard);
                 App.ObjFieldBinding(XMLTemplatesGrid.AddCheckBox("Avoid Duplicates Nodes", null), CheckBox.IsCheckedProperty, AddAPIModelWizard, nameof(AddAPIModelWizard.AvoidDuplicatesNodes));
                 mWSDLParser = new WSDLParser();
-
+                AddAPIModelWizard.mWSDLParser = mWSDLParser;
                 GingerCore.General.ObjFieldBinding(xURLTextBox, TextBox.TextProperty, AddAPIModelWizard, nameof(AddAPIModelWizard.URL));
                 xURLTextBox.AddValidationRule(eValidationRule.CannotBeEmpty);
             }
@@ -302,7 +302,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                     {
                         System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
 
-                        dlg.Filter = "XML Files (*.xml)|*.xml" + "|WSDL Files (*.wsdl)|*.wsdl" + "|All Files (*.*)|*.*";
+                        dlg.Filter = "WSDL Files (*.wsdl)|*.wsdl" + "|XML Files (*.xml)|*.xml" + "|All Files (*.*)|*.*";
 
                         System.Windows.Forms.DialogResult result = dlg.ShowDialog();
 
@@ -399,7 +399,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
             catch (Exception ex)
             {                
-                Reporter.ToUser(eUserMsgKeys.FileOperationError, ex.Message);
+                Reporter.ToUser(eUserMsgKey.FileOperationError, ex.Message);
                 error = error + Environment.NewLine + ex.Message;
                 xPreviewButton.Visibility = Visibility.Collapsed;
                 SourceRviewLable.Visibility = Visibility.Collapsed;
@@ -411,7 +411,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 xBrowseLoadButton.IsEnabled = true;
             }
             if (string.IsNullOrEmpty(error))                
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Success : The File Loaded successfully");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Success : The File Loaded successfully");
         }
 
         private XmlDocument PreviewContent = null;
@@ -460,8 +460,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
 
             return string.Empty ;
-        }
-
+        }       
     }
 
 }

@@ -22,12 +22,12 @@ using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.Common
 {
     // this action is for items to do on the device
     // Like install app
-    // like screenrecord
+    // like screen-record
     // reboot
     // get power/cpu etc...
 
@@ -36,7 +36,7 @@ namespace GingerCore.Actions.Common
         public override string ActionDescription { get { return "Device Action"; } }
         public override string ActionUserDescription { get { return "Device Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need run action on the device like screen record");
         }

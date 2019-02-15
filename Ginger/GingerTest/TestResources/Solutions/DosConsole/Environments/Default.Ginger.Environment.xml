@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="a83ba63d-a898-4112-83d5-9803adf34bda" ItemType="ProjEnvironment" CreatedBy="ravikugu" Created="201811061057" GingerVersion="3.0.0.0" Version="1" LastUpdateBy="ravikugu" LastUpdate="201811061057" />
+<ProjEnvironment Guid="a83ba63d-a898-4112-83d5-9803adf34bda" Name="Default" ParentGuid="00000000-0000-0000-0000-000000000000">
+<Applications>
+<EnvApplication Active="True" Guid="b92acc4a-e4d6-4b89-a237-502ece9e874c" Name="MyDosApp" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</Applications>
+</ProjEnvironment></GingerRepositoryItem>

@@ -17,7 +17,9 @@ limitations under the License.
 #endregion
 
 using System.Collections.Generic;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
@@ -42,6 +44,18 @@ namespace GingerCore.Platforms.PlatformsInfo
             return mElementLocatorsTypeList;
         }
 
+        public override List<ActBrowserElement.eControlAction> GetPlatformBrowserControlOperations()
+        {
+            List<ActBrowserElement.eControlAction> browserActElementList = new List<ActBrowserElement.eControlAction>();
+
+            browserActElementList.Add(ActBrowserElement.eControlAction.InitializeBrowser);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetPageSource);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetPageURL);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToDefaultFrame);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchFrame);
+
+            return browserActElementList;
+        }
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
             List<ActUIElement.eElementAction> pbTableControlActionlist = base.GetPlatformUIElementActionsList(ElementType);
@@ -158,6 +172,11 @@ namespace GingerCore.Platforms.PlatformsInfo
 
             list.Add(ActUIElement.eElementDragDropType.MouseDragDrop);            
             return list;
+        }
+
+        public override ObservableList<ElementLocator> GetLearningLocators()
+        {
+            return null;
         }
     }
 }

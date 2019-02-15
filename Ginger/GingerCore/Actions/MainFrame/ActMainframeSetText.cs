@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.MainFrame
 {
     public class ActMainframeSetText : Act
@@ -32,7 +32,7 @@ namespace GingerCore.Actions.MainFrame
         public override string ActionDescription { get { return "Set Text Main Frame"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action to Set text at a particular location in Mainframe Terminal");
         }
@@ -57,7 +57,7 @@ namespace GingerCore.Actions.MainFrame
 
        private bool mReloadvalue = true;
 
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool ReloadValue{
             get{
                 return mReloadvalue;

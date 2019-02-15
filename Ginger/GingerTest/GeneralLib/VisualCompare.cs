@@ -67,7 +67,7 @@ namespace GingerTest
         //We do visual compare using ImageMagick
         public bool IsVisualEquel(Visual visual, string VisualID)
         {
-            string tempScreenFolder = TestResources.getGingerUnitTesterTempFolder("VisualCompareScreens");
+            string tempScreenFolder = TestResources.GetTestTempFolder("VisualCompareScreens");
             if (!System.IO.Directory.Exists(tempScreenFolder))
             {
                 System.IO.Directory.CreateDirectory(tempScreenFolder);
@@ -94,7 +94,7 @@ namespace GingerTest
             }
             else
             {
-                throw new Exception("No baseline file for comapre, missing: " + BaselineFileName);
+                throw new Exception("No baseline file for compare, missing: " + BaselineFileName);
             }
         }
 

@@ -19,6 +19,7 @@ limitations under the License.
 using Ginger.GeneralWindows;
 using Ginger.MoveToGingerWPF;
 using Ginger.TwoLevelMenuLib;
+using Ginger.Variables;
 using GingerTest.POMs;
 using GingerWPF.UserControlsLib;
 using System;
@@ -28,6 +29,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Controls.Ribbon;
+using System.Linq;
 
 namespace GingerWPFUnitTest.POMs
 {
@@ -37,6 +39,8 @@ namespace GingerWPFUnitTest.POMs
         Ginger.MainWindow mMainWindow;
         public EnvironmentsPOM Environments;
         public AgentsPOM Agents;
+        public POMsPOM POMs;
+        public GlobalVariablesPOM GlobalVariables;
 
         public MainWindowPOM(Ginger.MainWindow mainWin)
         {
@@ -257,7 +261,6 @@ namespace GingerWPFUnitTest.POMs
                 Frame f = (Frame)mMainWindow .FindName("xMainWindowFrame");
                 TwoLevelMenuPage p = (TwoLevelMenuPage)f.Content;
                 
-                ListView lvi =  (ListView)FindElementByAutomationID<ListViewItem>(p, "Agents AID");
                 TwoLevelMenuPage configurationsPage = (TwoLevelMenuPage)f.Content;
 
                 ListView lv = (ListView)configurationsPage.FindName("xMainNavigationListView");
@@ -282,6 +285,82 @@ namespace GingerWPFUnitTest.POMs
             if (Agents == null) throw new Exception("Cannot goto Agents");
 
             return Agents;
+
+        }
+
+        internal POMsPOM GotoPOMs()
+        {
+            Agents = null;
+            Execute(() =>
+            {
+                ClickResourcesRibbon();
+                Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
+
+                TwoLevelMenuPage resourcesPage = (TwoLevelMenuPage)f.Content;
+
+                ListView lv = (ListView)resourcesPage.FindName("xMainNavigationListView");
+
+                foreach (TopMenuItem topMenuItem in lv.Items)
+                {
+                    if (topMenuItem.AutomationID == "Application Models AID")
+                    {
+                        lv.SelectedItem = topMenuItem;
+                        ListView lvi = (ListView)resourcesPage.FindName("xSubNavigationListView");
+                        foreach (SubMenuItem subMenuItem in lvi.Items)
+                        {
+                            if (subMenuItem.AutomationID == "POM Menu AID")
+                            {
+                                lvi.SelectedItem = subMenuItem;
+                            }
+
+                        }
+                        SleepWithDoEvents(100);
+                        Frame f1 = (Frame)FindElementByName(resourcesPage, "xSelectedItemFrame");
+                        SingleItemTreeViewExplorerPage itemExplorerPage = (SingleItemTreeViewExplorerPage)f1.Content;
+                        while (!itemExplorerPage.IsVisible)
+                        {
+                            SleepWithDoEvents(100);
+                        }
+                        POMs = new POMsPOM(itemExplorerPage);
+                        break;
+                    }
+                }
+            });
+
+            return POMs;
+
+        }
+
+
+        internal GlobalVariablesPOM GotoGlobalVariables()
+        {
+            GlobalVariables = null;
+            Execute(() => {
+                                
+                ClickResourcesRibbon();
+                Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
+                TwoLevelMenuPage resourcesPage = (TwoLevelMenuPage)f.Content;
+
+                ListView lv = (ListView)resourcesPage.FindName("xMainNavigationListView");
+                lv.SelectedItem = null;
+                foreach (TopMenuItem topMenuItem in lv.Items)
+                {
+                    if (topMenuItem.AutomationID == "Global Variables AID")
+                    {
+                        lv.SelectedItem = topMenuItem;
+                        SleepWithDoEvents(100);
+                        Frame f1 = (Frame)FindElementByName(resourcesPage, "xSelectedItemFrame");
+                        VariablesPage variablesPage = (VariablesPage)f1.Content;
+                        
+                        GlobalVariables = new GlobalVariablesPOM(variablesPage);
+                        break;
+                    }
+                }
+            });
+
+            if (GlobalVariables == null) throw new Exception("Cannot goto Global Variables");
+
+            return GlobalVariables;
 
         }
 

@@ -24,16 +24,16 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using System.Linq;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
-    //This class is for UI DropDownList elemnet
+    //This class is for UI DropDownList element
     public class ActDropDownList : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Drop Down Action"; } }
         public override string ActionUserDescription { get { return "Drop Down Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform any drop down actions.");
             TBH.AddLineBreak();
@@ -163,8 +163,9 @@ namespace GingerCore.Actions
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
             newAct.ElementLocateValue = String.Copy(this.LocateValue);
-            newAct.ElementType = eElementType.ComboBox;           
+            newAct.ElementType = eElementType.ComboBox;          
             newAct.Active = true;
+            newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, this.GetInputParamValue("Value"));
 
             return newAct;
         }

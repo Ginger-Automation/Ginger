@@ -20,10 +20,11 @@ using Amdocs.Ginger.Common;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.SolutionGeneral;
+
 using Ginger.UserControls;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Ginger.SolutionGeneral;
 
 namespace Ginger.SolutionWindows
 {
@@ -45,7 +46,7 @@ namespace Ginger.SolutionWindows
 
         private void InitGridData()
         {
-            //TOOD: read from files of Ginger folder not in solution and put it in tree view organzied + search, load the GUID so will help in search and map packages
+            //TOOD: read from files of Ginger folder not in solution and put it in tree view organized + search, load the GUID so will help in search and map packages
             // Later on get this list from our public web site
 
             // meanwhile grid will do
@@ -66,7 +67,8 @@ namespace Ginger.SolutionWindows
         }
        
         private void SetAppsGridView()
-        {            
+        {         
+            SelectApplicationGrid.SelectionMode = DataGridSelectionMode.Single;
             SelectApplicationGrid.ShowDelete = System.Windows.Visibility.Collapsed;
             SelectApplicationGrid.ShowClearAll = System.Windows.Visibility.Collapsed;
             SelectApplicationGrid.ShowAdd = System.Windows.Visibility.Collapsed;

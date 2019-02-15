@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using GingerCore.Actions.Java;
 using GingerCore.GeneralLib;
 using System;
@@ -30,7 +31,7 @@ namespace Ginger.Actions.Java
     {
         private ActJavaEXE mAct;
 
-        string JarFilesPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"\Documents\Java\");
+        string JarFilesPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\Java\");
 
         public ActJavaEXEEditPage(ActJavaEXE act)
         {
@@ -54,7 +55,7 @@ namespace Ginger.Actions.Java
             GingerCore.General.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, mAct, ActJavaEXE.Fields.ScriptName);
             GingerCore.General.ObjFieldBinding(ScriptDescriptionLabel, Label.ContentProperty, mAct, ActJavaEXE.Fields.ScriptDecription);
 
-            ScriptNameComboBox.SelectionChanged += ScriptNameComboBox_SelectionChanged;//here so won't be triggred after binding but only on user change
+            ScriptNameComboBox.SelectionChanged += ScriptNameComboBox_SelectionChanged;//here so won't be triggered after binding but only on user change
         }
 
         private void SetInitialLookAfterBind()
@@ -90,7 +91,7 @@ namespace Ginger.Actions.Java
 
             foreach (string file in fileEntries)
             {
-                string s = file.Replace(JarFilesPath, "");
+                string s = Path.GetFileName(file);
                 ScriptNameComboBox.Items.Add(s);
             }
         }

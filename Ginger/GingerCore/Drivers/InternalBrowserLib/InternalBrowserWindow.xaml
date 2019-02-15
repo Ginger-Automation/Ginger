@@ -140,16 +140,16 @@
         <TextBox Name="frmHTML" Grid.Row="2" Grid.ColumnSpan="3" Visibility="Collapsed" SelectionBrush="Red" SelectionOpacity="0.8" ></TextBox>
 
         <Popup x:Name="puOverlay" AllowsTransparency="True" Placement="top" IsOpen="False" PlacementTarget="{Binding ElementName=IB_Ribbon}">
-            <Border x:Name="bdrOverLay" CornerRadius="30" BorderBrush="{StaticResource @Skin1_ColorB}" Height="50" BorderThickness="2" Margin="0,120" Width="50">
+            <Border x:Name="bdrOverLay" CornerRadius="30" BorderBrush="{StaticResource $SelectionColor_Pink}" Height="50" BorderThickness="2" Margin="0,120" Width="50">
                 <StackPanel>
                     
-                    <Label FontSize="40" Foreground="{StaticResource @Skin1_ColorB}" FontWeight="ExtraBold" FontFamily="Wingdings"></Label>
+                    <Label FontSize="40" Foreground="{StaticResource $SelectionColor_Pink}" FontWeight="ExtraBold" FontFamily="Wingdings"></Label>
                 </StackPanel>
             </Border>
         </Popup>
 
         <Popup x:Name="puEmenu" AllowsTransparency="true" Placement="top" IsOpen="False" PlacementTarget="{Binding ElementName=IB_Ribbon}">
-            <Border x:Name="bdrEmenu" CornerRadius="10" BorderBrush="{StaticResource @Skin1_ColorA}" Background="{StaticResource @Skin1_ColorC}" Height="150" BorderThickness="2" Margin="0,120" Width="170" >
+            <Border x:Name="bdrEmenu" CornerRadius="10" BorderBrush="{StaticResource $Color_DarkBlue}" Background="{StaticResource $BackgroundColor_LightGray}" Height="150" BorderThickness="2" Margin="0,120" Width="170" >
                 <StackPanel>
                     <Label x:Name="eTagName" Style="{StaticResource @InputFieldLabelStyle}" Width="160" FontWeight="Bold" HorizontalAlignment="Center">TagName</Label>
                     <Button x:Name="btnAction1" FontSize="11" Content="Action 1"  Width="160" Click="btnAction1_Click" Style="{StaticResource @WindowButtonStyle}" Margin="0,2,0,2"/>
@@ -161,7 +161,7 @@
             </Border>
         </Popup>
 
-        <StatusBar Grid.Row="3" Grid.ColumnSpan="3" Background="{StaticResource @Skin1_ColorC}">
+        <StatusBar Grid.Row="3" Grid.ColumnSpan="3" Background="{StaticResource $BackgroundColor_LightGray}">
             <Label x:Name="lblStatus" Grid.ColumnSpan="3" Style="{StaticResource @LabelStyle}">Status</Label>
         </StatusBar>
 

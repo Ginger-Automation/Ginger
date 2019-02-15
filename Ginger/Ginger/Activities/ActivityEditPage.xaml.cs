@@ -65,10 +65,10 @@ namespace Ginger.BusinessFlowWindows
             else
                 mActivityParentBusinessFlow = App.BusinessFlow;
 
-            List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(Activity.eActivityAutomationStatus));
+            List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(eActivityAutomationStatus));
             AutomationStatusCombo.ItemsSource = automationStatusList;
             RunOptionCombo.BindControl(activity, Activity.Fields.ActionRunOption);            
-            HandlerTypeCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(ErrorHandler.eHandlerType));
+            HandlerTypeCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eHandlerType));
 
             App.FillComboFromEnumVal(cmbErrorHandlerMapping, mActivity.ErrorHandlerMappingType);
             App.ObjFieldBinding(txtActivityName, TextBox.TextProperty, mActivity, Activity.Fields.ActivityName);
@@ -129,19 +129,23 @@ namespace Ginger.BusinessFlowWindows
             if (!mActivity.IsNotGherkinOptimizedActivity)
                 txtActivityName.IsEnabled = false;
 
+            SetExpandersLabels();
+
             txtActivityName.Focus();        
         }
 
         private void FillTargetAppsComboBox()
         {
             TargetApplicationComboBox.ItemsSource = mActivityParentBusinessFlow.TargetApplications;
-            TargetApplicationComboBox.SelectedValuePath = TargetApplication.Fields.AppName;
-            TargetApplicationComboBox.DisplayMemberPath = TargetApplication.Fields.AppName;
+            TargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
+            TargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
         }
 
         public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset=false)
         {
             string title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+            RoutedEventHandler closeHandler = CloseWinClicked;
+            string closeContent= "Undo & Close";
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button okBtn = new Button();
             okBtn.Content = "Ok";
@@ -162,27 +166,37 @@ namespace Ginger.BusinessFlowWindows
                     title = "Edit Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.Activity);                    
                     saveBtn.Click += new RoutedEventHandler(SharedRepoSaveBtn_Click);
                     winButtons.Add(saveBtn);
-                    winButtons.Add(undoBtn);                    
+                    winButtons.Add(undoBtn);
                     break;
 
                 case General.RepositoryItemPageViewMode.ChildWithSave:
                     title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     saveBtn.Click += new RoutedEventHandler(ParentItemSaveButton_Click);
                     winButtons.Add(saveBtn);
-                    winButtons.Add(undoBtn);                    
+                    winButtons.Add(undoBtn);
                     break;
 
                 case General.RepositoryItemPageViewMode.View:
                     title = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-                    winButtons.Add(okBtn);                   
+                    winButtons.Add(okBtn);
+                    closeHandler = new RoutedEventHandler(okBtn_Click);
+                    closeContent = okBtn.Content.ToString();
                     break;
             }
 
             this.Height = 800;
             this.Width = 1000;
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, closeBtnText: closeContent, closeEventHandler: closeHandler, startupLocationWithOffset: startupLocationWithOffset);
             return saveWasDone;
+        }
+
+        private void CloseWinClicked(object sender, RoutedEventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            {
+                UndoChangesAndClose();
+            }
         }
 
         private void SetViewMode()
@@ -192,7 +206,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void ParentItemSaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (mActivityParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning) == MessageBoxResult.Yes)
+            if (mActivityParentBusinessFlow != null && Reporter.ToUser(eUserMsgKey.SaveItemParentWarning) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {                
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivityParentBusinessFlow);
                 saveWasDone = true;
@@ -207,21 +221,6 @@ namespace Ginger.BusinessFlowWindows
             Mouse.OverrideCursor = null;
 
             _pageGenericWin.Close();
-        }
-
-        private void CloseWinClicked(object sender, EventArgs e)
-        {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
-            {
-                UndoChangesAndClose();
-            }
-            else
-            {
-                if (editMode == General.RepositoryItemPageViewMode.SharedReposiotry)
-                    CheckIfUserWantToSave();
-                else
-                    _pageGenericWin.Close();
-            }
         }
 
         private void undoBtn_Click(object sender, RoutedEventArgs e)
@@ -277,7 +276,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void cmbErrorHandlerMapping_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cmbErrorHandlerMapping.SelectedValue.ToString() == Activity.eHandlerMappingType.SpecificErrorHandlers.ToString())
+            if (cmbErrorHandlerMapping.SelectedValue.ToString() == eHandlerMappingType.SpecificErrorHandlers.ToString())
             {
                 btnSpecificErrorHandler.Visibility = Visibility.Visible;
 
@@ -292,6 +291,39 @@ namespace Ginger.BusinessFlowWindows
             ErrorHandlerMappingPage errorHandlerMappingPage = new ErrorHandlerMappingPage(mActivity, mActivityParentBusinessFlow);
             errorHandlerMappingPage.ShowAsWindow();
             AutoLogProxy.UserOperationEnd();
+        }
+
+        private void SetExpandersLabels()
+        {
+            UpdateVariabelsExpanderLabel();
+            mActivity.Variables.CollectionChanged += Variables_CollectionChanged;
+            UpdateActionsExpanderLabel();
+            mActivity.Acts.CollectionChanged += Acts_CollectionChanged;
+        }
+
+        private void Acts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateActionsExpanderLabel();
+        }
+
+        private void Variables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateVariabelsExpanderLabel();
+        }
+
+        private void UpdateVariabelsExpanderLabel()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                VariablesExpanderLabel.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mActivity.Variables.Count);
+            });
+        }
+        private void UpdateActionsExpanderLabel()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                ActionsExpanderLabel.Content = string.Format("Actions ({0})", mActivity.Acts.Count);
+            });
         }
     }
 }

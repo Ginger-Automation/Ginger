@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using GingerWPFUnitTest.POMs;
 using System;
 using System.Reflection;
@@ -24,7 +25,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
-namespace GingerWPFUnitTest
+namespace GingerTest
 {
 
     public class GingerAutomator
@@ -38,7 +39,11 @@ namespace GingerWPFUnitTest
         static Thread mGingerThread = null;
 
         static GingerAutomator gingerAutomatorInstance;  // currently we have only one Ginger running for all tests
-        static int SessionCount = 0; // count how many seesions are waiting in queue
+        static int SessionCount = 0; // count how many sessions are waiting in queue
+
+
+        // Set to true if you want highlights when automation run and speak
+        public static bool Highlight { get { return false; }  }
 
         public static GingerAutomator StartSession()
         {
@@ -89,7 +94,7 @@ namespace GingerWPFUnitTest
                 Ginger.App.RunningFromUnitTest = true;
                 splash = new Ginger.SplashWindow();
                 splash.Show();                
-                //Ginger.App.UserProfile.AutoLoadLastSolution = false;                
+                //Ginger. WorkSpace.UserProfile.AutoLoadLastSolution = false;                
 
                 while (!app.IsReady && splash.IsVisible)
                 {
@@ -117,7 +122,7 @@ namespace GingerWPFUnitTest
             int i = 0;
             while (MainWindowPOM == null && i <600)
             {
-                Thread.Sleep(100);
+                    Thread.Sleep(100);
                 i++;
             }
 
@@ -196,7 +201,7 @@ namespace GingerWPFUnitTest
             //TW = new TestWindow(p);
             //TW.Show();
 
-            //TODO: we need to diable mouse event as elemnt on screen can look different
+            //TODO: we need to disable mouse event as element on screen can look different
             // or we need to make sure it is not in focus by loading another dummy window and focus
 
             //while (!TW.IsLoaded)
@@ -264,6 +269,11 @@ namespace GingerWPFUnitTest
 
         }
 
-
+        internal void ReloadSolution()
+        {
+            string path =  WorkSpace.UserProfile.Solution.ContainingFolderFullPath;
+            CloseSolution();
+            OpenSolution(path);
+        }
     }
 }

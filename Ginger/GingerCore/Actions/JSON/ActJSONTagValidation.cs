@@ -24,7 +24,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Xml;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.JSON
 {
     public class ActJSONTagValidation : ActWithoutDriver
@@ -39,7 +39,7 @@ namespace GingerCore.Actions.JSON
         public override string ActionDescription { get { return "JSON Tag Validation Action"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
         }
 
@@ -69,7 +69,7 @@ namespace GingerCore.Actions.JSON
         }
 
         public bool mReqisFromFile = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool ReqisFromFile
         {
             get
@@ -114,10 +114,11 @@ namespace GingerCore.Actions.JSON
                     throw new System.ArgumentException("Please provide a valid file name");
                 }
 
-                if (FilePath.Contains("~\\"))
-                {
-                    FilePath = FilePath.Replace("~\\", SolutionFolder);
-                }
+                //if (FilePath.Contains("~\\"))
+                //{
+                //    FilePath = FilePath.Replace("~\\", SolutionFolder);
+                //}
+                FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
 
                 jsonContent = System.IO.File.ReadAllText(FilePath);
             }
@@ -144,13 +145,11 @@ namespace GingerCore.Actions.JSON
             foreach (General.XmlNodeItem outputItem in outputTagsList)
             {
                 foreach (ActInputValue aiv in DynamicElements)
-                {
-                    ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                    VE.Value = @aiv.Param;
-
-                    if (outputItem.path == "/root/"+VE.ValueCalculated)
+                {                    
+                    string calculatedValue = ValueExpression.Calculate(@aiv.Param);
+                    if (outputItem.path == "/root/" + calculatedValue)
                     {
-                        AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value.ToString(), VE.ValueCalculated);
+                        AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value.ToString(), calculatedValue);
                         if (aiv.Value == null || aiv.Value == String.Empty)
                         {
                         }

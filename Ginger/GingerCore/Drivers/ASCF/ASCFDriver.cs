@@ -25,7 +25,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using GingerCore.Actions;
-using System.Windows;
 using System.IO;
 using System.Drawing;
 using System.Globalization;
@@ -95,14 +94,14 @@ namespace GingerCore.Drivers.ASCF
         {
             if (GingerToolBoxHost == null || GingerToolBoxHost.Length ==0)
             {
-                MessageBox.Show("Missing GingerToolBoxHost config value- Please verify Agent config parameter GingerToolBoxHost is not empty");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Missing GingerToolBoxHost config value- Please verify Agent config parameter GingerToolBoxHost is not empty");
                 return;
             }
           
             serverAddress = new IPEndPoint(IPAddress.Parse(GingerToolBoxHost), GingerToolBoxPort);
 
             IsTryingToConnect = true;
-            Application.Current.Dispatcher.Invoke((Action)delegate
+            System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate
             {
                 // OpenASCFDriverWindow();             
                 ConnectToGingerToolBox();
@@ -156,7 +155,7 @@ namespace GingerCore.Drivers.ASCF
                     //TODO: catch excpetion of socket not all..         
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         Thread.Sleep(500);
                     }
                 }
@@ -164,7 +163,7 @@ namespace GingerCore.Drivers.ASCF
                 General.DoEvents();
                 //Connect Failed after x retry...   
                 IsTryingToConnect = false;
-                Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, "ASCF","");
+                Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, "ASCF","");
             });
         }
 
@@ -178,12 +177,12 @@ namespace GingerCore.Drivers.ASCF
             
             for (int i = 0; i < 240; i++)
             {                
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.ASCFTryToConnect,null, "Try#" + i);
+                Reporter.ToStatus(eStatusMsgKey.ASCFTryToConnect,null, "Try#" + i);
                 try
                 {
                     clientSocket.Connect(serverAddress);
                     mConnected = true;
-                    Reporter.CloseGingerHelper();
+                    Reporter.HideStatusMessage();
                     return;
                 }
                 //TODO: catch excpetion of socket not all..         
@@ -194,7 +193,7 @@ namespace GingerCore.Drivers.ASCF
                 }                
             }
             //Show message failed
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
         }
         
         public string Send(String Action, String LocateBy, String LocateValue, String Property, String Value, bool WaitForIdle)
@@ -326,7 +325,7 @@ namespace GingerCore.Drivers.ASCF
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close ASCF Driver - " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close ASCF Driver - " + ex.Message);
             }
         }
 
@@ -503,7 +502,7 @@ namespace GingerCore.Drivers.ASCF
                     InjectGingerHTMLHelper();  
                     break;                
                 default:
-                    MessageBox.Show("Unknown Browser Control Action - " + act.ControlAction);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage,"Unknown Browser Control Action - " + act.ControlAction);
                     return;
             }
             // send the js script to the current browser, but first check that we have browser set
@@ -664,7 +663,7 @@ namespace GingerCore.Drivers.ASCF
                     action = "KeyType";
                     break;
                 default:
-                    MessageBox.Show("Unknown Control Action - " + AAC.ControlAction);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Unknown Control Action - " + AAC.ControlAction);
                     return;                    
             }
             //Must get the value for driver !!
@@ -757,7 +756,7 @@ namespace GingerCore.Drivers.ASCF
             SetActionStatus(actScreenShot, RC);
             string[] a;
 
-            //This Addiotional check is to support old version of GTB which are using '@' delimiter. Can be removed later
+            //This Additional check is to support old version of GTB which are using '@' delimiter. Can be removed later
             if (RC.Contains("~|"))
             {
                 a = RC.Split('~');
@@ -844,46 +843,46 @@ namespace GingerCore.Drivers.ASCF
         }
 
         //TODO: is it used?
-        public override List<ActWindow> GetAllWindows()
-        {
-            String sWindows = Send("FormsList", NA, NA, NA, NA, false);
-            String[] aWindows = sWindows.Split('|');
+        //public override List<ActWindow> GetAllWindows()
+        //{
+        //    String sWindows = Send("FormsList", NA, NA, NA, NA, false);
+        //    String[] aWindows = sWindows.Split('|');
             
-            List<ActWindow> Actwindows = new List<ActWindow>();
-            foreach (string s in aWindows)
-            {
-                ActWindow al = new ActWindow();
-                al.AddOrUpdateInputParamValue("Value",s);
-                al.LocateBy = eLocateBy.ByName;
-                al.LocateValue = s;
-                Actwindows.Add(al);
-            }
-            return Actwindows;
-        }
+        //    List<ActWindow> Actwindows = new List<ActWindow>();
+        //    foreach (string s in aWindows)
+        //    {
+        //        ActWindow al = new ActWindow();
+        //        al.AddOrUpdateInputParamValue("Value",s);
+        //        al.LocateBy = eLocateBy.ByName;
+        //        al.LocateValue = s;
+        //        Actwindows.Add(al);
+        //    }
+        //    return Actwindows;
+        //}
 
-        public override List<ActLink> GetAllLinks()
-        {
-            String sLinks = Send("FormActions", NA, NA, NA, NA, false);            
-            String[] aLinks = sLinks.Split('|');
+        //public override List<ActLink> GetAllLinks()
+        //{
+        //    String sLinks = Send("FormActions", NA, NA, NA, NA, false);            
+        //    String[] aLinks = sLinks.Split('|');
             
-            List<ActLink> ActLinks = new List<ActLink>();
-            foreach (string s in aLinks)
-            {                
-                ActLink al = new ActLink();
-                al.Description = "Click Menu/Link - " + s;
-                al.LocateBy = eLocateBy.ByName;
-                al.LocateValue = s;
-                al.AddOrUpdateInputParamValue("Value","com.amdocs.crm.workspace.SalesMenuActionsGlobal");
-                ActLinks.Add(al);
-            }
+        //    List<ActLink> ActLinks = new List<ActLink>();
+        //    foreach (string s in aLinks)
+        //    {                
+        //        ActLink al = new ActLink();
+        //        al.Description = "Click Menu/Link - " + s;
+        //        al.LocateBy = eLocateBy.ByName;
+        //        al.LocateValue = s;
+        //        al.AddOrUpdateInputParamValue("Value","com.amdocs.crm.workspace.SalesMenuActionsGlobal");
+        //        ActLinks.Add(al);
+        //    }
 
-            return ActLinks;
-        }
+        //    return ActLinks;
+        //}
 
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
+        //public override List<ActButton> GetAllButtons()
+        //{
+        //    return null;
+        //}
 
         public override void HighlightActElement(Act act)
         {
@@ -934,7 +933,7 @@ namespace GingerCore.Drivers.ASCF
             String sWindows = Send("GetFormsList", NA, NA, NA, NA, false);
             if (!sWindows.StartsWith("OK"))
             {
-                MessageBox.Show("Error Getting forms list - " + sWindows);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Error Getting forms list - " + sWindows);
                 return null;
             }
 
@@ -964,7 +963,7 @@ namespace GingerCore.Drivers.ASCF
             string RC = Send("HighLightControl", "ByName" + "", CI.Path, " ", " ", false);
             if (!RC.StartsWith("OK"))
             {
-                MessageBox.Show("Element Not found - path=" + CI.Path);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Element Not found - path=" + CI.Path);
             }
             
             //TODO: fix later to get HTMLPage
@@ -1004,7 +1003,7 @@ namespace GingerCore.Drivers.ASCF
             }
             else
             {
-                MessageBox.Show(s);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, s);
                 return null;
             }
         }
@@ -1022,7 +1021,7 @@ namespace GingerCore.Drivers.ASCF
             }
             else
             {
-                MessageBox.Show(s);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, s);
                 return null;
             }
         }
@@ -1043,7 +1042,7 @@ namespace GingerCore.Drivers.ASCF
             }
             else
             {
-                MessageBox.Show("Error in GetActiveForm - " + RC);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Error in GetActiveForm - " + RC);
             }
             return null;
         }
@@ -1070,7 +1069,7 @@ namespace GingerCore.Drivers.ASCF
         {
             if (!SocketConnected(clientSocket))
             {
-                Reporter.ToUser(eUserMsgKeys.ASCFNotConnected);
+                Reporter.ToUser(eUserMsgKey.ASCFNotConnected);
                 return;
             }
 
@@ -1081,7 +1080,7 @@ namespace GingerCore.Drivers.ASCF
                 
                 if (s.StartsWith("ERROR"))
                 {
-                    MessageBox.Show(s);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, s);
                     break;
                 }                
                 CreateAction(s);
@@ -1242,7 +1241,7 @@ namespace GingerCore.Drivers.ASCF
                     break;
 
                 default:
-                    MessageBox.Show("Unknown Action: " + action + System.Environment.NewLine + s);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Unknown Action: " + action + System.Environment.NewLine + s);
                     break;
             }
         }
@@ -1279,7 +1278,7 @@ namespace GingerCore.Drivers.ASCF
                     act.LocateBy= eLocateBy.ByName;
                     break;
                 default:
-                    MessageBox.Show("Unknown Locate By: " + locateBy);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Unknown Locate By: " + locateBy);
                     break;
             }
             act.LocateValue = locateValue;
@@ -1330,7 +1329,7 @@ namespace GingerCore.Drivers.ASCF
             else
             {
                 //TODO:
-                MessageBox.Show("Error - " + RC);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Error - " + RC);
             }
         }
 
@@ -1401,7 +1400,7 @@ namespace GingerCore.Drivers.ASCF
 
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
         {
             //DOTO add grid view contol lists
             return new List<ElementInfo>();
@@ -1418,7 +1417,12 @@ namespace GingerCore.Drivers.ASCF
         }
 
 
-        bool IWindowExplorer.TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
+        bool IWindowExplorer.TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartSpying()
         {
             throw new NotImplementedException();
         }

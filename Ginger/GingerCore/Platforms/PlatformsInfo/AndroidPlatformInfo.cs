@@ -18,8 +18,10 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -47,7 +49,10 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             throw new NotImplementedException();
         }
-
+        public override List<ActBrowserElement.eControlAction> GetPlatformBrowserControlOperations()
+        {
+            throw new NotImplementedException();
+        }
         public override List<eElementType> GetPlatformUIElementsType()
         {
             // We cache the results
@@ -132,6 +137,11 @@ namespace GingerCore.Platforms.PlatformsInfo
 
             }
             return list;
+        }
+
+        public override ObservableList<ElementLocator> GetLearningLocators()
+        {
+            return null;
         }
         // TODO: provide type of values per property - true/false, string, number bounds etc...       
     }

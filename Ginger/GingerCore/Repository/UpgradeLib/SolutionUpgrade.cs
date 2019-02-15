@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -36,26 +37,48 @@ namespace GingerCore.Repository.UpgradeLib
         }
 
         /// <summary>
-        /// Return list of the Solution files paths which were created with higher Ginger version
+        /// Return list of Solution files path with their version compare result
         /// </summary>
         /// <param name="solutionFiles"></param>
+        /// <param name="addInfoExtention"></param>
         /// <returns></returns>
-        public static ConcurrentBag<string> GetSolutionFilesCreatedWithRequiredGingerVersion(IEnumerable<string> solutionFiles, eGingerVersionComparisonResult requiredVersion, bool addInfoExtention = true)
+        public static ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> GetSolutionFilesWithVersion(IEnumerable<string> solutionFiles, bool addInfoExtention = true)
         {
+            ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = new ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>>();
             // read all XMLs and check for version
-            ConcurrentBag<string> requiredFiles = new ConcurrentBag<string>();
-
             Parallel.ForEach(solutionFiles, FileName =>
             {
                 string fileVer = string.Empty;
-                if (CompareSolutionFileGingerVersionToCurrent(FileName, ref fileVer) == requiredVersion)
-                {
-                    if (addInfoExtention)
-                        requiredFiles.Add(FileName + "--> File Version: " + fileVer);
-                    else
-                        requiredFiles.Add(FileName);
-                }
+                eGingerVersionComparisonResult versionRes = CompareSolutionFileGingerVersionToCurrent(FileName, ref fileVer);
+                
+                if (addInfoExtention)
+                    solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName + "--> File Version: " + fileVer));
+                else
+                    solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName));
             });
+
+            return solutionFilesWithVersion;
+        }
+
+        /// <summary>
+        /// Return list of the Solution files paths which match to specific result type
+        /// </summary>
+        /// <param name="solutionFiles"></param>
+        /// <returns></returns>
+        public static ConcurrentBag<string> GetSolutionFilesCreatedWithRequiredGingerVersion(ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersionCompare, eGingerVersionComparisonResult requiredVersion)
+        {
+            // read all XMLs and check for version
+            
+                ConcurrentBag<string> requiredFiles = new ConcurrentBag<string>();
+
+                Parallel.ForEach(solutionFilesWithVersionCompare, solFile =>
+                {
+                    if (solFile.Item1 == requiredVersion)
+                    {
+                        requiredFiles.Add(solFile.Item2);
+                    }
+                });
+            
             return requiredFiles;
         }
 
@@ -70,11 +93,11 @@ namespace GingerCore.Repository.UpgradeLib
             fileGingerVersion = GetSolutonFileGingerVersion(filePath);
             if (fileGingerVersion == null)
             {
-                Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to read and compare the Ginger version for the file: '{0}'", filePath));
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to read and compare the Ginger version for the file: '{0}'", filePath));
                 return eGingerVersionComparisonResult.ComparisonFailed;//failed to identify and compare the version
             }
 
-            if (fileGingerVersion == "3.0.0.0Beta")//Workaround needed due to move to new repository serilizer in middle of release 
+            if (fileGingerVersion == "3.0.0.0Beta")//Workaround needed due to move to new repository serializer in middle of release 
             {
                 return eGingerVersionComparisonResult.LowerVersion;
             }
@@ -84,7 +107,7 @@ namespace GingerCore.Repository.UpgradeLib
 
             if (fileVersionAsLong == 0)
             {
-                Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to read and compare the Ginger version for the file: '{0}'", filePath));
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to read and compare the Ginger version for the file: '{0}'", filePath));
                 return eGingerVersionComparisonResult.ComparisonFailed; ;//failed to identify and compare the version
             }
             else if (currentVersionAsLong == fileVersionAsLong)
@@ -95,8 +118,8 @@ namespace GingerCore.Repository.UpgradeLib
                 return eGingerVersionComparisonResult.HigherVersion; //File is from newer version
             else
             {
-                Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to read and compare the Ginger version for the file: '{0}'", filePath));
-                return eGingerVersionComparisonResult.ComparisonFailed;//failed to identify and compart the version
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to read and compare the Ginger version for the file: '{0}'", filePath));
+                return eGingerVersionComparisonResult.ComparisonFailed;//failed to identify and compare the version
             }
         }
 
@@ -118,6 +141,10 @@ namespace GingerCore.Repository.UpgradeLib
                     //get XML 
                     reader.ReadLine();//no need first line
                     xml = reader.ReadLine();
+                    if (xml.ToLower().Contains("version") == false)//to handle new line gap in some old xml's
+                    {
+                        xml = reader.ReadLine();
+                    }
                 }
             }
 
@@ -138,12 +165,12 @@ namespace GingerCore.Repository.UpgradeLib
                 }
 
                 if (fileVersion == null)
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to get the Ginger Version of the file: '{0}'", xmlFilePath));
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the Ginger Version of the file: '{0}'", xmlFilePath));
                 return fileVersion;
             }
             else
             {
-                Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to get the Ginger Version of the file: '{0}'", xmlFilePath));
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the Ginger Version of the file: '{0}'", xmlFilePath));
                 return null;
             }
         }

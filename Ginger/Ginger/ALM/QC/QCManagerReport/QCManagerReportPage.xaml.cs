@@ -230,13 +230,13 @@ namespace Ginger.ALM.QC
                         {
                             testCaseDetails.ActivitiesGroupID = repoActivsGroup.Guid;
                             testCaseDetails.ActivitiesGroupName = repoActivsGroup.Name;
-                            //check for automation precentage
+                            //check for automation percentage
                             foreach (QCTSTestStep step in tc.Steps)
                             {
                                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                                 Activity repoStepActivity = activities.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
                                 if (repoStepActivity != null)
-                                    if (repoStepActivity.AutomationStatus == Activity.eActivityAutomationStatus.Automated)
+                                    if (repoStepActivity.AutomationStatus ==eActivityAutomationStatus.Automated)
                                         automatedStepsCouter++;
                             }
                         }
@@ -244,7 +244,7 @@ namespace Ginger.ALM.QC
                         {
                             testCaseDetails.ActivitiesGroupName = "NA";                            
                         }
-                        //set automation precentage
+                        //set automation percentage
                         double automatedActsPrecanteg=0;
                         if (tc.Steps.Count > 0)
                         {
@@ -316,7 +316,7 @@ namespace Ginger.ALM.QC
                 catch (Exception ex)
                 {
                     testCaseDetails.LastExecutionTime = (filteredRuns[0].ExecutionDate);
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
                 testCaseDetails.LastExecutionStatus = filteredRuns[0].Status;
             }

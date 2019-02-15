@@ -22,7 +22,7 @@ using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     //This class is for submit
@@ -32,12 +32,12 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Submit Action"; } }
         public override string ActionUserDescription { get { return "Performs Submit Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform any Submit actions.");
             TBH.AddLineBreak();
             TBH.AddLineBreak();
-            TBH.AddText("To perform a Submit action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property" +
+            TBH.AddText("To perform a Submit action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property " +
             "that you set in Locate By type.Then select Action Type and then enter the page url in value textbox and run the action.");
         }        
 

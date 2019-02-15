@@ -10,48 +10,59 @@
       d:DesignHeight="300" d:DesignWidth="600"
       Title="Learn Config">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="140"/>
-            <RowDefinition Height="1*"/>
-        </Grid.RowDefinitions>
+    <ScrollViewer>
+        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="300*"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Margin="0,10,0,0" Grid.Row="0">
-            <Label Content="Target Appllication:" Style="{StaticResource @LabelStyle}"/>
-            <ComboBox x:Name="xTargetApplicationComboBox"  AutomationProperties.AutomationId="Platform Type AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
-        </StackPanel>
+            <StackPanel Grid.Row="0" Margin="0,10,0,0">
+                <StackPanel Orientation="Horizontal" >
+                    <Label Content="Target Application:" Style="{StaticResource @LabelStyle}"/>
+                    <ComboBox x:Name="xTargetApplicationComboBox"  AutomationProperties.AutomationId="TargetApplication AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
+                </StackPanel>
 
-        <Grid Margin="0,25,0,0" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <Label Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Page Elements Setup Method:"/>
-
-            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <RadioButton x:Name="xAutomaticElementConfigurationRadioButton" GroupName="ElementConfigRadioButtonsGroup"  Style="{StaticResource @InputRadioButtonStyle}" IsChecked="True" Checked="xAutomaticElementConfigurationRadioButton_Checked" Content="Automatic Learning"></RadioButton>
-                <RadioButton x:Name="xManualElementConfigurationRadioButton" GroupName="ElementConfigRadioButtonsGroup" Style="{StaticResource @InputRadioButtonStyle}" IsChecked="False" Checked="xAutomaticElementConfigurationRadioButton_Checked" Margin="10,0,0,0"  Content="Manual"></RadioButton>
+                <StackPanel Orientation="Horizontal" Margin="5,10,0,0">
+                    <Label Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Content="Page Elements Setup Method:" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <RadioButton x:Name="xAutomaticElementConfigurationRadioButton" GroupName="ElementConfigRadioButtonsGroup"  Style="{StaticResource $InputRadioButtonStyle}" IsChecked="True" Checked="xAutomaticElementConfigurationRadioButton_Checked" Content="Automatic Learning" FontWeight="Bold"></RadioButton>
+                        <RadioButton x:Name="xManualElementConfigurationRadioButton" GroupName="ElementConfigRadioButtonsGroup" Style="{StaticResource $InputRadioButtonStyle}" IsChecked="False" Checked="xAutomaticElementConfigurationRadioButton_Checked" Margin="10,0,0,0"  Content="Manual" FontWeight="Bold"></RadioButton>
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
+
+
+            <DockPanel Grid.Row="1" Margin="5,0,10,0">
+                <agents:ucAgentControl x:Name="xAgentControlUC" AutomationProperties.AutomationId="ucAgentControl AID" DockPanel.Dock="Top" Margin="0,0,0,15"></agents:ucAgentControl>
+
+                <Expander x:Name="xAutoMapElementLocatorsExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" Margin="0,0,0,15">
+                    <Expander.Header>
+                        <Label x:Name="xLocatorsExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
+                            <Label.Content>
+                                <GingerCore:ucTextDicResource Text="Custom Locators Setting"/>
+                            </Label.Content>
+                        </Label>
+                    </Expander.Header>
+                    <Expander.Content>
+                        <Ginger:ucGrid x:Name="xAutoMapElementLocatorsGrid" AutomationProperties.AutomationId="AutoMapElementLocatorsGrid AID" Title="Locators:" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Collapsed"/>
+                    </Expander.Content>
+                </Expander>
+
+                <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" >
+                    <Expander.Header>
+                        <Label x:Name="xPropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
+                            <Label.Content>
+                                <GingerCore:ucTextDicResource Text="Elements Types to Auto Map"/>
+                            </Label.Content>
+                        </Label>
+                    </Expander.Header>
+                    <Expander.Content>
+                        <Ginger:ucGrid x:Name="xAutoMapElementTypesGrid" AutomationProperties.AutomationId="AutoMapElementTypesGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+                    </Expander.Content>
+                </Expander>
+            </DockPanel>
+
         </Grid>
-
-        <agents:ucAgentControl x:Name="xAgentControlUC" Margin="0,20,0,0" Grid.Row="2"></agents:ucAgentControl>
-
-        <Expander x:Name="xAutoMapElementTypesExpander" Margin="0,20,0,0" Grid.Row="3" Visibility="Visible" IsExpanded="False" >
-            <Expander.Header>
-                <Label x:Name="PropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
-                    <Label.Content>
-                        <GingerCore:ucTextDicResource Text="Elements Types to Auto Map"/>
-                    </Label.Content>
-                </Label>
-            </Expander.Header>
-            <Expander.Content>
-                <Ginger:ucGrid x:Name="xAutoMapElementTypesGrid" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
-            </Expander.Content>
-        </Expander>
-
-       
-    </Grid>
+    </ScrollViewer>
 </Page>

@@ -86,7 +86,7 @@ namespace Ginger.WindowExplorer.Common
             
             view.GridColsView.Add(new GridColView() { Field = nameof(Activity.ActivityName) , WidthWeight = 100 });
 
-            // TODO: fix me temp input on desc - need to add input vars for activitiy
+            // TODO: fix me temp input on desc - need to add input vars for activity
             view.GridColsView.Add(new GridColView() { Field = nameof(Activity.Description), Header = "Input", WidthWeight = 200 });   //!!!!!!!!!!!!!!!!!!!!!!!!!!!
             view.GridColsView.Add(new GridColView() { Field = nameof(Activity.Screen), Header = "Output", WidthWeight = 200 });//!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -143,7 +143,7 @@ namespace Ginger.WindowExplorer.Common
         private void FillPOMS()
         {
             //List<ApplicationPOM> list = new List<ApplicationPOM>();
-            //string folder = Path.Combine(App.UserProfile.Solution.Folder, @"Applications\" + mApplicationAgent.AppName + @"\Page Objects Models\" );  // TODO: use const or POM helper
+            //string folder = Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Applications\" + mApplicationAgent.AppName + @"\Page Objects Models\" );  // TODO: use const or POM helper
             //string[] POMFolders = Directory.GetDirectories(folder);
 
 

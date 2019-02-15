@@ -23,15 +23,8 @@ using Amdocs.Ginger.Repository;
 using Ginger.WizardLib;
 using GingerCore;
 using GingerWPF.WizardLib;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -39,8 +32,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     {
         RepositoryFolder<ApplicationPOMModel> mPomModelsFolder;
         public ApplicationPOMModel POM;
+
         public string POMFolder;
         public ObservableList<UIElementFilter> AutoMapElementTypesList = new ObservableList<UIElementFilter>();
+        public ObservableList<ElementLocator> AutoMapElementLocatorsList = new ObservableList<ElementLocator>();
         public ObservableList<Agent> OptionalAgentsList = null;
         private Agent mAgent = null;
         private bool mManualElementConfiguration;
@@ -92,6 +87,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public override void Finish()
         {
+
             if (ScreenShot != null)
             {
                 using (var ms = new MemoryStream())
@@ -99,24 +95,25 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     POM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShot);
                 }
             }
-
-            if (mPomModelsFolder !=null)
-                mPomModelsFolder.AddRepositoryItem(POM);   
+            if (mPomModelsFolder != null)
+                mPomModelsFolder.AddRepositoryItem(POM);
             else
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
-
             //close all Agents raised in Wizard
             CloseStartedAgents();
-
         }
 
 
         public override void Cancel()
         {
-            base.Cancel();
+            if (mAgent != null && mAgent.Driver != null && mAgent.Driver.IsDriverBusy)
+            {
+                mAgent.Driver.mStopProcess = true;
+            }
 
             //close all Agents raised in Wizard
             CloseStartedAgents();
+            base.Cancel();
         }
 
         private void CloseStartedAgents()
@@ -124,8 +121,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (OptionalAgentsList != null)
             {
                 foreach (Agent agent in OptionalAgentsList)
-                    if (agent != null && agent.Status == Agent.eStatus.Running && agent.Tag!=null && agent.Tag.ToString() == "Started with Agent Control")
-                        agent.Close();
+                    if (agent != null && agent.Status == Agent.eStatus.Running && agent.Tag != null && agent.Tag.ToString() == "Started with Agent Control" && !agent.Driver.IsDriverBusy)
+                    {
+                        if (Reporter.ToUser(eUserMsgKey.AskIfToCloseAgent, agent.Name) == eUserMsgSelection.Yes)
+                        {
+                            agent.Close();
+                        }
+                    }
             }
         }
 

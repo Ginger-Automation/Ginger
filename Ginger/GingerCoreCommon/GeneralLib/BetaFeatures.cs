@@ -56,13 +56,11 @@ namespace Amdocs.Ginger.Common
         public bool BFPageActivitiesHookOnlyNewActivities { get { return GetFeature(nameof(BFPageActivitiesHookOnlyNewActivities)).Selected; } set { UpdateFeature(nameof(BFPageActivitiesHookOnlyNewActivities), value); } }
 
         // POM
-        public bool ShowPOMInWindowExplorer { get { return GetFeature(nameof(ShowPOMInWindowExplorer)).Selected; } set { UpdateFeature(nameof(ShowPOMInWindowExplorer), value); } }
-        public bool ShowPOMInResourcesTab{ get { return GetFeature(nameof(ShowPOMInResourcesTab)).Selected; } set { UpdateFeature(nameof(ShowPOMInResourcesTab), value); } }
+        public bool ShowPOMInWindowExplorer { get { return GetFeature(nameof(ShowPOMInWindowExplorer)).Selected; } set { UpdateFeature(nameof(ShowPOMInWindowExplorer), value); } }       
 
 
         // ALM
         public bool Rally { get { return GetFeature(nameof(Rally)).Selected; } set { UpdateFeature(nameof(Rally), value); } }
-        public bool RestAPI { get { return GetFeature(nameof(RestAPI)).Selected; } set { UpdateFeature(nameof(RestAPI), value); } }
 
         //Gherkin
         public bool ImportGherkinFeatureWizrd { get { return GetFeature(nameof(ImportGherkinFeatureWizrd)).Selected; } set { UpdateFeature(nameof(ImportGherkinFeatureWizrd), value); } }
@@ -89,12 +87,10 @@ namespace Amdocs.Ginger.Common
             mFeatures.Add(new BetaFeature() { Group = "Business Flows", Description = "BF Activities page hook only new activities - speed", ID = nameof(BFPageActivitiesHookOnlyNewActivities) });
 
             // POM
-            mFeatures.Add(new BetaFeature() { Group = "POM", Description = "Show POM in Window Explorer", ID = nameof(ShowPOMInWindowExplorer)});
-            mFeatures.Add(new BetaFeature() { Group = "POM", Description = "Show POM in Resources Tab", ID = nameof(ShowPOMInResourcesTab)});
+            mFeatures.Add(new BetaFeature() { Group = "POM", Description = "Show POM in Window Explorer", ID = nameof(ShowPOMInWindowExplorer)});           
 
             //ALM
-            mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Rally", ID = nameof(Rally) });
-            mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show REST API", ID = nameof(RestAPI) });
+            mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Rally", ID = nameof(Rally) });           
 
             //Gherkin
             mFeatures.Add(new BetaFeature() { Group = "Gherkin", Description = "Import Gherkin feature wizard", ID = nameof(ImportGherkinFeatureWizrd)});

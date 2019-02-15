@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.Common
     public class JsonSchemaTools
     {
         /// <summary>
-        /// Genrate sample json From NJsonSchema.Jsonschema4
+        /// Generate sample json From NJsonSchema.Jsonschema4
         /// </summary>
         /// <param name="schema"></param>
         /// <returns></returns>
@@ -37,11 +37,10 @@ namespace Amdocs.Ginger.Common
             {
                 return JsonSchemaFaker(schema.Reference, UseXMlNames);
             }
-
             Dictionary<string, object> JsonBody = new Dictionary<string, object>();
-
             foreach (KeyValuePair<string, JsonProperty> jkp in schema.ActualProperties)
             {
+                //code
                 string key = jkp.Key;
                 if (UseXMlNames && jkp.Value.Xml != null)
                 {
@@ -49,34 +48,34 @@ namespace Amdocs.Ginger.Common
                 }
                 if (jkp.Value.HasReference)
                 {
-                    if (jkp.Value.Reference.Equals(schema))
+                    if (jkp.Value.Reference.HasReference == false && jkp.Value.Reference.Properties.Count == 0)
                     {
-                        JsonBody.Add(key,string.Empty);
-
+                        object o1 = GenerateJsonObjectFromJsonSchema4(jkp.Value, UseXMlNames);
+                        JsonBody.Add(key, o1);
                     }
                     else
                     {
-                        JsonBody.Add(key, JsonSchemaFaker(jkp.Value.Reference, UseXMlNames));
+                        string property = JsonSchemaFaker(jkp.Value.Reference, UseXMlNames);
+                        object o = JsonConvert.DeserializeObject(property);
+                        JsonBody.Add(key, o);
                     }
-                   
                 }
                 else
                 {
-                    JsonBody.Add(key, GenerateJsonObjectFromJsonSchema4(jkp.Value, UseXMlNames));
+                    object o = GenerateJsonObjectFromJsonSchema4(jkp.Value, UseXMlNames);
+                    JsonBody.Add(key, o);
                 }
 
             }
-
-
 
             return JsonConvert.SerializeObject(JsonBody);
         }
 
 
         private static object GenerateJsonObjectFromJsonSchema4(JsonProperty value, bool UseXMlNames)
-         {
+        {
 
-            return "";
+
             object output = "";
             switch (value.Type)
             {
@@ -113,30 +112,24 @@ namespace Amdocs.Ginger.Common
                     }
                     if (value.Item.HasReference)
                     {
-                        if (value.Item.Reference.Equals(value))
+                        foreach (var item in value.Item.Reference.ActualProperties)
                         {
-                            foreach (var item in value.Item.Reference.ActualProperties)
+                            if (item.Value.Equals(value))
                             {
-                                if (item.Value.Equals(value))
+                                jb.Add(item.Key, "");
+                            }
+                            else
+                            {
+
+                                string key = item.Key;
+                                if (UseXMlNames && item.Value.Xml != null)
                                 {
-                                    jb.Add(item.Key, "");
+                                    key = item.Value.Xml.Name;
                                 }
-                                else
-                                {
 
-                                    string key = item.Key;
-                                    if (key.ToUpper() == "orderTerm".ToUpper())
-                                    {
+                                object o = GenerateJsonObjectFromJsonSchema4(item.Value, UseXMlNames);
 
-                                    }
-                                    if (UseXMlNames && item.Value.Xml != null)
-                                    {
-                                        key = item.Value.Xml.Name;
-                                    }
-
-
-                                    jb.Add(key, JsonConvert.SerializeObject(GenerateJsonObjectFromJsonSchema4(item.Value, UseXMlNames)));
-                                }
+                                jb.Add(key, (JToken)o);
                             }
                         }
 

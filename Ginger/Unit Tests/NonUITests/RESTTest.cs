@@ -43,7 +43,7 @@ namespace UnitTests.NonUITests
 
         // Need to have our own REST server, so will not be dependent on David server
         
-        [TestMethod]        
+        [TestMethod]  [Timeout(60000)]        
         public void WebServices_RestAction()
         {
 
@@ -66,7 +66,7 @@ namespace UnitTests.NonUITests
             }
             finally
             {
-                //running validation only in case of sucess
+                //running validation only in case of success
                 if (((int)a2.ResponseCode).ToString().StartsWith("2"))
                 {
                     Assert.AreEqual(17, a2.ReturnValues.Count);

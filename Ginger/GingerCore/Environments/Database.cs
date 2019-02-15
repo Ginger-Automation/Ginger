@@ -24,7 +24,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using Oracle.ManagedDataAccess.Client;
 using System.ComponentModel;
 using Microsoft.Win32;
 using System.Reflection;
@@ -32,10 +31,10 @@ using Npgsql;
 using GingerCore.DataSource;
 using GingerCore.NoSqlBase;
 using MySql.Data.MySqlClient;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Environments
 {
-    public class Database : RepositoryItemBase
+    public class Database : RepositoryItemBase, IDatabase
     {        
 
         public enum eDBTypes
@@ -47,6 +46,7 @@ namespace GingerCore.Environments
             Cassandra,
             PostgreSQL,
             MySQL,
+            Couchbase,
         }
 
         public enum eConfigType
@@ -87,8 +87,8 @@ namespace GingerCore.Environments
         private DbTransaction tran = null;
 
         public ObservableList<DataSourceBase> DSList { get; set; }
-        public bool mKeepConnectionOpen= true;
-        [IsSerializedForLocalRepository]
+        public bool mKeepConnectionOpen;
+        [IsSerializedForLocalRepository(true)]
         public bool KeepConnectionOpen
         {
             get
@@ -133,9 +133,15 @@ namespace GingerCore.Environments
                 if (mVE == null)
                 {
                     if (ProjEnvironment == null)
+                    {
                         ProjEnvironment = new Environments.ProjEnvironment();
+                    }
+
                     if (BusinessFlow == null)
+                    {
                         BusinessFlow = new GingerCore.BusinessFlow();
+                    }
+
                     mVE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList);
                 }
                 return mVE;
@@ -310,7 +316,7 @@ namespace GingerCore.Environments
 
             try
             {
-                
+
                 switch (DBType)
                 {
                     case eDBTypes.MSSQL:
@@ -323,10 +329,13 @@ namespace GingerCore.Environments
                         //Try Catch for Connecting DB Which having Oracle Version Less then 10.2                         
                         try
                         {
-                            OracleConnection oc = new OracleConnection();
-                            oc.ConnectionString = connectConnectionString;
-                            oc.Open();
-                            oConn = oc;
+                            var DLL = Assembly.LoadFile(AppDomain.CurrentDomain.BaseDirectory + @"Oracle.ManagedDataAccess.dll");
+                            var class1Type = DLL.GetType("Oracle.ManagedDataAccess.Client.OracleConnection");
+                            object[] param = new object[1];
+                            param[0] = connectConnectionString;
+                            dynamic c = Activator.CreateInstance(class1Type, param);
+                            oConn = (DbConnection)c;
+                            oConn.Open();
                             break;
                         }
                         catch (Exception e)
@@ -399,6 +408,16 @@ namespace GingerCore.Environments
                             LastConnectionUsedTime = DateTime.Now;
                         return true;
                         break;
+                    case eDBTypes.Couchbase:
+                        GingerCouchbase CouchbaseDriver = new GingerCouchbase(this);
+                        bool isConnectionCB;
+                        isConnectionCB = CouchbaseDriver.Connect();
+                        if (isConnectionCB == true)
+                        { 
+                            LastConnectionUsedTime = DateTime.Now;
+                        }
+                        return true;
+                        break;
 
                     case eDBTypes.MySQL:
                         oConn = new MySqlConnection();
@@ -416,7 +435,7 @@ namespace GingerCore.Environments
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "DB connection failed, DB type: " + DBType.ToString() + "; Connection String =" + connectConnectionString, e);
+                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + DBType.ToString() + "; Connection String =" + connectConnectionString, e);
                 throw (e);
             }
             return false;
@@ -433,7 +452,7 @@ namespace GingerCore.Environments
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to close DB Connection", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to close DB Connection", e);
                 throw (e);
             }
         }
@@ -470,6 +489,11 @@ namespace GingerCore.Environments
                         NoSqlBase.NoSqlBase NoSqlDriver = null;
                         NoSqlDriver = new GingerCassandra(this);
                         rc = NoSqlDriver.GetTableList(Keyspace);
+                    } else if (DBType == Database.eDBTypes.Couchbase)
+                    {
+                        NoSqlBase.NoSqlBase NoSqlDriver = null;
+                        NoSqlDriver = new GingerCouchbase(this);
+                        rc = NoSqlDriver.GetTableList(Keyspace);
                     }
                     else
                     {
@@ -502,7 +526,7 @@ namespace GingerCore.Environments
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get table list for DB:" + DBType.ToString(), e);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list for DB:" + DBType.ToString(), e);
                     throw (e);
                 }
             }           
@@ -522,6 +546,11 @@ namespace GingerCore.Environments
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerCassandra(this);
+                rc = NoSqlDriver.GetColumnList(table);
+            }else if (DBType == Database.eDBTypes.Couchbase)
+            {
+                NoSqlBase.NoSqlBase NoSqlDriver = null;
+                NoSqlDriver = new GingerCouchbase(this);
                 rc = NoSqlDriver.GetColumnList(table);
             }
             else 
@@ -544,8 +573,8 @@ namespace GingerCore.Environments
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "", e);
-                    //Reporter.ToUser(eUserMsgKeys.DbTableError, "table columns", e.Message);
+                    Reporter.ToLog(eLogLevel.ERROR, "", e);
+                    //Reporter.ToUser(eUserMsgKey.DbTableError, "table columns", e.Message);
                     throw (e);
                 }
                 finally
@@ -586,7 +615,7 @@ namespace GingerCore.Environments
                     catch (Exception e)
                     {
                         tran.Rollback();
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR,"Commit failed for:"+updateCmd, e);
+                        Reporter.ToLog(eLogLevel.ERROR,"Commit failed for:"+updateCmd, e);
                         throw e;
                     }
                 }
@@ -679,7 +708,7 @@ namespace GingerCore.Environments
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR,"Failed to execute query:"+ SQL,e, writeOnlyInDebugMode:true);
+                Reporter.ToLog(eLogLevel.ERROR,"Failed to execute query:"+ SQL, e);
                 throw e;
             }
             finally
@@ -716,7 +745,7 @@ namespace GingerCore.Environments
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to execute query:" + SQL, e,writeOnlyInDebugMode: true);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + SQL, e);
                     throw e;
                 }
                 finally

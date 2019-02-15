@@ -16,25 +16,25 @@ limitations under the License.
 */
 #endregion
 
-using System.Linq;
+using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
-
+using GingerCore.Actions.Common;
 using GingerCore.Platforms;
 using GingerCore.Variables;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
-using Ginger.Actions;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger;
 using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Ginger.Repository;
 
 namespace UnitTests.UITests
 {
+    [Ignore]
     [Level3]
     [TestClass]
     public class ActUIElementTest
@@ -47,14 +47,14 @@ namespace UnitTests.UITests
         public static void ClassInit(TestContext context)
         {
             AutoLogProxy.Init("Unit Tests");
+            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test Chrome";
             mBF.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.Web;            
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "WebApp" });
 
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };
@@ -65,7 +65,7 @@ namespace UnitTests.UITests
 
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
-
+            
             mGR.SolutionAgents = new ObservableList<Agent>();
             mGR.SolutionAgents.Add(a);
 
@@ -75,39 +75,8 @@ namespace UnitTests.UITests
             mGR.BusinessFlows.Add(mBF);
         }
 
-        [TestMethod]
-        public void DragAndDropJS()
-        {
-            ResetBusinessFlow();
-
-            Activity a1 = new Activity();
-            a1.Active = true;
-            a1.TargetApplication = "WebApp";
-            mBF.Activities.Add(a1);
-
-            ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://www.w3schools.com/html/html5_draganddrop.asp", Active = true };
-            a1.Acts.Add(act1);
-
-            ActUIElement act2 = new ActUIElement();
-
-            act2.ElementLocateBy = eLocateBy.ByXPath;
-            act2.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue, "//*[@id='drag1']");
-            act2.ElementAction = ActUIElement.eElementAction.DragDrop;
-            act2.GetOrCreateInputParam(ActUIElement.Fields.DragDropType, ActUIElement.eElementDragDropType.DragDropJS.ToString());
-            act2.TargetLocateBy = eLocateBy.ByXPath;
-            act2.GetOrCreateInputParam(ActUIElement.Fields.TargetLocateValue, "//*[@id='div2']");
-            act2.Active = true;
-            a1.Acts.Add(act2);
-
-            mGR.RunRunner();
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            Assert.AreEqual(a1.Status, eRunStatus.Passed);
-            Assert.AreEqual(act1.Status, eRunStatus.Passed);
-            Assert.AreEqual(act2.Status, eRunStatus.Passed);
-
-        }
-
-        [TestMethod]
+        
+        [TestMethod]  [Timeout(60000)]
         public void DragAndDropSelenium()
         {
             ResetBusinessFlow();
@@ -141,7 +110,41 @@ namespace UnitTests.UITests
 
         }
 
-        [TestMethod]
+        
+        [TestMethod]  [Timeout(60000)]
+        public void DragAndDropJS()
+        {
+            ResetBusinessFlow();
+
+            Activity a1 = new Activity();
+            a1.Active = true;
+            a1.TargetApplication = "WebApp";
+            mBF.Activities.Add(a1);
+
+            ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://www.w3schools.com/html/html5_draganddrop.asp", Active = true };
+            a1.Acts.Add(act1);
+
+            ActUIElement act2 = new ActUIElement();
+
+            act2.ElementLocateBy = eLocateBy.ByXPath;
+            act2.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue, "//*[@id='drag1']");
+            act2.ElementAction = ActUIElement.eElementAction.DragDrop;
+            act2.GetOrCreateInputParam(ActUIElement.Fields.DragDropType, ActUIElement.eElementDragDropType.DragDropJS.ToString());
+            act2.TargetLocateBy = eLocateBy.ByXPath;
+            act2.GetOrCreateInputParam(ActUIElement.Fields.TargetLocateValue, "//*[@id='div2']");
+            act2.Active = true;
+            a1.Acts.Add(act2);
+
+            mGR.RunRunner();
+            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
+            Assert.AreEqual(a1.Status, eRunStatus.Passed);
+            Assert.AreEqual(act1.Status, eRunStatus.Passed);
+            Assert.AreEqual(act2.Status, eRunStatus.Passed);
+
+        }
+
+        
+        [TestMethod]  [Timeout(60000)]
         public  void DoDragAndDropByOffSet()
         {
             ResetBusinessFlow();
@@ -173,7 +176,8 @@ namespace UnitTests.UITests
             Assert.AreEqual(act3.Status, eRunStatus.Passed);
         }
 
-        [TestMethod]
+        
+        [TestMethod]  [Timeout(60000)]
         public void DrawObject()
         {
             ResetBusinessFlow();

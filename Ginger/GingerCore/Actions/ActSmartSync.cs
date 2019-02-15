@@ -22,16 +22,16 @@ using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
-    //This class is for UI link elemnet
+    //This class is for UI link element
     public class ActSmartSync : Act
     {
         public override string ActionDescription { get { return "Smart Sync Action"; } }
         public override string ActionUserDescription { get { return "Smart Sync"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate smart sync.");
         }        

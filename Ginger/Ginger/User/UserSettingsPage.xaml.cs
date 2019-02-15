@@ -1,5 +1,24 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Core;
+using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +33,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using amdocs.ginger.GingerCoreNET;
 namespace Ginger.User
 {
     /// <summary>
@@ -23,26 +42,26 @@ namespace Ginger.User
     public partial class UserSettingsPage : Page
     {
         GenericWindow _pageGenericWin;
-        readonly eTerminologyDicsType mOriginalTerminologyType;
+        readonly GingerCore.eTerminologyType mOriginalTerminologyType;
 
         public UserSettingsPage()
         {
             InitializeComponent();
 
-            mOriginalTerminologyType = App.UserProfile.TerminologyDictionaryType;
-            xTerminologyTypeComboBox.BindControl(App.UserProfile, nameof(UserProfile.TerminologyDictionaryType));
+            mOriginalTerminologyType =  WorkSpace.UserProfile.TerminologyDictionaryType;
+            xTerminologyTypeComboBox.BindControl( WorkSpace.UserProfile, nameof(UserProfile.TerminologyDictionaryType));
             xTerminologyTypeNoteLbl.Visibility = Visibility.Collapsed;
 
-            xLoggingLevelComboBox.BindControl(App.UserProfile, nameof(UserProfile.AppLogLevel));
+            xLoggingLevelComboBox.BindControl( WorkSpace.UserProfile, nameof(UserProfile.AppLogLevel));
 
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAutoLoadLastSolutionCheckBox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToUpgradeSolutionCheckBox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToRecoverSolutionCheckBox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));            
+            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAutoLoadLastSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
+            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToUpgradeSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
+            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToRecoverSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));            
         }
 
         private void xTerminologyTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if ((eTerminologyDicsType)xTerminologyTypeComboBox.SelectedValue != mOriginalTerminologyType)
+            if ((GingerCore.eTerminologyType)xTerminologyTypeComboBox.SelectedValue != mOriginalTerminologyType)
             {
                 xTerminologyTypeNoteLbl.Visibility = Visibility.Visible;
             }
@@ -54,20 +73,44 @@ namespace Ginger.User
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
-            App.UserProfile.SaveBackup();
+             WorkSpace.UserProfile.SaveBackup();
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();            
+            ObservableList<Button> winButtons = new ObservableList<Button>();
+            Button saveBtn = new Button();
+            saveBtn.Content = "Save";
+            saveBtn.Click += new RoutedEventHandler(saveBtn_Click);
+            winButtons.Add(saveBtn);
+
             Button undoBtn = new Button();
             undoBtn.Content = "Undo & Close";
             undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
             winButtons.Add(undoBtn);
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit User Settings", this, winButtons, startupLocationWithOffset: startupLocationWithOffset);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit User Settings", this, winButtons, false, "Undo & Close", CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
         }
 
         private void UndoBtn_Click(object sender, RoutedEventArgs e)
         {
-            App.UserProfile.RestoreFromBackup(true);
+            UndoChangesAndClose();
+        }
+
+        private void saveBtn_Click(object sender, RoutedEventArgs e)
+        {
+             WorkSpace.UserProfile.SaveUserProfile();
+            _pageGenericWin.Close();
+        }
+
+        private void CloseWinClicked(object sender, EventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            {
+                UndoChangesAndClose();
+            }
+        }
+
+        private void UndoChangesAndClose()
+        {
+             WorkSpace.UserProfile.RestoreFromBackup(true);
             _pageGenericWin.Close();
         }
     }

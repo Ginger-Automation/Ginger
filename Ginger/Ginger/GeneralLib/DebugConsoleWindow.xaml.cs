@@ -85,14 +85,7 @@ namespace GingerWPF
         {
             throw new Exception("Thread crash");
         }
-
-        private void NewMainWindowButton_Click(object sender, RoutedEventArgs e)
-        {
-            WorkSpace.Instance.LoadUserProfile();
-            NewMainWindow w = new NewMainWindow();
-            w.Show();
-        }
-
+       
         private void LongPathButton_Click(object sender, RoutedEventArgs e)
         {
             io.testPath();
@@ -100,7 +93,7 @@ namespace GingerWPF
     }
 
 
-    //TODO: Move to seperate class
+    //TODO: Move to separate class
     public class ConsoleTextWriter : TextWriter
     {
         TextBlock mTextBlock = null;

@@ -101,7 +101,21 @@ namespace GingerCore.Drivers.Common
         {
             return ((IXPath)mUIAutomationHelper).GetNextSibling(EI);
         }
-        
+
+        string IXPath.GetElementID(ElementInfo EI)
+        {
+            return ((IXPath)mUIAutomationHelper).GetElementID(EI);
+        }
+
+        string IXPath.GetElementTagName(ElementInfo EI)
+        {
+            return ((IXPath)mUIAutomationHelper).GetElementTagName(EI);
+        }
+
+        List<object> IXPath.GetAllElementsByLocator(eLocateBy LocatorType, string LocValue)
+        {
+            return null;
+        }
         #endregion IXPath
 
         public void HighLightElement(ElementInfo ElementInfo)
@@ -225,7 +239,7 @@ namespace GingerCore.Drivers.Common
             {
                 retryForCOMExceptionDoneFlag = true;
                 mUIAutomationHelper.SwitchToWindow(mUIAutomationHelper.CurrentWindowRootElement.ElementName);
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Retrying the action" + act.GetType() + " Description is" + act.Description);
+                Reporter.ToLog(eLogLevel.DEBUG, "Retrying the action" + act.GetType() + " Description is" + act.Description);
                 RunAction(act);
                 retryForCOMExceptionDoneFlag = false;
             }

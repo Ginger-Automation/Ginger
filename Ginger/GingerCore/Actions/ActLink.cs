@@ -24,16 +24,16 @@ using System;
 using System.Collections.Generic;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
-    //This class is for UI link elemnet
+    //This class is for UI link element
     public class ActLink : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Link Action"; } }
         public override string ActionUserDescription { get { return "Click on a link object"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate a click on an object from type Link."
                                         + Environment.NewLine + Environment.NewLine +
@@ -134,7 +134,7 @@ namespace GingerCore.Actions
             Type currentType = GetActionTypeByElementActionName(this.LinkAction);
             if (currentType == typeof(ActUIElement))
             {
-                // check special cases, where neame should be changed. Than at default case - all names that have no change
+                // check special cases, where name should be changed. Than at default case - all names that have no change
                 switch (this.LinkAction)
                 {
                     case eLinkAction.Click:

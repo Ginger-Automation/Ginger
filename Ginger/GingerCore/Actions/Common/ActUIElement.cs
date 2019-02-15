@@ -27,7 +27,7 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.ComponentModel;
 using System.Linq;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.Common
 {
     public class ActUIElement : Act
@@ -52,7 +52,7 @@ namespace GingerCore.Actions.Common
         public override string ActionDescription { get { return "UIElement Action"; } }
         public override string ActionUserDescription { get { return "UIElement Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("UI Element Action");
         }
@@ -73,8 +73,9 @@ namespace GingerCore.Actions.Common
                     mPlatforms.Add(ePlatformType.Java);
                     mPlatforms.Add(ePlatformType.PowerBuilder);
                     mPlatforms.Add(ePlatformType.Windows);
+                    mPlatforms.Add(ePlatformType.Mobile);
 
-                    //TODO: to see the Web impl uncommnet
+                    //TODO: to see the Web impl uncomment
                     // DO NOT remove comment before we have Selenium support this action and converter for old action
                     mPlatforms.Add(ePlatformType.Web);
                 }
@@ -147,6 +148,10 @@ namespace GingerCore.Actions.Common
             public static string HandleElementLocateBy = "HandleElementLocateBy";
             public static string HandleElementLocatorValue = "HandleElementLocatorValue";
             public static string ValidationElementValue = "ValidationElementValue";
+
+            //used for SelectandValidate
+            public static string SubElementLocateBy = "SubElementLocateBy";
+            public static string SubElementLocatorValue = "SubElementLocatorValue";
         }
 
         // Fields Helper for specific action, will create AIV with param name based on enum
@@ -172,6 +177,8 @@ namespace GingerCore.Actions.Common
         {
             [EnumValueDescription("HTML Table")]
             HTMLTable,
+            [EnumValueDescription("Pane")]
+            Pane,
         }
 
         public enum eElementProperty
@@ -264,6 +271,9 @@ namespace GingerCore.Actions.Common
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Open Drop Down")]
             OpenDropDown,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Select and Validate")]
+            SelectandValidate,
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Close Drop Down")]
             CloseDropDown,
@@ -426,6 +436,10 @@ namespace GingerCore.Actions.Common
             IsDisabled,
             [EnumValueDescription("Switch")]
             Switch,
+            [EnumValueDescription("Double Click using XY")]
+            DoubleClickXY,
+            [EnumValueDescription("Send Keys using XY")]
+            SendKeysXY,
             #endregion Generic Action Types
 
             #region TextBox Action Types
@@ -513,8 +527,20 @@ namespace GingerCore.Actions.Common
             }
         }
 
+        eElementAction mElementAction;
         [IsSerializedForLocalRepository]
-        public eElementAction ElementAction { get; set; }
+        public eElementAction ElementAction
+        {
+            get { return mElementAction; }
+            set
+            {
+                if (mElementAction != value)
+                {
+                    mElementAction = value;
+                    OnPropertyChanged(nameof(ActUIElement.ElementAction));
+                }
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public eLocateBy ElementLocateBy { get; set; }
@@ -624,8 +650,7 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("4. Very Long - more than 30 seconds (test for idle every 5 seconds , max 5 minutes wait)")]
             VeryLong,
         }
-
-        [IsSerializedForLocalRepository]
+        
         public string ElementLocateValue
         {
             get
@@ -635,6 +660,7 @@ namespace GingerCore.Actions.Common
             set
             {
                 GetOrCreateInputParam(Fields.ElementLocateValue).Value = value;
+                OnPropertyChanged(nameof(ElementLocateValue));
             }
         }
 
@@ -750,18 +776,20 @@ namespace GingerCore.Actions.Common
         }
 
         //Pack
-        public void GetLocateByXYValues(out double X, out double Y)
+        public void GetLocateByXYValues(out double X, out double Y, object locateValueParentObject, string locateValueField)
         {
+            string locateValue = locateValueParentObject.GetType().GetProperty(locateValueField).GetValue(locateValueParentObject).ToString();//to support diffrent LocateValue fields we have on Act
+
             // split the Value, do not create new param
             // all locate value need to be combined into string
-            if (string.IsNullOrEmpty(ElementLocateValue))
+            if (string.IsNullOrEmpty(locateValue))
             {
                 X = 0;
                 Y = 0;
             }
             else
             {
-                string[] xy = ElementLocateValue.Split(',');
+                string[] xy = locateValue.Split(',');
                 if ((xy != null) && (xy.Count() > 1))
                 {
                     if (!double.TryParse(xy[0].Split('=')[1], out X))
@@ -778,9 +806,9 @@ namespace GingerCore.Actions.Common
         }
 
         //Parse
-        public void SetLocateByXYValues(double X, double Y)
+        public void SetLocateByXYValues(double X, double Y, object locateValueParentObject, string locateValueField)
         {
-            ElementLocateValue = "X=" + X + ",Y=" + Y;
+            locateValueParentObject.GetType().GetProperty(locateValueField).SetValue(locateValueParentObject, "X=" + X + ",Y=" + Y);//to support diffrent LocateValue fields we have on Act
         }
 
         //TOOD: impl in ActionEditPage to show the output grid or show no output values

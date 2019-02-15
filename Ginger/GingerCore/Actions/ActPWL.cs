@@ -23,16 +23,16 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
-    //This class is for UI link elemnet
+    //This class is for UI link element
     public class ActPWL : Act
     {
         public override string ActionDescription { get { return "Two web elements distances"; } }
         public override string ActionUserDescription { get { return "Get two web elements distances"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to get two different element distances");
             TBH.AddLineBreak();

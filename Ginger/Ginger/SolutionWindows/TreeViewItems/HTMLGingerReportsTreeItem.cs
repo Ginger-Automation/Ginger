@@ -38,7 +38,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         public RepositoryFolder<HTMLReportConfiguration> mHtmlReportsFolder;
         private HTMLReportTemplatesListPage mHTMLReportTemplatesListPage;
-        private ObservableList<HTMLReportConfiguration> mChildReports = null;
+       
 
         public HTMLGingerReportsTreeItem(RepositoryFolder<HTMLReportConfiguration> htmlReportsFolder)
         {
@@ -76,7 +76,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            //Add direct childrens 
+            //Add direct children's 
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
             ObservableList<HTMLReportConfiguration> templates = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();                   
             templates.CollectionChanged -= TreeFolderItems_CollectionChanged;
@@ -161,7 +161,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void OpenHTMLReportsFolder(object sender, RoutedEventArgs e)
         {
-            HTMLReportsConfiguration _selectedHTMLReportConfiguration = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration _selectedHTMLReportConfiguration =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (_selectedHTMLReportConfiguration != null)
             {
                 string path = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(_selectedHTMLReportConfiguration.HTMLReportsFolder);

@@ -106,11 +106,11 @@ namespace Ginger.Activities
 
             foreach (ActivityIdentifiers actIdent in mActivitiesGroup.ActivitiesIdentifiers)
             {
-                Activity repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                Activity repoAct = (Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
                 if (repoAct == null)
-                    repoAct = activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                    repoAct =(Activity) activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
                 if (repoAct == null)
-                    repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
+                    repoAct =(Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
                 if (repoAct != null)
                 {
                     actIdent.IdentifiedActivity = repoAct;
@@ -142,8 +142,7 @@ namespace Ginger.Activities
             ObservableList<Button> winButtons = new ObservableList<Button>();
             switch (mEditMode)
             {
-                case ActivitiesGroupPage.eEditMode.ExecutionFlow:
-               
+                case ActivitiesGroupPage.eEditMode.ExecutionFlow:               
                     Button okBtn = new Button();
                     okBtn.Content = "Ok";
                     okBtn.Click += new RoutedEventHandler(okBtn_Click);
@@ -166,7 +165,7 @@ namespace Ginger.Activities
 
             this.Height = 800;
             this.Width = 800;
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, "Undo & Close", CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
         }
 
         private void UndoChangesAndClose()
@@ -196,16 +195,9 @@ namespace Ginger.Activities
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
-            }
-            else
-            {
-                if (mEditMode == eEditMode.SharedRepository)
-                    CheckIfUserWantToSave();
-                else
-                    _pageGenericWin.Close();
             }
         }
 

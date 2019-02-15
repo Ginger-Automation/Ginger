@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using GingerCore;
 using ICSharpCode.AvalonEdit.Document;
 using System.Media;
@@ -84,8 +85,8 @@ namespace Ginger.UserControlsLib.TextEditor.Common
 
         private void ReplaceAllClick(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ReplaceAll, "Are you sure you want to Replace All occurrences of \"" +
-            txtFind2.Text + "\" with \"" + txtReplace.Text + "\"?") == MessageBoxResult.OK)
+            if (Reporter.ToUser(eUserMsgKey.ReplaceAll, "Are you sure you want to Replace All occurrences of \"" +
+            txtFind2.Text + "\" with \"" + txtReplace.Text + "\"?") == Amdocs.Ginger.Common.eUserMsgSelection.OK)
             {
                 Regex regex = GetRegEx(txtFind2.Text, true);
                 int offset = 0;

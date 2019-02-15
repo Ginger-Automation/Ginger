@@ -1,10 +1,11 @@
 
 
 #  <img src="https://github.com/Ginger-Automation/Ginger/blob/master/GingerLogo.png" width="64"> Ginger Automation 
-[![Build status](https://ci.appveyor.com/api/projects/status/1wcp41xf6q49988m/branch/master?svg=true)](https://ci.appveyor.com/project/ginger/ginger/branch/master) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/Ginger-Automation/)
+[![Build status](https://ci.appveyor.com/api/projects/status/1wcp41xf6q49988m/branch/master?svg=true)](https://ci.appveyor.com/project/ginger/ginger/branch/master)[![Build Status](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_apis/build/status/Ginger%20Linux%20Build?branchName=master)](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_build/latest?definitionId=7?branchName=master)[![Build Status](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_apis/build/status/Ginger%20Windows%20Build?branchName=master)](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_build/latest?definitionId=6?branchName=master)
+[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/Ginger-Automation/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Ginger is an Automation IDE, Drag & Drop automation, no coding skills needed, open platform with plugin capabilities.
+Ginger is an Automation IDE, Drag & Drop automation, Can be used by users with or without coding skills, open platform with plugin capabilities.
 
 
 
@@ -107,6 +108,3 @@ Ginger is leveraging on a variety of great open source libraries, like: Selenium
 | Hard disk space | 2GB   |  6GB+  |
 | .NET | 4.6.1 | 4.7.1 |
 
-
-# Coming soon
-Ginger is free to use and the open source code is in process of moving to Git from our TFS server it will be completed before the end of 2018

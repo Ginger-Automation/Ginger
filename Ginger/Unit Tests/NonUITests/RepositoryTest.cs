@@ -17,15 +17,16 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
+using Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.FlowControlLib;
-using GingerCore.Repository;
 using GingerCore.Variables;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -42,6 +43,8 @@ namespace UnitTests.NonUITests
         [Level1]
         public static void ClassInitialize(TestContext TC)
         {
+            //??
+            // RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
             Ginger.App.InitClassTypesDictionary();
         }
 
@@ -51,7 +54,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void BizFlowSaveLoad()
         {
 
@@ -112,7 +115,7 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void BizFlowCheckIsDirtyFalse()
         {
 
@@ -163,7 +166,7 @@ namespace UnitTests.NonUITests
             Assert.IsTrue(BF2.DirtyStatus != Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified);
         }
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void BizFlowClearBackup()
         {
             //Arrange
@@ -195,7 +198,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(BF2.Activities.Count,BF.Activities.Count);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ActivitiesClearBackup()
         {
             //Arrange
@@ -228,7 +231,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(BF2.Activities[0].Acts.Count, BF.Activities[0].Acts.Count);            
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ActionClearBackup()
         {
             //Arrange
@@ -266,7 +269,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void BizFlowCheckIsDirtyTrue()
         {
 
@@ -319,8 +322,8 @@ namespace UnitTests.NonUITests
             BF2.Description = "aaa";
             Assert.IsTrue(BF2.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified);
         }
-
-        [TestMethod]
+                
+        [TestMethod]  [Timeout(60000)]
         public void RunSetConfigSaveLoad()
         {
             //Arrange"
@@ -335,16 +338,16 @@ namespace UnitTests.NonUITests
             BFR.BusinessFlowName = "BF1";
             ARC1.BusinessFlowsRunList.Add(BFR);
             RSC.GingerRunners.Add(ARC1);
-
+            
             RSC.RepositorySerializer.SaveToFile(RSC, TempFilepath);
-
+            
             //Assert
             NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
             RunSetConfig RSC2 = (RunSetConfig)newRepositorySerializer.DeserializeFromFile(typeof(RunSetConfig), TempFilepath);
         }
 
         //[Ignore]
-        //[TestMethod]       
+        //[TestMethod]  [Timeout(60000)]       
         //public void SaveLoadRunSetWithRunSetActionSendFreeEmailX2()
         //{
         //    //Arrange
@@ -365,7 +368,7 @@ namespace UnitTests.NonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void SaveLoadRunSetWithRunSetActionSendFreeEmailValidateEmail()
         //{
         //    //Arrange
@@ -389,7 +392,7 @@ namespace UnitTests.NonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void LoadRunSetWith5Operations()
         //{
         //    //Arrange
@@ -404,7 +407,7 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void BizFlowAddActivitiesFromSharedRepoSaveLoad()
         {
 
@@ -498,7 +501,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void BackUpRestore()
         {
             //Arrange
@@ -534,12 +537,12 @@ namespace UnitTests.NonUITests
             act1.InputValues.Add(new ActInputValue() { Param = "Param2" });
 
             //add flow control
-            act1.FlowControls = new ObservableList<GingerCore.FlowControlLib.FlowControl>();
-            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "A=B", FlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.GoToActivity });
-            GingerCore.FlowControlLib.FlowControl.eFlowControlAction secondFlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.RerunAction;
+            act1.FlowControls = new ObservableList<FlowControl>();
+            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "A=B", FlowControlAction =eFlowControlAction.GoToActivity });
+            eFlowControlAction secondFlowControlAction =eFlowControlAction.RerunAction;
             GingerCore.FlowControlLib.FlowControl secondFlowControl = new GingerCore.FlowControlLib.FlowControl() { Condition = "C>123", FlowControlAction = secondFlowControlAction };
             act1.FlowControls.Add(secondFlowControl);
-            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "D=111", FlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.StopRun });
+            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "D=111", FlowControlAction =eFlowControlAction.StopRun });
 
             //BF Variables
             VariableString v = new VariableString();
@@ -570,7 +573,7 @@ namespace UnitTests.NonUITests
             act1.InputValues[0].Param = "qqq";
             act1.InputValues.Remove(act1.InputValues[1]);
 
-            act1.FlowControls[1].FlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.MessageBox;
+            act1.FlowControls[1].FlowControlAction =eFlowControlAction.MessageBox;
             act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "Val=123" });
             act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "Val=555" });
 
@@ -616,12 +619,12 @@ namespace UnitTests.NonUITests
        }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void BackUpRestoreBFWithVariableSelectionList()
         {
             //Arrange
             BusinessFlow BF = new BusinessFlow() { Name = "Biz flow VariableSelectionList" };
-                        
+
             VariableSelectionList sl = new VariableSelectionList();
             sl.Name = "Var 2";
             sl.OptionalValuesList = new ObservableList<OptionalValue>();
@@ -638,17 +641,40 @@ namespace UnitTests.NonUITests
             sl.OptionalValuesList[0].Value = "aaaa";
             sl.OptionalValuesList.Add(new OptionalValue("44"));
             sl.OptionalValuesList.Add(new OptionalValue("55"));
-            
+
             BF.RestoreFromBackup();
 
             //Assert
-           Assert.AreEqual(BF.Variables.Count, 1, "BF.Variables.Count");
-           Assert.AreEqual(BF.Variables[0], sl, "BF.Variables[0] REF");
-           Assert.AreEqual(((VariableSelectionList)BF.Variables[0]).OptionalValuesList[0].Value, "11", "BF.Variables[0].Value");
-           Assert.AreEqual(((VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count(), 3, "(VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count()");
+            Assert.AreEqual(BF.Variables.Count, 1, "BF.Variables.Count");
+            Assert.AreEqual(BF.Variables[0], sl, "BF.Variables[0] REF");
+            Assert.AreEqual(((VariableSelectionList)BF.Variables[0]).OptionalValuesList[0].Value, "11", "BF.Variables[0].Value");
+            Assert.AreEqual(((VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count(), 3, "(VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count()");
         }
 
-        //[TestMethod]
+
+        [TestMethod]  [Timeout(60000)]
+        public void BackUpRestoreVariableSelectionList()
+        {
+            //Arrange            
+                        
+            VariableSelectionList sl = new VariableSelectionList();
+            sl.Name = "Var 2";
+            sl.OptionalValuesList = new ObservableList<OptionalValue>();
+            sl.OptionalValuesList.Add(new OptionalValue("11"));            
+
+            //Act
+            sl.SaveBackup();
+
+            // Modify the SL
+            sl.OptionalValuesList[0].Value = "00";            
+            
+            sl.RestoreFromBackup();
+
+            //Assert           
+           Assert.AreEqual("11", sl.OptionalValuesList[0].Value, "OptionalValuesList[0].Value");           
+        }
+
+        //[TestMethod]  [Timeout(60000)]
         //public void ActivitiesReadSpeedTest()
         //{
 
@@ -671,7 +697,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestObjectAttrofOneRepoItem()
         {
             //Check Save and Load of RunSetConfig with Send Email action - RunSetActionSendEmail have 'Email' field which is single object as field, if save load correctly test pass
@@ -706,7 +732,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void BizFlowWithTags()
         {
 
@@ -745,7 +771,7 @@ namespace UnitTests.NonUITests
 
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void BizFlowSaveLoadSpeedTest()
         //{
 
@@ -809,7 +835,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void BigBizFlowLoadSpeedTest()
         //{
 
@@ -837,7 +863,7 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CopyAction()
         {
 
@@ -854,7 +880,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CreateDuplicationAction()
         {
 
@@ -873,7 +899,7 @@ namespace UnitTests.NonUITests
 
 
                
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void FlowcontrolTest_WithBFCreateCopy()
         {
             //Arrange
@@ -898,13 +924,13 @@ namespace UnitTests.NonUITests
             FlowControl flowControl = new FlowControl();
             flowControl.Active = true;
             flowControl.Condition = "1=1";
-            flowControl.FlowControlAction = FlowControl.eFlowControlAction.GoToActivity;
+            flowControl.FlowControlAction = eFlowControlAction.GoToActivity;
             flowControl.Value = activity2.Guid + flowControl.GUID_NAME_SEPERATOR + activity2.ItemName;
 
             FlowControl flowControl2 = new FlowControl();
             flowControl2.Active = true;
             flowControl2.Condition = "2=2";
-            flowControl2.FlowControlAction = FlowControl.eFlowControlAction.GoToAction;
+            flowControl2.FlowControlAction = eFlowControlAction.GoToAction;
             flowControl2.Value = act2.Guid + flowControl.GUID_NAME_SEPERATOR + act2.ItemName;
 
 
@@ -934,7 +960,7 @@ namespace UnitTests.NonUITests
         }
         
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void FlowcontrolTest_WithActivityCreateInstance()
         {
             //Arrange
@@ -950,7 +976,7 @@ namespace UnitTests.NonUITests
             FlowControl flowControl = new FlowControl();
             flowControl.Active = true;
             flowControl.Condition = "1=1";
-            flowControl.FlowControlAction = FlowControl.eFlowControlAction.GoToAction;
+            flowControl.FlowControlAction = eFlowControlAction.GoToAction;
             flowControl.Value = act2.Guid + flowControl.GUID_NAME_SEPERATOR + act2.ItemName;
 
 
@@ -972,7 +998,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ActionVariableDependancyTest_WithCreateInstance()
         {
             //Arrange
@@ -1007,7 +1033,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void ActivityVariableDependancyTest_UnserializeFile()
         //{
         //    //Arrange
@@ -1024,7 +1050,7 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ActivityVariableDependancyTest_WithCreateInstance()
         {
             //Arrange

@@ -28,9 +28,8 @@ namespace Amdocs.Ginger.Common.APIModelLib
 {
     public class JSONTemplateParser : APIConfigurationsDocumentParserBase
     {
-        public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, bool avoidDuplicatesNodes = false)
+        public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
         {
-            ObservableList<ApplicationAPIModel> AAMSList = new ObservableList<ApplicationAPIModel>();
 
             ApplicationAPIModel AAM = new ApplicationAPIModel();
             AAM.Name = Path.GetFileNameWithoutExtension(FileName);
@@ -67,7 +66,7 @@ namespace Amdocs.Ginger.Common.APIModelLib
             {
                 string tagName = Jn.Path.Split('.').LastOrDefault();
 
-                ReturnValues.Add(new ActReturnValue() { Param = tagName, Path = Jn.Path, Active = true });
+                ReturnValues.Add(new ActReturnValue() { Param = tagName, Path = Jn.Path, Active = true, DoNotConsiderAsTemp=true });
             }
 
             return ReturnValues;
@@ -84,7 +83,9 @@ namespace Amdocs.Ginger.Common.APIModelLib
             JToken jt = JToken.Parse(JSOnText);
             Dictionary<string, string> ParamPath = new Dictionary<string, string>();
             List<string> consts = new List<string>();
-            foreach (var Jn in JE.GetEndingNodes())
+
+            IEnumerable<JsonExtended> EndingNodesList = JE.GetEndingNodes();
+            foreach (var Jn in EndingNodesList)
             {
                 if (Jn == null)
                     continue;

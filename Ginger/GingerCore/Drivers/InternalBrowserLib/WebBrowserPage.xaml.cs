@@ -17,13 +17,13 @@ limitations under the License.
 #endregion
 
 
+using Amdocs.Ginger.Common;
+using mshtml;
 using System;
 using System.Collections;
 using System.Reflection;
 using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using mshtml;
 
 namespace GingerCore.Drivers
 {
@@ -43,7 +43,7 @@ namespace GingerCore.Drivers
         {
             //Get the native browser wrapped by WPF Web Browser
             SHDocVw.IWebBrowser2 axBrowser = typeof(WebBrowser).GetProperty("AxIWebBrowser2", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(browser, null) as SHDocVw.IWebBrowser2;
-            // Hook openning new window event
+            // Hook opening new window event
             ((SHDocVw.DWebBrowserEvents_Event)axBrowser).NewWindow += OnWebBrowserNewWindow;
         }
 
@@ -217,7 +217,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception ex)
             {                
-                Reporter.ToUser(eUserMsgKeys.JSExecutionFailed, ex.Message);
+                Reporter.ToUser(eUserMsgKey.JSExecutionFailed, ex.Message);
                 return null;
             }
         }

@@ -29,6 +29,7 @@ using GingerCore.Drivers;
 using GingerCore.Drivers.ASCF;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Actions.Locators.ASCF
 {
@@ -85,7 +86,7 @@ namespace Ginger.Actions.Locators.ASCF
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            // Will be overriden in derived class
+            // Will be overridden in derived class
              ObservableList<Act> list = new ObservableList<Act>();
             return list;
         }
@@ -93,7 +94,7 @@ namespace Ginger.Actions.Locators.ASCF
         ObservableList<ControlProperty> IWindowExplorerTreeItem.GetElementProperties()
         {
             //TODO: temp solution fix me hard coded [0[]
-            ASCFDriver d = (ASCFDriver)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent.Driver;
+            ASCFDriver d = (ASCFDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
 
             string RC = d.Send("GetControlInfo", "ByName" + "", ASCFControlInfo.Path, " ", " ", false);
 
@@ -116,6 +117,11 @@ namespace Ginger.Actions.Locators.ASCF
             {
                 return null;
             }
+        }
+
+        public ObservableList<ActInputValue> GetItemSpecificActionInputValues()
+        {
+            return null;
         }
     }
 }

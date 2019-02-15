@@ -32,6 +32,7 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using System.Drawing;
 using Amdocs.Ginger.Common;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger
 {
@@ -59,24 +60,26 @@ namespace Ginger
 
         public static string ConvertSolutionRelativePath(string fileName)
         {
-            string s = fileName;
-            s= s.ToUpper().Replace(App.UserProfile.Solution.Folder.ToUpper(), @"~\");
-            return s;            
+            //string s = fileName;
+            //s= s.ToUpper().Replace( WorkSpace.UserProfile.Solution.Folder.ToUpper(), @"~\");
+            //return s;
+            return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(fileName);
         }
 
         public static string GetFullFilePath(string filename)
         {
-            string s = filename;
-            if (s.StartsWith(@"~\"))
-            {
-                s = s.Replace(@"~\", App.UserProfile.Solution.Folder);
-            }
-            return s;            
+            //string s = filename;
+            //if (s.StartsWith(@"~\"))
+            //{
+            //    s = s.Replace(@"~\",  WorkSpace.UserProfile.Solution.Folder);
+            //}
+            //return s;
+            return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(filename);
         }
 
         public static string OpenSelectFolderDialog(string Title)
         {
-            // We use open file since it is a beter UI than folder selection, the user can type at the address and naviagte quicker - more user friendly
+            // We use open file since it is a better UI than folder selection, the user can type at the address and naviagte quicker - more user friendly
             var OFD = new System.Windows.Forms.OpenFileDialog();
             OFD.FileName = "Folder Selection";
             OFD.Title = Title;
@@ -173,47 +176,9 @@ namespace Ginger
 
         public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
         {
-            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
-            DirectoryInfo[] dirs = dir.GetDirectories();
 
-            // If the source directory does not exist, throw an exception.
-            if (!dir.Exists)
-            {
-                throw new DirectoryNotFoundException(
-                    "Source directory does not exist or could not be found: "
-                    + sourceDirName);
-            }
-
-            // If the destination directory does not exist, create it.
-            if (!Directory.Exists(destDirName))
-            {
-                Directory.CreateDirectory(destDirName);
-            }
-
-            // Get the file contents of the directory to copy.
-            FileInfo[] files = dir.GetFiles();
-
-            foreach (FileInfo file in files)
-            {
-                // Create the path to the new copy of the file.
-                string temppath = System.IO.Path.Combine(destDirName, file.Name);
-
-                // Copy the file.
-                file.CopyTo(temppath, true);
-            }
-
-            // If copySubDirs is true, copy the subdirectories.
-            if (copySubDirs)
-            {
-                foreach (DirectoryInfo subdir in dirs)
-                {
-                    // Create the subdirectory.
-                    string temppath = System.IO.Path.Combine(destDirName, subdir.Name);
-
-                    // Copy the subdirectories.
-                    DirectoryCopy(subdir.FullName, temppath, copySubDirs);
-                }
-            }
+            Amdocs.Ginger.Common.GeneralLib.General.DirectoryCopy(sourceDirName, destDirName, copySubDirs);
+           
         }
 
         //TODO: same function and code is copied in several placed - unite all to use the one below
@@ -341,7 +306,7 @@ namespace Ginger
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.WARN, "Error Occurred while doing DoEvents()", ex);
+                Reporter.ToLog(eLogLevel.WARN, "Error Occurred while doing DoEvents()", ex);
             }
         }
 
@@ -492,16 +457,9 @@ namespace Ginger
         //For Screenshots
         public static Tuple<int, int> RecalculatingSizeWithKeptRatio(Tuple<int, int> a, int boxWidth, int boxHight)
         {
-            //calculate the ratio
-            double dbl = (double)a.Item1 / (double)a.Item2;
-            if ((int)((double)boxHight * dbl) <= boxWidth)
-            {
-                return new Tuple<int, int>((int)((double)boxHight * dbl), boxHight);
-            }
-            else
-            {
-                return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
-            }
+
+          return  Amdocs.Ginger.Common.GeneralLib.General.RecalculatingSizeWithKeptRatio(a, boxWidth, boxHight);
+          
         }
 
         //For logos

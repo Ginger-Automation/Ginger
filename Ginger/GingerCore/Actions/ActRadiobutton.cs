@@ -21,16 +21,16 @@ using System;
 using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
-    //This class is for UI Radio Button elemnet
+    //This class is for UI Radio Button element
     public class ActRadioButton : Act
     {
         public override string ActionDescription { get { return "Radio Button Action"; } }
         public override string ActionUserDescription { get { return "Performs Radio button Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform any Radio button actions.");
             TBH.AddLineBreak();

@@ -22,7 +22,7 @@ using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.WebServices
 {
     public class ActWebAPIBase : Act
@@ -34,7 +34,7 @@ namespace GingerCore.Actions.WebServices
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool IsSelectableAction { get { return false; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
         }
 
@@ -155,7 +155,7 @@ namespace GingerCore.Actions.WebServices
                     AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, "True");//old action- for backward support- for not breaking existing validations using old parsing
 
                 if (IsInputParamExist(Fields.UseLegacyJSONParsing) == false)
-                    AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, "False"); //as defualt use new JSON parser
+                    AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, "False"); //as default use new JSON parser
 
                 bool eVal = true;
                 if (bool.TryParse(GetInputParamValue(Fields.UseLegacyJSONParsing), out eVal))

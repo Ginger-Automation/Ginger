@@ -47,18 +47,14 @@ namespace Ginger.GeneralLib
         {
             txtBlkApplicationInfo.Text = string.Empty;
             TextBlockHelper TBH = new TextBlockHelper(txtBlkApplicationInfo);
+            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
 
-            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorA")).ToString());
             //Application info
             TBH.AddFormattedText("Application:", foregroundColor, true);
             TBH.AddLineBreak();
             TBH.AddFormattedText(App.AppFullProductName, foregroundColor);
             TBH.AddLineBreak();
             TBH.AddFormattedText("Version: " + App.AppVersion, foregroundColor);
-            TBH.AddLineBreak();
-            TBH.AddFormattedText(App.ApplicationInfo.LegalCopyright, foregroundColor);
-            TBH.AddLineBreak();
-            TBH.AddFormattedText("All rights reserved.", foregroundColor);
             TBH.AddLineBreak();
             TBH.AddLineBreak();
 
@@ -74,8 +70,8 @@ namespace Ginger.GeneralLib
         {
             txtCredit.Text = string.Empty;
             TextBlockHelper TBH = new TextBlockHelper(txtCredit);
+            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());            
 
-            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorA")).ToString());            
             TBH.AddFormattedText("Inventor, Chief Architect & Developer:", foregroundColor);
             TBH.AddLineBreak();
             TBH.AddFormattedText("Yaron Weiss", foregroundColor, true);

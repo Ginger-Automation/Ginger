@@ -37,12 +37,18 @@ using GingerCore.Drivers.PBDriver;
 using GingerCore.Drivers.WindowsLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Drivers.PowerBuilder
 {
     public class PBControlTreeItemBase : AutomationElementTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {
-     
+        public ITreeView TreeView
+        {
+            get;
+            set;
+        }
+
         Object ITreeViewItem.NodeObject()
         {
             return base.UIAElementInfo;
@@ -151,7 +157,7 @@ namespace Ginger.Drivers.PowerBuilder
                 
             }
 
-             //TODO:For grids need to implement generic way, independant of class name.This is breaking other pane controls which are not actually Grids. 
+             //TODO:For grids need to implement generic way, independent of class name.This is breaking other pane controls which are not actually Grids. 
             //else if (elementNode.Current.LocalizedControlType == "pane" && elementNode.Current.ClassName == "pbdw126")
             //{
             //    PBDataGridTreeItem DGTI = new PBDataGridTreeItem();
@@ -212,7 +218,7 @@ namespace Ginger.Drivers.PowerBuilder
             {
                 treeItem = new PBDialogBoxTreeItem();
             }
-            //TODO: Add special handling for table controls. Don't dusplay table fields as child, instead create similar table on Explorer pages using these values
+            //TODO: Add special handling for table controls. Don't display table fields as child, instead create similar table on Explorer pages using these values
             else if (General.CompareStringsIgnoreCase(elementControlType, "table"))
             {
                 treeItem = new PBTableTreeItem();
@@ -228,10 +234,15 @@ namespace Ginger.Drivers.PowerBuilder
 
             // we need to put all the minimal attr so calc when needed
             UIAElementInfo EI = new UIAElementInfo();          
-            EI.ElementObject = elementInfo.ElementObject;  // Ths most important, the rest will be lazy loading
+            EI.ElementObject = elementInfo.ElementObject;  // The most important, the rest will be lazy loading
             treeItem.UIAElementInfo = EI;
 
             return treeItem;
+        }
+
+        public ObservableList<ActInputValue> GetItemSpecificActionInputValues()
+        {
+            return null;
         }
     }
 }

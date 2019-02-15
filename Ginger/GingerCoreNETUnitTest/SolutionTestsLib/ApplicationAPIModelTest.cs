@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -39,15 +40,13 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         public static void ClassInitialize(TestContext TC)
         {            
 
-            string TempSolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\APIModelsTest");
+            string TempSolutionFolder = TestResources.GetTestTempFolder(@"Solutions\APIModelsTest");
             if (Directory.Exists(TempSolutionFolder))
             {
                 Directory.Delete(TempSolutionFolder, true);
             }
-            SR = new SolutionRepository();
-
-            SR.AddItemInfo<ApplicationAPIModel>("*.Ginger.ApplicationAPIModel.xml", @"~\Applications Models\API Models", true, "API Models", addToRootFolders: true, PropertyNameForFileName: nameof(ApplicationAPIModel.Name));
-            // SR.AddItemInfo<GlobalAppModelParameter>("*.Ginger.GlobalAppModelParameter.xml", @"~\Applications Models\Global Models Parameters", true, "Global Model Parameters", addToRootFolders: true, PropertyNameForFileName: nameof(GlobalAppModelParameter.PlaceHolder));
+            SR = GingerSolutionRepository.CreateGingerSolutionRepository();
+            
 
             SR.CreateRepository(TempSolutionFolder);
 
@@ -62,7 +61,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VerifyApplicationAPIModelFileExtension()
         {
             // Need to verify ext is coming from ApplicationAPIModel and file name will not have ApplicationAPIModel 
@@ -77,7 +76,8 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             Assert.AreEqual(ext, "Ginger.ApplicationAPIModel");
         }
 
-        [TestMethod]
+        [Ignore]
+        [TestMethod]  [Timeout(60000)]
         public void AddAPIFromXMLAndAvoidDuplicateNodesTest()
         {
             //Arrange
@@ -90,12 +90,12 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             List<AppModelParameter> AppModelParametersAvoidNodes = new List<AppModelParameter>();
 
             //Act
-            AAMTempList = new XMLTemplateParser().ParseDocument(XmlfFilePath, false);
+            AAMTempList = new XMLTemplateParser().ParseDocument(XmlfFilePath, AAMTempList, false);
             doc.LoadXml(AAMTempList[0].RequestBody);
             xmlElements = new XMLDocExtended(doc).GetAllNodes().Where(x => x.Name == "tag").ToList();
             AppModelParameters = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "tag").ToList();
 
-            AAMTempList = new XMLTemplateParser().ParseDocument(XmlfFilePath, true);
+            AAMTempList = new XMLTemplateParser().ParseDocument(XmlfFilePath, AAMTempList, true);
             doc.LoadXml(AAMTempList[0].RequestBody);
             xmlElementsAvoidDuplicatesNodes = new XMLDocExtended(doc).GetAllNodes().Where(x => x.Name == "tag").ToList();
             AppModelParametersAvoidNodes = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "tag").ToList();
@@ -107,7 +107,8 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             Assert.AreEqual(AppModelParametersAvoidNodes.Count, 1);
         }
 
-        [TestMethod]
+        [Ignore]
+        [TestMethod]  [Timeout(60000)]
         public void AddAPIFromJSONAndAvoidDuplicateNodesTest()
         {
             //Arrange
@@ -119,11 +120,11 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             List<AppModelParameter> AppModelParametersAvoidDuplicatesNodes = new List<AppModelParameter>();
 
             //Act
-            AAMTempList = new JSONTemplateParser().ParseDocument(JsonFilePath, false);
+            AAMTempList = new JSONTemplateParser().ParseDocument(JsonFilePath, AAMTempList, false);
             jsonElements = new JsonExtended(AAMTempList[0].RequestBody).GetAllNodes().Where(x => x.Name == "id").ToList();
             AppModelParameters = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "id").ToList();
 
-            AAMTempList = new JSONTemplateParser().ParseDocument(JsonFilePath, true);
+            AAMTempList = new JSONTemplateParser().ParseDocument(JsonFilePath, AAMTempList, true);
             jsonElementsAvoidDuplicatesNodes = new JsonExtended(AAMTempList[0].RequestBody).GetAllNodes().Where(x => x.Name == "id").ToList();
             AppModelParametersAvoidDuplicatesNodes = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "id").ToList();
 
@@ -136,7 +137,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
 
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ApplicationAPIModelVerifySavedFile()
         {
             // Arrange
@@ -162,7 +163,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ApplicationAPIModelMixSoapAndRestSaveAndLoad()
         {
             // Arrange
@@ -189,7 +190,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         }
 
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ApplicationAPIModelMultipleSoapAndRestSaveAndLoad()
         {
             // Arrange
@@ -222,7 +223,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             Assert.AreEqual(AAMBListSubFolder.Count,3, "Second Folder should have 3 files");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void APIParsingSavingAndPulling()
         {
             // Arrange

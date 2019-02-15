@@ -21,7 +21,6 @@ using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.UserControls;
-using GingerCoreNET.ReporterLib;
 using GingerWPF.WizardLib;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
@@ -103,7 +102,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                         xLabelMessage.Content = "No Validation Issues Found. Proceed with Item/s Upload";
                     }
                     break;
-            }        
+            }
         }
     }
 }

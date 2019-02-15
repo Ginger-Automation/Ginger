@@ -24,7 +24,7 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCore.DataSource;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActDSTableElement : ActWithoutDriver
@@ -32,7 +32,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Data Source Action"; } }
         public override string ActionUserDescription { get { return "Data Source Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action to Read/Write Data from a common place for all Business Flows/Activities/Actions.");
         }
@@ -91,6 +91,7 @@ namespace GingerCore.Actions
                     outVal = VEMAD.ValueCalculated;
                     break;
                 case eControlAction.RowCount:
+                case eControlAction.AvailableRowCount:
                     ValueExpression VERC = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
                     VERC.Value = ValueExp;
                     // VE.ReplaceDataSource(ValueExp);
@@ -189,6 +190,8 @@ namespace GingerCore.Actions
             DeleteAll,
             [EnumValueDescription("Get Row Count")]
             RowCount,
+            [EnumValueDescription("Get Available Row Count")]
+            AvailableRowCount,
             [EnumValueDescription("Export to Excel")]
             ExportToExcel
         }
@@ -281,8 +284,35 @@ namespace GingerCore.Actions
         public string LocateRowType { get; set; }
         //[IsSerializedForLocalRepository]
         public string LocateRowValue { get; set; }
-        public string ExcelPath { get; set; }
-        public string ExcelSheetName { get; set; }
+
+        string mExcelPath;
+        public string ExcelPath
+        {
+            get { return mExcelPath;  }
+            set {
+
+                if (mExcelPath != value)
+                {
+                    mExcelPath = value;
+                    OnPropertyChanged(nameof(ExcelPath)); 
+                }
+            }
+        }
+
+        string mExcelSheetName;
+        public string ExcelSheetName
+        {
+            get { return mExcelSheetName; }
+            set
+            {
+
+                if (mExcelSheetName != value)
+                {
+                    mExcelSheetName = value;
+                    OnPropertyChanged(nameof(ExcelSheetName));
+                }
+            }
+        }
 
         public ObservableList<ActDSConditon> ActDSConditions
         {

@@ -42,104 +42,113 @@ namespace Ginger.UserControls
             //TODO: check why we come here with non matching object
             if (!typeof(IObservableList).IsAssignableFrom(e.NewValue.GetType())) return; //avoid invalid cast exception
 
-            l = (IObservableList)e.NewValue;            
-            if (l.Count == 0) return;
-
-            // If it is input and we have only one row then no need to show the grid
-            if (l[0].GetType() == typeof(ActInputValue) && l.Count == 1)
+            this.Dispatcher.Invoke(() =>
             {
-                ValueTextBox.Visibility = System.Windows.Visibility.Visible;
-                MainDataGrid2.Visibility = System.Windows.Visibility.Collapsed;
-                
-                Binding bd = new Binding("Value");
-                ValueTextBox.DataContext = l[0];
-                ValueTextBox.SetBinding(TextBox.TextProperty, bd);
-            }
-            else
-            {                
-                MainDataGrid2.Visibility = System.Windows.Visibility.Visible;
-                ValueTextBox.Visibility = System.Windows.Visibility.Collapsed;
-                SetGridData();
-            }
+                l = (IObservableList)e.NewValue;
+                if (l.Count == 0) return;
+
+                // If it is input and we have only one row then no need to show the grid
+                if (l[0].GetType() == typeof(ActInputValue) && l.Count == 1)
+                {
+                    ValueTextBox.Visibility = System.Windows.Visibility.Visible;
+                    MainDataGrid2.Visibility = System.Windows.Visibility.Collapsed;
+
+                    Binding bd = new Binding("Value");
+                    ValueTextBox.DataContext = l[0];
+                    ValueTextBox.SetBinding(TextBox.TextProperty, bd);
+                }
+                else
+                {
+                    MainDataGrid2.Visibility = System.Windows.Visibility.Visible;
+                    ValueTextBox.Visibility = System.Windows.Visibility.Collapsed;
+                    SetGridData();
+                }
+            });
         }
 
         private void SetGridData()
         {
-            //TODO: fix me to be generic, meanwhile temp quick and dirty solution
-            if (l[0].GetType() == typeof(ActInputValue))
+            this.Dispatcher.Invoke(() =>
             {
-                DataGridTextColumn DGTC = new DataGridTextColumn();
-                DGTC.Header = "Param";
-                Binding binding = new Binding("Param");            
-                DGTC.Binding = binding;
-                DGTC.IsReadOnly = true;
-                this.MainDataGrid2.Columns.Add(DGTC);
+                //TODO: fix me to be generic, meanwhile temp quick and dirty solution
+                if (l[0].GetType() == typeof(ActInputValue))
+                {
+                    DataGridTextColumn DGTC = new DataGridTextColumn();
+                    DGTC.Header = "Param";
+                    Binding binding = new Binding("Param");
+                    DGTC.Binding = binding;
+                    DGTC.IsReadOnly = true;
+                    this.MainDataGrid2.Columns.Add(DGTC);
 
-                DataGridTextColumn DGTC2 = new DataGridTextColumn();
-                DGTC2.Header = "Value";
-                Binding binding2 = new Binding("Value");
-                DGTC2.Binding = binding2;
-                this.MainDataGrid2.Columns.Add(DGTC2);
+                    DataGridTextColumn DGTC2 = new DataGridTextColumn();
+                    DGTC2.Header = "Value";
+                    Binding binding2 = new Binding("Value");
+                    DGTC2.Binding = binding2;
+                    this.MainDataGrid2.Columns.Add(DGTC2);
 
-                DataGridTextColumn DGTC3 = new DataGridTextColumn();
-                DGTC3.Header = "Run Time Value";
-                Binding binding3 = new Binding("ValueForDriver");            
-                DGTC3.Binding = binding3;
-                DGTC3.IsReadOnly = true;
-                this.MainDataGrid2.Columns.Add(DGTC3);
-            }
+                    DataGridTextColumn DGTC3 = new DataGridTextColumn();
+                    DGTC3.Header = "Run Time Value";
+                    Binding binding3 = new Binding("ValueForDriver");
+                    DGTC3.Binding = binding3;
+                    DGTC3.IsReadOnly = true;
+                    this.MainDataGrid2.Columns.Add(DGTC3);
+                }
 
-            if (l[0].GetType() == typeof(ActReturnValue))
-            {
-                DataGridTextColumn DGTC = new DataGridTextColumn();
-                DGTC.Header = "Param";
-                Binding binding = new Binding("Param");
-                DGTC.Binding = binding;
-                DGTC.IsReadOnly = true;
-                this.MainDataGrid2.Columns.Add(DGTC);
+                if (l[0].GetType() == typeof(ActReturnValue))
+                {
+                    DataGridTextColumn DGTC = new DataGridTextColumn();
+                    DGTC.Header = "Param";
+                    Binding binding = new Binding("Param");
+                    DGTC.Binding = binding;
+                    DGTC.IsReadOnly = true;
+                    this.MainDataGrid2.Columns.Add(DGTC);
 
-                DataGridTextColumn DGTC2 = new DataGridTextColumn();
-                DGTC2.Header = "Actual";
-                Binding binding2 = new Binding("Actual");
-                DGTC2.Binding = binding2;
-                this.MainDataGrid2.Columns.Add(DGTC2);
+                    DataGridTextColumn DGTC2 = new DataGridTextColumn();
+                    DGTC2.Header = "Actual";
+                    Binding binding2 = new Binding("Actual");
+                    DGTC2.Binding = binding2;
+                    this.MainDataGrid2.Columns.Add(DGTC2);
 
-                DataGridTextColumn DGTC3 = new DataGridTextColumn();
-                DGTC3.Header = "Expected";
-                Binding binding3 = new Binding("Expected");
-                DGTC3.Binding = binding3;
-                // DGTC3.IsReadOnly = true;
-                this.MainDataGrid2.Columns.Add(DGTC3);
+                    DataGridTextColumn DGTC3 = new DataGridTextColumn();
+                    DGTC3.Header = "Expected";
+                    Binding binding3 = new Binding("Expected");
+                    DGTC3.Binding = binding3;
+                    // DGTC3.IsReadOnly = true;
+                    this.MainDataGrid2.Columns.Add(DGTC3);
 
-                DataGridTextColumn DGTC4 = new DataGridTextColumn();
-                DGTC4.Header = "Status";
-                Binding binding4 = new Binding("Status");
-                DGTC4.Binding = binding4;
-                DGTC4.IsReadOnly = true;
-                this.MainDataGrid2.Columns.Add(DGTC4);
-            }
+                    DataGridTextColumn DGTC4 = new DataGridTextColumn();
+                    DGTC4.Header = "Status";
+                    Binding binding4 = new Binding("Status");
+                    DGTC4.Binding = binding4;
+                    DGTC4.IsReadOnly = true;
+                    this.MainDataGrid2.Columns.Add(DGTC4);
+                }
 
-            if (l[0].GetType() == typeof(FlowControl))
-            {
-                DataGridTextColumn DGTC = new DataGridTextColumn();
-                DGTC.Header = "Condition";
-                Binding binding = new Binding("Condition");
-                DGTC.Binding = binding;
-                DGTC.IsReadOnly = false;
-                this.MainDataGrid2.Columns.Add(DGTC);
-                
-                DataGridTextColumn DGTC3 = new DataGridTextColumn();
-                DGTC3.Header = FlowControl.Fields.FlowControlAction;
-                Binding binding3 = new Binding(FlowControl.Fields.FlowControlAction);
-                DGTC3.Binding = binding3;
-                this.MainDataGrid2.Columns.Add(DGTC3);
-            }
-            MainDataGrid2.ItemsSource = l;    
+                if (l[0].GetType() == typeof(FlowControl))
+                {
+                    DataGridTextColumn DGTC = new DataGridTextColumn();
+                    DGTC.Header = "Condition";
+                    Binding binding = new Binding("Condition");
+                    DGTC.Binding = binding;
+                    DGTC.IsReadOnly = false;
+                    this.MainDataGrid2.Columns.Add(DGTC);
+
+                    DataGridTextColumn DGTC3 = new DataGridTextColumn();
+                    DGTC3.Header = FlowControl.Fields.FlowControlAction;
+                    Binding binding3 = new Binding(FlowControl.Fields.FlowControlAction);
+                    DGTC3.Binding = binding3;
+                    this.MainDataGrid2.Columns.Add(DGTC3);
+                }
+                MainDataGrid2.ItemsSource = l;
+            });
         }
 
         private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            (sender as TextBox).GetBindingExpression(TextBox.TextProperty).UpdateSource();
+            this.Dispatcher.Invoke(() =>
+            {
+                (sender as TextBox).GetBindingExpression(TextBox.TextProperty).UpdateSource();
+            });
         }
     }
 }

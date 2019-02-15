@@ -26,7 +26,7 @@ using GingerCore.Repository;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActWindow  : Act, IObsoleteAction
@@ -35,7 +35,7 @@ namespace GingerCore.Actions
 
         public override string ActionUserDescription { get { return "Window Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate windows action like minimize,maximize,close etc.");
             TBH.AddLineBreak();
@@ -75,7 +75,7 @@ namespace GingerCore.Actions
             return l;
         }
         
-        //Availble window actions
+        //Available window actions
         public enum eWindowActionType
         {
             Switch,

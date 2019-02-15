@@ -44,7 +44,7 @@ namespace Ginger.Repository
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
 
@@ -87,18 +87,13 @@ namespace Ginger.Repository
 
                 if (isOverwrite)
                 {
-                    
-                    MovePrevVersion(itemToUpload.ExistingItem, itemToUpload.ExistingItem.FileName);
-                    //To be removed from here. And and need to handle from solution repository
+                    WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(itemToUpload.ExistingItem);
+                    //To be removed from here and need to handle from solution repository
                     itemCopy.ContainingFolder = itemToUpload.ExistingItem.ContainingFolder;
-                    itemCopy.ContainingFolderFullPath = itemToUpload.ExistingItem.ContainingFolderFullPath;
-                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(itemCopy);
-                }
-                else
-                {
-                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);                    
-                }
-                
+                    itemCopy.ContainingFolderFullPath = itemToUpload.ExistingItem.ContainingFolderFullPath;                  
+                }     
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);
+
                 itemToUpload.UsageItem.IsSharedRepositoryInstance = true;
 
                 if (itemToUpload.ExistingItemType == UploadItemSelection.eExistingItemType.ExistingItemIsParent && itemToUpload.ItemUploadType == UploadItemSelection.eItemUploadType.New)
@@ -111,7 +106,7 @@ namespace Ginger.Repository
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "failed to upload the repository item", e);
+                Reporter.ToLog(eLogLevel.ERROR, "failed to upload the repository item", e);
                 itemToUpload.ItemUploadStatus = UploadItemSelection.eItemUploadStatus.FailedToUpload;
                 return false;
             }
@@ -269,81 +264,13 @@ namespace Ginger.Repository
             return repoItem;
         }
 
-        public static void MovePrevVersion(RepositoryItemBase obj, string FileName)
-        {
-            if (File.Exists(FileName))
-            {
-                string repoItemTypeFolder = GetSharedRepoItemTypeFolder(obj.GetType());
-                string PrevFolder = Path.Combine(App.UserProfile.Solution.Folder, repoItemTypeFolder, "PrevVersions");
-                if (!Directory.Exists(PrevFolder))
-                {
-                    Directory.CreateDirectory(PrevFolder);
-                }
-                //TODO: change to usae locale or yyyymmdd...
-                string dts = DateTime.Now.ToString("MM_dd_yyyy_H_mm_ss");
-                string repoName = string.Empty;
-                if (obj.FileName != null && File.Exists(obj.FileName))
-                {
-                    repoName = obj.FileName;
-                }
-                string PrevFileName = repoName.Replace(repoItemTypeFolder, repoItemTypeFolder + @"\PrevVersions") + "." + dts + "." + obj.ObjFileExt;
-
-                if (PrevFileName.Length > 255)
-                {
-                    PrevFileName = PrevFileName.Substring(0, 250) + new Random().Next(1000).ToString();
-                }
-                try
-                {
-                    if (File.Exists(PrevFileName))
-                    {
-                        File.Delete(PrevFileName);
-                    }                        
-                    File.Move(FileName, PrevFileName);
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Save Previous File got error " + ex.Message);
-                }
-            }
-        }
-
-        public static string GetSharedRepoItemTypeFolder(Type T)
-        {
-            string folder = @"SharedRepository\";
-
-            if (T.Equals(typeof(ActivitiesGroup)))
-            {
-                folder += "ActivitiesGroups";
-            }
-            else if (T.Equals(typeof(Activity)))
-            {
-                folder += "Activities";
-            }
-            else if (T.IsSubclassOf(typeof(Act)))
-            {
-                folder += "Actions";
-            }
-            else if (T.IsSubclassOf(typeof(VariableBase)))
-            {
-                folder += "Variables";
-            }
-
-            if (folder == @"SharedRepository\")
-            {
-                throw new System.InvalidOperationException("Shared Repository Item folder path creation is wrong");
-            }                
-
-            return folder;
-        }
-
-
         public static bool CheckIfSureDoingChange(RepositoryItemBase item, string changeType)
         {
             RepositoryItemUsagePage usagePage = null;
             usagePage = new RepositoryItemUsagePage(item, true);
             if (usagePage.RepoItemUsages.Count > 0)//TODO: check if only one instance exist for showing the pop up for better performance
             {
-                if (Reporter.ToUser(eUserMsgKeys.AskIfWantsToChangeeRepoItem, item.GetNameForFileName(), usagePage.RepoItemUsages.Count, changeType) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.AskIfWantsToChangeeRepoItem, item.GetNameForFileName(), usagePage.RepoItemUsages.Count, changeType) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     return true;
                 }                    

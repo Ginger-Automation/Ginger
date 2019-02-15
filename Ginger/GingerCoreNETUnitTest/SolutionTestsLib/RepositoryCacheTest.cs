@@ -41,7 +41,7 @@
 
 //        }
 
-//        //[TestMethod]
+//        //[TestMethod]  [Timeout(60000)]
 //        //public void WeakReferenceTest()
 //        //{
 //        //    Stopwatch st = new Stopwatch();
@@ -56,7 +56,7 @@
 //        //    Assert.IsTrue(WR.IsAlive == false);            
 //        //}
         
-//        [TestMethod]
+//        [TestMethod]  [Timeout(60000)]
 //        public void CachecSimpleInOut()
 //        {
 //            //Arrange            
@@ -71,7 +71,7 @@
 //            Assert.AreEqual(BF, BF2); // make sure they are same object/ref
 //        }
 
-//        //[TestMethod]
+//        //[TestMethod]  [Timeout(60000)]
 //        //public void CachecWithObjRelease()
 //        //{
 //        //    //Arrange            
@@ -91,7 +91,7 @@
 //        //}
 
 
-//        //[TestMethod]
+//        //[TestMethod]  [Timeout(60000)]
 //        //public void CachecWithObjReleaseAndGCCollect()
 //        //{
 //        //    //Arrange            
@@ -109,7 +109,7 @@
 //        //    BusinessFlow BF2 = (BusinessFlow)RC[key];
 
 //        //    //Assert            
-//        //    Assert.IsTrue(BF2==null, "BF2 == null"); // make sure obj not found in cahce and is released
+//        //    Assert.IsTrue(BF2==null, "BF2 == null"); // make sure obj not found in cache is released
 //        //}
 //    }
 //}

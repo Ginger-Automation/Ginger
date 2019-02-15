@@ -18,13 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.PlugInsLib;
+using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.RunLib;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -43,19 +44,18 @@ namespace GingerCoreNETUnitTest.PluginsLib
             DummyWorkSpace ws = new DummyWorkSpace();
             WorkSpace.Init(ws);
 
-            string folder = TestResources.getGingerUnitTesterTempFolder("Solutions", "PluginTest");
+            string folder = TestResources.GetTestTempFolder("Solutions", "PluginTest");
 
             if (Directory.Exists(folder))
             {
                 Directory.Delete(folder, true);
             }
 
-            SR = new SolutionRepository();
-            SR.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", addToRootFolders: true, PropertyNameForFileName: nameof(PluginPackage.PluginID));
+            SR = GingerSolutionRepository.CreateGingerSolutionRepository();            
             SR.CreateRepository(folder);
             SR.Open(folder);
             WorkSpace.Instance.SolutionRepository = SR;
-            string pluginFolder = TestResources.GetTestResourcesFolder(@"PluginPackages\GingerOfficePlugin");
+            string pluginFolder = TestResources.GetTestResourcesFolder(@"PluginPackages" + Path.DirectorySeparatorChar + "GingerOfficePlugin");
 
 
             //string txt = WorkSpace.Instance.PlugInsManager.CreatePluginPackageInfo("GingerOfficePlugin", "1.0.0");
@@ -91,7 +91,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GetPlugins()
         {
             //Arrange            
@@ -100,15 +100,16 @@ namespace GingerCoreNETUnitTest.PluginsLib
             ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
 
             //Assert            
-            Assert.AreEqual("GingerOfficePlugin", Plugins[0].PluginID, "PluginID=GingerOfficePlugin");
+            Assert.AreEqual("GingerOfficePlugin", Plugins[0].PluginId, "PluginID=GingerOfficePlugin");
             Assert.AreEqual("1.0.0", Plugins[0].PluginPackageVersion, "Version=1.0");
 
         }
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void GetPluginServices()        
 
-        [TestMethod]
+        [Ignore]
+        [TestMethod]  [Timeout(60000)]
         public void GetPluginTextEditor()
         {
             //Arrange            
@@ -122,7 +123,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             Assert.AreEqual(1, list.Count, "There are one text editor");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GingerOfficePluginTestAction()
         {
             ////Arrange            
@@ -144,7 +145,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void GingerOfficePluginTestActionx3()
         {
             ////Arrange            
@@ -169,6 +170,51 @@ namespace GingerCoreNETUnitTest.PluginsLib
             ////Assert                
             //Assert.AreEqual(1, WorkSpace.Instance.LocalGingerGrid.NodeList.Count, "GingerGrid nodes 1 - only one service is up - reuse");
             
+        }
+
+
+        [TestMethod]  [Timeout(60000)]
+        public void GetOnlinePlugins()
+        {
+            //Arrange       
+            PluginsManager pluginsManager = new PluginsManager(WorkSpace.Instance.SolutionRepository);
+
+            // Act            
+            ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
+
+            //Assert
+            Assert.IsTrue(list.Count > 0, "list.Count > 0");
+        }
+
+        [TestMethod]  [Timeout(60000)]
+        public void GetOnlinePluginReleases()
+        {
+            //Arrange       
+            PluginsManager pluginsManager = new PluginsManager(WorkSpace.Instance.SolutionRepository);
+            ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
+            OnlinePluginPackage PACT = (from x in list where x.Id == "PACT" select x).SingleOrDefault();
+
+            // Act            
+            ObservableList<OnlinePluginPackageRelease> releases = PACT.Releases;
+
+            //Assert
+            Assert.IsTrue(releases.Count > 0, "list.Count > 0");
+        }
+
+        [TestMethod]  [Timeout(60000)]
+        public void InstallSeleniumPlugin_1_0()
+        {
+            //Arrange       
+            PluginsManager pluginsManager = new PluginsManager(WorkSpace.Instance.SolutionRepository);
+            ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
+            OnlinePluginPackage plugin = (from x in list where x.Id == "SeleniumDriver" select x).SingleOrDefault();
+            OnlinePluginPackageRelease release1_1 = (from x in plugin.Releases where x.Version == "1.0" select x).SingleOrDefault();
+
+            // Act            
+            string folder = pluginsManager.InstallPluginPackage(plugin, release1_1);
+
+            //Assert
+            Assert.IsTrue(Directory.Exists(folder));
         }
 
     }       

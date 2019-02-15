@@ -23,6 +23,7 @@ using GingerCore.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -95,16 +96,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
-            TreeViewUtils.AddMenuItem(mContextMenu, "Execution Logger Configurations", ExecutionResultsConfigWindow, null, "@Config3_16x16.png");
-            TV.AddToolbarTool("@Config3_16x16.png", "Execution Logger Configurations", ExecutionResultsConfigWindow);
-
             TreeViewUtils.AddMenuItem(mContextMenu, "Open Execution Results Default Folder", OpenExecutionResultsFolder, null, "@Folder_16x16.png");
             TV.AddToolbarTool("@Folder_16x16.png", "Open Execution Results Default Folder", OpenExecutionResultsFolder);                 
-        }
-
-        private void ExecutionResultsConfigWindow(object sender, System.Windows.RoutedEventArgs e)
-        {
-            Ginger.Reports.ExecutionLoggerConfiguration.ExecutionResultsConfigurationPage();
         }
 
         private void OpenExecutionResultsFolder(object sender, System.Windows.RoutedEventArgs e)
@@ -114,8 +107,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private string GetExecutionResultsFolder()
         {
-            if (App.UserProfile.Solution != null && App.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null && App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
-                return Ginger.Run.ExecutionLogger.GetLoggerDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder);
+            if ( WorkSpace.UserProfile.Solution != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
+                return Ginger.Run.ExecutionLogger.GetLoggerDirectory( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder);
             else
                 return string.Empty;
         }

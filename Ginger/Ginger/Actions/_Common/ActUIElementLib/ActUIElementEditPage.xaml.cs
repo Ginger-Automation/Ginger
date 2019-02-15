@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCore.Helpers;
 using GingerCore.Platforms.PlatformsInfo;
@@ -30,6 +32,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static GingerCore.Actions.Common.ActUIElement;
+using static GingerCore.General;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -40,33 +44,30 @@ namespace Ginger.Actions._Common.ActUIElementLib
     {
         ActUIElement mAction;
         PlatformInfoBase mPlatform;
+        string mExistingPOMAndElementGuidString = null;
 
         public ActUIElementEditPage(ActUIElement act)
         {
             InitializeComponent();
             mAction = act;
-            ePlatformType ActivityPlatform = GetActionPlatform();
-            mPlatform = PlatformInfoBase.GetPlatformImpl(ActivityPlatform);
-
-            ElementTypeComboBox.BindControl(mAction, ActUIElement.Fields.ElementType, mPlatform.GetPlatformUIElementsType());
-            if ((act.ElementType == eElementType.Unknown) && (act.ElementAction == ActUIElement.eElementAction.Unknown))
+            if (act.Platform == ePlatformType.NA)
             {
-                ElementLocateByComboBox.SelectedValue = Enum.GetName(typeof(eLocateBy), eLocateBy.POMElement);
+                act.Platform = GetActionPlatform();
             }
-
-            ElementLocateByComboBox.BindControl(mAction, ActUIElement.Fields.ElementLocateBy, mPlatform.GetPlatformUIElementLocatorsList());
+            mPlatform = PlatformInfoBase.GetPlatformImpl(act.Platform);
+            List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
+            ElementLocateByComboBox.BindControl(mAction, nameof(ActUIElement.ElementLocateBy), LocateByList);
+            ElementTypeComboBox.BindControl(mAction, nameof(ActUIElement.ElementType), mPlatform.GetPlatformUIElementsType());
             SetLocateValueFrame();
-
             ShowPlatformSpecificPage();
-            ShowControlSpecificPage();          
-
+            ShowControlSpecificPage();
             ElementLocateByComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
         }
 
         private ePlatformType GetActionPlatform()
         {
             string targetapp = App.BusinessFlow.CurrentActivity.TargetApplication;
-            ePlatformType platform = (from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            ePlatformType platform = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             return platform;
         }
 
@@ -85,7 +86,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mAction.LocateValue = string.Empty;
             mAction.LocateValueCalculated = string.Empty;
             mAction.ElementLocateValue = string.Empty;
-
             SetLocateValueFrame();
         }
 
@@ -100,53 +100,41 @@ namespace Ginger.Actions._Common.ActUIElementLib
             Page p = GetLocateValueEditPage(SelectedLocType);
             LocateValueEditFrame.Content = p;
             UpdateActionInfo(mAction.ElementAction);
-            if (SelectedLocType != eLocateBy.POMElement)
-            {
-                ElementTypeComboBox.IsEnabled = true;
-            }
+            //if (SelectedLocType != eLocateBy.POMElement)
+            //{
+            //    ElementTypeComboBox.IsEnabled = true;
+            //}
         }
+
+        List<ActUIElement.eElementAction> mElementActionsList = new List<ActUIElement.eElementAction>();
 
         private void ElementTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ElementLocateByComboBox.IsEnabled = true;
-            if (!String.IsNullOrEmpty(ElementTypeComboBox.SelectionBoxItem.ToString()))
+            mElementActionsList = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
+
+            ElementActionComboBox.SelectionChanged -= ElementActionComboBox_SelectionChanged;
+            ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
+            ElementActionComboBox.SelectedValue = mAction.ElementAction;//need to fix binding to avoid it
+            ElementActionComboBox.SelectionChanged += ElementActionComboBox_SelectionChanged;
+
+            if(mElementActionsList.Count == 0)
             {
-                if (ElementTypeComboBox.SelectedValue != null && !String.IsNullOrEmpty(ElementTypeComboBox.SelectedValue.ToString()))
-                {
-                    if (ElementTypeComboBox.SelectedValue.ToString() != ElementTypeComboBox.SelectionBoxItem.ToString())
-                    {
-                        ResetActUIFields();
-                    }
-                }
+                mAction.ElementAction = eElementAction.Unknown;
             }
-            List<ActUIElement.eElementAction> list = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
+            else if(mAction.ElementType != eElementType.Unknown && !mElementActionsList.Contains(mAction.ElementAction))
+            {
+                mAction.ElementAction = mElementActionsList[0];//defualt operation for element type should be first one
+            }
+
             ElementTypeImage.Source = GetImageSource(mAction.Image);
-            ElementActionComboBox.BindControlWithGrouping(mAction, ActUIElement.Fields.ElementAction, list);
             UpdateActionInfo(mAction.ElementAction);
-            UIElementActionEditPageFrame.Visibility = Visibility.Collapsed;
-            if (mAction.ElementType != eElementType.Unknown && mAction.ElementAction != ActUIElement.eElementAction.Unknown)
-            {
-                ShowControlSpecificPage();
-            }
-            ElementTypeComboBox.Refresh();
         }
 
         private void ElementActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!String.IsNullOrEmpty(ElementActionComboBox.SelectionBoxItem.ToString()))
-            {
-                if (ElementActionComboBox.SelectedValue != null && !String.IsNullOrEmpty(ElementActionComboBox.SelectedValue.ToString()))
-                {
-                    if (ElementActionComboBox.SelectedValue.ToString() != ElementActionComboBox.SelectionBoxItem.ToString())
-                    {
-                        ResetActUIFields();
-                    }
-                }
-                else
-                    // will reset the action combobox to unknown whenever element type is changes
-                    ElementActionComboBox.SelectedValue = ActUIElement.eElementAction.Unknown;
-            }
-            if (ElementActionComboBox.SelectedValue == null)
+            UIElementActionEditPageFrame.Visibility = Visibility.Collapsed;
+            ResetActUIFields();
+            if (ElementActionComboBox.SelectedItem == null)
             {
                 return;
             }
@@ -195,16 +183,19 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         void ShowControlSpecificPage()
         {
-            if ((mAction.ElementAction == ActUIElement.eElementAction.TableCellAction) || (mAction.ElementAction == ActUIElement.eElementAction.TableRowAction) 
-                || (mAction.ElementAction == ActUIElement.eElementAction.TableAction))
-            {              
+            if ((mAction.ElementAction == ActUIElement.eElementAction.TableCellAction) || 
+                 (mAction.ElementAction == ActUIElement.eElementAction.TableRowAction) ||
+                 (mAction.ElementAction == ActUIElement.eElementAction.TableAction))
+            {
                 if (mAction.ElementType == eElementType.Table)
                 {
                     UIElementActionEditPageFrame.Content = new UIElementTableConfigPage(mAction, mPlatform);
                     UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
                 }
                 else
+                {
                     UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Collapsed;
+                }
             }
             else if (mAction.ElementAction == ActUIElement.eElementAction.ClickAndValidate)
             {
@@ -218,10 +209,15 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 UIElementActionEditPageFrame.Content = new UIElementSendKeysAndValidate(mAction, mPlatform);
                 UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
             }
-            else if ((mAction.ElementAction == ActUIElement.eElementAction.JEditorPaneElementAction))// ||
-               // (mAction.ElementAction == ActUIElement.eElementAction.JEditorPaneElementAction))
+            else if (mAction.ElementAction == ActUIElement.eElementAction.SelectandValidate)
             {
-                UIElementActionEditPageFrame.Content = new UIElementTableConfigPage(mAction, mPlatform);//UIElementJEditorPanePage(mAction, mPlatform);
+                //TODO insert implementation for UIMouseClickAndValidate
+                UIElementActionEditPageFrame.Content = new UIElementSelectAndValidate(mAction, mPlatform);
+                UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
+            }
+            else if ((mAction.ElementAction == ActUIElement.eElementAction.JEditorPaneElementAction))
+            {
+                UIElementActionEditPageFrame.Content = new UIElementTableConfigPage(mAction, mPlatform);
                 UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
             }
             else if(mAction.ElementAction==ActUIElement.eElementAction.DragDrop)
@@ -229,8 +225,25 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 UIElementActionEditPageFrame.Content = new UIElementDragAndDropEditPage(mAction, mPlatform);
                 UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
             }
+            else if ((mAction.Platform == ePlatformType.Java &&
+                       (mAction.ElementAction == ActUIElement.eElementAction.DoubleClick ||
+                       mAction.ElementAction == ActUIElement.eElementAction.WinClick ||
+                       mAction.ElementAction == ActUIElement.eElementAction.MouseClick ||
+                       mAction.ElementAction == ActUIElement.eElementAction.MousePressRelease) &&
+                           (mAction.ElementType == eElementType.RadioButton ||
+                               mAction.ElementType == eElementType.CheckBox ||
+                               mAction.ElementType == eElementType.ComboBox ||
+                               mAction.ElementType == eElementType.Button))
+                      ||
+                      (mAction.Platform == ePlatformType.Web &&
+                       mAction.ElementAction == ActUIElement.eElementAction.ClickXY || mAction.ElementAction == ActUIElement.eElementAction.DoubleClickXY || mAction.ElementAction == ActUIElement.eElementAction.SendKeysXY))
+            {
+                UIElementActionEditPageFrame.Content = new UIElementXYCoordinatePage(mAction);
+                UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
+            }
             else
             {
+
                 List<ElementConfigControl> configControlsList = GetRequiredConfigControls();
                 Page elementEditPage = null;
                 if (configControlsList.Count != 0)
@@ -252,32 +265,38 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         public Page GetConfigPage(List<ElementConfigControl> configControlsList)
         {
-            StackPanel dynamicPanel = new StackPanel { Orientation = Orientation.Horizontal };
+            StackPanel dynamicPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment= HorizontalAlignment.Left, VerticalAlignment= VerticalAlignment.Center };
 
             UserControlsLib.UCComboBox comboBox;
             Label elementLabel;
             Page dynamicPage = new Page();
             foreach (ElementConfigControl element in configControlsList)
             {
-
                 if (element.ControlType == eElementType.ComboBox)
                 {
                     elementLabel = new Label()
                     {
-                        Content = element.Title,
+                        Style = this.FindResource("$LabelStyle") as Style,
+                        Content = element.Title + ":",
                         HorizontalAlignment = HorizontalAlignment.Left,
+                        VerticalAlignment = VerticalAlignment.Center,
                         FontSize = 14
                     };
                     comboBox = new UserControlsLib.UCComboBox()
                     {
                         Name = element.Title,
-                        Width = 590,
-                        Margin = new Thickness(99, 20, 20, 10)
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Width = 600,
+                        Margin = new Thickness(10, 0, 0, 0)
                     };
-
                     comboBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
                     ((Ginger.UserControlsLib.UCComboBox)comboBox).ComboBox.ItemsSource = element.PossibleValues;
-
+                    if (mAction.ElementLocateBy == eLocateBy.POMElement)
+                    {
+                        ((Ginger.UserControlsLib.UCComboBox)comboBox).ComboBox.SelectedValue = element.DefaultValue;
+                        comboBox.ComboBoxObject.Style = this.FindResource("$FlatEditInputComboBoxStyle") as Style;
+                    }                    
                     dynamicPanel.Children.Add(elementLabel);
                     dynamicPanel.Children.Add(comboBox);
                 }
@@ -285,15 +304,19 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 {
                     elementLabel = new Label()
                     {
-                        Content = element.Title,
+                        Style = this.FindResource("$LabelStyle") as Style,
+                        Content = element.Title + ":",
                         HorizontalAlignment = HorizontalAlignment.Left,
-                        FontSize=14
+                        VerticalAlignment = VerticalAlignment.Center,
+                        FontSize =14
                     };
                     Ginger.Actions.UCValueExpression txtBox = new Ginger.Actions.UCValueExpression()
-                    {
+                    {                       
                         Name = element.Title.ToString().Replace(" ", ""),
-                        Width = 590,
-                        Margin = new Thickness(99, 20, 20, 10)
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Width = 600,
+                        Margin = new Thickness(10, 0, 0, 0)
                     };
 
                     txtBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
@@ -305,55 +328,82 @@ namespace Ginger.Actions._Common.ActUIElementLib
             dynamicPage.Content = dynamicPanel;
             return dynamicPage;
         }
-       
+
         public List<ElementConfigControl> GetRequiredConfigControls()
         {
             List<ElementConfigControl> elementList = new List<ElementConfigControl>();
 
-            if (new ActUIElement.eElementAction[] {     ActUIElement.eElementAction.SetValue, ActUIElement.eElementAction.SendKeys, ActUIElement.eElementAction.SetDate,
-                                                        ActUIElement.eElementAction.SendKeyPressRelease, ActUIElement.eElementAction.SetText,
-                                                        ActUIElement.eElementAction.SetSelectedValueByIndex, ActUIElement.eElementAction.Select, ActUIElement.eElementAction.SelectByText,
-                                                        ActUIElement.eElementAction.RunJavaScript}.Contains(mAction.ElementAction))
+            if (new ActUIElement.eElementAction[] {
+                ActUIElement.eElementAction.SetValue,
+                ActUIElement.eElementAction.MultiSetValue,
+                ActUIElement.eElementAction.SendKeys,
+                ActUIElement.eElementAction.SetDate,
+                ActUIElement.eElementAction.SendKeyPressRelease,
+                ActUIElement.eElementAction.SetText,
+                ActUIElement.eElementAction.SelectByText,
+                ActUIElement.eElementAction.GetAttrValue,
+                ActUIElement.eElementAction.RunJavaScript}.Contains(mAction.ElementAction))
             {
-                //if (mAction.ElementType == eElementType.TextBox || mAction.ElementType == eElementType.ComboBox || mAction.ElementType == eElementType.CheckBox ||
-                //    mAction.ElementType == eElementType.Unknown)
-                //{
+                if (mAction.ElementLocateBy == eLocateBy.POMElement && (mAction.ElementAction == ActUIElement.eElementAction.SetValue ||
+                                                                        mAction.ElementAction == ActUIElement.eElementAction.SetText ||
+                                                                        mAction.ElementAction == ActUIElement.eElementAction.SelectByText ||
+                                                                        mAction.ElementAction == ActUIElement.eElementAction.SendKeys))
+                {
+                    elementList.Add(GetPomOptionalValuesComboBox(ActUIElement.Fields.Value, ePomElementValuesType.Values));
+                }
+                else
+                {
                     elementList.Add(new ElementConfigControl()
                     {
-                        Title = "Value", 
+                        Title = "Value",
                         BindedString = ActUIElement.Fields.Value,
                         ControlType = eElementType.TextBox,
                         PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.Value)) ? new List<string>() { "" } :
-                        mAction.GetInputParamValue(ActUIElement.Fields.Value).Split(',').ToList()
-                    });
-                //}
-            }
-            else if ((mAction.ElementAction == ActUIElement.eElementAction.Select))
-            {
-                if (mAction.ElementType != eElementType.RadioButton)
-                {
-                    elementList.Add(new ElementConfigControl()
-                    {
-                        Title = "Value",
-                        BindedString = ActUIElement.Fields.ValueToSelect,
-                        ControlType = eElementType.ComboBox,
-                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "" } :
-                        mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect).Split(',').ToList()
+                                new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.Value) } 
                     });
                 }
             }
-            else if ((mAction.ElementAction == ActUIElement.eElementAction.SelectByIndex))
+            else if (mAction.ElementAction == ActUIElement.eElementAction.Select)
             {
                 if (mAction.ElementType != eElementType.RadioButton)
                 {
-                    elementList.Add(new ElementConfigControl()
+                    if (mAction.ElementLocateBy == eLocateBy.POMElement)
                     {
-                        Title = "Value",
-                        BindedString = ActUIElement.Fields.ValueToSelect,
-                        ControlType = eElementType.ComboBox,
-                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "0", "1", "2", "3" } :
-                        mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect).Split(',').ToList()
-                    });
+                        elementList.Add(GetPomOptionalValuesComboBox(ActUIElement.Fields.ValueToSelect, ePomElementValuesType.Values));
+                    }
+                    else
+                    {
+                        elementList.Add(new ElementConfigControl()
+                        {
+                            Title = "Value",
+                            BindedString = ActUIElement.Fields.ValueToSelect,
+                            ControlType = eElementType.ComboBox,
+                            PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "" } :
+                                        new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) } 
+
+                        });
+                    }
+                }
+            }
+            else if ((mAction.ElementAction == ActUIElement.eElementAction.SelectByIndex || mAction.ElementAction == ActUIElement.eElementAction.SetSelectedValueByIndex))
+            {
+                if (mAction.ElementType != eElementType.RadioButton)
+                {
+                    if (mAction.ElementLocateBy == eLocateBy.POMElement)
+                    {
+                        elementList.Add(GetPomOptionalValuesComboBox(ActUIElement.Fields.ValueToSelect, ePomElementValuesType.Indexs));
+                    }
+                    else
+                    {
+                        elementList.Add(new ElementConfigControl()
+                        {
+                            Title = "Value",
+                            BindedString = ActUIElement.Fields.ValueToSelect,
+                            ControlType = eElementType.ComboBox,
+                            PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" } :
+                                    new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) }
+                        });
+                    }
                 }
             }
             else if ((mAction.ElementAction == ActUIElement.eElementAction.Click))
@@ -366,31 +416,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         BindedString = ActUIElement.Fields.ValueToSelect,
                         ControlType = eElementType.TextBox,
                         PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.Value)) ? new List<string>() { "" } :
-                        mAction.GetInputParamValue(ActUIElement.Fields.Value).Split(',').ToList()
-                    });
-                }
-            }
-            else if ((mAction.ElementAction == ActUIElement.eElementAction.DoubleClick) || (mAction.ElementAction == ActUIElement.eElementAction.WinClick) || (mAction.ElementAction == ActUIElement.eElementAction.MouseClick) ||
-                (mAction.ElementAction == ActUIElement.eElementAction.MousePressRelease))
-            {
-                if (mAction.ElementType == eElementType.RadioButton || mAction.ElementType == eElementType.CheckBox ||
-                mAction.ElementType == eElementType.ComboBox || mAction.ElementType == eElementType.Button)
-                {
-                    elementList.Add(new ElementConfigControl()
-                    {
-                        Title = "XCoordinate",
-                        BindedString = ActUIElement.Fields.XCoordinate,
-                        ControlType = eElementType.TextBox,
-                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.XCoordinate)) ? new List<string>() { "0" } :
-                        mAction.GetInputParamValue(ActUIElement.Fields.XCoordinate).Split(',').ToList()
-                    });
-                    elementList.Add(new ElementConfigControl()
-                    {
-                        Title = "YCoordinate",
-                        BindedString = ActUIElement.Fields.YCoordinate,
-                        ControlType = eElementType.TextBox,
-                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.YCoordinate)) ? new List<string>() { "0" } :
-                        mAction.GetInputParamValue(ActUIElement.Fields.YCoordinate).Split(',').ToList()
+                        new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.Value) }
                     });
                 }
             }
@@ -399,7 +425,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 //TODO: find a better way to bind list of enum with possible values.
                 List<ActUIElement.eElementProperty> propertyList = mPlatform.GetPlatformElementProperties();
                 List<string> propertyListString = new List<string>();
-                foreach(ActUIElement.eElementProperty property in propertyList)
+                foreach (ActUIElement.eElementProperty property in propertyList)
                 {
                     propertyListString.Add(property.ToString());
                 }
@@ -410,9 +436,22 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     BindedString = ActUIElement.Fields.ValueToSelect,
                     ControlType = eElementType.ComboBox,
                     PossibleValues = propertyListString
-                });                
+                });
             }
             return elementList;
+        }
+
+        enum ePomElementValuesType { Values, Indexs}
+        private ElementConfigControl GetPomOptionalValuesComboBox(string Valuefield, ePomElementValuesType valuesType)
+        {
+            ElementConfigControl optionalValuesCombo = new ElementConfigControl();
+            optionalValuesCombo.Title = "Value";
+            optionalValuesCombo.ControlType = eElementType.ComboBox;
+            optionalValuesCombo.BindedString = Valuefield;           
+            optionalValuesCombo.PossibleValues = GetPomElementOptionalValues(valuesType);
+            optionalValuesCombo.DefaultValue = !String.IsNullOrEmpty(mAction.GetInputParamValue(Valuefield)) ?
+                                    mAction.GetInputParamValue(Valuefield) : GetPomElementOptionalValuesDefaultValue(valuesType);           
+            return optionalValuesCombo;
         }
 
         ImageSource GetImageSource(System.Drawing.Image image)
@@ -436,13 +475,27 @@ namespace Ginger.Actions._Common.ActUIElementLib
             switch (SelectedLocType)
             {
                 case eLocateBy.POMElement:                 
-                    ElementTypeComboBox.IsEnabled = false;
-                    return new LocateByPOMElementPage(mAction);
+                    //ElementTypeComboBox.IsEnabled = false;
+                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAction, nameof(ActUIElement.ElementType), mAction, nameof(ActUIElement.ElementLocateValue));
+                    locateByPOMElementPage.ElementChangedPageEvent -= POMElementChanged;
+                    locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
+                    return locateByPOMElementPage;
                 case eLocateBy.ByXY:                   
-                    return new LocateByXYEditPage(mAction);
+                    return new LocateByXYEditPage(mAction, mAction, ActUIElement.Fields.ElementLocateValue);
                 default:                 
-                    return new LocateValueEditPage(mAction);
+                    return new LocateValueEditPage(mAction, ActUIElement.Fields.ElementLocateValue);
             }
+        }
+
+        
+
+        private void POMElementChanged()
+        {
+            if (mExistingPOMAndElementGuidString != mAction.ElementLocateValue)
+            {
+                mAction.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, string.Empty);
+            }
+            ShowControlSpecificPage();
         }
 
         private void UpdateActionInfo(ActUIElement.eElementAction SelectedAction)
@@ -450,56 +503,116 @@ namespace Ginger.Actions._Common.ActUIElementLib
             // TODO - Add case for KeyboardChange event for LocateValue
             // TODO - Add KeyboardChangeEventHandler for LocateValueEditPage
 
-            ActionInfoLabel.Text = string.Empty;
-            TextBlockHelper text = new TextBlockHelper(ActionInfoLabel);
-            
-            ActionInfoLabel.Visibility = Visibility.Visible;
+            xActionInfoLabel.Text = string.Empty;
+            TextBlockHelper text = new TextBlockHelper(xActionInfoLabel);
+
+            xActionInfoLabel.Visibility = Visibility.Visible;
             if (mAction.ElementType.ToString() != null && mAction.ElementType.ToString() != "" && mAction.ElementType != eElementType.Unknown)
-            {
-                text.AddBoldText("Select " + mAction.ElementType.ToString() + " ");
+            {                
+                text.AddBoldText(string.Format("Configured '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
                 if (mAction.ElementLocateBy.ToString() != null && mAction.ElementLocateBy.ToString() != "" && mAction.ElementLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
                 {
-                    text.AddBoldText(mAction.ElementLocateBy.ToString().ToLower());
+                    text.AddBoldText(string.Format(" to be located by '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.ElementLocateBy)));
                 }
                
                 if (SelectedAction.ToString() != null && SelectedAction.ToString() != ActUIElement.eElementAction.Unknown.ToString())
                 {
-                    text.AddUnderLineText(" to perform " + SelectedAction.ToString() + " operation");
+                    text.AddBoldText(string.Format(" to perform '{0}' operation.", GetEnumValueDescription(typeof(ActUIElement.eElementAction), SelectedAction)));
                 }
             }
             else
             {
                 if (mAction.ElementLocateBy.ToString() != null && mAction.ElementLocateBy.ToString() != "" && mAction.ElementLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
-                {
-                    text.AddBoldText("  " + mAction.ElementLocateBy.ToString());
+                {                    
+                    text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.ElementLocateBy)));
                 }
                 if (mAction.TargetLocateBy.ToString() != null && mAction.TargetLocateBy.ToString() != "" && mAction.TargetLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
-                {
-                    text.AddBoldText("  " + mAction.TargetLocateBy.ToString());
+                {                   
+                    text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.TargetLocateBy)));
                 }
                 if (mAction.TargetElementType.ToString() != null && mAction.TargetElementType.ToString() != "" && mAction.TargetElementType.ToString() != ActUIElement.eElementAction.Unknown.ToString())
                 {
                     if (!string.IsNullOrEmpty(text.GetText()))
                     {
-                        text.AddBoldText("  " + mAction.TargetElementType.ToString());
+                        text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.TargetElementType)));
                     }
                     else
-                        text.AddBoldText("  " + mAction.ElementType.ToString());
+                    {                       
+                        text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
+                    }
                 }
                 if (mAction.ElementType.ToString() != null && mAction.ElementType.ToString() != "" && mAction.ElementType.ToString() != ActUIElement.eElementAction.Unknown.ToString())
                 {
-                    if (!string.IsNullOrEmpty(text.GetText()))
-                    {
-                        text.AddBoldText("  " + mAction.ElementType.ToString());
-                    }
-                    else
-                        text.AddBoldText("  " + mAction.ElementType.ToString());
+                    text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
                 }
                 if (SelectedAction.ToString() != null && SelectedAction.ToString() != "" && SelectedAction != ActUIElement.eElementAction.Unknown)
-                {
-                    text.AddUnderLineText("  " + SelectedAction.ToString() + " operation");
+                {                    
+                    text.AddBoldText(string.Format(" '{0}' operation", GetEnumValueDescription(typeof(ActUIElement.eElementAction), SelectedAction)));
                 }
             }
-        }        
+        }
+
+        /// <summary>
+        /// This method is used to get the current selected POM
+        /// </summary>
+        /// <returns></returns>
+        private ElementInfo GetElementInfoFromCurerentPOMSelected()
+        {
+            ElementInfo selectedPOMElement = null;
+            mExistingPOMAndElementGuidString = mAction.ElementLocateValue;
+            string[] pOMandElementGUIDs = mAction.ElementLocateValue.Split('_');
+            Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
+            ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+            if (currentPOM != null)
+            {
+                Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
+                selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+            }
+            return selectedPOMElement;
+        }
+
+        /// <summary>
+        /// This method is used to get the POM element Optional values
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetPomElementOptionalValues(ePomElementValuesType valuesType)
+        {
+            List<string> optionalValues = new List<string>();
+            ElementInfo selectedPOMElement = GetElementInfoFromCurerentPOMSelected();
+            if (selectedPOMElement != null && selectedPOMElement.OptionalValuesObjectsList.Count > 0)       
+            {
+                if (valuesType == ePomElementValuesType.Values)
+                {
+                    optionalValues = selectedPOMElement.OptionalValuesObjectsList.Select(s => s.Value).ToList();
+                }
+                else
+                {
+                    optionalValues = selectedPOMElement.OptionalValuesObjectsList.Select(s => selectedPOMElement.OptionalValuesObjectsList.IndexOf(s).ToString()).ToList();
+                }
+            }
+            return optionalValues;
+        }
+
+        private string GetPomElementOptionalValuesDefaultValue(ePomElementValuesType valuesType)
+        {
+            string defaultValue = string.Empty;
+            ElementInfo selectedPOMElement = GetElementInfoFromCurerentPOMSelected();
+            if (selectedPOMElement != null && selectedPOMElement.OptionalValuesObjectsList.Count > 0)        //For new implementation
+            {
+                OptionalValue defValue = selectedPOMElement.OptionalValuesObjectsList.Where(s => s.IsDefault == true).FirstOrDefault();
+                if (defValue != null)
+                {
+                    if (valuesType == ePomElementValuesType.Values)
+                    {
+                        defaultValue = defValue.Value;
+                    }
+                    else
+                    {
+                        defaultValue = selectedPOMElement.OptionalValuesObjectsList.IndexOf(defValue).ToString();
+                    }
+                }
+            }
+            return defaultValue;
+        }
     }
 }

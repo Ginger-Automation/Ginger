@@ -68,8 +68,8 @@ namespace Ginger.Repository
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
-            viewCols.Add(new GridColView() { Field = VariableBase.Fields.Name, WidthWeight = 50, AllowSorting = true });
-            viewCols.Add(new GridColView() { Field = VariableBase.Fields.Description, WidthWeight = 35, AllowSorting = true });
+            viewCols.Add(new GridColView() { Field = nameof(VariableBase.Name), WidthWeight = 50, AllowSorting = true });
+            viewCols.Add(new GridColView() { Field = nameof(VariableBase.Description), WidthWeight = 35, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = "Inst.", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ViewInstancesButton"] });           
             xVariablesGrid.SetAllColumnsDefaultView(view);
             xVariablesGrid.InitViewItems();
@@ -104,7 +104,7 @@ namespace Ginger.Repository
                 }
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
 
         private void EditVar(object sender, RoutedEventArgs e)
@@ -120,7 +120,7 @@ namespace Ginger.Repository
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.AskToSelectVariable);
+                Reporter.ToUser(eUserMsgKey.AskToSelectVariable);
             }
         }
 
@@ -132,7 +132,7 @@ namespace Ginger.Repository
                 usagePage.ShowAsWindow();
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
 
         private void grdVariables_PreviewDragItem(object sender, EventArgs e)
@@ -160,7 +160,7 @@ namespace Ginger.Repository
                     if (dragedItemInGrid != null)
                         xVariablesGrid.Grid.SelectedItem = dragedItemInGrid;
                 }
-                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }
         }
 

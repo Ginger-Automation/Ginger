@@ -28,6 +28,7 @@ using Ginger.Actions;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using GingerPlugIns.TextEditorLib;
 using Amdocs.Ginger.Plugin.Core;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -78,7 +79,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                     closestpos = i1;
                     break;
                 }
-                if (c == "}" && i1 != SelectedContentArgs.TextEditor.CaretOffset)  // we stop if we found } - except for the first char - in case the usr click on the closing } of exp
+                if (c == "}" && i1 != SelectedContentArgs.TextEditor.CaretOffset)  // we stop if we found } - except for the first char - in case the user click on the closing } of exp
                 {                    
                     break;
                 }
@@ -121,7 +122,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
         void AddVars(List<ICompletionData> list)
         {            
-            foreach (VariableBase v in App.UserProfile.Solution.Variables)
+            foreach (VariableBase v in  WorkSpace.UserProfile.Solution.Variables)
             {
                 list.Add(GETVariableTCD(v));
             }

@@ -83,7 +83,7 @@
                         
                         <UserControls:ImageMakerControl Grid.Column="3" ImageType="{Binding StatusIcon}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 
-                        <TextBlock Grid.Column="4" VerticalAlignment="Center" Text="{Binding Elapsed}" ToolTip="Elapsed milliseonds" HorizontalAlignment="Right" Foreground="Black"/>
+                        <TextBlock Grid.Column="4" VerticalAlignment="Center" Text="{Binding Elapsed}" ToolTip="Elapsed milliseconds" HorizontalAlignment="Right" Foreground="Black"/>
                         <TextBlock Grid.Column="5" VerticalAlignment="Center" Text="{Binding Error}" Foreground="Black"/>
                         
                         
