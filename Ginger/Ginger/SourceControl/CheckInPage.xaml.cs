@@ -105,17 +105,17 @@ namespace Ginger.SourceControl
                    
               
                     mFiles = SourceControlIntegration.GetPathFilesStatus( WorkSpace.UserProfile.Solution.SourceControl, mPath);
-                //set items name and type
-                Parallel.ForEach(mFiles, SCFI =>
+                    //set items name and type
+                    Parallel.ForEach(mFiles, SCFI =>
                      {
                          try
                          {
-                             if (SCFI.Path.ToUpper().Contains(".GINGER.") && SCFI.Path.ToUpper().Contains(".XML"))
+                             if (SCFI.Path.ToUpper().Contains(".GINGER.") && SCFI.Path.ToUpper().Contains(".XML") && SCFI.Status != SourceControlFileInfo.eRepositoryItemStatus.Deleted)
                              {
-                                 NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
-                                 //unserialize the item
-                                 RepositoryItemBase item = newRepositorySerializer.DeserializeFromFile(SCFI.Path);
-                                 SCFI.Name = item.ItemName;
+                                     NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+                                     //unserialize the item
+                                     RepositoryItemBase item = newRepositorySerializer.DeserializeFromFile(SCFI.Path);
+                                     SCFI.Name = item.ItemName;
                              }
                              else
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
