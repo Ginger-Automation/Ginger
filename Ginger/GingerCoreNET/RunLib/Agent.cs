@@ -386,6 +386,10 @@ namespace GingerCore
                 ProjEnvironment = new Environments.ProjEnvironment();//to avoid value expertion exception
             if (BusinessFlow == null)
                 BusinessFlow = new GingerCore.BusinessFlow();//to avoid value expertion exception
+
+            Type driverType = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
+            SetDriverMissingParams(driverType);
+
             foreach (DriverConfigParam DCP in DriverConfiguration)
             {
                 //process Value expression in case used
@@ -452,6 +456,36 @@ namespace GingerCore
           
         }
 
+        private DriverConfigParam ReturnDriverConfigParams(MemberInfo mi)
+        {
+            UserConfiguredDefaultAttribute defaultVal = Attribute.GetCustomAttribute(mi, typeof(UserConfiguredDefaultAttribute), false) as UserConfiguredDefaultAttribute;
+            UserConfiguredDescriptionAttribute desc = Attribute.GetCustomAttribute(mi, typeof(UserConfiguredDescriptionAttribute), false) as UserConfiguredDescriptionAttribute;
+
+            DriverConfigParam DCP = new DriverConfigParam();
+            DCP.Parameter = mi.Name;
+            if (defaultVal != null) DCP.Value = defaultVal.DefaultValue;
+            if (desc != null) DCP.Description = desc.Description;
+
+            return DCP;
+        }
+        private void SetDriverMissingParams(Type t)
+        {
+            MemberInfo[] members = t.GetMembers();
+            UserConfiguredAttribute token = null;
+
+            foreach (MemberInfo mi in members)
+            {
+                token = Attribute.GetCustomAttribute(mi, typeof(UserConfiguredAttribute), false) as UserConfiguredAttribute;
+
+                if (token == null)
+                    continue;
+                DriverConfigParam configParam = ReturnDriverConfigParams(mi);
+
+                if(DriverConfiguration.Where(x=> x.Parameter == configParam.Parameter).FirstOrDefault()==null)
+                DriverConfiguration.Add(configParam);
+            }
+        }
+
         private void SetDriverDefualtParams(Type t)
         {
             MemberInfo[] members = t.GetMembers();
@@ -463,16 +497,12 @@ namespace GingerCore
 
                 if (token == null)
                     continue;
+                DriverConfigParam configParam= ReturnDriverConfigParams(mi);
 
-                UserConfiguredDefaultAttribute defaultVal = Attribute.GetCustomAttribute(mi, typeof(UserConfiguredDefaultAttribute), false) as UserConfiguredDefaultAttribute;
-                UserConfiguredDescriptionAttribute desc = Attribute.GetCustomAttribute(mi, typeof(UserConfiguredDescriptionAttribute), false) as UserConfiguredDescriptionAttribute;
 
-                DriverConfigParam DCP = new DriverConfigParam();
-                DCP.Parameter = mi.Name;
-                if (defaultVal != null) DCP.Value = defaultVal.DefaultValue;
-                if (desc != null) DCP.Description = desc.Description;
-                DriverConfiguration.Add(DCP);
+                DriverConfiguration.Add(configParam);
             }
+
         }
        
         // keep GingerNodeProxy here
