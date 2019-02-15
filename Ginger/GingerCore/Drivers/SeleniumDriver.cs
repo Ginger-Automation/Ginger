@@ -3639,18 +3639,8 @@ namespace GingerCore.Drivers
                 list = GingerCore.General.ConvertObservableListToList<ElementInfo>((GetAllElementsFromPage("", filteredElementType, foundElementsList, learnFullElementInfoDetails)));
                 allReadElem.Clear();
                 CurrentFrame = "";
-
-                try
-                {
-                    Thread.Sleep(5000);
-                    Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
-                    Driver.SwitchTo().DefaultContent();
-                }
-                catch
-                {
-                }
-
-
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
+                Driver.SwitchTo().DefaultContent();
                 return list;
             }
             finally
