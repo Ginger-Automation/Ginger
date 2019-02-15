@@ -79,7 +79,6 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
         public Int32 WaitTime
         {
             get
