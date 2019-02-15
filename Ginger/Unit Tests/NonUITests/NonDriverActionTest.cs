@@ -11,6 +11,7 @@ using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions.XML;
 using GingerCore.Platforms;
+using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
@@ -65,12 +66,18 @@ namespace UnitTests.NonUITests
             action.GetOrCreateInputParam(ActXMLProcessing.Fields.TargetFileName, targetFile);
             action.TargetFileName.ValueForDriver = targetFile;
 
+            VariableString stringVar = new VariableString();
+            stringVar.Name = "env";
+            stringVar.Value = "xyz";
+
+            mBF.CurrentActivity.AddVariable(stringVar);
+
             ObservableList<ActInputValue> paramList = new ObservableList<ActInputValue>();
-            paramList.Add(new ActInputValue() { Param = "PAR_ENV", Value = "localhost:8091" });
-            paramList.Add(new ActInputValue() { Param = "PAR_USER", Value = "Administrator" });
-            paramList.Add(new ActInputValue() { Param = "PAR_PASS", Value = "nikolas222" });
-            paramList.Add(new ActInputValue() { Param = "PAR_BUCKET", Value = "travel-sample" });
-            paramList.Add(new ActInputValue() { Param = "PAR_QUERY", Value = "Select * from 'travel-sample' where type='hotel' limit 1" });
+            paramList.Add(new ActInputValue() { Param = "PAR_ENV", Value = "{Var Name=env}" });
+            paramList.Add(new ActInputValue() { Param = "PAR_USER", Value = "abc" });
+            paramList.Add(new ActInputValue() { Param = "PAR_PASS", Value = "abc123" });
+            paramList.Add(new ActInputValue() { Param = "PAR_BUCKET", Value = "pqrst" });
+            paramList.Add(new ActInputValue() { Param = "PAR_QUERY", Value = "test1234" });
 
             action.DynamicElements = paramList;
             action.Active = true;
@@ -84,6 +91,7 @@ namespace UnitTests.NonUITests
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
             Assert.AreEqual(7, action.ReturnValues.Count);
+            Assert.AreEqual("xyz", action.ReturnValues[0].Actual);
             Assert.AreEqual(action.Error, null, "Act.Error");
         }
     }
