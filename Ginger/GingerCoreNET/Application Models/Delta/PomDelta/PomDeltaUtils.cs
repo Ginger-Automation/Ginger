@@ -185,6 +185,7 @@ namespace GingerCoreNET.Application_Models
                         //fiting previous learned Xpath to latest structure to avoid false change indication
                         if (matchingExistingLocator.LocateValue.StartsWith("/") == false)
                         {
+                            string updatedXpath = string.Empty;
                             string[] xpathVals = matchingExistingLocator.LocateValue.Split(new char[] { '/' });
                             for (int indx = 0; indx < xpathVals.Count(); indx++)
                             {
@@ -192,8 +193,10 @@ namespace GingerCoreNET.Application_Models
                                 {
                                     xpathVals[0] = xpathVals[0] + "[1]";
                                 }
-                                matchingExistingLocator.LocateValue = "/" + xpathVals[indx];
+                                updatedXpath += "/" + xpathVals[indx];
                             }
+
+                            matchingExistingLocator.LocateValue = updatedXpath;
                         }
                     }
                     //compare value
@@ -236,21 +239,20 @@ namespace GingerCoreNET.Application_Models
             }
             if (KeepOriginalLocatorsOrderAndActivation == true)
             {
-                //re-arrange Locators as in original item
-                foreach (ElementLocator locator in latestElement.Locators)
+                foreach (ElementLocator originalLocator in existingElement.Locators)
                 {
-                    ElementLocator originalLocator = existingElement.Locators.Where(x => x.Guid == locator.Guid).FirstOrDefault();
+                    ElementLocator latestLocator = latestElement.Locators.Where(x => x.Guid == originalLocator.Guid).FirstOrDefault();
 
-                    if (originalLocator != null)
+                    if (latestLocator != null)
                     {
-                        locator.Active = originalLocator.Active;
+                        latestLocator.Active = originalLocator.Active;
                         int originalIndex = existingElement.Locators.IndexOf(originalLocator);
                         if (originalIndex <= latestElement.Locators.Count)
                         {
-                            latestElement.Locators.Move(latestElement.Locators.IndexOf(locator), originalIndex);
-                            matchedDeltaElement.Locators.Move(matchedDeltaElement.Locators.IndexOf(matchedDeltaElement.Locators.Where(x=>x.ElementLocator == locator).First()), originalIndex);
-                        }                        
-                    }                   
+                            latestElement.Locators.Move(latestElement.Locators.IndexOf(latestLocator), originalIndex);
+                            matchedDeltaElement.Locators.Move(matchedDeltaElement.Locators.IndexOf(matchedDeltaElement.Locators.Where(x => x.ElementLocator == latestLocator).First()), originalIndex);
+                        }
+                    }
                 }
             }
 
@@ -333,9 +335,9 @@ namespace GingerCoreNET.Application_Models
             {
                 matchedDeltaElement.DeltaStatus = eDeltaStatus.Unchanged;
                 matchedDeltaElement.IsSelected = false;
-                List<DeltaElementLocator> minorLocatorsChangesList = matchedDeltaElement.Locators.Where(x => x.DeltaStatus != eDeltaStatus.Changed && x.DeltaStatus != eDeltaStatus.Deleted).ToList();
-                List<DeltaControlProperty> minorPropertiesChangesList = matchedDeltaElement.Properties.Where(x => x.DeltaStatus != eDeltaStatus.Changed && x.DeltaStatus != eDeltaStatus.Deleted).ToList();
-                if (modifiedLocatorsList.Count > 0 || modifiedPropertiesList.Count > 0)
+                List<DeltaElementLocator> minorLocatorsChangesList = matchedDeltaElement.Locators.Where(x => x.DeltaStatus == eDeltaStatus.Avoided || x.DeltaStatus == eDeltaStatus.Added || x.DeltaStatus == eDeltaStatus.Unknown).ToList();
+                List<DeltaControlProperty> minorPropertiesChangesList = matchedDeltaElement.Properties.Where(x => x.DeltaStatus == eDeltaStatus.Avoided || x.DeltaStatus == eDeltaStatus.Added || x.DeltaStatus == eDeltaStatus.Unknown).ToList();
+                if (minorLocatorsChangesList.Count > 0 || minorPropertiesChangesList.Count > 0)
                 {
                     matchedDeltaElement.DeltaExtraDetails = "Unimportant differences exists";
                 }
