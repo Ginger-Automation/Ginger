@@ -501,11 +501,8 @@
     <Compile Include="Actions\JSON\ActJSONTagValidation.cs" />
     <Compile Include="Actions\VisualTesting\ApplitoolsAnalyzer.cs" />
     <Compile Include="Actions\VisualTesting\IVisualAnalyzer.cs" />
-    <Compile Include="Actions\VisualTesting\IVisualTestingDriver.cs" />
     <Compile Include="Actions\VisualTesting\MagickAnalyzer.cs" />
     <Compile Include="Actions\VisualTesting\UIElementsAnalyzer.cs" />
-    <Compile Include="Actions\VisualTesting\VisualElement.cs" />
-    <Compile Include="Actions\VisualTesting\VisualElementsInfo.cs" />
     <Compile Include="Actions\WebServices\ActSoapUI.cs" />
     <Compile Include="Actions\ActFileOperations.cs" />
     <Compile Include="Actions\ActReadTextFile.cs" />
