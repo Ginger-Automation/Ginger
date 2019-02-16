@@ -233,7 +233,10 @@ namespace GingerCoreNET.Application_Models
                 {
                     deltaLocator.DeltaStatus = eDeltaStatus.Avoided;
                     deltaLocator.DeltaExtraDetails = "Customized locator not exist on latest";
-                    latestElement.Locators.Add(notLearedLocator);
+                    if (KeepOriginalLocatorsOrderAndActivation == true)
+                    {
+                        latestElement.Locators.Add(notLearedLocator);
+                    }
                 }
                 matchedDeltaElement.Locators.Add(deltaLocator);
             }

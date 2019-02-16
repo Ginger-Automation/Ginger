@@ -270,7 +270,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaControlProperty.Name), WidthWeight = 150, ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaControlProperty.Value), WidthWeight = 250, ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaControlProperty.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaControlProperty.DeltaExtraDetails), Header = "Comparison Details", WidthWeight = 250, AllowSorting = true, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaControlProperty.DeltaExtraDetails), Header = "Comparison Details", WidthWeight = 300, AllowSorting = true, ReadOnly = true });
             xPropertiesGrid.SetAllColumnsDefaultView(view);
             xPropertiesGrid.InitViewItems();
             xPropertiesGrid.SetTitleLightStyle = true;
@@ -292,17 +292,17 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     string title;
                     if (mSelectedElement.ElementName.Length > 100)
                     {
-                        title = string.Format("'{0}...' Details", mSelectedElement.ElementName.Substring(0, 25));
+                        title = string.Format("'{0}...' Comparison Details", mSelectedElement.ElementName.Substring(0, 25));
                     }
                     else
                     {
-                        title = string.Format("'{0}' Details", mSelectedElement.ElementName);
+                        title = string.Format("'{0}' Comparison Details", mSelectedElement.ElementName);
                     }
                     xDetailsExpanderLabel.Content = title;
                 }
                 else
                 {
-                    xDetailsExpanderLabel.Content = "Element Details";
+                    xDetailsExpanderLabel.Content = "Element Comparison Details";
                 }
 
                 mSelectedElement.Locators.CollectionChanged -= Locators_CollectionChanged;
@@ -324,7 +324,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void DisableDetailsExpander()
         {
-            xDetailsExpanderLabel.Content = "Element Details";
+            xDetailsExpanderLabel.Content = "Element Comparison Details";
             xDetailsExpander.IsEnabled = false;
             xDetailsExpander.IsExpanded = false;
         }
@@ -363,7 +363,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedLocator != null)
             {
+                bool originalActiveVal = mSelectedLocator.ElementLocator.Active;
+                mSelectedLocator.ElementLocator.Active = true;//so it will be tested even if disabeled 
                 mWinExplorer.TestElementLocators(new ElementInfo() { Path = CurrentEI.ElementInfo.Path, Locators = new ObservableList<ElementLocator>() { mSelectedLocator.ElementLocator } });
+                mSelectedLocator.ElementLocator.Active = originalActiveVal;
             }
         }
 

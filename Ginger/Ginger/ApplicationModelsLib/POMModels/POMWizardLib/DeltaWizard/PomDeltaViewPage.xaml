@@ -76,7 +76,7 @@
 
         <Expander x:Name="xDetailsExpander" Grid.Row="1" ExpandDirection="Down" Expanded="DetailsGrid_Expanded" IsExpanded="False" IsEnabled="False" Collapsed="DetailsGrid_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
             <Expander.Header>
-                <Label x:Name="xDetailsExpanderLabel" Content="Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" />
+                <Label x:Name="xDetailsExpanderLabel" Content="Element Comparison Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" />
             </Expander.Header>
             <Expander.Content>
                 <Grid>
