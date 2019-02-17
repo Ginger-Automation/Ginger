@@ -58,7 +58,7 @@ namespace GingerCoreNET.Application_Models
                 POMElementsCopy.Clear();
                 DeltaViewElements.Clear();
                 PomLearnUtils.PrepareLearningConfigurations();
-
+                PomLearnUtils.LearnScreenShot();//this will set screen size to be same as in learning time
                 PrepareCurrentPOMElementsData();
                 mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements, true);
                 SetUnidentifiedElementsDeltaDetails();
@@ -304,13 +304,22 @@ namespace GingerCoreNET.Application_Models
                 matchedDeltaElement.Properties.Add(deltaProperty);
             }
             //deleted Properties
-            List<ControlProperty> deletedProperties = existingElement.Properties.Where(x => matchedDeltaElement.Properties.Where(y => y.ElementProperty.Guid == x.Guid).FirstOrDefault() == null).ToList();
+            List<ControlProperty> deletedProperties = existingElement.Properties.Where(x => latestElement.Properties.Where(y => y.Name == x.Name).FirstOrDefault() == null).ToList();
             foreach (ControlProperty deletedProperty in deletedProperties)
             {
                 DeltaControlProperty deltaProp = new DeltaControlProperty();
                 deltaProp.ElementProperty = deletedProperty;
-                deltaProp.DeltaStatus = eDeltaStatus.Deleted;
-                deltaProp.DeltaExtraDetails = "Property not exist on latest";
+                if (PropertiesChangesToAvoid == DeltaControlProperty.ePropertiesChangesToAvoid.None
+                            || (PropertiesChangesToAvoid == DeltaControlProperty.ePropertiesChangesToAvoid.OnlySizeAndLocationProperties && mVisualPropertiesList.Contains(deletedProperty.Name) == false))
+                {
+                    deltaProp.DeltaStatus = eDeltaStatus.Deleted;
+                    deltaProp.DeltaExtraDetails = "Property not exist on latest";
+                }
+                else
+                {
+                    deltaProp.DeltaStatus = eDeltaStatus.Avoided;
+                    deltaProp.DeltaExtraDetails = "Property not exist on latest but avoided";
+                }
                 matchedDeltaElement.Properties.Add(deltaProp);
             }
 

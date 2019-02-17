@@ -2756,7 +2756,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return null;
         }
 
-        public Bitmap GetScreenShot()
+        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null)
         {
             return GetWindowScreenShot();
         }
