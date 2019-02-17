@@ -166,7 +166,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public static BusinessFlow Businessflow { get;  set; }
+        public BusinessFlow BusinessFlowInContext { get;  set; }
 
         public static bool RunningInExecutionMode = false;
 

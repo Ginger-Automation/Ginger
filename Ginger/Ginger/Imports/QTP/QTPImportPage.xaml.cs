@@ -399,7 +399,7 @@ namespace Ginger.Imports.QTP
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
             mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
-            App.BusinessFlow = mBusinessFlow;
+            //App.BusinessFlow = mBusinessFlow;
            
             AddActionPage addAction = new AddActionPage();
             addAction.ShowAsWindow(ActionsList);

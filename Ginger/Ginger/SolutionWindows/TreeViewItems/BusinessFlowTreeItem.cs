@@ -147,20 +147,20 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         }
         
-        public override void PostDeleteTreeItemHandler()
-        {
-            if (App.BusinessFlow == mBusinessFlow)
-            {
-                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Count != 0)
-                {
-                    App.BusinessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()[0];
-                }
-                else
-                {
-                    App.BusinessFlow = null;
-                }
-            }
-        }
+        //public override void PostDeleteTreeItemHandler()
+        //{
+        //    if (App.BusinessFlow == mBusinessFlow)
+        //    {
+        //        if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Count != 0)
+        //        {
+        //            App.BusinessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()[0];
+        //        }
+        //        else
+        //        {
+        //            App.BusinessFlow = null;
+        //        }
+        //    }
+        //}
 
         private void Automate(object sender, System.Windows.RoutedEventArgs e)
         {

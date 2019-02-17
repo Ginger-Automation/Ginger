@@ -267,49 +267,49 @@ namespace Ginger
         public static ucGrid ActionsGrid { get; set; }
 
 
-        public static BusinessFlow LastBusinessFlow { get; set; }
-        private static BusinessFlow mBusinessFlow
-        {
-            get
-            {
-                return(BusinessFlow) WorkSpace.Businessflow;
-            }
-            set
-            {
-                WorkSpace.Businessflow = value;
-            }
-        }
-        public static BusinessFlow BusinessFlow
-        {
-            get { return mBusinessFlow; }
-            set
-            {
-                LastBusinessFlow = mBusinessFlow;
-                mBusinessFlow = value;
+       
+        //private static BusinessFlow mBusinessFlow
+        //{
+        //    get
+        //    {
+        //        return(BusinessFlow) WorkSpace.Businessflow;
+        //    }
+        //    set
+        //    {
+        //        WorkSpace.Businessflow = value;
+        //    }
+        //}
+        //public static BusinessFlow BusinessFlow
+        //{
+        //    get { return mBusinessFlow; }
+        //    set
+        //    {
+                
+        //        mBusinessFlow = value;
 
-                if (value != null)
-                {
-                    if (mBusinessFlow.Activities.Count > 0)
-                    {
-                        mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
-                    }
-                    //WorkSpace.UserProfile.RecentBusinessFlow = App.BusinessFlow.Guid;
-                    //WorkSpace.UserProfile.Solution.LastBusinessFlowFileName = mBusinessFlow.FileName;
-                    //AddLastUsedBusinessFlow(mBusinessFlow);
-                }
+        //        if (value != null)
+        //        {
+        //            if (mBusinessFlow.Activities.Count > 0)
+        //            {
+        //                mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
+        //            }
+        //            //WorkSpace.UserProfile.RecentBusinessFlow = App.BusinessFlow.Guid;
+        //            //WorkSpace.UserProfile.Solution.LastBusinessFlowFileName = mBusinessFlow.FileName;
+        //            //AddLastUsedBusinessFlow(mBusinessFlow);
+        //        }
 
-                //Set Business Flow on AutomateTabGingerRunner
-                App.AutomateTabGingerRunner.BusinessFlows.Clear();
-                if (App.BusinessFlow != null)
-                {
-                    App.AutomateTabGingerRunner.BusinessFlows.Add(App.BusinessFlow);
-                }
-                App.AutomateTabGingerRunner.CurrentBusinessFlow = App.BusinessFlow;
-                UpdateApplicationsAgentsMapping();
+        //        //Set Business Flow on AutomateTabGingerRunner
+        //        App.AutomateTabGingerRunner.BusinessFlows.Clear();
+        //        if (App.BusinessFlow != null)
+        //        {
+        //            App.AutomateTabGingerRunner.BusinessFlows.Add(App.BusinessFlow);
+        //        }
+        //        App.AutomateTabGingerRunner.CurrentBusinessFlow = App.BusinessFlow;
+        //        UpdateApplicationsAgentsMapping();
 
-                OnPropertyChanged(nameof(BusinessFlow));
-            }
-        }
+        //        OnPropertyChanged(nameof(BusinessFlow));
+        //    }
+        //}
 
         //private static void AddLastUsedBusinessFlow(BusinessFlow BF)
         //{
@@ -1042,39 +1042,7 @@ namespace Ginger
                 return null;
         }
 
-        public static void UpdateApplicationsAgentsMapping(bool useAgentsCache = true)
-        {
-            if ( WorkSpace.UserProfile.Solution != null && App.BusinessFlow != null)
-            {
-                //First we check if biz flow have target apps if not add one based on solution, fast convert for old or deleted
-                if (App.BusinessFlow.TargetApplications.Count() == 0)
-                {
-                    if (string.IsNullOrEmpty( WorkSpace.UserProfile.Solution.MainApplication))
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You must have at least one Target Application configured, please set it up.");
-                        return;
-                    }
-                    else
-                    {
-                        // take it from solution main platform
-                        if (App.BusinessFlow.TargetApplications == null)
-                            App.BusinessFlow.TargetApplications = new ObservableList<TargetBase>();
-
-                        App.BusinessFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.UserProfile.Solution.MainApplication });
-                    }
-                }
-            }
-
-            if (WorkSpace.UserProfile.Solution != null)
-            {
-                App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-            }
-            else
-            {
-                App.AutomateTabGingerRunner.SolutionAgents = null;
-            }
-            App.AutomateTabGingerRunner.UpdateApplicationAgents();
-        }
+        
 
         //public static void AddItemToSaveAll(RepositoryItemBase itemToSave =null)
         //{
@@ -1152,14 +1120,14 @@ namespace Ginger
             }
         }
 
-        private static void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
-        {
-            if (args.EventType == AutomateEventArgs.eEventType.Automate)
-            {
-                App.BusinessFlow = (BusinessFlow)args.Object;
-                App.BusinessFlow.SaveBackup();
-            }
-        }
+        //private static void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
+        //{
+        //    if (args.EventType == AutomateEventArgs.eEventType.Automate)
+        //    {
+        //        App.BusinessFlow = (BusinessFlow)args.Object;
+        //        App.BusinessFlow.SaveBackup();
+        //    }
+        //}
 
         
 

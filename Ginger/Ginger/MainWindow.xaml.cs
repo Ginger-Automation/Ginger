@@ -312,7 +312,7 @@ namespace Ginger
                 else
                 {
                     xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
-                    App.LastBusinessFlow = null;
+                   
                     GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
                     GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
                     xSolutionTabsListView.SelectedItem = null;
@@ -742,8 +742,8 @@ namespace Ginger
             {
                 //TODO: load Business Flows tab
                 xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
-                App.BusinessFlow = (BusinessFlow)args.Object;
-                App.BusinessFlow.SaveBackup();
+                //App.BusinessFlow = (BusinessFlow)args.Object;
+                //App.BusinessFlow.SaveBackup();
             }
         }
 
