@@ -189,7 +189,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
             mWinExplorer.UnHighLightElements();
-            Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mAgent.Driver).GetScreenShot();
+            Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mAgent.Driver).GetScreenShot(new Tuple<int,int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
             mPOM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShotBitmap);
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
             xScreenShotFrame.Content = mScreenShotViewPage;

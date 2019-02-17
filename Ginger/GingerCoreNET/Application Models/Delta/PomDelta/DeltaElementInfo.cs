@@ -18,6 +18,8 @@ namespace GingerCoreNET.Application_Models
 
         public eElementType ElementTypeEnum { get { return ElementInfo.ElementTypeEnum; } }
 
+        public eImageType ElementTypeImage { get { return ElementInfo.ElementTypeImage; } }
+
         public ElementInfo.eElementStatus ElementStatus { get { return ElementInfo.ElementStatus; } }
 
         public eImageType StatusIcon { get { return ElementInfo.StatusIcon; } }

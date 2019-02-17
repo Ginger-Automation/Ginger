@@ -6321,7 +6321,7 @@ namespace GingerCore.Drivers
         public Bitmap GetScreenShot()
         {
             try
-            {
+            {                
                 Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
                 using (var ms = new MemoryStream(ss.AsByteArray))
                 {
@@ -6342,8 +6342,26 @@ namespace GingerCore.Drivers
             }
         }
 
-        Bitmap IVisualTestingDriver.GetScreenShot()
+        Bitmap IVisualTestingDriver.GetScreenShot(Tuple<int, int> setScreenSize = null)
         {
+            if (setScreenSize != null)
+            {
+                try
+                {
+                    //Driver.Manage().Window.Position = new System.Drawing.Point(0, 0);
+                    //System.Drawing.Size originalSize = Driver.Manage().Window.Size;
+                    Driver.Manage().Window.Size = new System.Drawing.Size(setScreenSize.Item1, setScreenSize.Item2);
+                    //Bitmap screenShot = GetScreenShot();
+                    //Driver.Manage().Window.Size = originalSize;
+                    //return screenShot;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to set browser screen size before taking screen shot", ex);
+                    return GetScreenShot();
+                }
+            }
+
             return GetScreenShot();
         }
 

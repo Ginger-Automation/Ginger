@@ -1569,7 +1569,7 @@ namespace GingerCore.Drivers.AndroidADB
         
         }
 
-        Bitmap IVisualTestingDriver.GetScreenShot()
+        Bitmap IVisualTestingDriver.GetScreenShot(Tuple<int, int> setScreenSize = null)
         {
             return GetScreenShot();
         }
