@@ -31,7 +31,6 @@ namespace Ginger.Reports
 {
     public class HTMLReportConfiguration : RepositoryItemBase, IHTMLReportConfiguration
     {        
-
         public  static partial class Fields
         {
             public static string ID = "ID";
@@ -155,7 +154,25 @@ namespace Ginger.Reports
                 Name = value;
             }
         }
+        public HTMLReportConfiguration()
+        {
 
+        }
+        public HTMLReportConfiguration(string name = "", bool isRunWithFlowOnly = false)
+        {
+            int configID = 1;
+            if (!isRunWithFlowOnly)
+            {
+                configID = SetReportTemplateSequence(true);
+                this.ID = configID;
+                if (Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations().Count == 0)
+                    this.IsDefault = true;
+                else
+                    this.IsDefault = false;
+            }
+            this.Name = SetReportTempalteName(name, configID);
+            SetHTMLReportConfigurationWithDefaultValues(this);
+        }
         internal void Save()
         {
             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -177,62 +194,44 @@ namespace Ginger.Reports
                 return nameof(this.Name);
             }
         }
-
-        public static HTMLReportConfiguration SetHTMLReportConfigurationWithDefaultValues(string name = null, bool RunStandalon = false)
+        public int SetReportTemplateSequence(bool isAddTemplate)
         {
-            int ConfigID = 1;
-            HTMLReportConfiguration newHTMLReportConfiguration = new HTMLReportConfiguration();
-            if (!RunStandalon)
+            if(isAddTemplate)
             {
-                if (WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq == 0)
-                {
-                    WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = 1;
-                }
-                else
-                {
-                    WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
-                }
-                newHTMLReportConfiguration = new HTMLReportConfiguration();
-                ConfigID = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq;
-                newHTMLReportConfiguration.ID = ConfigID;
-            }
-
-            if ((name != null) && (name != string.Empty))
-            {
-                newHTMLReportConfiguration.Name = name;
+                return WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
             }
             else
             {
-                newHTMLReportConfiguration.Name = "Template #" + ConfigID;
+                return WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq - 1;
             }
-
-
-            newHTMLReportConfiguration.ReportLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActionLevel.ToString();
-            if (!RunStandalon)
+        }
+        private string SetReportTempalteName(string name, int configId)
+        {
+            if (name.Equals(string.Empty))
             {
-                if (Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations().Count == 0)
-                    newHTMLReportConfiguration.IsDefault = true;
-                else
-                    newHTMLReportConfiguration.IsDefault = false;
+                return "Template #" + configId;
             }
-
-            newHTMLReportConfiguration.ShowAllIterationsElements = false;
-            newHTMLReportConfiguration.UseLocalStoredStyling = false;
-            newHTMLReportConfiguration.RunSetFieldsToSelect = GetReportLevelMembers(typeof(RunSetReport));
-            newHTMLReportConfiguration.EmailSummaryViewFieldsToSelect = GetReportLevelMembers(typeof(RunSetReport));
-            newHTMLReportConfiguration.GingerRunnerFieldsToSelect = GetReportLevelMembers(typeof(GingerReport));
-            newHTMLReportConfiguration.BusinessFlowFieldsToSelect = GetReportLevelMembers(typeof(BusinessFlowReport));
-            newHTMLReportConfiguration.ActivityGroupFieldsToSelect = GetReportLevelMembers(typeof(ActivityGroupReport));
-            newHTMLReportConfiguration.ActivityFieldsToSelect = GetReportLevelMembers(typeof(ActivityReport));
-            newHTMLReportConfiguration.ActionFieldsToSelect = GetReportLevelMembers(typeof(ActionReport));
-            newHTMLReportConfiguration.Description = string.Empty;
+            return name;
+        }
+        public void SetHTMLReportConfigurationWithDefaultValues(HTMLReportConfiguration reportConfiguraion)
+        {
+            reportConfiguraion.ReportLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActionLevel.ToString();
+            reportConfiguraion.ShowAllIterationsElements = false;
+            reportConfiguraion.UseLocalStoredStyling = false;
+            reportConfiguraion.RunSetFieldsToSelect = GetReportLevelMembers(typeof(RunSetReport));
+            reportConfiguraion.EmailSummaryViewFieldsToSelect = GetReportLevelMembers(typeof(RunSetReport));
+            reportConfiguraion.GingerRunnerFieldsToSelect = GetReportLevelMembers(typeof(GingerReport));
+            reportConfiguraion.BusinessFlowFieldsToSelect = GetReportLevelMembers(typeof(BusinessFlowReport));
+            reportConfiguraion.ActivityGroupFieldsToSelect = GetReportLevelMembers(typeof(ActivityGroupReport));
+            reportConfiguraion.ActivityFieldsToSelect = GetReportLevelMembers(typeof(ActivityReport));
+            reportConfiguraion.ActionFieldsToSelect = GetReportLevelMembers(typeof(ActionReport));
+            reportConfiguraion.Description = string.Empty;
             using (var ms = new MemoryStream())
             {
                 string file = Ginger.Reports.GingerExecutionReport.ExtensionMethods.getGingerEXEFileName().Replace("Ginger.exe", @"Images\@amdocs_logo.jpg");
                 Bitmap bitmap = new Bitmap(file);
-                newHTMLReportConfiguration.LogoBase64Image = BitmapToBase64(bitmap);
+                reportConfiguraion.LogoBase64Image = BitmapToBase64(bitmap);
             }
-            return newHTMLReportConfiguration;
         }
 
         public static string BitmapToBase64(Bitmap bImage)
