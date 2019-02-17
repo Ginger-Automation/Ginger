@@ -241,6 +241,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 25, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), WidthWeight = 35, AllowSorting = true });
 
