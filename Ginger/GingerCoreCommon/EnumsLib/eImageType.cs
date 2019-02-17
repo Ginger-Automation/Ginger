@@ -159,8 +159,10 @@ namespace Amdocs.Ginger.Common.Enums
         Approve,
         Reject,
         Warn,
+        EditWindow,
+        UserDefined,
         #endregion
-        
+
         #region Items Images
         //############################## Items Images:
         /// <summary>
@@ -243,6 +245,17 @@ namespace Amdocs.Ginger.Common.Enums
         Check,
         Bug,
         PlusSquare,        
-        DataTable        
+        DataTable,
+
+        #region Comparison Status Images
+        Unchanged,
+        Changed,
+        Deleted,
+        Added,
+        Avoided,
+        #endregion
     }
 }
+
+
+

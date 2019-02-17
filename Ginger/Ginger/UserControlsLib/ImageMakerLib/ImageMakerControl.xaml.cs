@@ -274,7 +274,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, (SolidColorBrush)FindResource("$PassedStatusColor"), 0, "Passed");
                     break;
                 case eImageType.Unknown:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Question,null, 0, "Unknown");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.QuestionCircle, null, 0, "Unknown");
                     break;
                 case eImageType.Failed:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle, (SolidColorBrush)FindResource("$FailedStatusColor"), 0, "Failed");
@@ -487,6 +487,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Warn:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle);
                     break;
+                case eImageType.EditWindow:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Edit);
+                    break;
                 #endregion
 
 
@@ -671,6 +674,24 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.TextBox:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.TextWidth);
+                    break;
+                #endregion
+
+                #region Comparison Status Images
+                case eImageType.Unchanged:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, toolTip: "Unchanged");
+                    break;
+                case eImageType.Changed:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, toolTip: "Changed");
+                    break;
+                case eImageType.Deleted:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MinusCircle, toolTip: "Deleted");
+                    break;
+                case eImageType.Added:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlusCircle, toolTip: "Added");
+                    break;
+                case eImageType.Avoided:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.EyeSlash, toolTip: "Avoided");
                     break;
                 #endregion
 

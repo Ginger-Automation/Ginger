@@ -71,8 +71,9 @@ namespace GingerTest.POMs
             }
             string html = TestResources.GetTestResourcesFile(URL);
             agent.Driver.RunAction(new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, ValueForDriver = html });
-            SleepWithDoEvents(2000);
+            SleepWithDoEvents(10000);
             wizard.NextButton.Click();
+            SleepWithDoEvents(5000);
             while (agent.Driver.IsDriverBusy)
             {
                 SleepWithDoEvents(20000);
