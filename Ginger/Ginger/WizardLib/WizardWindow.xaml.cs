@@ -293,7 +293,7 @@ namespace GingerWPF.WizardLib
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
+        {            
             WindowCloseWasHandled = true;
 
             if (xProcessingImage.Visibility == Visibility.Visible)
@@ -302,15 +302,18 @@ namespace GingerWPF.WizardLib
             }
             else
             {
-                mWizard.Cancel();
-                if (sender != null && sender is bool && (bool)sender == false)
-                {
-                    return;//close already been done
-                }
-                else
-                {
-                    CloseWizard();
-                }
+                //if (Reporter.ToUser(eUserMsgKey.WizardSureWantToCancel) == eUserMsgSelection.Yes)
+                //{
+                    mWizard.Cancel();
+                    if (sender != null && sender is bool && (bool)sender == false)
+                    {
+                        return;//close already been done
+                    }
+                    else
+                    {
+                        CloseWizard();
+                    }
+                //}
             }
         }
 
