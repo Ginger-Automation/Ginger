@@ -40,14 +40,12 @@ namespace amdocs.ginger.GingerCoreNET
     public class WorkSpace : RepositoryItemBase
     {
         private static WorkSpace mWorkSpace;
-
-        // public UserProfile UserProfile;
+        public static WorkSpace Instance { get { return mWorkSpace; } }        
 
         public SolutionRepository SolutionRepository;        
 
         // Will be back when we moved GR to GingerCoreNET
         // public GingerRunner GingerRunner;
-
         // public ProjEnvironment CurrentEnvironment;
   
         public SourceControlBase SourceControl;
@@ -55,9 +53,8 @@ namespace amdocs.ginger.GingerCoreNET
         public static string AppVersion="0.0.0.0.0";
 
         // move from App to here
-        //public static GingerRunner AutomateTabGingerRunner = new GingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
-        public  ISolution mSolution { get; set; }
-        public  ISolution Solution
+        public ISolution mSolution { get; set; }
+        public ISolution Solution
         {
             get { return mSolution; }
             set
@@ -76,6 +73,7 @@ namespace amdocs.ginger.GingerCoreNET
                 return System.IO.Path.GetDirectoryName(System.IO.Path.GetTempFileName()) + "\\Ginger_Email_Reports";
             }
         }
+
         PluginsManager mPluginsManager = null;
         public PluginsManager PlugInsManager
         {
@@ -97,45 +95,11 @@ namespace amdocs.ginger.GingerCoreNET
             mPluginsManager = null;
             //TODO: remove later since below init only RS2
             SolutionRepository.Open(SolutionFolder);
-            
-            // AutoLogProxy.Init("Ginger Test");  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            // ValueExpression.Solutionfolder = SolutionFolder;
-
-            //if (UserProfile != null)
-            //{
-            //    UserProfile.AddsolutionToRecent(SolutionFolder);
-            //    string UserProfileFileName = UserProfile.CreateUserProfileFileName();
-            //    UserProfile.Save(UserProfileFileName);
-            //}
-        }
-
-        //public void CleanupBeforeAppClosing()
-        //{
-        //    if (mLocalGingerGrid != null)
-        //    {
-        //        mLocalGingerGrid.Stop();
-        //    }
-        //}
-
-        public void InitPluginsManager()
-        {
-            //WorkSpace.Instance.PlugInsManager = new PluginsManager();
-
-            ////TODO: load plugin on demand, meanwhile we load all
-            //ObservableList<PluginPackage> list = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
-            //foreach (PluginPackage p in list)
-            //{
-            //    PlugInsManager.AddPluginPackage(p.Folder);
-            //}
         }
 
         public void CloseSolution()
         {
             SolutionRepository = null;
-            // PlugInsManager = null;
-            // GingerRunner = null;
-            // CurrentEnvironment = null;
             SourceControl = null;
             EventHandler.SolutionClosed();
         }
@@ -145,14 +109,12 @@ namespace amdocs.ginger.GingerCoreNET
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
         }
+
         public static UserProfile UserProfile { get; set; }
-        public static WorkSpace Instance { get { return mWorkSpace; } }
+       
 
         public IWorkSpaceEventHandler EventHandler { get; set; }
 
-        //public void SetCurrentBusinessFlow(BusinessFlow BF)
-        //{
-        //}
 
         // This is the local one 
         GingerGrid mLocalGingerGrid;
@@ -187,7 +149,6 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public BetaFeatures mBetaFeatures;
-
         public BetaFeatures BetaFeatures
         {
             get
@@ -210,64 +171,8 @@ namespace amdocs.ginger.GingerCoreNET
         public static bool RunningInExecutionMode = false;
 
         public static ProjEnvironment AutomateTabEnvironment;
+
         public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-
-        //TODO: move to GingerRunner - pass the obj needed
-        private void HookAgents()
-        {
-            // this.GingerRunner.ApplicationAgents.CollectionChanged += ApplicationAgents_CollectionChanged;            
-        }
-
-        //private void AA_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        //{
-        //    if (e.PropertyName == nameof(ApplicationAgent.Agent))
-        //    {
-        //        ((ApplicationAgent)sender).Agent.PlugInsManager = PlugInsManager;s
-        //        ((ApplicationAgent)sender).Agent.LocalGingerGrid = LocalGingerGrid;
-        //    }
-        //}
-
-        //private void SaveUserProfile()
-        //{
-        //    string filename = UserProfile.CreateUserProfileFileName();
-        //    UserProfile.Save(filename);
-        //}
-
-        private void ApplicationAgents_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            //foreach (ApplicationAgent AA in this.GingerRunner.ApplicationAgents)
-            //{
-            //    CheckAssignAgent(AA);
-            //    if (AA.Agent != null)
-            //    {
-            //        AA.Agent.PlugInsManager = PlugInsManager;
-            //        AA.Agent.LocalGingerGrid = LocalGingerGrid;
-            //    }
-            //    AA.PropertyChanged += AA_PropertyChanged;
-            //}
-        }
-
-        
-
-        public void LoadUserProfile()
-        {
-            //string UserProfileFileName = UserProfile.CreateUserProfileFileName();
-            //if (File.Exists(UserProfileFileName))
-            //{
-            //    UserProfile = UserProfile.LoadUserProfile(UserProfileFileName);
-            //}
-            //else
-            //{
-            //    string gingerFolder = UserProfile.GetUserGingerFolder();
-            //    if (!Directory.Exists(gingerFolder))
-            //    {
-            //        Directory.CreateDirectory(gingerFolder);
-            //    }
-            //    UserProfile = new UserProfile();
-            //    UserProfile.Save(UserProfileFileName);
-            //}
-        }
 
         public void RefreshGlobalAppModelParams(ApplicationModelBase AppModel)
         {
@@ -338,11 +243,5 @@ namespace amdocs.ginger.GingerCoreNET
                 }
             }
         }
-
-
-    }
-    public interface IUserprofile
-    {
-
     }
 }
