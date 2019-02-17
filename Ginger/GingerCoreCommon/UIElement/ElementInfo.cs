@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.Enums;
 using System.Text;
 using Amdocs.Ginger.Common.Repository;
+using System.Linq;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
@@ -335,11 +336,27 @@ namespace Amdocs.Ginger.Common.UIElement
             return mValue;
         }
 
+
+        public object mElementGroup;
+        public object ElementGroup
+        {
+            get
+            {
+                return mElementGroup;
+            }
+            set
+            {
+                if (mElementGroup != value)
+                {
+                    mElementGroup = value;
+                    OnPropertyChanged(nameof(ElementGroup));
+                }
+            }
+        }
+
+
         [IsSerializedForLocalRepository]
         public string Path { get; set; }
-
-        //  AbsoluteXPath
-
 
         private string mXPath;
 
@@ -389,6 +406,8 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             return mData;
         }
+
+
 
     }
 

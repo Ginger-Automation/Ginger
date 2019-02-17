@@ -41,6 +41,7 @@ namespace GingerTest.APIModelLib
 
             CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
             GingerAutomator mGingerAutomator = GingerAutomator.StartSession();
+
             mGingerAutomator.OpenSolution(SolutionFolder);
 
             mPOMsPOM = mGingerAutomator.MainWindowPOM.GotoPOMs();
