@@ -51,6 +51,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using HtmlAgilityPack;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Drivers
 {
@@ -3696,11 +3697,12 @@ namespace GingerCore.Drivers
                             }
                         }
 
-                        HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
-                        foundElemntInfo.ElementTypeEnum = elementTypeEnum;
+                        HTMLElementInfo foundElemntInfo;
 
                         if (learnPartialElementInfoDetails)
                         {
+                            foundElemntInfo = new HTMLElementInfo();
+                            foundElemntInfo.ElementTypeEnum = elementTypeEnum;
                             foundElemntInfo.ElementObject = el;
                             foundElemntInfo.Path = path;
                             foundElemntInfo.XPath = htmlNode.XPath;
@@ -4544,9 +4546,10 @@ namespace GingerCore.Drivers
 
                     if (ElementInfo.OptionalValuesObjectsList.Count > 0)
                     {
+                        ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
                         list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
-                        ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;                        
-                    }                                        
+                    }
+                    
                 }
 
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
@@ -4564,19 +4567,6 @@ namespace GingerCore.Drivers
                     }
                 }
 
-            if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
-            {
-                HtmlAttributeCollection htmlAttributes = ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes;
-
-                foreach (HtmlAttribute htmlAttribute in htmlAttributes)
-                {
-                    ControlProperty existControlProperty = list.Where(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value).FirstOrDefault();
-                    if (existControlProperty == null)
-                    {
-                        ControlProperty controlProperty = new ControlProperty() { Name = htmlAttribute.Name, Value = htmlAttribute.Value };
-                        list.Add(controlProperty);
-                    }
-                }
             }
 
             return list;
@@ -4838,14 +4828,14 @@ namespace GingerCore.Drivers
                 IframePath = IframeElementInfo.Path + "," + IframeElementInfo.XPath;
             else
                 IframePath = IframeElementInfo.XPath;
-            ElementInfo ElementInfo = GetHTMLElementInfoFromIWebElement(elInsideIframe, IframePath);
-            ElementInfo.ElementObject = elInsideIframe;
+            ElementInfo elementInfo = GetHTMLElementInfoFromIWebElement(elInsideIframe, IframePath);
+            elementInfo.ElementObject = elInsideIframe;
             if (elInsideIframe.TagName == "iframe" || elInsideIframe.TagName == "frame")
             {
                 Driver.SwitchTo().DefaultContent();
-                return GetElementFromIframe(ElementInfo);
+                return GetElementFromIframe(elementInfo);
             }
-            return ElementInfo;
+            return elementInfo;
         }
 
         public ElementInfo GetHTMLElementInfoFromIWebElement(IWebElement EL, string path)
