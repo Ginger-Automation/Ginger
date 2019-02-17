@@ -302,8 +302,8 @@ namespace GingerWPF.WizardLib
             }
             else
             {
-                if (Reporter.ToUser(eUserMsgKey.WizardSureWantToCancel) == eUserMsgSelection.Yes)
-                {
+                //if (Reporter.ToUser(eUserMsgKey.WizardSureWantToCancel) == eUserMsgSelection.Yes)
+                //{
                     mWizard.Cancel();
                     if (sender != null && sender is bool && (bool)sender == false)
                     {
@@ -313,7 +313,7 @@ namespace GingerWPF.WizardLib
                     {
                         CloseWizard();
                     }
-                }
+                //}
             }
         }
 
