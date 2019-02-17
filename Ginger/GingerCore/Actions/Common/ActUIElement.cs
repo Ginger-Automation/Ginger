@@ -708,6 +708,8 @@ namespace GingerCore.Actions.Common
         {
             get
             {
+                //TODO: replace with below code after Image type onAct.cs will be shifted to eImageType
+                //return ElementInfo.GetElementTypeImage(ElementType);
                 switch (ElementType)
                 {
                     case eElementType.Button:

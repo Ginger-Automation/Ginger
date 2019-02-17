@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.Drawing;
 
 namespace GingerCore.Actions.VisualTesting
@@ -23,7 +24,8 @@ namespace GingerCore.Actions.VisualTesting
     // Each driver which supports Visual testing should implement this interface, enable the action to take UI info and screen shot + change app window
     public interface IVisualTestingDriver
     {
-        Bitmap GetScreenShot();
+        Bitmap GetScreenShot(Tuple<int,int> setScreenSize=null);        
+
         VisualElementsInfo GetVisualElementsInfo();
         void ChangeAppWindowSize(int Width, int Height);
     }
