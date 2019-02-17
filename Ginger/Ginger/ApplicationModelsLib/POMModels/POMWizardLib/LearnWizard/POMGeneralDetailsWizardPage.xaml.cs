@@ -16,22 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.Actions.UserControls;
-using Ginger.WindowExplorer;
-using GingerCore;
 using GingerCore.Actions.VisualTesting;
-using GingerCore.Platforms;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -58,14 +50,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 case EventType.Init:
                     mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
-                    xNameTextBox.BindControl(mWizard.POM, nameof(ApplicationPOMModel.Name));
+                    xNameTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.Name));
                     xNameTextBox.AddValidationRule(new POMNameValidationRule());
                     xNameTextBox.Focus();
 
-                    xURLTextBox.BindControl(mWizard.POM, nameof(ApplicationPOMModel.PageURL));
+                    xURLTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.PageURL));
 
-                    xDescriptionTextBox.BindControl(mWizard.POM, nameof(ApplicationPOMModel.Description));
-                    xTagsViewer.Init(mWizard.POM.TagsKeys);
+                    xDescriptionTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.Description));
+                    xTagsViewer.Init(mWizard.mPomLearnUtils.POM.TagsKeys);
                     break;
                 case EventType.Active:
                     ShowScreenShot();
@@ -83,14 +75,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public void ShowScreenShot()
         {
-            mScreenshotPage = new ScreenShotViewPage(mWizard.POM.Name, mWizard.ScreenShot);
+            mScreenshotPage = new ScreenShotViewPage(mWizard.mPomLearnUtils.POM.Name, mWizard.mPomLearnUtils.ScreenShot);
             xScreenShotFrame.Content = mScreenshotPage;
         }
 
         private void xTakeScreenShotLoadButton_Click(object sender, RoutedEventArgs e)
         {
-            mWizard.IWindowExplorerDriver.UnHighLightElements();
-            mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
+            mWizard.mPomLearnUtils.LearnScreenShot();
             ShowScreenShot();
         }
 
@@ -109,9 +100,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         using (var ms = new MemoryStream())
                         {
                             BitmapImage bi = new BitmapImage(new Uri(op.FileName));
-                            mWizard.ScreenShot = Ginger.General.BitmapImage2Bitmap(bi);
-                            mWizard.POM.ScreenShotImage = Ginger.General.BitmapToBase64(mWizard.ScreenShot);
-                            mScreenshotPage = new ScreenShotViewPage(mWizard.POM.Name, mWizard.ScreenShot);
+                            mWizard.mPomLearnUtils.ScreenShot = Ginger.General.BitmapImage2Bitmap(bi);
+                            mWizard.mPomLearnUtils.POM.ScreenShotImage = Ginger.General.BitmapToBase64(mWizard.mPomLearnUtils.ScreenShot);
+                            mScreenshotPage = new ScreenShotViewPage(mWizard.mPomLearnUtils.POM.Name, mWizard.mPomLearnUtils.ScreenShot);
                             xScreenShotFrame.Content = mScreenshotPage;
                         }
                     }

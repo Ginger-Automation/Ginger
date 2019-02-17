@@ -1425,9 +1425,52 @@ namespace UnitTests.UITests.JavaDriverTest
         #endregion
 
         #region Unit Test For ActSwitchWindow
+
         [TestMethod]
         [Timeout(60000)]
-        public void ActSwitchWindowActionTest()
+        public void ActSwitchWindowActionWithNegativeSynTimeTest()
+        {
+            ActSwitchWindow action = new ActSwitchWindow();
+            action.LocateBy = eLocateBy.ByTitle;
+            action.LocateValue = "Java Swing";
+            action.Active = true;
+            action.WaitTime = -1;
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+
+            //Act
+            mGR.RunAction(action, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+            Assert.AreEqual(action.Error, null, "Act.Error");
+            Assert.AreEqual(30, action.WaitTime);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ActSwitchWindowActionWithSynTimeTest()
+        {
+            ActSwitchWindow action = new ActSwitchWindow();
+            action.LocateBy = eLocateBy.ByTitle;
+            action.LocateValue = "Java Swing";
+            action.Active = true;
+            action.WaitTime = 90;
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+
+            //Act
+            mGR.RunAction(action, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+            Assert.AreEqual(action.Error, null, "Act.Error");
+            Assert.AreEqual(90, action.WaitTime);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ActSwitchWindowActionWithNoSyncTimeTest()
         {
             ActSwitchWindow action = new ActSwitchWindow();
             action.LocateBy = eLocateBy.ByTitle;
@@ -1442,6 +1485,7 @@ namespace UnitTests.UITests.JavaDriverTest
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
             Assert.AreEqual(action.Error, null, "Act.Error");
+            Assert.AreEqual(30, action.WaitTime);
         }
 
         #endregion
