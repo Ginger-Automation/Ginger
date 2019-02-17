@@ -3674,16 +3674,19 @@ namespace GingerCore.Drivers
                         }
 
                         //filter element if needed
-                        HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
 
-                        foundElemntInfo.ElementTypeEnum = GetElementTypeEnum(el);
+                 
+                        eElementType elementTypeEnum = GetElementTypeEnum(el);
                         if (filteredElementType != null && filteredElementType.Count > 0)
                         {
-                            if (!filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
+                            if (!filteredElementType.Contains(elementTypeEnum))
                             {
                                 continue;
                             }
                         }
+
+                        HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
+                        foundElemntInfo.ElementTypeEnum = elementTypeEnum;
 
                         if (learnPartialElementInfoDetails)
                         {
@@ -3893,54 +3896,63 @@ namespace GingerCore.Drivers
 
         string GetElementName(HTMLElementInfo EI)
         {
-
             string bestElementName = string.Empty;
-            string tagName = EI.HTMLElementObject.Name;
-            string name = string.Empty;
-            string title = string.Empty;
-            string id = string.Empty;
-            string value = string.Empty;
-            string type = string.Empty;
-            foreach (HtmlAttribute att in EI.HTMLElementObject.Attributes)
+
+            if (EI.HTMLElementObject != null)
             {
-                if (att.Name == "name")
+                string tagName = EI.HTMLElementObject.Name;
+                string name = string.Empty;
+                string title = string.Empty;
+                string id = string.Empty;
+                string value = string.Empty;
+                string type = string.Empty;
+                foreach (HtmlAttribute att in EI.HTMLElementObject.Attributes)
                 {
-                    name = att.Value;
+                    if (att.Name == "name")
+                    {
+                        name = att.Value;
+                    }
+                    else if (att.Name == "title")
+                    {
+                        title = att.Value;
+                    }
+                    else if (att.Name == "type")
+                    {
+                        type = att.Value;
+                    }
+                    else if (att.Name == "id")
+                    {
+                        id = att.Value;
+                    }
+                    else if (att.Name == "value")
+                    {
+                        value = att.Value;
+                    }
                 }
-                else if (att.Name == "title")
+
+                string text = ((IWebElement)EI.ElementObject).Text;
+
+
+                if (text.Count() > 15)
                 {
-                    title = att.Value;
+                    text = string.Empty;
                 }
-                else if (att.Name == "type")
+
+                List<string> list = new List<string>() { tagName, text, type, name, title, title, id, value };
+
+                foreach (string att in list)
                 {
-                    type = att.Value;
+                    if (!string.IsNullOrEmpty(att) && !bestElementName.Contains(att))
+                        bestElementName = bestElementName + " " + att;
                 }
-                else if (att.Name == "id")
-                {
-                    id = att.Value;
-                }
-                else if (att.Name == "value")
-                {
-                    value = att.Value;
-                }
+
+
             }
-
-            string text = ((IWebElement)EI.ElementObject).Text;
-
-
-            if (text.Count() > 15)
+            else
             {
-                text = string.Empty;
+                if (string.IsNullOrEmpty(EI.Value)) return null;
+                bestElementName =  EI.Value + " " + EI.ElementType;
             }
-
-            List<string> list = new List<string>() { tagName, text, type, name, title, title, id, value };
-
-            foreach (string att in list)
-            {
-                if (!string.IsNullOrEmpty(att) && !bestElementName.Contains(att))
-                    bestElementName = bestElementName + " " + att;
-            }
-
 
             return bestElementName;
         }
@@ -4474,8 +4486,9 @@ namespace GingerCore.Drivers
                     if (ElementInfo.OptionalValuesObjectsList.Count > 0)
                     {
                         ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
+                        list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
                     }
-                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
+
                 }
 
                 if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
