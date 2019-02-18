@@ -19,25 +19,18 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.UserControls;
+using Ginger.ApplicationModelsLib.POMModels.POMWizardLib;
 using Ginger.UserControls;
 using GingerCore;
+using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.ApplicationModelsLib.POMModels
 {
@@ -68,19 +61,29 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         public Agent mAgent;
 
-        public enum eElementsContext
+        public enum eAllElementsPageContext
         {
-            Mapped,
-            Unmapped
+            POMEditPage,
+            AddPOMWizard
         }
+
+        public eAllElementsPageContext mContext;
 
         public PomElementsPage mappedUIElementsPage;
         public PomElementsPage unmappedUIElementsPage;
 
-        public PomAllElementsPage(ApplicationPOMModel POM)
+
+        public PomAllElementsPage(ApplicationPOMModel POM, eAllElementsPageContext context)
         {
             InitializeComponent();
             mPOM = POM;
+            mContext = context;
+
+            if (mContext == eAllElementsPageContext.AddPOMWizard)
+            {
+                xReLearnElements.Visibility = Visibility.Collapsed;
+            }
+
             mPOM.MappedUIElements.CollectionChanged += MappedUIElements_CollectionChanged;
             mPOM.UnMappedUIElements.CollectionChanged += UnMappedUIElements_CollectionChanged;
 
@@ -211,7 +214,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mSpyElement = mWinExplorer.GetControlFromMousePosition();
                 if (mSpyElement != null)
                 {
-                    
+                    //TODO: replace below fields setting with signle function doing it on Driver
                     mWinExplorer.UpdateElementInfoFields(mSpyElement);
                     mSpyElement.Locators = mWinExplorer.GetElementLocators(mSpyElement);
                     mSpyElement.Properties = mWinExplorer.GetElementProperties(mSpyElement);
@@ -231,67 +234,55 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void FocusSpyItemOnElementsGrid()
         {
-            bool elementfocused = false;
             if (mSpyElement == null)
             {
                 return;
-            } 
-            foreach (ElementInfo EI in mPOM.MappedUIElements)
-            {
-                ///*mWinExplorer.UpdateElementInfoFields(EI);/*//Not sure if needed
-
-                if (IsTheSameElement(EI, mSpyElement))
-                {
-                    xMappedElementsTab.Focus();
-                    elementfocused = true;
-                    mPOM.MappedUIElements.CurrentItem = EI;
-                    mappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
-                    break;
-                }
             }
 
-            foreach (ElementInfo EI in mPOM.UnMappedUIElements)
-            {
-                //mWinExplorer.UpdateElementInfoFields(EI);//Not sure if needed
+            ElementInfo matchingOriginalElement = (ElementInfo)mWinExplorer.GetMatchingElement(mSpyElement, mPOM.GetUnifiedElementsList());
 
-                if (IsTheSameElement(EI, mSpyElement))
-                {
-                    xUnmappedElementsTab.Focus();
-                    elementfocused = true;
-                    mPOM.UnMappedUIElements.CurrentItem = EI;
-                    unmappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
-                    break;
-                }
+            if (mPOM.MappedUIElements.Contains(matchingOriginalElement))
+            {
+                xMappedElementsTab.Focus();
+                mPOM.MappedUIElements.CurrentItem = matchingOriginalElement;
+                mappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
+                return;
             }
 
-            if (!elementfocused)
+            if (mPOM.UnMappedUIElements.Contains(matchingOriginalElement))
             {
-                xStatusLable.Content = "Found element is not included in below elements list, click here to add it ";
-                xCreateNewElement.Visibility = Visibility.Visible;
+                xUnmappedElementsTab.Focus();
+                mPOM.UnMappedUIElements.CurrentItem = matchingOriginalElement;
+                unmappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
+                return;
             }
+
+            xStatusLable.Content = "Found element is not included in below elements list, click here to add it ";
+            xCreateNewElement.Visibility = Visibility.Visible;
         }
 
-        private bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
-        {
-            bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && (firstEI.Path == secondEI.Path || string.IsNullOrEmpty(firstEI.Path) && string.IsNullOrEmpty(secondEI.Path)) ;
+        //public static bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
+        //{
+        //    bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && (firstEI.Path == secondEI.Path || string.IsNullOrEmpty(firstEI.Path) && string.IsNullOrEmpty(secondEI.Path));
 
-            bool HasSimilarLocators = true;
-            foreach (ElementLocator EL in firstEI.Locators)
-            {
-                ElementLocator SimilarLocator = secondEI.Locators.Where(x => x.LocateBy == EL.LocateBy && x.LocateValue == EL.LocateValue).FirstOrDefault();
-                if (SimilarLocator == null)
-                    HasSimilarLocators = false;
-            }
+        //    bool HasSimilarLocators = true;
+        //    foreach (ElementLocator EL in firstEI.Locators)
+        //    {
+        //        ElementLocator SimilarLocator = secondEI.Locators.Where(x => x.LocateBy == EL.LocateBy && x.LocateValue == EL.LocateValue).FirstOrDefault();
+        //        if (SimilarLocator == null)
+        //            HasSimilarLocators = false;
+        //    }
 
-            if (HasSimilarXpath && HasSimilarLocators)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        //    if (HasSimilarXpath && HasSimilarLocators)
+        //    {
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
+
 
         private void TestAllElementsClicked(object sender, RoutedEventArgs e)
         {
@@ -429,6 +420,25 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 Reporter.ToLog(eLogLevel.ERROR, "Error in POM All Elements Page tabs style", ex);
             }
         }
+
+        private void ReLearnClicked(object sender, RoutedEventArgs e)
+        {
+            if (mWinExplorer == null)
+            {
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
+                return;
+            }
+
+            if (mAgent.Driver.IsDriverBusy)
+            {
+                Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
+                return;
+            }
+
+
+            WizardWindow.ShowWizard(new PomDeltaWizard(mPOM, mAgent),1600,800, true);
+        }
+
 
 
     }
