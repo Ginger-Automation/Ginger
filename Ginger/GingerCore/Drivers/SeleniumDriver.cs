@@ -3685,9 +3685,7 @@ namespace GingerCore.Drivers
                             continue;
                         }
 
-                        //filter element if needed
-
-                        
+                        //filter element if needed                        
                         Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(el);
                         if (filteredElementType != null && filteredElementType.Count > 0)
                         {
@@ -3714,9 +3712,7 @@ namespace GingerCore.Drivers
                         {
                             foundElemntInfo = GetElementInfoWithIWebElement(el, htmlNode, path, learnPartialElementInfoDetails);
                         }
-
-       
-                      
+                            
                         foundElemntInfo.IsAutoLearned = true;
                         foundElementsList.Add(foundElemntInfo);
                         allReadElem.Add(foundElemntInfo);
@@ -3863,7 +3859,7 @@ namespace GingerCore.Drivers
             }
             else
                 elementType = eElementType.Unknown;
-            returnTuple = new Tuple<string, eElementType>(type, elementType);
+            returnTuple = new Tuple<string, eElementType>(tagName, elementType);
 
             return returnTuple;
         }
@@ -4471,20 +4467,31 @@ namespace GingerCore.Drivers
             }
 
             //Base properties 
-            list.Add(new ControlProperty() { Name = "Element Type", Value = ElementInfo.ElementType });
-            list.Add(new ControlProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
-            list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
-            list.Add(new ControlProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
+            if (!string.IsNullOrWhiteSpace(ElementInfo.ElementType))
+            {
+                list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
+            }
+            list.Add(new ControlProperty() { Name = "Element Type", Value = ElementInfo.ElementTypeEnum.ToString() });
+            if (!string.IsNullOrWhiteSpace(ElementInfo.Path))
+            {
+                list.Add(new ControlProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
+            }
+            if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
+            {
+                list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
+            }
+            if (!string.IsNullOrWhiteSpace(((HTMLElementInfo)ElementInfo).RelXpath))
+            {
+                list.Add(new ControlProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
+            }
             list.Add(new ControlProperty() { Name = "Height", Value = ((IWebElement)ElementInfo.ElementObject).Size.Height.ToString() });
             list.Add(new ControlProperty() { Name = "Width", Value = ((IWebElement)ElementInfo.ElementObject).Size.Width.ToString() });
             list.Add(new ControlProperty() { Name = "X", Value = ((IWebElement)ElementInfo.ElementObject).Location.X.ToString() });
             list.Add(new ControlProperty() { Name = "Y", Value = ((IWebElement)ElementInfo.ElementObject).Location.Y.ToString() });
-            if (!string.IsNullOrEmpty(ElementInfo.Value))
+            if (!string.IsNullOrWhiteSpace(ElementInfo.Value))
             {
                 list.Add(new ControlProperty() { Name = "Value", Value = ElementInfo.Value });
             }
-
-
 
             if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
             {
@@ -4527,8 +4534,6 @@ namespace GingerCore.Drivers
                         }
                     }
                 }
-
-
             }
             else if (el != null)
             {
@@ -4558,7 +4563,7 @@ namespace GingerCore.Drivers
                         ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
                         list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
                     }
-                    
+
                 }
 
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
@@ -4575,7 +4580,6 @@ namespace GingerCore.Drivers
                         }
                     }
                 }
-
             }
 
             return list;
