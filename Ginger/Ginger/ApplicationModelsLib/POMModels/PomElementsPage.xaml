@@ -32,6 +32,10 @@
                 </Button>
             </DataTemplate>
 
+            <DataTemplate x:Key="xLocateValueVETemplate">
+                <Button x:Name="xLocateValueVEButton" Click="XLocateValueVEButton_Click" Content="..." ToolTip="Locate Value Expression" Style="{StaticResource DataGridCellButtonStyle}" ></Button>
+            </DataTemplate>
+
             <DataTemplate  x:Key="xTestStatusIconTemplate">
                 <UserControls:ImageMakerControl x:Name="xStatusIconImageMakerControl" ImageType="{Binding StatusIcon}" ImageToolTip="{Binding StatusError}" SetAsFontImageWithSize="16"  Width="16" Height="16" />
                 <DataTemplate.Triggers>
