@@ -434,6 +434,11 @@ namespace GingerCore.Drivers
                         {
                             continue;
                         }
+                        if(CheckUserSpecificProcess(window) == false)
+                        {
+                            continue;
+                        }
+
                         //list All Windows except PB windows - FNW
 
                         if (!window.Current.ClassName.StartsWith("FNW"))
@@ -476,7 +481,11 @@ namespace GingerCore.Drivers
 
                     foreach (AutomationElement window in AppWindows)
                     {
-                        if (!IsWindowValid(window))
+                        if (!IsWindowValid(window)) 
+                        {
+                            continue;
+                        }
+                        if (CheckUserSpecificProcess(window) == false)
                         {
                             continue;
                         }
@@ -523,6 +532,19 @@ namespace GingerCore.Drivers
 
             return list;
         }
+        private bool CheckUserSpecificProcess(AutomationElement window)
+        {
+            Process currentProcess = Process.GetProcessById(window.Current.ProcessId);
+            if (currentProcess.StartInfo.Environment["USERNAME"] != Environment.UserName)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+ 
 
         #endregion RECORDING DRIVER
 
