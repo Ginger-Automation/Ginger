@@ -34,6 +34,9 @@ namespace Amdocs.Ginger.Repository
         {
         }
 
+        public const int cLearnScreenWidth= 1000;
+        public const int cLearnScreenHeight = 1000;
+
         public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web };
 
         private string mPageURL = string.Empty;
@@ -52,11 +55,36 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+
+
+
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> UnMappedUIElements = new ObservableList<ElementInfo>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> MappedUIElements = new ObservableList<ElementInfo>();
+
+        public ObservableList<ElementInfo> GetUnifiedElementsList()
+        {
+            ObservableList<ElementInfo> unifiedList = new ObservableList<ElementInfo>();
+            foreach (ElementInfo element in MappedUIElements)
+            {
+                element.ElementGroup = ApplicationPOMModel.eElementGroup.Mapped;
+                unifiedList.Add(element);
+            }
+            foreach (ElementInfo element in UnMappedUIElements)
+            {
+                element.ElementGroup = ApplicationPOMModel.eElementGroup.Unmapped;
+                unifiedList.Add(element);
+            }
+            return unifiedList;
+        }
+
+        public enum eElementGroup
+        {
+            Mapped,
+            Unmapped
+        }
 
         string mScreenShotImage;
         [IsSerializedForLocalRepository]
