@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Type="http://schemas.microsoft.com/packaging/2010/07/manifest" Target="/Ginger.Plugin.Core.nuspec" Id="R5af364e2e66c44cf" />
+  <Relationship Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="/package/services/metadata/core-properties/9b6c4870132143dbaf2a287eba1e6919.psmdcp" Id="R0f1c27aaa4fe401d" />
+</Relationships>
