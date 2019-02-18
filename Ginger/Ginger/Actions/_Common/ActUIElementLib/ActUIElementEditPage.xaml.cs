@@ -125,8 +125,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 mAction.ElementAction = mElementActionsList[0];//defualt operation for element type should be first one
             }
-
-            ElementTypeImage.Source = GetImageSource(mAction.Image);
+            
+            xElementTypeImage.ImageType = ElementInfo.GetElementTypeImage(mAction.ElementType);
             UpdateActionInfo(mAction.ElementAction);
         }
 
