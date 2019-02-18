@@ -329,7 +329,7 @@ namespace GingerCore.Variables
                 }
                 else
                 {
-                    if (value != null && PI != null)
+                    if (value != null && PI != null && value.ToString() != null)
                     {
                         try
                         {
