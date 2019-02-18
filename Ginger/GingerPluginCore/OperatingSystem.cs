@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace GingerUtils
+namespace GingerPluginCore
 {
     //TDOO: Dup with GingerUtils remove and use GingerUtils but verify it is included in the nuget created 
     public static class OperatingSystem
