@@ -101,43 +101,35 @@ namespace GingerCore.Actions.XML
                 string txt = PrepareFile();
 
                 // Write to out file
-                //string FileName = TargetFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
-                string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TargetFileName.ValueForDriver);
+                string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TargetFileName.ValueForDriver);
+                
+                if(string.IsNullOrEmpty(fileName))
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Target file name can't be null.");
+                }
+                System.IO.File.WriteAllText(fileName, txt);
 
-                System.IO.File.WriteAllText(FileName, txt);
-
-                WaitForProcessedFile();
                 ReadProcessedFile();
             }
 
             private void ReadProcessedFile()
             {
-                //string FileName = ProcessedFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
-                string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ProcessedFileName.ValueForDriver);
+                string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TargetFileName.ValueForDriver);
 
-                string xml = System.IO.File.ReadAllText(FileName);
-                XMLProcessor XMLP = new XMLProcessor();
-                XMLP.ParseToReturnValues(xml, this);
-            }
-
-            private void WaitForProcessedFile()
-            {
-                //string FileName = ProcessedFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
-                string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ProcessedFileName.ValueForDriver);
-
-            while (!System.IO.File.Exists(FileName))
-                {
-                    Thread.Sleep(100);
-                    General.DoEvents();
-                }
+                string xml = System.IO.File.ReadAllText(fileName);
+                XMLProcessor xmlProcessor = new XMLProcessor();
+                xmlProcessor.ParseToReturnValues(xml, this);
             }
 
             private string PrepareFile()
             {
-                //string FileName = TemplateFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
-                string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TemplateFileName.ValueForDriver);
-
-            string txt = System.IO.File.ReadAllText(FileName);
+                string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TemplateFileName.ValueForDriver);
+                
+                if(string.IsNullOrEmpty(fileName))
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Template file name can't be empty.");
+                }
+                string txt = System.IO.File.ReadAllText(fileName);
                 foreach (ActInputValue AIV in DynamicElements)
                 {
                     txt = txt.Replace(AIV.Param, AIV.ValueForDriver);
