@@ -1,4 +1,4 @@
-﻿using Amdocs.Ginger.Common.InterfacesLib;
+﻿
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using System;
@@ -88,11 +88,11 @@ namespace Ginger.Run.RunSetActions
         //TODO: move to Run SetAction
         private void SaveBFResults(ReportInfo RI, string folder, bool statusByGroupActivity)
         {
-            //ITestNGResultReport TNGReport = new ITestNGResultReport();
-            //string xml = TNGReport.CreateReport(RI, statusByGroupActivity);
+            TestNGResultReport TNGReport = new TestNGResultReport();
+            string xml = TNGReport.CreateReport(RI, statusByGroupActivity);
 
-            //System.IO.File.WriteAllLines(folder + @"\testng-results.xml", new string[] { xml });
-            //TODO: let the user select file prefix
+            System.IO.File.WriteAllLines(folder + @"\testng-results.xml", new string[] { xml });
+        //TODO: let the user select file prefix
         }
 
         public override string GetEditPage()

@@ -23,11 +23,12 @@ using System.Xml;
 using System.Xml.Linq;
 using GingerCore;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Reports
 {
     // Base class for HTML report with helper functions to create nice HTML report
-    public abstract class XMLReportBase
+    public abstract class XMLReportBase : ITestNGResultReport
     {
         public ReportInfo RI;
         public abstract string CreateReport(ReportInfo RI, bool statusByGroupActivity);
