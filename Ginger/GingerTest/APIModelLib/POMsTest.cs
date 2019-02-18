@@ -125,8 +125,8 @@ namespace GingerTest.APIModelLib
 
             //Assert  
             Assert.AreEqual(ButtonEI.Properties.Count, 12, "POM.properties check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Element Type", "submit"),"POM.property 0 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Platform Element Type", "INPUT"),"POM.property 0 check");
+            //Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"XPath", "/html[1]/body[1]/div[19]/input[1]"), "POM.property 2 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Relative XPath", "//input[@id='submit1']"), "POM.property 3 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Height", "21"), "POM.property 4 check");
@@ -138,8 +138,8 @@ namespace GingerTest.APIModelLib
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "type", "submit"), "POM.property 11 check");
 
             Assert.AreEqual(ComboBoxEI.Properties.Count, 12, "POM.properties check");
-            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "Element Type", "select-one"), "POM.property 0 check");
-            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
+            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "Platform Element Type", "SELECT"), "POM.property 0 check");
+            //Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"XPath", "/html[1]/body[1]/div[9]/select[1]"), "POM.property 2 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Relative XPath", "//select[@id='sel1']"), "POM.property 3 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Height", "19"), "POM.property 4 check");
