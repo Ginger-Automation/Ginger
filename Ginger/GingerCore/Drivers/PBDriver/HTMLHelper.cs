@@ -1734,6 +1734,7 @@ namespace GingerCore.Drivers.PBDriver
                     y = y - getelementYCordinate(Elem);
 
                     Elem = currentFrameDocument.elementFromPoint(x, y);
+
                 }                    
             }            
             Reporter.ToLog(eLogLevel.DEBUG, "GetHTMLElementFromPoint::" + Elem.className);
@@ -1811,12 +1812,15 @@ namespace GingerCore.Drivers.PBDriver
                     h1Par = h1Par.offsetParent;                    
                 }
                 Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-parTop out" + yPos);
-                int scrollTop;
+                int scrollTop = 0;
+                scrollTop = getscrollTop(h1);
                 if (currentFrameDocument != null && frame == false)
                 {
-                    yPos += getelementYCordinate(currentFrame, true);                   
-                }               
-                scrollTop = getscrollTop(h1);
+                    if(scrollTop != 0)
+                    {
+                        yPos += getelementYCordinate(currentFrame, true);
+                    }
+                }
                 Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-scrollTop out2 " + scrollTop);
                 return yPos - scrollTop;
             }

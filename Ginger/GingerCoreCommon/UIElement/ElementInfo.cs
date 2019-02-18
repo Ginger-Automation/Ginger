@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.Enums;
 using System.Text;
 using Amdocs.Ginger.Common.Repository;
+using System.Linq;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
@@ -62,8 +63,6 @@ namespace Amdocs.Ginger.Common.UIElement
         public bool IsAutoLearned { get; set; }
 
         public object ElementObject { get; set; }
-
-
 
         public Boolean IsExpandable { get; set; }
 
@@ -203,6 +202,7 @@ namespace Amdocs.Ginger.Common.UIElement
             {
                 mElementTypeEnum = value;
                 OnPropertyChanged(nameof(ElementTypeEnum));
+                OnPropertyChanged(nameof(ElementTypeImage));
             }
         }
 
@@ -219,6 +219,15 @@ namespace Amdocs.Ginger.Common.UIElement
                 return enumDescription;
             }
         }
+
+        public eImageType ElementTypeImage
+        {
+            get
+            {
+                return GetElementTypeImage(ElementTypeEnum);
+            }
+        }
+
 
         /// <summary>
         /// Please dont use this property it is obselet use the below property "OptionalValuesObjectsList"
@@ -335,11 +344,27 @@ namespace Amdocs.Ginger.Common.UIElement
             return mValue;
         }
 
+
+        public object mElementGroup;
+        public object ElementGroup
+        {
+            get
+            {
+                return mElementGroup;
+            }
+            set
+            {
+                if (mElementGroup != value)
+                {
+                    mElementGroup = value;
+                    OnPropertyChanged(nameof(ElementGroup));
+                }
+            }
+        }
+
+
         [IsSerializedForLocalRepository]
         public string Path { get; set; }
-
-        //  AbsoluteXPath
-
 
         private string mXPath;
 
@@ -390,6 +415,47 @@ namespace Amdocs.Ginger.Common.UIElement
             return mData;
         }
 
+        public static eImageType GetElementTypeImage(eElementType elementType = eElementType.Unknown)
+        {
+            switch (elementType)
+            {
+                case eElementType.Button:
+                    return eImageType.Button;
+                case eElementType.CheckBox:
+                    return eImageType.CheckBox;
+                case eElementType.ComboBox:
+                    return eImageType.DropList;
+                case eElementType.ComboBoxOption:
+                    return eImageType.List;
+                case eElementType.HyperLink:
+                    return eImageType.Link;
+                case eElementType.Image:
+                    return eImageType.Image;
+                case eElementType.Label:
+                    return eImageType.Label;
+                case eElementType.List:                
+                    return eImageType.List;
+                case eElementType.ListItem:
+                    return eImageType.List;
+                case eElementType.MenuBar:
+                case eElementType.MenuItem:
+                    return eImageType.Menu;
+                case eElementType.RadioButton:
+                    return eImageType.RadioButton;
+                case eElementType.Table:
+                case eElementType.TableItem:
+                    return eImageType.Table;
+                case eElementType.Text:
+                    return eImageType.Label;
+                case eElementType.TextBox:
+                    return eImageType.TextBox;
+                case eElementType.Window:
+                case eElementType.Dialog:
+                    return eImageType.Window;                
+            }
+
+            return eImageType.Element;
+        }
     }
 
         public enum eLocateBy

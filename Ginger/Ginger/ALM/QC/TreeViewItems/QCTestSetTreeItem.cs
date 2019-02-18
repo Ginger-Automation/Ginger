@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.IO;
 
 namespace Ginger.ALM.QC.TreeViewItems
 {
