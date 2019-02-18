@@ -19,6 +19,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Repository;
 
+
 namespace Amdocs.Ginger.Common.UIElement
 {
     //TODO: rename to UIElementProperty
@@ -29,5 +30,6 @@ namespace Amdocs.Ginger.Common.UIElement
         [IsSerializedForLocalRepository]
         public string Value { get; set; }
         public override string ItemName { get { return Name; } set { Name = value;  } }
+
     }
 }

@@ -22,8 +22,12 @@
                 <Label x:Name="xStatusLable" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Content="Spying is Off" ></Label>
                 <UserControls:ucButton x:Name="xCreateNewElement" ButtonType="RoundTextAndImageButton" ButtonText="Create New Element" ButtonImageType="New" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed"  Click="CreateNewElemetClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
             </StackPanel>
-        <UserControls:ucButton x:Name="xTestAllElements"  ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right"  ButtonText="Test All Mapped Elements" ButtonImageType="Play" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" />
-        <UserControls:ucButton x:Name="xStopTestAllElements"  ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right"  ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="StopTestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed"/>
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="0">
+            <UserControls:ucButton x:Name="xReLearnElements"  ButtonType="RoundTextAndImageButton" ButtonText="Update Elements" ButtonImageType="Refresh" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="ReLearnClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" />
+            <UserControls:ucButton x:Name="xTestAllElements"  ButtonType="RoundTextAndImageButton"   ButtonText="Test All Mapped Elements" ButtonImageType="Play" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" />
+            <UserControls:ucButton x:Name="xStopTestAllElements"  ButtonType="RoundTextAndImageButton"  ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="StopTestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed"/>
+        </StackPanel>
+
 
         <TabControl x:Name="xPOMModelTabs" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="POMModelTabsSelectionChanged"  >
             <TabControl.Resources>

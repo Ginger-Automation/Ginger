@@ -342,7 +342,7 @@ namespace GingerCore.Drivers
                         string geckoDriverExePath2 = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\geckodriver.exe";
                         System.Environment.SetEnvironmentVariable("webdriver.gecko.driver", geckoDriverExePath2, EnvironmentVariableTarget.Process);
 
-                        FirefoxOptions FirefoxOption= new FirefoxOptions();
+                        FirefoxOptions FirefoxOption = new FirefoxOptions();
                         if (HeadlessBrowserMode == true)
                             FirefoxOption.AddArgument("--headless");
 
@@ -356,7 +356,7 @@ namespace GingerCore.Drivers
                         else
                         {
                             FirefoxOption.Proxy = new Proxy();
-                            switch(mProxy.Kind)
+                            switch (mProxy.Kind)
                             {
                                 case ProxyKind.Manual:
                                     FirefoxOption.Proxy.Kind = ProxyKind.Manual;
@@ -3074,7 +3074,7 @@ namespace GingerCore.Drivers
                 ElementLocator locator = new ElementLocator();
                 locator.LocateBy = locateBy;
                 locator.LocateValue = locateValue;
-                elem= LocateElementByLocator(locator, AlwaysReturn);
+                elem = LocateElementByLocator(locator, AlwaysReturn);
                 if (elem == null)
                 {
                     act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
@@ -3110,7 +3110,16 @@ namespace GingerCore.Drivers
 
             foreach (ElementLocator locator in Locators.Where(x => x.Active == true).ToList())
             {
-                elem = LocateElementByLocator(locator, true);
+                if(!locator.IsAutoLearned)
+                {
+                    ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
+                    ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+                    evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
+                    elem = LocateElementByLocator(evaluatedLocator, true);
+                }
+                else
+                    elem = LocateElementByLocator(locator, true);
+
                 if (elem != null)
                 {
                     locator.StatusError = string.Empty;
@@ -3261,7 +3270,7 @@ namespace GingerCore.Drivers
                         elem = Driver.FindElement(By.XPath("//*[@value=\"" + locator.LocateValue + "\"]"));
                 }
 
-                if(locator.LocateBy == eLocateBy.ByAutomationID)
+                if (locator.LocateBy == eLocateBy.ByAutomationID)
                 {
                     elem = Driver.FindElement(By.XPath("//*[@data-automation-id=\"" + locator.LocateValue + "\"]"));
                 }
@@ -3615,7 +3624,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails= false)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
         {
             mIsDriverBusy = true;
 
@@ -3630,8 +3639,8 @@ namespace GingerCore.Drivers
                 list = GingerCore.General.ConvertObservableListToList<ElementInfo>((GetAllElementsFromPage("", filteredElementType, foundElementsList, learnFullElementInfoDetails)));
                 allReadElem.Clear();
                 CurrentFrame = "";
-                Driver.SwitchTo().DefaultContent();
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
+                Driver.SwitchTo().DefaultContent();
                 return list;
             }
             finally
@@ -3658,6 +3667,8 @@ namespace GingerCore.Drivers
                 {
                     try
                     {
+
+
                         if (mStopProcess)
                         {
                             return foundElementsList;
@@ -4091,7 +4102,7 @@ namespace GingerCore.Drivers
 
         private string GenerateElementID(object EL)
         {
-            string id = EL is IWebElement ? ((IWebElement)EL).GetAttribute("id") : ((HtmlNode)EL).GetAttributeValue("id","") ;
+            string id = EL is IWebElement ? ((IWebElement)EL).GetAttribute("id") : ((HtmlNode)EL).GetAttributeValue("id", "");
 
 
             if (string.IsNullOrEmpty(id))
@@ -4408,9 +4419,9 @@ namespace GingerCore.Drivers
 
                     if (ElementInfo.OptionalValuesObjectsList.Count > 0)
                     {
-                        ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
-                    }
-                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
+                        list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
+                        ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;                        
+                    }                                        
                 }
 
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
@@ -4433,7 +4444,7 @@ namespace GingerCore.Drivers
 
                 foreach (HtmlAttribute htmlAttribute in htmlAttributes)
                 {
-                    ControlProperty existControlProperty = list.Where(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value).FirstOrDefault();
+                    ControlProperty existControlProperty = (ControlProperty)list.Where(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value).FirstOrDefault();
                     if (existControlProperty == null)
                     {
                         ControlProperty controlProperty = new ControlProperty() { Name = htmlAttribute.Name, Value = htmlAttribute.Value };
@@ -6310,7 +6321,7 @@ namespace GingerCore.Drivers
         public Bitmap GetScreenShot()
         {
             try
-            {
+            {                
                 Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
                 using (var ms = new MemoryStream(ss.AsByteArray))
                 {
@@ -6331,8 +6342,26 @@ namespace GingerCore.Drivers
             }
         }
 
-        Bitmap IVisualTestingDriver.GetScreenShot()
+        Bitmap IVisualTestingDriver.GetScreenShot(Tuple<int, int> setScreenSize = null)
         {
+            if (setScreenSize != null)
+            {
+                try
+                {
+                    //Driver.Manage().Window.Position = new System.Drawing.Point(0, 0);
+                    //System.Drawing.Size originalSize = Driver.Manage().Window.Size;
+                    Driver.Manage().Window.Size = new System.Drawing.Size(setScreenSize.Item1, setScreenSize.Item2);
+                    //Bitmap screenShot = GetScreenShot();
+                    //Driver.Manage().Window.Size = originalSize;
+                    //return screenShot;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to set browser screen size before taking screen shot", ex);
+                    return GetScreenShot();
+                }
+            }
+
             return GetScreenShot();
         }
 
@@ -6413,29 +6442,27 @@ namespace GingerCore.Drivers
 
         }
 
-        void IWindowExplorer.UpdateElementInfoFields(ElementInfo ei)
+        void IWindowExplorer.UpdateElementInfoFields(ElementInfo EI)
         {
-            //TODO: remove from here and put in EI - do lazy loading if needed + why the switch frame?
-            if (ei == null)
+            //TODO: remove from here and put in EI - do lazy loading if needed.
+            if (EI == null)
             {
                 return;
             }
 
-            //Driver.SwitchTo().DefaultContent();
-            //SwitchFrame(ei.Path, ei.XPath, true);
-            if (string.IsNullOrEmpty(ei.XPath))
-                ei.XPath = GenerateXpathForIWebElement((IWebElement)ei.ElementObject, "");
+            if (string.IsNullOrEmpty(EI.XPath))
+                EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, "");
 
-            IWebElement e = (IWebElement)ei.ElementObject;
+            IWebElement e = (IWebElement)EI.ElementObject;
             if (e != null)
             {
-                ei.X = e.Location.X;
-                ei.Y = e.Location.Y;
-                ei.Width = e.Size.Width;
-                ei.Height = e.Size.Height;
+                EI.X = e.Location.X;
+                EI.Y = e.Location.Y;
+                EI.Width = e.Size.Width;
+                EI.Height = e.Size.Height;
             }
 
-            //Driver.SwitchTo().DefaultContent();
+
         }
 
         private void InitXpathHelper()
@@ -6487,7 +6514,7 @@ namespace GingerCore.Drivers
                 parentEI = allReadElem.Find(el => el.ElementObject != null && el.ElementObject.Equals(parentElementIWebElement));
             }
 
-            if (parentEI !=null)
+            if (parentEI != null)
             {
                 return parentEI;
             }
@@ -6529,7 +6556,7 @@ namespace GingerCore.Drivers
         private ElementInfo GetElementInfoFromIWebElement(IWebElement el, HtmlNode htmlNode, ElementInfo ChildElementInfo)
         {
             IWebElement webElement = null;
-            if(el == null)
+            if (el == null)
             {
                 webElement = Driver.FindElement(By.XPath(htmlNode.XPath));
             }
@@ -6814,9 +6841,67 @@ namespace GingerCore.Drivers
             finally
             {
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+                mIsDriverBusy = false;
+            }
+        }
+
+
+        void IWindowExplorer.CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> mOriginalList)
+        {
+            try
+            {
+                mIsDriverBusy = true;
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+
+                foreach (ElementInfo EI in mOriginalList)
+                {
+                    EI.ElementStatus = ElementInfo.eElementStatus.Pending;
+                }
+
+
+                foreach (ElementInfo EI in mOriginalList)
+                {
+                    try
+                    {
+                        SwitchFrame(EI);
+                        IWebElement e = LocateElementByLocators(EI.Locators);
+                        if (e != null)
+                        {
+                            EI.ElementObject = e;
+                            EI.ElementStatus = ElementInfo.eElementStatus.Passed;
+                        }
+                        else
+                        {                            
+                            EI.ElementStatus = ElementInfo.eElementStatus.Failed;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        EI.ElementStatus = ElementInfo.eElementStatus.Failed;
+                    }
+                }
+            }
+            finally
+            {
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
                 Driver.SwitchTo().DefaultContent();
                 mIsDriverBusy = false;
             }
+        }
+
+        public ElementInfo GetMatchingElement(ElementInfo element, ObservableList<ElementInfo> existingElemnts)
+        {
+            //try using online IWebElement Objects comparison
+            ElementInfo OriginalElementInfo = existingElemnts.Where(x => (x.ElementObject != null) && (element.ElementObject != null) && (x.ElementObject.ToString() == element.ElementObject.ToString())).FirstOrDefault();//comparing IWebElement ID's
+
+
+            if (OriginalElementInfo == null)
+            {
+                //try by type and Xpath comparison
+                OriginalElementInfo = existingElemnts.Where(x => (x.ElementTypeEnum == element.ElementTypeEnum) && (x.XPath == element.XPath) && (x.Path == element.Path || string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(element.Path))).FirstOrDefault();
+            }
+
+            return OriginalElementInfo;
         }
 
         void IWindowExplorer.StartSpying()
