@@ -43,10 +43,8 @@ namespace Ginger.Actions.XML
             //// Bind Controls
             App.ObjFieldBinding(XMLTemplateFileTextBox , TextBox.TextProperty, mAct.TemplateFileName , ActInputValue.Fields.Value);
             TargetFileNameTextBox.Init(mAct.TargetFileName);
-            ProcessedFileNameTextBox.Init(mAct.ProcessedFileName);
 
             SetGridView();
-
             DynamicParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPlaceHolder));
         }
 
