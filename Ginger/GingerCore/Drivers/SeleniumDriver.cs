@@ -3518,7 +3518,7 @@ namespace GingerCore.Drivers
                     };
                     result = action.BeginInvoke(null, null);
 
-                    if (result.AsyncWaitHandle.WaitOne(10000))
+                    if (result.AsyncWaitHandle.WaitOne(10000,true))
                     {
                         if (count == 0)
                             return false;
