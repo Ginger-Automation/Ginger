@@ -88,7 +88,7 @@ namespace GingerCore.Drivers.Common
             {
                 if (mName == null)
                 {
-                    mRelXpath = GetName();
+                    mName = GetName();
                 }
                 return mName;
             }
