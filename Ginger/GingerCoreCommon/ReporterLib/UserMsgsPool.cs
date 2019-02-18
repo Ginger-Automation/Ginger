@@ -132,7 +132,7 @@ namespace Amdocs.Ginger.Common
         InitializeBrowser, AskBeforeDefectProfileDeleting, MissedMandatotryFields, NoDefaultDefectProfileSelected, ALMDefectsWereOpened, AskALMDefectsOpening, WrongValueSelectedFromTheList, WrongNonNumberValueInserted, WrongDateValueInserted, NoDefectProfileCreated, IssuesInSelectedDefectProfile,
         VisualTestingFailedToDeleteOldBaselineImage, ApplitoolsLastExecutionResultsNotExists, ApplitoolsMissingChromeOrFirefoxBrowser, ParameterOptionalValues,
         FindAndRepalceFieldIsEmpty, FindAndReplaceListIsEmpty, FindAndReplaceNoItemsToRepalce, OracleDllIsMissing, ReportsTemplatesSaveWarn,
-        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, WizardCantMoveWhileInProcess, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported,
+        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, WizardCantMoveWhileInProcess, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported, WizardSureWantToCancel,
         POMSearchByGUIDFailed, POMElementSearchByGUIDFailed, NoRelevantAgentInRunningStatus, SolutionSaveWarning,
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, ValueIssue, MissingTargetApplication,
@@ -651,7 +651,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FolderNameTextBoxIsEmpty, new UserMsg(eUserMsgType.WARN, "Folders Names is Empty", "Please provide a proper folder name.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UserHaveNoWritePermission, new UserMsg(eUserMsgType.WARN, "User Have No Write Permission On Folder", "User that currently in use have no write permission on selected folder. Pay attention that attachment at shared folder may be not created.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FolderNotExistOrNotAvailible, new UserMsg(eUserMsgType.WARN, "Folder Not Exist Or Not Available", "Folder Not Exist Or Not Available. Please select another one.", eUserMsgOption.OK, eUserMsgSelection.None));
-
+            Reporter.UserMsgsPool.Add(eUserMsgKey.WizardSureWantToCancel, new UserMsg(eUserMsgType.QUESTION, "Cancel Wizard?", "Are you sure you want to cancel wizard and close?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ReportsTemplatesSaveWarn, new UserMsg(eUserMsgType.WARN, "Default Template Report Change", "Default change will cause all templates to be updated and saved, to continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToLoadPlugIn, new UserMsg(eUserMsgType.ERROR, "Failed to Load Plug In", "Ginger could not load the plug in '{0}'" + Environment.NewLine + "Error Details: {1}", eUserMsgOption.OK, eUserMsgSelection.None));
 

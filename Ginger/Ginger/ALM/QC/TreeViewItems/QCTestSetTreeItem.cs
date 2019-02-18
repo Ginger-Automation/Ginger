@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.IO;
 
 namespace Ginger.ALM.QC.TreeViewItems
 {
@@ -96,7 +97,7 @@ namespace Ginger.ALM.QC.TreeViewItems
                     {
                         AlreadyImported = true;
                         MappedBusinessFlow = bf;
-                        MappedBusinessFlowPath = System.IO.Path.Combine(bf.ContainingFolder, bf.Name);                       
+                        MappedBusinessFlowPath = bf.ContainingFolder + '\\' + bf.Name;                       
                         break;
                     }
                 }
