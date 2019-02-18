@@ -1515,8 +1515,6 @@
       <DependentUpon>ReportTemplatesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\RTFtoPDF.cs" />
-    <Compile Include="Reports\SpecialReports\XMLReportBase.cs" />
-    <Compile Include="Reports\SpecialReports\TestNGResultReport.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionEditPage.xaml.cs">
       <DependentUpon>RunSetActionEditPage.xaml</DependentUpon>
     </Compile>
@@ -4479,6 +4477,7 @@
     <Folder Include="Dictionaries\Languages\" />
     <Folder Include="Help\Library\" />
     <Folder Include="Reports\HTMLReports\" />
+    <Folder Include="Reports\SpecialReports\" />
     <Folder Include="Settings\TreeViewItems\" />
     <Folder Include="TelemertryLib\" />
     <Folder Include="UserConfig\" />
