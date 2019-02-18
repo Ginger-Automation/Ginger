@@ -3695,7 +3695,7 @@ namespace GingerCore.Drivers
                             {
                                 continue;
                             }
-                        }
+                        }//ElementInfo.ElementType
 
                         HTMLElementInfo foundElemntInfo;
 
@@ -4466,7 +4466,6 @@ namespace GingerCore.Drivers
             }
 
             //Base properties 
-            list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
             list.Add(new ControlProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
             list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
             list.Add(new ControlProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
@@ -4662,7 +4661,7 @@ namespace GingerCore.Drivers
                     // Organize based on better locators at start
                     case eLocateBy.ByID:
                         string id = string.Empty;
-                        if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).ID))
+                        if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null && !string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).ID))
                         {
                             id = ((HTMLElementInfo)ElementInfo).ID;
                         }
@@ -4680,7 +4679,7 @@ namespace GingerCore.Drivers
                     case eLocateBy.ByName:
 
                         string name = string.Empty;
-                        if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).Name))
+                        if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null && !string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).Name))
                         {
                             name = ((HTMLElementInfo)ElementInfo).Name;
                         }
@@ -4688,6 +4687,7 @@ namespace GingerCore.Drivers
                         {
                             name = e.GetAttribute("name");
                         }
+
                         if (!string.IsNullOrWhiteSpace(name))
                         {
                             elemLocator.LocateValue = name;
