@@ -32,7 +32,7 @@ namespace GingerCore.Actions.VisualTesting
         static JsonSerializer mJsonSerializer = null;
 
         // No need to serialize the bitmap
-        public Bitmap Bitmap { get; internal set; }
+        public Bitmap Bitmap { get; set; }
 
         [JsonProperty]
         public List<VisualElement> Elements = new List<VisualElement>();

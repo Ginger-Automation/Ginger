@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.Common.Enums
         DataSource,
         PluginPackage,
         #endregion
-        
+
         #region Variable Items Images
         Variable,
         VariableList,
@@ -97,7 +97,7 @@ namespace Amdocs.Ginger.Common.Enums
         Stopped,
         Running,
         #endregion
-        
+
         #region Operations Images
         //############################## Operations Images:        
         Refresh,
@@ -149,7 +149,7 @@ namespace Amdocs.Ginger.Common.Enums
         Collapse,
         ExpandAll,
         CollapseAll,
-        ActiveAll,        
+        ActiveAll,
         Exchange,
         Export,
         Filter,
@@ -171,8 +171,7 @@ namespace Amdocs.Ginger.Common.Enums
         KidsDrawing,
         Folder,
         ItemModified,
-        Email,
-        List,
+        Email,        
         Parameter,
         ListGroup,
         FlowDiagram,
@@ -180,7 +179,6 @@ namespace Amdocs.Ginger.Common.Enums
         Sitemap,
         Clock,
         File,
-        Link,
         InstanceLink,
         Search,
         Remove,
@@ -193,12 +191,10 @@ namespace Amdocs.Ginger.Common.Enums
         Help,
         Info,
         Screen,        
-        Text,
         Globe,
         Service,
         FileVideo,
-        Ticket,
-        Window,
+        Ticket,        
         Pointer,
         Camera,
         Wrench,
@@ -213,18 +209,13 @@ namespace Amdocs.Ginger.Common.Enums
         Error,
         Coffee,
         MapSigns,
-        Image,
         Elements,
         LocationPointer,
         GitHub,
         Ping,
+        Database,
         #endregion
 
-        #region Other Images
-        Database,
-        TextBox,
-        #endregion
-        
         #region Source control Images     
         SourceControl,
         SourceControlNew,
@@ -244,7 +235,37 @@ namespace Amdocs.Ginger.Common.Enums
         OpenFolder,
         Check,
         Bug,
-        PlusSquare,        
-        DataTable        
+        PlusSquare,
+        DataTable,
+
+        #region Comparison Status Images
+        Unchanged,
+        Changed,
+        Deleted,
+        Added,
+        Avoided,
+        #endregion
+
+        #region ElementType Images
+        Button,
+        TextBox,
+        CheckBox,
+        Link,
+        RadioButton,
+        Table,
+        Image,
+        Element,
+        Toggle,
+        Menu,
+        Label,
+        DropList,
+        List,
+        ListItem,
+        Window,
+        Text,
+        #endregion
     }
 }
+
+
+
