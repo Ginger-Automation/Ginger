@@ -116,7 +116,7 @@ namespace GingerTest.APIModelLib
         }
 
         [TestMethod]
-        [Timeout(60000)]
+        //[Timeout(60000)]
         public void ValidateElementsProperties()
         {
             //Act  
@@ -125,7 +125,7 @@ namespace GingerTest.APIModelLib
 
             //Assert  
             Assert.AreEqual(ButtonEI.Properties.Count, 12, "POM.properties check");
-            //Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Platform Element Type", "INPUT.SUBMIT"),"POM.property 0 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Element Type", "submit"),"POM.property 0 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"XPath", "/html[1]/body[1]/div[19]/input[1]"), "POM.property 2 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Relative XPath", "//input[@id='submit1']"), "POM.property 3 check");
@@ -133,13 +133,12 @@ namespace GingerTest.APIModelLib
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Width", "95"), "POM.property 5 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"X", "8"), "POM.property 6 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Y", "744"), "POM.property 7 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Value", null), "POM.property 8 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"id", "submit1"), "POM.property 9 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "name", "submit1"), "POM.property 10 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "type", "submit"), "POM.property 11 check");
 
             Assert.AreEqual(ComboBoxEI.Properties.Count, 12, "POM.properties check");
-            //Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "Platform Element Type", "SELECT"), "POM.property 0 check");
+            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "Element Type", "select-one"), "POM.property 0 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"XPath", "/html[1]/body[1]/div[9]/select[1]"), "POM.property 2 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Relative XPath", "//select[@id='sel1']"), "POM.property 3 check");
@@ -147,7 +146,6 @@ namespace GingerTest.APIModelLib
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Width", "74"), "POM.property 5 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"X", "631"), "POM.property 6 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Y", "226"), "POM.property 7 check");
-            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Value", null), "POM.property 8 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Optional Values", "Ahhhh...,Got It!,Too far,OMG"), "POM.property 9 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "id", "sel1"), "POM.property 9 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "name", "sel1"), "POM.property 10 check");

@@ -3637,7 +3637,7 @@ namespace GingerCore.Drivers
                 List<ElementInfo> list = new List<ElementInfo>();
                 Driver.SwitchTo().DefaultContent();
                 allReadElem.Clear();
-                list = GingerCore.General.ConvertObservableListToList<ElementInfo>((GetAllElementsFromPage("", filteredElementType, foundElementsList, learnFullElementInfoDetails)));
+                list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, learnFullElementInfoDetails));
                 allReadElem.Clear();
                 CurrentFrame = "";
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
@@ -3687,11 +3687,11 @@ namespace GingerCore.Drivers
 
                         //filter element if needed
 
-                 
-                        eElementType elementTypeEnum = GetElementTypeEnum(el);
+                        
+                        Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(el);
                         if (filteredElementType != null && filteredElementType.Count > 0)
                         {
-                            if (!filteredElementType.Contains(elementTypeEnum))
+                            if (!filteredElementType.Contains(elementTypeEnum.Item2))
                             {
                                 continue;
                             }
@@ -3702,7 +3702,8 @@ namespace GingerCore.Drivers
                         if (learnPartialElementInfoDetails)
                         {
                             foundElemntInfo = new HTMLElementInfo();
-                            foundElemntInfo.ElementTypeEnum = elementTypeEnum;
+                            foundElemntInfo.ElementType = elementTypeEnum.Item1;
+                            foundElemntInfo.ElementTypeEnum = elementTypeEnum.Item2;
                             foundElemntInfo.ElementObject = el;
                             foundElemntInfo.Path = path;
                             foundElemntInfo.XPath = htmlNode.XPath;
@@ -3747,11 +3748,12 @@ namespace GingerCore.Drivers
             return foundElementsList;
         }
 
-        public static eElementType GetElementTypeEnum(IWebElement EL = null, string JSType = null)
+        public static Tuple<string, eElementType> GetElementTypeEnum(IWebElement EL = null, string JSType = null)
         {
+            Tuple<string, eElementType> returnTuple;
             eElementType elementType = eElementType.Unknown;
             string tagName;
-            string type;
+            string type = string.Empty;
 
             if ((EL == null) && (JSType != null))
             {
@@ -3768,7 +3770,8 @@ namespace GingerCore.Drivers
             }
             else
             {
-                return elementType;
+                returnTuple = new Tuple<string, eElementType>( type, elementType );
+                return returnTuple;
             }
 
             if ((tagName.ToUpper() == "INPUT" && (type.ToUpper() == "UNDEFINED" || type.ToUpper() == "TEXT" || type.ToUpper() == "PASSWORD" || type.ToUpper() == "EMAIL")) ||
@@ -3823,7 +3826,8 @@ namespace GingerCore.Drivers
             }
             else if (tagName.ToUpper() == "OPTGROUP" || tagName.ToUpper() == "OPTION")
             {
-                return eElementType.ComboBoxOption;
+
+                elementType = eElementType.ComboBoxOption;
             }
             else if ((tagName.ToUpper() == "INPUT" && type.ToUpper() == "RADIO") || (tagName.ToUpper() == "RADIO"))
             {
@@ -3859,8 +3863,9 @@ namespace GingerCore.Drivers
             }
             else
                 elementType = eElementType.Unknown;
+            returnTuple = new Tuple<string, eElementType>(type, elementType);
 
-            return elementType;
+            return returnTuple;
         }
 
         private ElementInfo LearnElementInfoDetails(HTMLElementInfo EI)
@@ -3882,7 +3887,7 @@ namespace GingerCore.Drivers
             EI.Value = GenerateElementValue(el);
             EI.Name = GenerateElementName(el);
             EI.ElementType = GenerateElementType(el);
-            EI.ElementTypeEnum = GetElementTypeEnum(el);
+            EI.ElementTypeEnum = GetElementTypeEnum(el).Item2;
             EI.Path = path;
             if (elNode != null)
             {
@@ -3980,7 +3985,7 @@ namespace GingerCore.Drivers
             EI.Value = GenerateElementValue(el);
             EI.Name = GenerateElementName(el);
             EI.ElementType = GenerateElementType(el);
-            EI.ElementTypeEnum = GetElementTypeEnum(el);
+            EI.ElementTypeEnum = GetElementTypeEnum(el).Item2;
             EI.Path = path;
             EI.XPath = xPath;
             EI.ElementObject = el;
@@ -4147,7 +4152,7 @@ namespace GingerCore.Drivers
                 EI.Path = GenetratePath(path, xpath, EL.TagName);
                 EI.XPath = GenerateXpath(path, xpath, EL.TagName, ElementsIndexes[EL.TagName], ElementsCount[EL.TagName]); /*EI.GetAbsoluteXpath(); */
                 EI.ElementType = GenerateElementType(EL);
-                EI.ElementTypeEnum = GetElementTypeEnum(EL);
+                EI.ElementTypeEnum = GetElementTypeEnum(EL).Item2;
                 EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
                 list.Add(EI);
             }
@@ -4466,6 +4471,7 @@ namespace GingerCore.Drivers
             }
 
             //Base properties 
+            list.Add(new ControlProperty() { Name = "Element Type", Value = ElementInfo.ElementType });
             list.Add(new ControlProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
             list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
             list.Add(new ControlProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
@@ -4473,7 +4479,11 @@ namespace GingerCore.Drivers
             list.Add(new ControlProperty() { Name = "Width", Value = ((IWebElement)ElementInfo.ElementObject).Size.Width.ToString() });
             list.Add(new ControlProperty() { Name = "X", Value = ((IWebElement)ElementInfo.ElementObject).Location.X.ToString() });
             list.Add(new ControlProperty() { Name = "Y", Value = ((IWebElement)ElementInfo.ElementObject).Location.Y.ToString() });
-            list.Add(new ControlProperty() { Name = "Value", Value = ElementInfo.Value });
+            if (!string.IsNullOrEmpty(ElementInfo.Value))
+            {
+                list.Add(new ControlProperty() { Name = "Value", Value = ElementInfo.Value });
+            }
+
 
 
             if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
@@ -4849,7 +4859,7 @@ namespace GingerCore.Drivers
             EI.Value = GenerateElementValue(EL);
             EI.Name = GenerateElementName(EL);
             EI.ElementType = GenerateElementType(EL);
-            EI.ElementTypeEnum = GetElementTypeEnum(EL);
+            EI.ElementTypeEnum = GetElementTypeEnum(EL).Item2;
             EI.Path = path;
             EI.XPath = xpath;
             EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
@@ -5230,7 +5240,7 @@ namespace GingerCore.Drivers
                             actUI.Description = GetDescription(ControlAction, LocateValue, ElemValue, Type);
                             actUI.ElementLocateBy = GetLocateBy(LocateBy);
                             actUI.ElementLocateValue = LocateValue;
-                            actUI.ElementType = GetElementTypeEnum(null, Type);
+                            actUI.ElementType = GetElementTypeEnum(null, Type).Item2;
                             if (Enum.IsDefined(typeof(ActUIElement.eElementAction), ControlAction))
                                 actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), ControlAction);
                             else
@@ -6705,7 +6715,7 @@ namespace GingerCore.Drivers
             EI.Value = GenerateElementValue(webElement);
             EI.Name = GenerateElementName(webElement);
             EI.ElementType = GenerateElementType(webElement);
-            EI.ElementTypeEnum = GetElementTypeEnum(webElement);
+            EI.ElementTypeEnum = GetElementTypeEnum(webElement).Item2;
             EI.Path = ChildElementInfo.Path;
             EI.XPath = ChildElementInfo.XPath.Substring(0, ChildElementInfo.XPath.LastIndexOf("/"));
             EI.ElementObject = el;
