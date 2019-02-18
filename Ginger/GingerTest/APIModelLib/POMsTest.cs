@@ -77,7 +77,8 @@ namespace GingerTest.APIModelLib
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ValidatePOMGeneralDetails()
         {
             //Assert
@@ -88,7 +89,8 @@ namespace GingerTest.APIModelLib
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ValidatePOMScreenshotWasTaken()
         {
             //Act
@@ -98,7 +100,8 @@ namespace GingerTest.APIModelLib
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ValidateLearnedItems()
         {
             //Act
@@ -112,7 +115,8 @@ namespace GingerTest.APIModelLib
             Assert.IsNotNull(EI2, "POM.Element learned check");
         }
 
-        [TestMethod] /* [Timeout(60000)]*/
+        [TestMethod]
+        [Timeout(60000)]
         public void ValidateElementsProperties()
         {
             //Act  
