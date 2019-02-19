@@ -73,7 +73,9 @@ namespace GingerCore.Actions
             TakeScreenShot,
             RefreshDeviceScreenImage,
             PressKey,
-            OpenAppByName
+            OpenAppByName,
+            UnlockDevice,
+            LockDevice,
         }
 
         public enum ePressKey

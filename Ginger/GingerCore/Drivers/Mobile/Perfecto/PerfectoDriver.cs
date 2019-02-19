@@ -298,6 +298,12 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                     case ActMobileDevice.eMobileDeviceAction.OpenAppByName:
                         OpenAppByName(act.ValueForDriver);
                         break;
+                    case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
+                        UnlockDevice(act.ValueForDriver);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.LockDevice:
+                        LockDevice();
+                        break;
                     default:
                         act.Error = "Error: This operation is missing implementation";
                         break;
@@ -308,6 +314,58 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                 act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
             }
         }
+
+        private void LockDevice()
+        {
+            Dictionary<String, Object> pars = new Dictionary<String, Object>();
+            pars.Add("timeout", "10");
+            mDriver.ExecuteScript("mobile:screen:lock", pars);
+        }
+
+        private void UnlockDevice(string valueForDriver)
+        {
+            char[] passcode = valueForDriver.ToCharArray();
+
+            Dictionary<string, object> params1 = new Dictionary<string, object>();
+            params1.Add("keySequence", "HOME");
+            mDriver.ExecuteScript("mobile:presskey", params1);
+
+            if (DeviceProperty().Equals("Android"))
+            {
+
+                Dictionary<string, object> params2 = new Dictionary<string, object>();    // Few of Android devices doesn’t require the swipe operation to make the passcode entry to be visible. If that’s the case, comment the swipe function
+                params2.Add("start", "20%,80%");
+                params2.Add("end", "20%,20%");
+                params2.Add("duration", "1");
+
+                mDriver.ExecuteScript("mobile:touch:swipe", params2);
+
+                foreach (char c in passcode)
+                {
+                    mDriver.FindElementByXPath("//*[@text='" + c + "']").Click();
+                }
+
+                mDriver.FindElementByXPath(("//*[@text='OK']")).Click();        // Comment this line if unlocking device doesn't require to click on 'OK' button after entering the passcode
+            }
+            else
+            {
+                foreach (char c in passcode)
+                {
+                    mDriver.FindElementByXPath("//*[@label='" + c + "']").Click();
+                }
+            }
+
+        }
+
+        private string DeviceProperty()
+        {
+            Dictionary<string, object> params1 = new Dictionary<string, object>();
+            params1.Add("property", "os");                        // Can retrieve various device property info. of the device. Refer: https://developers.perfectomobile.com/pages/viewpage.action?pageId=13893798
+            string prop = (string)mDriver.ExecuteScript("mobile:device:info", params1);
+            return prop;
+        }
+
+
 
         private void PressLongHome()
         {

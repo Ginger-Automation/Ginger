@@ -231,6 +231,25 @@ namespace GingerCore.Platforms.PlatformsInfo
                 // adding generic/common actions per each ElementType
                 List<Enum> ElementCommonActionsList = new List<Enum>();
 
+
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.IsVisible);
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.IsDisabled);
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.IsEnabled);
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.Hover);
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.GetHeight);
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.GetStyle);
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.GetWidth);
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.SetFocus);
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.RunJavaScript);
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.GetSize);
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.GetAttrValue);
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.GetItemCount);
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.DragDrop);
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.MouseRightClick);
+                ElementCommonActionsList.Add(ActUIElement.eElementAction.ScrollToElement);
+
+
+
                 mPlatformElementTypeOperations.Where(y => y.ActionType == typeof(ActUIElement)).ToList()
                                                  .ForEach(z => z.ElementOperationsList = z.ElementOperationsList.Union(ElementCommonActionsList).ToList());
 
