@@ -36,7 +36,7 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 
 // a lot of samples from Microsoft on UIA at: https://uiautomationverify.svn.codeplex.com/svn/UIAVerify/
-// DO NOT add any specific driver here, this is generic windows app driver helper
+// DO NOT add any specific driver here, this is generic windows app driver helper 
 
 namespace GingerCore.Drivers
 {
@@ -434,6 +434,11 @@ namespace GingerCore.Drivers
                         {
                             continue;
                         }
+                        if(CheckUserSpecificProcess(window) == false)
+                        {
+                            continue;
+                        }
+
                         //list All Windows except PB windows - FNW
 
                         if (!window.Current.ClassName.StartsWith("FNW"))
@@ -476,7 +481,11 @@ namespace GingerCore.Drivers
 
                     foreach (AutomationElement window in AppWindows)
                     {
-                        if (!IsWindowValid(window))
+                        if (!IsWindowValid(window)) 
+                        {
+                            continue;
+                        }
+                        if (CheckUserSpecificProcess(window) == false)
                         {
                             continue;
                         }
@@ -523,6 +532,19 @@ namespace GingerCore.Drivers
 
             return list;
         }
+        private bool CheckUserSpecificProcess(AutomationElement window)
+        {
+            Process currentProcess = Process.GetProcessById(window.Current.ProcessId);
+            if (currentProcess.StartInfo.Environment["USERNAME"] != Environment.UserName)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+ 
 
         #endregion RECORDING DRIVER
 
@@ -3087,13 +3109,11 @@ namespace GingerCore.Drivers
                             if (vp != null)
                             {
                                 ((ValuePattern)vp).SetValue(value);
-                            }                            
+                            }
                             else
                             {
-                                Reporter.ToLog(eLogLevel.DEBUG, "In Combo Box Exception vp is null::");
-                                throw new Exception("Element doesn't support ValuePattern.Pattern, make sure locator is finding the correct element");
+                                SetCombobValueByUIA(element, value);
                             }
-
                         }
                         break;
 
@@ -3323,6 +3343,40 @@ namespace GingerCore.Drivers
                 throw new Exception("Unable to set value. Value - " + value);
             }
         }
+
+        /// <summary>
+        /// This method is used to select the
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="val"></param>
+        private void SetCombobValueByUIA(AutomationElement element, string val)
+        {
+            try
+            {
+                ExpandCollapsePattern exPat = element.GetCurrentPattern(ExpandCollapsePattern.Pattern)
+                                                                              as ExpandCollapsePattern;
+
+                if (exPat == null)
+                {
+                    throw new ApplicationException("Unable to set value");
+                }
+
+                exPat.Expand();
+
+                AutomationElement itemToSelect = element.FindFirst(TreeScope.Descendants, new
+                                      PropertyCondition(AutomationElement.NameProperty, val));
+
+                SelectionItemPattern sPat = itemToSelect.GetCurrentPattern(
+                                                          SelectionItemPattern.Pattern) as SelectionItemPattern;
+                sPat.Select();
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "In Combo Box Exception vp is null::");
+                throw new Exception("Element doesn't support ValuePattern.Pattern, make sure locator is finding the correct element");
+            }
+        }
+
         private bool ComparePBActualExpected(string actual,string exp)
         {
             return false;

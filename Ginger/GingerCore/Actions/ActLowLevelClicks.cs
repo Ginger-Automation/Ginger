@@ -120,7 +120,9 @@ namespace GingerCore.Actions
                 targetWin = UIAutomationGetWindowByTitle(WindowTitle);
             string locatorImgFilePath;
 
-            locatorImgFilePath = LocatorImgFile.Replace("~\\", SolutionFolder);
+            //locatorImgFilePath = LocatorImgFile.Replace("~\\", SolutionFolder);
+            locatorImgFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(LocatorImgFile);
+
             if (!File.Exists(LocatorImgFile))
             {
                 if (LocatorImgFile.Contains("Documents"))

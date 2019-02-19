@@ -75,7 +75,7 @@ namespace Ginger.Reports
         {
             InitializeComponent();
 
-            _HTMLReportConfiguration = SetHTMLReportConfigurationWithDefaultValues();
+            _HTMLReportConfiguration = HTMLReportConfiguration.SetHTMLReportConfigurationWithDefaultValues();
             SetControlsNewTemplate();
             SetDefaultLogoImage();
             SetHTMLReportsConfigFieldsGridsView();
@@ -162,43 +162,6 @@ namespace Ginger.Reports
             grdEmailSummaryViewFields.InitViewItems();
         }      
 
-        public static HTMLReportConfiguration SetHTMLReportConfigurationWithDefaultValues(string name = null)
-        {
-            if ( WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq == 0)
-            {
-                 WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = 1;
-            }
-            HTMLReportConfiguration newHTMLReportConfiguration = new HTMLReportConfiguration();
-            newHTMLReportConfiguration.ID =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq;
-            if ((name != null) && (name != string.Empty))
-            {
-                newHTMLReportConfiguration.Name = name;
-            }
-            else
-            {
-                newHTMLReportConfiguration.Name = "Template #" + newHTMLReportConfiguration.ID;
-            }
-            newHTMLReportConfiguration.ReportLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActionLevel.ToString();
-            if (Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations().Count == 0)
-                newHTMLReportConfiguration.IsDefault = true;
-            else
-                newHTMLReportConfiguration.IsDefault = false;
-            newHTMLReportConfiguration.ShowAllIterationsElements = false;
-            newHTMLReportConfiguration.UseLocalStoredStyling = false;
-            newHTMLReportConfiguration.RunSetFieldsToSelect = GetReportLevelMembers(typeof(RunSetReport));
-            newHTMLReportConfiguration.EmailSummaryViewFieldsToSelect = GetReportLevelMembers(typeof(RunSetReport));
-            newHTMLReportConfiguration.GingerRunnerFieldsToSelect = GetReportLevelMembers(typeof(GingerReport));
-            newHTMLReportConfiguration.BusinessFlowFieldsToSelect = GetReportLevelMembers(typeof(BusinessFlowReport));
-            newHTMLReportConfiguration.ActivityGroupFieldsToSelect = GetReportLevelMembers(typeof(ActivityGroupReport));
-            newHTMLReportConfiguration.ActivityFieldsToSelect = GetReportLevelMembers(typeof(ActivityReport));
-            newHTMLReportConfiguration.ActionFieldsToSelect = GetReportLevelMembers(typeof(ActionReport));
-            newHTMLReportConfiguration.Description = string.Empty;
-            using (var ms = new MemoryStream())
-            {
-                newHTMLReportConfiguration.LogoBase64Image = Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@amdocs_logo.jpg"))));
-            }
-            return newHTMLReportConfiguration;
-        }
 
         private void SetHTMLReportsConfigFieldsGridsData(HTMLReportConfiguration HTMLReportConfiguration)
         {

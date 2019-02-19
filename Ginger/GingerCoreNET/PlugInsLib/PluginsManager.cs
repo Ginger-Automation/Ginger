@@ -156,7 +156,7 @@ namespace Amdocs.Ginger.Repository
        
         public System.Diagnostics.Process StartService(string pluginId, string serviceID)
         {
-            Console.WriteLine("Staring Service...");
+            Console.WriteLine("Starting Service...");
             if (string.IsNullOrEmpty(pluginId))
             {
                 throw new ArgumentNullException(nameof(pluginId));
@@ -207,7 +207,7 @@ namespace Amdocs.Ginger.Repository
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo = procStartInfo;
 
-            Console.WriteLine("Staring Process..");
+            Console.WriteLine("Starting Process..");
             proc.Start();            
 
             mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));

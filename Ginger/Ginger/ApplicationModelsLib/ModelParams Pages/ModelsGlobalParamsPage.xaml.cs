@@ -43,6 +43,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using Ginger.SolutionWindows.TreeViewItems;
+using Amdocs.Ginger.Common.Repository;
 
 namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 {
@@ -523,13 +524,12 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
         private void OpenEditPossibleValuesPageButton_Click(object sender, RoutedEventArgs e)
         {
-            GlobalAppModelParameter SelectedAMDP = (GlobalAppModelParameter)xModelsGlobalParamsGrid.CurrentItem;
-            ObservableList<OptionalValue> list = SelectedAMDP.OptionalValuesList;
-            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(SelectedAMDP);
+            IParentOptionalValuesObject parObj = (IParentOptionalValuesObject)xModelsGlobalParamsGrid.CurrentItem;
+            ModelOptionalValuesPage MDPVP = new ModelOptionalValuesPage(parObj);
             bool editWasDone = MDPVP.ShowAsWindow();
 
             if (editWasDone)
-                SelectedAMDP.SaveBackup();
+                ((GlobalAppModelParameter)xModelsGlobalParamsGrid.CurrentItem).SaveBackup();
         }
 
         public List<GlobalAppModelParameter> ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)

@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
@@ -136,6 +137,11 @@ namespace GingerCore.Platforms.PlatformsInfo
 
             }
             return list;
+        }
+
+        public override ObservableList<ElementLocator> GetLearningLocators()
+        {
+            return null;
         }
         // TODO: provide type of values per property - true/false, string, number bounds etc...       
     }
