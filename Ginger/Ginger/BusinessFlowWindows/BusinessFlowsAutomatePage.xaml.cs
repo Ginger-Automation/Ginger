@@ -35,7 +35,8 @@ namespace Ginger.BusinessFlowWindows
     public partial class BusinessFlowsAutomatePage : Page
     {
         SingleItemTreeViewExplorerPage mBusFlowsPage;
-        Page mAutomatePage;        
+        AutomatePage mAutomatePage;
+        NewAutomatePage mNewAutomatePage;
 
         public BusinessFlowsAutomatePage()
         {
@@ -51,20 +52,24 @@ namespace Ginger.BusinessFlowWindows
         {
             if (args.EventType == AutomateEventArgs.eEventType.Automate)
             {
-                if (mAutomatePage == null)
+                if (WorkSpace.Instance.BetaFeatures.ShowNewautomate)
                 {
-                    if (WorkSpace.Instance.BetaFeatures.ShowNewautomate)
+                    if (mNewAutomatePage == null)
                     {
-                        mAutomatePage = new NewAutomatePage();
+                        mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);
                     }
-                    else
+                    xContentFrame.Content = mNewAutomatePage;
+                }
+                else
+                {
+                    if (mAutomatePage == null)
                     {
                         mAutomatePage = new AutomatePage((BusinessFlow)args.Object);
-                        ((AutomatePage)mAutomatePage).GoToBusFlowsListHandler(GoToBusinessFlowsList);
+                        mAutomatePage.GoToBusFlowsListHandler(GoToBusinessFlowsList);
                     }
-
+                    xContentFrame.Content = mAutomatePage;
                 }
-                xContentFrame.Content = mAutomatePage;
+
             }
         }
 

@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Run;
 using Amdocs.Ginger.UserControls;
@@ -75,6 +74,8 @@ namespace Ginger
     public partial class AutomatePage : Page 
     {
         BusinessFlow mBusinessFlow = null;
+        Activity mCurrentActivity = null;
+
         BusinessFlowPage mCurrentBusPage;
         VariablesPage mVariablesPage;
         ActivitiesGroupsPage mActivitiesGroupsPage;
@@ -83,10 +84,8 @@ namespace Ginger
         VariablesPage mActivityVariablesPage;
         public ActionsPage mActionsPage;
         RepositoryPage mReposiotryPage;
-        Activity mCurrentActivity = null;
-                
+                       
         GridLength mlastRepositoryColWidth = new GridLength(300);
-
         GridLength mlastBFVariablesRowHeight = new GridLength(200, GridUnitType.Star);
         GridLength mlastBFActivitiesGroupsRowHeight = new GridLength(200, GridUnitType.Star);
         GridLength mlastBFActivitiesRowHeight = new GridLength(300, GridUnitType.Star);
@@ -98,31 +97,16 @@ namespace Ginger
         AutomatePageRunnerListener mAutomatePageRunnerListener;
         ExecutionLogger mExecutionLogger;
 
-        public void GoToBusFlowsListHandler(RoutedEventHandler clickHandler)
-        {           
-            xToBusinessFlowsListBtn.Visibility = Visibility.Visible;
-            xToBusinessFlowsListBtn.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 32);
-            xToBusinessFlowsListBtn.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 16);
-            xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
-            xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
-            xToBusinessFlowsListBtn.Click += clickHandler;
-        }
-
         public AutomatePage(BusinessFlow businessFlow)
         {
             InitializeComponent();
 
-            LoadNewBusinessFlow(businessFlow);
-            if (mBusinessFlow == null)
-            {
-                //App.SetDefaultBusinessFlow();
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Failed to find {0} to load into Automate page.", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)));
-                return;
-            }
-
+            App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
+            WorkSpace.UserProfile.PropertyChanged += UserProfilePropertyChanged;
             AddRunnerListeners();
+            LoadBusinessFlowToAutomate(businessFlow);           
 
-            //Ribbon
+            //UI Updates
             btnRunActivity.Label = "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity);
             ContinuteRunActiviy.Header = "Continue Run from Current " + GingerDicser.GetTermResValue(eTermResKey.Activity);
             btnResetStatus.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 32);
@@ -133,9 +117,7 @@ namespace Ginger
             cboSpeed.Text = "0";
             App.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, App.AutomateTabGingerRunner, Ginger.Run.GingerRunner.Fields.RunInSimulationMode);
             AppAgentsMappingExpander2Frame.Content = new ApplicationAgentsMapPage(App.AutomateTabGingerRunner);
-
             SetExpanders();
-
             //Bind between Menu expanders and actual grid expanders
             App.ObjFieldBinding(BFVariablesExpander, Expander.IsExpandedProperty, BFVariablesExpander2, "IsExpanded");
             App.ObjFieldBinding(BFActivitiesGroupsExpander, Expander.IsExpandedProperty, BFActivitiesGroupsExpander2, "IsExpanded");
@@ -148,22 +130,29 @@ namespace Ginger
             mlastBFVariablesRowHeight = new GridLength(200, GridUnitType.Star);
             mlastActivityVariablesRowHeight = new GridLength(200, GridUnitType.Star);
             SetFramesContent();
-
-            //App.PropertyChanged += AppPropertychanged;
-            WorkSpace.UserProfile.PropertyChanged += UserProfilePropertyChanged;
-
-            App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEvent;
-            App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
-
             SetGridsView(eAutomatePageViewStyles.Design.ToString());
             SetGherkinOptions();
-
             BindEnvsCombo();
+
+            if (mBusinessFlow == null)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Failed to find {0} to load into Automate page.", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)));
+                return;
+            }
+        }
+
+        public void GoToBusFlowsListHandler(RoutedEventHandler clickHandler)
+        {
+            xToBusinessFlowsListBtn.Visibility = Visibility.Visible;
+            xToBusinessFlowsListBtn.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 32);
+            xToBusinessFlowsListBtn.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 16);
+            xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
+            xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
+            xToBusinessFlowsListBtn.Click += clickHandler;
         }
 
         private void AddRunnerListeners()
-        {
-            
+        {            
             // Add Listener so we can do GiveUserFeedback            
             mAutomatePageRunnerListener = new AutomatePageRunnerListener();
             mAutomatePageRunnerListener.AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback;
@@ -171,15 +160,7 @@ namespace Ginger
             mExecutionLogger = new ExecutionLogger(App.AutomateTabEnvironment, eExecutedFrom.Automation);
             mExecutionLogger.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
 
-
             WorkSpace.AutomateTabGingerRunner.ExecutionLogger.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-         
-
-
-            // TODO: do only if flag on !!!!!!!!!!!!!
-            // App.AutomateTabGingerRunner.RunListeners.Add(new GingerRunnerTimeLine());
-            // RunListenerBase.Start();
-
         }
 
         private void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
@@ -187,7 +168,10 @@ namespace Ginger
             switch (args.EventType)
             {
                 case AutomateEventArgs.eEventType.Automate:
-                    LoadNewBusinessFlow((BusinessFlow)args.Object);
+                    LoadBusinessFlowToAutomate((BusinessFlow)args.Object);
+                    break;
+                case AutomateEventArgs.eEventType.ClearAutomate:
+                    RemoveCurrentBusinessFlow();
                     break;
                 case AutomateEventArgs.eEventType.SetupRunnerForExecution:
                     SetAutomateTabRunnerForExecution();
@@ -252,7 +236,7 @@ namespace Ginger
             mActivityVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
             ActivityVariablesFrame.Content = mActivityVariablesPage;
 
-            mActionsPage = new ActionsPage();
+            mActionsPage = new ActionsPage(businessFlow:mBusinessFlow, editMode: General.RepositoryItemPageViewMode.Automation);
             mActionsPage.grdActions.ShowTitle = System.Windows.Visibility.Collapsed;
             ActivityActionsFrame.Content = mActionsPage;
 
@@ -395,6 +379,7 @@ namespace Ginger
                     ActivityActionsExpanderLabel.Content = label;
                     ActivityActionsExpander2Label.Content = label;
                 }
+                mActionsPage.UpdateParentBusinessFlow(mBusinessFlow);
             }
         }
 
@@ -445,11 +430,8 @@ namespace Ginger
 
         private void UserProfilePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            // Handle Solution change
-            //TODO: cleanup close current biz flow etc...
             if (e.PropertyName == nameof(UserProfile.Solution))
-            {
-                
+            {                
                 lstEnvs.ItemsSource = null;
 
                 if ( WorkSpace.UserProfile.Solution == null)
@@ -861,16 +843,15 @@ namespace Ginger
         //    }
         //}
 
-        private void LoadNewBusinessFlow(BusinessFlow businessFlowToLoad)
+        private void LoadBusinessFlowToAutomate(BusinessFlow businessFlowToLoad)
         {
             if (mBusinessFlow != businessFlowToLoad)
             {
-                StopAutomateRun();
-                mBusinessFlow.PropertyChanged -= mBusinessFlow_PropertyChanged;
-                mBusinessFlow.TargetApplications.CollectionChanged -= mBusinessFlowTargetApplications_CollectionChanged;
+                RemoveCurrentBusinessFlow();
                 mBusinessFlow = businessFlowToLoad;
-                if (mBusinessFlow != null)
-                {
+                WorkSpace.Instance.BusinessFlowInContext = mBusinessFlow;
+                if (businessFlowToLoad != null)
+                {                    
                     mBusinessFlow.SaveBackup();
                     mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
                     mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
@@ -882,11 +863,24 @@ namespace Ginger
                         mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
                     }
                     //Set Business Flow on AutomateTabGingerRunner
-                    App.AutomateTabGingerRunner.BusinessFlows.Clear();                   
-                    App.AutomateTabGingerRunner.BusinessFlows.Add(mBusinessFlow);                    
-                    App.AutomateTabGingerRunner.CurrentBusinessFlow = App.BusinessFlow;
+                                   
+                    App.AutomateTabGingerRunner.BusinessFlows.Add(mBusinessFlow);
+                    App.AutomateTabGingerRunner.CurrentBusinessFlow = mBusinessFlow;
                 }
+
             }
+        }
+
+        private void RemoveCurrentBusinessFlow()
+        {
+            StopAutomateRun();
+            if (mBusinessFlow != null)
+            {
+                mBusinessFlow.PropertyChanged -= mBusinessFlow_PropertyChanged;
+                mBusinessFlow.TargetApplications.CollectionChanged -= mBusinessFlowTargetApplications_CollectionChanged;
+                mBusinessFlow = null;                
+                App.AutomateTabGingerRunner.BusinessFlows.Clear();
+            }            
         }
 
         private void mBusinessFlowTargetApplications_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -1082,8 +1076,6 @@ namespace Ginger
             App.AutomateTabGingerRunner.DSList = new ObservableList<DataSourceBase>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
             App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<Agent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>());
             App.AutomateTabGingerRunner.SolutionApplications =  WorkSpace.UserProfile.Solution.ApplicationPlatforms;
-
-            SetGingerRunnerSpeed();
         }
 
         public async Task RunActivity()
@@ -1098,12 +1090,7 @@ namespace Ginger
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                 }
             }
-        }
-
-        private void SetGingerRunnerSpeed()
-        {
-            App.AutomateTabGingerRunner.SetSpeed(int.Parse(cboSpeed.Text));
-        }
+        }        
 
         private void DisableGridSelectedItemChangeOnClick(ucGrid UCGrid)
         {
@@ -1311,12 +1298,10 @@ namespace Ginger
             try
             {
                 App.AutomateTabGingerRunner.StopRun();
-                AutoLogProxy.UserOperationStart("StopRunButton_Click");
             }
             finally
             {
                 EnableDisableAutomateTabGrids(true);
-                AutoLogProxy.UserOperationEnd();
             }
         }
 
@@ -1556,6 +1541,16 @@ namespace Ginger
             GingerRunnerTimeLine gingerRunnerTimeLine = (GingerRunnerTimeLine)(from x in App.AutomateTabGingerRunner.RunListeners where x.GetType() == typeof(GingerRunnerTimeLine) select x).SingleOrDefault();
             TimeLinePage timeLinePage = new TimeLinePage(gingerRunnerTimeLine.timeLineEvents);
             timeLinePage.ShowAsWindow();
+        }
+
+        private void CboSpeed_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            App.AutomateTabGingerRunner.SetSpeed(int.Parse(cboSpeed.Text));
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            WorkSpace.Instance.BusinessFlowInContext = mBusinessFlow;
         }
     }
 }

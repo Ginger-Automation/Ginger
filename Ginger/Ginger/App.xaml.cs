@@ -75,7 +75,7 @@ namespace Ginger
                                        (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        public static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";
+        public static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//?????
 
         public static System.Diagnostics.FileVersionInfo ApplicationInfo
         {
@@ -164,23 +164,15 @@ namespace Ginger
             }
         }
 
-        public static TextBlock RunsetBFTextbox = null;
-        public static TextBlock RunsetActivityTextbox = null;
-        public static TextBlock RunsetActionTextbox = null;
-        public static string TempFolder
-        {
-            get
-            {
-                return System.IO.Path.GetDirectoryName(System.IO.Path.GetTempFileName()) + "\\Ginger_Email_Reports";
-            }
-        }
+        public static TextBlock RunsetBFTextbox = null;//???
+        public static TextBlock RunsetActivityTextbox = null;//???
+        public static TextBlock RunsetActionTextbox = null;//???
 
-        //Making the MainWindow Static to allow control it
         public new static MainWindow MainWindow { get; set; }
-        //End
+        
         private Dictionary<string, Int32> _exceptionsDic = new Dictionary<string, int>();
 
-        public static Amdocs.Ginger.CoreNET.Execution.eRunStatus RunSetExecutionStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+       
         /// <summary>
         /// Hold all Run Set execution data + execution methods
         /// </summary>        
@@ -196,16 +188,12 @@ namespace Ginger
                 WorkSpace.RunsetExecutor = value;
             }
         }
-        //TODO: whenever changed check if isDirty - and ask the user if to save
-        public static RepositoryItemBase CurrentRepositoryItem { get; set; }
 
-        public static ITreeViewItem CurrentSelectedTreeItem { get; set; }
-
-        public static string RecoverFolderPath = null;
-        public static IEnumerable<object> CurrentFolderItem { get; set; }
+        public static string RecoverFolderPath = null; //???
+        
 
         // Business Flow Objects        
-        private static ProjEnvironment mAutomateTabEnvironment
+        private static ProjEnvironment mAutomateTabEnvironment //???
         {
             get
             {
@@ -217,7 +205,7 @@ namespace Ginger
                 WorkSpace.AutomateTabEnvironment = value;
             }
         }
-        public static ProjEnvironment AutomateTabEnvironment
+        public static ProjEnvironment AutomateTabEnvironment //???
         {
             get
             {
@@ -233,7 +221,7 @@ namespace Ginger
         }
 
 
-        public static GingerRunner AutomateTabGingerRunner
+        public static GingerRunner AutomateTabGingerRunner///???
         {
             get
             {
@@ -246,93 +234,18 @@ namespace Ginger
             }
         }
 
-
-        public static AppProgressBar AppProgressBar { get; set; }
-
-        //public static UserProfile UserProfile { get; set; }
-
         public static event PropertyChangedEventHandler PropertyChanged;
         protected static void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
-            {
-                // Need to be App not biz flow, temp
-                handler(mBusinessFlow, new PropertyChangedEventArgs(name));
+            {                
+                handler(null, new PropertyChangedEventArgs(name));
             }
         }
 
         public static SplashWindow AppSplashWindow { get; set; }
-
-        public static ucGrid ActionsGrid { get; set; }
-
-
        
-        //private static BusinessFlow mBusinessFlow
-        //{
-        //    get
-        //    {
-        //        return(BusinessFlow) WorkSpace.Businessflow;
-        //    }
-        //    set
-        //    {
-        //        WorkSpace.Businessflow = value;
-        //    }
-        //}
-        //public static BusinessFlow BusinessFlow
-        //{
-        //    get { return mBusinessFlow; }
-        //    set
-        //    {
-                
-        //        mBusinessFlow = value;
-
-        //        if (value != null)
-        //        {
-        //            if (mBusinessFlow.Activities.Count > 0)
-        //            {
-        //                mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
-        //            }
-        //            //WorkSpace.UserProfile.RecentBusinessFlow = App.BusinessFlow.Guid;
-        //            //WorkSpace.UserProfile.Solution.LastBusinessFlowFileName = mBusinessFlow.FileName;
-        //            //AddLastUsedBusinessFlow(mBusinessFlow);
-        //        }
-
-        //        //Set Business Flow on AutomateTabGingerRunner
-        //        App.AutomateTabGingerRunner.BusinessFlows.Clear();
-        //        if (App.BusinessFlow != null)
-        //        {
-        //            App.AutomateTabGingerRunner.BusinessFlows.Add(App.BusinessFlow);
-        //        }
-        //        App.AutomateTabGingerRunner.CurrentBusinessFlow = App.BusinessFlow;
-        //        UpdateApplicationsAgentsMapping();
-
-        //        OnPropertyChanged(nameof(BusinessFlow));
-        //    }
-        //}
-
-        //private static void AddLastUsedBusinessFlow(BusinessFlow BF)
-        //{
-        //    if (BF != null)
-        //    {
-        //         WorkSpace.UserProfile.Solution.RecentlyUsedBusinessFlows.AddItem(BF.FileName);
-        //         WorkSpace.UserProfile.SaveUserProfile();
-        //    }
-        //}
-
-
-        //public static string LocalApplicationData
-        //{
-        //    get
-        //    {
-        //        //TODO: check where it goes - not roaming,.,
-        //        string s = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        //        s = s + @"\amdocs\" + App.AppName;
-        //        return s;
-        //    }
-        //}
-
-
 
         public static bool RunningFromUnitTest = false;
 
@@ -411,9 +324,7 @@ namespace Ginger
             WorkSpace.Init(WSEH);
 
             WorkSpace.Instance.BetaFeatures = BetaFeatures.LoadUserPref();
-            WorkSpace.Instance.BetaFeatures.PropertyChanged += BetaFeatureChanged;
-
-            AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
+            WorkSpace.Instance.BetaFeatures.PropertyChanged += BetaFeatureChanged;            
 
             if (WorkSpace.Instance.BetaFeatures.ShowDebugConsole)
             {
@@ -518,7 +429,6 @@ namespace Ginger
             // when loading check restore and restore
         }
 
-
         static bool bDone = false;
         public static void InitClassTypesDictionary()
         {
@@ -530,19 +440,14 @@ namespace Ginger
             // TODO: remove after we don't need old serializer to load old repo items
             NewRepositorySerializer.NewRepositorySerializerEvent += RepositorySerializer.NewRepositorySerializer_NewRepositorySerializerEvent;
 
-
             // Add all RI classes from GingerCoreNET
             // NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
 
             // Add all RI classes from GingerCoreCommon
             NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
-
             
-
-
             // Add all RI classes from GingerCore
             NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActButton).Assembly); // GingerCore.dll
-
             
             // add from Ginger
             NewRepositorySerializer.AddClassesFromAssembly(typeof(Ginger.App).Assembly);
@@ -555,7 +460,6 @@ namespace Ginger
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
             
-
             // TODO: remove after it moved to common
             AddClass(list, typeof(RunSetConfig));
             AddClass(list, typeof(RunSetActionSendEmail));
@@ -748,7 +652,7 @@ namespace Ginger
 
             WorkSpace.UserProfile.Solution = null;
             App.AutomateTabGingerRunner.ClearAgents();
-            App.BusinessFlow = null;
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ClearAutomate, null);
             AutoLogProxy.SetAccount("");
             WorkSpace.Instance.SolutionRepository = null;
             WorkSpace.Instance.SourceControl = null;
@@ -953,11 +857,6 @@ namespace Ginger
                 AppSolutionRecover.SolutionRecoverStart();
         }
 
-
-
-
-       
-
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             Exception ex = e.Exception;
@@ -985,26 +884,6 @@ namespace Ginger
             // Clear the err so it will not crash
             e.Handled = true;
         }
-
-        //public static BusinessFlow SetDefaultBusinessFlow()
-        //{
-        //    BusinessFlow defualtBF;
-
-        //    ObservableList<BusinessFlow> allBizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-        //    if (allBizFlows.Count > 0)
-        //    {
-        //        defualtBF = allBizFlows[0];
-        //    }
-        //    else
-        //    {
-        //        defualtBF = CreateNewBizFlow(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " 1");
-        //        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(defualtBF);
-        //    }
-
-        //    defualtBF.SaveBackup();
-        //    App.BusinessFlow = defualtBF;
-        //    return defualtBF;
-        //}
 
         public static BusinessFlow GetNewBusinessFlow(string Name, bool setTargetApp=false)
         {
@@ -1041,44 +920,7 @@ namespace Ginger
             else
                 return null;
         }
-
         
-
-        //public static void AddItemToSaveAll(RepositoryItemBase itemToSave =null)
-        //{
-        //    if (itemToSave == null)
-        //        if (CurrentRepositoryItem != null && CurrentSelectedTreeItem != null)
-        //            itemToSave = App.CurrentRepositoryItem;
-
-        //    if (itemToSave != null)
-        //        try
-        //        {
-        //            if (App.ItemstoSave.Where(x => x.Guid == itemToSave.Guid).FirstOrDefault() == null)
-        //            {
-        //                BackupAndSaveItem(itemToSave);
-        //            }
-        //            else
-        //            {
-        //                var itemToRemove = App.ItemstoSave.SingleOrDefault(x => x.Guid == itemToSave.Guid);
-        //                if (itemToRemove != null)
-        //                {
-        //                    App.ItemstoSave.Remove(itemToRemove);
-        //                    BackupAndSaveItem(itemToSave);
-        //                }
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to add the item '" + CurrentRepositoryItem.FileName + "' to Save All list after it was selected on the tree", ex);
-        //        }
-        //}
-
-        //private static void BackupAndSaveItem(RepositoryItemBase itemToSave)
-        //{
-        //    if (itemToSave.IsDirty == false)
-        //        itemToSave.SaveBackup();
-        //    App.ItemstoSave.Add(itemToSave);
-        //}
 
         private static void BetaFeatureChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -1103,7 +945,7 @@ namespace Ginger
         }
 
 
-        public static void CloseSolution()
+        public static void CloseSolution()///????
         {
              WorkSpace.UserProfile.Solution = null;
         }
@@ -1120,16 +962,6 @@ namespace Ginger
             }
         }
 
-        //private static void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
-        //{
-        //    if (args.EventType == AutomateEventArgs.eEventType.Automate)
-        //    {
-        //        App.BusinessFlow = (BusinessFlow)args.Object;
-        //        App.BusinessFlow.SaveBackup();
-        //    }
-        //}
-
-        
-
+        public BusinessFlow BusinessFlow;
     }
 }

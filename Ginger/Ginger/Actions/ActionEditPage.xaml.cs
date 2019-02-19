@@ -97,11 +97,11 @@ namespace Ginger.Actions
             if (actParentBusinessFlow != null)
                 mActParentBusinessFlow = actParentBusinessFlow;
             else
-                mActParentBusinessFlow = App.BusinessFlow;
+                mActParentBusinessFlow = WorkSpace.Instance.BusinessFlowInContext;
             if (actParentActivity != null)
                 mActParentActivity = actParentActivity;
             else
-                mActParentActivity = (Activity)App.BusinessFlow.CurrentActivity;
+                mActParentActivity = (Activity)WorkSpace.Instance.BusinessFlowInContext.CurrentActivity;
 
             EditMode = editMode;
             mAction.PropertyChanged += ActionPropertyChanged;

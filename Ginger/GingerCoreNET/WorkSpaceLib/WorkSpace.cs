@@ -40,14 +40,26 @@ namespace amdocs.ginger.GingerCoreNET
     public class WorkSpace : RepositoryItemBase
     {
         private static WorkSpace mWorkSpace;
-        public static WorkSpace Instance { get { return mWorkSpace; } }        
+        public static WorkSpace Instance { get { return mWorkSpace; } }
 
-        public SolutionRepository SolutionRepository;        
+        public static void Init(IWorkSpaceEventHandler WSEH)
+        {
+            mWorkSpace = new WorkSpace();
+            mWorkSpace.EventHandler = WSEH;
+        }
+
+        public SolutionRepository SolutionRepository;
+
+        /// <summary>
+        /// Do not use if not must.
+        /// Workaround to pass in context Business Flow for old pages
+        /// </summary>
+        public BusinessFlow BusinessFlowInContext { get; set; }
 
         // Will be back when we moved GR to GingerCoreNET
         // public GingerRunner GingerRunner;
         // public ProjEnvironment CurrentEnvironment;
-  
+
         public SourceControlBase SourceControl;
         public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
         public static string AppVersion="0.0.0.0.0";
@@ -90,6 +102,7 @@ namespace amdocs.ginger.GingerCoreNET
         // Here we will have knwon GingerGrids - !!!!!!!!!!!!!!!!!!! Design, think..........
         // public IObservable<GingerGrid> GingerGrids;
         public static GingerRunner AutomateTabGingerRunner { get; set; }
+
         public void OpenSolution(string SolutionFolder)
         {
             mPluginsManager = null;
@@ -104,11 +117,7 @@ namespace amdocs.ginger.GingerCoreNET
             EventHandler.SolutionClosed();
         }
 
-        public static void Init(IWorkSpaceEventHandler WSEH)
-        {
-            mWorkSpace = new WorkSpace();
-            mWorkSpace.EventHandler = WSEH;
-        }
+        
 
         public static UserProfile UserProfile { get; set; }
        
@@ -166,7 +175,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public BusinessFlow BusinessFlowInContext { get;  set; }
+        
 
         public static bool RunningInExecutionMode = false;
 

@@ -1571,6 +1571,15 @@ namespace Ginger.Run
             {
                 xActivitiesRunnerItemsListView.ItemsSource = null;
             }
+
+            if (mCurrentBusinessFlowRunnerItem != null)
+            {
+                WorkSpace.Instance.BusinessFlowInContext = (BusinessFlow)mCurrentBusinessFlowRunnerItem.ItemObject;
+            }
+            else
+            {
+                WorkSpace.Instance.BusinessFlowInContext = null;
+            }
         }
 
         private void xActivitiesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
