@@ -302,7 +302,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                         UnlockDevice(act.ValueForDriver);
                         break;
                     case ActMobileDevice.eMobileDeviceAction.LockDevice:
-                        LockDevice();
+                        LockDevice(act.ValueForDriver);
                         break;
                     default:
                         act.Error = "Error: This operation is missing implementation";
@@ -315,10 +315,10 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             }
         }
 
-        private void LockDevice()
+        private void LockDevice(string valueForDriver)
         {
-            Dictionary<String, Object> pars = new Dictionary<String, Object>();
-            pars.Add("timeout", "10");
+            Dictionary<string, object> pars = new Dictionary<string, object>();
+            pars.Add("timeout", valueForDriver);
             mDriver.ExecuteScript("mobile:screen:lock", pars);
         }
 
