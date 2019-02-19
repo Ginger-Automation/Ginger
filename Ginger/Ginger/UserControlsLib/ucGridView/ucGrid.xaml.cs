@@ -2091,7 +2091,7 @@ public void RemoveCustomView(string viewName)
             {
                 var cItem = grdMain.Items[i];
                 var mycheckbox = grdMain.Columns[0].GetCellContent(cItem) as CheckBox;
-                if ((bool)mycheckbox.IsChecked)
+                if (mycheckbox != null && (bool)mycheckbox.IsChecked)
                 {
                     count++;
                 }

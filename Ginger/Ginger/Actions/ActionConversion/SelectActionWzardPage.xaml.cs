@@ -79,30 +79,30 @@ namespace Ginger.Actions.ActionConversion
                         if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
                             (act.Active))
                         {
-                            ActionConversionHandler existingConvertibleActionType = mWizard.ActionToBeConverted.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
-                            if (existingConvertibleActionType == null)
-                            {
-                                ActionConversionHandler newConvertibleActionType = new ActionConversionHandler();
-                                newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
-                                newConvertibleActionType.SourceActionType = act.GetType();
-                                newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
-                                if (newConvertibleActionType.TargetActionType == null)
-                                    continue;
-                                newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
-                                newConvertibleActionType.ActionCount = 1;
-                                newConvertibleActionType.Actions.Add(act);
-                                newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
-                                mWizard.ActionToBeConverted.Add(newConvertibleActionType);
-                            }
-                            else
-                            {
-                                if (!existingConvertibleActionType.Actions.Contains(act))
-                                {
-                                    existingConvertibleActionType.ActionCount++;
-                                    existingConvertibleActionType.Actions.Add(act);
-                                    existingConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
-                                }
-                            }
+                            //ActionConversionHandler existingConvertibleActionType = mWizard.ActionToBeConverted.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
+                            //if (existingConvertibleActionType == null)
+                            //{
+                            ActionConversionHandler newConvertibleActionType = new ActionConversionHandler();
+                            newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
+                            newConvertibleActionType.SourceActionType = act.GetType();
+                            newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
+                            if (newConvertibleActionType.TargetActionType == null)
+                                continue;
+                            newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
+                            newConvertibleActionType.ActionCount = 1;
+                            newConvertibleActionType.Actions.Add(act);
+                            newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
+                            mWizard.ActionToBeConverted.Add(newConvertibleActionType);
+                            //}
+                            //else
+                            //{
+                            //    if (!existingConvertibleActionType.Actions.Contains(act))
+                            //    {
+                            //        existingConvertibleActionType.ActionCount++;
+                            //        existingConvertibleActionType.Actions.Add(act);
+                            //        existingConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
+                            //    }
+                            //}
                         }
                     }
                 }

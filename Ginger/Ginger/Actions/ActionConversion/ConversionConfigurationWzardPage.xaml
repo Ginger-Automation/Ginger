@@ -42,18 +42,21 @@
             </StackPanel>            
         </Border>
         <DockPanel x:Name="conversionBtnPanel" Grid.Row="6" Height="200" HorizontalAlignment="Stretch" LastChildFill="true">
-            <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="80"/>
-                    <RowDefinition Height="60"/>
-                </Grid.RowDefinitions>
-                <Label x:Name="lblConversionStatus" Grid.Row="1" Grid.ColumnSpan="3" Content="Please wait while the actions are converting..." Margin="15,0,0,0" FontWeight="Bold" FontSize="12" Style="{StaticResource @InputFieldLabelStyle}" Visibility="Collapsed" />
-            </Grid>
+            <StackPanel x:Name="POMSelectorPanel" MinWidth="498" Margin="10,20,0,0" Orientation="Horizontal">
+                <StackPanel>
+                    <CheckBox Name="chkPOM" Checked="chkPOM_Checked" IsChecked="False">
+                        <CheckBox.Content>
+                            <GingerCore:ucTextDicResource Text="Converts the action to selected POM elements"/>
+                        </CheckBox.Content>
+                    </CheckBox>
+                </StackPanel>
+                <StackPanel Margin="5,-1,0,0">
+                    <ComboBox Name="cmbPOM" Style="{StaticResource @InputComboBoxStyle}" Width="180" SelectionChanged="cmbPOM_SelectionChanged" />
+                </StackPanel>
+                <StackPanel Margin="5,-3,0,0">
+                    <Button x:Name="btnPOMRefresh" usercontrols:ImageMaker.Content="Refresh" ToolTip="Refresh" Click="btnPOMRefresh_Click" Width="22" Style="{StaticResource @InputImageButtonStyle_NoBorder}"></Button>
+                </StackPanel>
+            </StackPanel>
         </DockPanel>
     </Grid>
 </Page>

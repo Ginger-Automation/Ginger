@@ -51,6 +51,9 @@ namespace Ginger.Actions.ActionConversion
 
         public string CmbTargetApp { get; set; }
 
+        public bool ConvertToPOMAction { get; set; }
+
+        public string SelectedPOMObjectName { get; set; }
 
         public ActionsConversionWizard(Solution solution, BusinessFlow businessFlow)
         {
@@ -68,6 +71,39 @@ namespace Ginger.Actions.ActionConversion
         
         public override void Finish()
         {
+            //ExistingActionConversion();
+            POMActionConversion();
+        }
+
+        private void POMActionConversion()
+        {
+            if (!string.IsNullOrEmpty(SelectedPOMObjectName))
+            {
+                //ObservableList<ApplicationPOMModel> lst = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+                //ApplicationPOMModel appModel = lst.Where(x => x.Name == SelectedPOMObjectName).SingleOrDefault();
+
+                //if (appModel != null)
+                //{
+                foreach (Activity activity in BusinessFlow.Activities)
+                {
+                    if (activity.SelectedForConversion && activity.Acts.OfType<IObsoleteAction>().ToList().Count > 0)
+                    {
+                        foreach (Act act in activity.Acts.ToList())
+                        {
+                            if (act.Active && act is IObsoleteAction && ActionToBeConverted.Where(a => a.SourceActionType == act.GetType() && a.Selected && a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
+                            {
+                                Act newAct = ((IObsoleteAction)act).GetNewAction();
+                                activity.Acts.Add(newAct);
+                            }
+                        }
+                    }
+                }
+                //}
+            }
+        }
+
+        private void ExistingActionConversion()
+        {
             if (!DoExistingPlatformCheck(ActionToBeConverted))
             {
                 //missing target application so stop the conversion
@@ -77,10 +113,6 @@ namespace Ginger.Actions.ActionConversion
             {
                 try
                 {
-                    //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-
-                    //// setting the conversion status label as visible
-                    //lblConversionStatus.Visibility = Visibility.Visible;
                     Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, BusinessFlow.Name);
 
                     // create a new converted activity

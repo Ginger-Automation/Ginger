@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.ValidationRules;
 using GingerCore.Actions.ActionConversion;
 using GingerWPF.WizardLib;
@@ -63,6 +65,21 @@ namespace Ginger.Actions.ActionConversion
                 cmbTargetApp.SelectedIndex = 0;
             }
             mWizard.ChkDefaultTargetApp = Convert.ToBoolean(chkDefaultTargetApp.IsChecked);
+
+            BindPomCombobox();
+        }
+
+        private void BindPomCombobox()
+        {
+            ObservableList<ApplicationPOMModel> lst = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+            if (lst.Count > 0)
+            {
+                cmbPOM.BindControl(lst.Select(x => x.Name).ToList());
+                if ((cmbPOM != null) && (cmbPOM.Items.Count > 0))
+                {
+                    cmbPOM.SelectedIndex = 0;
+                }
+            }
         }
 
         private void chkDefaultTargetApp_Checked(object sender, RoutedEventArgs e)
@@ -115,6 +132,31 @@ namespace Ginger.Actions.ActionConversion
             if (mWizard != null)
             {
                 mWizard.RadNewActivity = !Convert.ToBoolean(radSameActivity.IsChecked);
+            }
+        }
+
+        private void btnPOMRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            BindPomCombobox();
+        }
+
+        private void cmbPOM_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cmbPOM.SelectedIndex > -1)
+            {
+                mWizard.SelectedPOMObjectName = Convert.ToString(cmbPOM.SelectedValue);
+            }
+        }
+
+        private void chkPOM_Checked(object sender, RoutedEventArgs e)
+        {
+            if (mWizard != null)
+            {
+                mWizard.ConvertToPOMAction = Convert.ToBoolean(chkPOM.IsChecked);
+                if (cmbPOM.SelectedIndex > -1)
+                {
+                    mWizard.SelectedPOMObjectName = Convert.ToString(cmbPOM.SelectedValue);
+                }
             }
         }
     }
