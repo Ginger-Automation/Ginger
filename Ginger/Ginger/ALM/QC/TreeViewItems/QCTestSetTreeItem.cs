@@ -97,8 +97,7 @@ namespace Ginger.ALM.QC.TreeViewItems
                     {
                         AlreadyImported = true;
                         MappedBusinessFlow = bf;
-                        string businessFlowName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(bf.Name);
-                        MappedBusinessFlowPath = System.IO.Path.Combine(bf.ContainingFolder, businessFlowName);                       
+                        MappedBusinessFlowPath = bf.ContainingFolder +'\\'+ bf.Name;                       
                         break;
                     }
                 }
