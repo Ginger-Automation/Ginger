@@ -3108,7 +3108,10 @@ namespace GingerCore.Drivers
                 locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
             }
 
-            foreach (ElementLocator locator in Locators.Where(x => x.Active == true).ToList())
+            IEnumerable<ElementLocator> locs = from loc in Locators
+                                               orderby loc.LocateBy descending
+                                               select loc;
+            foreach (ElementLocator locator in locs)
             {
                 if(!locator.IsAutoLearned)
                 {
