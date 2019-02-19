@@ -543,10 +543,20 @@
     </Compile>
     <Compile Include="ApplicationModelsLib\APIModels\NodeToDelete.cs" />
     <Compile Include="ApplicationModelsLib\ModelOptionalValue\ParameterValues.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaSettingsWizardPage.xaml.cs">
+      <DependentUpon>PomDeltaSettingsWizardPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaViewPage.xaml.cs">
+      <DependentUpon>PomDeltaViewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaWizard.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaElementCompareWizardPage.xaml.cs">
+      <DependentUpon>PomDeltaElementCompareWizardPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMNameValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\ButtonToDisableConverter.cs" />
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMNameValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMTAValidationRule.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMTAValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\UnmappedElementsPage.xaml.cs">
       <DependentUpon>UnmappedElementsPage.xaml</DependentUpon>
     </Compile>
@@ -701,17 +711,17 @@
     <Compile Include="ApplicationModelsLib\ModelParams Pages\ModelsGlobalParamsPage.xaml.cs">
       <DependentUpon>ModelsGlobalParamsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\AddPOMWizard.cs" />
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMLearnConfigWizardPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMWizard.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMLearnConfigWizardPage.xaml.cs">
       <DependentUpon>POMLearnConfigWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMObjectsMappingWizardPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMObjectsMappingWizardPage.xaml.cs">
       <DependentUpon>POMObjectsMappingWizardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\ScanPageWizardPage.xaml.cs">
       <DependentUpon>ScanPageWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMGeneralDetailsWizardPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMGeneralDetailsWizardPage.xaml.cs">
       <DependentUpon>POMGeneralDetailsWizardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\NavigationsPage.xaml.cs">
@@ -1505,8 +1515,6 @@
       <DependentUpon>ReportTemplatesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\RTFtoPDF.cs" />
-    <Compile Include="Reports\SpecialReports\XMLReportBase.cs" />
-    <Compile Include="Reports\SpecialReports\TestNGResultReport.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionEditPage.xaml.cs">
       <DependentUpon>RunSetActionEditPage.xaml</DependentUpon>
     </Compile>
@@ -2029,7 +2037,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Resource Include="PluginsLibNew\AddPluginWizardLib\AddPluginIntro.md" />
-    <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\AddPOMIntro.md" />
+    <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
     <None Include="Ginger.ruleset" />
     <None Include="Resources\VBSTemplate.bmp" />
@@ -2722,11 +2730,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMLearnConfigWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaElementCompareWizardPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaSettingsWizardPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaViewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMLearnConfigWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMObjectsMappingWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMObjectsMappingWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2734,7 +2754,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMGeneralDetailsWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMGeneralDetailsWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -4457,6 +4477,7 @@
     <Folder Include="Dictionaries\Languages\" />
     <Folder Include="Help\Library\" />
     <Folder Include="Reports\HTMLReports\" />
+    <Folder Include="Reports\SpecialReports\" />
     <Folder Include="Settings\TreeViewItems\" />
     <Folder Include="TelemertryLib\" />
     <Folder Include="UserConfig\" />

@@ -1,12 +1,9 @@
     <Page x:Class="Ginger.Actions._Common.ActUIElementLib.ActUIElementEditPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:Ginger="clr-namespace:Ginger"
-      xmlns:Actions="clr-namespace:Ginger.Actions"       
-      xmlns:h="clr-namespace:Ginger.Help"
-      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="500" d:DesignWidth="800"      
 	  Title="ActUIElementEditPage">
@@ -50,7 +47,7 @@
 
                 <StackPanel  Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
                     <Label  VerticalAlignment="Top" Content="Element Type:" Style="{StaticResource $LabelStyle}"/>
-                    <Image x:Name="ElementTypeImage" Source="{StaticResource @Run_16x16}" Width="16" />
+                    <UserControls:ImageMakerControl x:Name="xElementTypeImage" ImageType="Element" SetAsFontImageWithSize="16"  Width="16" Height="16" />
                 </StackPanel>
 
                 <ComboBox x:Name="ElementTypeComboBox"  SelectionChanged="ElementTypeComboBox_SelectionChanged"  Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Row="2" Grid.Column="1" Height="Auto" Margin="0,4,-48,4"/>

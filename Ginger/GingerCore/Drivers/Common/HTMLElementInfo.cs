@@ -18,83 +18,85 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using HtmlAgilityPack;
 
 namespace GingerCore.Drivers.Common
 {
     public class HTMLElementInfo : ElementInfo
-    {       
-        // add special HTML elem info here
-        public static class Fields
-        {
-            public static string ID = "ID";
-            public static string RelXpath = "RelXpath";
-            public static string Name = "Name";
-        }
+    {
 
-        // ---------------------------------------------------------------------------------------------------------------------
-        //  ID
-        // ---------------------------------------------------------------------------------------------------------------------
+
+
+        [IsSerializedForLocalRepository]
+        public string TagName { get; set; }
+
+
         private string mID = null;
+
+        [IsSerializedForLocalRepository]
         public string ID
         {
             get
             {
-                if (mID == null) mID = GetID();
+                if (mID == null)
+                {
+                    mID = GetID();
+                }
                 return mID;
             }
-            set { mID = value; }
+            set
+            {
+                mID = value;
+            }
         }
 
-        // Used for Lazy loading when possible
         public virtual string GetID()
         {
-            // we return Name unless it was overridden as expected
-            // So we keep backward compatibility until all drivers do it correctly
             return mID;
         }
 
-        // ---------------------------------------------------------------------------------------------------------------------
-        //  RelXpath
-        // ---------------------------------------------------------------------------------------------------------------------
         private string mRelXpath = null;
         public string RelXpath
         {
             get
             {
-                if (mRelXpath == null) mRelXpath = GetRelXpath();
+                if (mRelXpath == null)
+                {
+                    mRelXpath = GetRelXpath();
+                } 
                 return mRelXpath;
             }
-            set { mRelXpath = value; }
-        }   // Developer Name
+            set
+            {
+                mRelXpath = value;
+            }
+        }  
 
-        // Used for Lazy loading when possible
         public virtual string GetRelXpath()
         {
-            // we return Name unless it was overridden as expected
-            // So we keep backward compatibility until all drivers do it correctly
             return mRelXpath;
         }
 
-        // ---------------------------------------------------------------------------------------------------------------------
-        //  Name
-        // ---------------------------------------------------------------------------------------------------------------------
+
         private string mName = null;
+
+        [IsSerializedForLocalRepository]
         public string Name
         {
             get
             {
-                if (mName == null) mRelXpath = GetName();
+                if (mName == null)
+                {
+                    mName = GetName();
+                }
                 return mName;
             }
             set { mName = value; }
-        }   // Developer Name
+        }  
         
-        // Used for Lazy loading when possible
         public virtual string GetName()
         {
-            // we return Name unless it was overridden as expected
-            // So we keep backward compatibility until all drivers do it correctly
             return mName;
         }
 
