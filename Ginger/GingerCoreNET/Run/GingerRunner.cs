@@ -3723,26 +3723,9 @@ namespace Ginger.Run
                 {
                     businessFlow.Reset();
 
-                    BusinessFlowRun businessFlowRun = BusinessFlowsRunList.Where(x => x.BusinessFlowGuid == businessFlow.Guid).FirstOrDefault();
-
-                    foreach (VariableBase varb in businessFlow.GetBFandActivitiesVariabeles(true))
-                    {
-                       
-                        if (businessFlowRun.BusinessFlowCustomizedRunVariables != null && businessFlowRun.BusinessFlowCustomizedRunVariables.Count > 0)
-                        {
-                            VariableBase runVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.ParentGuid == varb.ParentGuid && v.ParentName == varb.ParentName && v.Name == varb.Name).FirstOrDefault();
-                            if (runVar != null)
-                            {
-                                RepositoryItemBase.ObjectsDeepCopy(runVar, varb);
-                                varb.DiffrentFromOrigin = runVar.DiffrentFromOrigin;
-                                varb.MappedOutputVariable = runVar.MappedOutputVariable;
-                            }                          
-                        }
-
-                        if(varb.DiffrentFromOrigin==false)
-                        {
-                            varb.ResetValue();
-                        }
+                    foreach (VariableBase inputVariable in businessFlow.GetBFandActivitiesVariabeles(true, true))
+                    {       
+                        inputVariable.ResetValue();                      
                     }
 
                     NotifyBusinessflowWasReset(CurrentBusinessFlow);                    
