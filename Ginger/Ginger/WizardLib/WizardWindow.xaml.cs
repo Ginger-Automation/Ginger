@@ -41,10 +41,11 @@ namespace GingerWPF.WizardLib
 
         List<ValidationError> mValidationErrors = new List<ValidationError>();
 
-        public static void ShowWizard(WizardBase wizard, double width = 800, bool DoNotShowAsDialog = false)
+        public static void ShowWizard(WizardBase wizard, double width = 800, double height = 800, bool DoNotShowAsDialog = false)
         {
             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Width = width;
+            wizardWindow.Height = height;
 
             if (DoNotShowAsDialog)
             {
@@ -292,24 +293,27 @@ namespace GingerWPF.WizardLib
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
+        {            
             WindowCloseWasHandled = true;
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Finish");
+                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Cancel");
             }
             else
             {
-                mWizard.Cancel();
-                if (sender != null && sender is bool && (bool)sender == false)
-                {
-                    return;//close already been done
-                }
-                else
-                {
-                    CloseWizard();
-                }
+                //if (Reporter.ToUser(eUserMsgKey.WizardSureWantToCancel) == eUserMsgSelection.Yes)
+                //{
+                    mWizard.Cancel();
+                    if (sender != null && sender is bool && (bool)sender == false)
+                    {
+                        return;//close already been done
+                    }
+                    else
+                    {
+                        CloseWizard();
+                    }
+                //}
             }
         }
 

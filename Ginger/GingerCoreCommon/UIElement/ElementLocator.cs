@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using System;
 
+
 namespace Amdocs.Ginger.Common.UIElement
 {
     public class ElementLocator : RepositoryItemBase 
@@ -54,6 +55,8 @@ namespace Amdocs.Ginger.Common.UIElement
         private int? mCount { get; set; }
         public int? Count { get { return mCount; } set { mCount = value; OnPropertyChanged(nameof(Count)); } }
 
+
+        
 
         private string mItemName;
 
