@@ -1248,7 +1248,7 @@ namespace GingerCore.Drivers
 
                     if (AE == null )
                     {
-                        throw new Exception("Cannot find element, Found path to element at: " + PathOK + " ,But couldn't find next element: " + PathNode);
+                        Reporter.ToLog(eLogLevel.DEBUG, "Cannot find element, Found path to element at:" + PathOK + ",But couldn't find next element:" + PathNode);
                     }
                     else
                     {
