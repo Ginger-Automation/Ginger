@@ -66,20 +66,5 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(requestBody.Replace(" ", ""), RequestToTest.RequestBody.Replace(" ", ""), "CheckResponseBody");
         }
 
-
-        [Level2]
-        [TestMethod]
-        public void DebugTests()
-        {
-            //Arrange
-            SwaggerParser parserForBillingAccount = new SwaggerParser();
-            string createPaymentProfileFileName = @"C:\Users\mohdkhan\Downloads\swagger.yaml";
-            ObservableList<ApplicationAPIModel> requests = new ObservableList<ApplicationAPIModel>();
-
-            //Act   
-            requests = parserForBillingAccount.ParseDocument(createPaymentProfileFileName);
-           
-        }
-
     }
 }
