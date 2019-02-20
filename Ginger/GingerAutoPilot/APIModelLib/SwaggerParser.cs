@@ -336,7 +336,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
         private ObservableList<AppModelParameter> GenerateXMLBody(ApplicationAPIModel aAM, JsonSchema4 operation)
         {
 
-            string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation, true);
+            string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation,null,true);
             string XMlName = operation.HasReference? XMlName = operation.Reference.Xml.Name: XMlName = operation.Xml.Name;
 
         
@@ -358,7 +358,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 
         private ObservableList<AppModelParameter> GenerateJsonBody(ApplicationAPIModel aAM, JsonSchema4 operation)
         {
-            string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation);
+            string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation,null);
             object[] BodyandModelParameters = JSONTemplateParser.GenerateBodyANdModelParameters(SampleBody);
             aAM.RequestBody = (string)BodyandModelParameters[0];
             return (ObservableList<AppModelParameter>)BodyandModelParameters[1];
