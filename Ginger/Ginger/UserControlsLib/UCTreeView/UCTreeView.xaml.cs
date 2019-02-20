@@ -27,6 +27,7 @@ using Amdocs.Ginger.Repository;
 using GingerWPF.DragDropLib;
 using System.Reflection;
 using System.Linq;
+using System.Threading.Tasks;
 
 
 namespace GingerWPF.UserControlsLib.UCTreeView
@@ -526,7 +527,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 // Goto sub items
                 if (tvi.HasItems)
                 {                    
-                    FilterItemsByText(tvi.Items, txt);
+                  FilterItemsByText(tvi.Items, txt);
                 }
             }
             //Show the root item

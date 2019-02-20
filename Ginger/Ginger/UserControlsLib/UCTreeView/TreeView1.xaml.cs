@@ -16,13 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using GingerCoreNET.SolutionRepositoryLib;
 using GingerWPF.TreeViewItemsLib;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -44,7 +47,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             get { return xTreeIcon.ImageType; }
             set { xTreeIcon.ImageType = value; }
         }
-        
+
         public object TreeTooltip
         {
             get { return xTreeViewTree.ToolTip; }
@@ -56,16 +59,16 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             get { return xTreeTitle.Style; }
             set { xTreeTitle.Style = value; }
         }
-        
+
         bool mAllowTreeTools = true;
         public bool AllowTreeTools { get { return mAllowTreeTools; } set { mAllowTreeTools = value; } }
-        
+
         public TreeView1()
         {
             InitializeComponent();
 
             //Tree Style
-            xTreeViewTree.Tree.BorderThickness = new Thickness(0);            
+            xTreeViewTree.Tree.BorderThickness = new Thickness(0);
 
             xTreeViewTree.ItemSelected += xTreeViewTree_ItemSelected;
             xTreeViewTree.ItemAdded += XTreeViewTree_ItemAdded;
@@ -111,16 +114,16 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         }
 
         private void xSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {             
+        {
             if (xSearchTextBox.Text.Length > 0)
             {
                 xSearchNullText.Visibility= Visibility.Collapsed;
-                xSearchClearBtn.Visibility = Visibility.Visible;
+                xSearchBtn.Visibility = Visibility.Visible;
             }
             else
             {
                 xSearchNullText.Visibility = Visibility.Visible;
-                xSearchClearBtn.Visibility = Visibility.Collapsed;
+                xSearchBtn.Visibility = Visibility.Visible;
                 List<TreeViewItem> pathNodes = new List<TreeViewItem>();
                 if (xTreeViewTree.MlastSelectedTVI!=null)
                 {
@@ -129,48 +132,47 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 CollapseUnselectedTreeNodes(xTreeViewTree.TreeItemsCollection, pathNodes);
                 return;
             }
-
-            string txt = xSearchTextBox.Text;            
-            xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, txt);
         }
-        
+
         private static void CollapseUnselectedTreeNodes(ItemCollection itemCollection,List<TreeViewItem> pathNodes)
-        {                     
+        {
             foreach (TreeViewItem tvItem in itemCollection)
-            {                                                
+            {
                 if (tvItem.HasItems)
                 {
                     CollapseUnselectedTreeNodes(tvItem.Items, pathNodes);
                     foreach (TreeViewItem item in tvItem.Items)
-                    {                        
+                    {
                         if (!(pathNodes != null && pathNodes.Contains(item)))
                         {
                             item.IsExpanded = false;
                             item.Visibility = Visibility.Visible;
-                        }                                                
+                        }
                     }
-                }                
-            }            
+                }
+            }
         }
 
         public static List<TreeViewItem> getSelecetdItemPathNodes(TreeViewItem SelectedItem)
         {
             List<TreeViewItem> pathNodes = new List<TreeViewItem>();
-            object ParentItem = getParentItem(SelectedItem);            
+            object ParentItem = getParentItem(SelectedItem);
             while (ParentItem.GetType() == typeof(TreeViewItem))
             {
-                pathNodes.Add((TreeViewItem)ParentItem);                                
-                ParentItem = getParentItem(ParentItem);                
+                pathNodes.Add((TreeViewItem)ParentItem);
+                ParentItem = getParentItem(ParentItem);
             }
             return pathNodes;
-        }        
+        }
 
         public static object getParentItem(object tvi)
         {
             return ((TreeViewItem)tvi).Parent;
-        }        
+        }
         private void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
         {
+            xSearchClearBtn.Visibility = Visibility.Collapsed;
+            xSearchBtn.Visibility = Visibility.Visible;
             xSearchTextBox.Text = "";
         }
 
@@ -186,11 +188,42 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         public void AddToolbarTool(string toolImage, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = Visibility.Visible, object CommandParameter = null)
         {
-           //no tool bar to add to in this View type
+            //no tool bar to add to in this View type
         }
         public void AddToolbarTool(eImageType imageType, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, object CommandParameter = null)
         {
             //no tool bar to add to in this View type
+        }
+
+        private void xSearchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(xSearchTextBox.Text))
+                {
+                    Reporter.ToStatus(eStatusMsgKey.Search, null, xSearchTextBox.Text);
+                    Mouse.OverrideCursor = Cursors.Wait;
+                    xSearchClearBtn.Visibility = Visibility.Visible;
+                    xSearchBtn.Visibility = Visibility.Collapsed;                    
+                    Search();                    
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to search : ", ex);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+                Reporter.HideStatusMessage();
+            }
+        }
+
+
+        private void Search()
+        {
+           string txt = xSearchTextBox.Text;
+           xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, txt);           
         }
     }
 }
