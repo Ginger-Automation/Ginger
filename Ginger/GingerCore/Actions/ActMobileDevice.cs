@@ -69,13 +69,19 @@ namespace GingerCore.Actions
             SwipeDown,
             SwipeRight,
             SwipeLeft,
+            ShortSwipeUp,
+            ShortSwipeDown,
+            ShortSwipeRight,
+            ShortSwipeLeft,
             Wait,
             TakeScreenShot,
             RefreshDeviceScreenImage,
             PressKey,
             OpenAppByName,
+            CloseAppByName,
             UnlockDevice,
             LockDevice,
+            SwipeToElement,
         }
 
         public enum ePressKey
