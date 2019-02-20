@@ -79,9 +79,6 @@ namespace Ginger.Actions.ActionConversion
                         if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
                             (act.Active))
                         {
-                            //ActionConversionHandler existingConvertibleActionType = mWizard.ActionToBeConverted.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
-                            //if (existingConvertibleActionType == null)
-                            //{
                             ActionConversionHandler newConvertibleActionType = new ActionConversionHandler();
                             newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
                             newConvertibleActionType.SourceActionType = act.GetType();
@@ -93,16 +90,6 @@ namespace Ginger.Actions.ActionConversion
                             newConvertibleActionType.Actions.Add(act);
                             newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
                             mWizard.ActionToBeConverted.Add(newConvertibleActionType);
-                            //}
-                            //else
-                            //{
-                            //    if (!existingConvertibleActionType.Actions.Contains(act))
-                            //    {
-                            //        existingConvertibleActionType.ActionCount++;
-                            //        existingConvertibleActionType.Actions.Add(act);
-                            //        existingConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
-                            //    }
-                            //}
                         }
                     }
                 }
