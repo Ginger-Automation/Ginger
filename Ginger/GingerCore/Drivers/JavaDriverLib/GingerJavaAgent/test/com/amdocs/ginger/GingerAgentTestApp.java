@@ -25,12 +25,12 @@ public class GingerAgentTestApp {
 	 */
 	public static void main(String[] args) {
  
-		JEditorPaneExample frame= new JEditorPaneExample();
+		BasicSwingApp frame= new BasicSwingApp();
+		//JEditorPaneExample frame= new JEditorPaneExample();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle("Java Swing Test App");
 	    frame.pack();
-	    frame.setVisible(true);
-	    frame.setSize(600, 300);
+	    frame.setVisible(true);	    
 	    //Start the Ginger Socket Server
 	    GingerAgent.SHOW_AGENT = true;
 	    GingerAgent GA = new GingerAgent();	    

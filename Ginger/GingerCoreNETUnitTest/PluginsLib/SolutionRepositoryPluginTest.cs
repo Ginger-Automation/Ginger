@@ -55,7 +55,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             SR.CreateRepository(folder);
             SR.Open(folder);
             WorkSpace.Instance.SolutionRepository = SR;
-            string pluginFolder = TestResources.GetTestResourcesFolder(@"PluginPackages\GingerOfficePlugin");
+            string pluginFolder = TestResources.GetTestResourcesFolder(@"PluginPackages" + Path.DirectorySeparatorChar + "GingerOfficePlugin");
 
 
             //string txt = WorkSpace.Instance.PlugInsManager.CreatePluginPackageInfo("GingerOfficePlugin", "1.0.0");

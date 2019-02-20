@@ -32,9 +32,7 @@
         <Label Grid.Row="1" Grid.Column="0"  Style="{StaticResource @InputFieldLabelStyle}">Target File Name</Label>
         <Actions:UCValueExpression x:Name="TargetFileNameTextBox" Grid.Row="1" Grid.Column="1"/>
 
-        <Label Grid.Row="2" Grid.Column="0"  Style="{StaticResource @InputFieldLabelStyle}">Processed File Name</Label>
-        <Actions:UCValueExpression x:Name="ProcessedFileNameTextBox" Grid.Row="2" Grid.Column="1"/>
-
+   
         <Ginger:ucGrid x:Name="DynamicParametersGrid" Title="Dynamic Parameters" Grid.Row="3" Grid.ColumnSpan="3" />
 
 

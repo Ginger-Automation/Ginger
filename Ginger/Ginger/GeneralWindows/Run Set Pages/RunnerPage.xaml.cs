@@ -549,6 +549,11 @@ namespace Ginger.Run
 
         private void xRunRunnerBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (mRunner.BusinessFlows.Count <= 0)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one Business Flow to '" + mRunner.Name + "' to start run.");
+                return;
+            }
             RunRunner();
         }
         public async void RunRunner()
@@ -561,16 +566,7 @@ namespace Ginger.Run
             App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
             mRunner.ResetRunnerExecutionDetails();
             App.RunsetExecutor.ConfigureRunnerForExecution(mRunner);
-            ExecutionLoggerConfiguration ELC = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-
-            ExecutionLogger EL = (ExecutionLogger)mRunner.RunListeners.Where(x => x.GetType() == typeof(ExecutionLogger)).FirstOrDefault();
-            EL.Configuration = ELC;
-            EL.GingerData.GingerName = mRunner.Name;
-            EL.GingerData.GingerEnv = mRunner.ProjEnvironment.Name;
-            EL.GingerData.Seq = 1;
-            EL.GingerData.Ginger_GUID = mRunner.Guid;
             await mRunner.RunRunnerAsync();
-
             GingerCore.General.DoEvents();   //needed?                 
         }
         public void UpdateRunnerInfo()

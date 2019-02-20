@@ -1,0 +1,123 @@
+﻿<Page x:Class="Ginger.ApplicationModelsLib.POMModels.PomDeltaViewPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:Ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="800" d:DesignWidth="1200"
+      Title="PomDeltaViewPage">
+
+    <Grid x:Name="PageGrid">
+        <Grid.Resources>
+            <DataTemplate x:Key="xHighlightButtonTemplate">
+                <Button x:Name="HighlightButton" Click="HighlightElementClicked" ToolTip="Highlight Element" Style="{StaticResource @InputImageGridCellButtonStyle}">
+                    <UserControls:ImageMakerControl ImageType="Pointer" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                </Button>
+            </DataTemplate>
+
+            <DataTemplate x:Key="xTestElementButtonTemplate">
+                <Button x:Name="TestElementButton" Click="TestElementButtonClicked" ToolTip="Highlight Element" Style="{StaticResource @InputImageGridCellButtonStyle}">
+                    <UserControls:ImageMakerControl ImageType="Play" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                </Button>
+            </DataTemplate>
+
+            <DataTemplate  x:Key="xTestStatusIconTemplate">
+                <UserControls:ImageMakerControl x:Name="xStatusIconImageMakerControl" ImageType="{Binding StatusIcon}" ImageToolTip="{Binding StatusError}" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Passed">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Green"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Unknown">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Gray"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Failed">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Red"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Pending">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Orange"/>
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+
+            <DataTemplate  x:Key="xDeltaStatusIconTemplate">
+                <UserControls:ImageMakerControl x:Name="xDeltaStatusIconImageMakerControl" ImageType="{Binding DeltaStatusIcon}" SetAsFontImageWithSize="16" Width="16" Height="16" />
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Unknown">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Gray"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Unchanged">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Green"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Changed">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Orange"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Deleted">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Red"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Added">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Blue"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Avoided">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Purple"/>
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </Grid.Resources>
+
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="Row1" Height="70*" MinHeight="35"/>
+            <RowDefinition  x:Name="Row2" Height="35" MinHeight="35"/>
+        </Grid.RowDefinitions>
+
+        <Ginger:ucGrid x:Name="xMainElementsGrid" Grid.Row="0" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed"/>
+        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows"  Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" />
+
+        <Expander x:Name="xDetailsExpander" Grid.Row="1" ExpandDirection="Down" Expanded="DetailsGrid_Expanded" IsExpanded="False" IsEnabled="False" Collapsed="DetailsGrid_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
+            <Expander.Header>
+                <Label x:Name="xDetailsExpanderLabel" Content="Element Comparison Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" />
+            </Expander.Header>
+            <Expander.Content>
+                <Grid>
+                    <TabControl x:Name="xElementDetailsTabs" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="xElementDetailsTabs_SelectionChanged" >
+                        <TabControl.Resources>
+                            <Style TargetType="{x:Type TabItem}">
+                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                                <Setter Property="Height" Value="25"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="False" >
+                                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True" >
+                                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TabControl.Resources>
+
+                        <TabItem Margin="0,0,0,0" >
+                            <TabItem.Header>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <UserControls:ImageMakerControl ImageType="ListGroup"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
+                                    <TextBlock x:Name="xPropertiesTextBlock" Text="Control Properties" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                                </StackPanel>
+                            </TabItem.Header>
+                            <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
+                        </TabItem>
+                        <TabItem>
+                            <TabItem.Header>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+                                    <UserControls:ImageMakerControl ImageType="LocationPointer"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
+                                    <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                                </StackPanel>
+                            </TabItem.Header>
+                            <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed"/>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </Expander.Content>
+        </Expander>
+
+    </Grid>
+</Page>

@@ -217,17 +217,16 @@ namespace Amdocs.Ginger.Repository
             RepositoryFolderBase repoFolder = null;
             Parallel.ForEach(mSolutionRootFolders, folder =>
             {
-
                 if (repoFolder == null)
                 {
                     if (Path.GetFullPath(folderPath) == Path.GetFullPath(folder.FolderFullPath))
                     {
-                        repoFolder = folder;                        
+                        repoFolder = folder;
                     }
                     else if (Path.GetFullPath(folderPath).ToLower().Contains(Path.GetFullPath(folder.FolderFullPath).ToLower()))
                     {
                         Uri fullPath = new Uri(folderPath, UriKind.Absolute);
-                        Uri relRoot = new Uri(SolutionFolder, UriKind.Absolute);
+                        Uri relRoot = new Uri(folder.FolderFullPath, UriKind.Absolute);
                         string relPath = "~\\" + Uri.UnescapeDataString(relRoot.MakeRelativeUri(fullPath).ToString().Replace("/", "\\"));
                         repoFolder = folder.GetSubFolderByName(relPath, true);
                     }
@@ -582,15 +581,8 @@ namespace Amdocs.Ginger.Repository
                     fileFolderPath = Path.Combine(A, B);
                 }
 
-                //FILE
-                string fileName = name;
-                //Removing all possible invalid path chars and checking the file name length is legal (<= 255)                      
-                foreach (char invalidChar in Path.GetInvalidFileNameChars())
-                {
-                    fileName = fileName.Replace(invalidChar.ToString(), "");
-                }
-                fileName = fileName.Replace(@".", "");
-                
+                string fileName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(name);
+                                
                 string fullName = v.Pattern.Replace("*", fileName);
 
 

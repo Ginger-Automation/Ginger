@@ -116,8 +116,9 @@ public class BasicSwingApp extends javax.swing.JFrame {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
         //create the child nodes
         DefaultMutableTreeNode USNode = new DefaultMutableTreeNode("US");
-        USNode.add(new DefaultMutableTreeNode("California"));
+        USNode.add(new DefaultMutableTreeNode("California/Texas"));
         USNode.add(new DefaultMutableTreeNode("Florida"));
+        USNode.add(new DefaultMutableTreeNode("Texas & Florida"));
         USNode.add(new DefaultMutableTreeNode("Texas"));
         
         DefaultMutableTreeNode CanadaNode = new DefaultMutableTreeNode("Canada");
