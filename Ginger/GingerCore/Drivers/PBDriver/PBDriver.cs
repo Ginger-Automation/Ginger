@@ -1083,6 +1083,16 @@ namespace GingerCore.Drivers.PBDriver
             }
         }
 
+        public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        {
+            throw new NotImplementedException();
+        }
+
         public void StartSpying()
         {
             throw new NotImplementedException();

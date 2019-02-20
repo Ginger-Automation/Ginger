@@ -101,36 +101,35 @@ namespace GingerCore.Actions.XML
                 string txt = PrepareFile();
 
                 // Write to out file
-                string FileName = TargetFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
-                System.IO.File.WriteAllText(FileName, txt);
+                string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TargetFileName.ValueForDriver);
+                
+                if(string.IsNullOrEmpty(fileName))
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Target file name can't be null.");
+                }
+                System.IO.File.WriteAllText(fileName, txt);
 
-                WaitForProcessedFile();
                 ReadProcessedFile();
             }
 
             private void ReadProcessedFile()
             {
-                string FileName = ProcessedFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
-                string xml = System.IO.File.ReadAllText(FileName);
-                XMLProcessor XMLP = new XMLProcessor();
-                XMLP.ParseToReturnValues(xml, this);
-            }
+                string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TargetFileName.ValueForDriver);
 
-            private void WaitForProcessedFile()
-            {
-                string FileName = ProcessedFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
-
-                while (!System.IO.File.Exists(FileName))
-                {
-                    Thread.Sleep(100);
-                    General.DoEvents();
-                }
+                string xml = System.IO.File.ReadAllText(fileName);
+                XMLProcessor xmlProcessor = new XMLProcessor();
+                xmlProcessor.ParseToReturnValues(xml, this);
             }
 
             private string PrepareFile()
             {
-                string FileName = TemplateFileName.ValueForDriver.Replace(@"~\", SolutionFolder);
-                string txt = System.IO.File.ReadAllText(FileName);
+                string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TemplateFileName.ValueForDriver);
+                
+                if(string.IsNullOrEmpty(fileName))
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Template file name can't be empty.");
+                }
+                string txt = System.IO.File.ReadAllText(fileName);
                 foreach (ActInputValue AIV in DynamicElements)
                 {
                     txt = txt.Replace(AIV.Param, AIV.ValueForDriver);

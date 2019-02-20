@@ -175,9 +175,9 @@ namespace GingerCore.Actions
                     break;
                 case eScriptInterpreterType.Other:
                     if (!string.IsNullOrEmpty(ScriptInterpreter))
-                    {
-                        
-                        p.StartInfo.FileName = ScriptInterpreter.Replace(@"~\", this.SolutionFolder);
+                    {                        
+                        //p.StartInfo.FileName = ScriptInterpreter.Replace(@"~\", this.SolutionFolder);
+                        p.StartInfo.FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScriptInterpreter);
                     }
                     break;
              }

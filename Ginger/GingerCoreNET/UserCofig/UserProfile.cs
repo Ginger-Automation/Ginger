@@ -253,8 +253,11 @@ namespace Ginger
         [IsSerializedForLocalRepository]
         public List<string> RecentAppAgentsMapping = new List<string>();
 
-        [IsSerializedForLocalRepository]
-        public Guid RecentBusinessFlow { get; set; }
+        //[IsSerializedForLocalRepository]
+        /// <summary>
+        /// Not needed anymore keeping for allowing to load UserProfile xml
+        /// </summary>
+        //public Guid RecentBusinessFlow { get; set; }
 
         [IsSerializedForLocalRepository]
         public Guid RecentEnvironment { get; set; }
@@ -417,7 +420,10 @@ namespace Ginger
             {
                 SaveRecentAppAgentsMapping();
             }
-            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while saving Recent App-Agents Mapping for User Profile save", ex);
+            }
 
             RepositorySerializer.SaveToFile(this, UserProfileFilePath);
         }
@@ -465,7 +471,7 @@ namespace Ginger
                     foreach (string mapping in appAgentMapping)
                     {
                         string[] appAgent = mapping.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (appAgent.Length == 2)
+                        if (appAgent.Length == 2 && !mappingDic.ContainsKey(appAgent[0])) //somehow duplicate application platform saved in solution, till we found root cause skip duplicate application platform.   
                         {
                             mappingDic.Add(appAgent[0], appAgent[1]);
                         }
@@ -498,14 +504,11 @@ namespace Ginger
 
             string InstallationConfigurationPath = Assembly.GetExecutingAssembly().Location.Replace(Path.GetFileName(Assembly.GetExecutingAssembly().Location), "Ginger.InstallationConfiguration.Json");
 
-
-            DateTime InstallationDT = File.GetLastWriteTime(InstallationConfigurationPath);
-
             string UserConfigJsonString = string.Empty;
             JObject UserConfigJsonObj = null;
             Dictionary<string, string> UserConfigdictObj = null;
             if (System.IO.File.Exists(InstallationConfigurationPath))
-            {
+            {                
                 UserConfigJsonString = System.IO.File.ReadAllText(InstallationConfigurationPath);
                 UserConfigJsonObj = JObject.Parse(UserConfigJsonString);
                 UserConfigdictObj = UserConfigJsonObj.ToObject<Dictionary<string, string>>();
@@ -520,12 +523,10 @@ namespace Ginger
                     string userProfileTxt = File.ReadAllText(UserProfileFilePath);
                     UserProfile up = (UserProfile)NewRepositorySerializer.DeserializeFromText(userProfileTxt);
                     up.FilePath = UserProfileFilePath;
-                    if (DateTime.Compare(UserProfileDT, InstallationDT) < 0)
+                    if (UserConfigdictObj != null &&
+                        DateTime.Compare(UserProfileDT, File.GetLastWriteTime(InstallationConfigurationPath)) < 0)
                     {
-                        if (UserConfigdictObj != null)
-                        {
-                            up.AddUserConfigProperties(UserConfigdictObj);
-                        }
+                        up.AddUserConfigProperties(UserConfigdictObj);
                     }
                     return up;
                 }
@@ -536,7 +537,6 @@ namespace Ginger
             }
 
             Reporter.ToLog(eLogLevel.INFO, "Creating new User Profile");
-
             UserProfile up2 = new UserProfile();
             up2.LoadDefaults();
             if (UserConfigdictObj != null)

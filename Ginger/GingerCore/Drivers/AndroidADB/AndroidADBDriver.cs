@@ -1381,7 +1381,7 @@ namespace GingerCore.Drivers.AndroidADB
             //identify by X,Y as last option 
             elemntAct.ElementLocateBy = eLocateBy.ByXY;
 
-            elemntAct.SetLocateByXYValues(pointOnMobile_X, pointOnMobile_Y);            
+            elemntAct.SetLocateByXYValues(pointOnMobile_X, pointOnMobile_Y, elemntAct, nameof(elemntAct.ElementLocateValue));            
 
             return elemntAct;                       
         }
@@ -1569,7 +1569,7 @@ namespace GingerCore.Drivers.AndroidADB
         
         }
 
-        Bitmap IVisualTestingDriver.GetScreenShot()
+        Bitmap IVisualTestingDriver.GetScreenShot(Tuple<int, int> setScreenSize = null)
         {
             return GetScreenShot();
         }
@@ -1600,6 +1600,16 @@ namespace GingerCore.Drivers.AndroidADB
         }
 
         public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
         {
             throw new NotImplementedException();
         }

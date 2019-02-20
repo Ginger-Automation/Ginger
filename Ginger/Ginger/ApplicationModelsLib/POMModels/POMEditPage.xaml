@@ -8,12 +8,12 @@
       xmlns:agents="clr-namespace:Ginger.Agents"
       xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
-      d:DesignHeight="800" d:DesignWidth="800"
+      d:DesignHeight="1000" d:DesignWidth="1000"
       Title="POMEditPage">
 
     <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="275"/>
+            <RowDefinition Height="230"/>
             <RowDefinition Name="SecondRow" Height="100*"/>
         </Grid.RowDefinitions>
 
@@ -22,11 +22,11 @@
                 <StackPanel Margin="5,0,5,0">
                     <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
                     <TextBox x:Name="xNameTextBox" Style="{StaticResource $TextBoxStyle}" FontSize="14" FontWeight="Bold" />
-
-                    <Label Style="{StaticResource $LabelStyle}" Content="Description:" Margin="-5,5,0,0"/>
-                    <TextBox x:Name="xDescriptionTextBox" TextWrapping="WrapWithOverflow" Height="50" Style="{StaticResource $MultiRowsTextBoxStyle}" />
-
-                    <Ginger:ucTagsViewer x:Name="xTagsViewer" Margin="-5,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <DockPanel Margin="0,5,0,0">
+                        <Label Style="{StaticResource $LabelStyle}" Content="Description:" DockPanel.Dock="Left"  Margin="-5,0,0,0"/>
+                        <Ginger:ucTagsViewer x:Name="xTagsViewer" Margin="5,0,10,0" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    </DockPanel>
+                    <TextBox x:Name="xDescriptionTextBox" TextWrapping="WrapWithOverflow" Height="35" Style="{StaticResource $MultiRowsTextBoxStyle}" />
                 </StackPanel>
 
                 <Grid Margin="5,10,5,0" >
@@ -51,7 +51,7 @@
             </StackPanel>
         </ScrollViewer>
         
-        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $BackgroundColor_LightGray}" />
+        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="LightGray" BorderThickness="1" />
 
         <TabControl x:Name="xPomTabs" Grid.Row="1" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="xPomTabs_SelectionChanged">
             <TabControl.Resources>

@@ -50,7 +50,10 @@ namespace Amdocs.Ginger.Common.UIElement
 
         bool IsElementObjectValid(object obj);
 
-        bool TestElementLocators(ElementInfo EI,bool GetOutAfterFoundElement = false);
+        bool TestElementLocators(ElementInfo Element, bool GetOutAfterFoundElement = false);
+        void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList);
+
+        ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements);
 
         void StartSpying();
     }

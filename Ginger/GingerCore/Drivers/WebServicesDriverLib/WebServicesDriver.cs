@@ -213,7 +213,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             {
                 mActWebService = (ActWebService)act;
                 string ReqXML = String.Empty;
-                FileStream ReqXMLStream = System.IO.File.OpenRead(mActWebService.XMLfileName.ValueForDriver.Replace(@"~\", mActWebService.SolutionFolder));
+                //FileStream ReqXMLStream = System.IO.File.OpenRead(mActWebService.XMLfileName.ValueForDriver.Replace(@"~\", mActWebService.SolutionFolder));
+                FileStream ReqXMLStream = System.IO.File.OpenRead(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mActWebService.XMLfileName.ValueForDriver));
+
                 using (StreamReader reader = new StreamReader(ReqXMLStream))
                 {
                     ReqXML = reader.ReadToEnd();
@@ -703,7 +705,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             string xmlFilesDir = "";
             try
             {
-                xmlFilesDir = SavedXMLDirectoryPath.Replace(@"~\", mActWebService.SolutionFolder) + @"\" + fileType + "XMLs";
+                //xmlFilesDir = SavedXMLDirectoryPath.Replace(@"~\", mActWebService.SolutionFolder) + @"\" + fileType + "XMLs";
+                xmlFilesDir = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SavedXMLDirectoryPath) + @"\" + fileType + "XMLs";
+
                 if (!Directory.Exists(xmlFilesDir))
                     Directory.CreateDirectory(xmlFilesDir);
                 String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss") + "_" + Guid.NewGuid();
