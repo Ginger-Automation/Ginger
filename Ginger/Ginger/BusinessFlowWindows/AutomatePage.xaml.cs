@@ -221,18 +221,18 @@ namespace Ginger
             CurrentBusFrame.Content = mCurrentBusPage;
             CurrentBusExpander.IsExpanded = false;
 
-            mVariablesPage = new VariablesPage(eVariablesLevel.BusinessFlow);
+            mVariablesPage = new VariablesPage(eVariablesLevel.BusinessFlow, mBusinessFlow, General.RepositoryItemPageViewMode.Automation);
             mVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
             BFVariablesFrame.Content = mVariablesPage;
-            mActivitiesGroupsPage = new ActivitiesGroupsPage();
+            mActivitiesGroupsPage = new ActivitiesGroupsPage(mBusinessFlow, General.RepositoryItemPageViewMode.Automation);
             mActivitiesGroupsPage.grdActivitiesGroups.ShowTitle = System.Windows.Visibility.Collapsed;
             BFActivitiesGroupsFrame.Content = mActivitiesGroupsPage;
 
-            mActivitiesPage = new ActivitiesPage();
+            mActivitiesPage = new ActivitiesPage(mBusinessFlow, General.RepositoryItemPageViewMode.Automation);
             mActivitiesPage.grdActivities.ShowTitle = System.Windows.Visibility.Collapsed;
             BFActivitiesFrame.Content = mActivitiesPage;
 
-            mActivityVariablesPage = new VariablesPage(eVariablesLevel.Activity);
+            mActivityVariablesPage = new VariablesPage(eVariablesLevel.Activity, mBusinessFlow.CurrentActivity, General.RepositoryItemPageViewMode.Automation);
             mActivityVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
             ActivityVariablesFrame.Content = mActivityVariablesPage;
 
@@ -240,7 +240,7 @@ namespace Ginger
             mActionsPage.grdActions.ShowTitle = System.Windows.Visibility.Collapsed;
             ActivityActionsFrame.Content = mActionsPage;
 
-            mReposiotryPage = new RepositoryPage();
+            mReposiotryPage = new RepositoryPage(mBusinessFlow);
             RepositoryFrame.Content = mReposiotryPage;
         }
 
@@ -250,7 +250,7 @@ namespace Ginger
             App.MainWindow.Dispatcher.Invoke(() =>
                     {
                         //set dynamic expanders titles
-                        if (mBusinessFlow != null)
+                        if (mBusinessFlow != null)//??
                         {                            
                             mCurrentBusPage = new BusinessFlowPage(mBusinessFlow, true);
                             CurrentBusFrame.Content = mCurrentBusPage;
@@ -258,18 +258,30 @@ namespace Ginger
                             UpdateMainBFLabel();
                             mBusinessFlow.PropertyChanged -= BusinessFlow_PropertyChanged;
                             mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
+
                             UpdateBusinessFlowVariabelsExpanders();
                             mBusinessFlow.Variables.CollectionChanged -= BusinessFlowVariables_CollectionChanged;
                             mBusinessFlow.Variables.CollectionChanged += BusinessFlowVariables_CollectionChanged;
+                            mVariablesPage.UpdateBusinessFlow(mBusinessFlow);
+
                             UpdateBusinessFlowActivitiesGroupsExpanders();
+                            mActivitiesGroupsPage.UpdateBusinessFlow(mBusinessFlow);
                             mBusinessFlow.ActivitiesGroups.CollectionChanged -= ActivitiesGroups_CollectionChanged;
                             mBusinessFlow.ActivitiesGroups.CollectionChanged += ActivitiesGroups_CollectionChanged;
+                            mActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
+
                             UpdateBusinessFlowActivitiesExpanders();
                             mBusinessFlow.Activities.CollectionChanged -= Activities_CollectionChanged;
                             mBusinessFlow.Activities.CollectionChanged += Activities_CollectionChanged;
-                            mCurrentActivity = (Activity)mBusinessFlow.CurrentActivity;            
-                            UpdateCurrentActivityVariabelsExpanders();
+                            mCurrentActivity = (Activity)mBusinessFlow.CurrentActivity;
+                            mActivitiesMiniPage.UpdateBusinessFlow(mBusinessFlow);
+
+                            UpdateCurrentActivityVariabelsExpanders();                            
+                            mActivityVariablesPage.UpdateActivity(mBusinessFlow.CurrentActivity);                            
+
                             UpdateCurrentActivityActionsExpanders();
+
+                            mReposiotryPage.UpdateBusinessFlow(mBusinessFlow);
                         }
 
                     });
@@ -318,7 +330,7 @@ namespace Ginger
                     label = string.Format("{0}", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups));
                     BBFActivitiesGroupsExpanderLabel.Content = label;
                     BBFActivitiesGroupsExpander2Label.Content = label;
-                }
+                }                
             }
         }
 
@@ -589,7 +601,7 @@ namespace Ginger
             {
                 if (mActivitiesMiniPage == null)
                 {
-                    mActivitiesMiniPage = new ActivitiesMiniViewPage();
+                    mActivitiesMiniPage = new ActivitiesMiniViewPage(mBusinessFlow);
                 }
                 BFActivitiesFrame.Content = mActivitiesMiniPage;
             }
@@ -890,7 +902,10 @@ namespace Ginger
 
         private void mBusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            
+            if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))
+            {
+                mActivityVariablesPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+            }
         }
 
         private void SaveBizFlowButton_Click(object sender, RoutedEventArgs e)
@@ -995,10 +1010,7 @@ namespace Ginger
         FindAndReplacePage mfindAndReplacePageAutomate = null;
         private void AutomateFindAndReplace()
         {
-            if (mfindAndReplacePageAutomate == null)
-            {
-                mfindAndReplacePageAutomate = new FindAndReplacePage(FindAndReplacePage.eContext.AutomatePage);
-            }
+            mfindAndReplacePageAutomate = new FindAndReplacePage(FindAndReplacePage.eContext.AutomatePage, mBusinessFlow);
             mfindAndReplacePageAutomate.ShowAsWindow();
         }
 

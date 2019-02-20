@@ -59,11 +59,8 @@ namespace Ginger.BusinessFlowWindows
             editMode = mode;
 
             RunDescritpion.Init(activity, Activity.Fields.RunDescription);
-
-            if (activityParentBusinessFlow != null)
-                mActivityParentBusinessFlow = activityParentBusinessFlow;
-            else
-                mActivityParentBusinessFlow = App.BusinessFlow;
+            
+            mActivityParentBusinessFlow = activityParentBusinessFlow;            
 
             List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(eActivityAutomationStatus));
             AutomationStatusCombo.ItemsSource = automationStatusList;
@@ -102,13 +99,13 @@ namespace Ginger.BusinessFlowWindows
             if (editMode == General.RepositoryItemPageViewMode.View)
             {
                 varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity, General.RepositoryItemPageViewMode.View);
-                actionsPage = new ActionsPage(mActivity, General.RepositoryItemPageViewMode.View);
+                actionsPage = new ActionsPage(mActivity, null, General.RepositoryItemPageViewMode.View);
                 SetViewMode();
             }
             else
             {
                 varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity, General.RepositoryItemPageViewMode.Child);
-                actionsPage = new ActionsPage(mActivity, General.RepositoryItemPageViewMode.Child);
+                actionsPage = new ActionsPage(mActivity, null, General.RepositoryItemPageViewMode.Child);
             }
 
             varbsPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;

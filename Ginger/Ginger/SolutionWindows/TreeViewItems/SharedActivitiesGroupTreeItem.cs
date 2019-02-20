@@ -76,7 +76,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActivitiesGroupPage == null)
             {
-                mActivitiesGroupPage = new ActivitiesGroupPage(mActivitiesGroup, ActivitiesGroupPage.eEditMode.SharedRepository);
+                mActivitiesGroupPage = new ActivitiesGroupPage(mActivitiesGroup, null,  ActivitiesGroupPage.eEditMode.SharedRepository);
             }
             return mActivitiesGroupPage;
         }

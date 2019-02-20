@@ -49,7 +49,7 @@ namespace Ginger.Variables
     {
         private eVariablesLevel mVariablesLevel;
         private object mVariablesParentObj;
-        private bool mVariablesParentObjIsStatic;
+       
         readonly General.RepositoryItemPageViewMode mEditMode;
 
         public eVariablesLevel VariablesLevel
@@ -63,7 +63,7 @@ namespace Ginger.Variables
         /// </summary>
         /// <param name="variablesLevel">Type of Variables parent object</param>
         /// <param name="variablesParentObj">Actual Variables parent object, if not provided then the Current Business Flow / Activity will be used</param>       
-        public VariablesPage(eVariablesLevel variablesLevel, object variablesParentObj = null, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
+        public VariablesPage(eVariablesLevel variablesLevel, object variablesParentObj, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
         {
             InitializeComponent();
 
@@ -71,16 +71,8 @@ namespace Ginger.Variables
             mVariablesParentObj = variablesParentObj;
             mEditMode = editMode;
 
-            if (variablesParentObj == null)
-            {
-                mVariablesParentObjIsStatic = false;
-            }
-            else
-                mVariablesParentObjIsStatic = true;
-            App.PropertyChanged += App_PropertyChanged; //Hook to catch current Business Flow changes
-            SetVariablesParentObj();            
-            SetVariablesGridView();
-            LoadGridData();
+            SetVariablesParentObj(variablesParentObj);                      
+            SetVariablesGridView();            
 
             if (mEditMode == General.RepositoryItemPageViewMode.View)
             {
@@ -126,50 +118,51 @@ namespace Ginger.Variables
             }
         }
 
-        private void SetVariablesParentObj()
+        private void SetVariablesParentObj(object variablesParentObj)
         {
             switch (mVariablesLevel)
             {
                 case eVariablesLevel.Solution:
-                    if (mVariablesParentObjIsStatic == false)
+                    if (variablesParentObj != null)
                     {
-                        if ( WorkSpace.UserProfile.Solution != null)
-                        {
-                            mVariablesParentObj =  WorkSpace.UserProfile.Solution;
-                            ((Solution)mVariablesParentObj).PropertyChanged += Solution_PropertyChanged;//Hook to catch Solution Variables changes
-                        }
-                        else
-                            mVariablesParentObj = new Solution();//to avoid crashing
+                        mVariablesParentObj = variablesParentObj;
+                        ((Solution)mVariablesParentObj).PropertyChanged += Solution_PropertyChanged;//Hook to catch Solution Variables changes
+                        LoadGridData();
                     }
                     break;
 
                 case eVariablesLevel.BusinessFlow:
-                    if (mVariablesParentObjIsStatic == false)
+                    if (variablesParentObj != null)
                     {
-                        if (App.BusinessFlow != null)
-                        {
-                            mVariablesParentObj = App.BusinessFlow;
-                            ((BusinessFlow)mVariablesParentObj).PropertyChanged += BusinessFlow_PropertyChanged;//Hook to catch Business Flow Variables changes
-                        }
-                        else
-                            mVariablesParentObj = new BusinessFlow();//to avoid crashing
+                        UpdateBusinessFlow((BusinessFlow)variablesParentObj);
                     }
                     break;
 
                 case eVariablesLevel.Activity:
-                    if (mVariablesParentObjIsStatic == false)
+                    if (variablesParentObj != null)
                     {
-                        if (App.BusinessFlow != null && App.BusinessFlow.CurrentActivity != null)
-                        {
-                            mVariablesParentObj = App.BusinessFlow.CurrentActivity;
-                            App.BusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;//Hook to catch Current Activity changes                           
-                        }
-                        else
-                            mVariablesParentObj = new Activity();//to avoid crashing
+                        UpdateActivity((Activity)variablesParentObj);
                     }
-                    if (mVariablesParentObj != null)
-                        ((Activity)mVariablesParentObj).PropertyChanged += Activity_PropertyChanged;//Hook to catch Activity Variables changes
                     break;
+            }
+        }
+
+        public void UpdateBusinessFlow(BusinessFlow bf)
+        {
+            mVariablesParentObj = bf;
+            if (mVariablesParentObj != null)
+            {
+                LoadGridData();
+            }
+        }
+
+        public void UpdateActivity(Activity activity)
+        {
+            mVariablesParentObj = activity;
+            if (mVariablesParentObj != null)
+            {
+                ((Activity)mVariablesParentObj).PropertyChanged += Activity_PropertyChanged;//Hook to catch Activity Variables changes
+                LoadGridData();
             }
         }
 
@@ -185,7 +178,7 @@ namespace Ginger.Variables
                         break;
 
                     case eVariablesLevel.BusinessFlow:
-                        if (mVariablesParentObjIsStatic)
+                        if (mEditMode != General.RepositoryItemPageViewMode.Automation)
                             grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
                         else
                             grdVariables.Title = "'" + ((BusinessFlow)mVariablesParentObj).Name + "' - " + GingerDicser.GetTermResValue(eTermResKey.Variables);
@@ -194,7 +187,7 @@ namespace Ginger.Variables
                         break;
 
                     case eVariablesLevel.Activity:
-                        if (mVariablesParentObjIsStatic)
+                        if (mEditMode != General.RepositoryItemPageViewMode.Automation)
                             grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
                         else
                             grdVariables.Title = "'" + ((Activity)mVariablesParentObj).ActivityName + "' - " + GingerDicser.GetTermResValue(eTermResKey.Variables);
@@ -278,30 +271,6 @@ namespace Ginger.Variables
             grdVariables.PreviewDragItem += grdVariables_PreviewDragItem;
         }
 
-        private void App_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(App.BusinessFlow))
-            {
-                if (App.BusinessFlow != null)
-                {
-                    if (mVariablesLevel == eVariablesLevel.BusinessFlow && (BusinessFlow)mVariablesParentObj != App.BusinessFlow)
-                    {
-                        SetVariablesParentObj();
-                        LoadGridData();
-                    }
-                    else if (mVariablesLevel == eVariablesLevel.Activity && (Activity)mVariablesParentObj != App.BusinessFlow.CurrentActivity)
-                    {
-                        SetVariablesParentObj();
-                        LoadGridData();
-                    }
-                }
-                else
-                {
-                    grdVariables.DataSourceList = new ObservableList<VariableBase>();
-                }
-            }
-        }
-
         private void Solution_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Solution.Variables) && mVariablesLevel == eVariablesLevel.Solution)
@@ -313,33 +282,12 @@ namespace Ginger.Variables
             }
         }
 
-        private void BusinessFlow_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(BusinessFlow.CurrentActivity) && mVariablesLevel == eVariablesLevel.Activity)
-            {
-                if ((Activity)mVariablesParentObj != App.BusinessFlow.CurrentActivity)
-                {
-                    SetVariablesParentObj();
-                    LoadGridData();
-                }
-            }
-            else if (e.PropertyName == nameof(BusinessFlow.Variables) && mVariablesLevel == eVariablesLevel.BusinessFlow)
-            {
-                if ((BusinessFlow)mVariablesParentObj == App.BusinessFlow)
-                {
-                    LoadGridData();
-                }
-            }
-        }
 
         private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Activity.Variables) && mVariablesLevel == eVariablesLevel.Activity)
             {
-                if ((Activity)mVariablesParentObj == App.BusinessFlow.CurrentActivity)
-                {
-                    LoadGridData();
-                }
+                LoadGridData();
             }
         }
 
@@ -454,7 +402,7 @@ namespace Ginger.Variables
 
         private void RefreshVariablesNames()
         {
-            if (mVariablesParentObjIsStatic == false
+            if (mEditMode != General.RepositoryItemPageViewMode.Automation
                 && mVariablesLevel == eVariablesLevel.Activity && mVariablesParentObj != null)
             {
                 ((Activity)mVariablesParentObj).RefreshVariablesNames();

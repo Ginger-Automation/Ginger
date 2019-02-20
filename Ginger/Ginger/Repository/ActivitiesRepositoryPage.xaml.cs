@@ -65,13 +65,8 @@ namespace Ginger.Repository
             else
                 mAddActivityHandler = AddFromRepository;
 
-            if (businessFlow != null)
-                mBusinessFlow = businessFlow;
-            else
-            {
-                mBusinessFlow = App.BusinessFlow;
-                App.PropertyChanged += AppPropertychanged;
-            }
+            
+            mBusinessFlow = businessFlow;
 
             SetActivitiesRepositoryGridView();            
             SetGridAndTreeData();
@@ -89,15 +84,9 @@ namespace Ginger.Repository
             }
         }
 
-        private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public void UpdateBusinessFlow(BusinessFlow bf)
         {
-            if (e.PropertyName == "BusinessFlow")
-            {
-                if (App.BusinessFlow != mBusinessFlow)
-                {
-                    mBusinessFlow = App.BusinessFlow;
-                }
-            }
+            mBusinessFlow = bf;
         }
 
         private void SetActivitiesRepositoryGridView()

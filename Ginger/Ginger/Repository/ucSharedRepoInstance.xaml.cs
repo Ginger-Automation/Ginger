@@ -118,7 +118,7 @@ namespace Ginger
             else if (mLinkedRepoItem is Act)
                 (new ActionEditPage((Act)mLinkedRepoItem, General.RepositoryItemPageViewMode.SharedReposiotry, new GingerCore.BusinessFlow(), new GingerCore.Activity())).ShowAsWindow(startupLocationWithOffset: true);
             else if (mLinkedRepoItem is GingerCore.Activities.ActivitiesGroup)
-                (new Activities.ActivitiesGroupPage((GingerCore.Activities.ActivitiesGroup)mLinkedRepoItem, Activities.ActivitiesGroupPage.eEditMode.SharedRepository)).ShowAsWindow(startupLocationWithOffset: true);
+                (new Activities.ActivitiesGroupPage((GingerCore.Activities.ActivitiesGroup)mLinkedRepoItem, null, Activities.ActivitiesGroupPage.eEditMode.SharedRepository)).ShowAsWindow(startupLocationWithOffset: true);
         }
 
         private void LinkStatusImageBtn_Click(object sender, RoutedEventArgs e)

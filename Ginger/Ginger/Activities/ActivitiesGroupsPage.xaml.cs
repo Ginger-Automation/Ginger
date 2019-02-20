@@ -43,20 +43,14 @@ namespace Ginger.Activities
     {
         BusinessFlow mBusinessFlow;
 
-        public ActivitiesGroupsPage(BusinessFlow businessFlow = null, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.SharedReposiotry)
+        public ActivitiesGroupsPage(BusinessFlow businessFlow, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.SharedReposiotry)
         {
             InitializeComponent();
 
+            mBusinessFlow = businessFlow;
             if (businessFlow != null)
             {
-                mBusinessFlow = businessFlow;
                 mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
-            }
-            else
-            {
-                mBusinessFlow = App.BusinessFlow;
-                mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
-                App.PropertyChanged += AppPropertychanged;
             }
 
             SetActivitiesGroupsGridView();
@@ -110,7 +104,7 @@ namespace Ginger.Activities
             {
                 if (grdActivitiesGroups.Grid.SelectedItem != null)
                 {
-                    ActivitiesGroupPage page = new ActivitiesGroupPage((ActivitiesGroup)grdActivitiesGroups.Grid.SelectedItem, ActivitiesGroupPage.eEditMode.ExecutionFlow);
+                    ActivitiesGroupPage page = new ActivitiesGroupPage((ActivitiesGroup)grdActivitiesGroups.Grid.SelectedItem, mBusinessFlow, ActivitiesGroupPage.eEditMode.ExecutionFlow);
                     page.ShowAsWindow();
                 }
                 else
@@ -120,18 +114,15 @@ namespace Ginger.Activities
             }
         }
 
-        private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public void UpdateBusinessFlow(BusinessFlow bf)
         {
-            if (e.PropertyName == "BusinessFlow")
+            if (bf != mBusinessFlow)
             {
-                if (App.BusinessFlow != mBusinessFlow)
-                {
-                    mBusinessFlow = App.BusinessFlow;
-                    if (mBusinessFlow != null)
-                        mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
-                }
-                RefreshActivitiesGroupsGrid();
+                mBusinessFlow = bf;
+                if (mBusinessFlow != null)
+                    mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
             }
+            RefreshActivitiesGroupsGrid();
         }
 
         private void BusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -298,7 +289,7 @@ namespace Ginger.Activities
         {
             grdActivitiesGroups.Grid.CommitEdit();
             grdActivitiesGroups.Grid.CancelEdit();
-            ActivitiesGroupPage page = new ActivitiesGroupPage(((ActivitiesGroup)grdActivitiesGroups.Grid.SelectedItem), ActivitiesGroupPage.eEditMode.ExecutionFlow);
+            ActivitiesGroupPage page = new ActivitiesGroupPage(((ActivitiesGroup)grdActivitiesGroups.Grid.SelectedItem), mBusinessFlow, ActivitiesGroupPage.eEditMode.ExecutionFlow);
             page.ShowAsWindow();
         }
 

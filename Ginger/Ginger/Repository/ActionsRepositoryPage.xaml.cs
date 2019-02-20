@@ -41,15 +41,23 @@ namespace Ginger.Repository
     public partial class ActionsRepositoryPage : Page
     {
         readonly RepositoryFolder<Act> mActionsFolder;
+        BusinessFlow mBusinessFlow;
 
-        public ActionsRepositoryPage(RepositoryFolder<Act> actionsFolder)
+        public ActionsRepositoryPage(RepositoryFolder<Act> actionsFolder, BusinessFlow businessFlow)
         {
             InitializeComponent();
 
             mActionsFolder = actionsFolder;
+            mBusinessFlow = businessFlow;
             SetActionsGridView();
             SetGridAndTreeData();
         }
+
+        public void UpdateBusinessFlow(BusinessFlow bf)
+        {
+            mBusinessFlow = bf;
+        }
+
 
         private void SetGridAndTreeData()
         {
@@ -119,11 +127,11 @@ namespace Ginger.Repository
             {
                 foreach (Act selectedItem in xActionsGrid.Grid.SelectedItems)
                 {
-                    App.BusinessFlow.AddAct((Act)selectedItem.CreateInstance(true));
+                    mBusinessFlow.AddAct((Act)selectedItem.CreateInstance(true));
                 }
                 
                 int selectedActIndex = -1;
-                ObservableList<IAct> actsList = App.BusinessFlow.CurrentActivity.Acts;
+                ObservableList<IAct> actsList = mBusinessFlow.CurrentActivity.Acts;
                 if (actsList.CurrentItem != null)
                 {
                     selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);

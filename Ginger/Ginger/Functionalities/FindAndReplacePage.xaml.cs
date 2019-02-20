@@ -56,6 +56,7 @@ namespace Ginger.Functionalities
     public partial class FindAndReplacePage : Page
     {
         private GenericWindow _pageGenericWin = null;
+        object mItemToSearchOn;
         private ObservableList<FoundItem> mFoundItemsList = new ObservableList<FoundItem>();
         private List<FindItemType> mMainItemsTypeList = new List<FindItemType>();
         private List<FindItemType> mSubItemsTypeList = new List<FindItemType>();
@@ -74,11 +75,13 @@ namespace Ginger.Functionalities
         }
            
         public eContext mContext;
+        
 
-        public FindAndReplacePage(eContext context)
+        public FindAndReplacePage(eContext context, object itemToSearchOn=null)
         {
             InitializeComponent();
             mContext = context;
+            mItemToSearchOn = itemToSearchOn;
             SetFoundItemsGridView();
             Init();
         }
@@ -211,9 +214,10 @@ namespace Ginger.Functionalities
         string mPageTitle = string.Empty;
         public void Init()
         {
-            if (mContext == eContext.AutomatePage)
-                App.PropertyChanged += App_PropertyChanged;
-            else if (mContext == eContext.RunsetPage)
+            //if (mContext == eContext.AutomatePage)
+            //    App.PropertyChanged += App_PropertyChanged;
+            //else 
+            if (mContext == eContext.RunsetPage)
             {
                 App.RunsetExecutor.PropertyChanged += RunsetExecutor_PropertyChanged;
                 xReplaceRadioButton.Visibility = Visibility.Hidden;
@@ -267,13 +271,13 @@ namespace Ginger.Functionalities
             }  
         }
 
-        private void App_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(App.BusinessFlow))
-            {
-                ClearUI();
-            } 
-        }
+        //private void App_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //{
+        //    if (e.PropertyName == nameof(App.BusinessFlow))
+        //    {
+        //        ClearUI();
+        //    } 
+        //}
 
         private FoundItem mCurrentItem { get { return (FoundItem)xFoundItemsGrid.CurrentItem; } }
 
@@ -318,7 +322,7 @@ namespace Ginger.Functionalities
             switch (mContext)
             {
                 case eContext.AutomatePage:
-                    title = string.Format("Find & Replace in '{0}' {1}", App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    title = string.Format("Find & Replace in '{0}' {1}", ((BusinessFlow)mItemToSearchOn).Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     break;
                 case eContext.RunsetPage:
                     title = string.Format("Find in '{0}' {1}", App.RunsetExecutor.RunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
@@ -464,7 +468,7 @@ namespace Ginger.Functionalities
                         mItemsToSearchIn.Add(new ItemToSearchIn(BF, BF, BF, string.Empty, string.Empty));                    
                     break;
                 case eContext.AutomatePage:
-                    mItemsToSearchIn.Add(new ItemToSearchIn(App.BusinessFlow, App.BusinessFlow, App.BusinessFlow, string.Empty, string.Empty));
+                    mItemsToSearchIn.Add(new ItemToSearchIn(((BusinessFlow)mItemToSearchOn), ((BusinessFlow)mItemToSearchOn), ((BusinessFlow)mItemToSearchOn), string.Empty, string.Empty));
                     break;
                 case eContext.RunsetPage:
                     foreach (GingerRunner runner in App.RunsetExecutor.RunSetConfig.GingerRunners)
@@ -500,10 +504,10 @@ namespace Ginger.Functionalities
 
                 case eContext.AutomatePage:
                     //Pull Activities from current businessflows
-                    foreach (Activity Activity in App.BusinessFlow.Activities)
+                    foreach (Activity Activity in ((BusinessFlow)mItemToSearchOn).Activities)
                     {
                         if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
-                        mItemsToSearchIn.Add(new ItemToSearchIn(Activity, Activity, App.BusinessFlow, App.BusinessFlow.Name, string.Empty));
+                        mItemsToSearchIn.Add(new ItemToSearchIn(Activity, Activity, ((BusinessFlow)mItemToSearchOn), ((BusinessFlow)mItemToSearchOn).Name, string.Empty));
                     }
                     break;
 
@@ -571,15 +575,15 @@ namespace Ginger.Functionalities
 
                 case eContext.AutomatePage:
                     //Pull Activities from current businessflow
-                    foreach (Activity activity in App.BusinessFlow.Activities)
+                    foreach (Activity activity in ((BusinessFlow)mItemToSearchOn).Activities)
                     {
-                        string itemParent = App.BusinessFlow.Name + @"\" + activity.ActivityName;
+                        string itemParent = ((BusinessFlow)mItemToSearchOn).Name + @"\" + activity.ActivityName;
                         foreach (Act action in activity.Acts)
                         {
                             if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
                             if (mSubItemType == null || action.GetType() == mSubItemType)
                             {
-                                mItemsToSearchIn.Add(new ItemToSearchIn(action, action, App.BusinessFlow, itemParent, string.Empty));
+                                mItemsToSearchIn.Add(new ItemToSearchIn(action, action, ((BusinessFlow)mItemToSearchOn), itemParent, string.Empty));
                             }
                         }
                     }
@@ -646,7 +650,7 @@ namespace Ginger.Functionalities
                     break;
 
                 case eContext.AutomatePage:
-                    AddVariableFromBusinessFlowList(new ObservableList<BusinessFlow>() { App.BusinessFlow });
+                    AddVariableFromBusinessFlowList(new ObservableList<BusinessFlow>() { ((BusinessFlow)mItemToSearchOn) });
                     break;
 
                 case eContext.RunsetPage:

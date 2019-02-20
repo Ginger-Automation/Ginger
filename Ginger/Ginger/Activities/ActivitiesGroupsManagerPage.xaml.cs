@@ -236,7 +236,7 @@ namespace Ginger.Activities
             {
                 ObservableList<ActivitiesGroup> selectedAGs = new ObservableList<ActivitiesGroup>();
                 foreach (ActivitiesGroup ag in grdGroups.Grid.SelectedItems) selectedAGs.Add(ag);
-                ALMIntegration.Instance.ExportBfActivitiesGroupsToALM(App.BusinessFlow, selectedAGs);
+                ALMIntegration.Instance.ExportBfActivitiesGroupsToALM(mBusinessFlow, selectedAGs);
             }
             else
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
@@ -258,16 +258,16 @@ namespace Ginger.Activities
             {
                 Activity instance = (Activity)((Activity)droppedItem).CreateInstance();
                 instance.Active = true;
-                App.BusinessFlow.SetActivityTargetApplication(instance);
-                App.BusinessFlow.AddActivity(instance);
+                mBusinessFlow.SetActivityTargetApplication(instance);
+                mBusinessFlow.AddActivity(instance);
             }
             else if (droppedItem.GetType() == typeof(ActivitiesGroup))
             {
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance();
-                App.BusinessFlow.AddActivitiesGroup(droppedGroupIns);
+                mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                App.BusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
-                App.BusinessFlow.AttachActivitiesGroupsAndActivities();
+                mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
+                mBusinessFlow.AttachActivitiesGroupsAndActivities();
             }
         }
 

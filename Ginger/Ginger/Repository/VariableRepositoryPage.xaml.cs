@@ -39,14 +39,22 @@ namespace Ginger.Repository
     public partial class VariablesRepositoryPage : Page
     {
         readonly RepositoryFolder<VariableBase> mVariablesFolder;
+        BusinessFlow mBusinessFlow;
 
-        public VariablesRepositoryPage(RepositoryFolder<VariableBase> variablesFolder)
+        public VariablesRepositoryPage(RepositoryFolder<VariableBase> variablesFolder, BusinessFlow businessFlow)
         {
             InitializeComponent();
 
             mVariablesFolder = variablesFolder;
+            mBusinessFlow = businessFlow;
+
             SetVariablesGridView();
             SetGridAndTreeData();
+        }
+
+        public void UpdateBusinessFlow(BusinessFlow bf)
+        {
+            mBusinessFlow = bf;
         }
 
         private void SetGridAndTreeData()
@@ -89,11 +97,11 @@ namespace Ginger.Repository
             {
                 foreach (VariableBase selectedItem in xVariablesGrid.Grid.SelectedItems)
                 {
-                    App.BusinessFlow.AddVariable((VariableBase)selectedItem.CreateInstance(true));
+                    mBusinessFlow.AddVariable((VariableBase)selectedItem.CreateInstance(true));
                 }                    
                 
                 int selectedActIndex = -1;
-                ObservableList<VariableBase> varList = App.BusinessFlow.Variables;
+                ObservableList<VariableBase> varList = mBusinessFlow.Variables;
                 if (varList.CurrentItem != null)
                 {
                     selectedActIndex = varList.IndexOf((VariableBase)varList.CurrentItem);

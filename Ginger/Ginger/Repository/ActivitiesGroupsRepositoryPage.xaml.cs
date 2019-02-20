@@ -55,14 +55,8 @@ namespace Ginger.Repository
         {
             InitializeComponent();
 
-            mActivitiesGroupFolder = activitiesGroupFolder;
-            if (businessFlow != null)
-                mBusinessFlow = businessFlow;
-            else
-            {
-                mBusinessFlow = App.BusinessFlow;
-                App.PropertyChanged += AppPropertychanged;
-            }
+            mActivitiesGroupFolder = activitiesGroupFolder;           
+            mBusinessFlow = businessFlow;
             
             SetActivitiesRepositoryGridView();            
             SetGridAndTreeData();
@@ -80,15 +74,9 @@ namespace Ginger.Repository
             }                
         }
 
-        private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public void UpdateBusinessFlow(BusinessFlow bf)
         {
-            if (e.PropertyName == "BusinessFlow")
-            {
-                if (App.BusinessFlow != mBusinessFlow)
-                {
-                    mBusinessFlow = App.BusinessFlow;
-                }
-            }
+            mBusinessFlow = bf;
         }
 
         private void SetActivitiesRepositoryGridView()
@@ -132,7 +120,7 @@ namespace Ginger.Repository
                         mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                         
                         int selectedActIndex = -1;
-                        ObservableList<ActivitiesGroup> actsList = App.BusinessFlow.ActivitiesGroups;
+                        ObservableList<ActivitiesGroup> actsList = mBusinessFlow.ActivitiesGroups;
                         if (actsList.CurrentItem != null)
                         {
                             selectedActIndex = actsList.IndexOf((ActivitiesGroup)actsList.CurrentItem);
@@ -156,7 +144,7 @@ namespace Ginger.Repository
             if (xActivitiesGroupsRepositoryGrid.CurrentItem != null)
             {
                 ActivitiesGroup activityGroup = (ActivitiesGroup)xActivitiesGroupsRepositoryGrid.CurrentItem;
-                ActivitiesGroupPage mActivitiesGroupPage = new ActivitiesGroupPage(activityGroup,ActivitiesGroupPage.eEditMode.SharedRepository);
+                ActivitiesGroupPage mActivitiesGroupPage = new ActivitiesGroupPage(activityGroup, null, ActivitiesGroupPage.eEditMode.SharedRepository);
                 mActivitiesGroupPage.ShowAsWindow();
             }
             else

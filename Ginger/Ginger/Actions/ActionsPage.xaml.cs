@@ -234,7 +234,7 @@ namespace Ginger.Actions
             }
             else
             {
-                AddActionPage addAction = new AddActionPage();
+                AddActionPage addAction = new AddActionPage(mBusinessFlow);
                 addAction.ShowAsWindow(mCurrentActivity.Acts);
             }
         }
