@@ -219,8 +219,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Globe);
                     break;
                 case eImageType.Application:
-                case eImageType.ApplicationPOMModel:
-                case eImageType.Window:
+                case eImageType.ApplicationPOMModel:                
                     SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMaximize);
                     break;
                 case eImageType.HtmlReport:
@@ -274,7 +273,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, (SolidColorBrush)FindResource("$PassedStatusColor"), 0, "Passed");
                     break;
                 case eImageType.Unknown:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Question,null, 0, "Unknown");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.QuestionCircle, null, 0, "Unknown");
                     break;
                 case eImageType.Failed:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle, (SolidColorBrush)FindResource("$FailedStatusColor"), 0, "Failed");
@@ -501,8 +500,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.FlowDiagram:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
-                    break;
-                case eImageType.List:
+                    break;                
                 case eImageType.DataTable:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Table);
                     break;
@@ -533,9 +531,6 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Clock:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline);
                     break;
-                case eImageType.Link:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExternalLink);
-                    break;
                 case eImageType.Report:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PieChart);
                     break;
@@ -562,10 +557,7 @@ namespace Amdocs.Ginger.UserControls
                     break;                
                 case eImageType.Info:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.InfoCircle);
-                    break;
-                case eImageType.Text:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Adn);
-                    break;                
+                    break;              
                 case eImageType.Service:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Headphones);
                     break;                
@@ -650,10 +642,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.MapSigns:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.MapSigns);
-                    break;
-                case eImageType.Image:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Image);
-                    break;
+                    break;                
                 case eImageType.Elements:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Th);
                     break;
@@ -666,14 +655,74 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Ping:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
                     break;
-                #endregion
-
-                #region Other Images
                 case eImageType.Database:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Database);
                     break;
+                #endregion
+
+                #region ElementType Images
+                case eImageType.Button:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.HandPointerOutline);
+                    break;
                 case eImageType.TextBox:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.PencilSquareOutline);
+                    break;
+                case eImageType.Image:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Image);
+                    break;
+                case eImageType.CheckBox:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.CheckSquareOutline);
+                    break;
+                case eImageType.RadioButton:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.DotCircleOutline);
+                    break;
+                case eImageType.Link:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExternalLink);
+                    break;
+                case eImageType.Element:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.SquareOutline);
+                    break;
+                case eImageType.Menu:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bars);
+                    break;
+                case eImageType.Label:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Font);
+                    break;
+                case eImageType.DropList:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ListAlt);
+                    break;
+                case eImageType.List:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ListOl);
+                    break;
+                case eImageType.Window:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMaximize);
+                    break;
+                case eImageType.Toggle:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ToggleOn);
+                    break;
+                case eImageType.Table:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Table);
+                    break;
+                case eImageType.Text:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.TextWidth);
+                    break;
+                #endregion
+
+                #region Comparison Status Images
+                case eImageType.Unchanged:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, toolTip: "Unchanged");
+                    break;
+                case eImageType.Changed:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, toolTip: "Changed");
+                    break;
+                case eImageType.Deleted:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MinusCircle, toolTip: "Deleted");
+                    break;
+                case eImageType.Added:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlusCircle, toolTip: "Added");
+                    break;
+                case eImageType.Avoided:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.EyeSlash, toolTip: "Avoided");
                     break;
                 #endregion
 

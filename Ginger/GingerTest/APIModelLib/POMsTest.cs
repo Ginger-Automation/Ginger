@@ -41,6 +41,7 @@ namespace GingerTest.APIModelLib
 
             CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
             GingerAutomator mGingerAutomator = GingerAutomator.StartSession();
+
             mGingerAutomator.OpenSolution(SolutionFolder);
 
             mPOMsPOM = mGingerAutomator.MainWindowPOM.GotoPOMs();
@@ -76,7 +77,8 @@ namespace GingerTest.APIModelLib
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ValidatePOMGeneralDetails()
         {
             //Assert
@@ -87,7 +89,8 @@ namespace GingerTest.APIModelLib
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ValidatePOMScreenshotWasTaken()
         {
             //Act
@@ -97,12 +100,13 @@ namespace GingerTest.APIModelLib
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ValidateLearnedItems()
         {
             //Act
-            ElementInfo EI1 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "Mexico INPUTRADIO" && x.ElementTypeEnum == eElementType.RadioButton).FirstOrDefault();
-            ElementInfo EI2 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "id123 input" && x.ElementTypeEnum == eElementType.TextBox).FirstOrDefault();
+            ElementInfo EI1 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "input radio country Mexico" && x.ElementTypeEnum == eElementType.RadioButton).FirstOrDefault();
+            ElementInfo EI2 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "input text id123" && x.ElementTypeEnum == eElementType.TextBox).FirstOrDefault();
 
             //Assert  
             Assert.AreEqual(mLearnedPOM.MappedUIElements.Count, 27, "POM.MappedUIElements.Coun check");
@@ -111,7 +115,8 @@ namespace GingerTest.APIModelLib
             Assert.IsNotNull(EI2, "POM.Element learned check");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        //[Timeout(60000)]
         public void ValidateElementsProperties()
         {
             //Act  
@@ -119,31 +124,28 @@ namespace GingerTest.APIModelLib
             ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.ComboBox).FirstOrDefault();
 
             //Assert  
-            Assert.AreEqual(ButtonEI.Properties.Count, 13, "POM.properties check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Platform Element Type", "INPUT.SUBMIT"),"POM.property 0 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
+            Assert.AreEqual(ButtonEI.Properties.Count, 12, "POM.properties check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Platform Element Type", "INPUT"),"POM.property 0 check");
+            //Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"XPath", "/html[1]/body[1]/div[19]/input[1]"), "POM.property 2 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Relative XPath", "//input[@id='submit1']"), "POM.property 3 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Height", "21"), "POM.property 4 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Width", "95"), "POM.property 5 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"X", "8"), "POM.property 6 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Y", "744"), "POM.property 7 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Value", "Submit Order"), "POM.property 8 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"id", "submit1"), "POM.property 9 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "name", "submit1"), "POM.property 10 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "type", "submit"), "POM.property 11 check");;
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "value", "Submit Order"), "POM.property 12 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "type", "submit"), "POM.property 11 check");
 
-            Assert.AreEqual(ComboBoxEI.Properties.Count, 13, "POM.properties check");
+            Assert.AreEqual(ComboBoxEI.Properties.Count, 12, "POM.properties check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "Platform Element Type", "SELECT"), "POM.property 0 check");
-            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
+            //Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"XPath", "/html[1]/body[1]/div[9]/select[1]"), "POM.property 2 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Relative XPath", "//select[@id='sel1']"), "POM.property 3 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Height", "19"), "POM.property 4 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Width", "74"), "POM.property 5 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"X", "631"), "POM.property 6 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Y", "226"), "POM.property 7 check");
-            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Value", "set to "), "POM.property 8 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Optional Values", "Ahhhh...,Got It!,Too far,OMG"), "POM.property 9 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "id", "sel1"), "POM.property 9 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "name", "sel1"), "POM.property 10 check");
