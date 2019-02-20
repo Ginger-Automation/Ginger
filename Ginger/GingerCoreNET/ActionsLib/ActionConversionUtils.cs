@@ -1,9 +1,12 @@
-﻿using Amdocs.Ginger.Common.UIElement;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Amdocs.Ginger.CoreNET
@@ -13,144 +16,177 @@ namespace Amdocs.Ginger.CoreNET
     /// </summary>
     public class ActionConversionUtils
     {
-        ///// <summary>
-        ///// This method is used to find the relative element from POM for the existing action
-        ///// </summary>
-        ///// <param name="selectedPOM"></param>
-        ///// <param name="newActUIElement"></param>
-        ///// <param name="currentAction"></param>
-        ///// <returns></returns>
-        //private ActUIElement GetMappedElementFromPOMForAction(ApplicationPOMModel selectedPOM, ActUIElement newActUIElement, Act currentAction)
-        //{
-        //    bool isPOM = true;
-        //    ElementInfo elementInfo = null;
-        //    IEnumerable<ElementInfo> lst = selectedPOM.MappedUIElements.Where(x => x.ElementTypeEnum != eElementType.Div);
-        //    foreach (var item in lst)
-        //    {
-        //        if (item != null)
-        //        {
-        //            if (currentAction.LocateBy == eLocateBy.ByXY)
-        //            {
-        //                int oldX = 0;
-        //                int oldY = 0;
+        /// <summary>
+        /// private constructor
+        /// </summary>
+        private ActionConversionUtils()
+        {
+        }
 
-        //                string[] oldxy = currentAction.LocateValue.Split(',');
-        //                if (oldxy != null && oldxy.Length > 0)
-        //                {
-        //                    int.TryParse(oldxy[0], out oldX);
-        //                    if (oldxy.Length > 1)
-        //                    {
-        //                        int.TryParse(oldxy[1], out oldY);
-        //                    }
-        //                }
+        private static ActionConversionUtils mInstance;
+        public static ActionConversionUtils Instance
+        {
+            get
+            {
+                if(mInstance == null)
+                {
+                    mInstance = new ActionConversionUtils();
+                }
+                return mInstance;
+            }
+        }
 
-        //                if (!string.IsNullOrEmpty(currentAction.LocateValue))
-        //                {
-        //                    newActUIElement.ElementLocateBy = eLocateBy.ByXY;
-        //                    int x = 0;
-        //                    int y = 0;
-        //                    foreach (var prop in item.Properties)
-        //                    {
-        //                        if (!string.IsNullOrEmpty(prop.Value) && prop.Name == "X")
-        //                        {
-        //                            int.TryParse(prop.Value, out x);
-        //                        }
-        //                        if (!string.IsNullOrEmpty(prop.Value) && prop.Name == "Y")
-        //                        {
-        //                            int.TryParse(prop.Value, out y);
-        //                        }
-        //                        if (x > 0 && y > 0)
-        //                        {
-        //                            break;
-        //                        }
-        //                    }
-        //                    if (oldX == x && oldY == y)
-        //                    {
-        //                        isPOM = false;
-        //                        elementInfo = item;
-        //                        elementInfo.X = x;
-        //                        elementInfo.Y = y;
-        //                    }
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if (currentAction.LocateBy == eLocateBy.ByXPath || currentAction.LocateBy == eLocateBy.ByRelXPath)
-        //                {
-        //                    if (currentAction.LocateValue == item.XPath)
-        //                    {
-        //                        elementInfo = item;
-        //                        break;
-        //                    }
-        //                }
-        //                else if (currentAction.LocateBy == eLocateBy.ByName)
-        //                {
-        //                    if (item.ElementName.Contains(currentAction.LocateValue))
-        //                    {
-        //                        elementInfo = item;
-        //                        break;
-        //                    }
-        //                }
-        //                else if (currentAction.LocateBy == eLocateBy.ByID)
-        //                {
-        //                    foreach (var prop in item.Properties)
-        //                    {
-        //                        if (!string.IsNullOrEmpty(prop.Value) &&
-        //                            prop.Name == "id" && prop.Value == currentAction.LocateValue)
-        //                        {
-        //                            elementInfo = item;
-        //                            break;
-        //                        }
-        //                    }
-        //                }
-        //                if (item.Properties != null && elementInfo == null)
-        //                {
-        //                    foreach (var prop in item.Properties)
-        //                    {
-        //                        if (!string.IsNullOrEmpty(prop.Value) &&
-        //                            (prop.Name == "XPath" && currentAction.LocateValue.Contains(prop.Value)) ||
-        //                            (prop.Name == "Relative XPath" && currentAction.LocateValue.Contains(prop.Value)) ||
-        //                            (prop.Name == "Name" && currentAction.LocateValue.Contains(prop.Value)))
-        //                        {
-        //                            elementInfo = item;
-        //                            break;
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //            if (elementInfo != null)
-        //            {
-        //                if (isPOM)
-        //                {
-        //                    newActUIElement.ElementLocateBy = eLocateBy.POMElement;
-        //                    newActUIElement.ElementLocateValue = string.Format("{0}_{1}", selectedPOM.Guid.ToString(), elementInfo.Guid.ToString());
-        //                }
-        //                else
-        //                {
-        //                    newActUIElement.ElementLocateBy = eLocateBy.ByXY;
-        //                    newActUIElement.ElementLocateValue = string.Format("X={0},Y={1}", elementInfo.X, elementInfo.Y);
-        //                }
-        //                newActUIElement.Value = currentAction.Value;
-        //                newActUIElement.ElementType = elementInfo.ElementTypeEnum;
-        //                ResetActUIFields(newActUIElement);
-        //                break;
-        //            }
-        //        }
-        //    }
-        //    return newActUIElement;
-        //}
+        /// <summary>
+        /// This method is used to find the relative element from POM for the existing action
+        /// </summary>
+        /// <param name="newActUIElement"></param>
+        /// <param name="pomModelObject"></param>
+        /// <returns></returns>
+        public Act GetMappedElementFromPOMForAction(Act newActUIElement, string pomModelObject)
+        {
+            ApplicationPOMModel selectedPOM = new ApplicationPOMModel();
 
-        ///// <summary>
-        ///// This method with reset the ActUIFields
-        ///// </summary>
-        ///// <param name="action"></param>
-        //private void ResetActUIFields(ActUIElement action)
-        //{
-        //    action.AddOrUpdateInputParamValue(ActUIElement.Fields.XCoordinate, String.Empty);
-        //    action.AddOrUpdateInputParamValue(ActUIElement.Fields.Value, String.Empty);
-        //    action.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, String.Empty);
-        //    action.AddOrUpdateInputParamValue(ActUIElement.Fields.YCoordinate, String.Empty);
-        //    action.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, String.Empty);
-        //}
+            ObservableList<ApplicationPOMModel> pomLst = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+            selectedPOM = pomLst.Where(x => x.Guid.ToString() == pomModelObject).SingleOrDefault();
+
+            bool isPOM = true;
+            ElementInfo elementInfo = null;
+            IEnumerable<ElementInfo> lst = selectedPOM.MappedUIElements.Where(x => x.ElementTypeEnum != eElementType.Div);
+
+            string locateValue = Convert.ToString(newActUIElement.GetType().GetProperty("LocateValue").GetValue(newActUIElement, null));
+            string elementLocateBy = Convert.ToString(newActUIElement.GetType().GetProperty("ElementLocateBy").GetValue(newActUIElement, null));
+
+            PropertyInfo pLocateBy = newActUIElement.GetType().GetProperty("ElementLocateBy");
+            if (pLocateBy != null)
+            {
+                if (elementLocateBy != "ByXY")
+                {
+                    if (pLocateBy.PropertyType.IsEnum)
+                        pLocateBy.SetValue(newActUIElement, Enum.Parse(pLocateBy.PropertyType, "POMElement"));  
+                }
+                else
+                {
+                    if (pLocateBy.PropertyType.IsEnum)
+                        pLocateBy.SetValue(newActUIElement, Enum.Parse(pLocateBy.PropertyType, "ByXY"));
+                }
+            }
+            
+            foreach (var item in lst)
+            {
+                if (item != null)
+                {
+                    if (elementLocateBy == eLocateBy.ByXY.ToString())
+                    {
+                        int oldX = 0;
+                        int oldY = 0;
+
+                        string[] oldxy = locateValue.Split(',');
+                        if (oldxy != null && oldxy.Length > 0)
+                        {
+                            int.TryParse(oldxy[0], out oldX);
+                            if (oldxy.Length > 1)
+                            {
+                                int.TryParse(oldxy[1], out oldY);
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(locateValue))
+                        {
+                            int x = 0;
+                            int y = 0;
+                            foreach (var prop in item.Properties)
+                            {
+                                if (!string.IsNullOrEmpty(prop.Value) && prop.Name == "X")
+                                {
+                                    int.TryParse(prop.Value, out x);
+                                }
+                                if (!string.IsNullOrEmpty(prop.Value) && prop.Name == "Y")
+                                {
+                                    int.TryParse(prop.Value, out y);
+                                }
+                                if (x > 0 && y > 0)
+                                {
+                                    break;
+                                }
+                            }
+                            if (oldX == x && oldY == y)
+                            {
+                                isPOM = false;
+                                elementInfo = item;
+                                elementInfo.X = x;
+                                elementInfo.Y = y;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (elementLocateBy == eLocateBy.ByXPath.ToString() || elementLocateBy == eLocateBy.ByRelXPath.ToString())
+                        {
+                            if (locateValue == item.XPath)
+                            {
+                                elementInfo = item;
+                            }
+                        }
+                        else if (elementLocateBy == eLocateBy.ByName.ToString())
+                        {
+                            if (item.ElementName.Contains(locateValue))
+                            {
+                                elementInfo = item;
+                            }
+                        }
+                        else if (elementLocateBy == eLocateBy.ByID.ToString())
+                        {
+                            foreach (var prop in item.Properties)
+                            {
+                                if (!string.IsNullOrEmpty(prop.Value) &&
+                                    prop.Name == "id" && prop.Value == locateValue)
+                                {
+                                    elementInfo = item;
+                                    break;
+                                }
+                            }
+                        }
+                        if (item.Properties != null && elementInfo == null)
+                        {
+                            foreach (var prop in item.Properties)
+                            {
+                                if (!string.IsNullOrEmpty(prop.Value) &&
+                                    (prop.Name == "XPath" && locateValue.Contains(prop.Value)) ||
+                                    (prop.Name == "Relative XPath" && locateValue.Contains(prop.Value)) ||
+                                    (prop.Name == "Name" && locateValue.Contains(prop.Value)))
+                                {
+                                    elementInfo = item;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (elementInfo != null)
+                    {
+                        string strVal = string.Empty;
+                        if (isPOM)
+                        {
+                            strVal = string.Format("{0}_{1}", selectedPOM.Guid.ToString(), elementInfo.Guid.ToString());
+                        }
+                        else
+                        {
+                            strVal = string.Format("X={0},Y={1}", elementInfo.X, elementInfo.Y);
+                        }
+
+                        PropertyInfo pLocateVal = newActUIElement.GetType().GetProperty("ElementLocateValue");
+                        if (pLocateVal != null)
+                        {
+                            pLocateVal.SetValue(newActUIElement, strVal);
+                        }
+
+                        PropertyInfo pElementType = newActUIElement.GetType().GetProperty("ElementType");
+                        if (pElementType != null && pElementType.PropertyType.IsEnum)
+                            pElementType.SetValue(newActUIElement, Enum.Parse(pElementType.PropertyType, Convert.ToString(elementInfo.ElementTypeEnum)));
+                        break;
+                    }
+                }
+            }
+            return newActUIElement;
+        }
     }
 }

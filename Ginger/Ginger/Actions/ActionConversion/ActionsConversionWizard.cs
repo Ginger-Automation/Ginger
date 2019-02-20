@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.WizardLib;
@@ -71,35 +72,7 @@ namespace Ginger.Actions.ActionConversion
         
         public override void Finish()
         {
-            //ExistingActionConversion();
-            POMActionConversion();
-        }
-
-        private void POMActionConversion()
-        {
-            if (!string.IsNullOrEmpty(SelectedPOMObjectName))
-            {
-                //ObservableList<ApplicationPOMModel> lst = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
-                //ApplicationPOMModel appModel = lst.Where(x => x.Name == SelectedPOMObjectName).SingleOrDefault();
-
-                //if (appModel != null)
-                //{
-                foreach (Activity activity in BusinessFlow.Activities)
-                {
-                    if (activity.SelectedForConversion && activity.Acts.OfType<IObsoleteAction>().ToList().Count > 0)
-                    {
-                        foreach (Act act in activity.Acts.ToList())
-                        {
-                            if (act.Active && act is IObsoleteAction && ActionToBeConverted.Where(a => a.SourceActionType == act.GetType() && a.Selected && a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
-                            {
-                                Act newAct = ((IObsoleteAction)act).GetNewAction();
-                                activity.Acts.Add(newAct);
-                            }
-                        }
-                    }
-                }
-                //}
-            }
+            ExistingActionConversion();
         }
 
         private void ExistingActionConversion()
@@ -132,9 +105,13 @@ namespace Ginger.Actions.ActionConversion
                                 foreach (Act oldAct in oldActivity.Acts.ToList())
                                 {
                                     if (oldAct is IObsoleteAction && ActionToBeConverted.Where(act => act.SourceActionType == oldAct.GetType() && act.Selected && act.TargetActionType == ((IObsoleteAction)oldAct).TargetAction()).FirstOrDefault() != null)
-                                    {
+                                    {                                        
                                         // convert the old action
                                         Act newAct = ((IObsoleteAction)oldAct).GetNewAction();
+                                        if (ConvertToPOMAction && newAct.GetType().Name == typeof(ActUIElement).Name)
+                                        {
+                                            ActionConversionUtils.Instance.GetMappedElementFromPOMForAction(newAct, SelectedPOMObjectName);
+                                        }
                                         int oldActionIndex = newActivity.Acts.IndexOf(newActivity.Acts.Where(x => x.Guid == oldAct.Guid).FirstOrDefault());
                                         newActivity.Acts.RemoveAt(oldActionIndex);
                                         newActivity.Acts.Add(newAct);
@@ -180,8 +157,12 @@ namespace Ginger.Actions.ActionConversion
                                         int selectedActIndex = activity.Acts.IndexOf(act);
 
                                         // convert the old action
-                                        activity.Acts.Add(((IObsoleteAction)act).GetNewAction());
-
+                                        Act newAct = ((IObsoleteAction)act).GetNewAction();                                        
+                                        if (ConvertToPOMAction && newAct.GetType().Name == typeof(ActUIElement).Name)
+                                        {
+                                            ActionConversionUtils.Instance.GetMappedElementFromPOMForAction(newAct, SelectedPOMObjectName);
+                                        }
+                                        activity.Acts.Add(newAct);
                                         if (selectedActIndex >= 0)
                                         {
                                             activity.Acts.Move(activity.Acts.Count - 1, selectedActIndex + 1);

@@ -10,53 +10,43 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ConversionConfigurationWzardPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-        <Border DockPanel.Dock="Top" Visibility="{Binding  ElementName=ToolsTray, Path=Visibility}" BorderThickness="1" BorderBrush="{StaticResource $Color_DarkBlue}"  >
-            <StackPanel x:Name="RowSelectorPanel">
-                <Label x:Name="lbl" Content="Add new action to :" FontSize="12" Margin="5,10,0,0" Style="{StaticResource @InputFieldLabelStyle}"/>
-                <RadioButton Name="radNewActivity" Tag="radDifferentActivity" Margin="10,10,0,0" Checked="RadNewActivity_Checked" >
-                    <RadioButton.Content>
-                        <GingerCore:ucTextDicResource Text="New [Activity]"/>
-                    </RadioButton.Content>
-                </RadioButton>
-                <RadioButton Name="radSameActivity" Tag="radSameActivity" Margin="10,10,0,0" IsChecked="True" Checked="RadSameActivity_Checked">
-                    <RadioButton.Content>
-                        <GingerCore:ucTextDicResource Text="Same [Activity]"/>
-                    </RadioButton.Content>
-                </RadioButton>
-                <StackPanel x:Name="RowDefaultTargetApplication" MinWidth="498" Margin="10,20,0,0" Orientation="Horizontal">
-                    <StackPanel>
-                        <CheckBox Name="chkDefaultTargetApp" Checked="chkDefaultTargetApp_Checked" Unchecked="chkDefaultTargetApp_Unchecked" IsChecked="True">
-                            <CheckBox.Content>
-                                <GingerCore:ucTextDicResource Text="Set default target application to modified [Activities]"/>
-                            </CheckBox.Content>
-                        </CheckBox>
-                    </StackPanel>
-                    <StackPanel Margin="5,-1,0,0">
-                        <ComboBox Name="cmbTargetApp" Style="{StaticResource @InputComboBoxStyle}" Width="180" SelectionChanged="CmbTargetApp_SelectionChanged" />
-                    </StackPanel>
-                    <StackPanel Margin="5,-3,0,0">
-                        <Button x:Name="btnRefresh" usercontrols:ImageMaker.Content="Refresh" ToolTip="Refresh" Click="btnRefresh_Click" Width="22" Style="{StaticResource @InputImageButtonStyle_NoBorder}"></Button>
-                    </StackPanel>
-                </StackPanel>
-            </StackPanel>            
-        </Border>
-        <DockPanel x:Name="conversionBtnPanel" Grid.Row="6" Height="200" HorizontalAlignment="Stretch" LastChildFill="true">
-            <StackPanel x:Name="POMSelectorPanel" MinWidth="498" Margin="10,20,0,0" Orientation="Horizontal">
-                <StackPanel>
-                    <CheckBox Name="chkPOM" Checked="chkPOM_Checked" IsChecked="False">
-                        <CheckBox.Content>
-                            <GingerCore:ucTextDicResource Text="Converts the action to selected POM elements"/>
-                        </CheckBox.Content>
-                    </CheckBox>
-                </StackPanel>
-                <StackPanel Margin="5,-1,0,0">
-                    <ComboBox Name="cmbPOM" Style="{StaticResource @InputComboBoxStyle}" Width="180" SelectionChanged="cmbPOM_SelectionChanged" />
-                </StackPanel>
-                <StackPanel Margin="5,-3,0,0">
-                    <Button x:Name="btnPOMRefresh" usercontrols:ImageMaker.Content="Refresh" ToolTip="Refresh" Click="btnPOMRefresh_Click" Width="22" Style="{StaticResource @InputImageButtonStyle_NoBorder}"></Button>
-                </StackPanel>
-            </StackPanel>
-        </DockPanel>
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="grdPane">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="320" />
+            <ColumnDefinition Width="170" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Label x:Name="lbl" Grid.Column="0" Grid.Row="0" Content="Add new action to :" FontSize="12" HorizontalAlignment="Left" Margin="5,0,0,0" Style="{StaticResource @InputFieldLabelStyle}"/>
+        <RadioButton Name="radNewActivity" Grid.Column="0" Grid.Row="1" Tag="radDifferentActivity" HorizontalAlignment="Left" Margin="10,5,0,0" Checked="RadNewActivity_Checked" >
+            <RadioButton.Content>
+                <GingerCore:ucTextDicResource Text="New [Activity]"/>
+            </RadioButton.Content>
+        </RadioButton>
+        <CheckBox Name="chkDefaultTargetApp" Grid.Column="0" Grid.Row="2"  Margin="25,5,0,0" HorizontalAlignment="Left" Checked="chkDefaultTargetApp_Checked" Unchecked="chkDefaultTargetApp_Unchecked" IsChecked="True">
+            <CheckBox.Content>
+                <GingerCore:ucTextDicResource Text="Set default target application to modified [Activities]"/>
+            </CheckBox.Content>
+        </CheckBox>
+        <ComboBox Name="cmbTargetApp" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Margin="5,0,0,0"  Style="{StaticResource @InputComboBoxStyle}" Width="165" SelectionChanged="CmbTargetApp_SelectionChanged" />
+        <Button x:Name="btnRefresh" Grid.Column="2" Grid.Row="2" Margin="3,0,0,0" HorizontalAlignment="Left" usercontrols:ImageMaker.Content="Refresh" ToolTip="Refresh" Click="btnRefresh_Click" Width="22" Style="{StaticResource @InputImageButtonStyle_NoBorder}" RenderTransformOrigin="4.873,0.514"></Button>
+        <RadioButton Name="radSameActivity" Grid.Column="0" Grid.Row="3" Tag="radDifferentActivity" HorizontalAlignment="Left" Margin="10,5,0,0" IsChecked="True" Checked="RadSameActivity_Checked">
+            <RadioButton.Content>
+                <GingerCore:ucTextDicResource Text="Same [Activity]"/>
+            </RadioButton.Content>
+        </RadioButton>
+        <CheckBox Name="chkPOM"  Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left"  Margin="25,5,0,0" Checked="chkPOM_Checked" Unchecked="ChkPOM_Unchecked" IsChecked="False">
+            <CheckBox.Content>
+                <GingerCore:ucTextDicResource Text="Converts the action to selected POM elements"/>
+            </CheckBox.Content>
+        </CheckBox>
+        <Frame Name="LocateValueEditFrame" Grid.ColumnSpan="3" Grid.Row="5" Margin="35,5,0,0" Width="750" HorizontalAlignment="Left" IsEnabled="False" BorderBrush="Transparent" />
     </Grid>
 </Page>

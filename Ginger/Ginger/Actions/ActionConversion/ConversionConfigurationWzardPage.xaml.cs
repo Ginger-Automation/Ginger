@@ -20,9 +20,12 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.ValidationRules;
+using Ginger.Actions._Common.ActUIElementLib;
 using GingerCore.Actions.ActionConversion;
+using GingerCore.Actions.Common;
 using GingerWPF.WizardLib;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,6 +40,20 @@ namespace Ginger.Actions.ActionConversion
         ActionsConversionWizard mWizard;
         public bool DefaultTaretApp { get; set; }
 
+        private string mSelectedPom = string.Empty;
+        public string SelectedPom
+        {
+            get
+            {
+                return mSelectedPom;
+            }
+            set
+            {
+                mSelectedPom = value;
+                mWizard.SelectedPOMObjectName = value;
+            }
+        }
+
         public ConversionConfigurationWzardPage()
         {
             InitializeComponent();
@@ -50,7 +67,7 @@ namespace Ginger.Actions.ActionConversion
                     mWizard = (ActionsConversionWizard)WizardEventArgs.Wizard;
                     break;
                 case EventType.Active:
-                    Init(WizardEventArgs);            
+                    Init(WizardEventArgs);
                     break;
                 case EventType.Finish:
                     break;
@@ -66,20 +83,10 @@ namespace Ginger.Actions.ActionConversion
             }
             mWizard.ChkDefaultTargetApp = Convert.ToBoolean(chkDefaultTargetApp.IsChecked);
 
-            BindPomCombobox();
-        }
+            grdPane.RowDefinitions[2].Height = new GridLength(0);
 
-        private void BindPomCombobox()
-        {
-            ObservableList<ApplicationPOMModel> lst = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
-            if (lst.Count > 0)
-            {
-                cmbPOM.BindControl(lst.Select(x => x.Name).ToList());
-                if ((cmbPOM != null) && (cmbPOM.Items.Count > 0))
-                {
-                    cmbPOM.SelectedIndex = 0;
-                }
-            }
+            LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(null, nameof(ActUIElement.ElementType), this, nameof(SelectedPom), true);
+            LocateValueEditFrame.Content = locateByPOMElementPage;
         }
 
         private void chkDefaultTargetApp_Checked(object sender, RoutedEventArgs e)
@@ -123,7 +130,8 @@ namespace Ginger.Actions.ActionConversion
         {
             if (mWizard != null)
             {
-                mWizard.RadNewActivity = Convert.ToBoolean(radNewActivity.IsChecked); 
+                mWizard.RadNewActivity = Convert.ToBoolean(radNewActivity.IsChecked);
+                grdPane.RowDefinitions[2].Height = new GridLength(1, GridUnitType.Auto);
             }
         }
 
@@ -132,19 +140,7 @@ namespace Ginger.Actions.ActionConversion
             if (mWizard != null)
             {
                 mWizard.RadNewActivity = !Convert.ToBoolean(radSameActivity.IsChecked);
-            }
-        }
-
-        private void btnPOMRefresh_Click(object sender, RoutedEventArgs e)
-        {
-            BindPomCombobox();
-        }
-
-        private void cmbPOM_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (cmbPOM.SelectedIndex > -1)
-            {
-                mWizard.SelectedPOMObjectName = Convert.ToString(cmbPOM.SelectedValue);
+                grdPane.RowDefinitions[2].Height = new GridLength(0);
             }
         }
 
@@ -153,10 +149,16 @@ namespace Ginger.Actions.ActionConversion
             if (mWizard != null)
             {
                 mWizard.ConvertToPOMAction = Convert.ToBoolean(chkPOM.IsChecked);
-                if (cmbPOM.SelectedIndex > -1)
-                {
-                    mWizard.SelectedPOMObjectName = Convert.ToString(cmbPOM.SelectedValue);
-                }
+                LocateValueEditFrame.IsEnabled = mWizard.ConvertToPOMAction;
+            }
+        }
+
+        private void ChkPOM_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (mWizard != null)
+            {
+                mWizard.ConvertToPOMAction = Convert.ToBoolean(chkPOM.IsChecked);
+                LocateValueEditFrame.IsEnabled = mWizard.ConvertToPOMAction;
             }
         }
     }
