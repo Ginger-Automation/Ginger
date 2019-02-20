@@ -1240,7 +1240,7 @@ namespace GingerCore.Drivers
                             }
                             else
                             {
-                                throw new Exception("Cannot find element '" + value + "[" + index2 + "] Because array contains only " + AEC.Count + " Elements");
+                                Reporter.ToLog(eLogLevel.DEBUG, "Cannot find element" + value + "[" + index2 + "] Because array contains only " + AEC.Count + "Elements");
                             }
                         }
                     }
