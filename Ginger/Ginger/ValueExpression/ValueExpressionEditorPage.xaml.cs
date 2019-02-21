@@ -54,7 +54,7 @@ namespace Ginger
     /// </summary>
     public partial class ValueExpressionEditorPage : Page
     {        
-        ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, App.BusinessFlow,WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(),false,"",false);
+        ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, WorkSpace.Instance.BusinessFlowInContext, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(),false,"",false);
         GenericWindow mWin;
         object mObj;
         string mAttrName;
