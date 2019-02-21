@@ -587,6 +587,7 @@ namespace GingerCore
             {
                 Activities.Add(a);
             }
+            CurrentActivity = a;
         }
 
         public void InsertActivity(Activity a, int index = -1)
