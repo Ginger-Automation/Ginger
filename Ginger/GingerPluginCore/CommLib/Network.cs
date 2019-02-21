@@ -14,11 +14,11 @@ namespace GingerPluginCore
         public static string GetFirstLocalHostIPAddress()
         {
             string networkIP = string.Empty;
-            if (GingerUtils.OperatingSystem.IsWindows())
+            if (OperatingSystem.IsWindows())
             {
                 networkIP = GetFirstLocalHostIPAddress_Windows();
             }
-            else if (GingerUtils.OperatingSystem.IsLinux())
+            else if (OperatingSystem.IsLinux())
             {
                 networkIP = GetFirstLocalHostIPAddress_Linux();
             }
