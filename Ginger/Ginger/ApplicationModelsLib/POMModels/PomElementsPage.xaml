@@ -8,7 +8,7 @@
       xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:local1="clr-namespace:Ginger.ApplicationModelsLib"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="800" d:DesignWidth="1200"
       Title="PomElementsPage">
 
     <Grid x:Name="PageGrid">
@@ -19,7 +19,11 @@
                 <Button x:Name="OpenEditOptionalValuesPageButton" Content="..." Click="OpenEditOptionalValuesPageButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"
                         IsEnabled="{Binding ElementTypeEnum, Converter={StaticResource ButtonToDisableConverter}}" />
             </DataTemplate>
-            
+
+            <DataTemplate x:Key="FieldUpdate">
+                <CheckBox x:Name="xElementsGrid_FieldUpdate"  Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotEqual, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Center"/>
+            </DataTemplate>
+
             <DataTemplate x:Key="xHighlightButtonTemplate">
                 <Button x:Name="HighlightButton" Click="HighlightElementClicked" ToolTip="Highlight Element" Style="{StaticResource @InputImageGridCellButtonStyle}">
                     <UserControls:ImageMakerControl ImageType="Pointer" SetAsFontImageWithSize="16"  Width="16" Height="16" />
@@ -53,7 +57,6 @@
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
-
         </Grid.Resources>
 
         <Grid.RowDefinitions>
