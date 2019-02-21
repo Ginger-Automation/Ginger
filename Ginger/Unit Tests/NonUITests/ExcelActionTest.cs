@@ -1,4 +1,21 @@
-﻿using amdocs.ginger.GingerCoreNET;
+﻿#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -81,13 +98,13 @@ namespace UnitTests.NonUITests
             ActExcel action = new ActExcel();
             action.ExcelActionType = ActExcel.eExcelActionType.WriteData;
             action.SheetName = "Sheet1";
-            action.SelectRowsWhere = "1";
+            action.SelectRowsWhere = "4";
             action.SelectAllRows = false;
             action.PrimaryKeyColumn = "Id";
-            action.SetDataUsed="Used= 'Y'";
+            action.SetDataUsed="Used='Y'";
             action.ExcelFileName = TestResources.GetTestResourcesFile(@"EXCELS\TestExcel.xlsx");
             action.Active = true;
-            action.ColMappingRules = "Id=4";
+            action.ColMappingRules = "First Name='aditi'";
             //Act
             mGR.RunAction(action);
             //Assert
@@ -108,7 +125,7 @@ namespace UnitTests.NonUITests
             mGR.RunAction(action1);
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
-            Assert.AreEqual(5, action1.ReturnValues.Count);
+            Assert.AreEqual("aditi", action1.ReturnValues[1].Actual);
 
 
         }
