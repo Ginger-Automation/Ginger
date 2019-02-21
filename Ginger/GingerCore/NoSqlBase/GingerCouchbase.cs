@@ -27,8 +27,6 @@ using Couchbase.Configuration.Client;
 using Couchbase.Authentication;
 using Couchbase.N1QL;
 using Couchbase.Configuration.Server.Serialization;
-
-
 namespace GingerCore.NoSqlBase
 {
     public class GingerCouchbase : NoSqlBase
@@ -51,7 +49,7 @@ namespace GingerCore.NoSqlBase
                 clusterCB = new Couchbase.Cluster(new ClientConfiguration
                 {
                     ViewRequestTimeout = 45000,
-                    Servers = new List<Uri> { new Uri(Db.TNSCalculated.ToString()) },//http://incespr021:8091                    
+                    Servers = new List<Uri> { new Uri(Db.TNSCalculated.ToString()) },                    
                 });
                 bool res = false;
                 String deCryptValue = EncryptionHandler.DecryptString(Db.PassCalculated.ToString(), ref res, false);
@@ -104,15 +102,11 @@ namespace GingerCore.NoSqlBase
         }
 
         public void ConnecttoBucket(string bucketName)
-        {            
-            var clusterMan = clusterCB.CreateManager(Db.UserCalculated.ToString(),Db.PassCalculated.ToString());
-            IList<BucketConfig> buckets = clusterMan.ListBuckets().Value;
-            string bucketpassword = (from buckConfig in buckets where buckConfig.Name == bucketName select buckConfig.SaslPassword).FirstOrDefault();
-            if(bucketpassword == null)
-            {
-                throw new Exception("No bucket found with name " + bucketName);
-            }
-            ClassicAuthenticator classicAuthenticator = new ClassicAuthenticator("Administrator", "Administrator");
+        {
+            var bucket = clusterCB.OpenBucket(bucketName);
+            string bucketpassword = bucket.Configuration.Password;
+
+            ClassicAuthenticator classicAuthenticator = new ClassicAuthenticator(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());
             classicAuthenticator.AddBucketCredential(bucketName, bucketpassword);            
             clusterCB.Authenticate(classicAuthenticator);                        
         }
@@ -138,7 +132,7 @@ namespace GingerCore.NoSqlBase
                             bucketName = SQLCalculated.Substring(SQLCalculated.IndexOf(" from ") + 6);
                             bucketName = bucketName.Substring(0, bucketName.IndexOf(" ")).Replace("`","");                                
                         }
-                        ConnecttoBucket(bucketName);                            
+                        ConnecttoBucket(bucketName);
                         result = clusterCB.Query<dynamic>(SQLCalculated);                        
                         for (int i=0; i< result.Rows.Count;i++)
                         {                            
