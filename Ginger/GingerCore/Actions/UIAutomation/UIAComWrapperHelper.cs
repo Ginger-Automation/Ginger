@@ -62,8 +62,6 @@ namespace GingerCore.Drivers
 
         private XPathHelper mXPathHelper = null;
 
-        private string val = string.Empty;
-
         public UIAComWrapperHelper()
         {
             InitXpathHelper();
@@ -3884,13 +3882,13 @@ namespace GingerCore.Drivers
         /// <returns></returns>
         public override String GetControlValue(object obj)
         {
-            object vp;
             AutomationElement element = (AutomationElement) obj;
+            string val = string.Empty;
+            object vp;
             string ControlType = element.Current.LocalizedControlType.ToString();
             if (General.CompareStringsIgnoreCase(ControlType ,"Edit Box" )||General.CompareStringsIgnoreCase(ControlType, "edit")||
                 General.CompareStringsIgnoreCase(ControlType, "item")|| General.CompareStringsIgnoreCase(ControlType, ""))
             {
-               string val = string.Empty;
                 if (string.IsNullOrEmpty(val))
                 {
                     val = GetElementValueByValuePattern(element);
@@ -3913,7 +3911,7 @@ namespace GingerCore.Drivers
 
             if (General.CompareStringsIgnoreCase(ControlType, "text"))
             {
-                string val = element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty).ToString();
+                val = element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty).ToString();
                 if (string.IsNullOrEmpty(val) && mPlatform.Equals(ePlatform.PowerBuilder))
                 {
                     val = GetControlValueFromChildControl(element);
@@ -3928,7 +3926,7 @@ namespace GingerCore.Drivers
 
             if (General.CompareStringsIgnoreCase(ControlType, "combo box"))
             {
-                string val = GetControlValueFromChildControl(element);
+                val = GetControlValueFromChildControl(element);
                 return val;
             }
             //-----------------------------------
@@ -3973,7 +3971,7 @@ namespace GingerCore.Drivers
             }
             if (General.CompareStringsIgnoreCase(ControlType, "title bar"))
             {
-                string val = element.Current.Name.ToString();
+                val = element.Current.Name.ToString();
                 return val;
             }
 
@@ -4004,7 +4002,7 @@ namespace GingerCore.Drivers
             }
             if (General.CompareStringsIgnoreCase(ControlType, "button"))
             {
-                string val = element.Current.Name;
+                val = element.Current.Name;
                 return val;
             }
             else if (General.CompareStringsIgnoreCase(ControlType, "radio button"))
@@ -6440,9 +6438,9 @@ namespace GingerCore.Drivers
 
         public String GetElementValueByValuePattern(AutomationElement element)
         {
+            string val = string.Empty;
             try
             {
-                string val = string.Empty;
                 val = (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
             }
             catch (Exception ex)
@@ -6454,9 +6452,9 @@ namespace GingerCore.Drivers
 
         public String GetElementValueByLegacyIAccessiblePattern(AutomationElement element)
         {
+            string val = string.Empty;
             try
             {
-                string val = string.Empty;
                 val = (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
             }
             catch (Exception ex)
@@ -6468,9 +6466,10 @@ namespace GingerCore.Drivers
 
         public String GetElementValueByTextpattern(AutomationElement element)
         {
+            string val = string.Empty;
+            object vp;
             try
             {
-                string val = string.Empty;
                 element.TryGetCurrentPattern(TextPattern.Pattern, out vp);
                 val = ((TextPattern)vp).DocumentRange.GetText(-1);
             }
