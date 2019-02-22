@@ -98,13 +98,13 @@ namespace UnitTests.NonUITests
             ActExcel action = new ActExcel();
             action.ExcelActionType = ActExcel.eExcelActionType.WriteData;
             action.SheetName = "Sheet1";
-            action.SelectRowsWhere = "4";
+            action.SelectRowsWhere = "1";
             action.SelectAllRows = false;
             action.PrimaryKeyColumn = "Id";
             action.SetDataUsed="Used='Y'";
             action.ExcelFileName = TestResources.GetTestResourcesFile(@"EXCELS\TestExcel.xlsx");
             action.Active = true;
-            action.ColMappingRules = "First Name='aditi'";
+            action.ColMappingRules = "FirstName='aditi'";
             //Act
             mGR.RunAction(action);
             //Assert
@@ -115,7 +115,7 @@ namespace UnitTests.NonUITests
             ActExcel action1 = new ActExcel();
             action1.ExcelActionType = ActExcel.eExcelActionType.ReadData;
             action1.SheetName = "Sheet1";
-            action.SelectRowsWhere = "4";
+            action.SelectRowsWhere = "1";
             action1.SelectAllRows = false;
             action1.PrimaryKeyColumn = "Id";
             action1.ExcelFileName = TestResources.GetTestResourcesFile(@"EXCELS\TestExcel.xlsx");
