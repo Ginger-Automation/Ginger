@@ -2,6 +2,7 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
+using GingerCore;
 using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
@@ -19,23 +20,109 @@ namespace Amdocs.Ginger.CoreNET
         /// <summary>
         /// private constructor
         /// </summary>
-        private ActionConversionUtils()
+        public ActionConversionUtils()
         {
         }
 
-        private static ActionConversionUtils mInstance;
-        public static ActionConversionUtils Instance
+        public string ActUIElementElementLocateByField
         {
-            get
+            get;
+            set;
+        }
+
+        public string ActUIElementLocateValueField
+        {
+            get;
+            set;
+        }
+
+        public string ActUIElementElementLocateValueField
+        {
+            get;
+            set;
+        }
+
+        public string ActUIElementElementTypeField
+        {
+            get;
+            set;
+        }
+
+        public string ActUIElementClassName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// This method is used to add the actions
+        /// </summary>
+        /// <param name="addNewActivity"></param>
+        public void ConvertToActions(bool addNewActivity, BusinessFlow businessFlow, 
+                                     ObservableList<ActionConversionHandler> actionsToBeConverted,
+                                     bool isDefaultTargetApp, string strTargetApp,
+                                     bool convertToPOMAction = false, string selectedPOMObjectName = "")
+        {
+            try
             {
-                if(mInstance == null)
+                foreach (Activity activity in businessFlow.Activities)
                 {
-                    mInstance = new ActionConversionUtils();
+                    if (activity.SelectedForConversion && activity.Acts.OfType<IObsoleteAction>().ToList().Count > 0)
+                    {
+                        Activity currentActivity;
+                        if (addNewActivity)
+                        {
+                            currentActivity = new Activity() { Active = true };
+                            currentActivity = (Activity)activity.CreateCopy(false);
+                            currentActivity.ActivityName = "New - " + activity.ActivityName;
+                            businessFlow.Activities.Insert(businessFlow.Activities.IndexOf(activity) + 1, currentActivity);
+                            activity.Active = false;
+                        }
+                        else
+                        {
+                            currentActivity = activity;
+                        }
+                        foreach (Act act in currentActivity.Acts.ToList())
+                        {
+                            if (act.Active && act is IObsoleteAction &&
+                                actionsToBeConverted.Where(a => a.SourceActionType == act.GetType() && 
+                                                          a.Selected && 
+                                                          a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
+                            {
+                                // get the index of the action that is being converted 
+                                int selectedActIndex = currentActivity.Acts.IndexOf(act);
+
+                                // convert the old action
+                                Act newAct = ((IObsoleteAction)act).GetNewAction();
+                                if (convertToPOMAction && newAct.GetType().Name == ActUIElementClassName)
+                                {
+                                    newAct = GetMappedElementFromPOMForAction(newAct, selectedPOMObjectName);
+                                }
+                                currentActivity.Acts.Insert(selectedActIndex + 1, newAct);
+
+                                // set obsolete action in the activity as inactive
+                                act.Active = false;
+                            }
+                        }
+
+                        // if the user has not chosen any target application in the combobox then, we set it as empty
+                        if (isDefaultTargetApp && !string.IsNullOrEmpty(strTargetApp))
+                        {
+                            currentActivity.TargetApplication = strTargetApp;
+                        }
+                        else
+                        {
+                            currentActivity.TargetApplication = string.Empty;
+                        }
+                    }
                 }
-                return mInstance;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert action", ex);
             }
         }
-
+        
         /// <summary>
         /// This method is used to find the relative element from POM for the existing action
         /// </summary>
@@ -44,149 +131,52 @@ namespace Amdocs.Ginger.CoreNET
         /// <returns></returns>
         public Act GetMappedElementFromPOMForAction(Act newActUIElement, string pomModelObject)
         {
-            ApplicationPOMModel selectedPOM = new ApplicationPOMModel();
-
             ObservableList<ApplicationPOMModel> pomLst = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
-            selectedPOM = pomLst.Where(x => x.Guid.ToString() == pomModelObject).SingleOrDefault();
+            ApplicationPOMModel selectedPOM = pomLst.Where(x => x.Guid.ToString() == pomModelObject).SingleOrDefault();
 
-            bool isPOM = true;
             ElementInfo elementInfo = null;
-            IEnumerable<ElementInfo> lst = selectedPOM.MappedUIElements.Where(x => x.ElementTypeEnum != eElementType.Div);
+            string locateValue = Convert.ToString(newActUIElement.GetType().GetProperty(ActUIElementLocateValueField).GetValue(newActUIElement, null));
+            eLocateBy elementLocateBy = GeteLocateByEnumItem(Convert.ToString(newActUIElement.GetType().GetProperty(ActUIElementElementLocateByField).GetValue(newActUIElement, null)));
 
-            string locateValue = Convert.ToString(newActUIElement.GetType().GetProperty("LocateValue").GetValue(newActUIElement, null));
-            string elementLocateBy = Convert.ToString(newActUIElement.GetType().GetProperty("ElementLocateBy").GetValue(newActUIElement, null));
-
-            PropertyInfo pLocateBy = newActUIElement.GetType().GetProperty("ElementLocateBy");
-            if (pLocateBy != null)
+            var matchingExistingLocator = selectedPOM.MappedUIElements.Where(x => x.Locators.Any(y => y.LocateBy == elementLocateBy && y.LocateValue == locateValue));
+            if(matchingExistingLocator != null)
             {
-                if (elementLocateBy != "ByXY")
+                elementInfo = matchingExistingLocator.FirstOrDefault();
+                if (elementInfo != null)
                 {
-                    if (pLocateBy.PropertyType.IsEnum)
-                        pLocateBy.SetValue(newActUIElement, Enum.Parse(pLocateBy.PropertyType, "POMElement"));  
-                }
-                else
-                {
-                    if (pLocateBy.PropertyType.IsEnum)
-                        pLocateBy.SetValue(newActUIElement, Enum.Parse(pLocateBy.PropertyType, "ByXY"));
-                }
-            }
-            
-            foreach (var item in lst)
-            {
-                if (item != null)
-                {
-                    if (elementLocateBy == eLocateBy.ByXY.ToString())
+                    PropertyInfo pLocateBy = newActUIElement.GetType().GetProperty(ActUIElementElementLocateByField);
+                    if (pLocateBy != null)
                     {
-                        int oldX = 0;
-                        int oldY = 0;
-
-                        string[] oldxy = locateValue.Split(',');
-                        if (oldxy != null && oldxy.Length > 0)
+                        if (pLocateBy.PropertyType.IsEnum)
                         {
-                            int.TryParse(oldxy[0], out oldX);
-                            if (oldxy.Length > 1)
-                            {
-                                int.TryParse(oldxy[1], out oldY);
-                            }
-                        }
-
-                        if (!string.IsNullOrEmpty(locateValue))
-                        {
-                            int x = 0;
-                            int y = 0;
-                            foreach (var prop in item.Properties)
-                            {
-                                if (!string.IsNullOrEmpty(prop.Value) && prop.Name == "X")
-                                {
-                                    int.TryParse(prop.Value, out x);
-                                }
-                                if (!string.IsNullOrEmpty(prop.Value) && prop.Name == "Y")
-                                {
-                                    int.TryParse(prop.Value, out y);
-                                }
-                                if (x > 0 && y > 0)
-                                {
-                                    break;
-                                }
-                            }
-                            if (oldX == x && oldY == y)
-                            {
-                                isPOM = false;
-                                elementInfo = item;
-                                elementInfo.X = x;
-                                elementInfo.Y = y;
-                            }
+                            pLocateBy.SetValue(newActUIElement, Enum.Parse(pLocateBy.PropertyType, "POMElement"));
                         }
                     }
-                    else
+
+                    PropertyInfo pLocateVal = newActUIElement.GetType().GetProperty(ActUIElementElementLocateValueField);
+                    if (pLocateVal != null)
                     {
-                        if (elementLocateBy == eLocateBy.ByXPath.ToString() || elementLocateBy == eLocateBy.ByRelXPath.ToString())
-                        {
-                            if (locateValue == item.XPath)
-                            {
-                                elementInfo = item;
-                            }
-                        }
-                        else if (elementLocateBy == eLocateBy.ByName.ToString())
-                        {
-                            if (item.ElementName.Contains(locateValue))
-                            {
-                                elementInfo = item;
-                            }
-                        }
-                        else if (elementLocateBy == eLocateBy.ByID.ToString())
-                        {
-                            foreach (var prop in item.Properties)
-                            {
-                                if (!string.IsNullOrEmpty(prop.Value) &&
-                                    prop.Name == "id" && prop.Value == locateValue)
-                                {
-                                    elementInfo = item;
-                                    break;
-                                }
-                            }
-                        }
-                        if (item.Properties != null && elementInfo == null)
-                        {
-                            foreach (var prop in item.Properties)
-                            {
-                                if (!string.IsNullOrEmpty(prop.Value) &&
-                                    (prop.Name == "XPath" && locateValue.Contains(prop.Value)) ||
-                                    (prop.Name == "Relative XPath" && locateValue.Contains(prop.Value)) ||
-                                    (prop.Name == "Name" && locateValue.Contains(prop.Value)))
-                                {
-                                    elementInfo = item;
-                                    break;
-                                }
-                            }
-                        }
+                        pLocateVal.SetValue(newActUIElement, string.Format("{0}_{1}", selectedPOM.Guid.ToString(), elementInfo.Guid.ToString()));
                     }
-                    if (elementInfo != null)
+
+                    PropertyInfo pElementType = newActUIElement.GetType().GetProperty(ActUIElementElementTypeField);
+                    if (pElementType != null && pElementType.PropertyType.IsEnum)
                     {
-                        string strVal = string.Empty;
-                        if (isPOM)
-                        {
-                            strVal = string.Format("{0}_{1}", selectedPOM.Guid.ToString(), elementInfo.Guid.ToString());
-                        }
-                        else
-                        {
-                            strVal = string.Format("X={0},Y={1}", elementInfo.X, elementInfo.Y);
-                        }
-
-                        PropertyInfo pLocateVal = newActUIElement.GetType().GetProperty("ElementLocateValue");
-                        if (pLocateVal != null)
-                        {
-                            pLocateVal.SetValue(newActUIElement, strVal);
-                        }
-
-                        PropertyInfo pElementType = newActUIElement.GetType().GetProperty("ElementType");
-                        if (pElementType != null && pElementType.PropertyType.IsEnum)
-                            pElementType.SetValue(newActUIElement, Enum.Parse(pElementType.PropertyType, Convert.ToString(elementInfo.ElementTypeEnum)));
-                        break;
+                        pElementType.SetValue(newActUIElement, Enum.Parse(pElementType.PropertyType, Convert.ToString(elementInfo.ElementTypeEnum)));
                     }
                 }
             }
             return newActUIElement;
+        }
+
+        /// <summary>
+        /// This method will get the eLocateBy
+        /// </summary>
+        /// <returns></returns>
+        private eLocateBy GeteLocateByEnumItem(string sEnum)
+        {
+            eLocateBy item = (eLocateBy)System.Enum.Parse(typeof(eLocateBy), sEnum);
+            return item;
         }
     }
 }

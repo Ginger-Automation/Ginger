@@ -27,11 +27,11 @@ using GingerCore;
 using Ginger.UserControls;
 
 using GingerCore.Actions;
-using GingerCore.Actions.ActionConversion;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Windows.Input;
 using Ginger.SolutionGeneral;
+using Amdocs.Ginger.CoreNET;
 
 namespace Ginger.Actions.ActionConversion
 {

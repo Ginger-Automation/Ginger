@@ -21,8 +21,9 @@ using System.Linq;
 using System;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCore.Actions;
 
-namespace GingerCore.Actions.ActionConversion
+namespace Amdocs.Ginger.CoreNET
 {
     public class ActionConversionHandler
     {

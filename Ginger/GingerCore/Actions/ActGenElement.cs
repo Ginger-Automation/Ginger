@@ -26,6 +26,8 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
+
 namespace GingerCore.Actions
 {
     // This class is for UI link element

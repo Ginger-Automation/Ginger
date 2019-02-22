@@ -11,6 +11,6 @@
       Title="SelectActionWzardPage">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-        <Ginger:ucGrid x:Name="gridConvertibleActions" Title="Convertible Action Types" ShowTagsFilter="Collapsed" Grid.Row="3" Grid.Column="0" IsReadOnly="True" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed"/>
+        <Ginger:ucGrid x:Name="xGridConvertibleActions" Title="Convertible Action Types" ShowTagsFilter="Collapsed" Grid.Row="3" Grid.Column="0" IsReadOnly="True" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed"/>
     </Grid>
 </Page>

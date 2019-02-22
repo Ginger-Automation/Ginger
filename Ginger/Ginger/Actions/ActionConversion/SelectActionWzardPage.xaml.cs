@@ -18,10 +18,10 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.ActionConversion;
 using GingerCore.Actions.Common;
 using GingerCore.Environments;
 using GingerWPF.WizardLib;
@@ -52,7 +52,6 @@ namespace Ginger.Actions.ActionConversion
             {
                 case EventType.Init:
                     mWizard = (ActionsConversionWizard)WizardEventArgs.Wizard;
-                    gridConvertibleActions.MarkUnMarkAllActive += MarkUnMarkAllActions;
                     break;
                 case EventType.Active:
                     Init();
@@ -74,6 +73,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 foreach (Activity convertibleActivity in lstSelectedActivities)
                 {
+                    int count = 1;
                     foreach (Act act in convertibleActivity.Acts)
                     {
                         if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
@@ -86,16 +86,17 @@ namespace Ginger.Actions.ActionConversion
                             if (newConvertibleActionType.TargetActionType == null)
                                 continue;
                             newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
-                            newConvertibleActionType.ActionCount = 1;
+                            newConvertibleActionType.ActionCount = count;
                             newConvertibleActionType.Actions.Add(act);
                             newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
                             mWizard.ActionToBeConverted.Add(newConvertibleActionType);
+                            count++;
                         }
                     }
                 }
                 if (mWizard.ActionToBeConverted.Count != 0)
                 {
-                    gridConvertibleActions.DataSourceList = mWizard.ActionToBeConverted;
+                    xGridConvertibleActions.DataSourceList = mWizard.ActionToBeConverted;
                     SetGridView();
                     return;
                 }
@@ -111,20 +112,6 @@ namespace Ginger.Actions.ActionConversion
             }
         }
 
-        private void MarkUnMarkAllActions(bool ActiveStatus)
-        {
-            if (gridConvertibleActions.DataSourceList.Count <= 0) return;
-            if (gridConvertibleActions.DataSourceList.Count > 0)
-            {
-                ObservableList<ActionConversionHandler> lstMarkUnMarkActions = (ObservableList<ActionConversionHandler>)gridConvertibleActions.DataSourceList;
-                foreach (ActionConversionHandler act in lstMarkUnMarkActions)
-                {
-                    act.Selected = ActiveStatus;
-                }
-                gridConvertibleActions.DataSourceList = lstMarkUnMarkActions;
-            }
-        }
-
         private void SetGridView()
         {
             //Set the Data Grid columns
@@ -135,10 +122,10 @@ namespace Ginger.Actions.ActionConversion
             view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.SourceActionTypeName, WidthWeight = 15, Header = "Source Action Type" });
             view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.Activities, WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
             view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.TargetActionTypeName, WidthWeight = 15, Header = "Target Action Type" });
-            gridConvertibleActions.SetAllColumnsDefaultView(view);
-            gridConvertibleActions.InitViewItems();
-            gridConvertibleActions.SetTitleLightStyle = true;
-            gridConvertibleActions.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
+            xGridConvertibleActions.SetAllColumnsDefaultView(view);
+            xGridConvertibleActions.InitViewItems();
+            xGridConvertibleActions.SetTitleLightStyle = true;
+            xGridConvertibleActions.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
             {
                 ucGrid.eUcGridValidationRules.CheckedRowCount
             };

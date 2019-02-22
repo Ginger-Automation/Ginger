@@ -10,7 +10,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ConversionConfigurationWzardPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="grdPane">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="xGrdPane">
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition Height="30" />
@@ -24,29 +24,29 @@
             <ColumnDefinition Width="170" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Label x:Name="lbl" Grid.Column="0" Grid.Row="0" Content="Add new action to :" FontSize="12" HorizontalAlignment="Left" Margin="5,0,0,0" Style="{StaticResource @InputFieldLabelStyle}"/>
-        <RadioButton Name="radNewActivity" Grid.Column="0" Grid.Row="1" Tag="radDifferentActivity" HorizontalAlignment="Left" Margin="10,5,0,0" Checked="RadNewActivity_Checked" >
+        <Label x:Name="xLbl" Grid.Column="0" Grid.Row="0" Content="Add new action to :" FontSize="12" HorizontalAlignment="Left" Margin="5,0,0,0" Style="{StaticResource @InputFieldLabelStyle}"/>
+        <RadioButton x:Name="xNewActivityRadioBtn" Grid.Column="0" Grid.Row="1" Tag="radDifferentActivity" HorizontalAlignment="Left" Margin="10,5,0,0" IsChecked="{Binding Path=NewActivityChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
             <RadioButton.Content>
                 <GingerCore:ucTextDicResource Text="New [Activity]"/>
             </RadioButton.Content>
         </RadioButton>
-        <CheckBox Name="chkDefaultTargetApp" Grid.Column="0" Grid.Row="2"  Margin="25,5,0,0" HorizontalAlignment="Left" Checked="chkDefaultTargetApp_Checked" Unchecked="chkDefaultTargetApp_Unchecked" IsChecked="True">
+        <CheckBox x:Name="xChkDefaultTargetApp" Grid.Column="0" Grid.Row="2"  Margin="25,5,0,0" HorizontalAlignment="Left" IsChecked="{Binding Path=DefaultTaretApp, Mode=TwoWay}">
             <CheckBox.Content>
                 <GingerCore:ucTextDicResource Text="Set default target application to modified [Activities]"/>
             </CheckBox.Content>
         </CheckBox>
-        <ComboBox Name="cmbTargetApp" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Margin="5,0,0,0"  Style="{StaticResource @InputComboBoxStyle}" Width="165" SelectionChanged="CmbTargetApp_SelectionChanged" />
-        <Button x:Name="btnRefresh" Grid.Column="2" Grid.Row="2" Margin="3,0,0,0" HorizontalAlignment="Left" usercontrols:ImageMaker.Content="Refresh" ToolTip="Refresh" Click="btnRefresh_Click" Width="22" Style="{StaticResource @InputImageButtonStyle_NoBorder}" RenderTransformOrigin="4.873,0.514"></Button>
-        <RadioButton Name="radSameActivity" Grid.Column="0" Grid.Row="3" Tag="radDifferentActivity" HorizontalAlignment="Left" Margin="10,5,0,0" IsChecked="True" Checked="RadSameActivity_Checked">
+        <ComboBox x:Name="xCmbTargetApp" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Margin="5,0,0,0"  Style="{StaticResource @InputComboBoxStyle}" Width="165" SelectedValue="{Binding Path=SelectedTargetApp, Mode=TwoWay}" />
+        <Button x:Name="xBtnRefresh" Grid.Column="2" Grid.Row="2" Margin="3,0,0,0" HorizontalAlignment="Left" usercontrols:ImageMaker.Content="Refresh" ToolTip="Refresh" Click="btnRefresh_Click" Width="22" Style="{StaticResource @InputImageButtonStyle_NoBorder}" RenderTransformOrigin="4.873,0.514"></Button>
+        <RadioButton x:Name="xRadSameActivity" Grid.Column="0" Grid.Row="3" Tag="radDifferentActivity" HorizontalAlignment="Left" Margin="10,5,0,0" IsChecked="{Binding Path=SameActivityChecked, Mode=TwoWay}" >
             <RadioButton.Content>
                 <GingerCore:ucTextDicResource Text="Same [Activity]"/>
             </RadioButton.Content>
         </RadioButton>
-        <CheckBox Name="chkPOM"  Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left"  Margin="25,5,0,0" Checked="chkPOM_Checked" Unchecked="ChkPOM_Unchecked" IsChecked="False">
+        <CheckBox x:Name="xChkPOM"  Grid.Column="0" IsChecked="{Binding Path=POMChecked, Mode=TwoWay}" Grid.Row="4" HorizontalAlignment="Left"  Margin="25,5,0,0" >
             <CheckBox.Content>
                 <GingerCore:ucTextDicResource Text="Converts the action to selected POM elements"/>
             </CheckBox.Content>
         </CheckBox>
-        <Frame Name="LocateValueEditFrame" Grid.ColumnSpan="3" Grid.Row="5" Margin="35,5,0,0" Width="750" HorizontalAlignment="Left" IsEnabled="False" BorderBrush="Transparent" />
+        <Frame x:Name="xLocateValueEditFrame" Grid.ColumnSpan="3" Grid.Row="5" Margin="35,5,0,0" Width="750" HorizontalAlignment="Left" IsEnabled="False" BorderBrush="Transparent" />
     </Grid>
 </Page>

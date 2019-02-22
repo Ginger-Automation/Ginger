@@ -25,6 +25,8 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
+
 namespace GingerCore.Actions
 {
     //This class is for UI DropDownList element
