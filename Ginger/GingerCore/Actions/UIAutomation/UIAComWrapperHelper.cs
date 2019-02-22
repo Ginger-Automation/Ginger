@@ -62,6 +62,11 @@ namespace GingerCore.Drivers
 
         private XPathHelper mXPathHelper = null;
 
+        private string val = string.Empty;
+
+        object vp;
+
+
         public UIAComWrapperHelper()
         {
             InitXpathHelper();
@@ -3643,7 +3648,7 @@ namespace GingerCore.Drivers
                         propValue = element.Current.Name;
                         break;
                     case "Value":
-                        object tempVal = element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
+                        object tempVal = GetControlValue(element);
                         if (tempVal != null)
                             propValue = tempVal.ToString();
                         break;
@@ -3884,16 +3889,16 @@ namespace GingerCore.Drivers
         {
             AutomationElement element = (AutomationElement) obj;
 
-            object vp;
+            
             string ControlType = element.Current.LocalizedControlType.ToString();
             if (General.CompareStringsIgnoreCase(ControlType ,"Edit Box" )||General.CompareStringsIgnoreCase(ControlType, "edit")||
                 General.CompareStringsIgnoreCase(ControlType, "item")|| General.CompareStringsIgnoreCase(ControlType, ""))
             {
-                string val = (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
-                if (String.IsNullOrEmpty(val))
-                {
-                    val = (String)element.GetCurrentPropertyValue(LegacyIAccessiblePatternIdentifiers.ValueProperty);
-                }
+                val = GetElementValueByValuePattern(element);
+
+                val = GetElementValueByLegacyIAccessiblePattern(element);
+
+                val = GetElementValueByTextpattern(element);
 
                 if (string.IsNullOrEmpty(val) && General.CompareStringsIgnoreCase(ControlType, ""))
                 {
@@ -3926,8 +3931,7 @@ namespace GingerCore.Drivers
 
             else if (General.CompareStringsIgnoreCase(ControlType, "document"))
             {
-                element.TryGetCurrentPattern(TextPattern.Pattern, out vp);
-                string val = ((TextPattern)vp).DocumentRange.GetText(-1);
+               val = GetElementValueByTextpattern(element);
                 return val;
             }
             // check box handler
@@ -3975,8 +3979,7 @@ namespace GingerCore.Drivers
                 //We have query on below DatePicker Control as the Pattern is not supporting.
                 if (General.CompareStringsIgnoreCase(ControlType, "SysDateTimePick32"))
                 {
-                    element.TryGetCurrentPattern(ValuePattern.Pattern, out vp);
-                    string str = ((ValuePattern)vp).Current.Value;
+                    string str = GetElementValueByValuePattern(element);
                     return str;
                 }
                 else if (General.CompareStringsIgnoreCase(ControlType, "pbdw126"))
@@ -6429,6 +6432,50 @@ namespace GingerCore.Drivers
                     Reporter.ToUser(eUserMsgKey.PatternNotHandled, "Pattern not handled yet - " + PatternType);
                     break;
             }
+        }
+
+        public String GetElementValueByValuePattern(AutomationElement element)
+        {
+            try
+            {
+                val = (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetValueProperty while GetCurrentPropertyValue::", ex);
+            }
+            return val;
+        }
+
+        public String GetElementValueByLegacyIAccessiblePattern(AutomationElement element)
+        {
+            try
+            {
+                val = (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetValueProperty while GetCurrentPropertyValue::", ex);
+            }
+            return val;
+        }
+
+        public String GetElementValueByTextpattern(AutomationElement element)
+        {
+
+            try
+            {
+                if (String.IsNullOrEmpty(val))
+                {
+                    element.TryGetCurrentPattern(TextPattern.Pattern, out vp);
+                    val = ((TextPattern)vp).DocumentRange.GetText(-1);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetValueProperty while GetCurrentPropertyValue::", ex);
+            }
+            return val;
         }
     }
 
