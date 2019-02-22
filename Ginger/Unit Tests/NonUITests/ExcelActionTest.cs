@@ -126,8 +126,6 @@ namespace UnitTests.NonUITests
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
             Assert.AreEqual("aditi", action1.ReturnValues[1].Actual);
-
-
         }
     }
 }
