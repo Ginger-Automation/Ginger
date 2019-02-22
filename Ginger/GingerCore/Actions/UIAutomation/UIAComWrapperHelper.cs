@@ -64,9 +64,6 @@ namespace GingerCore.Drivers
 
         private string val = string.Empty;
 
-        object vp;
-
-
         public UIAComWrapperHelper()
         {
             InitXpathHelper();
@@ -3887,19 +3884,26 @@ namespace GingerCore.Drivers
         /// <returns></returns>
         public override String GetControlValue(object obj)
         {
+            object vp;
             AutomationElement element = (AutomationElement) obj;
-
-            
             string ControlType = element.Current.LocalizedControlType.ToString();
             if (General.CompareStringsIgnoreCase(ControlType ,"Edit Box" )||General.CompareStringsIgnoreCase(ControlType, "edit")||
                 General.CompareStringsIgnoreCase(ControlType, "item")|| General.CompareStringsIgnoreCase(ControlType, ""))
             {
-                val = GetElementValueByValuePattern(element);
+               string val = string.Empty;
+                if (string.IsNullOrEmpty(val))
+                {
+                    val = GetElementValueByValuePattern(element);
+                }
 
-                val = GetElementValueByLegacyIAccessiblePattern(element);
-
-                val = GetElementValueByTextpattern(element);
-
+                if (string.IsNullOrEmpty(val))
+                {
+                    val = GetElementValueByLegacyIAccessiblePattern(element);
+                }
+                if (string.IsNullOrEmpty(val))
+                {
+                    val = GetElementValueByTextpattern(element);
+                }
                 if (string.IsNullOrEmpty(val) && General.CompareStringsIgnoreCase(ControlType, ""))
                 {
                     val = GetControlValueFromChildControl(element);
@@ -6438,6 +6442,7 @@ namespace GingerCore.Drivers
         {
             try
             {
+                string val = string.Empty;
                 val = (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
             }
             catch (Exception ex)
@@ -6451,6 +6456,7 @@ namespace GingerCore.Drivers
         {
             try
             {
+                string val = string.Empty;
                 val = (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
             }
             catch (Exception ex)
@@ -6462,14 +6468,11 @@ namespace GingerCore.Drivers
 
         public String GetElementValueByTextpattern(AutomationElement element)
         {
-
             try
             {
-                if (String.IsNullOrEmpty(val))
-                {
-                    element.TryGetCurrentPattern(TextPattern.Pattern, out vp);
-                    val = ((TextPattern)vp).DocumentRange.GetText(-1);
-                }
+                string val = string.Empty;
+                element.TryGetCurrentPattern(TextPattern.Pattern, out vp);
+                val = ((TextPattern)vp).DocumentRange.GetText(-1);
             }
             catch (Exception ex)
             {
