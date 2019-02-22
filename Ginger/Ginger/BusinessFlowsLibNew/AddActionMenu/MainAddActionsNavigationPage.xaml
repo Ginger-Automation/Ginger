@@ -1,0 +1,38 @@
+﻿<Page x:Class="Ginger.BusinessFlowsLibNew.AddActionMenu.MainAddActionsNavigationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+      d:DesignHeight="700" 
+      Title="MainAddActionsNavigationPage">
+
+    <Grid Name="AddActionsGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--<Button Name="SHAddActionPanel" Grid.Column="0" Grid.RowSpan="3" VerticalAlignment="Center" Click="SHAddActionPanel_Click" Width="50" Height="50" Style="{StaticResource @InputButtonStyleRoundCorner}" >
+            <UserControls:ucButton ToolTip="Show/Hide Action Panel" Click="SHAddActionPanel_Click" ButtonType="ImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="View" VerticalAlignment="Center"  />
+        </Button>
+
+        <Border BorderThickness="15,0,0,0" BorderBrush="DeepSkyBlue" Grid.Column="1" Grid.RowSpan="6"></Border>-->
+
+
+        <StackPanel Name="ActionSPanel"     Grid.RowSpan="6" Width="200" Background="GhostWhite">
+            <Button x:Name="xNavSharedRepo" Grid.Row="0" Grid.Column="0" Content="*Shared Repository" Click="XNavSharedRepo_Click" Background="DeepSkyBlue" FontSize="15" Foreground="White" Height="35" Width="150" FontWeight="Bold" Style="{StaticResource $ImageButtonStyle}" Margin="0,10" />
+            <Button x:Name="xNavPOM"        Grid.Row="1" Grid.Column="0" Content="#Page Objects Model" Click="XNavPOM_Click" Background="DeepSkyBlue" FontSize="15" Foreground="White" Height="35" Width="150" FontWeight="Bold" Style="{StaticResource $ImageButtonStyle}" Margin="0,10" />
+            <Button x:Name="xNavActLib"     Grid.Row="2" Grid.Column="0" Content="*Actions Library" Click="XNavSharedRepo_Click" Background="DeepSkyBlue" FontSize="15" Foreground="White" Height="35" Width="150" FontWeight="Bold" Style="{StaticResource $ImageButtonStyle}" Margin="0,10" />
+            <Button x:Name="xRecord"        Grid.Row="3" Grid.Column="0" Content="@Record" Click="XRecord_Click" Background="DeepSkyBlue" FontSize="15" Foreground="White" Height="35" Width="150" FontWeight="Bold" Style="{StaticResource $ImageButtonStyle}" Margin="0,10" />
+            <Button x:Name="xNavSpy"        Grid.Row="4" Grid.Column="0" Content="$Live Spy" Click="XNavPOM_Click" Background="DeepSkyBlue" FontSize="15" Foreground="White" Height="35" Width="150" FontWeight="Bold" Style="{StaticResource $ImageButtonStyle}" Margin="0,10" />
+            <Button x:Name="xNavWinExp"     Grid.Row="5" Grid.Column="0" Content="@ Windows Explorer" VerticalAlignment="Top" Click="XRecord_Click" Background="DeepSkyBlue" FontSize="15" Foreground="White" Height="35" Width="150" FontWeight="Bold" Style="{StaticResource $ImageButtonStyle}" Margin="0,10" />
+        </StackPanel>
+    </Grid>
+</Page>

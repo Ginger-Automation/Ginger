@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Ginger;
 using Ginger.BusinessFlowLib;
+using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
@@ -26,22 +27,39 @@ using GingerCore.GeneralLib;
 using GingerCoreNET.RunLib;
 using GingerWPF.GeneralLib;
 using GingerWPF.RunLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 namespace GingerWPF.BusinessFlowsLib
 {
+    //public delegate void ToggelPanelEventHandler(object sender, object e);
+
     /// <summary>
     /// Interaction logic for BusinessFlowPage.xaml
     /// </summary>
     public partial class NewAutomatePage : Page
     {
+        //public event EventHandler ToggelPanelEvent;
+
+        //protected virtual void OnToggelPanelEvent(EventArgs e)
+        //{
+        //    EventHandler handler = ToggelPanelEvent;
+        //    if (handler != null)
+        //    {
+        //        handler(this, e);
+        //    }
+        //}
+
+
         BusinessFlow mBusinessFlow;
         GingerRunner mGingerRunner;
         public NewAutomatePage()
         {
             InitializeComponent();
+
+        
 
             mGingerRunner = App.AutomateTabGingerRunner;
             // Temp - this page need to get BF as param
@@ -74,7 +92,7 @@ namespace GingerWPF.BusinessFlowsLib
             App.PropertyChanged += App_PropertyChanged;
 
             CurrentActivityFrame.Content = new ActivityPage((Activity)BusinessFlow.Activities[0]);  // TODO: use binding? or keep each activity page
-
+            AddActionMenuFrame.Content = new MainAddActionsNavigationPage();
             InitGingerRunnerControls();
         }
 
@@ -173,6 +191,22 @@ namespace GingerWPF.BusinessFlowsLib
         {
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);
             //TODO: show message item save or Ginger Helper
+        }
+
+        private void SHAddActionPanel_Click(object sender, RoutedEventArgs e)
+        {
+            if (AddActionMenuFrame.Visibility == Visibility.Collapsed)
+            {
+                AddActionMenuFrame.Visibility = Visibility.Visible;
+                xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Auto);
+                maingrd.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Auto);
+            }
+            else
+            {
+                AddActionMenuFrame.Visibility = Visibility.Collapsed;
+                xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(0);
+                maingrd.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Auto);
+            }
         }
     }
 }

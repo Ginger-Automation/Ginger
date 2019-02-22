@@ -569,6 +569,21 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
       <DependentUpon>POMModelsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowsLibNew\AddActionMenu\ActionsLibraryNavAction.xaml.cs">
+      <DependentUpon>ActionsLibraryNavAction.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowsLibNew\AddActionMenu\MainAddActionsNavigationPage.xaml.cs">
+      <DependentUpon>MainAddActionsNavigationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowsLibNew\AddActionMenu\POMNavAction.xaml.cs">
+      <DependentUpon>POMNavAction.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowsLibNew\AddActionMenu\RecordNavAction.xaml.cs">
+      <DependentUpon>RecordNavAction.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowsLibNew\AddActionMenu\SharedRepositoryNavAction.xaml.cs">
+      <DependentUpon>SharedRepositoryNavAction.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BusinessFlowWindows\AutomateEventArgs.cs" />
     <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
       <DependentUpon>BusinessFlowsAutomatePage.xaml</DependentUpon>
@@ -2809,6 +2824,26 @@
     <Page Include="BusinessFlowsLibNew\ActivityVariablesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowsLibNew\AddActionMenu\ActionsLibraryNavAction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowsLibNew\AddActionMenu\MainAddActionsNavigationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowsLibNew\AddActionMenu\POMNavAction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowsLibNew\AddActionMenu\RecordNavAction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowsLibNew\AddActionMenu\SharedRepositoryNavAction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="BusinessFlowsLibNew\NewAutomatePage.xaml">
       <Generator>MSBuild:Compile</Generator>
