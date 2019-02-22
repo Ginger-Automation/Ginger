@@ -3883,12 +3883,13 @@ namespace GingerCore.Drivers
         public override String GetControlValue(object obj)
         {
             AutomationElement element = (AutomationElement) obj;
-            string val = string.Empty;
             object vp;
             string ControlType = element.Current.LocalizedControlType.ToString();
             if (General.CompareStringsIgnoreCase(ControlType ,"Edit Box" )||General.CompareStringsIgnoreCase(ControlType, "edit")||
                 General.CompareStringsIgnoreCase(ControlType, "item")|| General.CompareStringsIgnoreCase(ControlType, ""))
             {
+                string val = string.Empty;
+
                 if (string.IsNullOrEmpty(val))
                 {
                     val = GetElementValueByValuePattern(element);
@@ -3911,7 +3912,7 @@ namespace GingerCore.Drivers
 
             if (General.CompareStringsIgnoreCase(ControlType, "text"))
             {
-                val = element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty).ToString();
+                string val = element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty).ToString();
                 if (string.IsNullOrEmpty(val) && mPlatform.Equals(ePlatform.PowerBuilder))
                 {
                     val = GetControlValueFromChildControl(element);
@@ -3926,14 +3927,14 @@ namespace GingerCore.Drivers
 
             if (General.CompareStringsIgnoreCase(ControlType, "combo box"))
             {
-                val = GetControlValueFromChildControl(element);
+                string val = GetControlValueFromChildControl(element);
                 return val;
             }
             //-----------------------------------
 
             else if (General.CompareStringsIgnoreCase(ControlType, "document"))
             {
-               val = GetElementValueByTextpattern(element);
+                string val = GetElementValueByTextpattern(element);
                 return val;
             }
             // check box handler
@@ -3971,7 +3972,7 @@ namespace GingerCore.Drivers
             }
             if (General.CompareStringsIgnoreCase(ControlType, "title bar"))
             {
-                val = element.Current.Name.ToString();
+                string val = element.Current.Name.ToString();
                 return val;
             }
 
@@ -4002,7 +4003,7 @@ namespace GingerCore.Drivers
             }
             if (General.CompareStringsIgnoreCase(ControlType, "button"))
             {
-                val = element.Current.Name;
+                string val = element.Current.Name;
                 return val;
             }
             else if (General.CompareStringsIgnoreCase(ControlType, "radio button"))
