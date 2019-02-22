@@ -101,14 +101,40 @@ namespace GingerCore.NoSqlBase
             clusterCB.Dispose();            
         }
 
-        public void ConnecttoBucket(string bucketName)
+        public bool ConnecttoBucket(string bucketName)
         {
-            var bucket = clusterCB.OpenBucket(bucketName);
-            string bucketpassword = bucket.Configuration.Password;
+            try
+            {
+                var bucket = clusterCB.OpenBucket(bucketName);
+                string bucketpassword = bucket.Configuration.Password;
+                ClassicAuthenticator classicAuthenticator = new ClassicAuthenticator(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());
+                classicAuthenticator.AddBucketCredential(bucketName, bucketpassword);
+                clusterCB.Authenticate(classicAuthenticator);
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed To Connect ConnectToBucket Method In GingerCouchBase DB", ex);
+                return false;
+            }
+        }
 
-            ClassicAuthenticator classicAuthenticator = new ClassicAuthenticator(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());
-            classicAuthenticator.AddBucketCredential(bucketName, bucketpassword);            
-            clusterCB.Authenticate(classicAuthenticator);                        
+
+        private string GetBucketName(string inputSQL)
+        {
+            string bucketName = string.Empty;
+            if (Action== ActDBValidation.eDBValidationType.RecordCount)
+            {
+                bucketName=inputSQL.Trim();
+                //replace single quotes
+                
+            }
+            else
+            {
+                 bucketName = inputSQL.Substring(inputSQL.IndexOf(" from ") + 6);
+                bucketName = bucketName.Substring(0, bucketName.IndexOf(" ")).Replace("`", "");
+            }
+            return bucketName;
         }
 
         public override void PerformDBAction()
@@ -119,55 +145,51 @@ namespace GingerCore.NoSqlBase
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
             VE.Value = SQL;
             string SQLCalculated = VE.ValueCalculated;
-            IQueryResult<dynamic> result =null;
-            string bucketName = "";
-            try
-            {
-                switch (Action)
-                {
-                    case Actions.ActDBValidation.eDBValidationType.FreeSQL:                       
-                        
-                        if(!String.IsNullOrEmpty(SQLCalculated))
-                        {
-                            bucketName = SQLCalculated.Substring(SQLCalculated.IndexOf(" from ") + 6);
-                            bucketName = bucketName.Substring(0, bucketName.IndexOf(" ")).Replace("`","");                                
-                        }
-                        ConnecttoBucket(bucketName);
-                        result = clusterCB.Query<dynamic>(SQLCalculated);                        
-                        for (int i=0; i< result.Rows.Count;i++)
-                        {                            
-                            Act.ParseJSONToOutputValues(result.Rows[i].ToString(), i+1);
-                        }                                                    
-                        break;
-                    case Actions.ActDBValidation.eDBValidationType.RecordCount:
-                        string SQLRecord = SQLCalculated;
-                        ConnecttoBucket(SQLCalculated);
-                        result = clusterCB.Query<dynamic>("Select Count(*) as RECORDCOUNT from `" + SQLCalculated + "`");                        
-                        Act.ParseJSONToOutputValues(result.Rows[0].ToString(), 1);                        
-                        break;
-                    case Actions.ActDBValidation.eDBValidationType.UpdateDB:                        
-                        if (!String.IsNullOrEmpty(SQLCalculated))
-                        {
-                            bucketName = SQLCalculated.Substring(SQLCalculated.IndexOf(" from ") + 6);
-                            bucketName = bucketName.Substring(0, bucketName.IndexOf(" ")).Replace("`", "");
-                        }
-                        ConnecttoBucket(bucketName);
-                        var RS1 = clusterCB.Query<dynamic>(SQLCalculated);
-                        break;
+            string bucketName = GetBucketName(SQLCalculated);
+            bool flag = ConnecttoBucket(bucketName);
 
-                    default:
-                        throw new Exception("Action Not SUpported");
+            if(!flag)
+            {
+                Act.Error = "failed to connect to bucket "+bucketName;
+                return;
+            }
+            else
+            {
+                IQueryResult<dynamic> result = null;
+                try
+                {
+                    switch (Action)
+                    {
+                        case Actions.ActDBValidation.eDBValidationType.FreeSQL:
+                            result = clusterCB.Query<dynamic>(SQLCalculated);
+                            for (int i = 0; i < result.Rows.Count; i++)
+                            {
+                                Act.ParseJSONToOutputValues(result.Rows[i].ToString(), i + 1);
+                            }
+                            break;
+                        case Actions.ActDBValidation.eDBValidationType.RecordCount:
+                            result = clusterCB.Query<dynamic>("Select Count(*) as RECORDCOUNT from `" + SQLCalculated + "`");
+                            Act.ParseJSONToOutputValues(result.Rows[0].ToString(), 1);
+                            break;
+                        case Actions.ActDBValidation.eDBValidationType.UpdateDB:
+                            var RS1 = clusterCB.Query<dynamic>(SQLCalculated);
+                            break;
+
+                        default:
+                            throw new Exception("Action Not SUpported");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Act.Error = "Failed to execute. Error :" + e.Message;
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                }
+                if (!Db.KeepConnectionOpen)
+                {
+                    Disconnect();
                 }
             }
-            catch (Exception e)
-            {
-                Act.Error = "Failed to execute. Error :" + e.Message;
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
-            }
-            if (!Db.KeepConnectionOpen)
-            {
-                Disconnect();
-            }
+
         }
     }
 }
