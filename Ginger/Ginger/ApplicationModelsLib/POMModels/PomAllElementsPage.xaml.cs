@@ -139,6 +139,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void CreateNewElemetClicked(object sender, RoutedEventArgs e)
         {
             mSpyElement.IsAutoLearned = false;
+            mWinExplorer.LearnElementInfoDetails(mSpyElement);
             mPOM.MappedUIElements.Add(mSpyElement);
             mPOM.MappedUIElements.CurrentItem = mSpyElement;
             mappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
@@ -214,10 +215,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mSpyElement = mWinExplorer.GetControlFromMousePosition();
                 if (mSpyElement != null)
                 {
-                    //TODO: replace below fields setting with signle function doing it on Driver
-                    mWinExplorer.UpdateElementInfoFields(mSpyElement);
-                    mSpyElement.Locators = mWinExplorer.GetElementLocators(mSpyElement);
-                    mSpyElement.Properties = mWinExplorer.GetElementProperties(mSpyElement);
+
                     mSpyElement.WindowExplorer = mWinExplorer;
                     mSpyElement.IsAutoLearned = true;
                     xStatusLable.Content = "Element found";
@@ -241,6 +239,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             ElementInfo matchingOriginalElement = (ElementInfo)mWinExplorer.GetMatchingElement(mSpyElement, mPOM.GetUnifiedElementsList());
 
+            bool DetailsLearned = false;
+            if (matchingOriginalElement == null)
+            {
+                DetailsLearned = true;
+                mWinExplorer.LearnElementInfoDetails(mSpyElement);
+                matchingOriginalElement = (ElementInfo)mWinExplorer.GetMatchingElement(mSpyElement, mPOM.GetUnifiedElementsList());
+            }
+
+
             if (mPOM.MappedUIElements.Contains(matchingOriginalElement))
             {
                 xMappedElementsTab.Focus();
@@ -255,6 +262,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mPOM.UnMappedUIElements.CurrentItem = matchingOriginalElement;
                 unmappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
                 return;
+            }
+
+
+            if (!DetailsLearned)
+            {
+                mWinExplorer.LearnElementInfoDetails(mSpyElement);
             }
 
             xStatusLable.Content = "Found element is not included in below elements list, click here to add it ";
