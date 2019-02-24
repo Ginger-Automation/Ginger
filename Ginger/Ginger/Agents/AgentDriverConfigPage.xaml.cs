@@ -106,7 +106,7 @@ namespace Ginger.Agents
         private void ParamsGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             DriverConfigParam DCP = (DriverConfigParam)DriverConfigurationGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(DCP, DriverConfigParam.Fields.Value, true);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(DCP, DriverConfigParam.Fields.Value, new Context());
             VEEW.ShowAsWindow();
         }
 

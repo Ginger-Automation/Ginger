@@ -92,7 +92,7 @@ namespace Ginger.Actions
                 mAction.SaveBackup();
             }
 
-            RunDescritpion.Init(act, Act.Fields.RunDescription);
+            RunDescritpion.Init(act.Context, act, Act.Fields.RunDescription);
 
             if (actParentBusinessFlow != null)
                 mActParentBusinessFlow = actParentBusinessFlow;
@@ -299,7 +299,7 @@ namespace Ginger.Actions
                 }
                 else if (a.InputValues.Count == 1)
                 {
-                    ValueUC.Init(mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mAction.Context, mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
@@ -310,7 +310,7 @@ namespace Ginger.Actions
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     a.Value = "";
-                    ValueUC.Init(a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(a.Context, a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                 }
             }
             else if (a.GetType() == typeof(ActGenElement))
@@ -320,13 +320,13 @@ namespace Ginger.Actions
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     a.AddOrUpdateInputParamValue("Value", "");
-                    ValueUC.Init(a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(a.Context, a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                 }
                 else
                 {
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mAction.Context, mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
                 }
             }
             else if (a.GetType() == typeof(ActLaunchJavaWSApplication) || a.GetType() == typeof(ActJavaEXE))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
@@ -349,20 +349,20 @@ namespace Ginger.Actions
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     a.AddOrUpdateInputParamValue("Value", "");
-                    ValueUC.Init(a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(a.Context, a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                 }
                 else
                 {
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mAction.Context, mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
                 }
             }
             else if (a.GetType() == typeof(ActDBValidation))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
                 if (a.InputValues.Count == 1)
                 {
-                    ValueUC.Init(mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mAction.Context, mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;
                     ValueUC.ValueTextBox.Text = mAction.InputValues.FirstOrDefault().Value;
@@ -372,7 +372,7 @@ namespace Ginger.Actions
                 {
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;
-                    ValueUC.Init(a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mAction.Context, a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                 }
             }
             else if (a.GetType() == typeof(ActScript))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
@@ -384,7 +384,7 @@ namespace Ginger.Actions
                 }
                 else if (a.InputValues.Count == 1)
                 {
-                    ValueUC.Init(mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mAction.Context, mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
@@ -397,7 +397,7 @@ namespace Ginger.Actions
                 {   
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mAction.Context, mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
                     ValueLabel.Content = a.InputValues.FirstOrDefault().Param;
                 }
@@ -713,13 +713,13 @@ namespace Ginger.Actions
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Expected);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Expected, mAction.Context);
             VEEW.ShowAsWindow();
         }
         private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)InputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, mAction.Context);
             VEEW.ShowAsWindow();
         }
         private void GridAddActualToExpectButton_Click(object sender, RoutedEventArgs e)
@@ -737,7 +737,7 @@ namespace Ginger.Actions
         private void SimulatedOutputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.SimulatedActual);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.SimulatedActual, mAction.Context);
             VEEW.ShowAsWindow();
         }
 
@@ -960,13 +960,13 @@ namespace Ginger.Actions
         private void GridParamVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Param);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Param, mAction.Context);
             VEEW.ShowAsWindow();
         }
         private void GridPathVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Path);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Path, mAction.Context);
             VEEW.ShowAsWindow();
         }
 

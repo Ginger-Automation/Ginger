@@ -36,7 +36,7 @@ namespace Ginger.Actions
             //TODO: fix hard coded ButtonAction use Fields - changed 
             App.ObjFieldBinding(ScreenAreaCoordinatesTextBox, TextBox.TextProperty, Act, ActCompareImgs.Fields.Coordinates, BindingMode.OneWay);
             App.ObjFieldBinding(ExpectedImageTextBox, TextBox.TextProperty, Act, ActCompareImgs.Fields.ExpectedImgFile, BindingMode.OneWay);
-            WindowNameTextBox.Init(Act.GetOrCreateInputParam(ActCompareImgs.Fields.WindowName), true, false, UCValueExpression.eBrowserType.Folder);
+            WindowNameTextBox.Init(Act.Context, Act.GetOrCreateInputParam(ActCompareImgs.Fields.WindowName), true, false, UCValueExpression.eBrowserType.Folder);
         }
 
         private void CaptureExpectedImageButton_Click(object sender, RoutedEventArgs e)

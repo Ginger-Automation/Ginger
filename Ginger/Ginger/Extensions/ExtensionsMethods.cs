@@ -266,10 +266,10 @@ namespace Ginger
         // ------------------------------------------------------------
 
         public static void BindControl(this UCValueExpression UCValueExpression, Object obj, string Field)
-            {
-                GingerCore.General.ObjFieldBinding(UCValueExpression, TextBox.TextProperty, obj, "Value");
-                UCValueExpression.Init(obj, Field);                
-            }
+        {
+            GingerCore.General.ObjFieldBinding(UCValueExpression, TextBox.TextProperty, obj, "Value");
+            UCValueExpression.Init(obj, Field);
+        }
 
         // ------------------------------------------------------------
         // check box

@@ -47,7 +47,7 @@ namespace Ginger.Actions
             App.ObjFieldBinding(ScriptNameComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ScriptName);
             App.ObjFieldBinding(txtWait, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.WaitTime);
             xDelimiterVE.BindControl(actConsoleCommand, nameof(ActConsoleCommand.Delimiter));
-            txtExpected.Init(mActConsoleCommand, ActConsoleCommand.Fields.ExpString);           
+            txtExpected.Init(mActConsoleCommand.Context, mActConsoleCommand, ActConsoleCommand.Fields.ExpString);           
         }
 
         private List<object> GetActionListPlatform()

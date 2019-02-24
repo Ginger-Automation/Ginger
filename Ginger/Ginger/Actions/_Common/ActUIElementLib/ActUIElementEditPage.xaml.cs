@@ -327,7 +327,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         Margin = new Thickness(10, 0, 0, 0)
                     };
 
-                    txtBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
+                    txtBox.Init(mAction.Context, mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
                     ((Ginger.Actions.UCValueExpression)txtBox).ValueTextBox.Text = element.PossibleValues.ElementAt(0);
                     dynamicPanel.Children.Add(elementLabel);
                     dynamicPanel.Children.Add(txtBox);

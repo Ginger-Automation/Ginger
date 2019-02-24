@@ -49,12 +49,14 @@ namespace Ginger.Actions
         GenericWindow _pageGenericWin = null;
         ObservableList<IAct> mActionsList;
         // bool IsPlugInAvailable = false;
-
-        public AddActionPage(BusinessFlow businessFlow)
+        Context mContext;
+        
+        public AddActionPage(Context context)
         {
             InitializeComponent();
 
-            mBusinessFlow = businessFlow;
+            mContext = context;
+            mBusinessFlow = context.BusinessFlow;
 
             SetActionsGridsView();
             LoadGridData();
@@ -241,7 +243,7 @@ namespace Ginger.Actions
                         throw new Exception("Action edit page not found - " + classname);
                     }                    
 
-                    WizardBase wizard = (GingerWPF.WizardLib.WizardBase)Activator.CreateInstance(t);
+                    WizardBase wizard = (GingerWPF.WizardLib.WizardBase)Activator.CreateInstance(t, mContext);
                     WizardWindow.ShowWizard(wizard);
                 }
                 else
@@ -252,6 +254,7 @@ namespace Ginger.Actions
                     {
                         Act selectedAction = (Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem);
                         aNew = (Act)selectedAction.CreateCopy();
+                        aNew.Context = mContext;
                         // copy param ex info
                         for (int i=0;i< selectedAction.InputValues.Count;i++)
                         {

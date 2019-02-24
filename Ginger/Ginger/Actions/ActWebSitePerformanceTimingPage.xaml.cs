@@ -35,7 +35,7 @@ namespace Ginger.Actions
             mAct = act;
 
             App.ObjFieldBinding(CSVFileNameTextBox, TextBox.TextProperty, mAct, ActWebSitePerformanceTiming.Fields.CSVFileName);
-            DetailsUCValueExpression.Init(mAct.GetOrCreateInputParam(ActWebSitePerformanceTiming.Fields.Detail ), ActInputValue.Fields.Value);
+            DetailsUCValueExpression.Init(mAct.Context, mAct.GetOrCreateInputParam(ActWebSitePerformanceTiming.Fields.Detail ), ActInputValue.Fields.Value);
         }
     }
 }

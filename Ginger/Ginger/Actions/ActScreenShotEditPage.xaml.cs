@@ -35,7 +35,7 @@ namespace Ginger.Actions
         {
             InitializeComponent();
             mAct = act;
-            SavetoFolderNameTextBox.Init(mAct.GetOrCreateInputParam(ActScreenShot.Fields.SaveToFileName));
+            SavetoFolderNameTextBox.Init(mAct.Context, mAct.GetOrCreateInputParam(ActScreenShot.Fields.SaveToFileName));
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)

@@ -42,8 +42,8 @@ namespace Ginger.Actions.XML
 
             //// Bind Controls
             App.ObjFieldBinding(XMLTemplateFileTextBox , TextBox.TextProperty, mAct.TemplateFileName , ActInputValue.Fields.Value);
-            TargetFileNameTextBox.Init(mAct.TargetFileName);
-            ProcessedFileNameTextBox.Init(mAct.ProcessedFileName);
+            TargetFileNameTextBox.Init(mAct.Context, mAct.TargetFileName);
+            ProcessedFileNameTextBox.Init(mAct.Context, mAct.ProcessedFileName);
 
             SetGridView();
 
@@ -75,7 +75,7 @@ namespace Ginger.Actions.XML
          private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
          {
              ActInputValue AIV = (ActInputValue)DynamicParametersGrid.CurrentItem;
-             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
+             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, mAct.Context);
              VEEW.ShowAsWindow();
          }
 

@@ -34,7 +34,7 @@ namespace Ginger.Actions
 
             mAct = act;
 
-            WaitTimeTextBox.Init(mAct.GetOrCreateInputParam(ActSwitchWindow.Fields.WaitTime));
+            WaitTimeTextBox.Init(mAct.Context, mAct.GetOrCreateInputParam(ActSwitchWindow.Fields.WaitTime));
         }
     }
 }

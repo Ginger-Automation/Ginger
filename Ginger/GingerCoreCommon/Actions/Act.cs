@@ -1673,5 +1673,7 @@ namespace GingerCore.Actions
         {
             // do nothing, will be override in action which needs it like ActWebAPIModel
         }
+
+        public Context Context { get; set; }
     }
 }

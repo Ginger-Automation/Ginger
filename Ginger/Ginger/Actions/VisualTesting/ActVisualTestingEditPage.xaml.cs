@@ -54,7 +54,7 @@ namespace Ginger.Actions.VisualTesting
             VisualTestingEngineComboBox.Init(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.VisualAnalyzer, ActVisualTesting.eVisualTestingAnalyzer.BitmapPixelsComparison.ToString()), typeof(ActVisualTesting.eVisualTestingAnalyzer), false, new SelectionChangedEventHandler(VisualTestingEngineComboBox_SelectionChanged));
             
             //Saved baseline image path for that action
-            CurrentBaselineImagePathTxtBox.Init(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.SavedBaseImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "*", BaseLineFileSelected_Click);
+            CurrentBaselineImagePathTxtBox.Init(mAct.Context, mAct.GetOrCreateInputParam(ActVisualTesting.Fields.SavedBaseImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "*", BaseLineFileSelected_Click);
             UpdateBaseLineImage();
             //TODO: hook value change and update 
 
@@ -62,7 +62,7 @@ namespace Ginger.Actions.VisualTesting
             //Saved Applitools baseline image path
             
             //Saved Target image file path
-            TargetImageFileNameUCVE.Init(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.SavedTargetImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "*", BrowseTargetImageFromFile_Click);
+            TargetImageFileNameUCVE.Init(mAct.Context, mAct.GetOrCreateInputParam(ActVisualTesting.Fields.SavedTargetImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "*", BrowseTargetImageFromFile_Click);
             UpdateTargetImage();
             
             ShowCompareResult();
@@ -288,7 +288,7 @@ namespace Ginger.Actions.VisualTesting
         private IVisualTestingDriver GetVisualTestingDriver()
         {
             App.AutomateTabGingerRunner.SetCurrentActivityAgent();
-            Agent a = (Agent)App.BusinessFlow.CurrentActivity.CurrentAgent;
+            Agent a = (Agent)mAct.Context.BusinessFlow.CurrentActivity.CurrentAgent;
 
             if (a.Driver is IVisualTestingDriver)
             {

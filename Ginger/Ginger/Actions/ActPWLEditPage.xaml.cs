@@ -45,7 +45,7 @@ namespace Ginger.Actions
             App.FillComboFromEnumVal(ActionNameComboBox, Act.PWLAction);
             //TODO: fix hard coded ButtonAction use Fields
             App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "PWLAction");
-            txtoLocateValue.Init(f, ActPWL.Fields.OLocateValue);
+            txtoLocateValue.Init(f.Context, f, ActPWL.Fields.OLocateValue);
 
             txtoLocateValue.ValueTextBox.Text = f.OLocateValue;
         }

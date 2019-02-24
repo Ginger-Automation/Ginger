@@ -82,7 +82,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 mBusinessFlowPage = new BusinessFlowPage(mBusinessFlow);
             }
-            App.BusinessFlow = mBusinessFlow;
             return mBusinessFlowPage;
         }
 

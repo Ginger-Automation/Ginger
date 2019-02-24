@@ -33,9 +33,9 @@ namespace Ginger.Actions
         {
             InitializeComponent();
             mAct = act;
-            TextFileNameTextBox.Init(mAct.GetOrCreateInputParam(ActReadTextFile.Fields.TextFilePath));
-            TextToWrite.Init(mAct.GetOrCreateInputParam(ActReadTextFile.Fields.TextToWrite));
-            LineNumber.Init(mAct.GetOrCreateInputParam(ActReadTextFile.Fields.AppendLineNumber));
+            TextFileNameTextBox.Init(mAct.Context, mAct.GetOrCreateInputParam(ActReadTextFile.Fields.TextFilePath));
+            TextToWrite.Init(mAct.Context, mAct.GetOrCreateInputParam(ActReadTextFile.Fields.TextToWrite));
+            LineNumber.Init(mAct.Context, mAct.GetOrCreateInputParam(ActReadTextFile.Fields.AppendLineNumber));
 
             mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 

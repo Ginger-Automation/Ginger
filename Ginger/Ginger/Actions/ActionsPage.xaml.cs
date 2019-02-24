@@ -234,7 +234,7 @@ namespace Ginger.Actions
             }
             else
             {
-                AddActionPage addAction = new AddActionPage(mBusinessFlow);
+                AddActionPage addAction = new AddActionPage(new Context() { BusinessFlow = mBusinessFlow });
                 addAction.ShowAsWindow(mCurrentActivity.Acts);
             }
         }
@@ -287,6 +287,7 @@ namespace Ginger.Actions
             if (grdActions.CurrentItem != null)
             {
                 Act a=(Act)grdActions.CurrentItem;
+                a.Context = new Context() { BusinessFlow = mBusinessFlow };
                 ActionEditPage actedit = new ActionEditPage(a,EditMode);
                 actedit.ap = this;
                 actedit.ShowAsWindow();
@@ -429,6 +430,7 @@ namespace Ginger.Actions
         {
             Act a = (Act)grdActions.CurrentItem;
             a.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            a.Context = new Context() { BusinessFlow = mBusinessFlow };
             ActionEditPage actedit = new ActionEditPage(a, EditMode);
             actedit.ap = this;
             actedit.ShowAsWindow();

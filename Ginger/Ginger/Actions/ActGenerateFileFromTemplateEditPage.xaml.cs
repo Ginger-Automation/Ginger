@@ -46,7 +46,7 @@ namespace Ginger.Actions
             App.ObjFieldBinding(FileActionComboBox, ComboBox.TextProperty, mAct, ActGenerateFileFromTemplate.Fields.FileAction);
             App.ObjFieldBinding(DataFileNameTextBox, TextBox.TextProperty, mAct, ActGenerateFileFromTemplate.Fields.DataFileName);
             TemplateFileNamComboBox.SelectedValue = System.IO.Path.GetFileName(mAct.TemplateFileName)!=null?System.IO.Path.GetFileName(mAct.TemplateFileName):null;
-            OutputFileNameTextBox.Init(mAct.GetOrCreateInputParam(ActGenerateFileFromTemplate.Fields.OutputFileName));
+            OutputFileNameTextBox.Init(mAct.Context, mAct.GetOrCreateInputParam(ActGenerateFileFromTemplate.Fields.OutputFileName));
            
             FillTemplateFileNamComboBox();
             if (!Directory.Exists(OutputFilesPath))

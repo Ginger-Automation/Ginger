@@ -33,9 +33,9 @@ namespace Ginger.Actions
         {
             InitializeComponent();
             mAct = act;
-            TextFileNameTextBox.Init(mAct.GetOrCreateInputParam(ActFileOperations.Fields.SourceFilePath), true, true, UCValueExpression.eBrowserType.File);
-            DestinationFolderTextBox.Init(mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder),true,true,UCValueExpression.eBrowserType.File);
-            xRunArgumentsTextBox.Init(mAct.GetOrCreateInputParam(nameof(ActFileOperations.Arguments)), true, false);
+            TextFileNameTextBox.Init(mAct.Context, mAct.GetOrCreateInputParam(ActFileOperations.Fields.SourceFilePath), true, true, UCValueExpression.eBrowserType.File);
+            DestinationFolderTextBox.Init(mAct.Context, mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder),true,true,UCValueExpression.eBrowserType.File);
+            xRunArgumentsTextBox.Init(mAct.Context, mAct.GetOrCreateInputParam(nameof(ActFileOperations.Arguments)), true, false);
 
             mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 

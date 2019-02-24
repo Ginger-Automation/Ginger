@@ -38,8 +38,8 @@ namespace Ginger.Actions
             App.FillComboFromEnumVal(ActionNameComboBox, Act.GenElementAction);                     
             App.ObjFieldBinding(ActionNameComboBox, ComboBox.SelectedValueProperty, Act, "GenElementAction"); 
 
-            Xoffset.Init(mAct.GetOrCreateInputParam(ActGenElement.Fields.Xoffset), true);
-            Yoffset.Init(mAct.GetOrCreateInputParam(ActGenElement.Fields.Yoffset), true);
+            Xoffset.Init(mAct.Context, mAct.GetOrCreateInputParam(ActGenElement.Fields.Xoffset), true);
+            Yoffset.Init(mAct.Context, mAct.GetOrCreateInputParam(ActGenElement.Fields.Yoffset), true);
         }
 
         private void ActionNameSelectionChanged(object sender, SelectionChangedEventArgs e)

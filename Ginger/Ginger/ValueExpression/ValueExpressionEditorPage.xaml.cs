@@ -16,36 +16,31 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ValueExpression;
+using Amdocs.Ginger.Repository;
+using Ginger.Actions;
+using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib.TextEditor.ValueExpression;
+using Ginger.Variables;
 using GingerCore;
+using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Ginger.DataSource;
-using GingerCore.DataSource;
-using Ginger.Actions;
-using Ginger.UserControlsLib.TextEditor;
-using Ginger.Variables;
-using Ginger.Environments;
-using System.Reflection;
-using Amdocs.Ginger.CoreNET.ValueExpression;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
-using Ginger.SolutionGeneral;
-using System.IO;
-using System.Dynamic;
-using Newtonsoft.Json.Linq;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger
 {
@@ -53,23 +48,22 @@ namespace Ginger
     /// Interaction logic for ActionValueEditorWindow.xaml
     /// </summary>
     public partial class ValueExpressionEditorPage : Page
-    {        
-        ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, WorkSpace.Instance.BusinessFlowInContext, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(),false,"",false);
+    {                
         GenericWindow mWin;
         object mObj;
         string mAttrName;
+        Context mContextItems;
+        ValueExpression mVE = null;
 
         static List<HighlightingRule> mHighlightingRules = null;
 
-        bool mHideBusinessFlowAndActivityVariables= false;
-
-        public ValueExpressionEditorPage(object obj, string AttrName, bool hideBusinessFlowAndActivityVariables = false)
+        public ValueExpressionEditorPage(object obj, string AttrName, Context contextItems)
         {
             InitializeComponent();
 
             mObj = obj;
             mAttrName = AttrName;
-            mHideBusinessFlowAndActivityVariables = hideBusinessFlowAndActivityVariables;
+            mContextItems = contextItems;
 
             ValueUCTextEditor.Bind(obj, AttrName);
             ValueUCTextEditor.HideToolBar();
@@ -373,41 +367,38 @@ namespace Ginger
 
         private void AddVariables()
         {
-            if ( WorkSpace.UserProfile.Solution != null)
+            if (WorkSpace.UserProfile.Solution != null)
             {
                 TreeViewItem solutionVars = new TreeViewItem();
                 solutionVars.Items.IsLiveSorting = true;
                 SetItemView(solutionVars, "Global " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
                 xObjectsTreeView.Items.Add(solutionVars);
-                 
-                foreach (VariableBase v in  WorkSpace.UserProfile.Solution.Variables.OrderBy("Name"))
+
+                foreach (VariableBase v in WorkSpace.UserProfile.Solution.Variables.OrderBy("Name"))
                     InsertNewVarTreeItem(solutionVars, v);
                 InsertAddNewVarTreeItem(solutionVars, eVariablesLevel.Solution);
             }
 
-            if (mHideBusinessFlowAndActivityVariables == false)
+            if (mContextItems!= null && mContextItems.BusinessFlow != null)
             {
-                if (App.BusinessFlow != null)
-                {
-                    TreeViewItem tviVars = new TreeViewItem();
-                    tviVars.Items.IsLiveSorting = true;
-                    SetItemView(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
-                    xObjectsTreeView.Items.Add(tviVars);
-                    
-                    foreach (VariableBase v in App.BusinessFlow.Variables.OrderBy("Name"))
-                        InsertNewVarTreeItem(tviVars, v);
-                    InsertAddNewVarTreeItem(tviVars, eVariablesLevel.BusinessFlow);
-                    tviVars.IsExpanded = true;
-                }
+                TreeViewItem tviVars = new TreeViewItem();
+                tviVars.Items.IsLiveSorting = true;
+                SetItemView(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
+                xObjectsTreeView.Items.Add(tviVars);
 
-                if (App.BusinessFlow.CurrentActivity != null)
+                foreach (VariableBase v in mContextItems.BusinessFlow.Variables.OrderBy("Name"))
+                    InsertNewVarTreeItem(tviVars, v);
+                InsertAddNewVarTreeItem(tviVars, eVariablesLevel.BusinessFlow);
+                tviVars.IsExpanded = true;
+
+                if (mContextItems.BusinessFlow.CurrentActivity != null)
                 {
                     TreeViewItem activityVars = new TreeViewItem();
                     activityVars.Items.IsLiveSorting = true;
                     SetItemView(activityVars, GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
                     xObjectsTreeView.Items.Add(activityVars);
 
-                    foreach (VariableBase v in App.BusinessFlow.CurrentActivity.Variables.OrderBy("Name"))
+                    foreach (VariableBase v in mContextItems.BusinessFlow.CurrentActivity.Variables.OrderBy("Name"))
                         InsertNewVarTreeItem(activityVars, v);
                     InsertAddNewVarTreeItem(activityVars, eVariablesLevel.Activity);
                 }
@@ -587,6 +578,10 @@ namespace Ginger
 
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
+            if (mVE == null)
+            {
+                mVE = new ValueExpression(App.AutomateTabEnvironment, mContextItems.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+            }
             mVE.Value = this.ValueUCTextEditor.textEditor.Text;
             ValueCalculatedTextBox.Text = mVE.ValueCalculated;            
         }

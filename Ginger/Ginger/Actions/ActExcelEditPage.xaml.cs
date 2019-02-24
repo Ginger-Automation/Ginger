@@ -157,7 +157,7 @@ namespace Ginger.Actions
 
         private void SheetNamVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActExcel.Fields.SheetName);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActExcel.Fields.SheetName, mAct.Context);
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             SheetNamComboBox.Text = mAct.SheetName;
         }
