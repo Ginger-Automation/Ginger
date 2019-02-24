@@ -125,13 +125,12 @@ namespace GingerCore.NoSqlBase
             string bucketName = string.Empty;
             if (Action== ActDBValidation.eDBValidationType.RecordCount)
             {
-                bucketName=inputSQL.Trim();
-                //replace single quotes
-                
+                bucketName=inputSQL.Trim(new char[] { (char)39 });//removes => ' 
+                bucketName = inputSQL.Trim(new char[] { (char)96 });//removes => ` 
             }
             else
             {
-                 bucketName = inputSQL.Substring(inputSQL.IndexOf(" from ") + 6);
+                bucketName = inputSQL.Substring(inputSQL.IndexOf(" from ") + 6);
                 bucketName = bucketName.Substring(0, bucketName.IndexOf(" ")).Replace("`", "");
             }
             return bucketName;
