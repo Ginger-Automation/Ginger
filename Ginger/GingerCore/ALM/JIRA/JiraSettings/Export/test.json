@@ -90,8 +90,8 @@
         {
           "name": "Labels",
           "key": "labels",
-          "type": "array",
-          "data": "{\"name\": \"{{value}}\"}"
+          "type": "strings_array",
+          "data": "{{value}}"
         },
         {
           "name": "Test Sets association with a Test",
