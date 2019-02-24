@@ -1240,7 +1240,7 @@ namespace GingerCore.Drivers
                             }
                             else
                             {
-                                throw new Exception("Cannot find element '" + value + "[" + index2 + "] Because array contains only " + AEC.Count + " Elements");
+                                Reporter.ToLog(eLogLevel.DEBUG, "Cannot find element" + value + "[" + index2 + "] Because array contains only " + AEC.Count + "Elements");
                             }
                         }
                     }
@@ -1248,7 +1248,7 @@ namespace GingerCore.Drivers
 
                     if (AE == null )
                     {
-                        throw new Exception("Cannot find element, Found path to element at: " + PathOK + " ,But couldn't find next element: " + PathNode);
+                        Reporter.ToLog(eLogLevel.DEBUG, "Cannot find element, Found path to element at:" + PathOK + ",But couldn't find next element:" + PathNode);
                     }
                     else
                     {
