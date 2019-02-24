@@ -281,28 +281,16 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                         PressLongHome();
                         break;
                     case ActMobileDevice.eMobileDeviceAction.SwipeDown:
-                        SwipeScreen(eSwipeSide.Down,false);
+                        SwipeScreen(eSwipeSide.Down);
                         break;
                     case ActMobileDevice.eMobileDeviceAction.SwipeUp:
-                        SwipeScreen(eSwipeSide.Up, false);
+                        SwipeScreen(eSwipeSide.Up);
                         break;
                     case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
-                        SwipeScreen(eSwipeSide.Left, false);
+                        SwipeScreen(eSwipeSide.Left);
                         break;
                     case ActMobileDevice.eMobileDeviceAction.SwipeRight:
-                        SwipeScreen(eSwipeSide.Right, false);
-                        break;
-                    case ActMobileDevice.eMobileDeviceAction.ShortSwipeDown:
-                        SwipeScreen(eSwipeSide.Down, true);
-                        break;
-                    case ActMobileDevice.eMobileDeviceAction.ShortSwipeUp:
-                        SwipeScreen(eSwipeSide.Up, true);
-                        break;
-                    case ActMobileDevice.eMobileDeviceAction.ShortSwipeLeft:
-                        SwipeScreen(eSwipeSide.Left, true);
-                        break;
-                    case ActMobileDevice.eMobileDeviceAction.ShortSwipeRight:
-                        SwipeScreen(eSwipeSide.Right, true);
+                        SwipeScreen(eSwipeSide.Right);
                         break;
                     case ActMobileDevice.eMobileDeviceAction.Wait:
                         Thread.Sleep(Convert.ToInt32(act.ValueForDriver) * 1000);
@@ -319,8 +307,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                     case ActMobileDevice.eMobileDeviceAction.LockDevice:
                         LockDevice(act.ValueForDriver);
                         break;
-                    case ActMobileDevice.eMobileDeviceAction.SwipeToElement:
-                        SwipeToElement(act.ValueForDriver);
+                    case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
+                        SwipeByCoordinates(act.ValueForDriver);
                         break;
                     default:
                         act.Error = "Error: This operation is missing implementation";
@@ -333,32 +321,17 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             }
         }
 
-        private void SwipeToElement(string xPath)
+        private void SwipeByCoordinates(string valueForDriver)
         {
-            bool flag = true;
-            int count = 1;
-            while (flag)
-            {
-                try
-                {
-                    mDriver.FindElement(By.XPath(xPath));
-                    flag = false;
-                    break;
-                }
-                catch (Exception NoSuchElementException)
-                {
-                    count = count + 1;
-                    Dictionary <string,object> params1 = new Dictionary<string, object>;
-                    params1.Add("start", "40%,70%");
-                    params1.Add("end", "40%,40%");
-                    params1.Add("duration", "2");
-                    mDriver.ExecuteScript("mobile:touch:swipe", params1);
-                    if (count == 5)
-                    {
-                        break;
-                    }
-                }
-            }
+            string[] arr = valueForDriver.Split(',');
+            string x1 = arr[0];
+            string y1 = arr[1];
+            string x2 = arr[2];
+            string y2 = arr[3];
+            Dictionary<string, object> params1 = new Dictionary<string, object>();
+            params1.Add("start", x1+"%,"+y1+"%");
+            params1.Add("end", x2 + "%," + y2 + "%");
+            mDriver.ExecuteScript("mobile:touch:swipe", params1);
         }
 
         private void CloseAppByName(string valueForDriver)
@@ -494,45 +467,30 @@ namespace GingerCore.Drivers.Mobile.Perfecto
         }
 
         //Swipe Action
-        private void SwipeScreen(eSwipeSide side, bool shortSwipe)
+        private void SwipeScreen(eSwipeSide side)
         {
             Dictionary<String, Object> params1 = new Dictionary<String, Object>();
-
-            int smallValue;
-            int bigValue;
-
-            if (shortSwipe)
-            {
-                smallValue = 40;
-                bigValue = 60;
-            }
-            else
-            {
-                   smallValue = 40;
-                bigValue = 60;
-            }
-
 
             switch (side)
             {
                 case eSwipeSide.Down:
-                    params1.Add("start", "50%," + bigValue + "%");
-                    params1.Add("end", "50%," + smallValue + "%");
+                    params1.Add("start", "50%,80%");
+                    params1.Add("end", "50%,20%");
                     mDriver.ExecuteScript("mobile:touch:swipe", params1);
                     break;
                 case eSwipeSide.Up:
-                    params1.Add("start", "50%," + smallValue + "%");
-                    params1.Add("end", "50%," + bigValue + "%");
+                    params1.Add("start", "50%,20%");
+                    params1.Add("end", "50%,80%");
                     mDriver.ExecuteScript("mobile:touch:swipe", params1);
                     break;
                 case eSwipeSide.Left:
-                    params1.Add("start",smallValue + "%,50%");
-                    params1.Add("end",bigValue + "%,50%");
+                    params1.Add("start","20%,50%");
+                    params1.Add("end","80%,50%");
                     mDriver.ExecuteScript("mobile:touch:swipe", params1);
                     break;
                 case eSwipeSide.Right:
-                    params1.Add("start",bigValue + "%,50%");
-                    params1.Add("end",smallValue + "%,50%");
+                    params1.Add("start","80%,50%");
+                    params1.Add("end","20%,50%");
                     mDriver.ExecuteScript("mobile:touch:swipe", params1);
                     break;
                 default:

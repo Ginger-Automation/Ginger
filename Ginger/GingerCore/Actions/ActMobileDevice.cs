@@ -69,10 +69,6 @@ namespace GingerCore.Actions
             SwipeDown,
             SwipeRight,
             SwipeLeft,
-            ShortSwipeUp,
-            ShortSwipeDown,
-            ShortSwipeRight,
-            ShortSwipeLeft,
             Wait,
             TakeScreenShot,
             RefreshDeviceScreenImage,
@@ -81,7 +77,7 @@ namespace GingerCore.Actions
             CloseAppByName,
             UnlockDevice,
             LockDevice,
-            SwipeToElement,
+            SwipeByCoordinates,
         }
 
         public enum ePressKey
