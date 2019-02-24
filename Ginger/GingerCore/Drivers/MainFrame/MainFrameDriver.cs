@@ -564,6 +564,11 @@ namespace GingerCore.Drivers.MainFrame
             throw new NotImplementedException();
         }
 
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        {
+            throw new NotImplementedException();
+        }
+
         public AppWindow GetActiveWindow()
         {
             AppWindow AppWin = new AppWindow();
