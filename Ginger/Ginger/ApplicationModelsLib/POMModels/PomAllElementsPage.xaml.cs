@@ -139,7 +139,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void CreateNewElemetClicked(object sender, RoutedEventArgs e)
         {
             mSpyElement.IsAutoLearned = false;
-            mWinExplorer.LearnElementInfoDetails(mSpyElement);
             mPOM.MappedUIElements.Add(mSpyElement);
             mPOM.MappedUIElements.CurrentItem = mSpyElement;
             mappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
@@ -239,10 +238,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             ElementInfo matchingOriginalElement = (ElementInfo)mWinExplorer.GetMatchingElement(mSpyElement, mPOM.GetUnifiedElementsList());
 
-            bool DetailsLearned = false;
             if (matchingOriginalElement == null)
             {
-                DetailsLearned = true;
                 mWinExplorer.LearnElementInfoDetails(mSpyElement);
                 matchingOriginalElement = (ElementInfo)mWinExplorer.GetMatchingElement(mSpyElement, mPOM.GetUnifiedElementsList());
             }
@@ -264,38 +261,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-
-            if (!DetailsLearned)
-            {
-                mWinExplorer.LearnElementInfoDetails(mSpyElement);
-            }
-
             xStatusLable.Content = "Found element is not included in below elements list, click here to add it ";
             xCreateNewElement.Visibility = Visibility.Visible;
         }
-
-        //public static bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
-        //{
-        //    bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && (firstEI.Path == secondEI.Path || string.IsNullOrEmpty(firstEI.Path) && string.IsNullOrEmpty(secondEI.Path));
-
-        //    bool HasSimilarLocators = true;
-        //    foreach (ElementLocator EL in firstEI.Locators)
-        //    {
-        //        ElementLocator SimilarLocator = secondEI.Locators.Where(x => x.LocateBy == EL.LocateBy && x.LocateValue == EL.LocateValue).FirstOrDefault();
-        //        if (SimilarLocator == null)
-        //            HasSimilarLocators = false;
-        //    }
-
-        //    if (HasSimilarXpath && HasSimilarLocators)
-        //    {
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
-
 
         private void TestAllElementsClicked(object sender, RoutedEventArgs e)
         {

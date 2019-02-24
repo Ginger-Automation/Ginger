@@ -4843,7 +4843,6 @@ namespace GingerCore.Drivers
                 foundElemntInfo.ElementObject = el;
                 foundElemntInfo.Path = string.Empty;
 
-                //GetHTMLElementInfoFromIWebElement(el, "");
                 if (el.TagName == "iframe" || el.TagName == "frame")
                 {
                     foundElemntInfo.Path = string.Empty;
