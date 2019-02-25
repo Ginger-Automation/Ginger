@@ -1289,7 +1289,13 @@ namespace GingerCore.Drivers.InternalBrowserLib
         {
             return null;
         }
-        
+
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        {
+            throw new NotImplementedException();
+        }
+
+
         AppWindow IWindowExplorer.GetActiveWindow()
         {
             AppWindow aw = new AppWindow();
@@ -1323,6 +1329,16 @@ namespace GingerCore.Drivers.InternalBrowserLib
         }
 
         public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
         {
             throw new NotImplementedException();
         }

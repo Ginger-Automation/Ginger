@@ -53,7 +53,7 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <!--<TextBlock Grid.Column="0" />-->
-                            <Polygon Grid.Column="0" Points="0,0 12,6 0,12 0,0" Stroke="SteelBlue" StrokeThickness="0" SnapsToDevicePixels="True" Margin="0,10,5,0" VerticalAlignment="Center" x:Name="SelectionArrow" >
+                            <Polygon Grid.Column="0" Points="0,0 12,6 0,12 0,0" Stroke="SteelBlue" StrokeThickness="0" SnapsToDevicePixels="True" Margin="0,0,0,0" VerticalAlignment="Center" x:Name="SelectionArrow" >
                                 <Polygon.Fill>
                                     <SolidColorBrush Color="SteelBlue" Opacity="1" />
                                 </Polygon.Fill>

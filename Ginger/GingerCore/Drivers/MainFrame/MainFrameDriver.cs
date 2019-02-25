@@ -564,6 +564,11 @@ namespace GingerCore.Drivers.MainFrame
             throw new NotImplementedException();
         }
 
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        {
+            throw new NotImplementedException();
+        }
+
         public AppWindow GetActiveWindow()
         {
             AppWindow AppWin = new AppWindow();
@@ -777,6 +782,16 @@ namespace GingerCore.Drivers.MainFrame
 
 
         public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
         {
             throw new NotImplementedException();
         }

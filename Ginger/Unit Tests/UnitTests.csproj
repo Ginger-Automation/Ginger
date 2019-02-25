@@ -285,6 +285,7 @@
     <Compile Include="NonUITests\Script\VBSNumericTests.cs" />
     <Compile Include="NonUITests\Script\VBSStringTests.cs" />
     <Compile Include="NonUITests\StatusResultTest.cs" />
+    <Compile Include="NonUITests\NonDriverActionTest.cs" />
     <Compile Include="NonUITests\UsedVariablesTest.cs" />
     <Compile Include="TestAssemblyInit.cs" />
     <Compile Include="TestResources\IEBrowser\IEBrowserWindow.xaml.cs">
@@ -417,6 +418,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\XML\calculator_soapui_project.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\XML\TargetFile.XML">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\XML\TemplateVU.XML">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="TestResources\AutoPilot\JSONTemplates\login.json">

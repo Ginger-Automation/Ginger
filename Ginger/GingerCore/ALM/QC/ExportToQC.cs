@@ -301,6 +301,17 @@ namespace GingerCore.ALM.QC
                             try { test[field.ID] = "NA"; }
                             catch { }
                     }
+                    if(field.Mandatory)
+                    {
+                        string[] fieldNameTokens = field.ItemName.Split(':');
+                        if(fieldNameTokens.Count() > 1)
+                        {
+                            if(int.TryParse(fieldNameTokens[0],out int num))
+                            {
+                                field.ItemName = fieldNameTokens[1].Trim();
+                            }
+                        }
+                    }
                 }
                 
                 //post the test

@@ -586,49 +586,48 @@ namespace Ginger.Run
             }
         }
 
-        private void SetBusinessFlowInputVarsWithOutputValues(BusinessFlow bfToUpdate)
+        private void PrepareVariables()
+        {
+            if (ExecutedFrom == eExecutedFrom.Run)
+            {
+                //We need to set variable mapped values only when running run set
+                SetVariableMappedValues();
+            }
+
+            PrepDynamicVariables();
+        }
+
+        private void SetVariableMappedValues()
         {
             //set the vars to update
-            List<VariableBase> inputVarsToUpdate = bfToUpdate.GetBFandActivitiesVariabeles(false, true, false).Where(x => (string.IsNullOrEmpty(x.MappedOutputValue)) == false).ToList();
-
-            //set the vars to get value from
-            List<VariableBase> outputVariables;
-            if (BusinessFlow.SolutionVariables != null)
-            {
-                outputVariables = BusinessFlow.SolutionVariables.ToList();
-            }
-            else
-            {
-                outputVariables = new List<VariableBase>();
-            }
-            ObservableList<BusinessFlow> prevBFs = new ObservableList<BusinessFlow>();
-            for (int i = 0; i < BusinessFlows.IndexOf(bfToUpdate); i++)
-            {
-                prevBFs.Add((BusinessFlow)BusinessFlows[i]);
-            }
-            foreach (BusinessFlow bf in prevBFs.Reverse())//doing in reverse for passing the most updated value of variables with similar name
-            {
-                foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(false, false, true))
-                {
-                    outputVariables.Add(var);
-                }
-            }
+            List<VariableBase> inputVars = CurrentBusinessFlow.GetBFandActivitiesVariabeles(false).ToList();
+            List<VariableBase> outputVariables = null;
 
             //do actual value update
-            foreach (VariableBase inputVar in inputVarsToUpdate)
+            foreach (VariableBase inputVar in inputVars)
             {
                 string mappedValue = "";
                 if (inputVar.MappedOutputType == VariableBase.eOutputType.Variable)
                 {
+                    if (outputVariables == null)
+                    {
+                        outputVariables = GetPossibleOutputVariables();
+                    }
+
                     VariableBase outputVar = outputVariables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault();
                     if (outputVar != null)
                     {
                         mappedValue = outputVar.Value;
                     }
-                }                    
+                }
                 else if(inputVar.MappedOutputType == VariableBase.eOutputType.DataSource)
                 {
                     mappedValue = GingerCore.ValueExpression.Calculate(ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, DSList);
+                }
+                else
+                {
+                    //if input variable value mapped to none , we reset it to initial value
+                    inputVar.ResetValue();
                 }
 
                 if (mappedValue != "")
@@ -662,6 +661,34 @@ namespace Ginger.Run
                 }
             }
         }
+
+        private List<VariableBase> GetPossibleOutputVariables()
+        {
+            //set the vars to get value from
+            List<VariableBase> outputVariables;
+            if (BusinessFlow.SolutionVariables != null)
+            {
+                outputVariables = BusinessFlow.SolutionVariables.ToList();
+            }
+            else
+            {
+                outputVariables = new List<VariableBase>();
+            }
+            ObservableList<BusinessFlow> prevBFs = new ObservableList<BusinessFlow>();
+            for (int i = 0; i < BusinessFlows.IndexOf(CurrentBusinessFlow); i++)
+            {
+                prevBFs.Add((BusinessFlow)BusinessFlows[i]);
+            }
+            foreach (BusinessFlow bf in prevBFs.Reverse())//doing in reverse for passing the most updated value of variables with similar name
+            {
+                foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(false, false, true))
+                {
+                    outputVariables.Add(var);
+                }
+            }
+            return outputVariables;
+                 
+        }      
 
         public void StartAgent(Agent Agent)
         {
@@ -3283,12 +3310,7 @@ namespace Ginger.Run
                     CurrentBusinessFlow.CurrentActivity = bfFirstActivity;
                     bfFirstActivity.Acts.CurrentItem = bfFirstActivity.Acts.FirstOrDefault();
                 }
-
-                //Init
-                if (doContinueRun == false)
-                {
-                    CurrentBusinessFlow.Reset();
-                }
+             
 
                 if(doContinueRun)
                 {
@@ -3301,6 +3323,13 @@ namespace Ginger.Run
 
                 
                 CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
+
+                //Do run preparations
+                
+                UpdateLastExecutingAgent();
+                CurrentBusinessFlow.Environment = ProjEnvironment == null ? "" : ProjEnvironment.Name;
+                PrepareVariables();
+
 
                 if (!doContinueRun)
                 {
@@ -3321,11 +3350,7 @@ namespace Ginger.Run
                     return;//no Activities to run
                 }
 
-                //Do run preparations
-                SetBusinessFlowInputVarsWithOutputValues(CurrentBusinessFlow);
-                UpdateLastExecutingAgent();
-                CurrentBusinessFlow.Environment = ProjEnvironment == null ? "" : ProjEnvironment.Name;
-                PrepDynamicVariables();
+               
                 
                 //Start execution
                 if (doContinueRun == false)
@@ -3786,12 +3811,14 @@ namespace Ginger.Run
             PublishToALMConfig = null;
             if (doNotResetBusFlows == false)
             {
-                foreach (BusinessFlow bf in BusinessFlows)
+                foreach (BusinessFlow businessFlow in BusinessFlows)
                 {
-                    bf.Reset();
-                    NotifyBusinessflowWasReset(CurrentBusinessFlow);                    
-                }                    
-            }            
+                    businessFlow.Reset();
+
+                   
+                    NotifyBusinessflowWasReset(CurrentBusinessFlow);
+                }
+            }
         }
 
        

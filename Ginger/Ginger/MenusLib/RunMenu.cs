@@ -61,7 +61,7 @@ namespace Ginger.MenusLib
             runSetMenu.Add(eImageType.RunSet, "", GetRunSetPage, ConsoleKey.R, "", "AID");
             twoLevelMenuGet.Add(runSetMenu);
 
-            TopMenuItem gingerGridMenu = new TopMenuItem(eImageType.List, "Gingers Grid", ConsoleKey.G, "Ginger Grid AID", "Grid showing all connected Ginger Nodes");
+            TopMenuItem gingerGridMenu = new TopMenuItem(eImageType.Table, "Gingers Grid", ConsoleKey.G, "Ginger Grid AID", "Grid showing all connected Ginger Nodes");
             gingerGridMenu.Add(eImageType.List, "", GetGingerGridPage, ConsoleKey.G, "", "AID");
             twoLevelMenuGet.Add(gingerGridMenu);
             

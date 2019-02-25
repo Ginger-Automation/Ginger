@@ -434,6 +434,11 @@ namespace GingerCore.Drivers
                         {
                             continue;
                         }
+                        if(CheckUserSpecificProcess(window) == false)
+                        {
+                            continue;
+                        }
+
                         //list All Windows except PB windows - FNW
 
                         if (!window.Current.ClassName.StartsWith("FNW"))
@@ -476,7 +481,11 @@ namespace GingerCore.Drivers
 
                     foreach (AutomationElement window in AppWindows)
                     {
-                        if (!IsWindowValid(window))
+                        if (!IsWindowValid(window)) 
+                        {
+                            continue;
+                        }
+                        if (CheckUserSpecificProcess(window) == false)
                         {
                             continue;
                         }
@@ -523,6 +532,19 @@ namespace GingerCore.Drivers
 
             return list;
         }
+        private bool CheckUserSpecificProcess(AutomationElement window)
+        {
+            Process currentProcess = Process.GetProcessById(window.Current.ProcessId);
+            if (currentProcess.StartInfo.Environment["USERNAME"] != Environment.UserName)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+ 
 
         #endregion RECORDING DRIVER
 
@@ -1218,7 +1240,7 @@ namespace GingerCore.Drivers
                             }
                             else
                             {
-                                throw new Exception("Cannot find element '" + value + "[" + index2 + "] Because array contains only " + AEC.Count + " Elements");
+                                Reporter.ToLog(eLogLevel.DEBUG, "Cannot find element" + value + "[" + index2 + "] Because array contains only " + AEC.Count + "Elements");
                             }
                         }
                     }
@@ -1226,7 +1248,7 @@ namespace GingerCore.Drivers
 
                     if (AE == null )
                     {
-                        throw new Exception("Cannot find element, Found path to element at: " + PathOK + " ,But couldn't find next element: " + PathNode);
+                        Reporter.ToLog(eLogLevel.DEBUG, "Cannot find element, Found path to element at:" + PathOK + ",But couldn't find next element:" + PathNode);
                     }
                     else
                     {
