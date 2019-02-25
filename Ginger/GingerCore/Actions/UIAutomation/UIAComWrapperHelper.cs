@@ -6479,7 +6479,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetValueProperty while GetCurrentPropertyValue::", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetPattern while TryGetCurrentPattern::", ex);
             }
             return val;
         }
