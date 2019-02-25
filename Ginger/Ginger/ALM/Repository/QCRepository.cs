@@ -292,17 +292,8 @@ namespace Ginger.ALM.Repository
             //TODO: retireve test case fields -->DONE
             ObservableList<ExternalItemFieldBase> testCaseFields =  WorkSpace.UserProfile.Solution.ExternalItemsFields;
             ALMIntegration.Instance.RefreshALMItemFields(testCaseFields, true, null);
-
-            //Going through the fields to leave only Test Case fields
-            for (int indx = testCaseFields.Count - 1; indx >= 0; indx--)
-            {
-                if (testCaseFields[indx].ItemType != eQCItemType.TestCase.ToString())
-                {
-                    testCaseFields.RemoveAt(indx);
-                }
-            }
-            
-            bool exportRes = ((QCCore)ALMIntegration.Instance.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, matchingTC, uploadPath, testCaseFields, ref res);
+            var filterTestCaseFields = testCaseFields.Where(tc => tc.ItemType == eQCItemType.TestCase.ToString()).ToList();
+            bool exportRes = ((QCCore)ALMIntegration.Instance.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, matchingTC, uploadPath, new ObservableList<ExternalItemFieldBase>(filterTestCaseFields), ref res);
             Reporter.HideStatusMessage();
             if (exportRes)
             {
@@ -380,16 +371,8 @@ namespace Ginger.ALM.Repository
             //TODO : need to update to retrieve only Test Set Item Fields -->DONE
             ObservableList<ExternalItemFieldBase> testSetFields =  WorkSpace.UserProfile.Solution.ExternalItemsFields;
             ALMIntegration.Instance.RefreshALMItemFields(testSetFields, true, null);
-
-            for (int indx = testSetFields.Count - 1 ; indx >= 0; indx--)
-            {
-                if (testSetFields[indx].ItemType != eQCItemType.TestSet.ToString())
-                {
-                    testSetFields.RemoveAt(indx);
-                }
-            }
-
-            bool exportRes = ((QCCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToALM(businessFlow, matchingTS, testLabUploadPath, testSetFields, ref res);
+            var filterTestSetFields = testSetFields.Where(tc => tc.ItemType == eQCItemType.TestSet.ToString()).ToList();
+            bool exportRes = ((QCCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToALM(businessFlow, matchingTS, testLabUploadPath, new ObservableList<ExternalItemFieldBase> (filterTestSetFields), ref res);
             Reporter.HideStatusMessage();
             if (exportRes)
             {
@@ -429,7 +412,7 @@ namespace Ginger.ALM.Repository
 
         public override void ImportALMTestsById(string importDestinationFolderPath)
         {
-            throw new NotImplementedException();
+            return;
         }
     }
 }

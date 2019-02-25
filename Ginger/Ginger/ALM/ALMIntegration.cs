@@ -31,7 +31,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore.ALM.QC;
 using GingerCore.ALM.QCRestAPI;
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.ALM
 {
@@ -75,6 +74,10 @@ namespace Ginger.ALM
                     AlmCore = new RallyCore();
                     AlmRepo = new RallyRepository();
                     break;
+                case eALMType.Jira:
+                    AlmCore = new JiraCore();
+                    AlmRepo = new JIRA_Repository(AlmCore);
+                    break;
             }
             if(firstSync)
                 SetALMCoreConfigurations();
@@ -82,19 +85,20 @@ namespace Ginger.ALM
 
         public void SetALMCoreConfigurations()
         {
-            ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
-            AlmCore.SetALMConfigurations( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.Solution.UseRest,   WorkSpace.UserProfile.ALMUserName,  WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMDomain,  WorkSpace.UserProfile.Solution.ALMProject);
+            ALMCore.SolutionFolder = WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            AlmCore.SetALMConfigurations(WorkSpace.UserProfile.Solution.ALMServerURL, WorkSpace.UserProfile.Solution.UseRest, WorkSpace.UserProfile.ALMUserName, WorkSpace.UserProfile.ALMPassword, WorkSpace.UserProfile.Solution.ALMDomain, WorkSpace.UserProfile.Solution.ALMProject, WorkSpace.UserProfile.Solution.ALMProjectKey);
             SyncConfigurations();
         }
 
         public void SyncConfigurations()
         {
-             WorkSpace.UserProfile.Solution.ALMServerURL = ALMCore.AlmConfig.ALMServerURL;
-             WorkSpace.UserProfile.Solution.UseRest = ALMCore.AlmConfig.UseRest;
-             WorkSpace.UserProfile.ALMUserName = ALMCore.AlmConfig.ALMUserName;
-             WorkSpace.UserProfile.ALMPassword = ALMCore.AlmConfig.ALMPassword;
-             WorkSpace.UserProfile.Solution.ALMDomain = ALMCore.AlmConfig.ALMDomain;
-             WorkSpace.UserProfile.Solution.ALMProject = ALMCore.AlmConfig.ALMProjectName;
+            WorkSpace.UserProfile.Solution.ALMServerURL = ALMCore.AlmConfig.ALMServerURL;
+            WorkSpace.UserProfile.Solution.UseRest = ALMCore.AlmConfig.UseRest;
+            WorkSpace.UserProfile.ALMUserName = ALMCore.AlmConfig.ALMUserName;
+            WorkSpace.UserProfile.ALMPassword = ALMCore.AlmConfig.ALMPassword;
+            WorkSpace.UserProfile.Solution.ALMDomain = ALMCore.AlmConfig.ALMDomain;
+            WorkSpace.UserProfile.Solution.ALMProject = ALMCore.AlmConfig.ALMProjectName;
+            WorkSpace.UserProfile.Solution.ALMProjectKey = ALMCore.AlmConfig.ALMProjectKey;
         }
 
         public ALMConfig AlmConfigurations
@@ -117,7 +121,8 @@ namespace Ginger.ALM
         {
             QC = 1,
             RQM = 2,
-            RALLY = 3
+            RALLY = 3,
+            Jira = 4
         }
 
         public enum eALMConnectType
@@ -139,7 +144,7 @@ namespace Ginger.ALM
             ALMCore.AlmConfig.ALMPassword = newPassword;
         }
 
-        public void SetALMProject(string newProject)
+        public void SetALMProject(KeyValuePair<string,string> newProject)
         {
             AlmRepo.SetALMProject(newProject);
         }
@@ -221,10 +226,10 @@ namespace Ginger.ALM
             return domainList;
         }
 
-        public List<string> GetALMDomainProjects(string ALMDomain, eALMConnectType almConectStyle)
+        public Dictionary<string, string> GetALMDomainProjects(string ALMDomain, eALMConnectType almConectStyle)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            List<string> projectsList = new List<string>();
+            Dictionary<string, string> projectsList = new Dictionary<string, string>();
             if (AutoALMServerConnect(almConectStyle))
             {
                 projectsList = AlmCore.GetALMDomainProjects(ALMDomain);
@@ -478,12 +483,12 @@ namespace Ginger.ALM
             return latestALMFieldsREST;
         }
 
-        public Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening)
+        public Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening,List<ExternalItemFieldBase> defectsFields)
         {
             Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
             if (ALMIntegration.Instance.AutoALMProjectConnect())
             {
-                defectsOpeningResults = AlmCore.CreateNewALMDefects(defectsForOpening, true);
+                defectsOpeningResults = AlmCore.CreateNewALMDefects(defectsForOpening, defectsFields, true);
             }
             return defectsOpeningResults;
         }
@@ -495,7 +500,6 @@ namespace Ginger.ALM
             {
                 //Get latestALMFields from ALMCore with Online flag
                 ObservableList<ExternalItemFieldBase> latestALMFields = AlmCore.GetALMItemFields(bw, online);
-
                 foreach (ExternalItemFieldBase latestField in latestALMFields)
                 {
                     ExternalItemFieldBase currentField = exitingFields.Where(x => x.ID == latestField.ID && x.ItemType == latestField.ItemType).FirstOrDefault();
@@ -531,7 +535,6 @@ namespace Ginger.ALM
                         mergedFields.Add(latestField);
                     }
                 }
-
                 exitingFields.ClearAll();
                 exitingFields.Append(mergedFields);
             }
@@ -571,7 +574,6 @@ namespace Ginger.ALM
             }
             return updatedFields;
         }
-
         public bool ShowImportReviewPage(string importDestinationPath, object selectedTestPlan = null)
         {
             return AlmRepo.ShowImportReviewPage(importDestinationPath, selectedTestPlan);
@@ -651,6 +653,10 @@ namespace Ginger.ALM
         public List<string> GetTestPlanExplorer(string path)
         {
             return AlmRepo.GetTestPlanExplorer(path);
+        }
+        public eALMType GetALMType()
+        {
+            return (eALMType)WorkSpace.UserProfile.Solution.AlmType;
         }
     }
 }
