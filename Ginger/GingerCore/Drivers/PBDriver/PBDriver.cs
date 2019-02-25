@@ -1000,7 +1000,7 @@ namespace GingerCore.Drivers.PBDriver
 
         public ElementInfo LearnElementInfoDetails(ElementInfo EI)
         {
-            throw new NotImplementedException();
+            return EI;
         }
 
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)

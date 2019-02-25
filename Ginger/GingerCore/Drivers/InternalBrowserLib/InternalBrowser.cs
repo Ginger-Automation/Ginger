@@ -1292,7 +1292,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         public ElementInfo LearnElementInfoDetails(ElementInfo EI)
         {
-            throw new NotImplementedException();
+            return EI;
         }
 
 
