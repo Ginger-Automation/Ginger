@@ -3888,26 +3888,26 @@ namespace GingerCore.Drivers
             if (General.CompareStringsIgnoreCase(ControlType ,"Edit Box" )||General.CompareStringsIgnoreCase(ControlType, "edit")||
                 General.CompareStringsIgnoreCase(ControlType, "item")|| General.CompareStringsIgnoreCase(ControlType, ""))
             {
-                string val = string.Empty;
+                string elementVal = string.Empty;
 
-                if (string.IsNullOrEmpty(val))
+                if (String.IsNullOrEmpty(elementVal))
                 {
-                    val = GetElementValueByValuePattern(element);
+                    elementVal = GetElementValueByValuePattern(element);
                 }
 
-                if (string.IsNullOrEmpty(val))
+                if (String.IsNullOrEmpty(elementVal))
                 {
-                    val = GetElementValueByLegacyIAccessiblePattern(element);
+                    elementVal = GetElementValueByLegacyIAccessiblePattern(element);
                 }
-                if (string.IsNullOrEmpty(val))
+                if (String.IsNullOrEmpty(elementVal))
                 {
-                    val = GetElementValueByTextpattern(element);
+                    elementVal = GetElementValueByTextpattern(element);
                 }
-                if (string.IsNullOrEmpty(val) && General.CompareStringsIgnoreCase(ControlType, ""))
+                if (string.IsNullOrEmpty(elementVal) && General.CompareStringsIgnoreCase(ControlType, ""))
                 {
-                    val = GetControlValueFromChildControl(element);
+                    elementVal = GetControlValueFromChildControl(element);
                 }
-                return val;
+                return elementVal;
             }
 
             if (General.CompareStringsIgnoreCase(ControlType, "text"))
@@ -6471,8 +6471,11 @@ namespace GingerCore.Drivers
             object vp;
             try
             {
-                element.TryGetCurrentPattern(TextPattern.Pattern, out vp);
-                val = ((TextPattern)vp).DocumentRange.GetText(-1);
+                if (String.IsNullOrEmpty(val))
+                {
+                    element.TryGetCurrentPattern(TextPattern.Pattern, out vp);
+                    val = ((TextPattern)vp).DocumentRange.GetText(-1);
+                }
             }
             catch (Exception ex)
             {
