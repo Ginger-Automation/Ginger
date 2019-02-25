@@ -214,10 +214,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mSpyElement = mWinExplorer.GetControlFromMousePosition();
                 if (mSpyElement != null)
                 {
-                    //TODO: replace below fields setting with signle function doing it on Driver
-                    mWinExplorer.UpdateElementInfoFields(mSpyElement);
-                    mSpyElement.Locators = mWinExplorer.GetElementLocators(mSpyElement);
-                    mSpyElement.Properties = mWinExplorer.GetElementProperties(mSpyElement);
+
                     mSpyElement.WindowExplorer = mWinExplorer;
                     mSpyElement.IsAutoLearned = true;
                     xStatusLable.Content = "Element found";
@@ -241,6 +238,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             ElementInfo matchingOriginalElement = (ElementInfo)mWinExplorer.GetMatchingElement(mSpyElement, mPOM.GetUnifiedElementsList());
 
+            if (matchingOriginalElement == null)
+            {
+                mWinExplorer.LearnElementInfoDetails(mSpyElement);
+                matchingOriginalElement = (ElementInfo)mWinExplorer.GetMatchingElement(mSpyElement, mPOM.GetUnifiedElementsList());
+            }
+
+
             if (mPOM.MappedUIElements.Contains(matchingOriginalElement))
             {
                 xMappedElementsTab.Focus();
@@ -260,29 +264,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xStatusLable.Content = "Found element is not included in below elements list, click here to add it ";
             xCreateNewElement.Visibility = Visibility.Visible;
         }
-
-        //public static bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
-        //{
-        //    bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && (firstEI.Path == secondEI.Path || string.IsNullOrEmpty(firstEI.Path) && string.IsNullOrEmpty(secondEI.Path));
-
-        //    bool HasSimilarLocators = true;
-        //    foreach (ElementLocator EL in firstEI.Locators)
-        //    {
-        //        ElementLocator SimilarLocator = secondEI.Locators.Where(x => x.LocateBy == EL.LocateBy && x.LocateValue == EL.LocateValue).FirstOrDefault();
-        //        if (SimilarLocator == null)
-        //            HasSimilarLocators = false;
-        //    }
-
-        //    if (HasSimilarXpath && HasSimilarLocators)
-        //    {
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
-
 
         private void TestAllElementsClicked(object sender, RoutedEventArgs e)
         {
