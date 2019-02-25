@@ -1289,7 +1289,13 @@ namespace GingerCore.Drivers.InternalBrowserLib
         {
             return null;
         }
-        
+
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        {
+            throw new NotImplementedException();
+        }
+
+
         AppWindow IWindowExplorer.GetActiveWindow()
         {
             AppWindow aw = new AppWindow();
