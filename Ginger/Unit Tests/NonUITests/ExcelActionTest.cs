@@ -73,6 +73,7 @@ namespace UnitTests.NonUITests
         [TestMethod]
         public void ReadExcelTest()
         {
+            
             //Arrange
             ActExcel action = new ActExcel();
             action.ExcelActionType = ActExcel.eExcelActionType.ReadData;
@@ -83,8 +84,17 @@ namespace UnitTests.NonUITests
             action.Active = true;
             action.AddNewReturnParams = true;
             //Act
-           
-            mGR.RunAction(action);
+
+
+            try
+            {
+                mGR.RunAction(action);
+                Console.WriteLine(action.Error);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
             Assert.AreEqual(10, action.ReturnValues.Count);
