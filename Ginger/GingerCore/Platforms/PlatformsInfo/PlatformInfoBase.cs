@@ -201,6 +201,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                     list.Add(ActUIElement.eElementAction.DismissDialog);
                     break;
             }
+
+
             return list;
         }
         public virtual List<ActUIElement.eTableAction> GetTableControlActions(ActUIElement.eElementAction tableAction)
