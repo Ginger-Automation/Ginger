@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Environments;
@@ -67,13 +68,11 @@ namespace Ginger.Actions.ActionConversion
             xGrdGroups.InitViewItems();
             xGrdGroups.SetTitleLightStyle = true;
 
-            if (mWizard.BusinessFlow.Activities.Where(x => x.SelectedForConversion == true).Count() != 0)
-            {
-                mWizard.BusinessFlow.Activities.Where(x => x.SelectedForConversion == true).ToList().ForEach(x => { x.SelectedForConversion = false; });
-            }
-            xGrdGroups.DataSourceList = GingerCore.General.ConvertListToObservableList(mWizard.BusinessFlow.Activities.Where(x => x.Active == true).ToList());
+            ActionConversionUtils utils = new ActionConversionUtils();
+            ObservableList<Activity> lst = utils.GetConvertableActivitiesFromBusinessFlow(mWizard.BusinessFlow);
+            xGrdGroups.DataSourceList = lst;
             xGrdGroups.RowChangedEvent += grdGroups_RowChangedEvent;
-            xGrdGroups.Title = "Name of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " in '" + mWizard.BusinessFlow.Name + "'";
+            xGrdGroups.Title = "Convert Activities";
             xGrdGroups.MarkUnMarkAllActive += MarkUnMarkAllActivities;
             xGrdGroups.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
             {

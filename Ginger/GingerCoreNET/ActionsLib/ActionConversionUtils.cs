@@ -226,5 +226,41 @@ namespace Amdocs.Ginger.CoreNET
             }
             return lst;
         }
+
+        /// <summary>
+        /// This method will give the list of convertable activities
+        /// </summary>
+        /// <param name="businessFlow"></param>
+        /// <returns></returns>
+        public ObservableList<Activity> GetConvertableActivitiesFromBusinessFlow(BusinessFlow businessFlow)
+        {
+            ObservableList<Activity> lst = new ObservableList<Activity>();
+            try
+            {
+                foreach (Activity convertibleActivity in businessFlow.Activities)
+                {
+                    bool isPresent = false;
+                    foreach (Act act in convertibleActivity.Acts)
+                    {
+                        if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
+                            (act.Active))
+                        {
+                            isPresent = true;
+                            break;
+                        }
+                    }
+                    if(isPresent)
+                    {
+                        lst.Add(convertibleActivity);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Getting convertable actions from activities", ex);
+            }
+            return lst;
+        }
+
     }
 }
