@@ -1,0 +1,77 @@
+﻿{
+  "PageSize": 25,
+  "Apis": [
+    {
+      "key": "Project",
+      "Value": "/rest/api/2/project"
+    },
+    {
+      "key": "Issue",
+      "Value": "/rest/api/2/issue"
+    },
+    {
+      "key": "Search",
+      "Value": "/rest/api/2/search?jql=project ={project_id} and issuetype in (\"{issue_types}\"){additionalData}&startAt={start_at}&maxResults={page_size}"
+    },
+    {
+      "key": "Fields",
+      "Value": "/rest/api/2/issue/createmeta?projectKeys={project_prefix}&issuetypeNames={issue_types}&expand=projects.issuetypes.fields"
+    },
+    {
+      "key": "SetStatus",
+      "Value": "/rest/raven/1.0/api/testrun/{run_id}/status?status={run_status}"
+    },
+    {
+      "key": "GetRunStatus",
+      "Value": "/rest/raven/1.0/api/testrun/{run_id}"
+    },
+    {
+      "key": "GetProjectVersions",
+      "Value": "/rest/api/2/project/{project_prefix}/versions"
+    }
+  ],
+  "Resources": [
+    {
+      "key": "TEST_CASE",
+      "Value": "Test"
+    },
+    {
+      "key": "TEST_SET",
+      "Value": "Test Set"
+    },
+    {
+      "key": "TEST_CASE_EXECUTION_RECORDS",
+      "Value": "Test Execution"
+    },
+    {
+      "key": "DEFECT",
+      "Value": "Defect"
+    },
+    {
+      "key": "TEST_PLAN",
+      "Value": "Test Plan"
+    }
+  ],
+  "Statuses": [
+    {
+      "key": "PASS",
+      "Value": "PASS"
+    },
+    {
+      "key": "TODO",
+      "Value": "TODO"
+    },
+    {
+      "key": "EXECUTING",
+      "Value": "EXECUTING"
+    },
+    {
+      "key": "ABORTED",
+      "Value": "ABORTED"
+    },
+    {
+      "key": "BLOCKED",
+      "Value": "BLOCKED"
+    }
+  ]
+}

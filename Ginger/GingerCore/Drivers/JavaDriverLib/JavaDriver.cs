@@ -2226,6 +2226,11 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
         }
 
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        {
+            throw new NotImplementedException();
+        }
+
         ElementInfo IWindowExplorer.GetControlFromMousePosition()
         {
             //TODO:

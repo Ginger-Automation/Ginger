@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 using TDAPIOLELib;
 
 namespace GingerCore.ALM.QC
@@ -102,7 +103,7 @@ namespace GingerCore.ALM.QC
         // Opening QC Connection 
         public static bool ConnectQCServer(string QCServerUrl, string QCUserName, string QCPassword)
         {
-            if (string.IsNullOrEmpty(QCServerUrl) || string.IsNullOrEmpty(QCUserName) || string.IsNullOrEmpty(QCPassword))
+            if(string.IsNullOrEmpty(QCServerUrl) || string.IsNullOrEmpty(QCUserName) || string.IsNullOrEmpty(QCPassword))
             {
                 return false;
             }
@@ -207,7 +208,7 @@ namespace GingerCore.ALM.QC
             return QCDomains;
         }
 
-        public static List<string> GetQCDomainProjects(string domainName)
+        public static Dictionary<string,string> GetQCDomainProjects(string domainName)
         {
             dynamic lstProjects = mTDConn.VisibleProjects[domainName];
             List<string> strProjects = new List<string>();
@@ -215,7 +216,7 @@ namespace GingerCore.ALM.QC
             {
                 strProjects.Add(project.ToString());
             }
-            return strProjects;
+            return strProjects.ToDictionary(prj => prj, prj => prj);
         }
 
         //get test plan explorer(tree view)

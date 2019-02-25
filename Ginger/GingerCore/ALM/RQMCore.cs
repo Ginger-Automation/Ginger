@@ -72,7 +72,7 @@ namespace GingerCore.ALM
             return RQMConnect.Instance.GetRQMDomains();
         }
 
-        public override List<string> GetALMDomainProjects(string ALMDomain)
+        public override Dictionary<string, string> GetALMDomainProjects(string ALMDomain)
         {
             AlmConfig.ALMDomain = ALMDomain;
             return RQMConnect.Instance.GetRQMDomainProjects();
@@ -97,7 +97,7 @@ namespace GingerCore.ALM
             return UpdatedAlmFields(ImportFromRQM.GetALMItemFields(bw, online));
         }
 
-        public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST)
+        public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST)
         {
             return null;
         }
@@ -114,7 +114,7 @@ namespace GingerCore.ALM
             set { ImportFromRQM.GingerActivitiesRepo = value; }
         }
 
-        public override void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject)
+        public override void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject, string ALMProjectKey)
         {
             AlmConfig.ALMServerURL = GetServerValueFromDict(GetDynamicServerConfigAndSetPaths());
             AlmConfig.UseRest = UseRest;
@@ -122,6 +122,7 @@ namespace GingerCore.ALM
             AlmConfig.ALMPassword = ALMPassword;
             AlmConfig.ALMDomain = ALMDomain;
             AlmConfig.ALMProjectName = ALMProject;
+            AlmConfig.ALMProjectKey = ALMProjectKey;
         }
         
         #region RQM Configurations Package

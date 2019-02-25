@@ -843,7 +843,6 @@ namespace GingerCore.ALM.RQM
 
             RqmRepository rqmRep = new RqmRepository(RQMCore.ConfigPackageFolderPath);
             List<IProjectDefinitions> rqmProjectsDataList;
-            //string rqmSserverUrl = loginData.Server.ToString() + "/";
             string rqmSserverUrl = ALMCore.AlmConfig.ALMServerURL + "/";
             LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
             IProjectData rqmProjectsData = rqmRep.GetVisibleProjects(loginData);
