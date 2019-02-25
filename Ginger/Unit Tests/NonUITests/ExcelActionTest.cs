@@ -41,12 +41,12 @@ namespace UnitTests.NonUITests
     [Level3]
     public class ExcelActionTest
     {
-        static BusinessFlow mBF;
         static GingerRunner mGR;
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
+            BusinessFlow mBF;
             AutoLogProxy.Init("NonDriverActionTests");
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
 
@@ -77,7 +77,6 @@ namespace UnitTests.NonUITests
             ActExcel action = new ActExcel();
             action.ExcelActionType = ActExcel.eExcelActionType.ReadData;
             action.SheetName = "Sheet1";
-            //action.SelectRowsWhere = "";
             action.SelectAllRows = true;
             action.PrimaryKeyColumn = "Id";
             action.ExcelFileName = TestResources.GetTestResourcesFile(@"EXCELS\TestExcel.xlsx");
