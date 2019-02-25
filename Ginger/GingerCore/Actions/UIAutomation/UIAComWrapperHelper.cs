@@ -3888,54 +3888,49 @@ namespace GingerCore.Drivers
             if (General.CompareStringsIgnoreCase(ControlType ,"Edit Box" )||General.CompareStringsIgnoreCase(ControlType, "edit")||
                 General.CompareStringsIgnoreCase(ControlType, "item")|| General.CompareStringsIgnoreCase(ControlType, ""))
             {
-                string elementVal = string.Empty;
+                string elementValue = GetElementValueByValuePattern(element);
 
-                if (String.IsNullOrEmpty(elementVal))
+                if (String.IsNullOrEmpty(elementValue))
                 {
-                    elementVal = GetElementValueByValuePattern(element);
+                    elementValue = GetElementValueByLegacyIAccessiblePattern(element);
                 }
-
-                if (String.IsNullOrEmpty(elementVal))
+                if (String.IsNullOrEmpty(elementValue))
                 {
-                    elementVal = GetElementValueByLegacyIAccessiblePattern(element);
+                    elementValue = GetElementValueByTextpattern(element);
                 }
-                if (String.IsNullOrEmpty(elementVal))
+                if (string.IsNullOrEmpty(elementValue) && General.CompareStringsIgnoreCase(ControlType, ""))
                 {
-                    elementVal = GetElementValueByTextpattern(element);
+                    elementValue = GetControlValueFromChildControl(element);
                 }
-                if (string.IsNullOrEmpty(elementVal) && General.CompareStringsIgnoreCase(ControlType, ""))
-                {
-                    elementVal = GetControlValueFromChildControl(element);
-                }
-                return elementVal;
+                return elementValue;
             }
 
             if (General.CompareStringsIgnoreCase(ControlType, "text"))
             {
-                string val = GetElementValueByValuePattern(element);
-                if (string.IsNullOrEmpty(val) && mPlatform.Equals(ePlatform.PowerBuilder))
+                string value = GetElementValueByValuePattern(element);
+                if (string.IsNullOrEmpty(value) && mPlatform.Equals(ePlatform.PowerBuilder))
                 {
-                    val = GetControlValueFromChildControl(element);
+                    value = GetControlValueFromChildControl(element);
                 }
-                if (string.IsNullOrEmpty(val))
+                if (string.IsNullOrEmpty(value))
                 {
                     // In some cases the name is the actual control value, wierd but exist...maybe there is no developer name
-                    val = element.Current.Name;
+                    value = element.Current.Name;
                 }
-                return val;
+                return value;
             }
 
             if (General.CompareStringsIgnoreCase(ControlType, "combo box"))
             {
-                string val = GetControlValueFromChildControl(element);
-                return val;
+                string value = GetControlValueFromChildControl(element);
+                return value;
             }
             //-----------------------------------
 
             else if (General.CompareStringsIgnoreCase(ControlType, "document"))
             {
-                string val = GetElementValueByTextpattern(element);
-                return val;
+                string value = GetElementValueByTextpattern(element);
+                return value;
             }
             // check box handler
             if (General.CompareStringsIgnoreCase(ControlType, "check box"))
@@ -3972,8 +3967,8 @@ namespace GingerCore.Drivers
             }
             if (General.CompareStringsIgnoreCase(ControlType, "title bar"))
             {
-                string val = element.Current.Name.ToString();
-                return val;
+                string value = element.Current.Name.ToString();
+                return value;
             }
 
             //DatePicker
@@ -4003,8 +3998,8 @@ namespace GingerCore.Drivers
             }
             if (General.CompareStringsIgnoreCase(ControlType, "button"))
             {
-                string val = element.Current.Name;
-                return val;
+                string value = element.Current.Name;
+                return value;
             }
             else if (General.CompareStringsIgnoreCase(ControlType, "radio button"))
             {
@@ -4129,7 +4124,7 @@ namespace GingerCore.Drivers
                 element.TryGetCurrentPattern(ValuePattern.Pattern, out vp);
                 if (vp != null)
                 {
-                    return (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
+                    return GetElementValueByValuePattern(element);
 
                 }
                 else
@@ -6439,49 +6434,49 @@ namespace GingerCore.Drivers
 
         public String GetElementValueByValuePattern(AutomationElement element)
         {
-            string val = string.Empty;
+            string value = string.Empty;
             try
             {
-                val = (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
+                value = (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetValueProperty while GetCurrentPropertyValue::", ex);
             }
-            return val;
+            return value;
         }
 
         public String GetElementValueByLegacyIAccessiblePattern(AutomationElement element)
         {
-            string val = string.Empty;
+            string value = string.Empty;
             try
             {
-                val = (String)element.GetCurrentPropertyValue(LegacyIAccessiblePatternIdentifiers.ValueProperty);
+                value = (String)element.GetCurrentPropertyValue(LegacyIAccessiblePatternIdentifiers.ValueProperty);
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetValueProperty while GetCurrentPropertyValue::", ex);
             }
-            return val;
+            return value;
         }
 
         public String GetElementValueByTextpattern(AutomationElement element)
         {
-            string val = string.Empty;
+            string value = string.Empty;
             object vp;
             try
             {
-                if (String.IsNullOrEmpty(val))
+                element.TryGetCurrentPattern(TextPattern.Pattern, out vp);
+                if (vp != null)
                 {
-                    element.TryGetCurrentPattern(TextPattern.Pattern, out vp);
-                    val = ((TextPattern)vp).DocumentRange.GetText(-1);
+                    value = ((TextPattern)vp).DocumentRange.GetText(-1);
                 }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetPattern while TryGetCurrentPattern::", ex);
             }
-            return val;
+            return value;
         }
     }
 
