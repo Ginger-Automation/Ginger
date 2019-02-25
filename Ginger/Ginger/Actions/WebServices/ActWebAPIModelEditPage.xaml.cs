@@ -177,7 +177,7 @@ namespace Ginger.Actions.WebServices
         private void ValueExpressionButton_Click(object sender, RoutedEventArgs e)
         {
             EnhancedActInputValue AIV = (EnhancedActInputValue)APIModelParamsValueUCGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, mAct.Context);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, (Context)mAct.Context);
             VEEW.ShowAsWindow();
         }
 

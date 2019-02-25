@@ -58,7 +58,7 @@ namespace Ginger.BusinessFlowWindows
                 mActivity.SaveBackup();
             editMode = mode;
 
-            RunDescritpion.Init(activity, Activity.Fields.RunDescription);
+            RunDescritpion.Init(new Context() { BusinessFlow = activityParentBusinessFlow },  activity, Activity.Fields.RunDescription);
             
             mActivityParentBusinessFlow = activityParentBusinessFlow;            
 

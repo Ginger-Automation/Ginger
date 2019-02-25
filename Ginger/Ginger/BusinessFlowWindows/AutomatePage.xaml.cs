@@ -75,7 +75,7 @@ namespace Ginger
     {
         BusinessFlow mBusinessFlow = null;
         Activity mCurrentActivity = null;
-
+        Context mContext = new Context();
         BusinessFlowPage mCurrentBusPage;
         VariablesPage mVariablesPage;
         ActivitiesGroupsPage mActivitiesGroupsPage;
@@ -103,6 +103,7 @@ namespace Ginger
 
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
             WorkSpace.UserProfile.PropertyChanged += UserProfilePropertyChanged;
+            mContext.Runner = App.AutomateTabGingerRunner;
             AddRunnerListeners();
             LoadBusinessFlowToAutomate(businessFlow);           
 
@@ -116,7 +117,7 @@ namespace Ginger
             btnResetFromCurrentAction.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 14);
             cboSpeed.Text = "0";
             App.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, App.AutomateTabGingerRunner, Ginger.Run.GingerRunner.Fields.RunInSimulationMode);
-            AppAgentsMappingExpander2Frame.Content = new ApplicationAgentsMapPage(App.AutomateTabGingerRunner);
+            AppAgentsMappingExpander2Frame.Content = new ApplicationAgentsMapPage(mContext);
             SetExpanders();
             //Bind between Menu expanders and actual grid expanders
             App.ObjFieldBinding(BFVariablesExpander, Expander.IsExpandedProperty, BFVariablesExpander2, "IsExpanded");
@@ -172,6 +173,9 @@ namespace Ginger
                     break;
                 case AutomateEventArgs.eEventType.ClearAutomate:
                     RemoveCurrentBusinessFlow();
+                    break;
+                case AutomateEventArgs.eEventType.UpdateAppAgentsMapping:
+                    UpdateApplicationsAgentsMapping();
                     break;
                 case AutomateEventArgs.eEventType.SetupRunnerForExecution:
                     SetAutomateTabRunnerForExecution();
@@ -861,6 +865,7 @@ namespace Ginger
             {
                 RemoveCurrentBusinessFlow();
                 mBusinessFlow = businessFlowToLoad;
+                mContext.BusinessFlow = mBusinessFlow;
                 WorkSpace.Instance.BusinessFlowInContext = mBusinessFlow;
                 if (businessFlowToLoad != null)
                 {                    

@@ -52,18 +52,18 @@ namespace Ginger
         GenericWindow mWin;
         object mObj;
         string mAttrName;
-        Context mContextItems;
+        Context mContext;
         ValueExpression mVE = null;
 
         static List<HighlightingRule> mHighlightingRules = null;
 
-        public ValueExpressionEditorPage(object obj, string AttrName, Context contextItems)
+        public ValueExpressionEditorPage(object obj, string AttrName, Context context)
         {
             InitializeComponent();
 
             mObj = obj;
             mAttrName = AttrName;
-            mContextItems = contextItems;
+            mContext = context;
 
             ValueUCTextEditor.Bind(obj, AttrName);
             ValueUCTextEditor.HideToolBar();
@@ -379,26 +379,26 @@ namespace Ginger
                 InsertAddNewVarTreeItem(solutionVars, eVariablesLevel.Solution);
             }
 
-            if (mContextItems!= null && mContextItems.BusinessFlow != null)
+            if (mContext!= null && mContext.BusinessFlow != null)
             {
                 TreeViewItem tviVars = new TreeViewItem();
                 tviVars.Items.IsLiveSorting = true;
                 SetItemView(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
                 xObjectsTreeView.Items.Add(tviVars);
 
-                foreach (VariableBase v in mContextItems.BusinessFlow.Variables.OrderBy("Name"))
+                foreach (VariableBase v in mContext.BusinessFlow.Variables.OrderBy("Name"))
                     InsertNewVarTreeItem(tviVars, v);
                 InsertAddNewVarTreeItem(tviVars, eVariablesLevel.BusinessFlow);
                 tviVars.IsExpanded = true;
 
-                if (mContextItems.BusinessFlow.CurrentActivity != null)
+                if (mContext.BusinessFlow.CurrentActivity != null)
                 {
                     TreeViewItem activityVars = new TreeViewItem();
                     activityVars.Items.IsLiveSorting = true;
                     SetItemView(activityVars, GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
                     xObjectsTreeView.Items.Add(activityVars);
 
-                    foreach (VariableBase v in mContextItems.BusinessFlow.CurrentActivity.Variables.OrderBy("Name"))
+                    foreach (VariableBase v in mContext.BusinessFlow.CurrentActivity.Variables.OrderBy("Name"))
                         InsertNewVarTreeItem(activityVars, v);
                     InsertAddNewVarTreeItem(activityVars, eVariablesLevel.Activity);
                 }
@@ -580,7 +580,7 @@ namespace Ginger
         {
             if (mVE == null)
             {
-                mVE = new ValueExpression(App.AutomateTabEnvironment, mContextItems.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+                mVE = new ValueExpression(App.AutomateTabEnvironment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
             }
             mVE.Value = this.ValueUCTextEditor.textEditor.Text;
             ValueCalculatedTextBox.Text = mVE.ValueCalculated;            

@@ -19,6 +19,7 @@ limitations under the License.
 using System.Windows;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 namespace Ginger.Actions
 {
@@ -33,9 +34,9 @@ namespace Ginger.Actions
         {
             InitializeComponent();
             mAct = act;
-            TextFileNameTextBox.Init(mAct.Context, mAct.GetOrCreateInputParam(ActFileOperations.Fields.SourceFilePath), true, true, UCValueExpression.eBrowserType.File);
-            DestinationFolderTextBox.Init(mAct.Context, mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder),true,true,UCValueExpression.eBrowserType.File);
-            xRunArgumentsTextBox.Init(mAct.Context, mAct.GetOrCreateInputParam(nameof(ActFileOperations.Arguments)), true, false);
+            TextFileNameTextBox.Init((Context)mAct.Context, mAct.GetOrCreateInputParam(ActFileOperations.Fields.SourceFilePath), true, true, UCValueExpression.eBrowserType.File);
+            DestinationFolderTextBox.Init((Context)mAct.Context, mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder),true,true,UCValueExpression.eBrowserType.File);
+            xRunArgumentsTextBox.Init((Context)mAct.Context, mAct.GetOrCreateInputParam(nameof(ActFileOperations.Arguments)), true, false);
 
             mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 

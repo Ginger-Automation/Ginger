@@ -30,6 +30,7 @@ namespace Ginger.BusinessFlowWindows
         {
             Automate,
             ClearAutomate,
+            UpdateAppAgentsMapping,
             SetupRunnerForExecution,
             RunCurrentAction,
             RunCurrentActivity,

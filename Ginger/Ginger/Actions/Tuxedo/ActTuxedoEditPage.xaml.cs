@@ -45,14 +45,14 @@ namespace Ginger.Actions.Tuxedo
             App.ObjFieldBinding(PCPath, TextBox.TextProperty, mAct.PCPath, ActInputValue.Fields.Value);
             App.ObjFieldBinding(PreComamndTextBox, TextBox.TextProperty, mAct.PreCommand, ActInputValue.Fields.Value);            
              
-            UnixPath.Init(mAct.Context, mAct.UnixPath);
-            HostUCVE.Init(mAct.Context, mAct.Host);
-            Port.Init(mAct.Context, mAct.Port);            
-            UserName.Init(mAct.Context, mAct.UserName);
-            Password.Init(mAct.Context, mAct.Password);                        
+            UnixPath.Init((Context)mAct.Context, mAct.UnixPath);
+            HostUCVE.Init((Context)mAct.Context, mAct.Host);
+            Port.Init((Context)mAct.Context, mAct.Port);            
+            UserName.Init((Context)mAct.Context, mAct.UserName);
+            Password.Init((Context)mAct.Context, mAct.Password);                        
 
-            PrivateKey.Init(mAct.Context, mAct.PrivateKey);
-            KeyPassPhrase.Init(mAct.Context, mAct.PrivateKeyPassPhrase);
+            PrivateKey.Init((Context)mAct.Context, mAct.PrivateKey);
+            KeyPassPhrase.Init((Context)mAct.Context, mAct.PrivateKeyPassPhrase);
 
             SetGridView();                 
         }
@@ -76,7 +76,7 @@ namespace Ginger.Actions.Tuxedo
          private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
          {
              ActInputValue AIV = (ActInputValue)UDParamsGrid.CurrentItem;
-             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, mAct.Context);
+             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, (Context)mAct.Context);
              VEEW.ShowAsWindow();
          }
 

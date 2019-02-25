@@ -42,10 +42,10 @@ namespace Ginger.Actions
     /// </summary>
     public partial class ActionsPage : Page
     {
-        Activity mCurrentActivity;
-        
+        Activity mCurrentActivity;        
         public General.RepositoryItemPageViewMode EditMode { get; set; }
         BusinessFlow mBusinessFlow;
+        Context mContext = new Context();
 
         public ActionsPage(Activity activity=null, BusinessFlow businessFlow=null, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
         {
@@ -257,7 +257,8 @@ namespace Ginger.Actions
 
         public void UpdateParentBusinessFlow(BusinessFlow bf)
         {            
-            mBusinessFlow = bf;            
+            mBusinessFlow = bf;
+            mContext.BusinessFlow = bf;
             if (mBusinessFlow != null)
             {
                 if (mBusinessFlow.CurrentActivity == null)
@@ -274,7 +275,7 @@ namespace Ginger.Actions
 
         private void AddToRepository(object sender, RoutedEventArgs e)
         {
-            Repository.SharedRepositoryOperations.AddItemsToRepository(grdActions.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
+          (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, grdActions.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
         } 
 
         private void RefreshGrid(object sender, RoutedEventArgs e)

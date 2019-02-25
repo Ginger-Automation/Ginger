@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
@@ -327,7 +328,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         Margin = new Thickness(10, 0, 0, 0)
                     };
 
-                    txtBox.Init(mAction.Context, mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
+                    txtBox.Init((Context)mAction.Context, mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
                     ((Ginger.Actions.UCValueExpression)txtBox).ValueTextBox.Text = element.PossibleValues.ElementAt(0);
                     dynamicPanel.Children.Add(elementLabel);
                     dynamicPanel.Children.Add(txtBox);
@@ -484,14 +485,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 case eLocateBy.POMElement:                 
                     //ElementTypeComboBox.IsEnabled = false;
-                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAction, nameof(ActUIElement.ElementType), mAction, nameof(ActUIElement.ElementLocateValue));
+                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage((Context)mAction.Context, mAction, nameof(ActUIElement.ElementType), mAction, nameof(ActUIElement.ElementLocateValue));
                     locateByPOMElementPage.ElementChangedPageEvent -= POMElementChanged;
                     locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
                     return locateByPOMElementPage;
                 case eLocateBy.ByXY:                   
                     return new LocateByXYEditPage(mAction, mAction, ActUIElement.Fields.ElementLocateValue);
                 default:                 
-                    return new LocateValueEditPage(mAction, ActUIElement.Fields.ElementLocateValue);
+                    return new LocateValueEditPage((Context)mAction.Context, mAction, ActUIElement.Fields.ElementLocateValue);
             }
         }
 

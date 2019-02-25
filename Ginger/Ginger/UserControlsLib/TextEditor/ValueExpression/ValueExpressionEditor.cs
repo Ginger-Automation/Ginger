@@ -16,19 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Plugin.Core;
+using Ginger.Actions;
+using Ginger.UserControlsLib.TextEditor.Common;
+using GingerCore.Variables;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using ICSharpCode.AvalonEdit.Folding;
-using Ginger.UserControlsLib.TextEditor.Common;
-using GingerCore.Variables;
 using System.Windows.Media.Imaging;
-using Ginger.Actions;
-using ICSharpCode.AvalonEdit.CodeCompletion;
-using GingerPlugIns.TextEditorLib;
-using Amdocs.Ginger.Plugin.Core;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {

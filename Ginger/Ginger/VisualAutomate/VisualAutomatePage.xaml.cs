@@ -105,7 +105,7 @@ namespace Ginger.VisualAutomate
                 ActUIElement AUIE = (ActUIElement)act;
                 if (AUIE.ElementAction == ActUIElement.eElementAction.SetValue)
                 {
-                    ValueExpressionEditorPage pa = new ValueExpressionEditorPage(act, ActUIElement.Fields.Value, act.Context);
+                    ValueExpressionEditorPage pa = new ValueExpressionEditorPage(act, ActUIElement.Fields.Value, (Context)act.Context);
                     pa.ShowAsWindow(eWindowShowStyle.Dialog);
                     bOpenActionEditPage = false;
                 }

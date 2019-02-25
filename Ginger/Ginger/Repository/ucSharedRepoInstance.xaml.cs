@@ -42,6 +42,7 @@ namespace Ginger
         BusinessFlow mBusinessFlow = null;
         bool mLinkIsByExternalID = false;
         bool mLinkIsByParentID = false;
+        Context mContext = new Context();
 
         public ucSharedRepoInstance()
         {
@@ -55,6 +56,7 @@ namespace Ginger
         {
             mItem = item;
             mBusinessFlow = containingBusinessFlow;
+            mContext.BusinessFlow = mBusinessFlow;
             SetRepoLinkStatus();
         }
 
@@ -137,17 +139,15 @@ namespace Ginger
                 }
             }
             else
-            {
-                //App.LocalRepository.AddItemToRepositoryWithPreChecks(mItem, mBusinessFlow);
-                Repository.SharedRepositoryOperations.AddItemToRepository(mItem);
+            {                
+                (new Repository.SharedRepositoryOperations()).AddItemToRepository(mContext, mItem);
                 SetRepoLinkStatus();            
             }
         }
 
         private void UpdateRepoBtn_Click(object sender, RoutedEventArgs e)
         {
-            //App.LocalRepository.AddItemToRepositoryWithPreChecks(mItem, mBusinessFlow);
-            Repository.SharedRepositoryOperations.AddItemToRepository(mItem);
+            (new Repository.SharedRepositoryOperations()).AddItemToRepository(mContext, mItem);
             SetRepoLinkStatus();
         }
     }

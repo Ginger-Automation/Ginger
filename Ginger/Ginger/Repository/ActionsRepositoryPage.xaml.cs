@@ -42,6 +42,7 @@ namespace Ginger.Repository
     {
         readonly RepositoryFolder<Act> mActionsFolder;
         BusinessFlow mBusinessFlow;
+        Context mContext = new Context();
 
         public ActionsRepositoryPage(RepositoryFolder<Act> actionsFolder, BusinessFlow businessFlow)
         {
@@ -49,6 +50,7 @@ namespace Ginger.Repository
 
             mActionsFolder = actionsFolder;
             mBusinessFlow = businessFlow;
+            mContext.BusinessFlow = mBusinessFlow;
             SetActionsGridView();
             SetGridAndTreeData();
         }
@@ -56,6 +58,7 @@ namespace Ginger.Repository
         public void UpdateBusinessFlow(BusinessFlow bf)
         {
             mBusinessFlow = bf;
+            mContext.BusinessFlow = mBusinessFlow;
         }
 
 
@@ -86,7 +89,7 @@ namespace Ginger.Repository
             if (dragedItem != null)
             {
                 // App.LocalRepository.AddItemToRepositoryWithPreChecks(dragedItem, null);
-                SharedRepositoryOperations.AddItemToRepository(dragedItem);
+                (new SharedRepositoryOperations()).AddItemToRepository(mContext, dragedItem);
                 //refresh and select the item
                 try
                {

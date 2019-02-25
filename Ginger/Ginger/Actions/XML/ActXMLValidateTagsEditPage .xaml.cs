@@ -46,7 +46,7 @@ namespace Ginger.Actions.XML
 
             xDocumentTypeComboBox.Init(mAct, ActXMLTagValidation.Fields.DocumentType, typeof(ActXMLTagValidation.eDocumentType));
      
-            XMLFileTextBox.Init(mAct.Context, mAct.InputFile);
+            XMLFileTextBox.Init((Context)mAct.Context, mAct.InputFile);
       
             SetGridView();
 
@@ -76,7 +76,7 @@ namespace Ginger.Actions.XML
          private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
          {
              ActInputValue AIV = (ActInputValue)DynamicParametersGrid.CurrentItem;
-             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, mAct.Context);
+             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, (Context)mAct.Context);
              VEEW.ShowAsWindow();
          }
 

@@ -46,6 +46,7 @@ namespace Ginger.BusinessFlowFolder
     public partial class ActivitiesPage : Page
     {
         BusinessFlow mBusinessFlow;
+        Context mContext = new Context();
 
         public ActivitiesPage(BusinessFlow businessFlow, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.SharedReposiotry)
         {
@@ -114,6 +115,7 @@ namespace Ginger.BusinessFlowFolder
             if (mBusinessFlow != bf)
             {
                 mBusinessFlow = bf;
+                mContext.BusinessFlow = mBusinessFlow;
                 if (mBusinessFlow != null)
                     mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
             }
@@ -305,10 +307,8 @@ namespace Ginger.BusinessFlowFolder
         }
 
         private void AddToRepository(object sender, RoutedEventArgs e)
-
         {
-            Repository.SharedRepositoryOperations.AddItemsToRepository(grdActivities.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
-          
+            (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, grdActivities.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
         }
 
         private void EditActivity(object sender, RoutedEventArgs e)

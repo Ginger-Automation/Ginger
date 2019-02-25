@@ -42,12 +42,13 @@ namespace Ginger.Activities
     public partial class ActivitiesGroupsPage : Page
     {
         BusinessFlow mBusinessFlow;
-
+        Context mContext = new Context();
         public ActivitiesGroupsPage(BusinessFlow businessFlow, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.SharedReposiotry)
         {
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
+            mContext.BusinessFlow = mBusinessFlow;
             if (businessFlow != null)
             {
                 mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
@@ -119,6 +120,7 @@ namespace Ginger.Activities
             if (bf != mBusinessFlow)
             {
                 mBusinessFlow = bf;
+                mContext.BusinessFlow = mBusinessFlow;
                 if (mBusinessFlow != null)
                     mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
             }
@@ -240,7 +242,7 @@ namespace Ginger.Activities
             }
             itemsToUpload.AddRange(listOfGroups);
 
-            SharedRepositoryOperations.AddItemsToRepository(itemsToUpload);
+            (new SharedRepositoryOperations()).AddItemsToRepository(mContext, itemsToUpload);
         }
 
         private void RefereshFromALM(object sender, RoutedEventArgs e)

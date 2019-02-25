@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -46,8 +47,8 @@ namespace Ginger.Actions
             App.ObjFieldBinding(CommandTextBox, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.Command);
             App.ObjFieldBinding(ScriptNameComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ScriptName);
             App.ObjFieldBinding(txtWait, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.WaitTime);
-            xDelimiterVE.BindControl(actConsoleCommand, nameof(ActConsoleCommand.Delimiter));
-            txtExpected.Init(mActConsoleCommand.Context, mActConsoleCommand, ActConsoleCommand.Fields.ExpString);           
+            xDelimiterVE.BindControl((Context)actConsoleCommand.Context, actConsoleCommand, nameof(ActConsoleCommand.Delimiter));
+            txtExpected.Init((Context)mActConsoleCommand.Context, mActConsoleCommand, ActConsoleCommand.Fields.ExpString);           
         }
 
         private List<object> GetActionListPlatform()

@@ -587,7 +587,7 @@ namespace Ginger
             else
                 SourceControlIntegration.GetLatest( WorkSpace.UserProfile.Solution.Folder,  WorkSpace.UserProfile.Solution.SourceControl);
 
-            App.UpdateApplicationsAgentsMapping(false);
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping,null);
             Reporter.HideStatusMessage();
 
             AutoLogProxy.UserOperationEnd();

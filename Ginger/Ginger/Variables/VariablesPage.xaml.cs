@@ -16,24 +16,22 @@ limitations under the License.
 */
 #endregion
 
-using GingerWPF.DragDropLib;
-using Ginger.Environments;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.Repository;
+using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Variables;
+using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Ginger.BusinessFlowFolder;
-using Amdocs.Ginger.Common;
-using System.Linq;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
-using Ginger.Repository;
-using Ginger.SolutionGeneral;
 
 namespace Ginger.Variables
 {
@@ -51,6 +49,7 @@ namespace Ginger.Variables
         private object mVariablesParentObj;
        
         readonly General.RepositoryItemPageViewMode mEditMode;
+        Context mContext = new Context();
 
         public eVariablesLevel VariablesLevel
         {
@@ -150,6 +149,7 @@ namespace Ginger.Variables
         public void UpdateBusinessFlow(BusinessFlow bf)
         {
             mVariablesParentObj = bf;
+            mContext.BusinessFlow = (BusinessFlow)mVariablesParentObj;
             if (mVariablesParentObj != null)
             {
                 LoadGridData();
@@ -293,8 +293,7 @@ namespace Ginger.Variables
 
         private void AddToRepository(object sender, RoutedEventArgs e)
         {          
-            Repository.SharedRepositoryOperations.AddItemsToRepository(grdVariables.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
-         
+          (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, grdVariables.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());         
         }
 
         private void RefreshGrid(object sender, RoutedEventArgs e)

@@ -40,14 +40,14 @@ namespace Ginger.Actions.WebServices
             InitializeComponent();
 
             mActREST = a;
-            URLUCValueExpression.Init(mActREST.Context, mActREST.EndPointURL);
-            URLDomainUCValueExpression.Init(mActREST.Context, mActREST.URLDomain, ActInputValue.Fields.Value);
-            URLPasswordUCValueExpression.Init(mActREST.Context, mActREST.URLPass, ActInputValue.Fields.Value);
-            URLUserUCValueExpression.Init(mActREST.Context, mActREST.URLUser, ActInputValue.Fields.Value);
-            RequestBodyUCValueExpression.Init(mActREST.Context, mActREST.RequestBody);
-            RequestRespondXmlSaveTextBox.Init(mActREST.Context, mActREST.SaveRequestResponseFolderPath);
+            URLUCValueExpression.Init((Context)mActREST.Context, mActREST.EndPointURL);
+            URLDomainUCValueExpression.Init((Context)mActREST.Context, mActREST.URLDomain, ActInputValue.Fields.Value);
+            URLPasswordUCValueExpression.Init((Context)mActREST.Context, mActREST.URLPass, ActInputValue.Fields.Value);
+            URLUserUCValueExpression.Init((Context)mActREST.Context, mActREST.URLUser, ActInputValue.Fields.Value);
+            RequestBodyUCValueExpression.Init((Context)mActREST.Context, mActREST.RequestBody);
+            RequestRespondXmlSaveTextBox.Init((Context)mActREST.Context, mActREST.SaveRequestResponseFolderPath);
 
-            TemplateFileNameFileBrowser.Init(mActREST.Context, mActREST.TemplateFile); 
+            TemplateFileNameFileBrowser.Init((Context)mActREST.Context, mActREST.TemplateFile); 
             App.FillComboFromEnumVal(RequestTypeComboBox, mActREST.RequestType);
             App.ObjFieldBinding(RequestTypeComboBox, ComboBox.TextProperty, mActREST,  ActREST.Fields.RequestType);
 
@@ -102,14 +102,14 @@ namespace Ginger.Actions.WebServices
         private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)DynamicElementsGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, mActREST.Context);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, (Context)mActREST.Context);
             VEEW.ShowAsWindow();
         }
 
         private void HttpHeadersInputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)HttpHeadersGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage (AIV, ActInputValue.Fields.Value, mActREST.Context);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage (AIV, ActInputValue.Fields.Value, (Context)mActREST.Context);
             VEEW.ShowAsWindow ();
         }
 

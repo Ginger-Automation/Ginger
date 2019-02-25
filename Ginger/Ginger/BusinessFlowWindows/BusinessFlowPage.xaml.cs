@@ -47,8 +47,9 @@ namespace Ginger.BusinessFlowFolder
         RepositoryPage mReposiotryPage;
         ActivitiesGroupsPage mActivitiesGroupsPage;
         VariablesPage mVariablesPage;
-        ActivitiesPage mActivitiesPage;    
-        
+        ActivitiesPage mActivitiesPage;
+        Context mContext;
+
         GridLength mlastRepositoryColWidth = new GridLength(150);
         GridLength mMinColsExpanderSize = new GridLength(35);
         GenericWindow _pageGenericWin = null;
@@ -62,7 +63,8 @@ namespace Ginger.BusinessFlowFolder
             InitializeComponent();
 
             mBusinessFlow = BizFlow;
-            RunDescritpion.Init(BizFlow, BusinessFlow.Fields.RunDescription);
+            mContext = new Context() { BusinessFlow = BizFlow };
+            RunDescritpion.Init(mContext, BizFlow, BusinessFlow.Fields.RunDescription);
             mEditMode = editMode;
             LoadBizFlowData();
             App.PropertyChanged += AppPropertychanged;

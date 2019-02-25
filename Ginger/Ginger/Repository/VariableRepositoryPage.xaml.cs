@@ -40,6 +40,7 @@ namespace Ginger.Repository
     {
         readonly RepositoryFolder<VariableBase> mVariablesFolder;
         BusinessFlow mBusinessFlow;
+        Context mContext = new Context();
 
         public VariablesRepositoryPage(RepositoryFolder<VariableBase> variablesFolder, BusinessFlow businessFlow)
         {
@@ -47,6 +48,7 @@ namespace Ginger.Repository
 
             mVariablesFolder = variablesFolder;
             mBusinessFlow = businessFlow;
+            mContext.BusinessFlow = mBusinessFlow;
 
             SetVariablesGridView();
             SetGridAndTreeData();
@@ -55,6 +57,7 @@ namespace Ginger.Repository
         public void UpdateBusinessFlow(BusinessFlow bf)
         {
             mBusinessFlow = bf;
+            mContext.BusinessFlow = mBusinessFlow;
         }
 
         private void SetGridAndTreeData()
@@ -157,9 +160,7 @@ namespace Ginger.Repository
             VariableBase dragedItem = (VariableBase)((DragInfo)sender).Data;
             if (dragedItem != null)
             {
-                //App.LocalRepository.AddItemToRepositoryWithPreChecks(dragedItem, null);
-
-                SharedRepositoryOperations.AddItemToRepository(dragedItem);
+                (new SharedRepositoryOperations()).AddItemToRepository(mContext, dragedItem);
 
                 //refresh and select the item
                 try

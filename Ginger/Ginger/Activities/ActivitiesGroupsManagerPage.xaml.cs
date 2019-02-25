@@ -43,7 +43,7 @@ namespace Ginger.Activities
     {
         BusinessFlow mBusinessFlow;
         ActivitiesGroup mSelectedGroup;
-
+        Context mContext = new Context();
         GenericWindow _pageGenericWin = null;
 
         public ActivitiesGroupsManagerPage(BusinessFlow businessFlow)
@@ -51,6 +51,7 @@ namespace Ginger.Activities
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
+            mContext.BusinessFlow = mBusinessFlow;
             mBusinessFlow.SaveBackup();            
 
             mBusinessFlow.AttachActivitiesGroupsAndActivities();
@@ -209,25 +210,7 @@ namespace Ginger.Activities
 
         private void AddToRepository(object sender, RoutedEventArgs e)
         {
-            Repository.SharedRepositoryOperations.AddItemsToRepository(grdGroups.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
-            //if (grdGroups.Grid.SelectedItems != null)
-            //{
-            //    //foreach (ActivitiesGroup group in grdGroups.Grid.SelectedItems)
-            //    //{
-            //    //    //add the Group to repository
-            //    //    if (App.LocalRepository.AddItemToRepository(group, false) == true)
-            //    //    {
-            //    //        //add the Group Activities to repository
-            //    //        foreach (ActivityIdentifiers actIdent in group.ActivitiesIdentifiers)
-            //    //        {
-            //    //            //check that all used variables exist in the Activity (and not taken from the BF)
-            //    //            if (actIdent.IdentifiedActivity.WarnFromMissingVariablesUse( WorkSpace.UserProfile.Solution.Variables,mBusinessFlow.Variables, false) == true) continue;
-
-            //    //            App.LocalRepository.AddItemToRepository(actIdent.IdentifiedActivity, false);
-            //    //        }
-            //    //    }
-            //    //}
-            //}
+            (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, grdGroups.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
         }
 
         private void ExportToALM(object sender, RoutedEventArgs e)
