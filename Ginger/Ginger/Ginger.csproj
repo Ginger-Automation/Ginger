@@ -424,6 +424,7 @@
     <Compile Include="Actions\ActionConversion\ConversionConfigurationWzardPage.xaml.cs">
       <DependentUpon>ConversionConfigurationWzardPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionConversion\BooleanToVisiblityCollapsedConverter.cs" />
     <Compile Include="Actions\ActionConversion\SelectActionWzardPage.xaml.cs">
       <DependentUpon>SelectActionWzardPage.xaml</DependentUpon>
     </Compile>

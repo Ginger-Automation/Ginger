@@ -47,6 +47,19 @@ namespace Ginger.Actions.ActionConversion
 
         public bool NewActivityChecked { get; set; }
 
+        private bool mSameActivityChecked = true;
+        public bool SameActivityChecked
+        {
+            get {
+                return mSameActivityChecked;
+            }
+            set
+            {
+                mSameActivityChecked = value;
+                NewActivityChecked = !value;
+            }
+        }
+
         public bool DefaultTargetAppChecked { get; set; }
 
         public string SelectedTargetApp { get; set; }
@@ -73,9 +86,9 @@ namespace Ginger.Actions.ActionConversion
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Actions Conversion Introduction", Page: new WizardIntroPage("/Actions/ActionConversion/ActionConversionIntro.md"));
 
-            AddPage(Name: "Select Activity for Conversion", Title: "Select Activity for Conversion", SubTitle: "Select Activity for Conversion", Page: new SelectActivityWzardPage());
+            AddPage(Name: "Select Activities for Conversion", Title: "Select Activities for Conversion", SubTitle: "Select Activities for Conversion", Page: new SelectActivityWzardPage());
 
-            AddPage(Name: "Select Action for Conversion", Title: "Select Action for Conversion", SubTitle: "Select Action for Conversion", Page: new SelectActionWzardPage());
+            AddPage(Name: "Select Legacy Actions Type for Conversion", Title: "Select Legacy Actions Type for Conversion", SubTitle: "Select Legacy Actions Type for Conversion", Page: new SelectActionWzardPage());
 
             AddPage(Name: "Conversion Configurations", Title: "Conversion Configurations", SubTitle: "Conversion Configurations", Page: new ConversionConfigurationWzardPage());
         }
@@ -106,8 +119,7 @@ namespace Ginger.Actions.ActionConversion
                     utils.ActUIElementElementLocateValueField = nameof(ActUIElement.ElementLocateValue);
                     utils.ActUIElementElementTypeField = nameof(ActUIElement.ElementType);
                     utils.ActUIElementClassName = nameof(ActUIElement);
-                    utils.ConvertToActions(NewActivityChecked, BusinessFlow, ActionToBeConverted, DefaultTargetAppChecked, SelectedTargetApp, ConvertToPOMAction, SelectedPOMObjectName);
-                    Reporter.HideStatusMessage();
+                    utils.ConvertToActions(NewActivityChecked, BusinessFlow, ActionToBeConverted, DefaultTargetAppChecked, SelectedTargetApp, ConvertToPOMAction, SelectedPOMObjectName);                    
                 }
                 catch (Exception ex)
                 {
@@ -116,6 +128,7 @@ namespace Ginger.Actions.ActionConversion
                 }
                 finally
                 {
+                    Reporter.HideStatusMessage();
                     Mouse.OverrideCursor = null;
                 }
             }

@@ -68,32 +68,10 @@ namespace Ginger.Actions.ActionConversion
 
             // fetching list of selected convertible activities from the first grid
             List<Activity> lstSelectedActivities = mWizard.BusinessFlow.Activities.Where(x => x.SelectedForConversion).ToList();
-
             if (lstSelectedActivities.Count != 0)
             {
-                foreach (Activity convertibleActivity in lstSelectedActivities)
-                {
-                    int count = 1;
-                    foreach (Act act in convertibleActivity.Acts)
-                    {
-                        if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
-                            (act.Active))
-                        {
-                            ActionConversionHandler newConvertibleActionType = new ActionConversionHandler();
-                            newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
-                            newConvertibleActionType.SourceActionType = act.GetType();
-                            newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
-                            if (newConvertibleActionType.TargetActionType == null)
-                                continue;
-                            newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
-                            newConvertibleActionType.ActionCount = count;
-                            newConvertibleActionType.Actions.Add(act);
-                            newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
-                            mWizard.ActionToBeConverted.Add(newConvertibleActionType);
-                            count++;
-                        }
-                    }
-                }
+                ActionConversionUtils utils = new ActionConversionUtils();
+                mWizard.ActionToBeConverted = utils.GetConvertableActivityActions(lstSelectedActivities);
                 if (mWizard.ActionToBeConverted.Count != 0)
                 {
                     xGridConvertibleActions.DataSourceList = mWizard.ActionToBeConverted;

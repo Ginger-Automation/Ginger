@@ -868,7 +868,7 @@ namespace Ginger
             AutoLogProxy.UserOperationStart("btnConversionMechanism_Click");
             
 
-            WizardWindow.ShowWizard(new ActionsConversionWizard());
+            WizardWindow.ShowWizard(new ActionsConversionWizard(), 900, 700);
             AutoLogProxy.UserOperationEnd();
         }
 

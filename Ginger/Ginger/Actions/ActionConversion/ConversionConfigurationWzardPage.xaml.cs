@@ -16,15 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.ValidationRules;
 using Ginger.Actions._Common.ActUIElementLib;
 using GingerCore.Actions.Common;
 using GingerWPF.WizardLib;
 using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,79 +32,10 @@ namespace Ginger.Actions.ActionConversion
     public partial class ConversionConfigurationWzardPage : Page, IWizardPage
     {
         ActionsConversionWizard mWizard;
-        bool mDefaultTaretApp = true;
-        public bool DefaultTaretApp
-        {
-            get
-            {
-                return mDefaultTaretApp;
-            }
-            set
-            {
-                mDefaultTaretApp = value;
-            }
-        }
-
-        bool mNewActivityChecked = false;
-        public bool NewActivityChecked
-        {
-            get
-            {
-                return mNewActivityChecked;
-            }
-            set
-            {
-                mNewActivityChecked = value;
-                
-            }
-        }
-
-        bool mSameActivityChecked = true;
-        public bool SameActivityChecked
-        {
-            get
-            {
-                return mSameActivityChecked;
-            }
-            set
-            {
-                mSameActivityChecked = value;
-                OnNewActivityChecked(!value);
-            }
-        }
-
-        bool mPOMChecked = false;
-        public bool POMChecked
-        {
-            get
-            {
-                return mPOMChecked;
-            }
-            set
-            {
-                mPOMChecked = value;
-                OnPOMChecked(value);
-            }
-        }
-
-        string mSelectedTargetApp = string.Empty;
-        public string SelectedTargetApp
-        {
-            get
-            {
-                return mSelectedTargetApp;
-            }
-            set
-            {
-                mSelectedTargetApp = value;
-                mWizard.SelectedTargetApp = value;
-            }
-        }
 
         public ConversionConfigurationWzardPage()
         {
             InitializeComponent();
-            DataContext = this;
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -129,60 +55,25 @@ namespace Ginger.Actions.ActionConversion
         
         private void Init(WizardEventArgs WizardEventArgs)
         {
-            xCmbTargetApp.BindControl(mWizard.BusinessFlow.TargetApplications.Select(x => x.Name).ToList());
-            if ((xCmbTargetApp != null) && (xCmbTargetApp.Items.Count > 0))
-            {
-                xCmbTargetApp.SelectedIndex = 0;
-            }
             mWizard.DefaultTargetAppChecked = Convert.ToBoolean(xChkDefaultTargetApp.IsChecked);
-
-            xGrdPane.RowDefinitions[2].Height = new GridLength(0);
-
+            
             LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(null, nameof(ActUIElement.ElementType), mWizard, nameof(mWizard.SelectedPOMObjectName), true);
             xLocateValueEditFrame.Content = locateByPOMElementPage;
-        }
-
-        private void OnDefaultTargetAppChecked(object sender, RoutedEventArgs e)
-        {
-            if ((xCmbTargetApp != null) && (xCmbTargetApp.Items.Count > 0))
-            {
-                mWizard.DefaultTargetAppChecked = Convert.ToBoolean(xChkDefaultTargetApp.IsChecked);
-                xCmbTargetApp.IsEnabled = true;
-                xBtnRefresh.IsEnabled = true;
-            }
+            DataContext = mWizard;
+            BindTargetApplication();
         }
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
+            BindTargetApplication();
+        }
+
+        private void BindTargetApplication()
+        {
             xCmbTargetApp.BindControl(mWizard.BusinessFlow.TargetApplications.Select(x => x.Name).ToList());
             if ((xCmbTargetApp != null) && (xCmbTargetApp.Items.Count > 0))
             {
                 xCmbTargetApp.SelectedIndex = 0;
-            }
-        }
-        
-        private void OnNewActivityChecked(bool isChecked)
-        {
-            if (mWizard != null)
-            {
-                mWizard.NewActivityChecked = isChecked;
-                if (isChecked)
-                {
-                    xGrdPane.RowDefinitions[2].Height = new GridLength(1, GridUnitType.Auto);
-                }
-                else
-                {
-                    xGrdPane.RowDefinitions[2].Height = new GridLength(0);
-                }
-            }
-        }
-
-        private void OnPOMChecked(bool isChecked)
-        {
-            if (mWizard != null)
-            {
-                mWizard.ConvertToPOMAction = isChecked;
-                xLocateValueEditFrame.IsEnabled = mWizard.ConvertToPOMAction;
             }
         }
     }

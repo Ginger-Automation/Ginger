@@ -131,40 +131,47 @@ namespace Amdocs.Ginger.CoreNET
         /// <returns></returns>
         public Act GetMappedElementFromPOMForAction(Act newActUIElement, string pomModelObject)
         {
-            ObservableList<ApplicationPOMModel> pomLst = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
-            ApplicationPOMModel selectedPOM = pomLst.Where(x => x.Guid.ToString() == pomModelObject).SingleOrDefault();
-
-            ElementInfo elementInfo = null;
-            string locateValue = Convert.ToString(newActUIElement.GetType().GetProperty(ActUIElementLocateValueField).GetValue(newActUIElement, null));
-            eLocateBy elementLocateBy = GeteLocateByEnumItem(Convert.ToString(newActUIElement.GetType().GetProperty(ActUIElementElementLocateByField).GetValue(newActUIElement, null)));
-
-            var matchingExistingLocator = selectedPOM.MappedUIElements.Where(x => x.Locators.Any(y => y.LocateBy == elementLocateBy && y.LocateValue == locateValue));
-            if(matchingExistingLocator != null)
+            try
             {
-                elementInfo = matchingExistingLocator.FirstOrDefault();
-                if (elementInfo != null)
+                ObservableList<ApplicationPOMModel> pomLst = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+                ApplicationPOMModel selectedPOM = pomLst.Where(x => x.Guid.ToString() == pomModelObject).SingleOrDefault();
+
+                ElementInfo elementInfo = null;
+                string locateValue = Convert.ToString(newActUIElement.GetType().GetProperty(ActUIElementLocateValueField).GetValue(newActUIElement, null));
+                eLocateBy elementLocateBy = GeteLocateByEnumItem(Convert.ToString(newActUIElement.GetType().GetProperty(ActUIElementElementLocateByField).GetValue(newActUIElement, null)));
+
+                var matchingExistingLocator = selectedPOM.MappedUIElements.Where(x => x.Locators.Any(y => y.LocateBy == elementLocateBy && y.LocateValue.ToLower().Trim().Equals(locateValue.ToLower().Trim())));
+                if (matchingExistingLocator != null)
                 {
-                    PropertyInfo pLocateBy = newActUIElement.GetType().GetProperty(ActUIElementElementLocateByField);
-                    if (pLocateBy != null)
+                    elementInfo = matchingExistingLocator.FirstOrDefault();
+                    if (elementInfo != null)
                     {
-                        if (pLocateBy.PropertyType.IsEnum)
+                        PropertyInfo pLocateBy = newActUIElement.GetType().GetProperty(ActUIElementElementLocateByField);
+                        if (pLocateBy != null)
                         {
-                            pLocateBy.SetValue(newActUIElement, Enum.Parse(pLocateBy.PropertyType, "POMElement"));
+                            if (pLocateBy.PropertyType.IsEnum)
+                            {
+                                pLocateBy.SetValue(newActUIElement, Enum.Parse(pLocateBy.PropertyType, "POMElement"));
+                            }
+                        }
+
+                        PropertyInfo pLocateVal = newActUIElement.GetType().GetProperty(ActUIElementElementLocateValueField);
+                        if (pLocateVal != null)
+                        {
+                            pLocateVal.SetValue(newActUIElement, string.Format("{0}_{1}", selectedPOM.Guid.ToString(), elementInfo.Guid.ToString()));
+                        }
+
+                        PropertyInfo pElementType = newActUIElement.GetType().GetProperty(ActUIElementElementTypeField);
+                        if (pElementType != null && pElementType.PropertyType.IsEnum)
+                        {
+                            pElementType.SetValue(newActUIElement, Enum.Parse(pElementType.PropertyType, Convert.ToString(elementInfo.ElementTypeEnum)));
                         }
                     }
-
-                    PropertyInfo pLocateVal = newActUIElement.GetType().GetProperty(ActUIElementElementLocateValueField);
-                    if (pLocateVal != null)
-                    {
-                        pLocateVal.SetValue(newActUIElement, string.Format("{0}_{1}", selectedPOM.Guid.ToString(), elementInfo.Guid.ToString()));
-                    }
-
-                    PropertyInfo pElementType = newActUIElement.GetType().GetProperty(ActUIElementElementTypeField);
-                    if (pElementType != null && pElementType.PropertyType.IsEnum)
-                    {
-                        pElementType.SetValue(newActUIElement, Enum.Parse(pElementType.PropertyType, Convert.ToString(elementInfo.ElementTypeEnum)));
-                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Get Mapped Element From POM", ex);
             }
             return newActUIElement;
         }
@@ -177,6 +184,47 @@ namespace Amdocs.Ginger.CoreNET
         {
             eLocateBy item = (eLocateBy)System.Enum.Parse(typeof(eLocateBy), sEnum);
             return item;
+        }
+
+        /// <summary>
+        /// This method will give the list of convertable action 
+        /// </summary>
+        /// <param name="lstSelectedActivities"></param>
+        /// <returns></returns>
+        public ObservableList<ActionConversionHandler> GetConvertableActivityActions(List<Activity> lstSelectedActivities)
+        {
+            ObservableList<ActionConversionHandler> lst = new ObservableList<ActionConversionHandler>();
+            try
+            {
+                foreach (Activity convertibleActivity in lstSelectedActivities)
+                {
+                    int count = 1;
+                    foreach (Act act in convertibleActivity.Acts)
+                    {
+                        if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
+                            (act.Active))
+                        {
+                            ActionConversionHandler newConvertibleActionType = new ActionConversionHandler();
+                            newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
+                            newConvertibleActionType.SourceActionType = act.GetType();
+                            newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
+                            if (newConvertibleActionType.TargetActionType == null)
+                                continue;
+                            newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
+                            newConvertibleActionType.ActionCount = count;
+                            newConvertibleActionType.Actions.Add(act);
+                            newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
+                            lst.Add(newConvertibleActionType);
+                            count++;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Getting convertable actions from activities", ex);
+            }
+            return lst;
         }
     }
 }

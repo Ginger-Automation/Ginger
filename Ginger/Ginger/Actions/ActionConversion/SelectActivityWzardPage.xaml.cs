@@ -63,19 +63,19 @@ namespace Ginger.Actions.ActionConversion
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.SelectedForConversion, WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" });
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ActivityName, WidthWeight = 15, Header = "Name of " + GingerDicser.GetTermResValue(eTermResKey.Activity) });
-            grdGroups.SetAllColumnsDefaultView(defView);
-            grdGroups.InitViewItems();
-            grdGroups.SetTitleLightStyle = true;
+            xGrdGroups.SetAllColumnsDefaultView(defView);
+            xGrdGroups.InitViewItems();
+            xGrdGroups.SetTitleLightStyle = true;
 
             if (mWizard.BusinessFlow.Activities.Where(x => x.SelectedForConversion == true).Count() != 0)
             {
                 mWizard.BusinessFlow.Activities.Where(x => x.SelectedForConversion == true).ToList().ForEach(x => { x.SelectedForConversion = false; });
             }
-            grdGroups.DataSourceList = GingerCore.General.ConvertListToObservableList(mWizard.BusinessFlow.Activities.Where(x => x.Active == true).ToList());
-            grdGroups.RowChangedEvent += grdGroups_RowChangedEvent;
-            grdGroups.Title = "Name of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " in '" + mWizard.BusinessFlow.Name + "'";
-            grdGroups.MarkUnMarkAllActive += MarkUnMarkAllActivities;
-            grdGroups.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
+            xGrdGroups.DataSourceList = GingerCore.General.ConvertListToObservableList(mWizard.BusinessFlow.Activities.Where(x => x.Active == true).ToList());
+            xGrdGroups.RowChangedEvent += grdGroups_RowChangedEvent;
+            xGrdGroups.Title = "Name of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " in '" + mWizard.BusinessFlow.Name + "'";
+            xGrdGroups.MarkUnMarkAllActive += MarkUnMarkAllActivities;
+            xGrdGroups.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
             {
                 ucGrid.eUcGridValidationRules.CheckedRowCount
             };
@@ -85,29 +85,21 @@ namespace Ginger.Actions.ActionConversion
         {
             if (mWizard.BusinessFlow != null)
             {
-                mWizard.BusinessFlow.CurrentActivity = (Activity)grdGroups.CurrentItem;
-                if (mWizard.BusinessFlow.CurrentActivity != null)
-                    ((Activity)mWizard.BusinessFlow.CurrentActivity).PropertyChanged += CurrentActivity_PropertyChanged;
+                mWizard.BusinessFlow.CurrentActivity = (Activity)xGrdGroups.CurrentItem;
             }
-        }
-
-        private void CurrentActivity_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "HandlerType")
-                grdGroups.setDefaultView();
         }
 
         private void MarkUnMarkAllActivities(bool ActiveStatus)
         {
-            if (grdGroups.DataSourceList.Count <= 0) return;
-            if (grdGroups.DataSourceList.Count > 0)
+            if (xGrdGroups.DataSourceList.Count <= 0) return;
+            if (xGrdGroups.DataSourceList.Count > 0)
             {
-                ObservableList<Activity> lstMarkUnMarkActivities = (ObservableList<Activity>)grdGroups.DataSourceList;
+                ObservableList<Activity> lstMarkUnMarkActivities = (ObservableList<Activity>)xGrdGroups.DataSourceList;
                 foreach (Activity act in lstMarkUnMarkActivities)
                 {
                     act.SelectedForConversion = ActiveStatus;
                 }
-                grdGroups.DataSourceList = lstMarkUnMarkActivities;
+                xGrdGroups.DataSourceList = lstMarkUnMarkActivities;
             }
         }
     }
