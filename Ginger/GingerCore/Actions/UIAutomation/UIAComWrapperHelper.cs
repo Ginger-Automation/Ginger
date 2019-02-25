@@ -3861,10 +3861,10 @@ namespace GingerCore.Drivers
                     }
 
                 }
-                val = (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
+                val = GetElementValueByValuePattern(element);
                 if (String.IsNullOrEmpty(val))
                 {
-                    val = (String)element.GetCurrentPropertyValue(LegacyIAccessiblePatternIdentifiers.ValueProperty);
+                    val = GetElementValueByLegacyIAccessiblePattern(element);
                 }
             }
             catch (Exception ex)
@@ -3912,7 +3912,7 @@ namespace GingerCore.Drivers
 
             if (General.CompareStringsIgnoreCase(ControlType, "text"))
             {
-                string val = element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty).ToString();
+                string val = GetElementValueByValuePattern(element);
                 if (string.IsNullOrEmpty(val) && mPlatform.Equals(ePlatform.PowerBuilder))
                 {
                     val = GetControlValueFromChildControl(element);
@@ -6456,7 +6456,7 @@ namespace GingerCore.Drivers
             string val = string.Empty;
             try
             {
-                val = (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
+                val = (String)element.GetCurrentPropertyValue(LegacyIAccessiblePatternIdentifiers.ValueProperty);
             }
             catch (Exception ex)
             {
