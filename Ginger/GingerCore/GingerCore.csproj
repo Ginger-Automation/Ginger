@@ -72,7 +72,7 @@
     <Reference Include="AjaxMin">
       <HintPath>..\packages\AjaxMin.5.14.5506.26202\lib\net40\AjaxMin.dll</HintPath>
     </Reference>
-    <Reference Include="ALMRepository, Version=7.7.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="ALMRepository, Version=8.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\ALMRepository.dll</HintPath>
     </Reference>
@@ -151,6 +151,9 @@
     <Reference Include="Ionic.Zip, Version=1.9.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Eyes.Images.1.18.0\lib\net35\Ionic.Zip.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="JiraRepository">
+      <HintPath>DLLs\JiraRepository.dll</HintPath>
     </Reference>
     <Reference Include="LibGit2Sharp, Version=0.24.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -599,6 +602,14 @@
     <Compile Include="Actions\XML\XMLProcessor.cs" />
     <Compile Include="ALM\ALMConfig.cs" />
     <Compile Include="ALM\ALMCore.cs" />
+    <Compile Include="ALM\JiraCore.cs" />
+    <Compile Include="ALM\JIRA\Bll\JiraExportManager.cs" />
+    <Compile Include="ALM\JIRA\Data Contracts\TestRunData.cs" />
+    <Compile Include="ALM\JIRA\Bll\JiraImportManager.cs" />
+    <Compile Include="ALM\JIRA\JiraTestSet.cs" />
+    <Compile Include="ALM\JIRA\JiraTest.cs" />
+    <Compile Include="ALM\JIRA\JiraTestParameter.cs" />
+    <Compile Include="ALM\JIRA\JiraTestStep.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
     <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />
     <Compile Include="ALM\QCRestAPI\ImportFromQCRest.cs" />
@@ -634,6 +645,7 @@
     <Compile Include="ALM\RQM\RQMFieldsMappingConfig.cs" />
     <Compile Include="ALM\RQM\RQMTestPlan.cs" />
     <Compile Include="ALM\RQM\RQMConnect.cs" />
+    <Compile Include="ALM\JIRA\Bll\JiraConnectManager.cs" />
     <Compile Include="DataSource\ActDSTableElement.cs" />
     <Compile Include="DataSource\ActDSConditon.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
@@ -884,6 +896,10 @@
     <Content Include="DLLs\RQM_Repository.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="ALM\JIRA\JiraSettings\Export\test.json" />
+    <None Include="ALM\JIRA\JiraSettings\Export\testexecution.json" />
+    <None Include="ALM\JIRA\JiraSettings\Export\testset.json" />
+    <None Include="ALM\JIRA\JiraSettings\JiraSettings.json" />
     <None Include="GingerCore.ruleset" />
     <None Include="RallyRestAPI.NET.shfbproj" />
     <None Include="Resources\%40EmptyStart_16x16.gif" />
