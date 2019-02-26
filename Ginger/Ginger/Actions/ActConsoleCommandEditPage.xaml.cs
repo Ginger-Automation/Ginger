@@ -54,7 +54,7 @@ namespace Ginger.Actions
         private List<object> GetActionListPlatform()
         {
             List<object> actionList = new List<object>();
-            string targetapp = WorkSpace.Instance.BusinessFlowInContext.CurrentActivity.TargetApplication;
+            string targetapp = ((Context)mActConsoleCommand.Context).BusinessFlow.CurrentActivity.TargetApplication;
             ePlatformType platform = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             actionList.Add(ActConsoleCommand.eConsoleCommand.FreeCommand);
 

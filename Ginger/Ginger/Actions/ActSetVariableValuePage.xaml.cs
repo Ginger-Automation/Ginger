@@ -43,13 +43,13 @@ namespace Ginger.Actions
 
         private void SetComboListsValues()
         {
-            if (WorkSpace.Instance.BusinessFlowInContext != null)
+            if (((Context)mAct.Context).BusinessFlow != null)
             {
-                mVars = WorkSpace.Instance.BusinessFlowInContext.GetAllHierarchyVariables();
+                mVars = ((Context)mAct.Context).BusinessFlow.GetAllHierarchyVariables();
             }
             else
             {
-                mVars = WorkSpace.UserProfile.Solution.Variables;
+                mVars = ((Context)mAct.Context).BusinessFlow.Variables;
             }
          
             foreach (VariableBase v in mVars.OrderBy(nameof(VariableBase.Name)))

@@ -180,7 +180,7 @@ namespace Ginger.Run
         private RunnerItemPage CreateBusinessFlowRunnerItem(BusinessFlow bf, bool ViewMode=false)
         {
             RunnerItemPage ri = new RunnerItemPage(bf, ViewMode1);           
-            ri.ItemName = bf.Name;
+            ri.ItemName = bf.Name;            
             if (string.IsNullOrEmpty(bf.Description))
             {
                 ri.xItemSeparator.Visibility = Visibility.Collapsed;              
@@ -261,7 +261,11 @@ namespace Ginger.Run
         {
             mBusinessflowRunnerItems = new ObservableList<RunnerItemPage>();
             foreach (BusinessFlow bff in mRunner.BusinessFlows)
-                mBusinessflowRunnerItems.Add(CreateBusinessFlowRunnerItem(bff, ViewMode));
+            {
+                RunnerItemPage bfItem = CreateBusinessFlowRunnerItem(bff, ViewMode);
+                bfItem.Context = new Context() { BusinessFlow = bff, Runner = mRunner };
+                mBusinessflowRunnerItems.Add(bfItem);
+            }
         }
         private void Businessflow_ClickGenerateReport(object sender, RoutedEventArgs e)
         {

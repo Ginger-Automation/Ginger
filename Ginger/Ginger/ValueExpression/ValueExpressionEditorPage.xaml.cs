@@ -68,7 +68,7 @@ namespace Ginger
             ValueUCTextEditor.Bind(obj, AttrName);
             ValueUCTextEditor.HideToolBar();
             ValueUCTextEditor.lblTitle.Content = "Value";
-            ValueUCTextEditor.SetDocumentEditor(new ValueExpressionEditor());
+            ValueUCTextEditor.SetDocumentEditor(new ValueExpressionEditor(mContext));
 
             GetHighlightingRules();
             
@@ -494,14 +494,14 @@ namespace Ginger
                     ((Solution) WorkSpace.UserProfile.Solution).AddVariable(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
-                    ((BusinessFlow)App.BusinessFlow).AddVariable(newStringVar);
+                    ((BusinessFlow)mContext.BusinessFlow).AddVariable(newStringVar);
                     break;
                 case eVariablesLevel.Activity:
-                    ((Activity)App.BusinessFlow.CurrentActivity).AddVariable(newStringVar);
+                    ((Activity)mContext.BusinessFlow.CurrentActivity).AddVariable(newStringVar);
                     break;
             }
 
-            VariableEditPage varEditPage = new VariableEditPage(newStringVar);
+            VariableEditPage varEditPage = new VariableEditPage(newStringVar, mContext);
             varEditPage.ShowAsWindow(eWindowShowStyle.Dialog);
 
             //make sure name is unique
@@ -511,10 +511,10 @@ namespace Ginger
                     ((Solution) WorkSpace.UserProfile.Solution).SetUniqueVariableName(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
-                    ((BusinessFlow)App.BusinessFlow).SetUniqueVariableName(newStringVar);
+                    ((BusinessFlow)mContext.BusinessFlow).SetUniqueVariableName(newStringVar);
                     break;
                 case eVariablesLevel.Activity:
-                    ((Activity)App.BusinessFlow.CurrentActivity).SetUniqueVariableName(newStringVar);
+                    ((Activity)mContext.BusinessFlow.CurrentActivity).SetUniqueVariableName(newStringVar);
                     break;
             }
 

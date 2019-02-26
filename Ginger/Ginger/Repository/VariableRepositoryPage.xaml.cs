@@ -125,7 +125,7 @@ namespace Ginger.Repository
                 VariableBase selectedVarb = (VariableBase)xVariablesGrid.CurrentItem;
                 selectedVarb.NameBeforeEdit = selectedVarb.Name;
 
-                VariableEditPage w = new VariableEditPage(selectedVarb, false, VariableEditPage.eEditMode.SharedRepository);
+                VariableEditPage w = new VariableEditPage(selectedVarb, mContext, false, VariableEditPage.eEditMode.SharedRepository);
                 w.ShowAsWindow(eWindowShowStyle.Dialog);
 
             }

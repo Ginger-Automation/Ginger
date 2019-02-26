@@ -133,7 +133,7 @@ namespace Ginger.Agents
                 //Once all the driver implementing IwindowExplorer are ready, simply checking is IWindowExplorer will server the purpose and flag IsWindowExplorerSupportReady can be removed
                 if (((Agent)AG.Agent).IsWindowExplorerSupportReady)
                 {
-                    WindowExplorerPage WEP = new WindowExplorerPage(AG);
+                    WindowExplorerPage WEP = new WindowExplorerPage(AG, mContext);
                     WEP.ShowAsWindow();
                 }               
                 else
@@ -157,7 +157,7 @@ namespace Ginger.Agents
             //For ASCF, launch explorer automatically when launching Agent
             if (((Agent)AG.Agent).IsShowWindowExplorerOnStart && ((Agent)AG.Agent).Status == Agent.eStatus.Running)
             {
-                WindowExplorerPage WEP = new WindowExplorerPage(AG);
+                WindowExplorerPage WEP = new WindowExplorerPage(AG, mContext);
                 WEP.ShowAsWindow();
             }
 

@@ -97,11 +97,11 @@ namespace Ginger.Actions
             if (actParentBusinessFlow != null)
                 mActParentBusinessFlow = actParentBusinessFlow;
             else
-                mActParentBusinessFlow = WorkSpace.Instance.BusinessFlowInContext;
+                mActParentBusinessFlow = ((Context)mAction.Context).BusinessFlow;
             if (actParentActivity != null)
                 mActParentActivity = actParentActivity;
             else
-                mActParentActivity = (Activity)WorkSpace.Instance.BusinessFlowInContext.CurrentActivity;
+                mActParentActivity = (Activity)((Context)mAction.Context).BusinessFlow.CurrentActivity;
 
             EditMode = editMode;
             mAction.PropertyChanged += ActionPropertyChanged;
@@ -1132,7 +1132,7 @@ namespace Ginger.Actions
                 //Instead of check make it disabled ?
                 if (driver is IWindowExplorer)
                 {
-                    WindowExplorerPage WEP = new WindowExplorerPage(aa, mAction);
+                    WindowExplorerPage WEP = new WindowExplorerPage(aa, (Context)mAction.Context,  mAction);
                     WEP.ShowAsWindow();
                 }
                 else

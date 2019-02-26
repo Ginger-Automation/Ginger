@@ -886,22 +886,27 @@ namespace Ginger.Functionalities
         {
             VariableBase variableToView = (VariableBase)variableToViewFoundItem.OriginObject;
             RepositoryItemBase Parent = variableToViewFoundItem.ParentItemToSave;
+            Context context = null;
+            if (Parent is BusinessFlow)
+            {
+                context = new Context() { BusinessFlow = (BusinessFlow)Parent };
+            }
             VariableEditPage w;
             if(mContext == eContext.RunsetPage)
-                w = new VariableEditPage(variableToView, true, VariableEditPage.eEditMode.View);
+                w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.View);
             if (mContext == eContext.AutomatePage)
             {
                 if (Parent != null && Parent is BusinessFlow)
-                    w = new VariableEditPage(variableToView, true, VariableEditPage.eEditMode.BusinessFlow, Parent as BusinessFlow);
+                    w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.BusinessFlow, Parent as BusinessFlow);
                 else if (Parent != null && Parent is Activity)
-                    w = new VariableEditPage(variableToView, true, VariableEditPage.eEditMode.Activity, Parent as Activity);
+                    w = new VariableEditPage(variableToView, null, true, VariableEditPage.eEditMode.Activity, Parent as Activity);
                 else
-                    w = new VariableEditPage(variableToView, true, VariableEditPage.eEditMode.SharedRepository, Parent);
+                    w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.SharedRepository, Parent);
             }
             else if (Parent != null && (Parent is Solution || Parent is BusinessFlow || Parent is Activity))
-                w = new VariableEditPage(variableToView, true, VariableEditPage.eEditMode.FindAndReplace, Parent);
+                w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.FindAndReplace, Parent);
             else
-                w = new VariableEditPage(variableToView, true, VariableEditPage.eEditMode.SharedRepository);
+                w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.SharedRepository);
 
             if (w.ShowAsWindow(eWindowShowStyle.Dialog) == true)
                 RefreshFoundItemField(variableToViewFoundItem);

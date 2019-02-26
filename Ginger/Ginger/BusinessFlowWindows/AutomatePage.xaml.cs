@@ -266,26 +266,44 @@ namespace Ginger
                             UpdateBusinessFlowVariabelsExpanders();
                             mBusinessFlow.Variables.CollectionChanged -= BusinessFlowVariables_CollectionChanged;
                             mBusinessFlow.Variables.CollectionChanged += BusinessFlowVariables_CollectionChanged;
-                            mVariablesPage.UpdateBusinessFlow(mBusinessFlow);
+                            if (mVariablesPage != null)
+                            {
+                                mVariablesPage.UpdateBusinessFlow(mBusinessFlow);
+                            }
 
                             UpdateBusinessFlowActivitiesGroupsExpanders();
-                            mActivitiesGroupsPage.UpdateBusinessFlow(mBusinessFlow);
+                            if (mActivitiesGroupsPage != null)
+                            {
+                                mActivitiesGroupsPage.UpdateBusinessFlow(mBusinessFlow);
+                            }
                             mBusinessFlow.ActivitiesGroups.CollectionChanged -= ActivitiesGroups_CollectionChanged;
                             mBusinessFlow.ActivitiesGroups.CollectionChanged += ActivitiesGroups_CollectionChanged;
-                            mActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
+                            if (mActivitiesPage != null)
+                            {
+                                mActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
+                            }
 
                             UpdateBusinessFlowActivitiesExpanders();
                             mBusinessFlow.Activities.CollectionChanged -= Activities_CollectionChanged;
                             mBusinessFlow.Activities.CollectionChanged += Activities_CollectionChanged;
                             mCurrentActivity = (Activity)mBusinessFlow.CurrentActivity;
-                            mActivitiesMiniPage.UpdateBusinessFlow(mBusinessFlow);
+                            if (mActivitiesMiniPage != null)
+                            {
+                                mActivitiesMiniPage.UpdateBusinessFlow(mBusinessFlow);
+                            }
 
-                            UpdateCurrentActivityVariabelsExpanders();                            
-                            mActivityVariablesPage.UpdateActivity(mBusinessFlow.CurrentActivity);                            
+                            UpdateCurrentActivityVariabelsExpanders();
+                            if (mActivityVariablesPage != null)
+                            {
+                                mActivityVariablesPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+                            }
 
                             UpdateCurrentActivityActionsExpanders();
 
-                            mReposiotryPage.UpdateBusinessFlow(mBusinessFlow);
+                            if (mReposiotryPage != null)
+                            {
+                                mReposiotryPage.UpdateBusinessFlow(mBusinessFlow);
+                            }
                         }
 
                     });
@@ -395,7 +413,10 @@ namespace Ginger
                     ActivityActionsExpanderLabel.Content = label;
                     ActivityActionsExpander2Label.Content = label;
                 }
-                mActionsPage.UpdateParentBusinessFlow(mBusinessFlow);
+                if (mActionsPage != null)
+                {
+                    mActionsPage.UpdateParentBusinessFlow(mBusinessFlow);
+                }
             }
         }
 
@@ -866,7 +887,6 @@ namespace Ginger
                 RemoveCurrentBusinessFlow();
                 mBusinessFlow = businessFlowToLoad;
                 mContext.BusinessFlow = mBusinessFlow;
-                WorkSpace.Instance.BusinessFlowInContext = mBusinessFlow;
                 if (businessFlowToLoad != null)
                 {                    
                     mBusinessFlow.SaveBackup();
@@ -907,7 +927,7 @@ namespace Ginger
 
         private void mBusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))
+            if (e.PropertyName == nameof(BusinessFlow.CurrentActivity) && mActivityVariablesPage != null)
             {
                 mActivityVariablesPage.UpdateActivity(mBusinessFlow.CurrentActivity);
             }
@@ -1563,11 +1583,6 @@ namespace Ginger
         private void CboSpeed_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             App.AutomateTabGingerRunner.SetSpeed(int.Parse(cboSpeed.Text));
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            WorkSpace.Instance.BusinessFlowInContext = mBusinessFlow;
         }
     }
 }

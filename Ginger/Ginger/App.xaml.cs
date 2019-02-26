@@ -962,6 +962,6 @@ namespace Ginger
             }
         }
 
-        public BusinessFlow BusinessFlow;
+        //public BusinessFlow BusinessFlow;
     }
 }

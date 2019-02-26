@@ -36,11 +36,6 @@ namespace Ginger.BusinessFlowWindows
         Context mContext;
 
         public enum eBrowserType { File, Folder }
-
-        public bool HideVEBusinessFlowAndActivityVariables
-        {
-            get;set;
-        }
         
         public UCValueExpression()
         {

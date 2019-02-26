@@ -50,11 +50,6 @@ namespace amdocs.ginger.GingerCoreNET
 
         public SolutionRepository SolutionRepository;
 
-        /// <summary>
-        /// Do not use if not must.
-        /// Workaround to pass in context Business Flow for old pages
-        /// </summary>
-        public BusinessFlow BusinessFlowInContext { get; set; }
 
         // Will be back when we moved GR to GingerCoreNET
         // public GingerRunner GingerRunner;

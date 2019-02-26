@@ -35,11 +35,6 @@ namespace Ginger.Activities
         eBrowserType mBrowserType;
         public enum eBrowserType { File, Folder }
         Context mContext;
-
-        public bool HideVEBusinessFlowAndActivityVariables
-        {
-            get;set;
-        }
         
         public UCValueExpression()
         {

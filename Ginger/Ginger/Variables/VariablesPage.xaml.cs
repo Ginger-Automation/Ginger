@@ -106,7 +106,7 @@ namespace Ginger.Variables
             }
 
             int selectedActIndex = -1;
-            ObservableList<VariableBase> actsList = App.BusinessFlow.Variables;
+            ObservableList<VariableBase> actsList = mContext.BusinessFlow.Variables;
             if (actsList.CurrentItem != null)
             {
                 selectedActIndex = actsList.IndexOf((VariableBase)actsList.CurrentItem);
@@ -347,7 +347,7 @@ namespace Ginger.Variables
                         mode = VariableEditPage.eEditMode.Global;
                         break;
                 }            
-                VariableEditPage w = new VariableEditPage(selectedVarb, false,mode);
+                VariableEditPage w = new VariableEditPage(selectedVarb, mContext, false, mode);
                 w.ShowAsWindow(eWindowShowStyle.Dialog);
                 RefreshGrid(sender, e);
 
@@ -365,7 +365,7 @@ namespace Ginger.Variables
             VariableBase selectedVarb = (VariableBase)grdVariables.CurrentItem;
             selectedVarb.NameBeforeEdit = selectedVarb.Name;
 
-            VariableEditPage w = new VariableEditPage(selectedVarb, false);
+            VariableEditPage w = new VariableEditPage(selectedVarb, mContext, false);
             w.ShowAsWindow(eWindowShowStyle.Dialog);
 
             if (selectedVarb.NameBeforeEdit != selectedVarb.Name)

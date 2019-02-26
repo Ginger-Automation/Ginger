@@ -281,7 +281,7 @@ namespace Ginger.Run
             VariableBase varToEdit = (VariableBase)grdVariables.CurrentItem;
             string originalFormula = varToEdit.Formula;
             string originalValue= varToEdit.Value;            
-            VariableEditPage w = new VariableEditPage(varToEdit, true);
+            VariableEditPage w = new VariableEditPage(varToEdit, new Context() { BusinessFlow = mBusinessFlow }, true);
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             if (varToEdit.Formula != originalFormula || varToEdit.Value != originalValue)//variable was changed
             {
