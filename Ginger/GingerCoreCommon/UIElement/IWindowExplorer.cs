@@ -56,5 +56,6 @@ namespace Amdocs.Ginger.Common.UIElement
         ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements);
 
         void StartSpying();
+        ElementInfo LearnElementInfoDetails(ElementInfo EI);
     }
 }

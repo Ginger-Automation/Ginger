@@ -48,7 +48,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private bool IsPOMNameExist(string value)
         {
-            if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == value select x).SingleOrDefault() != null)
+            if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == value select x).FirstOrDefault() != null)
             {
                 return true;
             }
