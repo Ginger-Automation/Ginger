@@ -13,7 +13,7 @@
     {
       "Category": "String Functions",
       "Name": "Trim whitespace & line breaks",
-      "Expression": "Trim(Replace(\"{Actual}\",\"vbCrLf\",\"\"))",
+      "Expression": "{CS Exp={Actual}.Replace(System.Environment.NewLine,\"\").Replace(\" \",\"\")}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -83,7 +83,7 @@
     {
       "Category": "Date Time Functions",
       "Name": "Current Time Hour (0# format)",
-      "Expression": "Right(\"0\" & Int(Timer/3600),2)",
+      "Expression": "{CS Exp=DateTime.Now.Hour.ToString(\"D2\")}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -93,7 +93,7 @@
     {
       "Category": "Date Time Functions",
       "Name": "Current Time Minute (0# format)",
-      "Expression": "Right(\"0\" &  Int((Timer-(Int(Timer/3600)*3600))/60),2)",
+      "Expression": "{CS Exp=DateTime.Now.Minute.ToString(\"D2\")}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -103,7 +103,7 @@
     {
       "Category": "Date Time Functions",
       "Name": "Current Time Seconds (0# format)",
-      "Expression": "Right(\"0\" & Int(Timer-(Int(Timer/60)*60)),2)",
+      "Expression": "{CS Exp=DateTime.Now.Second.ToString(\"D2\")}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -281,19 +281,9 @@
       "IconImageName": "@Regex16x16.png"
     },
     {
-      "Category": "Date Time Functions",
-      "Name": "Actual > 0",
-      "Expression": "{Actual} > 0",
-      "UseCase": null,
-      "Samples": [],
-      "ReturnType": null,
-      "ExpressionResult": null,
-      "IconImageName": null
-    },
-    {
       "Category": "Output Validation",
       "Name": "Actual Contains String 'ABC'",
-      "Expression": "InStr({Actual},\"ABC\")>0",
+      "Expression": "{CS Exp={Actual}.Contains(\"ABC\")}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -303,7 +293,7 @@
     {
       "Category": "Output Validation",
       "Name": "Actual start with 'ABC'",
-      "Expression": "Left({Actual},3)=\"ABC\"",
+      "Expression": "{CS Exp={Actual}.StartsWith(\"ABC\")}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -313,7 +303,7 @@
     {
       "Category": "Output Validation",
       "Name": "Actual String Length is 5 chars",
-      "Expression": "Len({Actual})=5",
+      "Expression": "{CS Exp={Actual}.Length.Equals(5)}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -323,7 +313,7 @@
     {
       "Category": "Output Validation",
       "Name": "Actual SubString from char in position 2 length 3 is 'ABC'",
-      "Expression": "Mid({Actual},2,3)=\"ABC\"",
+      "Expression": "{CS Exp={Actual}.Substring(2, 3).Equals(\"ABC\")}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
