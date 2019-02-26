@@ -91,12 +91,10 @@ namespace Ginger.Run.RunSetActions
         {
             if (DynamicParameters.Count > 0)
             {
-                ValueExpression VE = new ValueExpression(null, null);
-                int i = 0;
-                foreach (ActInputValue actInput in DynamicParameters)
+                ValueExpression VE = new ValueExpression(RI.Environment, null);
+                for(int i = 0;DynamicParameters.Count > 0; i++)
                 {
-                    DynamicParameters[i].ValueForDriver = VE.Calculate(actInput.Value);
-                    i++;
+                    DynamicParameters[i].ValueForDriver = VE.Calculate(DynamicParameters[i].Value);
                 }
             }
             TestNGResultReport TNGReport = new TestNGResultReport();

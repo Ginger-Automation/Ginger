@@ -191,10 +191,7 @@ namespace Ginger.Reports
             string BFResults = string.Empty;
             foreach (Activity activity in BF.Activities)
             {
-                DateTime startedAt = activity.StartTimeStamp;
-                DateTime finishedAt = activity.StartTimeStamp;
-
-                BFResults += buildXml(activity.Status, ref passCount, ref failedCount, ref blockedCount, General.ConvertInvalidXMLCharacters(BF.Name), General.ConvertInvalidXMLCharacters(activity.ActivityName), General.ConvertInvalidXMLCharacters(activity.Description), activity.Elapsed,startedAt,finishedAt);
+                BFResults += buildXml(activity.Status, ref passCount, ref failedCount, ref blockedCount, General.ConvertInvalidXMLCharacters(BF.Name), General.ConvertInvalidXMLCharacters(activity.ActivityName), General.ConvertInvalidXMLCharacters(activity.Description), activity.Elapsed, activity.StartTimeStamp, activity.EndTimeStamp);
             }
             return BFResults;
         }

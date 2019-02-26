@@ -40,7 +40,7 @@ namespace Ginger.Run.RunSetActions
             App.ObjFieldBinding(TargetTestNGReportFolderBox, TextBox.TextProperty, mRunSetActionScript, nameof(RunSetActionGenerateTestNGReport.SaveResultsInSolutionFolderName));
             App.ObjFieldBinding(sourceActivityRadioBtn, RadioButton.IsCheckedProperty, mRunSetActionScript, nameof(RunSetActionGenerateTestNGReport.IsStatusByActivity));
             App.ObjFieldBinding(sourceActivitiesRadioBtn, RadioButton.IsCheckedProperty, mRunSetActionScript, nameof(RunSetActionGenerateTestNGReport.IsStatusByActivitiesGroup));
-            App.ObjFieldBinding(useDynamicParameters, CheckBox.IsCheckedProperty, mRunSetActionScript,nameof(RunSetActionGenerateTestNGReport.ConfiguerDynamicParameters));
+            App.ObjFieldBinding(xUseDynamicParameters, CheckBox.IsCheckedProperty, mRunSetActionScript,nameof(RunSetActionGenerateTestNGReport.ConfiguerDynamicParameters));
 
             SetParametersGridView();
             grdTestNGReportParameters.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddButton));
@@ -56,14 +56,12 @@ namespace Ginger.Run.RunSetActions
         }
         private void useDynamicParameters_Checked(object sender, RoutedEventArgs e)
         {
-            if (useDynamicParameters.IsChecked == true)
+            if (xUseDynamicParameters.IsChecked == true)
             {
-                useDynamicParameters.Content = "Use Specific Environment:";
                 dynamicParametersPnl.Visibility = System.Windows.Visibility.Visible;
             }
             else
             {
-                useDynamicParameters.Content = "Use Specific Environment";
                 dynamicParametersPnl.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
@@ -75,7 +73,6 @@ namespace Ginger.Run.RunSetActions
             defView.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Param, Header = "Paramater Name", WidthWeight = 40 });
             defView.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Value, Header = "Parameter Value", WidthWeight = 40 });
             defView.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ParamValueExpressionButton"] });
-            //defView.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.ValueForDriver, Header = "Calculated Value", WidthWeight = 150, BindingMode = BindingMode.OneWay });
 
             grdTestNGReportParameters.SetAllColumnsDefaultView(defView);
             grdTestNGReportParameters.InitViewItems();
