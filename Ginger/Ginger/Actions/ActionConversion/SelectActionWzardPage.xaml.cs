@@ -56,8 +56,6 @@ namespace Ginger.Actions.ActionConversion
                 case EventType.Active:
                     Init();
                     break;
-                case EventType.Finish:
-                    break;
             }
         }
         
@@ -70,7 +68,7 @@ namespace Ginger.Actions.ActionConversion
             List<Activity> lstSelectedActivities = mWizard.BusinessFlow.Activities.Where(x => x.SelectedForConversion).ToList();
             if (lstSelectedActivities.Count != 0)
             {
-                ActionConversionUtils utils = new ActionConversionUtils();
+                ConvertableActionDetails utils = new ConvertableActionDetails();
                 mWizard.ActionToBeConverted = utils.GetConvertableActivityActions(lstSelectedActivities);
                 if (mWizard.ActionToBeConverted.Count != 0)
                 {

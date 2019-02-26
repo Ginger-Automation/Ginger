@@ -15,15 +15,8 @@ namespace Amdocs.Ginger.CoreNET
     /// <summary>
     /// This class is used to add methods for action conversion helpers
     /// </summary>
-    public class ActionConversionUtils
+    public class ConvertableActionDetails
     {
-        /// <summary>
-        /// private constructor
-        /// </summary>
-        public ActionConversionUtils()
-        {
-        }
-
         public string ActUIElementElementLocateByField
         {
             get;
@@ -202,14 +195,12 @@ namespace Amdocs.Ginger.CoreNET
                     foreach (Act act in convertibleActivity.Acts)
                     {
                         if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
-                            (act.Active))
+                            (act.Active) && ((IObsoleteAction)act).TargetActionTypeName() != null)
                         {
                             ActionConversionHandler newConvertibleActionType = new ActionConversionHandler();
                             newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
                             newConvertibleActionType.SourceActionType = act.GetType();
                             newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
-                            if (newConvertibleActionType.TargetActionType == null)
-                                continue;
                             newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
                             newConvertibleActionType.ActionCount = count;
                             newConvertibleActionType.Actions.Add(act);
@@ -261,6 +252,5 @@ namespace Amdocs.Ginger.CoreNET
             }
             return lst;
         }
-
     }
 }

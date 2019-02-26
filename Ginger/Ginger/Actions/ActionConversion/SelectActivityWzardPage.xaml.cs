@@ -51,10 +51,6 @@ namespace Ginger.Actions.ActionConversion
                     mWizard = (ActionsConversionWizard)WizardEventArgs.Wizard;
                     SetGridsView();
                     break;
-                case EventType.Active:
-                    break;
-                case EventType.Finish:
-                    break;
             }
         }
 
@@ -68,7 +64,7 @@ namespace Ginger.Actions.ActionConversion
             xGrdGroups.InitViewItems();
             xGrdGroups.SetTitleLightStyle = true;
 
-            ActionConversionUtils utils = new ActionConversionUtils();
+            ConvertableActionDetails utils = new ConvertableActionDetails();
             ObservableList<Activity> lst = utils.GetConvertableActivitiesFromBusinessFlow(mWizard.BusinessFlow);
             xGrdGroups.DataSourceList = lst;
             xGrdGroups.RowChangedEvent += grdGroups_RowChangedEvent;
@@ -90,7 +86,10 @@ namespace Ginger.Actions.ActionConversion
 
         private void MarkUnMarkAllActivities(bool ActiveStatus)
         {
-            if (xGrdGroups.DataSourceList.Count <= 0) return;
+            if (xGrdGroups.DataSourceList.Count <= 0)
+            {
+                return;
+            }
             if (xGrdGroups.DataSourceList.Count > 0)
             {
                 ObservableList<Activity> lstMarkUnMarkActivities = (ObservableList<Activity>)xGrdGroups.DataSourceList;

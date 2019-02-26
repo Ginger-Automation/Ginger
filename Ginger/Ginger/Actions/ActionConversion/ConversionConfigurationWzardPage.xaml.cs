@@ -48,8 +48,6 @@ namespace Ginger.Actions.ActionConversion
                 case EventType.Active:
                     Init(WizardEventArgs);
                     break;
-                case EventType.Finish:
-                    break;
             }
         }
         

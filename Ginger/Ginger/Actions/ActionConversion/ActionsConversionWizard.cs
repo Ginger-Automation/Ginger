@@ -113,7 +113,7 @@ namespace Ginger.Actions.ActionConversion
                     Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, BusinessFlow.Name);
 
                     // create a new converted activity
-                    ActionConversionUtils utils = new ActionConversionUtils();
+                    ConvertableActionDetails utils = new ConvertableActionDetails();
                     utils.ActUIElementElementLocateByField = nameof(ActUIElement.ElementLocateBy);
                     utils.ActUIElementLocateValueField = nameof(ActUIElement.LocateValue);
                     utils.ActUIElementElementLocateValueField = nameof(ActUIElement.ElementLocateValue);
@@ -165,7 +165,9 @@ namespace Ginger.Actions.ActionConversion
                 {
                     // ask the user if he wants to continue with the conversion, if there are missing target platforms
                     if (Reporter.ToUser(eUserMsgKey.MissingTargetPlatformForConversion, item.Value, item.Key) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    {
                         return false;
+                    }
                 }
             }
             return true;
