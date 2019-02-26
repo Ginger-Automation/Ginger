@@ -438,10 +438,11 @@ namespace Ginger.ALM
                     JiraRadioButton.IsChecked = true;
                     JiraRadioButton.FontWeight = FontWeights.ExtraBold;
                     JiraRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-                    RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
-                    DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    RQMLoadConfigPackageButton.Visibility = Visibility.Visible;
+                    DownloadPackageLink.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
-                    ExampleURLHint.Content = "Example: https://ServerName";
+                    SetLoadJiraPackageButtonContent();
+                    //ExampleURLHint.Content = "Example: https://ServerName";
                     if (!isServerDetailsCorrect)
                     {
                         ServerURLTextBox.IsEnabled = true;
@@ -536,7 +537,20 @@ namespace Ginger.ALM
                 ExampleURLHint.Content = "and Load RQM Configuration Package";
             }
         }
+        private void SetLoadJiraPackageButtonContent()
+        {
+            if (!string.IsNullOrEmpty(ServerURLTextBox.Text))
+            {
+                RQMLoadConfigPackageButton.Content = "Replace";
+                ExampleURLHint.Content = "and click Replace to change Jira Configuration Package";
 
+            }
+            else
+            {
+                RQMLoadConfigPackageButton.Content = "Load";
+                ExampleURLHint.Content = "and Load Jira Configuration Package";
+            }
+        }
         private void ServerURLTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
 

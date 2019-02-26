@@ -40,7 +40,10 @@ namespace GingerCore.ALM.JIRA
         {
             this.jiraRepositoryObj = jiraRep;
         }
-
+        public void CreateJiraRepository()
+        {
+            jiraRepositoryObj = new JiraRepository.JiraRepository(JiraCore.ConfigPackageFolderPath);
+        }
         public bool SetJiraProjectFullDetails()
         {
             GetJiraDomainProjects();

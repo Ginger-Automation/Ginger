@@ -42,6 +42,7 @@ namespace GingerCore.ALM
         private JiraRepository.JiraRepository jiraRepObj;
         public static string ALMProjectGroupName { get; set; }
         public static string ALMProjectGuid { get; set; }
+        public static string ConfigPackageFolderPath { set; get; }
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
         {
             get { return jiraImportObj.GingerActivitiesGroupsRepo; }
@@ -54,7 +55,8 @@ namespace GingerCore.ALM
         }
         public JiraCore()
         {
-            jiraRepObj = new JiraRepository.JiraRepository();
+            //if (ConfigPackageFolderPath == null) ConfigPackageFolderPath = "";
+            jiraRepObj = new JiraRepository.JiraRepository(ConfigPackageFolderPath);
             exportMananger = new JiraExportManager(jiraRepObj);
             jiraConnectObj = new JiraConnectManager(jiraRepObj);
             jiraImportObj = new JiraImportManager(jiraRepObj);
@@ -152,6 +154,46 @@ namespace GingerCore.ALM
         {
             jiraImportObj.UpdateBussinessFlow(ref businessFlow);
         }
+        public bool ValidateConfigurationFile(string PackageFileName)
+        {
+            bool containJiraSettingsFile = false;
+            using (FileStream configPackageZipFile = new FileStream(PackageFileName, FileMode.Open))
+            {
+                using (ZipArchive zipArchive = new ZipArchive(configPackageZipFile))
+                {
+                    foreach (ZipArchiveEntry entry in zipArchive.Entries)
+                        if (entry.FullName == @"JiraSettings/")
+                        {
+                            containJiraSettingsFile = true;
+                            break;
+                        }
+                }
+            }
+            return containJiraSettingsFile;
+        }
+        public bool IsConfigPackageExists()
+        {
+            string CurrJiraConfigPath = Path.Combine(ALMCore.SolutionFolder, "Configurations", "JiraConfigurationsPackage\\JiraSettings");
 
+            if (Directory.Exists(CurrJiraConfigPath))
+            {
+                if (File.Exists(Path.Combine(CurrJiraConfigPath, "JiraSettings.json")))
+                {
+                    ConfigPackageFolderPath = CurrJiraConfigPath;
+                    jiraConnectObj.CreateJiraRepository();
+                    return true;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Jira Configuration package not exist in solution, Jiraettings not exist at: " + Path.Combine(CurrJiraConfigPath, "JiraSettings"));
+                }
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.WARN, "JiraConfigurationsPackage folder not exist at: " + CurrJiraConfigPath);
+            }
+
+            return false;
+        }
     }
 }
