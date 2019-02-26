@@ -173,11 +173,11 @@ namespace GingerCore.ALM
         }
         public bool IsConfigPackageExists()
         {
-            string CurrJiraConfigPath = Path.Combine(ALMCore.SolutionFolder, "Configurations", "JiraConfigurationsPackage\\JiraSettings");
+            string CurrJiraConfigPath = Path.Combine(ALMCore.SolutionFolder, "Configurations", "JiraConfigurationsPackage");
 
             if (Directory.Exists(CurrJiraConfigPath))
             {
-                if (File.Exists(Path.Combine(CurrJiraConfigPath, "JiraSettings.json")))
+                if (Directory.Exists(Path.Combine(CurrJiraConfigPath, "JiraSettings")))
                 {
                     ConfigPackageFolderPath = CurrJiraConfigPath;
                     jiraConnectObj.CreateJiraRepository();
