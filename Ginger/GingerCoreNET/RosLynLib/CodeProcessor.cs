@@ -121,9 +121,20 @@ namespace GingerCoreNET.RosLynLib
             }
             catch(Exception Ex)
             {
-                
+
             }
-            bool result = (bool)CSharpScript.EvaluateAsync(condition).Result;
+            bool result = false;
+            try
+            {
+                result = (bool)CSharpScript.EvaluateAsync(condition).Result;
+            }
+            catch(Exception EvalExcep)
+            {
+                Reporter.ToLog(eLogLevel.INFO, condition + System.Environment.NewLine + " not a valid c# expression to evaluate", EvalExcep);
+
+
+                result = false;
+            }
             return result;
         }
 
