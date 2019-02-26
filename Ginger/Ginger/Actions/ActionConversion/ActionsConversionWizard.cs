@@ -43,7 +43,7 @@ namespace Ginger.Actions.ActionConversion
         public override string Title { get { return "Actions Conversion Wizard"; } }
         public BusinessFlow BusinessFlow;
         public Solution Solution;
-        public ObservableList<ActionConversionHandler> ActionToBeConverted = new ObservableList<ActionConversionHandler>();
+        public ObservableList<ConvertableActionDetails> ActionToBeConverted = new ObservableList<ConvertableActionDetails>();
 
         public bool NewActivityChecked { get; set; }
 
@@ -113,7 +113,7 @@ namespace Ginger.Actions.ActionConversion
                     Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, BusinessFlow.Name);
 
                     // create a new converted activity
-                    ConvertableActionDetails utils = new ConvertableActionDetails();
+                    ActionConversionUtils utils = new ActionConversionUtils();
                     utils.ActUIElementElementLocateByField = nameof(ActUIElement.ElementLocateBy);
                     utils.ActUIElementLocateValueField = nameof(ActUIElement.LocateValue);
                     utils.ActUIElementElementLocateValueField = nameof(ActUIElement.ElementLocateValue);
@@ -139,7 +139,7 @@ namespace Ginger.Actions.ActionConversion
             base.Cancel();
         }
 
-        private bool DoExistingPlatformCheck(ObservableList<ActionConversionHandler> lstActionToBeConverted)
+        private bool DoExistingPlatformCheck(ObservableList<ConvertableActionDetails> lstActionToBeConverted)
         {
             // fetch list of existing platforms in the business flow
             List<ePlatformType> lstExistingPlatform = Solution.ApplicationPlatforms
@@ -149,7 +149,7 @@ namespace Ginger.Actions.ActionConversion
 
             Dictionary<ePlatformType, string> lstMissingPlatform = new Dictionary<ePlatformType, string>();
             // create list of missing platforms
-            foreach (ActionConversionHandler ACH in lstActionToBeConverted)
+            foreach (ConvertableActionDetails ACH in lstActionToBeConverted)
             {
                 if (ACH.Selected && !lstExistingPlatform.Contains(ACH.TargetPlatform)
                     && !lstMissingPlatform.ContainsKey(ACH.TargetPlatform))

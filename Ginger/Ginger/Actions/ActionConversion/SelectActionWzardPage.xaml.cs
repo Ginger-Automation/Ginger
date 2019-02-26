@@ -68,7 +68,7 @@ namespace Ginger.Actions.ActionConversion
             List<Activity> lstSelectedActivities = mWizard.BusinessFlow.Activities.Where(x => x.SelectedForConversion).ToList();
             if (lstSelectedActivities.Count != 0)
             {
-                ConvertableActionDetails utils = new ConvertableActionDetails();
+                ActionConversionUtils utils = new ActionConversionUtils();
                 mWizard.ActionToBeConverted = utils.GetConvertableActivityActions(lstSelectedActivities);
                 if (mWizard.ActionToBeConverted.Count != 0)
                 {
@@ -94,10 +94,10 @@ namespace Ginger.Actions.ActionConversion
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.Selected, Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.SourceActionTypeName, WidthWeight = 15, Header = "Source Action Type" });
-            view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.Activities, WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
-            view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.TargetActionTypeName, WidthWeight = 15, Header = "Target Action Type" });
+            view.GridColsView.Add(new GridColView() { Field = ConvertableActionDetails.Fields.Selected, Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = ConvertableActionDetails.Fields.SourceActionTypeName, WidthWeight = 15, Header = "Source Action Type" });
+            view.GridColsView.Add(new GridColView() { Field = ConvertableActionDetails.Fields.Activities, WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
+            view.GridColsView.Add(new GridColView() { Field = ConvertableActionDetails.Fields.TargetActionTypeName, WidthWeight = 15, Header = "Target Action Type" });
             xGridConvertibleActions.SetAllColumnsDefaultView(view);
             xGridConvertibleActions.InitViewItems();
             xGridConvertibleActions.SetTitleLightStyle = true;

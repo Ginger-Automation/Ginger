@@ -64,11 +64,11 @@ namespace Ginger.Actions.ActionConversion
             xGrdGroups.InitViewItems();
             xGrdGroups.SetTitleLightStyle = true;
 
-            ConvertableActionDetails utils = new ConvertableActionDetails();
+            ActionConversionUtils utils = new ActionConversionUtils();
             ObservableList<Activity> lst = utils.GetConvertableActivitiesFromBusinessFlow(mWizard.BusinessFlow);
             xGrdGroups.DataSourceList = lst;
             xGrdGroups.RowChangedEvent += grdGroups_RowChangedEvent;
-            xGrdGroups.Title = "Convert Activities";
+            xGrdGroups.Title = "Convert " + GingerDicser.GetTermResValue(eTermResKey.Activities);
             xGrdGroups.MarkUnMarkAllActive += MarkUnMarkAllActivities;
             xGrdGroups.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
             {
