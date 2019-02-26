@@ -57,14 +57,13 @@ namespace GingerCore.NoSqlBase
                 {
                     Db.Pass = deCryptValue;                    
                 }
-
-                clusterCB.Authenticate(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());                
+                clusterCB.Authenticate(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());
                 return true;
             }
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Couchbase DB", e);
-                throw (e);
+                return false;
             }
         }
 
@@ -110,6 +109,7 @@ namespace GingerCore.NoSqlBase
                 ClassicAuthenticator classicAuthenticator = new ClassicAuthenticator(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());
                 classicAuthenticator.AddBucketCredential(bucketName, bucketpassword);
                 clusterCB.Authenticate(classicAuthenticator);
+                //TODO: need to check and true and flase on basis of connection
                 return true;
             }
             catch(Exception ex)
@@ -125,8 +125,8 @@ namespace GingerCore.NoSqlBase
             string bucketName = string.Empty;
             if (Action== ActDBValidation.eDBValidationType.RecordCount)
             {
-                bucketName=inputSQL.Trim(new char[] { (char)39 });//removes => ' 
-                bucketName = inputSQL.Trim(new char[] { (char)96 });//removes => ` 
+                bucketName = inputSQL.Replace("`", "");
+                bucketName = bucketName.Replace("'", "");
             }
             else
             {
@@ -138,16 +138,19 @@ namespace GingerCore.NoSqlBase
 
         public override void PerformDBAction()
         {
-            Connect();
+            if (!Connect())
+            {
+                Act.Error = "Failed to connect to Couchbase DB";
+                return;
+            }
             string SQL = Act.SQL;
             string keyspace = Act.Keyspace;
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
             VE.Value = SQL;
             string SQLCalculated = VE.ValueCalculated;
             string bucketName = GetBucketName(SQLCalculated);
-            bool flag = ConnecttoBucket(bucketName);
 
-            if(!flag)
+            if(!ConnecttoBucket(bucketName))
             {
                 Act.Error = "failed to connect to bucket "+bucketName;
                 return;
@@ -167,7 +170,7 @@ namespace GingerCore.NoSqlBase
                             }
                             break;
                         case Actions.ActDBValidation.eDBValidationType.RecordCount:
-                            result = clusterCB.Query<dynamic>("Select Count(*) as RECORDCOUNT from `" + SQLCalculated + "`");
+                            result = clusterCB.Query<dynamic>("Select Count(*) as RECORDCOUNT from `" + bucketName + "`");
                             Act.ParseJSONToOutputValues(result.Rows[0].ToString(), 1);
                             break;
                         case Actions.ActDBValidation.eDBValidationType.UpdateDB:
