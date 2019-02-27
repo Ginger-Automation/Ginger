@@ -635,7 +635,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         public ElementInfo LearnElementInfoDetails(ElementInfo EI)
         {
-            throw new NotImplementedException();
+            return EI;
         }
 
         List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
