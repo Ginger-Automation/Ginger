@@ -42,7 +42,6 @@ namespace GingerCore.ALM
         private JiraRepository.JiraRepository jiraRepObj;
         public static string ALMProjectGroupName { get; set; }
         public static string ALMProjectGuid { get; set; }
-        public static string ConfigPackageFolderPath { set; get; }
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
         {
             get { return jiraImportObj.GingerActivitiesGroupsRepo; }
@@ -55,8 +54,7 @@ namespace GingerCore.ALM
         }
         public JiraCore()
         {
-            //if (ConfigPackageFolderPath == null) ConfigPackageFolderPath = "";
-            jiraRepObj = new JiraRepository.JiraRepository(ConfigPackageFolderPath);
+            jiraRepObj = new JiraRepository.JiraRepository(ALMCore.AlmConfig.ALMConfigPackageFolderPath);
             exportMananger = new JiraExportManager(jiraRepObj);
             jiraConnectObj = new JiraConnectManager(jiraRepObj);
             jiraImportObj = new JiraImportManager(jiraRepObj);
@@ -179,7 +177,7 @@ namespace GingerCore.ALM
             {
                 if (Directory.Exists(Path.Combine(CurrJiraConfigPath, "JiraSettings")))
                 {
-                    ConfigPackageFolderPath = CurrJiraConfigPath;
+                    ALMCore.AlmConfig.ALMConfigPackageFolderPath = CurrJiraConfigPath;
                     jiraConnectObj.CreateJiraRepository();
                     return true;
                 }
