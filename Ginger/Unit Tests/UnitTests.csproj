@@ -286,6 +286,7 @@
     <Compile Include="NonUITests\Script\VBSStringTests.cs" />
     <Compile Include="NonUITests\StatusResultTest.cs" />
     <Compile Include="NonUITests\NonDriverActionTest.cs" />
+    <Compile Include="NonUITests\AnalyzerTests.cs" />
     <Compile Include="NonUITests\UsedVariablesTest.cs" />
     <Compile Include="TestAssemblyInit.cs" />
     <Compile Include="TestResources\IEBrowser\IEBrowserWindow.xaml.cs">
