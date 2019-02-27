@@ -780,7 +780,7 @@ namespace GingerCore
                 Expr = Expr.Substring(1, Expr.Length - 2);
                 Expr = Expr.Replace("VBS Eval=", "");
                 //check whether the Expr contains Split.If yes the take user entered number and decreased it to -1
-                if (p.Contains("{VBS Eval=Split("))
+                if (p.Contains("{VBS Eval")
                 {
 
 
@@ -795,7 +795,7 @@ namespace GingerCore
                 //TODO: err
                 mValueCalculated = mValueCalculated.Replace(p, "ERROR: " + e.Message);
             }
-            if (FailonUnix && System.Environment.OSVersion.Platform.ToString().StartsWith("Win"))
+            if (FailonUnix && !System.Environment.OSVersion.Platform.ToString().StartsWith("Win"))
             {
 
 
