@@ -1621,7 +1621,7 @@ namespace GingerCore.Drivers.AndroidADB
 
         public ElementInfo LearnElementInfoDetails(ElementInfo EI)
         {
-            throw new NotImplementedException();
+            return EI;
         }
 
         //TODO: Phone state
