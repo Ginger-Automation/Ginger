@@ -1512,7 +1512,7 @@ namespace GingerCore.Drivers.Appium
         }
         public ElementInfo LearnElementInfoDetails(ElementInfo EI)
         {
-            throw new NotImplementedException();
+            return EI;
         }
     }
 }
