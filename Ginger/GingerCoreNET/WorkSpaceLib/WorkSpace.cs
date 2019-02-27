@@ -207,15 +207,15 @@ namespace amdocs.ginger.GingerCoreNET
                 mBetaFeatures = value;
             }
         }
-        private static VERefrenceList mVERefrences;
-        public static VERefrenceList VERefrences
+        private static VEReferenceList mVERefrences;
+        public static VEReferenceList VERefrences
         {
             get
             {
                 if (mVERefrences == null)
                 {
 
-                 mVERefrences=   VERefrenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json" }));
+                 mVERefrences=   VEReferenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json" }));
                 }
 
                 return mVERefrences;

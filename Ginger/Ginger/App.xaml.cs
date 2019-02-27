@@ -23,7 +23,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.Repository;
-using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;

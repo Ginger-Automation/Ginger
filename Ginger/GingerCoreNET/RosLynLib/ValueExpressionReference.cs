@@ -25,13 +25,13 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib.Refrences
         }
     }
 
-    public class VERefrenceList
+    public class VEReferenceList
     {
         public List<ValueExpressionReference> Refrences = new List<ValueExpressionReference>();
 
-        public static VERefrenceList LoadFromJson(string JsonFilePath)
+        public static VEReferenceList LoadFromJson(string JsonFilePath)
         {
-            return JsonConvert.DeserializeObject<VERefrenceList>(System.IO.File.ReadAllText(JsonFilePath));
+            return JsonConvert.DeserializeObject<VEReferenceList>(System.IO.File.ReadAllText(JsonFilePath));
         }
         public void SavetoJson(string JsonFilePath)
         {

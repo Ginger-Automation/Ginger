@@ -42,6 +42,16 @@
     },
     {
       "Category": "Date Time Functions",
+      "Name": "Get Current TimeStamp",
+      "Expression": "{CS Exp=DateTimeOffset.UtcNow.ToUnixTimeSeconds()}",
+      "UseCase": "You'll get the UTC time stamp",
+      "Samples": [],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Date Time Functions",
       "Name": "Tomorrow",
       "Expression": "{CS Exp=DateTime.Now+new TimeSpan(24,0,0)}",
       "UseCase": "Get Same time for tomorrow  ",

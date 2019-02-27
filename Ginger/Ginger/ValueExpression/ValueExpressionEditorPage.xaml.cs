@@ -57,7 +57,7 @@ namespace Ginger
     public partial class ValueExpressionEditorPage : Page
     {        
         ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, App.BusinessFlow,WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(),false,"",false);
-        VERefrenceList Tvel = new VERefrenceList();
+        VEReferenceList Tvel = new VEReferenceList();
         GenericWindow mWin;
         object mObj;
         string mAttrName;
@@ -135,7 +135,7 @@ namespace Ginger
             AddVariables();
             AddEnvParams();
             AddGlobalParameters();
-            AddRosylynFunctions();
+            AddCSFunctions();
            //AddVBSFunctions();
             //AddRegexFunctions();
             //AddVBSIfFunctions();
@@ -217,9 +217,9 @@ namespace Ginger
             AddVBSIfEval(tviVars, "Actual to Upper Case = 'ABC'", "UCase({Actual})=\"ABC\"");
         }
 
-        private void AddRosylynFunctions()
+        private void AddCSFunctions()
         {
-            WorkSpace.VERefrences = VERefrenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json" }));
+            WorkSpace.VERefrences = VEReferenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json" }));
 
 
             foreach (ValueExpressionReference VER in WorkSpace.VERefrences.Refrences)
