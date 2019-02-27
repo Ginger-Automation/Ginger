@@ -297,7 +297,8 @@ namespace GingerCore
 
         [IsSerializedForLocalRepository]
         public new string ExternalID { get; set; } // will use it for QC ID or other external ID
-
+        [IsSerializedForLocalRepository]
+        public string AlmData{ get; set; } 
         //[IsSerializedForLocalRepository]
         //TODO: remove and make it only platform, otherwise is save also the agent details and make isDirsty too sensitive
 
@@ -587,6 +588,7 @@ namespace GingerCore
             {
                 Activities.Add(a);
             }
+            CurrentActivity = a;
         }
 
         public void InsertActivity(Activity a, int index = -1)

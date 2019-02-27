@@ -1436,5 +1436,10 @@ namespace GingerCore.Drivers.ASCF
         {
             throw new NotImplementedException();
         }
+
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        {
+            return EI;
+        }
     }
 }

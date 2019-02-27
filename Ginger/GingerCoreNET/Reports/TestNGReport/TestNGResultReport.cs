@@ -19,10 +19,7 @@ limitations under the License.
 using System.Collections.Generic;
 using System.Linq;
 using GingerCore;
-using GingerCore.GeneralLib;
-using GingerCore.Actions;
-using Ginger.Reports;
-using Amdocs.Ginger.Common;
+using GingerCoreNET.GeneralLib;
 
 namespace Ginger.Reports
 {
@@ -30,6 +27,7 @@ namespace Ginger.Reports
     {
         public override string CreateReport(ReportInfo RI, bool statusByGroupActivity)
         {
+
             base.RI = RI;
             string runSetName = "GingerRunSet";
             string runGroupName = "GingerRunGroup";
@@ -63,12 +61,12 @@ namespace Ginger.Reports
             </class>";             
 
                 BFNames = BFNames + @"
-                <method signature=""" + GingerCore.General.ConvertInvalidXMLCharacters(BF.Name) + @""" name=""" + GingerCore.General.ConvertInvalidXMLCharacters(BF.Name) + @""" class=""" + GingerCore.General.ConvertInvalidXMLCharacters(BF.Name) + ".Ginger Business Flow" + @"""/>";
+                <method signature=""" + General.ConvertInvalidXMLCharacters(BF.Name) + @""" name=""" + General.ConvertInvalidXMLCharacters(BF.Name) + @""" class=""" + General.ConvertInvalidXMLCharacters(BF.Name) + ".Ginger Business Flow" + @"""/>";
             }
             reportHeader = reportHeader + @"
 <testng-results blocked=""" + blockedCount + @""" failed=""" + failedCount + @""" total=""" + totalCount + @""" passed=""" + passCount + @""">";
             reportHeader = reportHeader + @"
-    <suite name=""" + GingerCore.General.ConvertInvalidXMLCharacters(runSetName) + @""">";
+    <suite name=""" + General.ConvertInvalidXMLCharacters(runSetName) + @""">";
             reportGroups = reportGroups + BFNames + @"
             </group>
         </groups>";
@@ -97,7 +95,7 @@ namespace Ginger.Reports
                     {
                         List<Activity> acts = item.ActivitiesIdentifiers.Select(a => a.IdentifiedActivity).ToList();
                         Amdocs.Ginger.CoreNET.Execution.eRunStatus status = getGroupActivityStatus(acts, ref elapsed);
-                        BFResults += buildXml(status, ref passCount, ref failedCount, ref blockedCount, GingerCore.General.ConvertInvalidXMLCharacters(BF.Name), GingerCore.General.ConvertInvalidXMLCharacters(item.Name), GingerCore.General.ConvertInvalidXMLCharacters(item.Description), elapsed);
+                        BFResults += buildXml(status, ref passCount, ref failedCount, ref blockedCount, General.ConvertInvalidXMLCharacters(BF.Name), General.ConvertInvalidXMLCharacters(item.Name), General.ConvertInvalidXMLCharacters(item.Description), elapsed);
                     }
                 }
 
@@ -113,13 +111,13 @@ namespace Ginger.Reports
                 if (unGroupedAct.Count > 0)
                 {
                     Amdocs.Ginger.CoreNET.Execution.eRunStatus status = getGroupActivityStatus(unGroupedAct, ref elapsed);
-                    BFResults += buildXml(status, ref passCount, ref failedCount, ref blockedCount, GingerCore.General.ConvertInvalidXMLCharacters(BF.Name), "Ungrouped", "Ungrouped", elapsed);
+                    BFResults += buildXml(status, ref passCount, ref failedCount, ref blockedCount, General.ConvertInvalidXMLCharacters(BF.Name), "Ungrouped", "Ungrouped", elapsed);
                 }
             }
             else//if there are no groups create default group
             {
                 Amdocs.Ginger.CoreNET.Execution.eRunStatus status = getGroupActivityStatus(BF.Activities.ToList(), ref elapsed);
-                BFResults += buildXml(status, ref passCount, ref failedCount, ref blockedCount, GingerCore.General.ConvertInvalidXMLCharacters(BF.Name), "Ungrouped", "Ungrouped", elapsed);
+                BFResults += buildXml(status, ref passCount, ref failedCount, ref blockedCount, General.ConvertInvalidXMLCharacters(BF.Name), "Ungrouped", "Ungrouped", elapsed);
             }          
 
             return BFResults;
@@ -155,7 +153,7 @@ namespace Ginger.Reports
             string BFResults = string.Empty;
             foreach (Activity activity in BF.Activities)
             {
-                BFResults += buildXml(activity.Status, ref passCount, ref failedCount, ref blockedCount, GingerCore.General.ConvertInvalidXMLCharacters(BF.Name), GingerCore.General.ConvertInvalidXMLCharacters(activity.ActivityName), GingerCore.General.ConvertInvalidXMLCharacters(activity.Description), activity.Elapsed);
+                BFResults += buildXml(activity.Status, ref passCount, ref failedCount, ref blockedCount, General.ConvertInvalidXMLCharacters(BF.Name), General.ConvertInvalidXMLCharacters(activity.ActivityName), General.ConvertInvalidXMLCharacters(activity.Description), activity.Elapsed);
             }
             return BFResults;
         }

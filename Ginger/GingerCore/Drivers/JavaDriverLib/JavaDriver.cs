@@ -2226,6 +2226,11 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
         }
 
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        {
+            return EI;
+        }
+
         ElementInfo IWindowExplorer.GetControlFromMousePosition()
         {
             //TODO:
@@ -2756,7 +2761,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return null;
         }
 
-        public Bitmap GetScreenShot()
+        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null)
         {
             return GetWindowScreenShot();
         }

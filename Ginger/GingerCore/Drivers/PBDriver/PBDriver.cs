@@ -998,6 +998,11 @@ namespace GingerCore.Drivers.PBDriver
             return GetControlFromMousePosition();           
         }
 
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        {
+            return EI;
+        }
+
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)
         {
             return GetElementProperties(ElementInfo);         

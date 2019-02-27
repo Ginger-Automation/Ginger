@@ -141,9 +141,16 @@ namespace GingerCore.Repository.UpgradeLib
                     //get XML 
                     reader.ReadLine();//no need first line
                     xml = reader.ReadLine();
-                    if (xml.ToLower().Contains("version") == false)//to handle new line gap in some old xml's
+                    if (xml != null)
                     {
-                        xml = reader.ReadLine();
+                        if (xml.ToLower().Contains("version") == false)//to handle new line gap in some old xml's
+                        {
+                            xml = reader.ReadLine();
+                        }
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the Ginger Version of the file: '{0}'", xmlFilePath));
                     }
                 }
             }

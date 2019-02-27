@@ -1230,7 +1230,7 @@ namespace Ginger
 
             //execute preparations
             SetAutomateTabRunnerForExecution();
-            App.AutomateTabGingerRunner.ResetRunnerExecutionDetails(true);
+            App.AutomateTabGingerRunner.ResetRunnerExecutionDetails();
             mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
             
         }

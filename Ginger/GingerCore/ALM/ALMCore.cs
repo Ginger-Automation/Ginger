@@ -40,12 +40,12 @@ namespace GingerCore.ALM
         public abstract void DisconnectALMServer();
         public abstract bool DisconnectALMProjectStayLoggedIn();
         public abstract List<string> GetALMDomains();
-        public abstract List<string> GetALMDomainProjects(string ALMDomainName);
+        public abstract Dictionary<string, string> GetALMDomainProjects(string ALMDomainName);
         public abstract bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null);
         public abstract ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType = ALM_Common.DataContracts.ResourceType.ALL);
-        public abstract Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST = false);
+        public abstract Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false);
 
-        public virtual void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject)
+        public virtual void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject, string ALMProjectKey)
         {
             AlmConfig.ALMServerURL = ALMServerUrl;
             AlmConfig.UseRest = UseRest;
@@ -53,6 +53,7 @@ namespace GingerCore.ALM
             AlmConfig.ALMPassword = ALMPassword;
             AlmConfig.ALMDomain = ALMDomain;
             AlmConfig.ALMProjectName = ALMProject;
+            AlmConfig.ALMProjectKey = ALMProjectKey;
         }
 
         public BusinessFlow ConvertRQMTestPlanToBF(RQMTestPlan testPlan)

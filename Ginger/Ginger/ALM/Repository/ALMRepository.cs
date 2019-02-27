@@ -42,9 +42,10 @@ namespace Ginger.ALM.Repository
              WorkSpace.UserProfile.ALMPassword = newPassword;
         }
 
-        public void SetALMProject(string project)
+        public void SetALMProject(KeyValuePair<string, string> project)
         {
-             WorkSpace.UserProfile.Solution.ALMProject = project;
+            WorkSpace.UserProfile.Solution.ALMProject = project.Value;
+            WorkSpace.UserProfile.Solution.ALMProjectKey = project.Key;
         }
 
         public abstract bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle);

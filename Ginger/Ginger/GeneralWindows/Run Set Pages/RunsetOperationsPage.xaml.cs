@@ -213,7 +213,7 @@ namespace Ginger.Run
 
         private void AddAutomatedALMDefectsOperation(object sender, RoutedEventArgs e)
         {
-            if (! WorkSpace.UserProfile.Solution.UseRest)
+            if (! WorkSpace.UserProfile.Solution.UseRest && WorkSpace.UserProfile.Solution.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
             {
                 Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI);
                 return;

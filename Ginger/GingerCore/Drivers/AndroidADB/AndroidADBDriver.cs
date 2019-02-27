@@ -1569,7 +1569,7 @@ namespace GingerCore.Drivers.AndroidADB
         
         }
 
-        Bitmap IVisualTestingDriver.GetScreenShot()
+        Bitmap IVisualTestingDriver.GetScreenShot(Tuple<int, int> setScreenSize = null)
         {
             return GetScreenShot();
         }
@@ -1617,6 +1617,11 @@ namespace GingerCore.Drivers.AndroidADB
         public void StartSpying()
         {
             throw new NotImplementedException();
+        }
+
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        {
+            return EI;
         }
 
         //TODO: Phone state

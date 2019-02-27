@@ -1,0 +1,147 @@
+﻿{
+  "templates": [
+    {
+      "projects": [ "Default" ],
+      "fields": [
+        {
+          "name": "Issue Type",
+          "key": "issuetype",
+          "type": "object",
+          "data": "{ \"name\": \"Test\" }"
+        },
+        {
+          "name": "Description",
+          "key": "description",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Project",
+          "key": "project",
+          "type": "object",
+          "data": "{ \"key\": \"{{value}}\" }"
+        },
+        {
+          "name": "Automation_Status",
+          "key": "customfield_17301",
+          "type": "option",
+          "data": "{\"value\": \"{{value}}\",\"id\": \"{{id}}\"}"
+        },
+        {
+          "name": "Fix Version/s",
+          "key": "fixVersions",
+          "type": "array",
+          "data": "{\"name\": \"{{value}}\"}"
+        },
+        {
+          "name": "Cucumber Scenario",
+          "key": "customfield_15602",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Generic Test Definition",
+          "key": "customfield_15603",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Test Type",
+          "key": "customfield_15600",
+          "type": "option",
+          "data": "{\"value\": \"{{value}}\"}"
+        },
+        {
+          "name": "Cucumber Test Type",
+          "key": "customfield_15601",
+          "type": "option",
+          "data": "{\"value\": \"{{value}}\"}"
+        },
+        {
+          "name": "Time Tracking",
+          "key": "timetracking",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Summary",
+          "key": "summary",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Reporter",
+          "key": "reporter",
+          "type": "object",
+          "data": "{\"name\": \"{{value}}\"}"
+        },
+        {
+          "name": "Priority",
+          "key": "priority",
+          "type": "object",
+          "data": "{ \"name\": \"{{value}}\"}"
+        },
+        {
+          "name": "Automated",
+          "key": "customfield_16900",
+          "type": "option",
+          "data": "{\"value\": \"{{value}}\"}"
+        },
+        {
+          "name": "Labels",
+          "key": "labels",
+          "type": "strings_array",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Test Sets association with a Test",
+          "key": "customfield_15607",
+          "type": "object",
+          "data": "{ \"name\": \"{{value}}\"}"
+        },
+        {
+          "name": "Testing Level",
+          "key": "customfield_11523",
+          "type": "option",
+          "data": "{\"value\": \"{{value}}\"}"
+        },
+        {
+          "name": "Test Steps",
+          "key": "customfield_15604",
+          "type": "steps",
+          "data": "{\"index\": \"{{step_index}}\",\"step\": \"{{step_name}}\",\"data\": \"{{step_data}}\",\"result\": \"{{step_result}}\"}"
+        },
+        {
+          "name": "Environment",
+          "key": "environment",
+          "type": "string",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Pre-Conditions association with a Test",
+          "key": "customfield_15608",
+          "type": "strings_array",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Test Plans associated with a Test",
+          "key": "customfield_15609",
+          "type": "strings_array",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Linked Issues",
+          "key": "issuelinks",
+          "type": "strings_array",
+          "data": "{{value}}"
+        },
+        {
+          "name": "Assignee",
+          "key": "assignee",
+          "type": "object",
+          "data": "{ \"name\": \"{{value}}\"}"
+        }
+      ]
+    }
+  ]
+}
