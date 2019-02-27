@@ -58,9 +58,10 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                foreach (Activity activity in businessFlow.Activities)
+                for (int intIndex = 0; intIndex < businessFlow.Activities.Count(); intIndex++)
                 {
-                    if (activity.SelectedForConversion && activity.Acts.OfType<IObsoleteAction>().ToList().Count > 0)
+                    Activity activity = businessFlow.Activities[intIndex];
+                    if (activity != null && activity.SelectedForConversion && activity.Acts.OfType<IObsoleteAction>().ToList().Count > 0)
                     {
                         Activity currentActivity;
                         if (addNewActivity)
@@ -68,8 +69,9 @@ namespace Amdocs.Ginger.CoreNET
                             currentActivity = new Activity() { Active = true };
                             currentActivity = (Activity)activity.CreateCopy(false);
                             currentActivity.ActivityName = "New - " + activity.ActivityName;
-                            businessFlow.Activities.Insert(businessFlow.Activities.IndexOf(activity) + 1, currentActivity);
+                            businessFlow.Activities.Insert(intIndex + 1, currentActivity);
                             activity.Active = false;
+                            intIndex++;
                         }
                         else
                         {
@@ -95,6 +97,10 @@ namespace Amdocs.Ginger.CoreNET
 
                                 // set obsolete action in the activity as inactive
                                 act.Active = false;
+                                if (addNewActivity)
+                                {
+                                    currentActivity.Acts.Remove(act);
+                                }
                             }
                         }
 
@@ -126,40 +132,43 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                ObservableList<ApplicationPOMModel> pomLst = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
-                ApplicationPOMModel selectedPOM = pomLst.Where(x => x.Guid.ToString() == pomModelObject).SingleOrDefault();
-
-                ElementInfo elementInfo = null;
-                string locateValue = Convert.ToString(newActUIElement.GetType().GetProperty(ActUIElementLocateValueField).GetValue(newActUIElement, null));
-                eLocateBy elementLocateBy = GeteLocateByEnumItem(Convert.ToString(newActUIElement.GetType().GetProperty(ActUIElementElementLocateByField).GetValue(newActUIElement, null)));
-
-                var matchingExistingLocator = selectedPOM.MappedUIElements.Where(x => x.Locators.Any(y => y.LocateBy == elementLocateBy && y.LocateValue.ToLower().Trim().Equals(locateValue.ToLower().Trim())));
-                if (matchingExistingLocator != null)
+                if (!string.IsNullOrEmpty(pomModelObject))
                 {
-                    elementInfo = matchingExistingLocator.FirstOrDefault();
-                    if (elementInfo != null)
+                    ObservableList<ApplicationPOMModel> pomLst = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+                    ApplicationPOMModel selectedPOM = pomLst.Where(x => x.Guid.ToString() == pomModelObject).SingleOrDefault();
+
+                    ElementInfo elementInfo = null;
+                    string locateValue = Convert.ToString(newActUIElement.GetType().GetProperty(ActUIElementLocateValueField).GetValue(newActUIElement, null));
+                    eLocateBy elementLocateBy = GeteLocateByEnumItem(Convert.ToString(newActUIElement.GetType().GetProperty(ActUIElementElementLocateByField).GetValue(newActUIElement, null)));
+
+                    var matchingExistingLocator = selectedPOM.MappedUIElements.Where(x => x.Locators.Any(y => y.LocateBy == elementLocateBy && y.LocateValue.ToLower().Trim().Equals(locateValue.ToLower().Trim())));
+                    if (matchingExistingLocator != null)
                     {
-                        PropertyInfo pLocateBy = newActUIElement.GetType().GetProperty(ActUIElementElementLocateByField);
-                        if (pLocateBy != null)
+                        elementInfo = matchingExistingLocator.FirstOrDefault();
+                        if (elementInfo != null)
                         {
-                            if (pLocateBy.PropertyType.IsEnum)
+                            PropertyInfo pLocateBy = newActUIElement.GetType().GetProperty(ActUIElementElementLocateByField);
+                            if (pLocateBy != null)
                             {
-                                pLocateBy.SetValue(newActUIElement, Enum.Parse(pLocateBy.PropertyType, "POMElement"));
+                                if (pLocateBy.PropertyType.IsEnum)
+                                {
+                                    pLocateBy.SetValue(newActUIElement, Enum.Parse(pLocateBy.PropertyType, "POMElement"));
+                                }
+                            }
+
+                            PropertyInfo pLocateVal = newActUIElement.GetType().GetProperty(ActUIElementElementLocateValueField);
+                            if (pLocateVal != null)
+                            {
+                                pLocateVal.SetValue(newActUIElement, string.Format("{0}_{1}", selectedPOM.Guid.ToString(), elementInfo.Guid.ToString()));
+                            }
+
+                            PropertyInfo pElementType = newActUIElement.GetType().GetProperty(ActUIElementElementTypeField);
+                            if (pElementType != null && pElementType.PropertyType.IsEnum)
+                            {
+                                pElementType.SetValue(newActUIElement, Enum.Parse(pElementType.PropertyType, Convert.ToString(elementInfo.ElementTypeEnum)));
                             }
                         }
-
-                        PropertyInfo pLocateVal = newActUIElement.GetType().GetProperty(ActUIElementElementLocateValueField);
-                        if (pLocateVal != null)
-                        {
-                            pLocateVal.SetValue(newActUIElement, string.Format("{0}_{1}", selectedPOM.Guid.ToString(), elementInfo.Guid.ToString()));
-                        }
-
-                        PropertyInfo pElementType = newActUIElement.GetType().GetProperty(ActUIElementElementTypeField);
-                        if (pElementType != null && pElementType.PropertyType.IsEnum)
-                        {
-                            pElementType.SetValue(newActUIElement, Enum.Parse(pElementType.PropertyType, Convert.ToString(elementInfo.ElementTypeEnum)));
-                        }
-                    }
+                    } 
                 }
             }
             catch (Exception ex)

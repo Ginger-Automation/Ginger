@@ -79,6 +79,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionConversion\ActionConversionTest.cs" />
     <Compile Include="APIModelLib\POMsTest.cs" />
     <Compile Include="APIModelLib\WSDLParserTest.cs" />
     <!--<Compile Include="APIModelLib\WSDLToAPITest.cs" />-->
