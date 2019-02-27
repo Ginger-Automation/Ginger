@@ -46,12 +46,12 @@ namespace Ginger.Actions.WebServices
 
         public void Bind()
         {
-            URLUCValueExpression.Init((Context)mAct.Context, mAct.URL, ActInputValue.Fields.Value);
-            SoapActionUCValueExpression.Init((Context)mAct.Context, mAct.SOAPAction, ActInputValue.Fields.Value);
-            XMLFileNameUCValueExpression.Init((Context)mAct.Context, mAct.XMLfileName, ActInputValue.Fields.Value);
-            URLDomainUCValueExpression.Init((Context)mAct.Context, mAct.URLDomain, ActInputValue.Fields.Value);
-            URLPasswordUCValueExpression.Init((Context)mAct.Context, mAct.URLPass, ActInputValue.Fields.Value);
-            URLUserUCValueExpression.Init((Context)mAct.Context, mAct.URLUser, ActInputValue.Fields.Value);
+            URLUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.URL, ActInputValue.Fields.Value);
+            SoapActionUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.SOAPAction, ActInputValue.Fields.Value);
+            XMLFileNameUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.XMLfileName, ActInputValue.Fields.Value);
+            URLDomainUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.URLDomain, ActInputValue.Fields.Value);
+            URLPasswordUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.URLPass, ActInputValue.Fields.Value);
+            URLUserUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.URLUser, ActInputValue.Fields.Value);
             SetDynamicGrid();
             DynamicXMLElementsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddDynamicXMLelement));          
         }
@@ -65,7 +65,7 @@ namespace Ginger.Actions.WebServices
         private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)DynamicXMLElementsGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, (Context)mAct.Context);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mAct.Context));
             VEEW.ShowAsWindow();
         }
 

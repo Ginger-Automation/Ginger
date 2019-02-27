@@ -72,7 +72,7 @@ namespace Ginger.ActionLib
                 l.Style = App.GetStyle("@InputFieldLabelStyle");                
                 Grid.SetRow(l, rnum);
 
-                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl((Context)mAct.Context, param);             
+                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(Context.GetAsContext(mAct.Context), param);             
                 actionInputValueUserControl.Margin = new Thickness(5);
                 ActionConfigGrid.Children.Add(actionInputValueUserControl);
                 Grid.SetRow(actionInputValueUserControl, rnum);

@@ -892,7 +892,7 @@ namespace Ginger
                     mBusinessFlow.SaveBackup();
                     mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
                     mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
-                    UpdateApplicationsAgentsMapping();
+                    
                     SetExpanders();
                     SetGherkinOptions();
                     if (mBusinessFlow.Activities.Count > 0)
@@ -903,6 +903,7 @@ namespace Ginger
                                    
                     App.AutomateTabGingerRunner.BusinessFlows.Add(mBusinessFlow);
                     App.AutomateTabGingerRunner.CurrentBusinessFlow = mBusinessFlow;
+                    UpdateApplicationsAgentsMapping();
                 }
 
             }

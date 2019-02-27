@@ -35,7 +35,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             mAction = Action;
 
-            ValueUCE.BindControl((Context)mAction.Context, mAction, ActUIElement.Fields.Value);
+            ValueUCE.BindControl(Context.GetAsContext(mAction.Context), mAction, ActUIElement.Fields.Value);
         }
     }
 }

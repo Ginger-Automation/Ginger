@@ -865,7 +865,11 @@ namespace Ginger.Functionalities
         public void ViewAction(FoundItem actionToView)
         {
             Act act = (Act)actionToView.OriginObject;
-            RepositoryItemBase Parent = actionToView.ParentItemToSave;
+            RepositoryItemBase Parent = actionToView.ParentItemToSave;            
+            if (Parent is BusinessFlow)
+            {
+                act.Context = new Context() { BusinessFlow = (BusinessFlow)Parent };
+            }
             ActionEditPage w;
             if(mContext == eContext.RunsetPage)
                 w = new ActionEditPage(act, General.RepositoryItemPageViewMode.View);

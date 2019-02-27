@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Repository;
@@ -118,7 +119,7 @@ namespace Ginger.Actions
                 foreach (Act cA in OrderedActions)
                 {
                     if (cA.LegacyActionPlatformsList.Intersect( WorkSpace.UserProfile.Solution.ApplicationPlatforms
-                                                                    .Where(x => mBusinessFlow.CurrentActivity.TargetApplication == x.AppName)
+                                                                    .Where(x => mContext.Activity.TargetApplication == x.AppName)
                                                                     .Select(x => x.Platform).ToList()).Any())
                     {
                         LegacyActions.Add(cA);
@@ -147,51 +148,55 @@ namespace Ginger.Actions
             AppDomain.CurrentDomain.Load("GingerCoreCommon");
             AppDomain.CurrentDomain.Load("GingerCoreNET");
             
-
             var ActTypes = new List<Type>();
-            foreach (Assembly GC in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name.Contains("GingerCore")))
-               
+            foreach (Assembly GC in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name.Contains("GingerCore")))               
             {
-
                 var types = from type in GC.GetTypes() where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) select type;
                 ActTypes.AddRange(types);
             }
- 
-                  
 
+            ObservableList<TargetBase> targetApplications;
+            if (mBusinessFlow != null)
+            {
+                targetApplications = mBusinessFlow.TargetApplications;
+            }
+            else
+            {
+                targetApplications = WorkSpace.UserProfile.Solution.GetSolutionTargetApplications();
+            }
+            TargetApplication targetApp = (TargetApplication)(from x in targetApplications where x.Name == mContext.Activity.TargetApplication select x).FirstOrDefault();
+            if (targetApp == null)
+            {
+                if (targetApplications.Count == 1)
+                {
+                    targetApp = (TargetApplication)targetApplications.FirstOrDefault();
+                    mContext.Activity.TargetApplication = targetApp.AppName;
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.MissingActivityAppMapping);
+                    return null;
+                }
+            }
+            ApplicationPlatform appPlatform = (from x in WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetApp.AppName select x).FirstOrDefault();
 
             foreach (Type t in ActTypes)
             {
-                Act a = (Act)Activator.CreateInstance(t);
+                Act action = (Act)Activator.CreateInstance(t);
 
-                if (a.IsSelectableAction == false) 
+                if (action.IsSelectableAction == false) 
                     continue;
 
-                TargetApplication TA = (TargetApplication)(from x in mBusinessFlow.TargetApplications where x.Name == mBusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
-                if (TA == null)
+                if (appPlatform != null)
                 {
-                    if (mBusinessFlow.TargetApplications.Count == 1)
-                    {
-                        TA = (TargetApplication)mBusinessFlow.TargetApplications.FirstOrDefault();
-                        mBusinessFlow.CurrentActivity.TargetApplication = TA.AppName;
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.MissingActivityAppMapping);
-                        return null;
-                    }
-                }
-                ApplicationPlatform AP = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == TA.AppName select x).FirstOrDefault();
-                if (AP != null)
-                {
-                    if (a.Platforms.Contains(AP.Platform))
+                    if (action.Platforms.Contains(appPlatform.Platform))
                     {
                         //DO Act.GetSampleAct in base
-                        if ((Acts.Where(c => c.GetType() == a.GetType()).FirstOrDefault()) == null)
+                        if ((Acts.Where(c => c.GetType() == action.GetType()).FirstOrDefault()) == null)
                         {
-                            a.Description = a.ActionDescription;
-                            a.Active = true;
-                            Acts.Add(a);
+                            action.Description = action.ActionDescription;
+                            action.Active = true;
+                            Acts.Add(action);
                         }
                     }
                 }

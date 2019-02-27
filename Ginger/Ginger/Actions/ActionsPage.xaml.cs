@@ -62,13 +62,12 @@ namespace Ginger.Actions
             else
             {
                 EditMode = General.RepositoryItemPageViewMode.Automation;
-                UpdateParentBusinessFlow(businessFlow);                              
-
                 grdActions.AddToolbarTool("@Split_16x16.png", "Split to " + GingerDicser.GetTermResValue(eTermResKey.Activities), new RoutedEventHandler(Split));
                 grdActions.AddToolbarTool(eImageType.Reset, "Reset Run Details", new RoutedEventHandler(ResetAction));
                 grdActions.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Action", FloatingContinueRunActionButton_Click, 4);
                 grdActions.AddFloatingImageButton("@RunAction_20x20.png", "Run Action", FloatingRunActionButton_Click, 4);
-            }            
+            }
+            UpdateParentBusinessFlow(businessFlow);
             SetActionsGridView();
                                    
             SetGridRowStyle();
@@ -234,7 +233,7 @@ namespace Ginger.Actions
             }
             else
             {
-                AddActionPage addAction = new AddActionPage(new Context() { BusinessFlow = mBusinessFlow });
+                AddActionPage addAction = new AddActionPage(new Context() { BusinessFlow = mBusinessFlow , Activity= mCurrentActivity});
                 addAction.ShowAsWindow(mCurrentActivity.Acts);
             }
         }

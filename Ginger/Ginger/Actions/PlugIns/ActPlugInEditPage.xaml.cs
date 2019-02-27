@@ -61,7 +61,7 @@ namespace Ginger.Actions.PlugIns
                 param.ParamType = (from x in actionInputsDetails where x.Param == param.Param select x.ParamType).SingleOrDefault();
                 
                 // Add ActionInputValueUserControl for the param value to edit
-                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl((Context)mAct.Context, param);
+                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(Context.GetAsContext(mAct.Context), param);
                 DockPanel.SetDock(actionInputValueUserControl, Dock.Top);
                 actionInputValueUserControl.Margin = new Thickness(0,10,0,0);
                 xActionInputControlsPnl.Children.Add(actionInputValueUserControl);

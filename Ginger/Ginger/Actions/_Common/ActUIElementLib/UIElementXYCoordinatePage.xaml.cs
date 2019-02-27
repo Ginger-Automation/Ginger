@@ -28,9 +28,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             mAct = Act;         
             InitializeComponent();            
-            xXCoordinate.Init((Context)mAct.Context, mAct.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, mAct.GetInputParamValue(ActUIElement.Fields.XCoordinate)));
-            xYCoordinate.Init((Context)mAct.Context, mAct.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate, mAct.GetInputParamValue(ActUIElement.Fields.YCoordinate)));
-            xValue.Init((Context)mAct.Context, mAct.GetOrCreateInputParam(ActUIElement.Fields.Value, mAct.GetInputParamValue(ActUIElement.Fields.Value)));
+            xXCoordinate.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, mAct.GetInputParamValue(ActUIElement.Fields.XCoordinate)));
+            xYCoordinate.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate, mAct.GetInputParamValue(ActUIElement.Fields.YCoordinate)));
+            xValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.Value, mAct.GetInputParamValue(ActUIElement.Fields.Value)));
             if (mAct.ElementAction == ActUIElement.eElementAction.SendKeysXY)
             {
                 xValuePanel.Visibility = Visibility.Visible;

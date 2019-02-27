@@ -39,8 +39,8 @@ namespace Ginger.Actions
             App.FillComboFromEnumVal(ActionNameComboBox, Act.GenElementAction);                     
             App.ObjFieldBinding(ActionNameComboBox, ComboBox.SelectedValueProperty, Act, "GenElementAction"); 
 
-            Xoffset.Init((Context)mAct.Context, mAct.GetOrCreateInputParam(ActGenElement.Fields.Xoffset), true);
-            Yoffset.Init((Context)mAct.Context, mAct.GetOrCreateInputParam(ActGenElement.Fields.Yoffset), true);
+            Xoffset.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActGenElement.Fields.Xoffset), true);
+            Yoffset.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActGenElement.Fields.Yoffset), true);
         }
 
         private void ActionNameSelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -42,15 +42,15 @@ namespace Ginger.Actions.Communication
 
         private void Bind()
         {
-            MailFromTextBox.Init((Context)mAct.Context, mAct, nameof(ActeMail.MailFrom));
-            MailToTextBox.Init((Context)mAct.Context, mAct, nameof(ActeMail.Mailto));
-            MailCCTextBox.Init((Context)mAct.Context, mAct, nameof(ActeMail.Mailcc));
-            SubjectTextBox.Init((Context)mAct.Context, mAct, nameof(ActeMail.Subject));
-            BodyTextBox.Init((Context)mAct.Context, mAct, nameof(ActeMail.Body));
+            MailFromTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFrom));
+            MailToTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailto));
+            MailCCTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailcc));
+            SubjectTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Subject));
+            BodyTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Body));
             App.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.Port));
             App.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.Pass));       
-            xSMTPMailHostTextBox.Init((Context)mAct.Context, mAct, nameof(ActeMail.Host));
-            xSMTPUserTextBox.Init((Context)mAct.Context, mAct, nameof(ActeMail.User));                                           
+            xSMTPMailHostTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Host));
+            xSMTPUserTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.User));                                           
             GingerCore.General.ActInputValueBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.EnableSSL, "true"));
             GingerCore.General.ActInputValueBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.ConfigureCredential,"false"));
             App.ObjFieldBinding(AttachmentFilename, TextBox.TextProperty, mAct, nameof(ActeMail.AttachmentFileName));

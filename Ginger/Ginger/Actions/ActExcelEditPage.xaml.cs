@@ -48,13 +48,13 @@ namespace Ginger.Actions
         public void Bind()
         {            
             ExcelActionComboBox.BindControl(mAct, ActExcel.Fields.ExcelActionType);
-            ExcelFileNameTextBox.BindControl((Context)mAct.Context, mAct, ActExcel.Fields.ExcelFileName);
+            ExcelFileNameTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.ExcelFileName);
             SheetNamComboBox.BindControl(mAct, ActExcel.Fields.SheetName);
-            SelectRowsWhereTextBox.BindControl((Context)mAct.Context, mAct, ActExcel.Fields.SelectRowsWhere);
+            SelectRowsWhereTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.SelectRowsWhere);
             GingerCore.General.ObjFieldBinding(SelectAllRows,CheckBox.IsCheckedProperty,mAct, ActExcel.Fields.SelectAllRows);
-            PrimaryKeyColumnTextBox.BindControl((Context)mAct.Context, mAct, ActExcel.Fields.PrimaryKeyColumn);
-            SetDataUsedTextBox.BindControl((Context)mAct.Context, mAct, ActExcel.Fields.SetDataUsed);
-            ColMappingRulesTextBox.BindControl((Context)mAct.Context, mAct, ActExcel.Fields.ColMappingRules);
+            PrimaryKeyColumnTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.PrimaryKeyColumn);
+            SetDataUsedTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.SetDataUsed);
+            ColMappingRulesTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.ColMappingRules);
             
             if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData)
             {                
@@ -158,7 +158,7 @@ namespace Ginger.Actions
 
         private void SheetNamVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActExcel.Fields.SheetName, (Context)mAct.Context);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActExcel.Fields.SheetName, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             SheetNamComboBox.Text = mAct.SheetName;
         }

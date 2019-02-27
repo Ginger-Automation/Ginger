@@ -274,7 +274,7 @@ namespace Ginger.UserControlsLib
             Context context = null;
             if(obj is Act)
             {
-                context = (Context)((Act)obj).Context;
+                context = Context.GetAsContext(((Act)obj).Context);
             }
             ValueExpressionEditorPage w = new ValueExpressionEditorPage(obj, AttrName, context);
             w.ShowAsWindow(eWindowShowStyle.Dialog);

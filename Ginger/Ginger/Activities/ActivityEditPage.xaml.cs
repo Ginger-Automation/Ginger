@@ -31,6 +31,8 @@ using Ginger.Repository;
 using Ginger.Activities;
 using Amdocs.Ginger;
 using amdocs.ginger.GingerCoreNET;
+using System.Linq;
+using Amdocs.Ginger.Common.Repository;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -99,13 +101,13 @@ namespace Ginger.BusinessFlowWindows
             if (editMode == General.RepositoryItemPageViewMode.View)
             {
                 varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity, General.RepositoryItemPageViewMode.View);
-                actionsPage = new ActionsPage(mActivity, null, General.RepositoryItemPageViewMode.View);
+                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.View);
                 SetViewMode();
             }
             else
             {
                 varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity, General.RepositoryItemPageViewMode.Child);
-                actionsPage = new ActionsPage(mActivity, null, General.RepositoryItemPageViewMode.Child);
+                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.Child);
             }
 
             varbsPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
@@ -133,7 +135,14 @@ namespace Ginger.BusinessFlowWindows
 
         private void FillTargetAppsComboBox()
         {
-            TargetApplicationComboBox.ItemsSource = mActivityParentBusinessFlow.TargetApplications;
+            if (mActivityParentBusinessFlow != null)
+            {
+                TargetApplicationComboBox.ItemsSource = mActivityParentBusinessFlow.TargetApplications;
+            }
+            else
+            {
+                TargetApplicationComboBox.ItemsSource = WorkSpace.UserProfile.Solution.GetSolutionTargetApplications();
+            }
             TargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             TargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
         }

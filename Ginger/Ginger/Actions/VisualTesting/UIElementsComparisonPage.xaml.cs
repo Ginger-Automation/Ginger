@@ -36,7 +36,7 @@ namespace Ginger.Actions.VisualTesting
             InitializeComponent();
             InitLayout();
 
-            BaselineInfoFileUCVE.Init((Context)mAct.Context, mAct.GetOrCreateInputParam(ActVisualTesting.Fields.BaselineInfoFile ), true, true, UCValueExpression.eBrowserType.File, "*", BaselineInfoFileUCVE_FileSelected);
+            BaselineInfoFileUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.BaselineInfoFile ), true, true, UCValueExpression.eBrowserType.File, "*", BaselineInfoFileUCVE_FileSelected);
         }
 
         public void InitLayout()

@@ -60,6 +60,7 @@ namespace Ginger.Actions
             // If the VE is on stand alone form:
             this.obj = obj;
             this.AttrName = AttrName;
+            mContext = context;
             GingerCore.General.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);       
         }
 
@@ -67,6 +68,7 @@ namespace Ginger.Actions
         {
             this.obj = obj;
             this.AttrName = AttrName;
+            mContext = context;
             GingerCore.General.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
 
             if (isBrowseNeeded)
@@ -103,6 +105,7 @@ namespace Ginger.Actions
             // If the VE is on stand alone form:
             this.obj = AIV;
             this.AttrName = ActInputValue.Fields.Value;
+            mContext = context;
             GingerCore.General.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
 
             if (isBrowseNeeded)

@@ -52,7 +52,7 @@ namespace Ginger.Actions.Java
 
         private void DoBinding()
         {
-            JavaPathTextBox.Init((Context)mAct.Context, mAct, ActJavaEXE.Fields.JavaWSEXEPath);
+            JavaPathTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActJavaEXE.Fields.JavaWSEXEPath);
             GingerCore.General.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, mAct, ActJavaEXE.Fields.ScriptName);
             GingerCore.General.ObjFieldBinding(ScriptDescriptionLabel, Label.ContentProperty, mAct, ActJavaEXE.Fields.ScriptDecription);
 
