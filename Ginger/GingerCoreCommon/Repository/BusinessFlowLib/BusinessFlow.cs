@@ -539,39 +539,33 @@ namespace GingerCore
             }
         }
 
-        public void AddActivity(Activity a, Activity indexActivity = null)
+        public void AddActivity(Activity a)
         {
             if (a == null)
                 return;
 
             int selectedActivityIndex = 0;
-            if(indexActivity == null)
+
+            if (CurrentActivity != null)
             {
-                if (CurrentActivity != null)
+                String activityGroupName = CurrentActivity.ActivitiesGroupID;
+                if (!string.IsNullOrEmpty(activityGroupName))
                 {
-                    String activityGroupName = CurrentActivity.ActivitiesGroupID;
-                    if (!string.IsNullOrEmpty(activityGroupName))
+                    ActivitiesGroup activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == activityGroupName).FirstOrDefault();
+                    selectedActivityIndex = Activities.IndexOf(CurrentActivity);
+                    while (!string.IsNullOrEmpty(Activities[selectedActivityIndex].ActivitiesGroupID) && Activities[selectedActivityIndex].ActivitiesGroupID.Equals(activitiesGroup?.Name) == true)
                     {
-                        ActivitiesGroup activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == activityGroupName).FirstOrDefault();
-                        selectedActivityIndex = Activities.IndexOf(CurrentActivity);
-                        while (!string.IsNullOrEmpty(Activities[selectedActivityIndex].ActivitiesGroupID) && Activities[selectedActivityIndex].ActivitiesGroupID.Equals(activitiesGroup.Name) == true)
+                        selectedActivityIndex++;
+                        if (selectedActivityIndex >= Activities.Count)
                         {
-                            selectedActivityIndex++;
-                            if (selectedActivityIndex >= Activities.Count)
-                            {
-                                break;
-                            }
+                            break;
                         }
                     }
-                }
-                else
-                {
-                    CurrentActivity = a;
                 }
             }
             else
             {
-                selectedActivityIndex = Activities.IndexOf(indexActivity) + 1;
+                CurrentActivity = a;
             }
 
             if (selectedActivityIndex > 0)
@@ -688,7 +682,7 @@ namespace GingerCore
                 counter++;
             activitiesGroup.Name = activitiesGroup.Name + "_" + counter.ToString();
         }
-        public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup,ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false, Activity indexActivity = null)
+        public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup,ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false)
         {
             string missingActivities = string.Empty;
 
@@ -709,17 +703,13 @@ namespace GingerCore
                         Activity actInstance = (Activity)repoAct.CreateInstance(true);
                         actInstance.ActivitiesGroupID = activitiesGroup.Name;
                         if (keepOriginalTargetApplicationMapping == false)
+                        {
                             SetActivityTargetApplication(actInstance);
-                        if(indexActivity == null && ActivitiesGroups.Count > 1)
-                        {
-                            this.AddActivity(actInstance);
                         }
-                        else
-                        {
-                            this.AddActivity(actInstance, indexActivity);
-                        }
+                                             
+                        this.AddActivity(actInstance);
                         actIdent.IdentifiedActivity = actInstance;
-                        indexActivity = actInstance;
+                        
                     }
                     else
                     {
