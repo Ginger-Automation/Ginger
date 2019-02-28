@@ -517,7 +517,6 @@
     <Compile Include="Actions\ActGetMsgboxText.cs" />
     <Compile Include="Actions\ActButton.cs" />
     <Compile Include="Actions\ActCheckbox.cs" />
-    <Compile Include="Actions\ActClearAllVariables.cs" />
     <Compile Include="Actions\ActFileTransfer.cs" />
     <Compile Include="Actions\ActConsoleCommand.cs" />
     <Compile Include="Actions\ActDBValidation.cs" />
