@@ -15,24 +15,20 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Repository;
-using Amdocs.Ginger.Repository;
-using Ginger.Repository;
-using Ginger.Repository.ItemToRepositoryWizard;
 using GingerCore;
-using GingerCore.Variables;
 using GingerTestHelper;
-using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 using System.Linq;
 using GingerCore.Actions;
 using Amdocs.Ginger.CoreNET;
-using System.Collections.Generic;
 using GingerCore.Actions.Common;
+using System;
+using Amdocs.Ginger.Repository;
+using GingerWPF.WorkSpaceLib;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.CoreNET.Repository;
+using System.IO;
 
 namespace GingerTest
 {
@@ -42,7 +38,7 @@ namespace GingerTest
     {
         static SolutionRepository mSolutionRepository;
         static BusinessFlow mBF;
-        static string solutionName; 
+        static string solutionName;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
@@ -61,12 +57,6 @@ namespace GingerTest
             mSolutionRepository.Open(TempRepositoryFolder);
         }
 
-        [TestCleanup]
-        public void TestCleanUp()
-        {
-
-        }
-
         private static void CreateTestSolution()
         {
             // First we create a basic solution with some sample items
@@ -82,13 +72,17 @@ namespace GingerTest
 
             SR.Close();
         }
-        
-        [TestMethod]
-        [Timeout(60000)]
-        public void ActionConversionToSameActivityTest()
+
+        [TestCleanup]
+        public void TestCleanUp()
         {
-            mBF = new BusinessFlow() { Name= "TestBFConversion", Active=true };
-            
+
+        }
+
+        private static void GetActivityWithActGenElementActions()
+        {
+            mBF = new BusinessFlow() { Name = "TestBFConversion", Active = true };
+
             Activity activity = new Activity();
             activity.SelectedForConversion = true;
             ActGenElement gen1 = new ActGenElement();
@@ -99,233 +93,158 @@ namespace GingerTest
             gen1.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
             activity.Acts.Add(gen1);
 
-            ActGenElement gen2 = new ActGenElement();
-            gen2.Active = true;
-            gen2.Description = "Set Value : last_name input";
-            gen2.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            gen2.LocateValue = "last_name";
-            gen2.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
-            activity.Acts.Add(gen2);
+            mBF.AddActivity(activity);
+        }
+
+        private static void GetActivityWithActUIElementActions()
+        {
+            mBF = new BusinessFlow() { Name = "TestBFConversion", Active = true };
+
+            Activity activity = new Activity();
+            activity.SelectedForConversion = true;
+
+            ActUIElement gen1 = new ActUIElement();
+            gen1.Active = true;
+            gen1.Description = "Set Value : first_name input";
+            gen1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath;
+            gen1.LocateValue = "//input[@name='first_name']";
+            gen1.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox;
+            gen1.ElementAction = ActUIElement.eElementAction.SendKeys;
+            gen1.ElementLocateValue = "";
+            activity.Acts.Add(gen1);
 
             mBF.AddActivity(activity);
+        }
 
-            // add business flow to the solution repository
-            mSolutionRepository.AddRepositoryItem(mBF);
-
+        private static void ExecuteActionConversion(bool addNewActivity, bool isDefaultTargetApp, string strTargetApp,
+                                                    bool convertToPOMAction = false, string selectedPOMObjectName = "")
+        {
             ActionConversionUtils utils = new ActionConversionUtils();
             ObservableList<ConvertableActionDetails> lst = utils.GetConvertableActivityActions(mBF.Activities.ToList());
             foreach (var item in lst)
             {
                 item.Selected = true;
             }
-            utils.ConvertToActions(false, mBF, lst, true, string.Empty);
+            utils.ConvertToActions(addNewActivity, mBF, lst, isDefaultTargetApp, strTargetApp, convertToPOMAction, selectedPOMObjectName);
+        }
 
-            Activity newActivity = mBF.Activities[0];
-            int count = newActivity.Acts.Count();
+        [TestMethod]
+        [Timeout(60000)]
+        public void ActionConversionToSameActivityTest()
+        {
+            GetActivityWithActGenElementActions();
+            
+            ExecuteActionConversion(false, true, string.Empty);
+
+            string targetType = ((IObsoleteAction)mBF.Activities[0].Acts[0]).TargetAction().ToString();
+            string convertedType = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[1]).ActClass;
+
+            string targetLocateType = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[0]).LocateBy.ToString();
+            string convertedLocateType = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[1]).LocateBy.ToString();
+
+            string targetLocateValue = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[0]).LocateValue.ToString();
+            string convertedLocateValue = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[1]).LocateValue.ToString();
 
             ////Assert
-            Assert.AreEqual(count, 4);            
+            Assert.AreEqual(mBF.Activities.Count(), 1);
+            Assert.AreEqual(targetType, convertedType);
+            Assert.AreEqual(targetLocateType, convertedLocateType);
+            Assert.AreEqual(targetLocateValue, convertedLocateValue);
         }
 
         [TestMethod]
         [Timeout(60000)]
         public void NoActionConversionToSameActivityTest()
         {
-            mBF = new BusinessFlow() { Name = "TestBFConversion", Active = true };
-
-            Activity activity = new Activity();
-            activity.SelectedForConversion = true;
-            ActUIElement gen1 = new ActUIElement();
-            gen1.Active = true;
-            gen1.Description = "Set Value : first_name input";
-            gen1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath;
-            gen1.LocateValue = "//input[@name='first_name']";
-            gen1.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox;
-            gen1.ElementAction = ActUIElement.eElementAction.SendKeys;
-            gen1.ElementLocateValue = "";
-            activity.Acts.Add(gen1);
-
-            mBF.AddActivity(activity);
-
-            // add business flow to the solution repository
-            mSolutionRepository.AddRepositoryItem(mBF);
-
-            ActionConversionUtils utils = new ActionConversionUtils();
-            ObservableList<ConvertableActionDetails> lst = utils.GetConvertableActivityActions(mBF.Activities.ToList());
-            foreach (var item in lst)
-            {
-                item.Selected = true;
-            }
-            utils.ConvertToActions(false, mBF, lst, true, string.Empty);
-
-            Activity newActivity = mBF.Activities[0];
-            int count = newActivity.Acts.Count();
-
+            GetActivityWithActUIElementActions();
+            
+            ExecuteActionConversion(false, true, string.Empty);
+            
             ////Assert
-            Assert.AreEqual(count, 1);
-        }
+            Assert.IsFalse(mBF.Activities[0].Acts[0] is IObsoleteAction);
+            Assert.AreEqual(mBF.Activities[0].Acts.Count(), 1);
+        }        
 
         [TestMethod]
         [Timeout(60000)]
         public void ActionConversionToNewActivityTest()
         {
-            mBF = new BusinessFlow() { Name = "TestBFConversion", Active = true };
-
-            Activity activity = new Activity();
-            activity.SelectedForConversion = true;
-            ActGenElement gen1 = new ActGenElement();
-            gen1.Active = true;
-            gen1.Description = "Set Value : first_name input";
-            gen1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath;
-            gen1.LocateValue = "//input[@name='first_name']";
-            gen1.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
-            activity.Acts.Add(gen1);
-
-            ActGenElement gen2 = new ActGenElement();
-            gen2.Active = true;
-            gen2.Description = "Set Value : last_name input";
-            gen2.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            gen2.LocateValue = "last_name";
-            gen2.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
-            activity.Acts.Add(gen2);
-
-            mBF.AddActivity(activity);
-
+            GetActivityWithActGenElementActions();
+            
             // add business flow to the solution repository
             mSolutionRepository.AddRepositoryItem(mBF);
 
-            ActionConversionUtils utils = new ActionConversionUtils();
-            ObservableList<ConvertableActionDetails> lst = utils.GetConvertableActivityActions(mBF.Activities.ToList());
-            foreach (var item in lst)
-            {
-                item.Selected = true;
-            }
-            utils.ConvertToActions(true, mBF, lst, true, string.Empty);
+            ExecuteActionConversion(true, true, string.Empty);
 
-            int count = mBF.Activities.Count();
+            string targetType = ((IObsoleteAction)mBF.Activities[0].Acts[0]).TargetAction().ToString();
+            string convertedType = ((GingerCore.Actions.Act)mBF.Activities[1].Acts[0]).ActClass;
+
+            string targetLocateType = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[0]).LocateBy.ToString();
+            string convertedLocateType = ((GingerCore.Actions.Act)mBF.Activities[1].Acts[0]).LocateBy.ToString();
+
+            string targetLocateValue = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[0]).LocateValue.ToString();
+            string convertedLocateValue = ((GingerCore.Actions.Act)mBF.Activities[1].Acts[0]).LocateValue.ToString();
 
             ////Assert
-            Assert.AreEqual(count, 2);
+            Assert.AreEqual(mBF.Activities.Count(), 2);
+            Assert.AreEqual(targetType, convertedType);
+            Assert.AreEqual(targetLocateType, convertedLocateType);
+            Assert.AreEqual(targetLocateValue, convertedLocateValue);
         }
 
         [TestMethod]
         [Timeout(60000)]
         public void NoActionConversionToNewActivityTest()
         {
-            mBF = new BusinessFlow() { Name = "TestBFConversion", Active = true };
-
-            Activity activity = new Activity();
-            activity.SelectedForConversion = true;
-            ActUIElement gen1 = new ActUIElement();
-            gen1.Active = true;
-            gen1.Description = "Set Value : first_name input";
-            gen1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath;
-            gen1.LocateValue = "//input[@name='first_name']";
-            gen1.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox;
-            gen1.ElementAction = ActUIElement.eElementAction.SendKeys;
-            gen1.ElementLocateValue = "";
-            activity.Acts.Add(gen1);
-
-            mBF.AddActivity(activity);
-
+            GetActivityWithActUIElementActions();
+            
             // add business flow to the solution repository
             mSolutionRepository.AddRepositoryItem(mBF);
 
-            ActionConversionUtils utils = new ActionConversionUtils();
-            ObservableList<ConvertableActionDetails> lst = utils.GetConvertableActivityActions(mBF.Activities.ToList());
-            foreach (var item in lst)
-            {
-                item.Selected = true;
-            }
-            utils.ConvertToActions(true, mBF, lst, true, string.Empty);
-
-            Activity newActivity = mBF.Activities[0];
-            int count = newActivity.Acts.Count();
+            ExecuteActionConversion(true, true, string.Empty);
 
             ////Assert
-            Assert.AreEqual(count, 1);
+            Assert.IsFalse(mBF.Activities[0].Acts[0] is IObsoleteAction);
+            Assert.AreEqual(mBF.Activities.Count(), 1);
+            Assert.AreEqual(mBF.Activities[0].Acts.Count(), 1);
         }
 
         [TestMethod]
         [Timeout(60000)]
         public void ActionConversionToSameActivityPOMActionTest()
         {
-            mBF = new BusinessFlow() { Name = "TestBFConversion", Active = true };
+            GetActivityWithActGenElementActions();
+            
+            ExecuteActionConversion(false, true, string.Empty, true);
 
-            Activity activity = new Activity();
-            activity.SelectedForConversion = true;
-            ActGenElement gen1 = new ActGenElement();
-            gen1.Active = true;
-            gen1.Description = "Set Value : first_name input";
-            gen1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath;
-            gen1.LocateValue = "//input[@name='first_name']";
-            gen1.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
-            activity.Acts.Add(gen1);
+            string targetType = ((IObsoleteAction)mBF.Activities[0].Acts[0]).TargetAction().ToString();
+            string convertedType = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[1]).ActClass;
 
-            ActGenElement gen2 = new ActGenElement();
-            gen2.Active = true;
-            gen2.Description = "Set Value : last_name input";
-            gen2.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            gen2.LocateValue = "last_name";
-            gen2.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
-            activity.Acts.Add(gen2);
+            string targetLocateType = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[0]).LocateBy.ToString();
+            string convertedLocateType = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[1]).LocateBy.ToString();
 
-            mBF.AddActivity(activity);
-
-            // add business flow to the solution repository
-            mSolutionRepository.AddRepositoryItem(mBF);
-
-            ActionConversionUtils utils = new ActionConversionUtils();
-            ObservableList<ConvertableActionDetails> lst = utils.GetConvertableActivityActions(mBF.Activities.ToList());
-            foreach (var item in lst)
-            {
-                item.Selected = true;
-            }
-            utils.ConvertToActions(false, mBF, lst, true, string.Empty, true);
-
-            Activity newActivity = mBF.Activities[0];
-            int count = newActivity.Acts.Count();
+            string targetLocateValue = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[0]).LocateValue.ToString();
+            string convertedLocateValue = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[1]).LocateValue.ToString();
 
             ////Assert
-            Assert.AreEqual(count, 4);
+            Assert.AreEqual(mBF.Activities.Count(), 1);
+            Assert.AreEqual(targetType, convertedType);
+            Assert.AreEqual(targetLocateType, convertedLocateType);
+            Assert.AreEqual(targetLocateValue, convertedLocateValue);
         }
 
         [TestMethod]
         [Timeout(60000)]
         public void NoActionConversionToSameActivityPOMActionTest()
         {
-            mBF = new BusinessFlow() { Name = "TestBFConversion", Active = true };
-
-            Activity activity = new Activity();
-            activity.SelectedForConversion = true;
-            ActUIElement gen1 = new ActUIElement();
-            gen1.Active = true;
-            gen1.Description = "Set Value : first_name input";
-            gen1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath;
-            gen1.LocateValue = "//input[@name='first_name']";
-            gen1.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox;
-            gen1.ElementAction = ActUIElement.eElementAction.SendKeys;
-            gen1.ElementLocateValue = "";
-            activity.Acts.Add(gen1);
-
-            mBF.AddActivity(activity);
-
-            // add business flow to the solution repository
-            mSolutionRepository.AddRepositoryItem(mBF);
-
-            ActionConversionUtils utils = new ActionConversionUtils();
-            ObservableList<ConvertableActionDetails> lst = utils.GetConvertableActivityActions(mBF.Activities.ToList());
-            foreach (var item in lst)
-            {
-                item.Selected = true;
-            }
-            utils.ConvertToActions(false, mBF, lst, true, string.Empty, true);
-
-            Activity newActivity = mBF.Activities[0];
-            int count = newActivity.Acts.Count();
+            GetActivityWithActUIElementActions();
+            
+            ExecuteActionConversion(false, true, string.Empty, true);
 
             ////Assert
-            Assert.AreEqual(count, 1);
+            Assert.IsFalse(mBF.Activities[0].Acts[0] is IObsoleteAction);
+            Assert.AreEqual(mBF.Activities.Count(), 1);
+            Assert.AreEqual(mBF.Activities[0].Acts.Count(), 1);
         }
     }
 }
