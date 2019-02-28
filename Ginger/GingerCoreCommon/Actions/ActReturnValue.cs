@@ -55,9 +55,7 @@ namespace Amdocs.Ginger.Repository
             public static string StoreToVariable = "StoreToVariable";
             public static string StoreToDataSource = "StoreToDataSource";
             public static string StoreTo = "StoreTo";
-            public static string StoreToValue = "StoreToValue";
-            public static string Operator = "Operator";
-            
+            public static string StoreToValue = "StoreToValue";           
         }
 
         [IsSerializedForLocalRepository]
