@@ -37,7 +37,7 @@ namespace GingerTest
     public class ActionConversionTest
     {
         static SolutionRepository mSolutionRepository;
-        static BusinessFlow mBF;
+        static BusinessFlow mBF; 
         static string solutionName;
 
         [ClassInitialize]
