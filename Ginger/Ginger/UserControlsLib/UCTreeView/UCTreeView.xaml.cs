@@ -288,7 +288,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             //compare the value
             string filterbyValue = TreeNodesFilterByField.Item2.ToString();
-            if (filterbyValue == filterByObject.ToString())
+            if (filterByObject.ToString() == filterbyValue)
                 return true;
 
             return false;
