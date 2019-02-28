@@ -205,7 +205,7 @@ namespace Ginger.Actions
             Activity activity = new Activity() { Active=true};
             activity.TargetApplication = mCurrentActivity.TargetApplication;
             activity.ActivityName = CurrentAction.Description;
-            App.BusinessFlow.AddActivity(activity);
+            
 
             // Find the action index to split on
             int i = 0;
@@ -229,7 +229,8 @@ namespace Ginger.Actions
             {
                 IAct a1 = mCurrentActivity.Acts[j];
                mCurrentActivity.Acts.Remove(a1);
-            }            
+            }
+            App.BusinessFlow.AddActivity(activity);
         }
 
         private void AddAction(object sender, RoutedEventArgs e)

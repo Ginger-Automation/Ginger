@@ -2520,13 +2520,7 @@ namespace Ginger.Run
                 NotifyDynamicActivityWasAddedToBusinessflow(CurrentBusinessFlow);
                   
 
-                //move activity after current activity
-                int aIndex = CurrentBusinessFlow.Activities.IndexOf(sharedActivityInstance);
-                int currentIndex = CurrentBusinessFlow.Activities.IndexOf(CurrentBusinessFlow.CurrentActivity);
-                CurrentBusinessFlow.Activities.Move(aIndex, currentIndex + 1);
-
-                //set it as next activity to run
-                CurrentBusinessFlow.CurrentActivity = sharedActivityInstance;
+                //set it as next activity to run           
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 sharedActivityInstance.Acts.CurrentItem = sharedActivityInstance.Acts.FirstOrDefault();
 
