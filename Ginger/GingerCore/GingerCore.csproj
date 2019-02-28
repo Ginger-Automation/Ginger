@@ -489,7 +489,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\ActionConversion\ActionConversionHandler.cs" />
     <Compile Include="Actions\RobotFramework\ActRobot.cs" />
     <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
     <Compile Include="Actions\VisualTesting\VisualCompareAnalyzerIntegration.cs" />
@@ -557,7 +556,6 @@
     <Compile Include="Actions\Android\ActShell.cs" />
     <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
     <Compile Include="Actions\Common\ActUIElement.cs" />
-    <Compile Include="Actions\Common\IObsoleteAction.cs" />
     <Compile Include="Actions\Common\UIElementPropertyValueLocator.cs" />
     <Compile Include="Actions\Communication\ActeMail.cs" />
     <Compile Include="Actions\ActBrowserElement.cs" />
@@ -967,6 +965,7 @@
     <None Include="Resources\Pin32x32.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Actions\ActionConversion\" />
     <Folder Include="Actions\PlugIns\" />
     <Folder Include="Actions\Simulators\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\CCM\fa1qm1\" />
