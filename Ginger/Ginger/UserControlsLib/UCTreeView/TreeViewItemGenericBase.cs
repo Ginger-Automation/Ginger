@@ -109,10 +109,10 @@ namespace GingerWPF.TreeViewItemsLib
 
         public void PrepareItemForEdit()
         {
-            object repositoryItemBase = ((ITreeViewItem)this).NodeObject();
-            if (repositoryItemBase!=null && repositoryItemBase is RepositoryItemBase)
+            object treeObject = ((ITreeViewItem)this).NodeObject();
+            if (treeObject!=null && treeObject is RepositoryItemBase)
             {
-                ((RepositoryItemBase)repositoryItemBase).StartDirtyTracking();
+                ((RepositoryItemBase)treeObject).StartDirtyTracking();
             }
         }
 
