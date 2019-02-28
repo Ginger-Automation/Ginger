@@ -27,8 +27,6 @@ using Couchbase.Configuration.Client;
 using Couchbase.Authentication;
 using Couchbase.N1QL;
 using Couchbase.Configuration.Server.Serialization;
-
-
 namespace GingerCore.NoSqlBase
 {
     public class GingerCouchbase : NoSqlBase
@@ -51,7 +49,7 @@ namespace GingerCore.NoSqlBase
                 clusterCB = new Couchbase.Cluster(new ClientConfiguration
                 {
                     ViewRequestTimeout = 45000,
-                    Servers = new List<Uri> { new Uri(Db.TNSCalculated.ToString()) },//http://incespr021:8091                    
+                    Servers = new List<Uri> { new Uri(Db.TNSCalculated.ToString()) },                    
                 });
                 bool res = false;
                 String deCryptValue = EncryptionHandler.DecryptString(Db.PassCalculated.ToString(), ref res, false);
@@ -59,14 +57,13 @@ namespace GingerCore.NoSqlBase
                 {
                     Db.Pass = deCryptValue;                    
                 }
-
-                clusterCB.Authenticate(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());                
+                clusterCB.Authenticate(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());
                 return true;
             }
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Couchbase DB", e);
-                throw (e);
+                return false;
             }
         }
 
@@ -103,77 +100,98 @@ namespace GingerCore.NoSqlBase
             clusterCB.Dispose();            
         }
 
-        public void ConnecttoBucket(string bucketName)
-        {            
-            var clusterMan = clusterCB.CreateManager(Db.UserCalculated.ToString(),Db.PassCalculated.ToString());
-            IList<BucketConfig> buckets = clusterMan.ListBuckets().Value;
-            string bucketpassword = (from buckConfig in buckets where buckConfig.Name == bucketName select buckConfig.SaslPassword).FirstOrDefault();
-            if(bucketpassword == null)
+        public bool ConnecttoBucket(string bucketName)
+        {
+            try
             {
-                throw new Exception("No bucket found with name " + bucketName);
+                var bucket = clusterCB.OpenBucket(bucketName);
+                string bucketpassword = bucket.Configuration.Password;
+                ClassicAuthenticator classicAuthenticator = new ClassicAuthenticator(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());
+                classicAuthenticator.AddBucketCredential(bucketName, bucketpassword);
+                clusterCB.Authenticate(classicAuthenticator);
+                //TODO: need to check and true and flase on basis of connection
+                return true;
             }
-            ClassicAuthenticator classicAuthenticator = new ClassicAuthenticator("Administrator", "Administrator");
-            classicAuthenticator.AddBucketCredential(bucketName, bucketpassword);            
-            clusterCB.Authenticate(classicAuthenticator);                        
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed To Connect ConnectToBucket Method In GingerCouchBase DB", ex);
+                return false;
+            }
+        }
+
+
+        private string GetBucketName(string inputSQL)
+        {
+            string bucketName = string.Empty;
+            if (Action== ActDBValidation.eDBValidationType.RecordCount)
+            {
+                bucketName = inputSQL.Replace("`", "");
+                bucketName = bucketName.Replace("'", "");
+            }
+            else
+            {
+                bucketName = inputSQL.Substring(inputSQL.IndexOf(" from ") + 6);
+                bucketName = bucketName.Substring(0, bucketName.IndexOf(" ")).Replace("`", "");
+            }
+            return bucketName;
         }
 
         public override void PerformDBAction()
         {
-            Connect();
+            if (!Connect())
+            {
+                Act.Error = "Failed to connect to Couchbase DB";
+                return;
+            }
             string SQL = Act.SQL;
             string keyspace = Act.Keyspace;
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
             VE.Value = SQL;
             string SQLCalculated = VE.ValueCalculated;
-            IQueryResult<dynamic> result =null;
-            string bucketName = "";
-            try
-            {
-                switch (Action)
-                {
-                    case Actions.ActDBValidation.eDBValidationType.FreeSQL:                       
-                        
-                        if(!String.IsNullOrEmpty(SQLCalculated))
-                        {
-                            bucketName = SQLCalculated.Substring(SQLCalculated.IndexOf(" from ") + 6);
-                            bucketName = bucketName.Substring(0, bucketName.IndexOf(" ")).Replace("`","");                                
-                        }
-                        ConnecttoBucket(bucketName);                            
-                        result = clusterCB.Query<dynamic>(SQLCalculated);                        
-                        for (int i=0; i< result.Rows.Count;i++)
-                        {                            
-                            Act.ParseJSONToOutputValues(result.Rows[i].ToString(), i+1);
-                        }                                                    
-                        break;
-                    case Actions.ActDBValidation.eDBValidationType.RecordCount:
-                        string SQLRecord = SQLCalculated;
-                        ConnecttoBucket(SQLCalculated);
-                        result = clusterCB.Query<dynamic>("Select Count(*) as RECORDCOUNT from `" + SQLCalculated + "`");                        
-                        Act.ParseJSONToOutputValues(result.Rows[0].ToString(), 1);                        
-                        break;
-                    case Actions.ActDBValidation.eDBValidationType.UpdateDB:                        
-                        if (!String.IsNullOrEmpty(SQLCalculated))
-                        {
-                            bucketName = SQLCalculated.Substring(SQLCalculated.IndexOf(" from ") + 6);
-                            bucketName = bucketName.Substring(0, bucketName.IndexOf(" ")).Replace("`", "");
-                        }
-                        ConnecttoBucket(bucketName);
-                        var RS1 = clusterCB.Query<dynamic>(SQLCalculated);
-                        break;
+            string bucketName = GetBucketName(SQLCalculated);
 
-                    default:
-                        throw new Exception("Action Not SUpported");
+            if(!ConnecttoBucket(bucketName))
+            {
+                Act.Error = "failed to connect to bucket "+bucketName;
+                return;
+            }
+            else
+            {
+                IQueryResult<dynamic> result = null;
+                try
+                {
+                    switch (Action)
+                    {
+                        case Actions.ActDBValidation.eDBValidationType.FreeSQL:
+                            result = clusterCB.Query<dynamic>(SQLCalculated);
+                            for (int i = 0; i < result.Rows.Count; i++)
+                            {
+                                Act.ParseJSONToOutputValues(result.Rows[i].ToString(), i + 1);
+                            }
+                            break;
+                        case Actions.ActDBValidation.eDBValidationType.RecordCount:
+                            result = clusterCB.Query<dynamic>("Select Count(*) as RECORDCOUNT from `" + bucketName + "`");
+                            Act.ParseJSONToOutputValues(result.Rows[0].ToString(), 1);
+                            break;
+                        case Actions.ActDBValidation.eDBValidationType.UpdateDB:
+                            var RS1 = clusterCB.Query<dynamic>(SQLCalculated);
+                            break;
+
+                        default:
+                            throw new Exception("Action Not SUpported");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Act.Error = "Failed to execute. Error :" + e.Message;
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                }
+                if (!Db.KeepConnectionOpen)
+                {
+                    Disconnect();
                 }
             }
-            catch (Exception e)
-            {
-                Act.Error = "Failed to execute. Error :" + e.Message;
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
-            }
-            if (!Db.KeepConnectionOpen)
-            {
-                Disconnect();
-            }
+
         }
     }
 }
