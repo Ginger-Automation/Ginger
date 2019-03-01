@@ -753,6 +753,7 @@ namespace Amdocs.Ginger.Repository
         {
             //update the folder name in file system
             string newFullPath = Path.Combine(Path.GetDirectoryName(PathHelper.GetLongPath(FolderFullPath)), newFolderName);
+
             if (FolderName.ToUpper() == newFolderName.ToUpper())//user just changed the name letters case
             {
                 //move to temp folder
@@ -773,6 +774,7 @@ namespace Amdocs.Ginger.Repository
             OnPropertyChanged(nameof(FolderFullPath));
             OnPropertyChanged(nameof(DisplayName));
             OnPropertyChanged(nameof(FolderName));
+            mFileWatcher.Path = FolderFullPath;
 
             //updating the folder items cache with correct File Path
             UpdateFolderItemsCacheFilePath();
