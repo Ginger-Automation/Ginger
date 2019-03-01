@@ -420,6 +420,17 @@
     <Compile Include="Actions\ActionConversion\ActionConverterPage.xaml.cs">
       <DependentUpon>ActionConverterPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionConversion\ActionsConversionWizard.cs" />
+    <Compile Include="Actions\ActionConversion\ConversionConfigurationWzardPage.xaml.cs">
+      <DependentUpon>ConversionConfigurationWzardPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\ActionConversion\BooleanToVisiblityCollapsedConverter.cs" />
+    <Compile Include="Actions\ActionConversion\SelectActionWzardPage.xaml.cs">
+      <DependentUpon>SelectActionWzardPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\ActionConversion\SelectActivityWzardPage.xaml.cs">
+      <DependentUpon>SelectActivityWzardPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
       <DependentUpon>ActionLogConfigPage.xaml</DependentUpon>
     </Compile>
@@ -2040,6 +2051,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Agents\AddAgentWizardLib\AddAgentIntro.md" />
+    <Resource Include="Actions\ActionConversion\ActionConversionIntro.md" />
     <None Include="ALMRESTConfiguration\appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -2602,6 +2614,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ActionsNew\NewAddActionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ActionConversion\ConversionConfigurationWzardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ActionConversion\SelectActionWzardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ActionConversion\SelectActivityWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

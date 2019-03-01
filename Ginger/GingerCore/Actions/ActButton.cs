@@ -25,6 +25,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 // This class is for Button actions
 namespace GingerCore.Actions
 {

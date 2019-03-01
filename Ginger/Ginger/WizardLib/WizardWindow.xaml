@@ -32,7 +32,7 @@
 
     <Grid x:Name="gridMain" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="300" />
             <ColumnDefinition Width="*"	/>
         </Grid.ColumnDefinitions>
 
