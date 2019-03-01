@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         // Class using it attach its handler to Action
         public Action<GingerSocketInfo> MessageHandler { get; set; }
         
-        private readonly object mRLock = new object();
+        private readonly object mSendLockObject = new object();
         public NewPayLoad DataAsPayload
         {
             get
@@ -102,7 +102,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             mSocket.BeginSend(b, 0, b.Length, SocketFlags.None, SendCallback, this);
             bytesOut += b.Length;
             mProcessingStatus = eProcessingStatus.WaitingForResponse;
-            lock (mRLock)
+            lock (mSendLockObject)
             {
                 mSendDone.WaitOne(); // blocking until send completed
             }
@@ -126,12 +126,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         // Each time new data arrive we get callback
         private void ReceiveCallback(IAsyncResult ar)
         {
-            Console.WriteLine("ReceiveCallback");
+            Console.WriteLine("Receive Callback");
             // TODO: add timeout to prevent partial package to get stuck
 
-            lock (mRLock)
+            lock (mSendLockObject)
             {
-                Console.WriteLine("lll");
+                Console.WriteLine("Send lock obtained");
             };
             
             
