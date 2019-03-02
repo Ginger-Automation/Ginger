@@ -529,14 +529,14 @@ function define_GingerLib() {
     }
 
     GingerLib.isVisible = function (el) {
-      
+
 		if($(el).is(":visible")==false || $(el).css('display')=== 'none' || $(el).css('opacity')===0)
 		{
 			//if visible , display or opacity check is false return false straight a way
 			return false;
 		}
 		else
-		{
+        {
 			//if element is visible then we do additional check to verify if it is on foreground
 			return GingerLib.IsOnForeGround(el);
 		}
@@ -546,19 +546,27 @@ function define_GingerLib() {
     GingerLib.IsOnForeGround=  function (element) {
 
          element.scrollIntoView();
-
 		 if (element.offsetWidth === 0 || element.offsetHeight === 0) return false;
 		
-		var height = document.documentElement.clientHeight,
-	    rects = element.getClientRects(),
+        var height = document.documentElement.clientHeight;
+        if (height === 0)
+        {
+            height = document.body.clientHeight;
+            if (height === 0 || height === undefined)
+            {
+                height = $(window).height();
+            }
+        }
+        var rects = element.getClientRects();
+
 	    on_top = function(r) {
-            var x = (r.left + r.right)/2, y = (r.top + r.bottom)/2;
+            var x = (r.left + r.right) / 2, y = (r.top + r.bottom) / 2;
                 return element.contains(document.elementFromPoint(x, y));          
 		};
 		
 		for (var i = 0, l = rects.length; i < l; i++) {
 			 var r = rects[i],
-			    in_viewport = r.top > 0 ? r.top <= height : (r.bottom > 0 && r.bottom <= height);
+                in_viewport = r.top > 0 ? r.top <= height : (r.bottom > 0 && r.bottom <= height);
 			if (in_viewport && on_top(r)) return true;
 	    }
 
@@ -898,7 +906,7 @@ function define_GingerLib() {
     GingerLib.GetElementWithImplicitSync = function (LocateBy, LocateValue)
     {
         ErrorMessage="";
-        var el = GingerLib.GetElement(LocateBy, LocateValue);
+        var el = GingerLib.GetElement(LocateBy, LocateValue);    
         var bStopWaiting = false;
         var start = new Date().getTime();
         var elapsed = new Date().getTime() - start;
@@ -918,7 +926,7 @@ function define_GingerLib() {
                 }
 
 				if(el!=undefined)
-				{
+                {
 					if (GingerLib.isVisible(el) || $(el).prop("type") == "checkbox")
 					{					
 						bStopWaiting = true;
