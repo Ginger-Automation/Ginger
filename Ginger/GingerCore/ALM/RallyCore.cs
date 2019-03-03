@@ -26,7 +26,7 @@ using Rally.RestApi.Json;
 using Rally.RestApi.Response;
 using GingerCore.ALM.Rally;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.InterfacesLib;
+using System.Linq;
 
 namespace GingerCore.ALM
 {
@@ -139,7 +139,7 @@ namespace GingerCore.ALM
             return domains;
         }
 
-        public override List<string> GetALMDomainProjects(string ALMDomain)
+        public override Dictionary<string,string> GetALMDomainProjects(string ALMDomain)
         {
             List<string> projects = new List<string>();
             try
@@ -178,7 +178,7 @@ namespace GingerCore.ALM
             {
                 throw ex;
             }
-            return projects;
+            return projects.ToDictionary(prj => prj, prj => prj); ;
         }
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
@@ -200,7 +200,7 @@ namespace GingerCore.ALM
             return null;
         }
 
-        public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST)
+        public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST)
         {
             return null;
         }
