@@ -22,6 +22,8 @@ using GingerCoreNET.SolutionRepositoryLib;
 using GingerWPF.TreeViewItemsLib;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,6 +36,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
     /// </summary>
     public partial class TreeView1 : UserControl, ITreeView
     {
+
+        private Task mSearchTask = null;
+        private CancellationTokenSource mCancellationTokenSource = null;
+        private string mSearchString;
+
         public UCTreeView Tree => xTreeViewTree;
 
         public string TreeTitle
@@ -112,70 +119,52 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 xTreeViewTree.CurrentSelectedTreeViewItem.SetTools(this);
             }
         }
-
-        private void xSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+       
+        private async void xSearchTextBox_TextChangedAsync(object sender, TextChangedEventArgs e)
         {
-            if (xSearchTextBox.Text.Length > 0)
+            if (string.IsNullOrEmpty(xSearchTextBox.Text))
             {
-                xSearchNullText.Visibility= Visibility.Collapsed;
-                xSearchBtn.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xSearchNullText.Visibility = Visibility.Visible;
-                xSearchBtn.Visibility = Visibility.Visible;
-                List<TreeViewItem> pathNodes = new List<TreeViewItem>();
-                if (xTreeViewTree.MlastSelectedTVI!=null)
-                {
-                    pathNodes = getSelecetdItemPathNodes(xTreeViewTree.MlastSelectedTVI);
-                }
-                CollapseUnselectedTreeNodes(xTreeViewTree.TreeItemsCollection, pathNodes);
                 return;
             }
-        }
-
-        private static void CollapseUnselectedTreeNodes(ItemCollection itemCollection,List<TreeViewItem> pathNodes)
-        {
-            foreach (TreeViewItem tvItem in itemCollection)
+            // this inner method checks if user is still typing
+            async Task<bool> UserKeepsTyping()
             {
-                if (tvItem.HasItems)
-                {
-                    CollapseUnselectedTreeNodes(tvItem.Items, pathNodes);
-                    foreach (TreeViewItem item in tvItem.Items)
-                    {
-                        if (!(pathNodes != null && pathNodes.Contains(item)))
-                        {
-                            item.IsExpanded = false;
-                            item.Visibility = Visibility.Visible;
-                        }
-                    }
-                }
+                string txt = xSearchTextBox.Text; 
+                await Task.Delay(1000);     
+                return txt != xSearchTextBox.Text;
             }
+            if (await UserKeepsTyping() || xSearchTextBox.Text == mSearchString) return;
+          
+            mSearchString = xSearchTextBox.Text;
+            await SearchAsync();           
+           
         }
-
-        public static List<TreeViewItem> getSelecetdItemPathNodes(TreeViewItem SelectedItem)
-        {
-            List<TreeViewItem> pathNodes = new List<TreeViewItem>();
-            object ParentItem = getParentItem(SelectedItem);
-            while (ParentItem.GetType() == typeof(TreeViewItem))
-            {
-                pathNodes.Add((TreeViewItem)ParentItem);
-                ParentItem = getParentItem(ParentItem);
-            }
-            return pathNodes;
-        }
-
-        public static object getParentItem(object tvi)
-        {
-            return ((TreeViewItem)tvi).Parent;
-        }
-        private void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
+        
+        private async void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
         {
             xSearchClearBtn.Visibility = Visibility.Collapsed;
             xSearchBtn.Visibility = Visibility.Visible;
             xSearchTextBox.Text = "";
+            mSearchString = null;
+
+            if (mSearchTask?.IsCompleted==false && mSearchTask?.IsCanceled == false)
+            {
+               await CancelSearchAsync();
+            }
+            else
+            {
+                //if search is already complete and user trying to clear text we collapse the unselected nodes
+                List<TreeViewItem> pathNodes = new List<TreeViewItem>();
+                if (xTreeViewTree.MlastSelectedTVI != null)
+                {
+                    pathNodes = UCTreeView.getSelecetdItemPathNodes(xTreeViewTree.MlastSelectedTVI);
+                }
+                UCTreeView.CollapseUnselectedTreeNodes(xTreeViewTree.TreeItemsCollection, pathNodes);
+            }
         }
 
+      
+        
         public void SearchTree(string txt)
         {
             xSearchTextBox.Text = txt;
@@ -195,35 +184,80 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             //no tool bar to add to in this View type
         }
 
-        private void xSearchBtn_Click(object sender, RoutedEventArgs e)
+        private async void xSearchBtn_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if (!string.IsNullOrEmpty(xSearchTextBox.Text))
             {
-                if (!string.IsNullOrEmpty(xSearchTextBox.Text))
-                {
-                    Reporter.ToStatus(eStatusMsgKey.Search, null, xSearchTextBox.Text);
-                    Mouse.OverrideCursor = Cursors.Wait;
-                    xSearchClearBtn.Visibility = Visibility.Visible;
-                    xSearchBtn.Visibility = Visibility.Collapsed;                    
-                    Search();                    
-                }
-            }
-            catch(Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to search : ", ex);
-            }
-            finally
-            {
-                Mouse.OverrideCursor = null;
-                Reporter.HideStatusMessage();
+               await SearchAsync();
             }
         }
 
 
-        private void Search()
+        private async Task SearchAsync()
         {
-           string txt = xSearchTextBox.Text;
-           xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, txt);           
+
+            if (string.IsNullOrEmpty(mSearchString))
+            {
+                return;
+            }
+
+            if (mSearchTask?.IsCanceled==false && mSearchTask?.IsCompleted==false)
+            {
+                //Cancel if previous search is running 
+              await CancelSearchAsync();
+            }           
+
+            xSearchBtn.Visibility = Visibility.Collapsed;
+            xSearchClearBtn.Visibility = Visibility.Visible;
+            mCancellationTokenSource = new CancellationTokenSource();
+            mSearchTask = new Task(() =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    try
+                    {
+                        mCancellationTokenSource.Token.ThrowIfCancellationRequested();
+                        Reporter.ToStatus(eStatusMsgKey.Search, null, ": " + mSearchString);
+                        Mouse.OverrideCursor = Cursors.Wait;
+                        xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, mSearchString, mCancellationTokenSource.Token);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to search : ", ex);
+                    }
+                    finally
+                    {
+                        Reporter.HideStatusMessage();
+                        Mouse.OverrideCursor = null;
+                        mCancellationTokenSource.Dispose();
+                    }
+                });
+            }, mCancellationTokenSource.Token, TaskCreationOptions.LongRunning);
+
+            mSearchTask.Start();
+
+        }
+
+        private async Task CancelSearchAsync()
+        {
+
+            mCancellationTokenSource?.Cancel();
+            Stopwatch st = new Stopwatch();
+            st.Start();
+            while (mSearchTask.IsCompleted ==false && mSearchTask.IsCanceled==false  && mSearchTask.IsFaulted==false)
+            {
+                await Task.Delay(1000);
+                if (st.ElapsedMilliseconds > 5000)
+                {
+                    break;
+                }
+            }
+
+            mCancellationTokenSource?.Dispose();
+            mSearchTask = null;
+
+            Reporter.HideStatusMessage();
+            Mouse.OverrideCursor = null;
         }
     }
 }
