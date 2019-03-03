@@ -88,11 +88,14 @@ namespace Ginger.Repository
                 if (isOverwrite)
                 {
                     WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(itemToUpload.ExistingItem);
-                    //To be removed from here and need to handle from solution repository
-                    itemCopy.ContainingFolder = itemToUpload.ExistingItem.ContainingFolder;
-                    itemCopy.ContainingFolderFullPath = itemToUpload.ExistingItem.ContainingFolderFullPath;                  
+                
+                    RepositoryFolderBase repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(itemToUpload.ExistingItem.ContainingFolderFullPath);
+                    repositoryFolder.AddRepositoryItem(itemCopy);
+                }
+                else
+                {
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);
                 }     
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);
 
                 itemToUpload.UsageItem.IsSharedRepositoryInstance = true;
 
