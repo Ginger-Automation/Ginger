@@ -216,22 +216,20 @@ namespace Amdocs.Ginger.Repository
         {
             RepositoryFolderBase repoFolder = null;
             Parallel.ForEach(mSolutionRootFolders, folder =>
-            {
-                if (repoFolder == null)
-                {
-                    if (Path.GetFullPath(folderPath) == Path.GetFullPath(folder.FolderFullPath))
-                    {
-                        repoFolder = folder;
-                    }
-                    else if (Path.GetFullPath(folderPath).ToLower().Contains(Path.GetFullPath(folder.FolderFullPath).ToLower()))
-                    {
-                        Uri fullPath = new Uri(folderPath, UriKind.Absolute);
-                        Uri relRoot = new Uri(folder.FolderFullPath, UriKind.Absolute);
-                        string relPath = "~\\" + Uri.UnescapeDataString(relRoot.MakeRelativeUri(fullPath).ToString().Replace("/", "\\"));
-                        repoFolder = folder.GetSubFolderByName(relPath, true);
-                    }
-                }
-            });
+             {
+                 if (repoFolder == null)
+                 {
+                     if (Path.GetFullPath(folderPath) == Path.GetFullPath(folder.FolderFullPath))
+                     {
+                         repoFolder = folder;
+                     }
+                     else if (Path.GetFullPath(folderPath).ToLower().Contains(Path.GetFullPath(folder.FolderFullPath).ToLower()))
+                     {
+                         string relPath = "~" + folderPath.Replace(SolutionFolder, "");
+                         repoFolder = folder.GetSubFolderByName(relPath, true);
+                     }
+                 }
+             });
             return repoFolder;
         }
 
@@ -677,7 +675,7 @@ namespace Amdocs.Ginger.Repository
             if (RF != null && targetRF != null)
             {
                 RF.DeleteRepositoryItem(repositoryItem);
-                targetRF.AddRepositoryItem(repositoryItem);                              
+                targetRF.AddRepositoryItem(repositoryItem);
             }
             else
             {
