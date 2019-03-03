@@ -209,9 +209,9 @@ namespace Amdocs.Ginger.Common
                 {
                     ToConsole(eLogLevel.DEBUG, "Showing Status Message: " + messageContent);
                 }
-
-                mLastStatusTime.Start();
+            
                 WorkSpaceReporter.ToStatus(messageToShow.MessageType, messageContent);
+                mLastStatusTime.Start();
             }
             catch (Exception ex)
             {
@@ -228,17 +228,14 @@ namespace Amdocs.Ginger.Common
                 return;
             }
             bClosing = true;
-            
-            Task t = new Task(() => {
-                while (mLastStatusTime.ElapsedMilliseconds < 1000)  // let the message show for at least one second
-                {
-                    Task.Delay(100);
-                }                
-                WorkSpaceReporter.ToStatus(eStatusMsgType.INFO, null);
-                mLastStatusTime.Reset();
-                bClosing = false;
-            });
-            t.Start();
+
+            while (mLastStatusTime.IsRunning && mLastStatusTime.ElapsedMilliseconds < 1000)  // let the message show for at least one second
+            {
+                Task.Delay(100);
+            }
+            WorkSpaceReporter.ToStatus(eStatusMsgType.INFO, null);
+            mLastStatusTime.Reset();
+            bClosing = false;
         }
         #endregion ToStatus
 

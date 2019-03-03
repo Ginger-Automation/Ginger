@@ -521,10 +521,7 @@ namespace GingerWPF.TreeViewItemsLib
         /// <param name="NameProperty">The field of the item which holds the item name or static name in case the repository item is null</param>
         /// <returns></returns>
         protected StackPanel NewTVItemHeaderStyle(RepositoryItemBase repoItem, eImageType imageType = eImageType.Null, string NameProperty = "")
-        {
-            //TODO: Move to biz flow page?
-            repoItem.StartDirtyTracking();
-
+        {            
             //The new item style with Source control
             StackPanel stack = new StackPanel();
             stack.Orientation = Orientation.Horizontal;
