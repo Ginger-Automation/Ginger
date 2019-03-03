@@ -80,7 +80,7 @@ namespace GingerCoreNETUnitTests.CommandProcessorLib
             string condition = "1==1";
 
             //Act
-            bool result = mCodeProcessor.EvalCondition(condition);
+            bool result = CodeProcessor.EvalCondition(condition);
 
             //assert            
             Assert.AreEqual(true, result, "result is true");
@@ -93,7 +93,7 @@ namespace GingerCoreNETUnitTests.CommandProcessorLib
             string condition = "1+2*3==7";
 
             //Act
-            bool result = mCodeProcessor.EvalCondition(condition);
+            bool result = CodeProcessor.EvalCondition(condition);
 
             //assert            
             Assert.AreEqual(true, result, "result is true");
@@ -106,7 +106,7 @@ namespace GingerCoreNETUnitTests.CommandProcessorLib
             string condition = "1+1==3";
 
             //Act
-            bool result = mCodeProcessor.EvalCondition(condition);
+            bool result = CodeProcessor.EvalCondition(condition);
 
             //assert            
             Assert.AreEqual(false, result, "result is false");

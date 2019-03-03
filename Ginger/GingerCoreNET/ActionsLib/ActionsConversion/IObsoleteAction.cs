@@ -16,10 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 
-namespace GingerCore.Actions.Common
+namespace Amdocs.Ginger.CoreNET
 {
     // Action can implement when the action is old and should not be used
     // it cause the action to be removed from add action window

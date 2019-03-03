@@ -13,7 +13,7 @@
             <RowDefinition Height="50*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150*"/>
+            <ColumnDefinition Width="200*"/>
             <ColumnDefinition Width="350*"/>
             <ColumnDefinition Width="30"/>
         </Grid.ColumnDefinitions>
@@ -24,14 +24,40 @@
                 <Image Source="{StaticResource @Add_16x16}" Height="16" Width="16"/>
             </Button>
         </DockPanel>
-        <TreeView x:Name="xObjectsTreeView" Grid.Row="2" Grid.RowSpan="3" Grid.Column="0" Margin="0,0,10,0"/>        
+        <TreeView x:Name="xObjectsTreeView" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Margin="0,0,10,0" LostFocus="XObjectsTreeView_LostFocus"/>
+        <StackPanel Grid.Row="4" Grid.Column="0" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,10,0" Visibility="Collapsed" x:Name="xHelpPanel">
+            <Label  Content="Help"  Style="{StaticResource @SectionHeaderLabelStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+            <Label x:Name="xHelpTitle" Content="Title" HorizontalContentAlignment="Left"    HorizontalAlignment="Left" FontWeight="SemiBold"/>
+            <DockPanel Visibility="Visible" x:Name="xHelpCategoryPanel">
+                <Label Content="Type: " HorizontalContentAlignment="Left" FontWeight="SemiBold"></Label> 
+                <Label x:Name="XHelpCategory" HorizontalAlignment="Left"  ></Label>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock x:Name="XHelpContentName" TextAlignment="Left" TextWrapping="Wrap" FontWeight="SemiBold"></TextBlock>
+                <TextBlock x:Name="XHelpContent" TextAlignment="Left" TextWrapping="Wrap" ></TextBlock>
+            </DockPanel>
+            <StackPanel>
+                <TextBlock x:Name="XHelpExtra" TextAlignment="Left" TextWrapping="Wrap"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4" Grid.Column="0" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,10,0" Visibility="Collapsed" x:Name="xWarningPanel">
+            <Label  Content="Warning"  Background="Maroon" Foreground="White" FontWeight="Bold" FontSize="14" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+            <TextBlock Foreground="Maroon" TextAlignment="Left" TextWrapping="Wrap" FontWeight="SemiBold">Value Expression Contains VBS Operation</TextBlock>
+            <TextBlock  TextAlignment="Left" TextWrapping="Wrap">VBS operations are slow and works only on Windows</TextBlock>
+            <DockPanel>
+                <TextBlock TextAlignment="Left" Text="VBS : " FontWeight="DemiBold"></TextBlock>
+                <TextBlock  TextAlignment="Left" TextWrapping="Wrap" x:Name="XWarningValueExpression"></TextBlock>
+            </DockPanel>
+        </StackPanel>
+
         <GridSplitter ResizeDirection="Columns" Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" VerticalAlignment="Stretch" Width="10" Style="{StaticResource @VerticalGridSplitterStyle}"/>
 
         <DockPanel Grid.Row="0" Grid.Column="2" Background="{StaticResource $BackgroundColor_LightGray}">
             <Image x:Name="infoImage"  Source="{StaticResource @Question_Large.png.png}" Height="16" Width="16" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,8,0"/>
         </DockPanel>
 
-        <TextEditor:UCTextEditor x:Name="ValueUCTextEditor" Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" Margin="0,0,0,10" ShowUpdateContent="Visible" SetUpdateLabel="Update VE"  Loaded="ValueUCTextEditor_Loaded" AllowWordWrapping="True"/>
+        <TextEditor:UCTextEditor x:Name="ValueUCTextEditor" Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" Margin="0,0,0,10" ShowUpdateContent="Visible" SetUpdateLabel="Update VE"   AllowWordWrapping="True" LostFocus="ValueUCTextEditor_LostFocus"/>
         
         <StackPanel Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,10">
             <Button x:Name="ClearButton" Click="ClearButton_Click" ToolTip="Clear" Style="{StaticResource @InputImageButtonStyle_NoBorder}" >

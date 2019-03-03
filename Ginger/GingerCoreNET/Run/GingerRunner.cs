@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.TargetLib;
@@ -39,6 +40,7 @@ using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.Drivers.CommunicationProtocol;
+using GingerCoreNET.RosLynLib;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
@@ -2605,15 +2607,11 @@ namespace Ginger.Run
                     CalculateModelParameterExpectedValue(act, actReturnValue);
 
                     //compare Actual vs Expected (calculated)
-                    CalculateARCStatus(actReturnValue);
+                    string ARCError = CalculateARCStatus(actReturnValue);
 
                     if (actReturnValue.Status == ActReturnValue.eStatus.Failed)
                     {
-                        string formatedExpectedCalculated = actReturnValue.ExpectedCalculated;
-                        if (actReturnValue.ExpectedCalculated.Length >= 9 && (actReturnValue.ExpectedCalculated.Substring(actReturnValue.ExpectedCalculated.Length - 9, 9)).Contains("is False"))
-                            formatedExpectedCalculated = actReturnValue.ExpectedCalculated.ToString().Substring(0, actReturnValue.ExpectedCalculated.Length - 9);
-
-                        act.Error += "Output Value validation failed for the Parameter '" + actReturnValue.Param + "' , Expected value is " + formatedExpectedCalculated + " while Actual value is '" + actReturnValue.Actual +"'"+ System.Environment.NewLine;
+                        act.Error += ARCError + System.Environment.NewLine;
                     }
                 }
             }            
@@ -2670,7 +2668,150 @@ namespace Ginger.Run
             
         }
 
-        public static void CalculateARCStatus(ActReturnValue ARC)
+        public static string CalculateARCStatus(ActReturnValue ARC)
+        {
+
+
+            string ErrorInfo;
+            if (ARC.Operator == eOperator.Legacy)
+            {
+                CalculateARCStatusLegacy(ARC);
+
+                string formatedExpectedCalculated = ARC.ExpectedCalculated;
+                if (ARC.ExpectedCalculated.Length >= 9 && (ARC.ExpectedCalculated.Substring(ARC.ExpectedCalculated.Length - 9, 9)).Contains("is False"))
+                    formatedExpectedCalculated = ARC.ExpectedCalculated.ToString().Substring(0, ARC.ExpectedCalculated.Length - 9);
+
+                ErrorInfo = "Output Value validation failed for the Parameter '" + ARC.Param + "' , Expected value is " + formatedExpectedCalculated + " while Actual value is '" + ARC.Actual + "'";
+            }
+
+            else
+            {
+                if (string.IsNullOrEmpty(ARC.Actual) && !string.IsNullOrEmpty(ARC.ExpectedCalculated) && ARC.Operator != eOperator.Evaluate)
+                {
+                    ARC.Status = ActReturnValue.eStatus.Failed;
+                    ErrorInfo = "Actual or Expected is empty.";
+                }
+
+                bool? status = null;
+
+
+                string Expression = string.Empty;
+
+                switch (ARC.Operator)
+                {
+
+                    case eOperator.Contains:
+                        status = ARC.Actual.Contains(ARC.ExpectedCalculated);
+                        ErrorInfo = ARC.Actual + "Does not Contains " + ARC.ExpectedCalculated;
+                        break;
+                    case eOperator.DoesNotContains:
+                        status = !ARC.Actual.Contains(ARC.ExpectedCalculated);
+                        ErrorInfo = ARC.Actual + "Contains " + ARC.ExpectedCalculated;
+                        break;
+                    case eOperator.Equals:
+                        status = string.Equals(ARC.Actual, ARC.ExpectedCalculated);
+                        ErrorInfo = ARC.Actual + " Does not equals " + ARC.ExpectedCalculated;
+                        break;
+                    case eOperator.Evaluate:
+                        Expression = ARC.ExpectedCalculated;
+                        ErrorInfo = "Function evealuation didn't resulted in True";
+                        break;
+                    case eOperator.GreaterThan:
+                        if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))
+                        {
+                            status = false;
+                            ErrorInfo = "Actual and Expected both values should be numeric";
+                        }
+                        else
+                        {
+                            Expression = ARC.Actual + ">" + ARC.ExpectedCalculated;
+                            ErrorInfo = ARC.Actual + "is not greater than " + ARC.ExpectedCalculated;
+                        }
+                        break;
+                    case eOperator.GreaterThanEquals:
+                        if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))
+                        {
+                            status = false;
+                            ErrorInfo = "Actual and Expected both values should be numeric";
+                        }
+                        else
+                        {
+                            Expression = ARC.Actual + ">=" + ARC.ExpectedCalculated;
+
+                            ErrorInfo = ARC.Actual + "is not greater than equals to " + ARC.ExpectedCalculated;
+                        }
+                        break;
+                    case eOperator.LessThan:
+                        if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))
+                        {
+                            status = false;
+                            ErrorInfo = "Actual and Expected both values should be numeric";
+                        }
+                        else
+                        {
+                            Expression = ARC.Actual + "<" + ARC.ExpectedCalculated;
+                            ErrorInfo = ARC.Actual + "is not less than " + ARC.ExpectedCalculated;
+
+                        }
+                        break;
+                    case eOperator.LessThanEquals:
+                        if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))
+                        {
+                            status = false;
+                            ErrorInfo = "Actual and Expected both values should be numeric";
+                        }
+                        else
+                        {
+                            Expression = ARC.Actual + "<=" + ARC.ExpectedCalculated;
+                            ErrorInfo = ARC.Actual + "is not less than equals to " + ARC.ExpectedCalculated;
+                        }
+                        break;
+                    case eOperator.NotEquals:
+                        status = !string.Equals(ARC.Actual, ARC.ExpectedCalculated);
+                        ErrorInfo = ARC.Actual + "is equals to " + ARC.ExpectedCalculated;
+                        break;
+                    default:
+                        ErrorInfo = "Not Supported Operation";
+                        break;
+
+                }
+                if (status == null)
+                {
+
+                    status = CodeProcessor.EvalCondition(Expression);
+                }
+
+
+                if (status.Value)
+                {
+                    ARC.Status = ActReturnValue.eStatus.Passed;
+                }
+                else
+                {
+                    ARC.Status = ActReturnValue.eStatus.Failed;
+                }
+
+            }
+
+            return ErrorInfo;
+        }
+
+        private static bool CheckIfValuesCanbecompared(string actual,string Expected)
+        {
+            try
+            {
+            
+            
+                double.Parse(actual);
+                double.Parse(actual);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+       public static void CalculateARCStatusLegacy(ActReturnValue ARC)
         {
             //TODO: Check Expected null or empty return with no change
             

@@ -27,11 +27,11 @@ using GingerCore;
 using Ginger.UserControls;
 
 using GingerCore.Actions;
-using GingerCore.Actions.ActionConversion;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Windows.Input;
 using Ginger.SolutionGeneral;
+using Amdocs.Ginger.CoreNET;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -43,7 +43,7 @@ namespace Ginger.Actions.ActionConversion
         private Solution mSolution;
         private BusinessFlow mBusinessFlow;
         private bool isGridSet = false;
-        ObservableList<ActionConversionHandler> lstActionToBeConverted = new ObservableList<ActionConversionHandler>();
+        ObservableList<ConvertableActionDetails> lstActionToBeConverted = new ObservableList<ConvertableActionDetails>();
 
         GenericWindow _pageGenericWin = null;
 
@@ -98,8 +98,8 @@ namespace Ginger.Actions.ActionConversion
             if (gridConvertibleActions.DataSourceList.Count <= 0) return;
             if (gridConvertibleActions.DataSourceList.Count > 0)
             {
-                ObservableList<ActionConversionHandler> lstMarkUnMarkActions = (ObservableList<ActionConversionHandler>)gridConvertibleActions.DataSourceList;
-                foreach (ActionConversionHandler act in lstMarkUnMarkActions)
+                ObservableList<ConvertableActionDetails> lstMarkUnMarkActions = (ObservableList<ConvertableActionDetails>)gridConvertibleActions.DataSourceList;
+                foreach (ConvertableActionDetails act in lstMarkUnMarkActions)
                 {
                     act.Selected = ActiveStatus;
                 }
@@ -131,10 +131,10 @@ namespace Ginger.Actions.ActionConversion
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.Selected, Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.SourceActionTypeName, WidthWeight = 15, Header = "Source Action Type" });
-            view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.Activities, WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
-            view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.TargetActionTypeName, WidthWeight = 15, Header = "Target Action Type" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Selected), Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.SourceActionTypeName), WidthWeight = 15, Header = "Source Action Type" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.TargetActionTypeName), WidthWeight = 15, Header = "Target Action Type" });
             gridConvertibleActions.SetAllColumnsDefaultView(view);
             gridConvertibleActions.InitViewItems();
             gridConvertibleActions.SetTitleLightStyle = true;
@@ -161,14 +161,14 @@ namespace Ginger.Actions.ActionConversion
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Actions Conversion", this);
         }
 
-        private bool DoExistingPlatformCheck(ObservableList<ActionConversionHandler> lstActionToBeConverted) 
+        private bool DoExistingPlatformCheck(ObservableList<ConvertableActionDetails> lstActionToBeConverted) 
         {
             // fetch list of existing platforms in the business flow
             List<ePlatformType> lstExistingPlatform = mSolution.ApplicationPlatforms.Where(x => mBusinessFlow.TargetApplications
                                                .Any(a => a.Name == x.AppName)).Select(x => x.Platform).ToList();
             Dictionary<ePlatformType, string> lstMissingPlatform = new Dictionary<ePlatformType, string>();
             // create list of missing platforms
-            foreach (ActionConversionHandler ACH in lstActionToBeConverted)
+            foreach (ConvertableActionDetails ACH in lstActionToBeConverted)
             {
                 if (ACH.Selected && !lstExistingPlatform.Contains(ACH.TargetPlatform) 
                     && !lstMissingPlatform.ContainsKey(ACH.TargetPlatform))
@@ -337,10 +337,10 @@ namespace Ginger.Actions.ActionConversion
                         if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
                             (act.Active))
                         {
-                            ActionConversionHandler existingConvertibleActionType = lstActionToBeConverted.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
+                            ConvertableActionDetails existingConvertibleActionType = lstActionToBeConverted.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
                             if (existingConvertibleActionType == null)
                             {
-                                ActionConversionHandler newConvertibleActionType = new ActionConversionHandler();
+                                ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();
                                 newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
                                 newConvertibleActionType.SourceActionType = act.GetType();
                                 newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
