@@ -106,6 +106,16 @@ namespace GingerWPF.TreeViewItemsLib
         {
             //do in Folder node if needed
         }
+
+        public void PrepareItemForEdit()
+        {
+            object treeObject = ((ITreeViewItem)this).NodeObject();
+            if (treeObject!=null && treeObject is RepositoryItemBase)
+            {
+                ((RepositoryItemBase)treeObject).StartDirtyTracking();
+            }
+        }
+
         private void SaveTreeItemHandler(object sender, RoutedEventArgs e)
         {
             if (SaveTreeItem(((ITreeViewItem)this).NodeObject()))
