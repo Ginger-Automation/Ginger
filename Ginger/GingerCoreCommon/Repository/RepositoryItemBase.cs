@@ -163,14 +163,7 @@ namespace Amdocs.Ginger.Repository
 
         public void SaveBackup()
         {
-            if (DirtyStatus != eDirtyStatus.NoChange) 
-            {
-                CreateBackup();                
-            }
-            else
-            {
-                CreateBackup(true);
-            }
+                CreateBackup();
         }
 
         // Deep backup keep obj ref and all prop, restore to real original situation
