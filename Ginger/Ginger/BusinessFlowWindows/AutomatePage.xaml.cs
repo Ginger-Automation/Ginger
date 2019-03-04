@@ -48,6 +48,7 @@ using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -976,10 +977,9 @@ namespace Ginger
         private void btnActionConversion_Click(object sender, RoutedEventArgs e)
         {
             AutoLogProxy.UserOperationStart("btnConversionMechanism_Click");
-            ActionConverterPage gtb = new ActionConverterPage(mBusinessFlow);
-            // combine in the abover constructor
-            gtb.Init( WorkSpace.UserProfile.Solution, mBusinessFlow);
-            gtb.ShowAsWindow();
+            
+
+            WizardWindow.ShowWizard(new ActionsConversionWizard(), 900, 700);
             AutoLogProxy.UserOperationEnd();
         }
 

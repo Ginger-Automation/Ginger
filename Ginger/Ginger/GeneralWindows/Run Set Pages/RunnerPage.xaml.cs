@@ -561,7 +561,7 @@ namespace Ginger.Run
             RunRunner();
         }
         public async void RunRunner()
-        {            
+        {
             if (mRunner.IsRunning)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Runner is already running.");

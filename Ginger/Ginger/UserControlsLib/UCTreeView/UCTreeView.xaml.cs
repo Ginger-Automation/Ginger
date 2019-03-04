@@ -27,7 +27,8 @@ using Amdocs.Ginger.Repository;
 using GingerWPF.DragDropLib;
 using System.Reflection;
 using System.Linq;
-
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -195,7 +196,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             RemoveDummyNode(TVI);
             SetRepositoryFolderIsExpanded(TVI, true);
             SetTreeNodeItemChilds(TVI);
-
+            GingerCore.General.DoEvents();
             // remove the handler as expand data is cached now on tree
             TVI.Expanded -= TVI_Expanded;
             TVI.Expanded += TVI_ExtraExpanded;
@@ -221,7 +222,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             object itviObject = itvi.NodeObject();
             if (itviObject is RepositoryFolderBase)
             { 
-                ((RepositoryFolderBase)itviObject).IsFolderExpanded = isExpanded;
+                ((RepositoryFolderBase)itviObject).IsFolderExpanded = isExpanded;               
             }
         }
 
@@ -234,7 +235,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
                 List<ITreeViewItem> Childs = null;
                 Childs = ITVI.Childrens();
-                    
+                
                 TVI.Items.Clear();
                 if (Childs != null)
                 {
@@ -478,14 +479,27 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         /// </summary>
         /// <param name="itemCollection"></param>
         /// <param name="txt"></param>
-        public void FilterItemsByText(ItemCollection itemCollection, string txt)
+        public void FilterItemsByText(ItemCollection itemCollection, string txt, CancellationToken cancellationToken=new CancellationToken())
         {
             // Filter not working for new TVI            
             foreach (TreeViewItem tvi in itemCollection)
             {
+             
+                if(cancellationToken.IsCancellationRequested)
+                {
+                    List<TreeViewItem> pathNodes = new List<TreeViewItem>();
+                    if (MlastSelectedTVI != null)
+                    {
+                        pathNodes = getSelecetdItemPathNodes(MlastSelectedTVI);
+                    }
+                    CollapseUnselectedTreeNodes(TreeItemsCollection, pathNodes);
+
+                    cancellationToken.ThrowIfCancellationRequested();
+                }            
+                
                 // Need to expand to get all lazy loading
                 tvi.IsExpanded = true;
-
+                
                 ITreeViewItem ITVI = (ITreeViewItem)tvi.Tag;
 
                 // Find the label in the header, this is label child of the Header Stack Panel
@@ -526,14 +540,46 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 // Goto sub items
                 if (tvi.HasItems)
                 {                    
-                    FilterItemsByText(tvi.Items, txt);
+                  FilterItemsByText(tvi.Items, txt,cancellationToken);                  
                 }
             }
             //Show the root item
                 ((TreeViewItem)Tree.Items[0]).Visibility = System.Windows.Visibility.Visible;
             
-        }       
-                
+        }
+        public static List<TreeViewItem> getSelecetdItemPathNodes(TreeViewItem SelectedItem)
+        {
+            List<TreeViewItem> pathNodes = new List<TreeViewItem>();
+            object ParentItem = getParentItem(SelectedItem);
+            while (ParentItem.GetType() == typeof(TreeViewItem))
+            {
+                pathNodes.Add((TreeViewItem)ParentItem);
+                ParentItem = getParentItem(ParentItem);
+            }
+            return pathNodes;
+        }
+        public static object getParentItem(object tvi)
+        {
+            return ((TreeViewItem)tvi).Parent;
+        }
+        public static void CollapseUnselectedTreeNodes(ItemCollection itemCollection, List<TreeViewItem> pathNodes)
+        {
+            foreach (TreeViewItem tvItem in itemCollection)
+            {
+                if (tvItem.HasItems)
+                {
+                    CollapseUnselectedTreeNodes(tvItem.Items, pathNodes);
+                    foreach (TreeViewItem item in tvItem.Items)
+                    {
+                        if (!(pathNodes != null && pathNodes.Contains(item)))
+                        {
+                            item.IsExpanded = false;
+                            item.Visibility = Visibility.Visible;
+                        }
+                    }
+                }
+            }
+        }
         public void SetBtnImage(Button btn, string imageName)
         {
             Image image = new Image();

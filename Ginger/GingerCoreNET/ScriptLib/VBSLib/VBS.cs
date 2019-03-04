@@ -43,41 +43,51 @@ namespace GingerCore.GeneralLib
 
         public string Execute(string Expr)
         {
-            Stopwatch st = Stopwatch.StartNew();                
-            //Create temp vbs file
-            string fileName="";
+            if (Environment.OSVersion.Platform.ToString().StartsWith("Win"))
+            {
 
-            try
-            {
-                fileName = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".vbs";
-            }
-            catch (Exception)
-            {
-                //this to overcome speical IT settings which doesn't allow local personal folders
-                fileName = "" + Environment.GetFolderPath(Environment.SpecialFolder.InternetCache) + @"\" + Guid.NewGuid().ToString() + ".vbs" + "";
-            }
-            string s = "Dim v" + Environment.NewLine;
-            s += "v=" + Expr.Replace("\r\n", "vbCrLf").Replace("\n", "vbCrLf").Replace("\r", "vbCrLf") + Environment.NewLine;
-            s += "Wscript.echo v" + Environment.NewLine;
-            System.IO.File.WriteAllText(fileName, s);
-            //Execute
-            string result = RunVBS(fileName);
-            
-            //Delete the temp vbs file
-            System.IO.File.Delete(fileName);
 
-            if (result != null)
-            {
-                result = result.Trim();
+                Stopwatch st = Stopwatch.StartNew();
+                //Create temp vbs file
+                string fileName = "";
+
+                try
+                {
+                    fileName = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".vbs";
+                }
+                catch (Exception)
+                {
+                    //this to overcome speical IT settings which doesn't allow local personal folders
+                    fileName = "" + Environment.GetFolderPath(Environment.SpecialFolder.InternetCache) + @"\" + Guid.NewGuid().ToString() + ".vbs" + "";
+                }
+                string s = "Dim v" + Environment.NewLine;
+                s += "v=" + Expr.Replace("\r\n", "vbCrLf").Replace("\n", "vbCrLf").Replace("\r", "vbCrLf") + Environment.NewLine;
+                s += "Wscript.echo v" + Environment.NewLine;
+                System.IO.File.WriteAllText(fileName, s);
+                //Execute
+                string result = RunVBS(fileName);
+
+                //Delete the temp vbs file
+                System.IO.File.Delete(fileName);
+
+                if (result != null)
+                {
+                    result = result.Trim();
+                }
+                st.Stop();
+                Reporter.ToLog(eLogLevel.DEBUG, "Executed VBS - Elapsed: " + st.ElapsedMilliseconds + " ,Expression: " + Expr + " ,Result: " + result);
+                return result;
             }
-            st.Stop();
-            Reporter.ToLog(eLogLevel.DEBUG, "Executed VBS - Elapsed: " + st.ElapsedMilliseconds + " ,Expression: " + Expr + " ,Result: " + result);
-            return result;
-        }   
-        
+            else
+            {
+                return Expr;
+            }
+
+        }
+
 
         string RunVBS(string fileName)
-        {            
+        {
             DataBuffer = "";
             ErrorBuffer = "";
             System.Diagnostics.Process p = new System.Diagnostics.Process();
@@ -85,18 +95,18 @@ namespace GingerCore.GeneralLib
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.RedirectStandardError = true;
-            
+
             //if (File.Exists(GetSystemDirectory() + @"\cscript.exe"))
-                //p.StartInfo.FileName = GetSystemDirectory() + @"\cscript.exe";
+            //p.StartInfo.FileName = GetSystemDirectory() + @"\cscript.exe";
             //else
-                p.StartInfo.FileName = @"cscript";
-                
-            
+            p.StartInfo.FileName = @"cscript";
+
+
             p.OutputDataReceived += (proc, outLine) => { AddData(outLine.Data); };
             p.ErrorDataReceived += (proc, outLine) => { AddError(outLine.Data); };
             p.Exited += Process_Exited;
-            
-            p.StartInfo.Arguments = "\"" + fileName + "\" /B /Nologo";                
+
+            p.StartInfo.Arguments = "\"" + fileName + "\" /B /Nologo";
             p.Start();
 
             p.BeginOutputReadLine();
@@ -121,6 +131,8 @@ namespace GingerCore.GeneralLib
         }
 
 
+
+
         protected void AddError(string outLine)
         {
             if (!string.IsNullOrEmpty(outLine))
@@ -143,3 +155,5 @@ namespace GingerCore.GeneralLib
 
     }
 }
+
+

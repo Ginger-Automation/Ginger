@@ -21,22 +21,12 @@ using System.Linq;
 using System;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCore.Actions;
 
-namespace GingerCore.Actions.ActionConversion
+namespace Amdocs.Ginger.CoreNET
 {
-    public class ActionConversionHandler
+    public class ConvertableActionDetails
     {
-        public static partial class Fields
-        {
-            public static string Activities = "Activities";
-            public static string ActionCount = "ActionCount";
-            public static string SourceActionTypeName = "SourceActionTypeName";
-            public static string SourceOperationName = "SourceOperationName";
-            public static string TargetActionTypeName = "TargetActionTypeName";
-            public static string TargetActionPlatform = "TargetActionPlatform";
-            public static string Selected = "Selected";
-        }
-
         // holds the list of parent activities containing convertible actions
         public List<string> ActivityList { get; set; }
 
@@ -99,7 +89,7 @@ namespace GingerCore.Actions.ActionConversion
             set { }
         }
 
-        public ActionConversionHandler()
+        public ConvertableActionDetails()
         {
             ActivityList = new List<string>();
             Actions = new List<Act>();

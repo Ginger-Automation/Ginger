@@ -163,17 +163,6 @@ namespace Ginger.BusinessFlowFolder
                 mBusinessFlow.SetActivityTargetApplication(instance);
                 mBusinessFlow.AddActivity(instance);
                 
-                //Placing the item after current item
-                int selectedActIndex = -1;
-                ObservableList<Activity> actsList = mBusinessFlow.Activities;
-                if (actsList.CurrentItem != null)
-                {
-                    selectedActIndex = actsList.IndexOf((Activity)actsList.CurrentItem);
-                }
-                if (selectedActIndex >= 0)
-                {
-                    actsList.Move(actsList.Count - 1, selectedActIndex + 1);
-                }            
             }                
             else if (droppedItem.GetType() == typeof(ActivitiesGroup))
             {
@@ -182,17 +171,7 @@ namespace Ginger.BusinessFlowFolder
                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                 mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                 mBusinessFlow.AttachActivitiesGroupsAndActivities();
-
-                int selectedActIndex = -1;
-                ObservableList<ActivitiesGroup> actsList = mBusinessFlow.ActivitiesGroups;
-                if (actsList.CurrentItem != null)
-                {
-                    selectedActIndex = actsList.IndexOf((ActivitiesGroup)actsList.CurrentItem);
-                }
-                if (selectedActIndex >= 0)
-                {
-                    actsList.Move(actsList.Count - 1, selectedActIndex + 1);
-                }
+                        
             }
         }
         
@@ -331,8 +310,7 @@ namespace Ginger.BusinessFlowFolder
             a.TargetApplication = mBusinessFlow.MainApplication;
             a.ActivityName = "New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
             mBusinessFlow.AddActivity(a);
-            mBusinessFlow.Activities.CurrentItem = a;
-            mBusinessFlow.CurrentActivity = a;
+            mBusinessFlow.Activities.CurrentItem = a;         
         }
         
         private void RefreshActivitiesGrid()
