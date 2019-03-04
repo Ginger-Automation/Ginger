@@ -7,7 +7,7 @@ using System.IO;
 using System.Text;
 using Ginger.Reports;
 using Amdocs.Ginger.Common;
-
+using GingerCore;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -17,12 +17,13 @@ namespace Ginger.Run.RunSetActions
         {
             public static string SaveResultstoFolderName = "SaveResultstoFolderName";
             public static string OpenExecutionResultsFolder = "OpenExecutionResultsFolder";
-            public static string SaveResultsInSolutionFolderName = "SaveResultsInSolutionFolderName";
             public static string SaveindividualBFReport = "SaveindividualBFReport";
-            public static string IsStatusByActivitiesGroup = "IsStatusByActivitiesGroup";
-            public static string IsStatusByActivity = "IsStatusByActivity";
         }
+        [IsSerializedForLocalRepository(false)]
+        public bool ConfiguerDynamicParameters { get; set; }
 
+        [IsSerializedForLocalRepository]
+        public ObservableList<ActInputValue> DynamicParameters = new ObservableList<ActInputValue>();
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
             List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
@@ -88,8 +89,16 @@ namespace Ginger.Run.RunSetActions
         //TODO: move to Run SetAction
         private void SaveBFResults(ReportInfo RI, string folder, bool statusByGroupActivity)
         {
+            if (DynamicParameters.Count > 0)
+            {
+                ValueExpression VE = new ValueExpression(RI.Environment, null);
+                for(int i = 0;i< DynamicParameters.Count ; i++)
+                {
+                    DynamicParameters[i].ValueForDriver = VE.Calculate(DynamicParameters[i].Value);
+                }
+            }
             TestNGResultReport TNGReport = new TestNGResultReport();
-            string xml = TNGReport.CreateReport(RI, statusByGroupActivity);
+            string xml = TNGReport.CreateReport(RI, statusByGroupActivity, DynamicParameters);
 
             System.IO.File.WriteAllLines(folder + @"\testng-results.xml", new string[] { xml });
         //TODO: let the user select file prefix
