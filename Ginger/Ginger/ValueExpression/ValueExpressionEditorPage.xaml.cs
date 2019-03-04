@@ -70,17 +70,16 @@ namespace Ginger
 
     public partial class ValueExpressionEditorPage : Page
     {
-        private static Regex VBSReg = new Regex(@"{VBS Eval=([^}])*}", RegexOptions.Compiled);
-        ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, App.BusinessFlow,WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(),false,"",false);
+        private static Regex VBSReg = new Regex(@"{VBS Eval=([^}])*}", RegexOptions.Compiled);      
         VEReferenceList Tvel = new VEReferenceList();
         GenericWindow mWin;
         object mObj;
         string mAttrName;
         Context mContext;
         ValueExpression mVE = null;
-
         static List<HighlightingRule> mHighlightingRules = null;
         private Dictionary<string, TreeViewItem> Categories = new Dictionary<string, TreeViewItem>();
+
         public ValueExpressionEditorPage(object obj, string AttrName, Context context)
         {
             InitializeComponent();

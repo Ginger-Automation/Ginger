@@ -200,6 +200,10 @@ namespace Ginger.Repository
             {
                 foreach (RepositoryItemBase item in items)
                 {
+                    if (item == null)
+                    {
+                        continue;
+                    }
                     if (GetMatchingRepoItem(item, existingRepoItems, ref linkIsByExternalID, ref linkIsByParentID) != null)
                     {
                         item.IsSharedRepositoryInstance = true;

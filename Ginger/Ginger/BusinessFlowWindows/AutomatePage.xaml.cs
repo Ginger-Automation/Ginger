@@ -979,7 +979,7 @@ namespace Ginger
             AutoLogProxy.UserOperationStart("btnConversionMechanism_Click");
             
 
-            WizardWindow.ShowWizard(new ActionsConversionWizard(), 900, 700);
+            WizardWindow.ShowWizard(new ActionsConversionWizard(mContext), 900, 700);
             AutoLogProxy.UserOperationEnd();
         }
 
