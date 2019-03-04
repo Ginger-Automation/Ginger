@@ -27,6 +27,8 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
+
 namespace GingerCore.Actions
 {
     public class ActWindow  : Act, IObsoleteAction

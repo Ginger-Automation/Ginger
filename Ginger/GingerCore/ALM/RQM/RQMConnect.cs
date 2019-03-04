@@ -119,7 +119,7 @@ namespace GingerCore.ALM.RQM
 
         }
 
-        public List<string> GetRQMDomainProjects()
+        public Dictionary<string, string> GetRQMDomainProjects()
         {
             LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
             IProjectData rqmProjectsData = RQMRep.GetVisibleProjects(loginData);
@@ -131,7 +131,7 @@ namespace GingerCore.ALM.RQM
                 RQMProjects.Add(proj.ProjectName);
             }
 
-            return RQMProjects;
+            return RQMProjects.ToDictionary(x=>x,x=>x);
         }
 
         public bool SetRQMProjectFullDetails()

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -25,7 +25,9 @@ namespace GingerCoreNET.ALMLib
         public enum eALMType
         {
             QC = 1,
-            RQM = 2
+            RQM = 2,
+            RALLY = 3,
+            Jira = 4
         }
 
         public enum eALMConnectType

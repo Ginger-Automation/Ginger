@@ -109,7 +109,10 @@ namespace Ginger.Run
                 if (value != null)
                 {
                     mConfiguration = value;
-
+                    if (mConfiguration.ExecutionLoggerConfigurationExecResultsFolder.StartsWith(@"~\"))
+                    {
+                        mConfiguration.ExecutionLoggerConfigurationExecResultsFolder=mConfiguration.ExecutionLoggerConfigurationExecResultsFolder.Replace(@"~\",WorkSpace.Instance.Solution.Folder);
+                    }
                     if (!CheckOrCreateDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder))
                     {
                         mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
@@ -428,6 +431,7 @@ namespace Ginger.Run
                 RunSetReport.Elapsed = (double)RunSetReport.Watch.ElapsedMilliseconds / 1000;
                 RunSetReport.MachineName = Environment.MachineName.ToString();
                 RunSetReport.ExecutedbyUser = Environment.UserName.ToString();
+                RunSetReport.GingerVersion = WorkSpace.AppVersion.ToString();
 
                 if (LogFolder == null)
                 {

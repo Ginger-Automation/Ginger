@@ -298,6 +298,18 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                     case ActMobileDevice.eMobileDeviceAction.OpenAppByName:
                         OpenAppByName(act.ValueForDriver);
                         break;
+                    case ActMobileDevice.eMobileDeviceAction.CloseAppByName:
+                        CloseAppByName(act.ValueForDriver);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
+                        UnlockDevice(act.ValueForDriver);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.LockDevice:
+                        LockDevice(act.ValueForDriver);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
+                        SwipeByCoordinates(act.ValueForDriver);
+                        break;
                     default:
                         act.Error = "Error: This operation is missing implementation";
                         break;
@@ -308,6 +320,78 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                 act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
             }
         }
+
+        private void SwipeByCoordinates(string valueForDriver)
+        {
+            string[] arr = valueForDriver.Split(',');
+            string x1 = arr[0];
+            string y1 = arr[1];
+            string x2 = arr[2];
+            string y2 = arr[3];
+            Dictionary<string, object> params1 = new Dictionary<string, object>();
+            params1.Add("start", x1+"%,"+y1+"%");
+            params1.Add("end", x2 + "%," + y2 + "%");
+            mDriver.ExecuteScript("mobile:touch:swipe", params1);
+        }
+
+        private void CloseAppByName(string valueForDriver)
+        {
+            Dictionary<string, object> params1 = new Dictionary<string, object>();
+            params1.Add("name", valueForDriver);
+            mDriver.ExecuteScript("mobile:application:close", params1);
+        }
+
+        private void LockDevice(string valueForDriver)
+        {
+            Dictionary<string, object> pars = new Dictionary<string, object>();
+            pars.Add("timeout", valueForDriver);
+            mDriver.ExecuteScript("mobile:screen:lock", pars);
+        }
+
+        private void UnlockDevice(string valueForDriver)
+        {
+            char[] passcode = valueForDriver.ToCharArray();
+
+            Dictionary<string, object> params1 = new Dictionary<string, object>();
+            params1.Add("keySequence", "HOME");
+            mDriver.ExecuteScript("mobile:presskey", params1);
+
+            if (DeviceProperty().Equals("Android"))
+            {
+
+                Dictionary<string, object> params2 = new Dictionary<string, object>();    // Few of Android devices doesn’t require the swipe operation to make the passcode entry to be visible. If that’s the case, comment the swipe function
+                params2.Add("start", "20%,80%");
+                params2.Add("end", "20%,20%");
+                params2.Add("duration", "1");
+
+                mDriver.ExecuteScript("mobile:touch:swipe", params2);
+
+                foreach (char c in passcode)
+                {
+                    mDriver.FindElementByXPath("//*[@text='" + c + "']").Click();
+                }
+
+                mDriver.FindElementByXPath(("//*[@text='OK']")).Click();        // Comment this line if unlocking device doesn't require to click on 'OK' button after entering the passcode
+            }
+            else
+            {
+                foreach (char c in passcode)
+                {
+                    mDriver.FindElementByXPath("//*[@label='" + c + "']").Click();
+                }
+            }
+
+        }
+
+        private string DeviceProperty()
+        {
+            Dictionary<string, object> params1 = new Dictionary<string, object>();
+            params1.Add("property", "os");                        // Can retrieve various device property info. of the device. Refer: https://developers.perfectomobile.com/pages/viewpage.action?pageId=13893798
+            string prop = (string)mDriver.ExecuteScript("mobile:device:info", params1);
+            return prop;
+        }
+
+
 
         private void PressLongHome()
         {
@@ -386,6 +470,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
         private void SwipeScreen(eSwipeSide side)
         {
             Dictionary<String, Object> params1 = new Dictionary<String, Object>();
+
             switch (side)
             {
                 case eSwipeSide.Down:
@@ -399,13 +484,13 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                     mDriver.ExecuteScript("mobile:touch:swipe", params1);
                     break;
                 case eSwipeSide.Left:
-                    params1.Add("start", "20%,50%");
-                    params1.Add("end", "80%,50%");
+                    params1.Add("start","20%,50%");
+                    params1.Add("end","80%,50%");
                     mDriver.ExecuteScript("mobile:touch:swipe", params1);
                     break;
                 case eSwipeSide.Right:
-                    params1.Add("start", "80%,50%");
-                    params1.Add("end", "20%,50%");
+                    params1.Add("start","80%,50%");
+                    params1.Add("end","20%,50%");
                     mDriver.ExecuteScript("mobile:touch:swipe", params1);
                     break;
                 default:

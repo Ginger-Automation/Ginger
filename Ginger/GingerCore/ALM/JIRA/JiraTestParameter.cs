@@ -16,22 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
 
-namespace GingerCore.Actions.Common
+namespace GingerCore.ALM.JIRA
 {
-    // Action can implement when the action is old and should not be used
-    // it cause the action to be removed from add action window
-    public interface IObsoleteAction
+    public class JiraTestParameter
     {
-        // Check if relevant for the platform of the activity
-        bool IsObsoleteForPlatform(ePlatformType Platfrom);
+        //parameter Name
+        public string Name { get; set; }
+        //Actual Value or check Default value if Actual is null
+        public string Value { get; set; }
 
-        // return convert action
-        Act GetNewAction();
-        Type TargetAction();
-        String TargetActionTypeName();
-        ePlatformType GetTargetPlatform();
+        //TODO not sure if this is needed yet will determine during testing. 
+        public string Type { get; set; }
     }
 }

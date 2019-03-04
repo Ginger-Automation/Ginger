@@ -63,30 +63,27 @@ namespace GingerCore.Variables
         {
             get
             {
-                if (RunWatch.IsRunning)
+                switch (TimerUnit)
                 {
-                    switch (TimerUnit)
-                    {
-                        case eTimerUnit.MilliSeconds:
-                            mValue = Math.Round(RunWatch.Elapsed.TotalMilliseconds, 2).ToString();
-                            break;
+                    case eTimerUnit.MilliSeconds:
+                        mValue = Math.Round(RunWatch.Elapsed.TotalMilliseconds, 2).ToString();
+                        break;
 
-                        case eTimerUnit.Seconds:
-                            mValue =  Math.Round(RunWatch.Elapsed.TotalSeconds, 2).ToString();
-                            break;
+                    case eTimerUnit.Seconds:
+                        mValue = Math.Round(RunWatch.Elapsed.TotalSeconds, 2).ToString();
+                        break;
 
-                        case eTimerUnit.Minutes:
-                            mValue = Math.Round(RunWatch.Elapsed.TotalMinutes, 2).ToString();
-                            break;
+                    case eTimerUnit.Minutes:
+                        mValue = Math.Round(RunWatch.Elapsed.TotalMinutes, 2).ToString();
+                        break;
 
-                        case eTimerUnit.Hours:
-                            mValue =  Math.Round(RunWatch.Elapsed.TotalHours, 2).ToString();
-                            break;
-                    }
+                    case eTimerUnit.Hours:
+                        mValue = Math.Round(RunWatch.Elapsed.TotalHours, 2).ToString();
+                        break;
                 }
-                
+
                 return mValue;
-                
+
             }
             set
             {
@@ -123,7 +120,7 @@ namespace GingerCore.Variables
         public void StopTimer()
         {
             if (RunWatch.IsRunning)
-            {
+            {              
                 RunWatch.Stop();
                 timer.Stop();
                 timer.Elapsed -= dispatcherTimerElapsedTick;
@@ -138,16 +135,8 @@ namespace GingerCore.Variables
 
         public override void ResetValue()
         {
-            if (RunWatch.IsRunning)
-            {                
-                RunWatch.Reset();
-                timer.Stop();
-                timer.Elapsed -= dispatcherTimerElapsedTick;                
-            }
-            else
-            {
-               Value = "0";
-            }
+            StopTimer();
+            RunWatch.Reset();            
         }
 
         private void dispatcherTimerElapsedTick(object sender, System.EventArgs e)

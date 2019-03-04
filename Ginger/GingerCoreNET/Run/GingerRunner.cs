@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.TargetLib;
@@ -39,6 +40,7 @@ using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.Drivers.CommunicationProtocol;
+using GingerCoreNET.RosLynLib;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
@@ -584,49 +586,48 @@ namespace Ginger.Run
             }
         }
 
-        private void SetBusinessFlowInputVarsWithOutputValues(BusinessFlow bfToUpdate)
+        private void PrepareVariables()
+        {
+            if (ExecutedFrom == eExecutedFrom.Run)
+            {
+                //We need to set variable mapped values only when running run set
+                SetVariableMappedValues();
+            }
+
+            PrepDynamicVariables();
+        }
+
+        private void SetVariableMappedValues()
         {
             //set the vars to update
-            List<VariableBase> inputVarsToUpdate = bfToUpdate.GetBFandActivitiesVariabeles(false, true, false).Where(x => (string.IsNullOrEmpty(x.MappedOutputValue)) == false).ToList();
-
-            //set the vars to get value from
-            List<VariableBase> outputVariables;
-            if (BusinessFlow.SolutionVariables != null)
-            {
-                outputVariables = BusinessFlow.SolutionVariables.ToList();
-            }
-            else
-            {
-                outputVariables = new List<VariableBase>();
-            }
-            ObservableList<BusinessFlow> prevBFs = new ObservableList<BusinessFlow>();
-            for (int i = 0; i < BusinessFlows.IndexOf(bfToUpdate); i++)
-            {
-                prevBFs.Add((BusinessFlow)BusinessFlows[i]);
-            }
-            foreach (BusinessFlow bf in prevBFs.Reverse())//doing in reverse for passing the most updated value of variables with similar name
-            {
-                foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(false, false, true))
-                {
-                    outputVariables.Add(var);
-                }
-            }
+            List<VariableBase> inputVars = CurrentBusinessFlow.GetBFandActivitiesVariabeles(false).ToList();
+            List<VariableBase> outputVariables = null;
 
             //do actual value update
-            foreach (VariableBase inputVar in inputVarsToUpdate)
+            foreach (VariableBase inputVar in inputVars)
             {
                 string mappedValue = "";
                 if (inputVar.MappedOutputType == VariableBase.eOutputType.Variable)
                 {
+                    if (outputVariables == null)
+                    {
+                        outputVariables = GetPossibleOutputVariables();
+                    }
+
                     VariableBase outputVar = outputVariables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault();
                     if (outputVar != null)
                     {
                         mappedValue = outputVar.Value;
                     }
-                }                    
+                }
                 else if(inputVar.MappedOutputType == VariableBase.eOutputType.DataSource)
                 {
                     mappedValue = GingerCore.ValueExpression.Calculate(ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, DSList);
+                }
+                else
+                {
+                    //if input variable value mapped to none , we reset it to initial value
+                    inputVar.ResetValue();
                 }
 
                 if (mappedValue != "")
@@ -660,6 +661,34 @@ namespace Ginger.Run
                 }
             }
         }
+
+        private List<VariableBase> GetPossibleOutputVariables()
+        {
+            //set the vars to get value from
+            List<VariableBase> outputVariables;
+            if (BusinessFlow.SolutionVariables != null)
+            {
+                outputVariables = BusinessFlow.SolutionVariables.ToList();
+            }
+            else
+            {
+                outputVariables = new List<VariableBase>();
+            }
+            ObservableList<BusinessFlow> prevBFs = new ObservableList<BusinessFlow>();
+            for (int i = 0; i < BusinessFlows.IndexOf(CurrentBusinessFlow); i++)
+            {
+                prevBFs.Add((BusinessFlow)BusinessFlows[i]);
+            }
+            foreach (BusinessFlow bf in prevBFs.Reverse())//doing in reverse for passing the most updated value of variables with similar name
+            {
+                foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(false, false, true))
+                {
+                    outputVariables.Add(var);
+                }
+            }
+            return outputVariables;
+                 
+        }      
 
         public void StartAgent(Agent Agent)
         {
@@ -2491,13 +2520,7 @@ namespace Ginger.Run
                 NotifyDynamicActivityWasAddedToBusinessflow(CurrentBusinessFlow);
                   
 
-                //move activity after current activity
-                int aIndex = CurrentBusinessFlow.Activities.IndexOf(sharedActivityInstance);
-                int currentIndex = CurrentBusinessFlow.Activities.IndexOf(CurrentBusinessFlow.CurrentActivity);
-                CurrentBusinessFlow.Activities.Move(aIndex, currentIndex + 1);
-
-                //set it as next activity to run
-                CurrentBusinessFlow.CurrentActivity = sharedActivityInstance;
+                //set it as next activity to run           
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 sharedActivityInstance.Acts.CurrentItem = sharedActivityInstance.Acts.FirstOrDefault();
 
@@ -2584,15 +2607,11 @@ namespace Ginger.Run
                     CalculateModelParameterExpectedValue(act, actReturnValue);
 
                     //compare Actual vs Expected (calculated)
-                    CalculateARCStatus(actReturnValue);
+                    string ARCError = CalculateARCStatus(actReturnValue);
 
                     if (actReturnValue.Status == ActReturnValue.eStatus.Failed)
                     {
-                        string formatedExpectedCalculated = actReturnValue.ExpectedCalculated;
-                        if (actReturnValue.ExpectedCalculated.Length >= 9 && (actReturnValue.ExpectedCalculated.Substring(actReturnValue.ExpectedCalculated.Length - 9, 9)).Contains("is False"))
-                            formatedExpectedCalculated = actReturnValue.ExpectedCalculated.ToString().Substring(0, actReturnValue.ExpectedCalculated.Length - 9);
-
-                        act.Error += "Output Value validation failed for the Parameter '" + actReturnValue.Param + "' , Expected value is " + formatedExpectedCalculated + " while Actual value is '" + actReturnValue.Actual +"'"+ System.Environment.NewLine;
+                        act.Error += ARCError + System.Environment.NewLine;
                     }
                 }
             }            
@@ -2649,7 +2668,150 @@ namespace Ginger.Run
             
         }
 
-        public static void CalculateARCStatus(ActReturnValue ARC)
+        public static string CalculateARCStatus(ActReturnValue ARC)
+        {
+
+
+            string ErrorInfo;
+            if (ARC.Operator == eOperator.Legacy)
+            {
+                CalculateARCStatusLegacy(ARC);
+
+                string formatedExpectedCalculated = ARC.ExpectedCalculated;
+                if (ARC.ExpectedCalculated.Length >= 9 && (ARC.ExpectedCalculated.Substring(ARC.ExpectedCalculated.Length - 9, 9)).Contains("is False"))
+                    formatedExpectedCalculated = ARC.ExpectedCalculated.ToString().Substring(0, ARC.ExpectedCalculated.Length - 9);
+
+                ErrorInfo = "Output Value validation failed for the Parameter '" + ARC.Param + "' , Expected value is " + formatedExpectedCalculated + " while Actual value is '" + ARC.Actual + "'";
+            }
+
+            else
+            {
+                if (string.IsNullOrEmpty(ARC.Actual) && !string.IsNullOrEmpty(ARC.ExpectedCalculated) && ARC.Operator != eOperator.Evaluate)
+                {
+                    ARC.Status = ActReturnValue.eStatus.Failed;
+                    ErrorInfo = "Actual or Expected is empty.";
+                }
+
+                bool? status = null;
+
+
+                string Expression = string.Empty;
+
+                switch (ARC.Operator)
+                {
+
+                    case eOperator.Contains:
+                        status = ARC.Actual.Contains(ARC.ExpectedCalculated);
+                        ErrorInfo = ARC.Actual + "Does not Contains " + ARC.ExpectedCalculated;
+                        break;
+                    case eOperator.DoesNotContains:
+                        status = !ARC.Actual.Contains(ARC.ExpectedCalculated);
+                        ErrorInfo = ARC.Actual + "Contains " + ARC.ExpectedCalculated;
+                        break;
+                    case eOperator.Equals:
+                        status = string.Equals(ARC.Actual, ARC.ExpectedCalculated);
+                        ErrorInfo = ARC.Actual + " Does not equals " + ARC.ExpectedCalculated;
+                        break;
+                    case eOperator.Evaluate:
+                        Expression = ARC.ExpectedCalculated;
+                        ErrorInfo = "Function evealuation didn't resulted in True";
+                        break;
+                    case eOperator.GreaterThan:
+                        if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))
+                        {
+                            status = false;
+                            ErrorInfo = "Actual and Expected both values should be numeric";
+                        }
+                        else
+                        {
+                            Expression = ARC.Actual + ">" + ARC.ExpectedCalculated;
+                            ErrorInfo = ARC.Actual + "is not greater than " + ARC.ExpectedCalculated;
+                        }
+                        break;
+                    case eOperator.GreaterThanEquals:
+                        if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))
+                        {
+                            status = false;
+                            ErrorInfo = "Actual and Expected both values should be numeric";
+                        }
+                        else
+                        {
+                            Expression = ARC.Actual + ">=" + ARC.ExpectedCalculated;
+
+                            ErrorInfo = ARC.Actual + "is not greater than equals to " + ARC.ExpectedCalculated;
+                        }
+                        break;
+                    case eOperator.LessThan:
+                        if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))
+                        {
+                            status = false;
+                            ErrorInfo = "Actual and Expected both values should be numeric";
+                        }
+                        else
+                        {
+                            Expression = ARC.Actual + "<" + ARC.ExpectedCalculated;
+                            ErrorInfo = ARC.Actual + "is not less than " + ARC.ExpectedCalculated;
+
+                        }
+                        break;
+                    case eOperator.LessThanEquals:
+                        if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))
+                        {
+                            status = false;
+                            ErrorInfo = "Actual and Expected both values should be numeric";
+                        }
+                        else
+                        {
+                            Expression = ARC.Actual + "<=" + ARC.ExpectedCalculated;
+                            ErrorInfo = ARC.Actual + "is not less than equals to " + ARC.ExpectedCalculated;
+                        }
+                        break;
+                    case eOperator.NotEquals:
+                        status = !string.Equals(ARC.Actual, ARC.ExpectedCalculated);
+                        ErrorInfo = ARC.Actual + "is equals to " + ARC.ExpectedCalculated;
+                        break;
+                    default:
+                        ErrorInfo = "Not Supported Operation";
+                        break;
+
+                }
+                if (status == null)
+                {
+
+                    status = CodeProcessor.EvalCondition(Expression);
+                }
+
+
+                if (status.Value)
+                {
+                    ARC.Status = ActReturnValue.eStatus.Passed;
+                }
+                else
+                {
+                    ARC.Status = ActReturnValue.eStatus.Failed;
+                }
+
+            }
+
+            return ErrorInfo;
+        }
+
+        private static bool CheckIfValuesCanbecompared(string actual,string Expected)
+        {
+            try
+            {
+            
+            
+                double.Parse(actual);
+                double.Parse(actual);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+       public static void CalculateARCStatusLegacy(ActReturnValue ARC)
         {
             //TODO: Check Expected null or empty return with no change
             
@@ -3216,12 +3378,7 @@ namespace Ginger.Run
                     CurrentBusinessFlow.CurrentActivity = bfFirstActivity;
                     bfFirstActivity.Acts.CurrentItem = bfFirstActivity.Acts.FirstOrDefault();
                 }
-
-                //Init
-                if (doContinueRun == false)
-                {
-                    CurrentBusinessFlow.Reset();
-                }
+             
 
                 if(doContinueRun)
                 {
@@ -3234,6 +3391,13 @@ namespace Ginger.Run
 
                 
                 CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
+
+                //Do run preparations
+                
+                UpdateLastExecutingAgent();
+                CurrentBusinessFlow.Environment = ProjEnvironment == null ? "" : ProjEnvironment.Name;
+                PrepareVariables();
+
 
                 if (!doContinueRun)
                 {
@@ -3254,11 +3418,7 @@ namespace Ginger.Run
                     return;//no Activities to run
                 }
 
-                //Do run preparations
-                SetBusinessFlowInputVarsWithOutputValues(CurrentBusinessFlow);
-                UpdateLastExecutingAgent();
-                CurrentBusinessFlow.Environment = ProjEnvironment == null ? "" : ProjEnvironment.Name;
-                PrepDynamicVariables();
+               
                 
                 //Start execution
                 if (doContinueRun == false)
@@ -3719,12 +3879,14 @@ namespace Ginger.Run
             PublishToALMConfig = null;
             if (doNotResetBusFlows == false)
             {
-                foreach (BusinessFlow bf in BusinessFlows)
+                foreach (BusinessFlow businessFlow in BusinessFlows)
                 {
-                    bf.Reset();
-                    NotifyBusinessflowWasReset(CurrentBusinessFlow);                    
-                }                    
-            }            
+                    businessFlow.Reset();
+
+                   
+                    NotifyBusinessflowWasReset(CurrentBusinessFlow);
+                }
+            }
         }
 
        

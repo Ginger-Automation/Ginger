@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using GingerCore.ALM;
 using GingerCore.Activities;
+using Amdocs.Ginger.Repository;
 
 #region License
 /*
@@ -79,7 +80,7 @@ namespace Amdocs.Ginger.Common
 
         bool ProcessCommandLineArgs(string[] file);
 
-        void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening);
+        void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields);
 
         void HTMLReportAttachment(string report, ref string emailReadyHtml, ref string reportresultfolder, string runsetfolder, object Attachment, object conf);
 
