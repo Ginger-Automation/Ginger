@@ -77,12 +77,15 @@ namespace Ginger.Reports
             if (DynamicParameters.Count > 0)
             {
                 reportHeader = reportHeader + @"
-    <dynamic-parameters ";
+    <dynamic-parameters>";
                 foreach (ActInputValue actInput in DynamicParameters)
                 {
-                    reportHeader = reportHeader + " " + actInput.Param + "=" + "\"" + actInput.ValueForDriver + "\"";
+                      reportHeader = reportHeader +  @"
+        <paramter name =""" + actInput.Param + @""" value=""" + actInput.ValueForDriver + @"""/>";
                 }
-                reportHeader = reportHeader + ">";
+                reportHeader = reportHeader + @"
+    </dynamic-parameters>";
+
             }
 
             reportHeader = reportHeader + @"
@@ -94,24 +97,12 @@ namespace Ginger.Reports
 
                 xml = xml + reportHeader + reportGroups + @"
             <test name=""GingerTest"">" + reportClasses;
-
-            if (DynamicParameters.Count > 0)
-            {
-                xml = xml + @"
-            </test>
-        </suite>
-    </dynamic-parameters>
-</testng-results>
-";
-            }
-            else
-            {
+      
                 xml = xml + @"
             </test>
         </suite>
 </testng-results>
 ";
-            }
             return xml;
         }
 

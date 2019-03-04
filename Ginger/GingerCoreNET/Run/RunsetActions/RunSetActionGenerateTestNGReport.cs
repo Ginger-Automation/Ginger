@@ -92,7 +92,7 @@ namespace Ginger.Run.RunSetActions
             if (DynamicParameters.Count > 0)
             {
                 ValueExpression VE = new ValueExpression(RI.Environment, null);
-                for(int i = 0;DynamicParameters.Count > 0; i++)
+                for(int i = 0;i< DynamicParameters.Count ; i++)
                 {
                     DynamicParameters[i].ValueForDriver = VE.Calculate(DynamicParameters[i].Value);
                 }
