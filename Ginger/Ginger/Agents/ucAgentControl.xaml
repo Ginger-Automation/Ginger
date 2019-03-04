@@ -21,8 +21,8 @@
                 <ColumnDefinition Width="50"/>
             </Grid.ColumnDefinitions>
             <Label  Grid.Column="0" Content="Agent:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <ComboBox x:Name="xAgentsComboBox"  Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}"  HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="xAgentsComboBox_SelectionChanged" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
-            <usercontrols:ucButton x:Name="xAgentStatusBtn" Grid.Column="2" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Power" Click="xAgentStatusBtn_Click"/>
+            <ComboBox x:Name="xAgentsComboBox"  Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}"  AutomationProperties.AutomationId="AgentsComboBox AID" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="xAgentsComboBox_SelectionChanged" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
+            <usercontrols:ucButton x:Name="xAgentStatusBtn" Grid.Column="2" ButtonType="ImageButton" HorizontalAlignment="Center" AutomationProperties.AutomationId="AgentStatusButton AID" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Power" Click="xAgentStatusBtn_Click"/>
         </Grid>
 
         <Expander x:Name="xAgentConfigsExpander" Grid.Row="1" Margin="0,20,0,0" IsExpanded="False" IsEnabled="False" >

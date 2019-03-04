@@ -85,7 +85,7 @@ namespace Ginger.Activities
         {
             if (grdActivities.Grid.SelectedItems.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
 

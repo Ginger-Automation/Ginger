@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="54eed984-4e7a-4937-b28d-0bafc54bd771" ItemType="BusinessFlow" CreatedBy="ELIRANBA" Created="201812130910" GingerVersion="3.1.0.0" Version="1" LastUpdateBy="ELIRANBA" LastUpdate="201812130910" />
+<BusinessFlow Guid="54eed984-4e7a-4937-b28d-0bafc54bd771" Name="Business Flow 1" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="48e22b26-7abb-4b90-83d1-ff1216911b63" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="0%" TargetApplication="MyWebApp" />
+</Activities>
+
+<TargetApplications>
+<TargetApplication AppName="MyWebApp" Guid="81cee886-5154-43fb-ac64-6ff1fdb2d4e3" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>

@@ -31,6 +31,7 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
 using GingerTestHelper;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
@@ -51,9 +52,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.Name = "BF Test Fire Fox";
             mBF.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.Web;            
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };
@@ -76,7 +75,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.BusinessFlows.Add(mBF);
         }
 
-        [TestMethod]
+        [Ignore]
+        [TestMethod]  [Timeout(60000)]
         public void SCM_Login()
         {
 
@@ -124,7 +124,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
         // Test the time to enter data into text box
-        [TestMethod]
+        [Ignore]
+        [TestMethod]  [Timeout(60000)]
         public void SpeedTest()
         {
             //Arrange
@@ -166,8 +167,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.RunStatus = eRunStatus.Pending;
         }
 
-
-        [TestMethod]
+        [Ignore]
+        [TestMethod]  [Timeout(60000)]
         public void TestVariableResetIssue()
         {
             //This was a tricky bug not repro every time.

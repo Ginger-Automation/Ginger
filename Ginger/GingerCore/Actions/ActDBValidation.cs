@@ -16,24 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
+using GingerCore.Actions.Common;
 using GingerCore.Environments;
 using GingerCore.Helpers;
-using GingerCore.Platforms;
-using GingerCore.Properties;
-using GingerCore.Repository;
-using GingerCore.Variables;
-using Ginger;
-using GingerCore.Actions.Common;
 using GingerCore.NoSqlBase;
-using Amdocs.Ginger.Common;
+using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     // TODO: rename to DBAction
@@ -42,7 +37,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "DataBase Action"; } }
         public override string ActionUserDescription { get { return "Run Select/Update SQL on Database"; } }
         
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to pull/validate/update/etc. data from/on a database system.");
             TBH.AddLineBreak();
@@ -138,7 +133,7 @@ namespace GingerCore.Actions
             get
             {try
                 {
-                    if (DB.DBType == Database.eDBTypes.Cassandra)
+                    if (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase)
                         return eDatabaseTye.NoSQL;
                     else return eDatabaseTye.Relational;
                 }
@@ -279,24 +274,27 @@ namespace GingerCore.Actions
                     NoSqlDriver.PerformDBAction();
                    
                     break;
+                case Database.eDBTypes.Couchbase:
+                    NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
+                    NoSqlDriver.PerformDBAction();
+
+                    break;
             }
         }
 
         private bool SetDBConnection()
         {
-            //TODO: add on null or not found throw execption so it will fail
-            ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow,DSList);
-            VE.Value = this.AppName;
-            string AppNameCalculated = VE.ValueCalculated;
+            //TODO: add on null or not found throw execption so it will fail            
+            string AppNameCalculated = ValueExpression.Calculate(this.AppName);
             EnvApplication App = (from a in RunOnEnvironment.Applications where a.Name == AppNameCalculated select a).FirstOrDefault();
             if (App == null)
             {
                 Error= "The mapped Environment Application '" + AppNameCalculated + "' was not found in the '" + RunOnEnvironment.Name +"' Environment which was selected for execution.";
                 return false;
             }
-            VE.Value = DBName;
-            string DBNameCalculated = VE.ValueCalculated;
-            DB = (from d in App.Dbs where d.Name == DBNameCalculated select d).FirstOrDefault();
+            
+            string DBNameCalculated = ValueExpression.Calculate(DBName);
+            DB = (Database)(from d in App.Dbs where d.Name == DBNameCalculated select d).FirstOrDefault();
             if (DB ==null)
             {
                 Error = "The mapped DB '" + DBNameCalculated + "' was not found in the '" + AppNameCalculated + "' Environment Application.";
@@ -324,7 +322,9 @@ namespace GingerCore.Actions
             {
                 if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
-                    string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
+                    //string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
+                    string filePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
+
                     FileInfo scriptFile = new FileInfo(filePath);
                    SQL = scriptFile.OpenText().ReadToEnd();
                 }
@@ -364,7 +364,9 @@ namespace GingerCore.Actions
             {
                 if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
-                    string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
+                    //string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
+                    string filePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
+
                     FileInfo scriptFile = new FileInfo(filePath);
                     SQL = scriptFile.OpenText().ReadToEnd();
                 }
@@ -418,7 +420,7 @@ namespace GingerCore.Actions
                 if (e.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
                 {
                     string message = Database.GetMissingDLLErrorDescription();
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, message, e);
+                    Reporter.ToLog(eLogLevel.WARN, message, e);
                     this.Error += Environment.NewLine + message;
                 }
             }
@@ -442,14 +444,12 @@ namespace GingerCore.Actions
             }
         }
         private void updateQueryParams()
-        {
-            ValueExpression Ve = new ValueExpression(this.RunOnEnvironment, this.RunOnBusinessFlow, this.DSList);
+        {            
             foreach (ActInputValue AIV in QueryParams)
             {
                 if (!String.IsNullOrEmpty(AIV.Value))
-                {
-                    Ve.Value = AIV.Value;
-                    AIV.ValueForDriver = Ve.ValueCalculated;
+                {                    
+                    AIV.ValueForDriver = ValueExpression.Calculate(AIV.Value);
                 }
             }
         }

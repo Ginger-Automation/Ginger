@@ -32,6 +32,7 @@ using System.Windows.Data;
 using Ginger.Repository;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Activities
 {
@@ -114,7 +115,7 @@ namespace Ginger.Activities
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                    Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 }
             }
         }
@@ -153,17 +154,13 @@ namespace Ginger.Activities
         private void grdActivitiesGroups_ItemDropped(object sender, EventArgs e)
         {
             object droppedItem = ((DragInfo)sender).Data;
-            Activity previousActivity = null;
-            if ((ActivitiesGroup)grdActivitiesGroups.CurrentItem != null && ((ActivitiesGroup)grdActivitiesGroups.CurrentItem).ActivitiesIdentifiers.Count > 0)
-            {
-                previousActivity = ((ActivitiesGroup)grdActivitiesGroups.CurrentItem).ActivitiesIdentifiers[((ActivitiesGroup)grdActivitiesGroups.CurrentItem).ActivitiesIdentifiers.Count - 1].IdentifiedActivity;
-            }
+           
             if (droppedItem.GetType() == typeof(ActivitiesGroup))
             {
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance(true);
                 mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();                
-                mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false, false, previousActivity);
+                mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false, false);
                 mBusinessFlow.AttachActivitiesGroupsAndActivities();
 
                 int selectedActIndex = -1;
@@ -242,8 +239,8 @@ namespace Ginger.Activities
             foreach (RepositoryItemBase group in listOfGroups)
             {
                 foreach (ActivityIdentifiers AI in ((ActivitiesGroup)group).ActivitiesIdentifiers)
-                {
-                   itemsToUpload.Add(AI.IdentifiedActivity);                 
+                {                    
+                    itemsToUpload.Add(AI.IdentifiedActivity);                 
                 }
             }
             itemsToUpload.AddRange(listOfGroups);
@@ -259,7 +256,7 @@ namespace Ginger.Activities
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
 
@@ -272,7 +269,7 @@ namespace Ginger.Activities
                 ALMIntegration.Instance.ExportBfActivitiesGroupsToALM(mBusinessFlow, selectedAGs);
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
 
         private void RefreshActivitiesGroupsGrid()

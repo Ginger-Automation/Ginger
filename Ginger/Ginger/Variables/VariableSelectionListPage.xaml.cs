@@ -47,10 +47,11 @@ namespace Ginger.Variables
             grdOptionalValues.btnClearAll.AddHandler(Button.ClickEvent, new RoutedEventHandler(btnClearAll_Click));
             grdOptionalValues.grdMain.RowEditEnding += grdOptionalValues_RowEditEnding;
             grdOptionalValues.Grid.IsVisibleChanged += grdOptionalValues_IsVisibleChanged;
-        
-            comboSelectedValue.ItemsSource = mVar.OptionalValuesList.ToList<OptionalValue>();
+
+            comboSelectedValue.ItemsSource = mVar.OptionalValuesList;
             comboSelectedValue.DisplayMemberPath = nameof(OptionalValue.Value);
-            App.ObjFieldBinding(comboSelectedValue, ComboBox.TextProperty, mVar, nameof(VariableSelectionList.SelectedValue));           
+            App.ObjFieldBinding(comboSelectedValue, ComboBox.TextProperty, mVar, nameof(VariableSelectionList.SelectedValue));
+            //comboSelectedValue.BindControl(mVar, nameof(VariableSelectionList.SelectedValue), mVar.OptionalValuesList.ToList<OptionalValue>());
         }
 
         private void SetOptionalValuesGridView()
@@ -106,10 +107,6 @@ namespace Ginger.Variables
 
         private void UpdateOptionalValues()
         {            
-            comboSelectedValue.ItemsSource = mVar.OptionalValuesList.ToList<OptionalValue>();
-            comboSelectedValue.DisplayMemberPath = nameof(OptionalValue.Value);                   
-            comboSelectedValue.Refresh();
-
             mVar.OnPropertyChanged(nameof(VariableSelectionList.Formula));
             VerifySelectedValue();
         }
@@ -122,10 +119,6 @@ namespace Ginger.Variables
                 if (mVar.SelectedValue == string.Empty || mVar.OptionalValuesList.Where(v => v.Value == mVar.SelectedValue).SingleOrDefault() == null)
                 {
                     mVar.SelectedValue = mVar.OptionalValuesList[0].Value;
-                }
-                else
-                {
-                    mVar.SelectedValue = string.Empty;
                 }
             }
         }

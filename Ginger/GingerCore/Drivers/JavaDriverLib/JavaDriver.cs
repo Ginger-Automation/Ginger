@@ -16,12 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.Java;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.CommunicationProtocol;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,16 +34,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Automation;
-using System.Windows.Threading;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Windows.Threading;
 
 namespace GingerCore.Drivers.JavaDriverLib
 {
@@ -126,7 +125,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             if (JavaAgentHost == null || JavaAgentHost.Length ==0)
             {
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty");
+                Reporter.ToLog(eLogLevel.WARN, "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty");
                 ErrorMessageFromDriver= "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty";
                 return;
             }
@@ -176,7 +175,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else
             {
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Failed to connect Java Agent");
+                Reporter.ToLog(eLogLevel.WARN, "Failed to connect Java Agent");
                 ErrorMessageFromDriver = "Failed to connect Java Agent";
             }
         }
@@ -217,7 +216,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     //TODO: catch excpetion of socket not all..         
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         Thread.Sleep(500);
                     }                  
                 }
@@ -228,7 +227,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         
         private Boolean Reconnect()
         {
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "Trying to reconnent Java Agent");
+            Reporter.ToLog(eLogLevel.DEBUG, "Trying to reconnent Java Agent");
             try
             {
                 clientSocket.Connect(serverAddress);
@@ -360,7 +359,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close Ginger Java Agent Driver - " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Ginger Java Agent Driver - " + ex.Message);
             }
             finally
             {
@@ -1400,6 +1399,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     break;
 
                 case ActTableElement.eTableAction.DoubleClick:
+                case ActTableElement.eTableAction.ActivateCell:
                     Locators.Add(AJTE.ColSelectorValue.ToString());
                     Locators.Add(AJTE.LocateColTitle);
                     PL1.AddValue(Locators);
@@ -1567,7 +1567,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                             else
                             {
                                 actScreenShot.Error = "Failed to create Java application screenshot. Error= " + error;
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, actScreenShot.Error);
+                                Reporter.ToLog(eLogLevel.ERROR, actScreenShot.Error);
                             }               
                         }
                         else
@@ -1593,7 +1593,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                             catch(Exception ex)
                             {
                                 actScreenShot.Error = "Failed to create Java application HTML Widget screenshot. Error= " + ex.Message;
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, actScreenShot.Error, ex);
+                                Reporter.ToLog(eLogLevel.ERROR, actScreenShot.Error, ex);
                             }
                         }
                     }
@@ -1696,22 +1696,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
 
 
-        //TODO: Not used. But need to override
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
-
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
-
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
-
+        
         public override void HighlightActElement(Act act)
         {
         }
@@ -1873,7 +1858,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             if (Response.IsErrorPayLoad())
             {                
-                Reporter.ToUser(eUserMsgKeys.FailedToInitiate, "JEditor Element");
+                Reporter.ToUser(eUserMsgKey.FailedToInitiate, "JEditor Element");
                 return;
             }
         }
@@ -1900,7 +1885,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             if (Response.IsErrorPayLoad())
             {
                 //TODO:: Handle exception                 
-                Reporter.ToUser(eUserMsgKeys.FailedToInitiate, "Browser Element");
+                Reporter.ToUser(eUserMsgKey.FailedToInitiate, "Browser Element");
                 return;
             }
         }
@@ -2241,6 +2226,11 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
         }
 
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        {
+            return EI;
+        }
+
         ElementInfo IWindowExplorer.GetControlFromMousePosition()
         {
             //TODO:
@@ -2271,7 +2261,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     });
 
                     Mouse.OverrideCursor = null;                    
-                    Reporter.ToUser(eUserMsgKeys.InitializeBrowser);
+                    Reporter.ToUser(eUserMsgKey.InitializeBrowser);
                     return null;
                 }
                 else
@@ -2295,7 +2285,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else
             {                
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error in GetActiveForm");
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in GetActiveForm");
                 return null;
             }
         }
@@ -2316,7 +2306,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             catch (Exception ex)
             {                
-                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error in GetHTMLElements - " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in GetHTMLElements - " + ex.Message);
                 return null;
             }
         }
@@ -2771,7 +2761,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return null;
         }
 
-        public Bitmap GetScreenShot()
+        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null)
         {
             return GetWindowScreenShot();
         }
@@ -2796,7 +2786,22 @@ namespace GingerCore.Drivers.JavaDriverLib
             throw new NotImplementedException();
         }
 
-        public bool TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
+        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartSpying()
         {
             throw new NotImplementedException();
         }

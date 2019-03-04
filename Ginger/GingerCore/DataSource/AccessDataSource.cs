@@ -305,7 +305,7 @@ namespace GingerCore.DataSource
             }
             catch (Exception e)
             {
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
             }
         }
              
@@ -372,8 +372,8 @@ namespace GingerCore.DataSource
                         catch (Exception e)
                         {
                             dataTable.RejectChanges();
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
-                            //Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
+                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                            //Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
                         }
                     }
                 }
@@ -384,7 +384,7 @@ namespace GingerCore.DataSource
             catch (Exception e)
             {
                 dataTable.RejectChanges();
-                Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
             }
         }
         private void ExportDSToExcel(DataTable table, string sFilePath,string sSheetName="")

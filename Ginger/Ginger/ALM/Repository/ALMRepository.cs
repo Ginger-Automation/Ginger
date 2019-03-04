@@ -22,6 +22,8 @@ using GingerCore.Activities;
 using System;
 using System.Collections.Generic;
 using GingerCore.ALM.QC;
+using Amdocs.Ginger.Common.InterfacesLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM.Repository
 {
@@ -32,17 +34,18 @@ namespace Ginger.ALM.Repository
 
         public string ALMPassword()
         {
-            return App.UserProfile.ALMPassword;
+            return  WorkSpace.UserProfile.ALMPassword;
         }
 
         public void SetALMPassword(string newPassword)
         {
-            App.UserProfile.ALMPassword = newPassword;
+             WorkSpace.UserProfile.ALMPassword = newPassword;
         }
 
-        public void SetALMProject(string project)
+        public void SetALMProject(KeyValuePair<string, string> project)
         {
-            App.UserProfile.Solution.ALMProject = project;
+            WorkSpace.UserProfile.Solution.ALMProject = project.Value;
+            WorkSpace.UserProfile.Solution.ALMProjectKey = project.Key;
         }
 
         public abstract bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle);
@@ -53,7 +56,7 @@ namespace Ginger.ALM.Repository
         public abstract bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false);
         public abstract void ImportALMTests(string importDestinationFolderPath);
         public abstract void ImportALMTestsById(string importDestinationFolderPath);
-        public abstract eUserMsgKeys GetDownloadPossibleValuesMessage();
+        public abstract eUserMsgKey GetDownloadPossibleValuesMessage();
         public abstract IEnumerable<Object> SelectALMTestSets();
         public abstract bool ImportSelectedTests(string importDestinationPath, IEnumerable<Object> selectedTests);
         public abstract List<string> GetTestLabExplorer(string path);

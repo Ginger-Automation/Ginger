@@ -16,21 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
+using GingerCore.Helpers;
+using GingerCore.Properties;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using GingerCore.Properties;
-using GingerCore.Repository;
+using System.Data;
 using System.Data.OleDb;
 using System.IO;
-using System.Data;
-using GingerCore.Platforms;
-using GingerCore.Helpers;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common;
-
+using System.Text;
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActGenerateFileFromTemplate : ActWithoutDriver
@@ -38,7 +35,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Generate File From Template Action"; } }
         public override string ActionUserDescription { get { return "Generates File From Template Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action when you want to generate file from template action.");
             TBH.AddLineBreak();
@@ -70,8 +67,7 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public eFileAction FileAction { get; set; }
-
-        public ValueExpression VE { get; set; }
+        
 
         public new static partial class Fields
         {
@@ -126,7 +122,7 @@ namespace GingerCore.Actions
                     case eFileAction.CSVFromTemplate:
                         string CompleteOutputFileName = GenerateOutputPath();
                         string txt = GenerateCSVFromTemplate();
-                        System.IO.File.WriteAllText(CompleteOutputFileName, txt, Encoding.UTF8);                       
+                        File.WriteAllText(CompleteOutputFileName, txt, Encoding.UTF8);                       
                         break;
                     default:
                         break;
@@ -134,7 +130,7 @@ namespace GingerCore.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
             }
         }
         //to get the absolute path of output file
@@ -242,11 +238,9 @@ namespace GingerCore.Actions
             return sbheader.Append(sbdata.ToString()).Append(sbtrailer.ToString()).ToString();
         }
 
-        private string ProcessLine(string l)
+        private string ProcessLine(string line)
         {
-            // TODO: process params VE          
-            VE.Value = l;
-            return VE.ValueCalculated;
+            return ValueExpression.Calculate(line);
         }
 
         private List<string> ProcessData(string l)
@@ -254,9 +248,13 @@ namespace GingerCore.Actions
             string DataFilePath;
             if (DataFileName.StartsWith("~"))
             {
-                DataFilePath = System.IO.Path.Combine(SolutionFolder, DataFileName.Replace("~\\", ""));
+                //DataFilePath = System.IO.Path.Combine(SolutionFolder, DataFileName.Replace("~\\", ""));
+                DataFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataFileName);
             }
-            else DataFilePath = DataFileName;
+            else
+            {
+                DataFilePath = DataFileName;
+            }
 
             // TODO: process params VE
             // Process Data for each line use l as template
@@ -274,9 +272,8 @@ namespace GingerCore.Actions
                         continue;
                     template = template.Replace(",,", ",#,");
                     template = template.Replace("{Param=" + headers[j] + "}", tmp[j]);
-                }
-                VE.Value = template;
-                results.Add(VE.ValueCalculated);
+                }                
+                results.Add(ValueExpression.Calculate(template));
             }
 
             return results;
@@ -313,7 +310,7 @@ namespace GingerCore.Actions
             }
             catch (Exception exc)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, exc.Message);
+                Reporter.ToLog(eLogLevel.ERROR, exc.Message);
             }
             finally
             {

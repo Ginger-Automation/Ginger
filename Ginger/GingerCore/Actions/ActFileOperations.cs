@@ -23,7 +23,7 @@ using System.Linq;
 using GingerCore.Helpers;
 using System.IO;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 //This class is for dummy act - good for agile, and to be replace later on when real
 //  act is available, so tester can write the step to be.
 namespace GingerCore.Actions
@@ -33,7 +33,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "File Operations"; } }
         public override string ActionUserDescription { get { return "Perform File operations like Check if File Exists, Execute a file "; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action to perform File operations ");
 
@@ -146,11 +146,13 @@ namespace GingerCore.Actions
             calculatedSourceFilePath = GetInputParamCalculatedValue(Fields.SourceFilePath);
                       
             bool IsSorcePathRelative = false;
-            if (calculatedSourceFilePath.StartsWith(@"~\"))
+            if (calculatedSourceFilePath.StartsWith(@"~"))
             {
-                calculatedSourceFilePath = calculatedSourceFilePath.Replace(@"~\", SolutionFolder);
+                //calculatedSourceFilePath = calculatedSourceFilePath.Replace(@"~\", SolutionFolder);
+                calculatedSourceFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedSourceFilePath);
                 IsSorcePathRelative = true;
             }
+
             if (calculatedSourceFilePath.EndsWith("*"))
             {
                 string[] FileNameList = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath));
@@ -346,8 +348,9 @@ namespace GingerCore.Actions
         {
             string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
 
-            if (calculatedDestinationPath.StartsWith(@"~\"))
-                calculatedDestinationPath = calculatedDestinationPath.Replace(@"~\", SolutionFolder);
+            //if (calculatedDestinationPath.StartsWith(@"~\"))
+            //    calculatedDestinationPath = calculatedDestinationPath.Replace(@"~\", SolutionFolder);
+            calculatedDestinationPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedDestinationPath);
 
             DestinationFolder = System.IO.Path.GetDirectoryName(calculatedDestinationPath);
             if (String.IsNullOrEmpty(DestinationFolder))

@@ -39,8 +39,8 @@ namespace Ginger.Environments
             InitializeComponent();
             mEnvApplication = app;
 
-            App.ObjFieldBinding(ApplicationNameTextBox, TextBox.TextProperty, app, EnvApplication.Fields.Name);
-            App.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, EnvApplication.Fields.Description);
+            App.ObjFieldBinding(ApplicationNameTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Name));
+            App.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Description));
 
             UpdateParametersTabHeader();
             app.GeneralParams.CollectionChanged += GeneralParams_CollectionChanged;
@@ -138,7 +138,7 @@ namespace Ginger.Environments
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
         }
     }

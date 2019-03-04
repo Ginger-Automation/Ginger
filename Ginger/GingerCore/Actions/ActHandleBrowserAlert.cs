@@ -23,6 +23,8 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 
 namespace GingerCore.Actions
 {
@@ -31,7 +33,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Handle Browser Alerts"; } }
         public override string ActionUserDescription { get { return "Handle Browser Alerts"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to test/handle browser alert on any web pages");
             TBH.AddLineBreak();

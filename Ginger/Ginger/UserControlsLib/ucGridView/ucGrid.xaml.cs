@@ -120,7 +120,7 @@ namespace Ginger
                             grdMain.CommitEdit();
                             grdMain.CancelEdit();
                             mCollectionView.Filter = FilterGridRows;
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         }
                     }
                     this.Dispatcher.Invoke(() =>
@@ -141,7 +141,7 @@ namespace Ginger
                 catch (InvalidOperationException ioe)
                 {
                     //Think this happen I tried to rename an activity I'd just added.
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to set ucGrid.DataSourceList", ioe);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to set ucGrid.DataSourceList", ioe);
                 }
                 if (mObjList != null)
                 {
@@ -245,7 +245,7 @@ namespace Ginger
                                 sb.Append(PI.GetValue(obj).ToString()).Append("~");
                             }
                         }
-                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                        catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                     }
                 }
             }
@@ -263,7 +263,7 @@ namespace Ginger
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
             }
             return sb.ToString().ToUpper();
@@ -342,6 +342,8 @@ namespace Ginger
             });
         }
 
+
+
         //for grid view        
         private Dictionary<string, DataGridColumn> _CurrentGridCols = new Dictionary<string, DataGridColumn>();
         private Dictionary<string, GridViewDef> _GridViews = new Dictionary<string, GridViewDef>();
@@ -396,6 +398,12 @@ namespace Ginger
         {
             get { return grdMain; }
             set { grdMain = value; }
+        }
+
+        public DataGridSelectionMode SelectionMode
+        {
+            get { return grdMain.SelectionMode; }
+            set { grdMain.SelectionMode = value; }
         }
         public Visibility ShowHeader
         {
@@ -694,11 +702,11 @@ namespace Ginger
         {
             if (mObjList.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
+                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
                 return;
             }
 
-            if ((Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == MessageBoxResult.Yes)
+            if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 mObjList.SaveUndoData();
                 mObjList.ClearAll();
@@ -708,7 +716,7 @@ namespace Ginger
         {
             if (grdMain.SelectedItems.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.SelectItemToDelete);
+                Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
                 return;
             }
 
@@ -1385,7 +1393,7 @@ public void RemoveCustomView(string viewName)
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.FailedToloadTheGrid, ex.Message);
+                Reporter.ToUser(eUserMsgKey.FailedToloadTheGrid, ex.Message);
             }
         }
 
@@ -1397,9 +1405,47 @@ public void RemoveCustomView(string viewName)
             template.VisualTree = factory;
             return template;
         }
-      
+
+
+        public static DataTemplate GetGridComboBoxTemplate(List<GingerCore.General.ComboEnumItem> valuesList, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false,
+                                        string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null)
+        {
+            DataTemplate template = new DataTemplate();
+            FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));
+
+            combo.SetValue(ComboBox.ItemsSourceProperty, valuesList);
+            combo.SetValue(ComboBox.DisplayMemberPathProperty, nameof(GingerCore.General.ComboEnumItem.text));
+            combo.SetValue(ComboBox.SelectedValuePathProperty,nameof(GingerCore.General.ComboEnumItem.Value)); 
+
+            Binding selectedValueBinding = new Binding(selectedValueField);
+            selectedValueBinding.Mode = BindingMode.TwoWay;
+            selectedValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            combo.SetBinding(ComboBox.SelectedValueProperty, selectedValueBinding);
+            if (isreadonly)
+            {
+                Binding ReadonlyBinding = new Binding(readonlyfield);
+                ReadonlyBinding.Mode = BindingMode.OneWay;
+                ReadonlyBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                combo.SetBinding(ComboBox.IsHitTestVisibleProperty, ReadonlyBinding);
+            }
+            else
+            {
+                if (allowEdit == true)
+                    combo.SetValue(ComboBox.IsEditableProperty, true);
+            }
+            if (selectedByDefault == true)
+            {
+                combo.SetValue(ComboBox.SelectedIndexProperty, 0);
+            }
+            if (comboSelectionChangedHandler != null)
+                combo.AddHandler(ComboBox.SelectionChangedEvent, comboSelectionChangedHandler);
+
+            template.VisualTree = combo;
+            return template;
+        }
+
         public static DataTemplate GetGridComboBoxTemplate(string valuesListField, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false, 
-            string readonlyfield ="", bool isreadonly=false)
+                                                            string readonlyfield ="", bool isreadonly=false)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));         
@@ -1685,6 +1731,7 @@ public void RemoveCustomView(string viewName)
             AddToolbarTool(image, toolTip, clickHandler, toolVisibility);
         }
 
+
         private void AddToolbarTool(object userControl, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible)
         {
             Button tool = new Button();
@@ -1707,6 +1754,58 @@ public void RemoveCustomView(string viewName)
             toolbar.Items.Add(TagsViewer);
             toolbar.Items.Add(lblView);
             toolbar.Items.Add(comboView);
+        }
+
+
+        public void AddComboBoxToolbarTool(string lableContent,Type enumType, SelectionChangedEventHandler view_SelectionChanged, string defaultOptionText = null)
+        {
+            ComboBox comboBox = new ComboBox();
+            comboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
+
+            comboBox.Width = 100;
+            List<GingerCore.General.ComboEnumItem> itemsList = GingerCore.General.GetEnumValuesForCombo(enumType);
+            if (defaultOptionText != null)
+            {
+                GingerCore.General.ComboEnumItem existingDefaultItem = itemsList.Where(x => x.text == defaultOptionText).FirstOrDefault();
+                if (existingDefaultItem != null)
+                {
+                    comboBox.ItemsSource = itemsList;
+                    comboBox.SelectedItem = existingDefaultItem;
+                }
+                else
+                {
+                    GingerCore.General.ComboEnumItem newDefaultItem = new GingerCore.General.ComboEnumItem() { text = defaultOptionText, Value = null };
+                    List<GingerCore.General.ComboEnumItem> itemsListWithNewDefaultText = new List<GingerCore.General.ComboEnumItem>();
+                    itemsListWithNewDefaultText.Add(newDefaultItem);
+                    foreach (GingerCore.General.ComboEnumItem CEI in itemsList)
+                    {
+                        itemsListWithNewDefaultText.Add(CEI);
+                    }
+                    comboBox.ItemsSource = itemsListWithNewDefaultText;
+                    comboBox.SelectedIndex = 0;
+                }
+            }
+
+            comboBox.SelectionChanged += view_SelectionChanged;
+
+            Label label = new Label();
+            label.Content = lableContent;
+
+            //toolbar.Items.Remove(lblSearch);
+            //toolbar.Items.Remove(txtSearch);
+            //toolbar.Items.Remove(btnClearSearch);
+            //toolbar.Items.Remove(lblView);
+            //toolbar.Items.Remove(comboView);
+            //toolbar.Items.Remove(TagsViewer);
+            //toolbar.Items.Add(label);
+            //toolbar.Items.Add(comboBox);
+            //toolbar.Items.Add(lblSearch);
+            //toolbar.Items.Add(txtSearch);
+            //toolbar.Items.Add(btnClearSearch);
+            //toolbar.Items.Add(TagsViewer);
+            //toolbar.Items.Add(lblView);
+            toolbar.Items.Add(label);
+            toolbar.Items.Add(comboBox);
         }
 
 
@@ -1829,8 +1928,8 @@ public void RemoveCustomView(string viewName)
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Operation Failed");
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation Failed");
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -1845,8 +1944,8 @@ public void RemoveCustomView(string viewName)
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Operation Failed");
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation Failed");
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -1900,7 +1999,7 @@ public void RemoveCustomView(string viewName)
             {
                 mCutSourceList = null;
                 mCopiedorCutItems.Clear();
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Operation Failed, make sure the copied items type is correct." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation Failed, make sure the copied items type is correct." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + ex.Message);
             }
         }
 
@@ -2078,6 +2177,20 @@ public void RemoveCustomView(string viewName)
                 ClearFloatingButtons();
         }
 
+        private int GetCheckedRowCount()
+        {
+            int count = 0;
+            for(int i = 0; i < Grid.Items.Count; i++)
+            {
+                var cItem = grdMain.Items[i];
+                var mycheckbox = grdMain.Columns[0].GetCellContent(cItem) as CheckBox;
+                if (mycheckbox != null && (bool)mycheckbox.IsChecked)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
 
         public static readonly DependencyProperty RowsCountProperty = DependencyProperty.Register(
                     "RowsCount", typeof(int), typeof(ucGrid), new PropertyMetadata(0));        
@@ -2092,9 +2205,11 @@ public void RemoveCustomView(string viewName)
         {
             CantBeEmpty,
             OnlyOneItem,
+            CheckedRowCount
         }
 
         public List<eUcGridValidationRules> ValidationRules = new List<eUcGridValidationRules>();
+
 
         public bool HasValidationError()
         {
@@ -2109,6 +2224,16 @@ public void RemoveCustomView(string viewName)
 
                     case eUcGridValidationRules.OnlyOneItem:
                         if (Grid.Items.Count != 1) validationRes= true;
+                        break;
+
+                    case eUcGridValidationRules.CheckedRowCount:
+                        {
+                            int count = GetCheckedRowCount();
+                            if (count <= 0)
+                            {
+                                validationRes = true; 
+                            }
+                        }
                         break;
                 }
             }

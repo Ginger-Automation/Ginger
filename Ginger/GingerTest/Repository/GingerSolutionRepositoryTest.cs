@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore.Environments;
 using GingerTestHelper;
@@ -25,13 +26,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 
-namespace GingerCoreCommonTest.Repository
+namespace GingerTest
 {
 
     [TestClass]
@@ -46,24 +45,24 @@ namespace GingerCoreCommonTest.Repository
             CreateTestSolution();
             
             // Init SR
-            mSolutionRepository = Ginger.App.CreateGingerSolutionRepository();
+            mSolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             Ginger.App.InitClassTypesDictionary();            
-            string TempRepositoryFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\SRTestTemp");            
-            mSolutionRepository.Open(TempRepositoryFolder);            
+            string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTemp");            
+            mSolutionRepository.Open(TempRepositoryFolder);
         }
 
         private static void CreateTestSolution()
         {
             // First we create a basic solution with some sample items
             SolutionRepository SR = new SolutionRepository();            
-            string TempRepositoryFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\SRTestTemp");
+            string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTemp");
             if (Directory.Exists(TempRepositoryFolder))
             {
                 Directory.Delete(TempRepositoryFolder, true);
             }
 
             
-            SR = Ginger.App.CreateGingerSolutionRepository();
+            SR = GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.Open(TempRepositoryFolder);
 
             ProjEnvironment E1 = new ProjEnvironment() { Name = "E1" };
@@ -105,7 +104,7 @@ namespace GingerCoreCommonTest.Repository
 
       
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VerifyEnvcopyIsOK()
         {
             //Arrange
@@ -122,7 +121,7 @@ namespace GingerCoreCommonTest.Repository
             Assert.AreEqual(env1.Guid, env1Copy.Guid);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void EnvRenameshouldKeepOriginalFileName()
         {
             //Arrange
@@ -141,7 +140,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void EnvRenameDupWithFileNameExist()
         {
             //Arrange
@@ -164,7 +163,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void EnvRenameDupWithFileNameExistx3()
         {
             //Arrange
@@ -198,7 +197,7 @@ namespace GingerCoreCommonTest.Repository
         //TODO: add another test which update value with same and see prop changed didn't trigger
 
         [Ignore] // Temp so the build will pass
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CheckPropertyChangedTriggered()
         {
             // Scan all RIs for each prop marked with [IsSerializedForLocalRepositoryAttribute] try to change and verify prop changed triggered

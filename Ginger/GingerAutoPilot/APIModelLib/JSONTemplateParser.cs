@@ -83,7 +83,9 @@ namespace Amdocs.Ginger.Common.APIModelLib
             JToken jt = JToken.Parse(JSOnText);
             Dictionary<string, string> ParamPath = new Dictionary<string, string>();
             List<string> consts = new List<string>();
-            foreach (var Jn in JE.GetEndingNodes())
+
+            IEnumerable<JsonExtended> EndingNodesList = JE.GetEndingNodes();
+            foreach (var Jn in EndingNodesList)
             {
                 if (Jn == null)
                     continue;
@@ -105,6 +107,7 @@ namespace Amdocs.Ginger.Common.APIModelLib
                     {
                         consts.Add(param);
                     }
+                    
                     ((JValue)jt2).Value = param;
                 
                 }

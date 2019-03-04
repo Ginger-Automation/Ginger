@@ -80,7 +80,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (item is DataSourceBase)
             {
-                return new DataSourceTreeItem() { DSDetails = (DataSourceBase)item , TableTreeView = mDataSourceView};
+                return new DataSourceTreeItem((DataSourceBase)item, mDataSourceView);
             }
 
             if (item is RepositoryFolderBase)
@@ -209,7 +209,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             if (itemsSavedCount == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Nothing found to Save.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Nothing found to Save.");
             }
         }
         public override void AddTreeItem()

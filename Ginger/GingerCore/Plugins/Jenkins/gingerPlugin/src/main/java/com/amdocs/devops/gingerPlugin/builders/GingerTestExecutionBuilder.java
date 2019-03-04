@@ -208,18 +208,18 @@ public class GingerTestExecutionBuilder extends Builder implements SimpleBuildSt
 			UpdateParametersValues(envVars);
 			String remoteFilePath = null;
 			String solFolder="";
-			if(getScType().equalsIgnoreCase("GIT") && !solutionName.endsWith(".git"))
+			if(getScType().equalsIgnoreCase("GIT") && !tmpSolutionName.endsWith(".git"))
 			{
 				solFolder =getScUrl().substring(getScUrl().lastIndexOf("/")+1) + "\\" ;
 			}
 			System.out.println("solFolder::" + solFolder);
 			if(!getRemoteSolutionPath().isEmpty())
 			{
-				remoteFilePath =  getRemoteSolutionPath() +  "\\" + solFolder + solutionName;		
+				remoteFilePath =  getRemoteSolutionPath() +  "\\" + solFolder + tmpSolutionName;		
 			}
 			else
 			{
-				remoteFilePath =  workspace.getRemote( ) + "\\" + solFolder + solutionName;
+				remoteFilePath =  workspace.getRemote( ) + "\\" + solFolder + tmpSolutionName;
 			}
 			System.out.println("remoteFilePath::" + remoteFilePath);					
 			Callable<String,IOException> task = new GingerRemoteTask( workspace , listener , getGingerInstallationPath( ) , getScType() ,getScUrl() , getScUsername(), getScPassword(), getRemoteSolutionPath(),getScProxyServer(),getScProxyPort(),tmpSolutionName, remoteFilePath , tmpRunSetName , tmpTargetEnvCode);			

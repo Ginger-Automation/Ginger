@@ -13,8 +13,7 @@
             <ColumnDefinition Width="541*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="230"/>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="180"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
@@ -32,34 +31,28 @@
                 <Label Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Content="Description:" />
                 <Border BorderThickness="1" BorderBrush="{StaticResource $Color_DarkBlue}" Grid.Row="1" Margin="5,0,0,0" >
                     <ScrollViewer  >
-                        <TextBlock x:Name="txtBlkDescritpion" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" ></TextBlock>
+                        <TextBlock x:Name="xSummaryTextBlock" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" ></TextBlock>
                     </ScrollViewer>
                 </Border>
             </Grid>
 
             <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                 <Label Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Content="PlugIn Version:" />
-                <Label x:Name="PlugInVersionlbl" Style="{StaticResource @InputFieldLabelStyle}" FontSize="13" />
+                <Label x:Name="xPlugInPackageVersionLabel" Style="{StaticResource @InputFieldLabelStyle}" FontSize="13" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                 <Label Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Content="PlugIn Folder:" />
-                <Label x:Name="PlugInFolderlbl" Style="{StaticResource @InputFieldLabelStyle}" FontSize="13" />
+                <Label x:Name="xPlugInFolderLabel" Style="{StaticResource @InputFieldLabelStyle}" FontSize="13" />
             </StackPanel>
-
-            <StackPanel Orientation="Horizontal">
-                <Label Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Content="PlugIn Type:" />
-                <Label x:Name="PlugInTypelbl" Style="{StaticResource @InputFieldLabelStyle}"/>
-            </StackPanel>
+           
 
             <DockPanel>
                 <Label x:Name="LoadErrorLbl" HorizontalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Foreground="Red" Content="Failed To Load The PlugIn"  Visibility="Collapsed"/>
             </DockPanel>
 
         </StackPanel>
-
-        <Ginger:ucGrid x:Name="ServicesGrid" Title="Services" Grid.Row="1"></Ginger:ucGrid>
-        
+                
         <TabControl x:Name="PlugInTab" Grid.Row="2" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
@@ -79,10 +72,17 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                         <Image Source="{StaticResource  @GeneralAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
-                        <TextBlock Text="Service Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock Text="Services" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Ginger:ucGrid x:Name="PlugInsActionsGrid" Title="PlugIn Actions" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Collapsed"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30*"/>
+                        <RowDefinition Height="70*"/>
+                    </Grid.RowDefinitions>
+                    <Ginger:ucGrid x:Name="xServicesGrid" Title="Services" RowChangedEvent="XServicesGrid_RowChangedEvent" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Collapsed"/>
+                    <Ginger:ucGrid x:Name="xServiceActionGrid" Grid.Row="1" Title="Service Actions" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Collapsed"/>
+                </Grid>
             </TabItem>
             <TabItem x:Name="TextEditorTab" Margin="2,0,-6,0">
                 <TabItem.Header>

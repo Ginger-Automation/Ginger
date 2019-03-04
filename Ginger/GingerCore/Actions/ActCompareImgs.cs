@@ -28,7 +28,7 @@ using System.Drawing;
 using System.Windows.Automation;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActCompareImgs : ActWithoutDriver
@@ -36,7 +36,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Compare Screen Areas Action"; } }
         public override string ActionUserDescription { get { return "Compares screen areas"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to compare the screen area.");
         }
@@ -101,12 +101,14 @@ namespace GingerCore.Actions
                 targetWin = UIAutomationGetWindowByTitle(WindowName);
 
             string ExpectedImgFile1 = ExpectedImgFile;
-            if (ExpectedImgFile1.StartsWith("~"))
-            {
-                string SolutionFolder1 = SolutionFolder.ToString();
-                ExpectedImgFile1 = ExpectedImgFile1.Replace("~\\", "");
-                ExpectedImgFile1 = System.IO.Path.Combine(SolutionFolder1, ExpectedImgFile1);
-            }
+            //if (ExpectedImgFile1.StartsWith("~"))
+            //{
+            //    string SolutionFolder1 = SolutionFolder.ToString();
+            //    ExpectedImgFile1 = ExpectedImgFile1.Replace("~\\", "");
+            //    ExpectedImgFile1 = System.IO.Path.Combine(SolutionFolder1, ExpectedImgFile1);
+            //}
+            ExpectedImgFile1 = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ExpectedImgFile1);
+
             if (WindowName == "FULLSCREEN")
             {
                 List<AutomationElement> wins = UIAutomationGetFirstLevelWindows();

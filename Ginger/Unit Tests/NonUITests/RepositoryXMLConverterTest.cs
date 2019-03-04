@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.Repository;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Repository;
@@ -36,7 +38,13 @@ namespace UnitTests.NonUITests
             Ginger.App.InitClassTypesDictionary();            
         }
 
-        [TestMethod]
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+        }
+
+        [TestMethod]  [Timeout(60000)]
         public void BusinessFlowDeserializationTest()
         {
             //Arrange            
@@ -51,7 +59,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(14, BF.Activities.Count, "BF has 14 activities");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AgentDeserializationTest()
         {
             //Arrange
@@ -67,7 +75,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(agent.DriverType,Agent.eDriverType.InternalBrowser);
         }
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void EnvironmentDeserializationTest()
         {
             //Arrange

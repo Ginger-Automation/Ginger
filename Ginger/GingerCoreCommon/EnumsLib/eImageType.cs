@@ -1,4 +1,22 @@
-﻿namespace Amdocs.Ginger.Common.Enums
+﻿#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+namespace Amdocs.Ginger.Common.Enums
 {
 
     public enum eImageType
@@ -17,8 +35,11 @@
         /// Ginger Icon image
         /// </summary>
         Ginger,
+        GingerLogo,
+        GingerLogoGray,
         GingerIconWhite,
         GingerIconGray,
+        GingerSplash,
         #endregion
 
 
@@ -44,7 +65,6 @@
         DataSource,
         PluginPackage,
         #endregion
-
 
         #region Variable Items Images
         Variable,
@@ -77,7 +97,6 @@
         Stopped,
         Running,
         #endregion
-
 
         #region Operations Images
         //############################## Operations Images:        
@@ -130,15 +149,19 @@
         Collapse,
         ExpandAll,
         CollapseAll,
-        ActiveAll,        
+        ActiveAll,
         Exchange,
         Export,
         Filter,
         ImportFile,
         Upgrade,
         Recover,
+        Approve,
+        Reject,
+        Warn,
+        EditWindow,
+        UserDefined,
         #endregion
-
 
         #region Items Images
         //############################## Items Images:
@@ -148,8 +171,7 @@
         KidsDrawing,
         Folder,
         ItemModified,
-        Email,
-        List,
+        Email,        
         Parameter,
         ListGroup,
         FlowDiagram,
@@ -157,7 +179,6 @@
         Sitemap,
         Clock,
         File,
-        Link,
         InstanceLink,
         Search,
         Remove,
@@ -170,12 +191,10 @@
         Help,
         Info,
         Screen,        
-        Text,
         Globe,
         Service,
         FileVideo,
-        Ticket,
-        Window,
+        Ticket,        
         Pointer,
         Camera,
         Wrench,
@@ -190,17 +209,12 @@
         Error,
         Coffee,
         MapSigns,
-        Image,
         Elements,
         LocationPointer,
         GitHub,
-        #endregion
-
-        #region Other Images
+        Ping,
         Database,
-        TextBox,
         #endregion
-
 
         #region Source control Images     
         SourceControl,
@@ -221,7 +235,37 @@
         OpenFolder,
         Check,
         Bug,
-        PlusSquare,        
-        DataTable        
+        PlusSquare,
+        DataTable,
+
+        #region Comparison Status Images
+        Unchanged,
+        Changed,
+        Deleted,
+        Added,
+        Avoided,
+        #endregion
+
+        #region ElementType Images
+        Button,
+        TextBox,
+        CheckBox,
+        Link,
+        RadioButton,
+        Table,
+        Image,
+        Element,
+        Toggle,
+        Menu,
+        Label,
+        DropList,
+        List,
+        ListItem,
+        Window,
+        Text,
+        #endregion
     }
 }
+
+
+

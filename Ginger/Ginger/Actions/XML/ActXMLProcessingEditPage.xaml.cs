@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
@@ -42,10 +43,8 @@ namespace Ginger.Actions.XML
             //// Bind Controls
             App.ObjFieldBinding(XMLTemplateFileTextBox , TextBox.TextProperty, mAct.TemplateFileName , ActInputValue.Fields.Value);
             TargetFileNameTextBox.Init(mAct.TargetFileName);
-            ProcessedFileNameTextBox.Init(mAct.ProcessedFileName);
 
             SetGridView();
-
             DynamicParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPlaceHolder));
         }
 
@@ -83,7 +82,7 @@ namespace Ginger.Actions.XML
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
             dlg.DefaultExt = "*.xml";
             dlg.Filter = "XML Template File (*.xml)|*.xml";
-            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
             if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

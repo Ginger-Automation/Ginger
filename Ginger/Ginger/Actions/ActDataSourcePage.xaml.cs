@@ -402,7 +402,7 @@ namespace Ginger.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 return;
             }
         }
@@ -433,8 +433,8 @@ namespace Ginger.Actions
             GingerCore.General.FillComboFromEnumType(ControlActionComboBox, typeof(ActDSTableElement.eControlAction));
             GingerCore.General.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mActDSTblElem, ActJavaElement.Fields.ControlAction);
 
-            ExcelFilePath.Init(ExcelFilePath,ActDSTableElement.Fields.ExcelPath, true, true, UCValueExpression.eBrowserType.File, "xlsx");
-            ExcelSheetName.Init(ExcelSheetName,ActDSTableElement.Fields.ExcelSheetName, true);
+            ExcelFilePath.Init(mActDSTblElem, ActDSTableElement.Fields.ExcelPath, true, true, UCValueExpression.eBrowserType.File, "xlsx");
+            ExcelSheetName.Init(mActDSTblElem, ActDSTableElement.Fields.ExcelSheetName, true);
             ExcelFilePath.ValueTextBox.TextChanged += ExcelFilePathTextBox_TextChanged;
             ExcelSheetName.ValueTextBox.TextChanged += ExcelSheetNameTextBox_TextChanged;
             ExcelFilePath.ValueTextBox.LostFocus += ExcelFilePathTextBox_LostFocus;
@@ -511,7 +511,7 @@ namespace Ginger.Actions
         {
             if (ErrorLabel.Content.ToString() != "")
             {
-                if (Reporter.ToUser(eUserMsgKeys.InvalidValueExpression, "Data Source") == MessageBoxResult.No)
+                if (Reporter.ToUser(eUserMsgKey.InvalidValueExpression, "Data Source") == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 {
                     return;
                 }
@@ -930,7 +930,7 @@ namespace Ginger.Actions
             catch (Exception ex)
             {                
                 mActDSTblElem.ValueExp = "";
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed", ex);
             }
         }
 
@@ -1254,11 +1254,13 @@ namespace Ginger.Actions
                 if(ds.Name == cmbDataSourceName.SelectedValue.ToString())
                 {
                     mDataSourceName = cmbDataSourceName.SelectedValue.ToString();
-                    if (ds.FilePath.StartsWith("~"))
-                    {
-                        ds.FileFullPath = ds.FilePath.Replace(@"~\","").Replace("~", "");
-                        ds.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, ds.FileFullPath);
-                    }
+                    //if (ds.FilePath.StartsWith("~"))
+                    //{
+                    //    ds.FileFullPath = ds.FilePath.Replace(@"~\","").Replace("~", "");
+                    //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, ds.FileFullPath);
+                    //}
+                    ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
+
                     ds.Init(ds.FileFullPath);
                     //ds.Init(ds.FilePath);
                     List<string> dsTableNames = new List<string>();

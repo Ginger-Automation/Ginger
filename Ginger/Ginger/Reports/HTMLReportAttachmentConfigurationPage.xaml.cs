@@ -29,6 +29,8 @@ using System.IO;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
 
+using Amdocs.Ginger.Common.InterfacesLib;
+
 namespace Ginger.Reports
 {
     /// <summary>
@@ -58,7 +60,7 @@ namespace Ginger.Reports
             DefaultTemplatePickerCbx.ItemsSource = null;
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            if (App.UserProfile.Solution != null  && HTMLReportConfigurations.Count > 0)
+            if ( WorkSpace.UserProfile.Solution != null  && HTMLReportConfigurations.Count > 0)
             {
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;
@@ -87,7 +89,7 @@ namespace Ginger.Reports
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpression mVE=new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
+            ValueExpression mVE=new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
             string extraInformationCalculated = string.Empty;
             mVE.Value = mEmailAttachment.ExtraInformation;
             extraInformationCalculated = mVE.ValueCalculated;
@@ -95,26 +97,26 @@ namespace Ginger.Reports
             {
                 if ((extraInformationCalculated == null) || (extraInformationCalculated.Length < 3))
                 {
-                    Reporter.ToUser(eUserMsgKeys.FolderNameTextBoxIsEmpty);
+                    Reporter.ToUser(eUserMsgKey.FolderNameTextBoxIsEmpty);
                     return;
                 }
                 else if(extraInformationCalculated.Length > 100)
                 {
-                    Reporter.ToUser(eUserMsgKeys.FolderNamesAreTooLong);
+                    Reporter.ToUser(eUserMsgKey.FolderNamesAreTooLong);
                     return;
                 }                
                 else
                 {
                     if (!Directory.Exists(extraInformationCalculated))
                     {
-                        Reporter.ToUser(eUserMsgKeys.FolderNotExistOrNotAvailible);
+                        Reporter.ToUser(eUserMsgKey.FolderNotExistOrNotAvailible);
                         return;
                     }
                     else
                     {
                         if (!HasWritePermission(extraInformationCalculated))
                         {
-                            Reporter.ToUser(eUserMsgKeys.UserHaveNoWritePermission);
+                            Reporter.ToUser(eUserMsgKey.UserHaveNoWritePermission);
                             // return;
                         }
                     }

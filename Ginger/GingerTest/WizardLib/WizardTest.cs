@@ -1,14 +1,32 @@
-﻿
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+
 
 using GingerTestHelper;
 using GingerWPF.WizardLib;
-using GingerWPFUnitTest;
 using GingerWPFUnitTest.POMs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 using System.Threading.Tasks;
+using GingerTest.WizardLib;
 
-namespace GingerTest.WizardLib
+namespace GingerTest
 {
     [TestClass]
     public class WizardTest
@@ -60,11 +78,11 @@ namespace GingerTest.WizardLib
         }
 
         [Level3]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VerifyButtonsOnStartThenCancel()
         {
             //Arrange            
-            string folder = TestResources.getGingerUnitTesterTempFolder("MyWizardItemsFolder1");
+            string folder = TestResources.GetTestTempFolder("MyWizardItemsFolder1");
 
             //Act
             WizardPOM mWizard = ShowMyWizard(folder);
@@ -82,11 +100,11 @@ namespace GingerTest.WizardLib
         }
 
         [Level3]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CreateMyWizardItem()
         {
             //Arrange            
-            string folder = TestResources.getGingerUnitTesterTempFolder("MyWizardItemsFolder2");
+            string folder = TestResources.GetTestTempFolder("MyWizardItemsFolder2");
 
             //Act
             WizardPOM mWizard = ShowMyWizard(folder);
@@ -104,13 +122,13 @@ namespace GingerTest.WizardLib
 
         [Level3]
         [Ignore] //TODO FIXME
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void WizardWithWindowWidth()
         {
             //Arrange            
 
             double width = 1200;
-            string folder = TestResources.getGingerUnitTesterTempFolder("MyWizardItemsFolder3");
+            string folder = TestResources.GetTestTempFolder("MyWizardItemsFolder3");
 
             //Act
             WizardPOM mWizard = ShowMyWizard(folder, width);
@@ -122,7 +140,7 @@ namespace GingerTest.WizardLib
         }
 
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void WizardIntro()
         //{
         //    //Arrange                        

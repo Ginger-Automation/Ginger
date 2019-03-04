@@ -24,7 +24,8 @@ using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
-
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 // This class is for Button actions
 namespace GingerCore.Actions
 {
@@ -33,7 +34,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Button Action"; } }
         public override string ActionUserDescription { get { return "Click on a button object"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate a click on an object from type Button."
                                         + Environment.NewLine + Environment.NewLine +

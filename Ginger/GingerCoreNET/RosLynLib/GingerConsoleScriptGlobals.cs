@@ -16,14 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
-using GingerCoreNET.Drivers;
 using GingerCoreNET.DriversLib;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RosLynLib
 {
@@ -49,6 +46,8 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
 
         List<GingerNode> GingerNodes = new List<GingerNode>();
 
+
+        // DELETE Not used or change to new approuch
         public void StartNode(string Name, string ID, string GingerGridHost = "127.0.0.1", int GingerGridPort = 15001)
         {
             //Console.WriteLine("* StartNode - " + Name);
@@ -124,33 +123,33 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
         //    return GN;
         //}
 
-        public void StartService(string Name, string ID, string GingerGridHost = "127.0.0.1", int GingerGridPort = 15001)
-        {
-            IGingerService d = P.GetService(Name);
-            StartServiceOnGingerNode(d, ID, GingerGridHost, GingerGridPort);
-        }
+        //public void StartService(string Name, string ID, string GingerGridHost = "127.0.0.1", int GingerGridPort = 15001)
+        //{
+        //    IGingerService d = P.GetService(Name);
+        //    StartServiceOnGingerNode(d, ID, GingerGridHost, GingerGridPort);
+        //}
 
-        private void StartServiceOnGingerNode(IGingerService service, string NodeName, string GingerGridHost = "127.0.0.1", int GingerGridPort = 15001)
-        {
-            Console.WriteLine("Service Name: " + service );
-            bool bReady = false;
-            bNodest = true;
-            Task t = new Task(() =>
-            {
-                GingerNode GN = new GingerNode(service);
-                GN.StartGingerNode(NodeName, GingerGridHost, GingerGridPort);
-                GN.GingerNodeMessage += GingerNodeMessage;
-                GingerNodes.Add(GN);
-                bReady = true;
-            });
+        //private void StartServiceOnGingerNode(IGingerService service, string NodeName, string GingerGridHost = "127.0.0.1", int GingerGridPort = 15001)
+        //{
+        //    Console.WriteLine("Service Name: " + service );
+        //    bool bReady = false;
+        //    bNodest = true;
+        //    Task t = new Task(() =>
+        //    {
+        //        GingerNode GN = new GingerNode(service);
+        //        GN.StartGingerNode(NodeName, GingerGridHost, GingerGridPort);
+        //        GN.GingerNodeMessage += GingerNodeMessage;
+        //        GingerNodes.Add(GN);
+        //        bReady = true;
+        //    });
 
-            t.Start();
-            while (!bReady) // TODO: add timeout or use ManualResetEvent with timeout
-            {
-                Console.WriteLine("Waiting for service Node to be ready");
-                Thread.Sleep(500);
-            }
-            Console.WriteLine("Ginger Service started - " + NodeName);  // Add ports and GingerGrid details
-        }
+        //    t.Start();
+        //    while (!bReady) // TODO: add timeout or use ManualResetEvent with timeout
+        //    {
+        //        Console.WriteLine("Waiting for service Node to be ready");
+        //        Thread.Sleep(500);
+        //    }
+        //    Console.WriteLine("Ginger Service started - " + NodeName);  // Add ports and GingerGrid details
+        //}
     }
 }

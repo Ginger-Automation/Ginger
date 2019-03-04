@@ -16,20 +16,20 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 using Ginger.Environments;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
 using GingerCore.Environments;
+using GingerWPF.TreeViewItemsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
-using GingerWPF.TreeViewItemsLib;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -129,7 +129,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             if (appsWereAdded)
             {
-                Reporter.ToUser(eUserMsgKeys.ShareEnvAppWithAllEnvs);
+                Reporter.ToUser(eUserMsgKey.ShareEnvAppWithAllEnvs);
             }
         }
 

@@ -22,14 +22,12 @@ using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTest.POMs;
 using GingerTestHelper;
-using GingerWPFUnitTest.GeneralLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading;
 
-namespace GingerWPFUnitTest.AgentsLib
+namespace GingerTest
 {
     [TestClass]
     [Level3]
@@ -47,7 +45,7 @@ namespace GingerWPFUnitTest.AgentsLib
             mTC = TC;
             
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\AgentsTest");
-            SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\AgentsTest");
+            SolutionFolder = TestResources.GetTestTempFolder(@"Solutions\AgentsTest");
             if (Directory.Exists(SolutionFolder))
             {
                 Directory.Delete(SolutionFolder, true);
@@ -79,7 +77,7 @@ namespace GingerWPFUnitTest.AgentsLib
         }
 
         [Ignore]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void VisualCompareAgentConfig()
         {
             //Arrange
@@ -100,7 +98,7 @@ namespace GingerWPFUnitTest.AgentsLib
 
 
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddAgentUsingWizard()
         {
             //Arrange       
@@ -116,7 +114,7 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.AreEqual(name, agent.Name, "Agent.Name is same");
         }
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void RenameAgent()
         {
             //Arrange     
@@ -138,7 +136,7 @@ namespace GingerWPFUnitTest.AgentsLib
         }
 
         [Ignore] // TODO: FIXME
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddAgentsFolderinFilesystemShowinTree()
         {
             //Arrange
@@ -155,7 +153,7 @@ namespace GingerWPFUnitTest.AgentsLib
         }
 
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddAgentsFolderUsingMenu()
         {
             //Arrange
@@ -175,7 +173,7 @@ namespace GingerWPFUnitTest.AgentsLib
         }
 
         [Ignore]  // FIXME failing because the folder doesn't expand to show the added agent
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void AddAgentsFolderUsingMenuAndAddAgent()
         {
             //Arrange
@@ -198,7 +196,7 @@ namespace GingerWPFUnitTest.AgentsLib
         
         [Ignore] // TODO: FIXME not working when running multiple tests
         [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", @".\TestData\Agents.csv", "Agents#csv", DataAccessMethod.Sequential)]        
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CreateAgentsFromCSV()
         {
             // arrange
@@ -222,7 +220,7 @@ namespace GingerWPFUnitTest.AgentsLib
         [Ignore]
         [DataRow("Web 1", "Web", "SeleniumChrome")]
         [DataRow("Web 2", "Web", "SeleniumFireFox")]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CreateAgentsbyTestData(string agentName, string platfromType, string driverType)
         {
             // arrange
@@ -242,7 +240,7 @@ namespace GingerWPFUnitTest.AgentsLib
 
 
         [Ignore] // FIXME missing functionality
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CopyPasteAgentinAgentRoot()
         {
             //Arrange            
@@ -269,7 +267,7 @@ namespace GingerWPFUnitTest.AgentsLib
         }
 
         [Ignore] // FIXME missing functionality
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CutPasteAgentFromRootToSubFolder()
         {
             //Arrange            
@@ -300,7 +298,7 @@ namespace GingerWPFUnitTest.AgentsLib
         }
 
         [Ignore] // FIXME missing functionality
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CutPasteAgentFromSubFolderToRoot()
         {
             //Arrange            
@@ -328,6 +326,32 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.IsTrue(ACopyTag != null);
             Assert.AreEqual(@"~\Agents\" + folderName, ACopyTag.ContainingFolder);
             Assert.AreEqual(MyAgent, ACopyTag, "Same agent object in memory");
+        }
+
+        [Ignore] // failing because the sub folder is not auto expand
+        [TestMethod]  [Timeout(60000)]
+        public void DuplicateAgentinSubFolder()
+        {
+            //Arrange
+            string folderName = "sub folder dup";
+            string agentName = "agent 1";
+            string agentDupName = "agent 1 dup";
+
+            AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
+            AgentsPOM.AgentsTree.SelectRootItem();
+            AgentsPOM.AddSubFolder(folderName);
+            AgentsPOM.CreateAgent(folderName, agentName, ePlatformType.Web, Agent.eDriverType.SeleniumChrome);
+            mGingerAutomator.ReloadSolution();
+
+            //Act   
+            AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
+            AgentsPOM.AgentsTree.SelectItem(folderName);
+            AgentsPOM.AgentsTree.SelectItem(agentName);
+            AgentsPOM.AgentsTree.Duplicate(agentDupName);
+            bool b = AgentsPOM.AgentsTree.IsItemExist(agentDupName);
+
+            // Assert            
+            Assert.IsTrue(b, "Dup agent exist in tree");            
         }
 
     }

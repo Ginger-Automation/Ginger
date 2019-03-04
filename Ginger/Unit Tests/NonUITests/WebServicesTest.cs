@@ -19,9 +19,11 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Actions.WebServices;
 using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Drivers.WebServicesDriverLib;
@@ -60,9 +62,7 @@ namespace UnitTests.NonUITests
 
 
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.WebServices;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.WebServices;            
 
 
             mDriver = new WebServicesDriver(mBF);
@@ -81,7 +81,7 @@ namespace UnitTests.NonUITests
 
             mGR.BusinessFlows.Add(mBF);
 
-            Reporter.ToLog(eAppReporterLogLevel.INFO, "Creating the GingerCoreNET WorkSpace");
+            Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);         
 
@@ -93,7 +93,7 @@ namespace UnitTests.NonUITests
             
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void APIModelExecutionTest()
         {
 
@@ -125,7 +125,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //[Ignore]
         //public void BizFlowSaveLoad()
         //{
@@ -133,7 +133,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //[Ignore]
         //public void WebServHelloWorld()
         //{
@@ -173,7 +173,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //[Ignore]
         //public void WebServCreateCustomer()
         //{
@@ -214,7 +214,7 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void WebServices_WebServiceSendXML()
         {
             WebServiceXML webServiceCall = new WebServiceXML();
@@ -230,7 +230,7 @@ namespace UnitTests.NonUITests
             
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void WebServices_WebAPISOAP()
         {
                        
@@ -279,7 +279,7 @@ namespace UnitTests.NonUITests
             }
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void WebServices_WebAPIRest()
         {
             WebServicesDriver mDriver = new WebServicesDriver(mBF);
@@ -329,7 +329,7 @@ namespace UnitTests.NonUITests
                 }
             }
         }       
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void TestXMLReader()
         {
 
@@ -399,7 +399,43 @@ namespace UnitTests.NonUITests
 
         }
 
+        [TestMethod]
+        [Timeout(10000)]
+        public void WebServices_SoapWrapperActionTest()
+        {
+            WebServicesDriver mDriver = new WebServicesDriver(mBF);
 
+            Agent wsAgent = new Agent();
+            wsAgent.DriverType = Agent.eDriverType.WebServices;
+            wsAgent.Driver = mDriver;
+            ApplicationAgent mAG = new ApplicationAgent();
+            mAG.Agent = wsAgent;
+
+            mGR = new GingerRunner();
+            mGR.SolutionAgents = new ObservableList<Agent>();
+
+            mGR.SolutionAgents.Add(wsAgent);
+
+            mGR.BusinessFlows.Add(mBF);
+
+            Activity Activity2 = new Activity();
+            Activity2.Active = true;
+            Activity2.ActivityName = "Soap UI Wrapper action";
+            Activity2.CurrentAgent = wsAgent;
+            mBF.Activities.Add(Activity2);
+
+            ActSoapUI actSoapUi = new ActSoapUI();
+
+            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML\calculator_soapui_project.xml");
+
+            actSoapUi.AddOrUpdateInputParamValue(ActSoapUI.Fields.ImportFile, xmlFilePath);
+            
+            mBF.Activities[0].Acts.Add(actSoapUi);
+
+            Assert.AreEqual(6, actSoapUi.ActInputValues.Count);
+            Assert.AreEqual(xmlFilePath, actSoapUi.ActInputValues[1].Value.ToString());
+
+        }
 
     }
 }
