@@ -55,7 +55,7 @@ namespace Ginger.Actions.ActionConversion
         {
             mWizard.DefaultTargetAppChecked = Convert.ToBoolean(xChkDefaultTargetApp.IsChecked);
             
-            LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(null, nameof(ActUIElement.ElementType), mWizard, nameof(mWizard.SelectedPOMObjectName), true);
+            LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mWizard.Context, null, nameof(ActUIElement.ElementType), mWizard, nameof(mWizard.SelectedPOMObjectName), true);
             xLocateValueEditFrame.Content = locateByPOMElementPage;
             DataContext = mWizard;
             BindTargetApplication();
@@ -68,7 +68,7 @@ namespace Ginger.Actions.ActionConversion
 
         private void BindTargetApplication()
         {
-            xCmbTargetApp.BindControl(mWizard.BusinessFlow.TargetApplications.Select(x => x.Name).ToList());
+            xCmbTargetApp.BindControl(mWizard.Context.BusinessFlow.TargetApplications.Select(x => x.Name).ToList());
             if ((xCmbTargetApp != null) && (xCmbTargetApp.Items.Count > 0))
             {
                 xCmbTargetApp.SelectedIndex = 0;

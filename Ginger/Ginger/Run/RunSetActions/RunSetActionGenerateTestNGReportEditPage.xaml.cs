@@ -88,7 +88,7 @@ namespace Ginger.Run.RunSetActions
         private void ParamsGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)grdTestNGReportParameters.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, true);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, null);
             VEEW.ShowAsWindow();
         }
     }

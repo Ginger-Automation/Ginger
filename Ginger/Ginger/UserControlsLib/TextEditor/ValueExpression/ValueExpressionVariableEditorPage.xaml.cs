@@ -21,6 +21,7 @@ using GingerCore.Variables;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -30,11 +31,13 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
     public partial class ValueExpressionVariableEditorPage : Page
     {
         SelectedContentArgs mSelectedContentArgs;
-        
-        public ValueExpressionVariableEditorPage(SelectedContentArgs SelectedContentArgs)
+        Context mContext;
+
+        public ValueExpressionVariableEditorPage(Context context, SelectedContentArgs SelectedContentArgs)
         {
             InitializeComponent();
 
+            mContext = context;
             mSelectedContentArgs = SelectedContentArgs;
             
             List<string> lst = new List<string>();
@@ -45,12 +48,12 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                 lst.Add(v.Name);
             }
 
-            foreach (VariableBase v in App.BusinessFlow.Variables)
+            foreach (VariableBase v in mContext.BusinessFlow.Variables)
             {
                 lst.Add(v.Name);
             }
 
-            foreach (VariableBase v in App.BusinessFlow.CurrentActivity.Variables)
+            foreach (VariableBase v in mContext.BusinessFlow.CurrentActivity.Variables)
             {
                 lst.Add(v.Name);
             }

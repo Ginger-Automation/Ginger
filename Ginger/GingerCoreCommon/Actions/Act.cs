@@ -1673,5 +1673,10 @@ namespace GingerCore.Actions
         {
             // do nothing, will be override in action which needs it like ActWebAPIModel
         }
+
+        /// <summary>
+        /// should be object from type 'Context' which should include in context objects
+        /// </summary>
+        public object Context { get; set; }
     }
 }

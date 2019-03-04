@@ -31,6 +31,8 @@ using Ginger.Repository;
 using Ginger.Activities;
 using Amdocs.Ginger;
 using amdocs.ginger.GingerCoreNET;
+using System.Linq;
+using Amdocs.Ginger.Common.Repository;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -58,12 +60,9 @@ namespace Ginger.BusinessFlowWindows
                 mActivity.SaveBackup();
             editMode = mode;
 
-            RunDescritpion.Init(activity, Activity.Fields.RunDescription);
-
-            if (activityParentBusinessFlow != null)
-                mActivityParentBusinessFlow = activityParentBusinessFlow;
-            else
-                mActivityParentBusinessFlow = App.BusinessFlow;
+            RunDescritpion.Init(new Context() { BusinessFlow = activityParentBusinessFlow },  activity, Activity.Fields.RunDescription);
+            
+            mActivityParentBusinessFlow = activityParentBusinessFlow;            
 
             List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(eActivityAutomationStatus));
             AutomationStatusCombo.ItemsSource = automationStatusList;
@@ -102,13 +101,13 @@ namespace Ginger.BusinessFlowWindows
             if (editMode == General.RepositoryItemPageViewMode.View)
             {
                 varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity, General.RepositoryItemPageViewMode.View);
-                actionsPage = new ActionsPage(mActivity, General.RepositoryItemPageViewMode.View);
+                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.View);
                 SetViewMode();
             }
             else
             {
                 varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity, General.RepositoryItemPageViewMode.Child);
-                actionsPage = new ActionsPage(mActivity, General.RepositoryItemPageViewMode.Child);
+                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.Child);
             }
 
             varbsPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
@@ -136,7 +135,14 @@ namespace Ginger.BusinessFlowWindows
 
         private void FillTargetAppsComboBox()
         {
-            TargetApplicationComboBox.ItemsSource = mActivityParentBusinessFlow.TargetApplications;
+            if (mActivityParentBusinessFlow != null)
+            {
+                TargetApplicationComboBox.ItemsSource = mActivityParentBusinessFlow.TargetApplications;
+            }
+            else
+            {
+                TargetApplicationComboBox.ItemsSource = WorkSpace.UserProfile.Solution.GetSolutionTargetApplications();
+            }
             TargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             TargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
         }

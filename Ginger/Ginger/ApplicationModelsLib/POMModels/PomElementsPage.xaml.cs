@@ -715,7 +715,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             else
             {
-                ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedVarb, nameof(ElementLocator.LocateValue), true);
+                ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedVarb, nameof(ElementLocator.LocateValue), null);
                 VEEW.ShowAsWindow();
             }
         }

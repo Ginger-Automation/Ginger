@@ -58,9 +58,9 @@ namespace Ginger.BusinessFlowWindows
 
         private void btnOpen_Click(object sender, RoutedEventArgs e)
         {
-            App.BusinessFlow = (BusinessFlow)grdBusinessFlows.CurrentItem;
-            App.BusinessFlow.CurrentActivity = App.BusinessFlow.Activities.FirstOrDefault();
-            this.Close();
+            //App.BusinessFlow = (BusinessFlow)grdBusinessFlows.CurrentItem;
+            //App.BusinessFlow.CurrentActivity = App.BusinessFlow.Activities.FirstOrDefault();
+            //this.Close();
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)

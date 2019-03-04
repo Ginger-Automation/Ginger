@@ -16,19 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Plugin.Core;
+using Ginger.Actions;
+using Ginger.UserControlsLib.TextEditor.Common;
+using GingerCore.Variables;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using ICSharpCode.AvalonEdit.Folding;
-using Ginger.UserControlsLib.TextEditor.Common;
-using GingerCore.Variables;
 using System.Windows.Media.Imaging;
-using Ginger.Actions;
-using ICSharpCode.AvalonEdit.CodeCompletion;
-using GingerPlugIns.TextEditorLib;
-using Amdocs.Ginger.Plugin.Core;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -63,6 +62,11 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             }
         }
 
+        Context mContext;
+        public ValueExpressionEditor(Context context)
+        {
+            mContext = context;
+        }
         public override Page GetSelectedContentPageEditor(SelectedContentArgs SelectedContentArgs)
         {
             // SelectedContentArgs.TextEditor.Document.
@@ -127,12 +131,12 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                 list.Add(GETVariableTCD(v));
             }
 
-            foreach (VariableBase v in App.BusinessFlow.Variables)
+            foreach (VariableBase v in mContext.BusinessFlow.Variables)
             {
                 list.Add(GETVariableTCD(v));
             }
 
-            foreach (VariableBase v in App.BusinessFlow.CurrentActivity.Variables)
+            foreach (VariableBase v in mContext.BusinessFlow.CurrentActivity.Variables)
             {
                 list.Add(GETVariableTCD(v));
             }
@@ -160,7 +164,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
             if (txt.StartsWith("{Var Name="))
             {
-                p= new ValueExpressionVariableEditorPage(SelectedContentArgs);
+                p= new ValueExpressionVariableEditorPage(mContext, SelectedContentArgs);
             }
             
             if (txt.StartsWith("{DS Name="))

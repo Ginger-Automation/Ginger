@@ -49,9 +49,10 @@ namespace Ginger.WindowExplorer
         ElementInfo mElementInfo = null;        
         Page mDataPage = null;
         double mLastDataGridRowHeight = 50;
+        Context mContext;
 
         // when launching from Window explore we get also available actions to choose so user can add
-        public ControlActionsPage(IWindowExplorer driver, ElementInfo ElementInfo, ObservableList<Act> Actions, Page DataPage, ObservableList<ActInputValue> actInputValues)
+        public ControlActionsPage(IWindowExplorer driver, ElementInfo ElementInfo, ObservableList<Act> Actions, Page DataPage, ObservableList<ActInputValue> actInputValues, Context context)
         {
             InitializeComponent();
 
@@ -60,8 +61,9 @@ namespace Ginger.WindowExplorer
             mActInputValues = actInputValues;
             mActions = Actions;
             mLocators = mWindowExplorerDriver.GetElementLocators(mElementInfo);
-            mDataPage = DataPage;          
-            
+            mDataPage = DataPage;
+            mContext = context;
+
             InitActionsGrid();
             InitLocatorsGrid();
             InitDataPage();
@@ -168,10 +170,10 @@ namespace Ginger.WindowExplorer
 
             Act act = (Act)((Act)(mActions.CurrentItem)).CreateCopy();
             SetActionDetails(act);
-            App.BusinessFlow.AddAct(act);
+            mContext.BusinessFlow.AddAct(act);
 
             int selectedActIndex = -1;
-            ObservableList<IAct> actsList = App.BusinessFlow.CurrentActivity.Acts;
+            ObservableList<IAct> actsList = mContext.BusinessFlow.CurrentActivity.Acts;
             if (actsList.CurrentItem != null)
             {
                 selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
@@ -234,7 +236,7 @@ namespace Ginger.WindowExplorer
 
             SetActionDetails(act);
             App.AutomateTabGingerRunner.PrepActionValueExpression(act);
-            ApplicationAgent ag =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent ag =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
             if (ag != null)
             {
                 App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;

@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -46,14 +47,14 @@ namespace Ginger.Actions
             App.ObjFieldBinding(CommandTextBox, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.Command);
             App.ObjFieldBinding(ScriptNameComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ScriptName);
             App.ObjFieldBinding(txtWait, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.WaitTime);
-            xDelimiterVE.BindControl(actConsoleCommand, nameof(ActConsoleCommand.Delimiter));
-            txtExpected.Init(mActConsoleCommand, ActConsoleCommand.Fields.ExpString);           
+            xDelimiterVE.BindControl(Context.GetAsContext(actConsoleCommand.Context), actConsoleCommand, nameof(ActConsoleCommand.Delimiter));
+            txtExpected.Init(Context.GetAsContext(mActConsoleCommand.Context), mActConsoleCommand, ActConsoleCommand.Fields.ExpString);           
         }
 
         private List<object> GetActionListPlatform()
         {
             List<object> actionList = new List<object>();
-            string targetapp = App.BusinessFlow.CurrentActivity.TargetApplication;
+            string targetapp = Context.GetAsContext(mActConsoleCommand.Context).BusinessFlow.CurrentActivity.TargetApplication;
             ePlatformType platform = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             actionList.Add(ActConsoleCommand.eConsoleCommand.FreeCommand);
 
