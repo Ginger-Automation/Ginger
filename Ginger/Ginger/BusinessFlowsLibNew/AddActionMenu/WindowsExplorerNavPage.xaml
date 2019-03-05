@@ -1,0 +1,48 @@
+﻿<Page x:Class="Ginger.BusinessFlowsLibNew.AddActionMenu.WindowsExplorerNavPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
+      xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      mc:Ignorable="d" 
+      d:DesignHeight="700" d:DesignWidth="450"
+      Title="WindowsExplorerNavPage">
+
+    <!--<Grid Background="LightGray">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="WindowComboboxRow" Height="30" />
+            <RowDefinition x:Name="ControlsViewRow" Height="35*" MinHeight="35"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" x:Name="xWindowGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="100*"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="20"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Window:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <ComboBox Grid.Column="1" x:Name="WindowsComboBox" SelectionChanged="WindowsComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
+            <Button Grid.Column="2" x:Name="RefreshWindowsButton" Click="RefreshWindowsButton_Click" usercontrols:ImageMaker.Content="Refresh" Width="18" ToolTip="Refresh Windows List" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">
+            </Button>
+            <Button Grid.Column="3" x:Name="AddSwitchWindowActionButton" Click="AddSwitchWindowActionButton_Click" ToolTip="Add Switch Window Action to Business Flow" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Image Source="{StaticResource @AddToList_16x16}" Height="16" Width="16"/>
+            </Button>
+        </Grid>
+
+        <Expander x:Name="ControlsViewsExpander" Grid.Row="1" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="True" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="ControlsViewsExpander_Expanded" Collapsed="ControlsViewsExpander_Collapsed" >
+            <Expander.Header>
+                <Label x:Name="ControlsViewsExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource $BackgroundColor_LightGray}" Content="Window Elements"/>
+            </Expander.Header>
+            <Expander.Content>
+                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                    <UCTreeView:TreeView2 x:Name="WindowControlsTreeView" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                    <Ginger:ucGrid x:Name="WindowControlsGridView" Title="Window Visible Controls" RowChangedEvent="WindowControlsGridView_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"/>
+                </Grid>
+            </Expander.Content>
+        </Expander>
+
+    </Grid>-->
+</Page>

@@ -101,7 +101,7 @@ namespace Ginger.WindowExplorer
             mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
 
             //Instead of check make it disabled ?
-            if ((((Agent)ApplicationAgent.Agent).Driver is IWindowExplorer) == false)
+            if (((Agent)ApplicationAgent.Agent).Driver != null && (((Agent)ApplicationAgent.Agent).Driver is IWindowExplorer) == false)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Control selection is not available yet for driver - " + ((Agent)ApplicationAgent.Agent).Driver.GetType().ToString());
                 _GenWin.Close();

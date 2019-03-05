@@ -569,20 +569,26 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
       <DependentUpon>POMModelsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\AddActionMenu\ActionsLibraryNavAction.xaml.cs">
-      <DependentUpon>ActionsLibraryNavAction.xaml</DependentUpon>
+    <Compile Include="BusinessFlowsLibNew\AddActionMenu\ActionsLibraryNavPage.xaml.cs">
+      <DependentUpon>ActionsLibraryNavPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowsLibNew\AddActionMenu\LiveSpyNavPage.xaml.cs">
+      <DependentUpon>LiveSpyNavPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowsLibNew\AddActionMenu\MainAddActionsNavigationPage.xaml.cs">
       <DependentUpon>MainAddActionsNavigationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\AddActionMenu\POMNavAction.xaml.cs">
-      <DependentUpon>POMNavAction.xaml</DependentUpon>
+    <Compile Include="BusinessFlowsLibNew\AddActionMenu\POMNavPage.xaml.cs">
+      <DependentUpon>POMNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\AddActionMenu\RecordNavAction.xaml.cs">
-      <DependentUpon>RecordNavAction.xaml</DependentUpon>
+    <Compile Include="BusinessFlowsLibNew\AddActionMenu\RecordNavPage.xaml.cs">
+      <DependentUpon>RecordNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\AddActionMenu\SharedRepositoryNavAction.xaml.cs">
-      <DependentUpon>SharedRepositoryNavAction.xaml</DependentUpon>
+    <Compile Include="BusinessFlowsLibNew\AddActionMenu\SharedRepositoryNavPage.xaml.cs">
+      <DependentUpon>SharedRepositoryNavPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowsLibNew\AddActionMenu\WindowsExplorerNavPage.xaml.cs">
+      <DependentUpon>WindowsExplorerNavPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowWindows\AutomateEventArgs.cs" />
     <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
@@ -2825,7 +2831,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\AddActionMenu\ActionsLibraryNavAction.xaml">
+    <Page Include="BusinessFlowsLibNew\AddActionMenu\ActionsLibraryNavPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowsLibNew\AddActionMenu\LiveSpyNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2833,15 +2843,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowsLibNew\AddActionMenu\POMNavAction.xaml">
+    <Page Include="BusinessFlowsLibNew\AddActionMenu\POMNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowsLibNew\AddActionMenu\RecordNavAction.xaml">
+    <Page Include="BusinessFlowsLibNew\AddActionMenu\RecordNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowsLibNew\AddActionMenu\SharedRepositoryNavAction.xaml">
+    <Page Include="BusinessFlowsLibNew\AddActionMenu\SharedRepositoryNavPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowsLibNew\AddActionMenu\WindowsExplorerNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -161,6 +161,7 @@ namespace Amdocs.Ginger.Common.Enums
         Warn,
         EditWindow,
         UserDefined,
+        Spy,
         #endregion
 
         #region Items Images

@@ -16,13 +16,28 @@ using System.Windows.Shapes;
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
     /// <summary>
-    /// Interaction logic for POMNavAction.xaml
+    /// Interaction logic for WindowsExplorerNavPage.xaml
     /// </summary>
-    public partial class POMNavAction : Page
+    public partial class WindowsExplorerNavPage : Page
     {
-        public POMNavAction()
+        public WindowsExplorerNavPage()
         {
             InitializeComponent();
+        }
+
+        private void ControlsViewsExpander_Collapsed(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void WindowControlsGridView_RowChangedEvent(object sender, EventArgs e)
+        {
+
+        }
+
+        private void WindowControlsGridView_RowChangedEvent_1(object sender, EventArgs e)
+        {
+
         }
     }
 }

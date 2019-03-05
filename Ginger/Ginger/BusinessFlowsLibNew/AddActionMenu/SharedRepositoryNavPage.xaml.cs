@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
     /// <summary>
-    /// Interaction logic for ActionsLibraryNavAction.xaml
+    /// Interaction logic for SharedRepositoryNavAction.xaml
     /// </summary>
-    public partial class ActionsLibraryNavAction : Page
+    public partial class SharedRepositoryNavPage : Page
     {
-        public ActionsLibraryNavAction()
+        public SharedRepositoryNavPage()
         {
             InitializeComponent();
         }

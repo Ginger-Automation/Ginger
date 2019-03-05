@@ -658,6 +658,10 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Database:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Database);
                     break;
+
+                case eImageType.Spy:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.UserSecret);
+                    break;
                 #endregion
 
                 #region ElementType Images

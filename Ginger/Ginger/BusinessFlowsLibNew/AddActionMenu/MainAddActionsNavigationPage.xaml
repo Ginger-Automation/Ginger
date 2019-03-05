@@ -6,33 +6,116 @@
       xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
       xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
-      d:DesignHeight="700" 
       Title="MainAddActionsNavigationPage">
 
-    <Grid Name="AddActionsGrid">
+    <Grid Name="AddActionsGrid" Background="White" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="15" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="30" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!--<Button Name="SHAddActionPanel" Grid.Column="0" Grid.RowSpan="3" VerticalAlignment="Center" Click="SHAddActionPanel_Click" Width="50" Height="50" Style="{StaticResource @InputButtonStyleRoundCorner}" >
-            <UserControls:ucButton ToolTip="Show/Hide Action Panel" Click="SHAddActionPanel_Click" ButtonType="ImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="View" VerticalAlignment="Center"  />
-        </Button>
+        <!--<GridSplitter ResizeDirection="Columns" Grid.Column="0" Width="15" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="DeepSkyBlue" IsEnabled="True"/>-->
 
-        <Border BorderThickness="15,0,0,0" BorderBrush="DeepSkyBlue" Grid.Column="1" Grid.RowSpan="6"></Border>-->
+        <Grid Name="navigationBar" Grid.Row="0" Background="DeepSkyBlue" Grid.Column="0" Grid.ColumnSpan="2">
+            <UserControls:ucButton ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="GoBack" Click="UcButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,-8,0,0"  />
+            <Label Name="navBarTitle" Content="Title" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="ExtraBold" Foreground="White" FontSize="15"/>
+            <!--<Button Name="toggleViewButton" HorizontalAlignment="Right" Content="View 1" Click="ToggleViewButton_Click" VerticalAlignment="Center" />-->
+        </Grid>
 
+        <Grid Name="defaultView" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+            <StackPanel Name="navHomeStackPnl">
+                <UserControls:ucButton ButtonText="Shared Repository"  ButtonType="RoundTextAndImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="SharedRepositoryItem" Click="XNavSharedRepo_Click"   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15,10" />
+                <UserControls:ucButton ButtonText="Page Objects Model" ButtonType="RoundTextAndImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="ApplicationPOMModel"  Click="XNavPOM_Click"          HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15,10" />
+                <UserControls:ucButton ButtonText="Actions Library"    ButtonType="RoundTextAndImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Action"               Click="XNavActLib_Click"       HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15,10" />
+                <UserControls:ucButton ButtonText="Record"             ButtonType="RoundTextAndImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Camera"               Click="XRecord_Click"          HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15,10" />
+                <UserControls:ucButton ButtonText="Live Spy"           ButtonType="RoundTextAndImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Spy"                  Click="XNavSpy_Click"          HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15,10" />
+                <UserControls:ucButton ButtonText="Windows Explorer"   ButtonType="RoundTextAndImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Search"               Click="XNavWinExp_Click"       HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15,10" />
+            </StackPanel>
 
-        <StackPanel Name="ActionSPanel"     Grid.RowSpan="6" Width="200" Background="GhostWhite">
-            <Button x:Name="xNavSharedRepo" Grid.Row="0" Grid.Column="0" Content="*Shared Repository" Click="XNavSharedRepo_Click" Background="DeepSkyBlue" FontSize="15" Foreground="White" Height="35" Width="150" FontWeight="Bold" Style="{StaticResource $ImageButtonStyle}" Margin="0,10" />
-            <Button x:Name="xNavPOM"        Grid.Row="1" Grid.Column="0" Content="#Page Objects Model" Click="XNavPOM_Click" Background="DeepSkyBlue" FontSize="15" Foreground="White" Height="35" Width="150" FontWeight="Bold" Style="{StaticResource $ImageButtonStyle}" Margin="0,10" />
-            <Button x:Name="xNavActLib"     Grid.Row="2" Grid.Column="0" Content="*Actions Library" Click="XNavSharedRepo_Click" Background="DeepSkyBlue" FontSize="15" Foreground="White" Height="35" Width="150" FontWeight="Bold" Style="{StaticResource $ImageButtonStyle}" Margin="0,10" />
-            <Button x:Name="xRecord"        Grid.Row="3" Grid.Column="0" Content="@Record" Click="XRecord_Click" Background="DeepSkyBlue" FontSize="15" Foreground="White" Height="35" Width="150" FontWeight="Bold" Style="{StaticResource $ImageButtonStyle}" Margin="0,10" />
-            <Button x:Name="xNavSpy"        Grid.Row="4" Grid.Column="0" Content="$Live Spy" Click="XNavPOM_Click" Background="DeepSkyBlue" FontSize="15" Foreground="White" Height="35" Width="150" FontWeight="Bold" Style="{StaticResource $ImageButtonStyle}" Margin="0,10" />
-            <Button x:Name="xNavWinExp"     Grid.Row="5" Grid.Column="0" Content="@ Windows Explorer" VerticalAlignment="Top" Click="XRecord_Click" Background="DeepSkyBlue" FontSize="15" Foreground="White" Height="35" Width="150" FontWeight="Bold" Style="{StaticResource $ImageButtonStyle}" Margin="0,10" />
-        </StackPanel>
+            <Frame Name="navPnlActionFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" />
+        </Grid>
+
+        <!--<Grid Name="requestedView" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Visible">
+            <StackPanel Name="navHomeStackPnlReq">
+                <Button Click="XNavSharedRepo_Click" Style="{StaticResource @PanelButtonStyle}"  IsEnabled="true" ToolTip="Shared Repository" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Margin="10" UseLayoutRounding="True">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <UserControls:ImageMakerControl Height="25" Width="25" FontSize="25" ImageType="SharedRepositoryItem" SetBorder="False" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Margin="0,10" />
+                        <Label Grid.Column="1" Content="Shared Repository" FontSize="15" FontWeight="Bold" Foreground="White" />
+                    </Grid>
+                </Button>
+
+                <Button Click="XNavPOM_Click" Style="{StaticResource @PanelButtonStyle}"  IsEnabled="true" ToolTip="Shared Repository" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" UseLayoutRounding="True">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <UserControls:ImageMakerControl Height="25" Width="25" FontSize="25" ImageType="ApplicationPOMModel" SetBorder="False" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Margin="0,10" />
+                        <Label Grid.Column="1" Content="Page Objects Model" FontSize="15" FontWeight="Bold" Foreground="White" />
+                    </Grid>
+                </Button>
+
+                <Button Click="XNavActLib_Click" Style="{StaticResource @PanelButtonStyle}"  IsEnabled="true" ToolTip="Actions Library" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" UseLayoutRounding="True">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <UserControls:ImageMakerControl Height="25" Width="25" FontSize="25" ImageType="Action" SetBorder="False" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Margin="0,10" />
+                        <Label Grid.Column="1" Content="Actions Library" FontSize="15" FontWeight="Bold" Foreground="White" />
+                    </Grid>
+                </Button>
+
+                <Button Click="XRecord_Click" Style="{StaticResource @PanelButtonStyle}"  IsEnabled="true" ToolTip="Record" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" UseLayoutRounding="True">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <UserControls:ImageMakerControl Height="25" Width="25" FontSize="25" ImageType="Camera" SetBorder="False" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Margin="0,10" />
+                        <Label Grid.Column="1" Content="Record" FontSize="15" FontWeight="Bold" Foreground="White" />
+                    </Grid>
+                </Button>
+
+                <Button Click="XNavSpy_Click" Style="{StaticResource @PanelButtonStyle}"  IsEnabled="true" ToolTip="Live Spy" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" UseLayoutRounding="True">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <UserControls:ImageMakerControl Height="25" Width="25" FontSize="25" ImageType="Spy" SetBorder="False" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Margin="0,10" />
+                        <Label Grid.Column="1" Content="Live Spy" FontSize="15" FontWeight="Bold" Foreground="White" />
+                    </Grid>
+                </Button>
+
+                <Button Click="XNavWinExp_Click" Style="{StaticResource @PanelButtonStyle}"  IsEnabled="true" ToolTip="Windows Explorer" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" UseLayoutRounding="True">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <UserControls:ImageMakerControl Height="25" Width="25" FontSize="25" ImageType="Search" SetBorder="False" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Margin="0,10" />
+                        <Label Grid.Column="1" Content="Windows Explorer" FontSize="15" FontWeight="Bold" Foreground="White" />
+                    </Grid>
+                </Button>
+
+            </StackPanel>
+
+            <Frame Name="navPnlActionFrameReq" NavigationUIVisibility="Hidden" Visibility="Collapsed" />
+        </Grid>-->
     </Grid>
 </Page>

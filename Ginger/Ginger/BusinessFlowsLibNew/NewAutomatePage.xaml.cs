@@ -41,6 +41,7 @@ namespace GingerWPF.BusinessFlowsLib
     /// </summary>
     public partial class NewAutomatePage : Page
     {
+        //Activity currentActivity = null;
         //public event EventHandler ToggelPanelEvent;
 
         //protected virtual void OnToggelPanelEvent(EventArgs e)
@@ -92,7 +93,6 @@ namespace GingerWPF.BusinessFlowsLib
             App.PropertyChanged += App_PropertyChanged;
 
             CurrentActivityFrame.Content = new ActivityPage((Activity)BusinessFlow.Activities[0]);  // TODO: use binding? or keep each activity page
-            AddActionMenuFrame.Content = new MainAddActionsNavigationPage();
             InitGingerRunnerControls();
         }
 
@@ -195,17 +195,20 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SHAddActionPanel_Click(object sender, RoutedEventArgs e)
         {
+            if (AddActionMenuFrame.Content == null)
+                AddActionMenuFrame.Content = new MainAddActionsNavigationPage(mBusinessFlow);
+
             if (AddActionMenuFrame.Visibility == Visibility.Collapsed)
             {
                 AddActionMenuFrame.Visibility = Visibility.Visible;
                 xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Auto);
-                maingrd.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Auto);
+                SHAddActionPanel.Content = "-";
             }
             else
             {
                 AddActionMenuFrame.Visibility = Visibility.Collapsed;
-                xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(0);
-                maingrd.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Auto);
+                xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(0, GridUnitType.Pixel);
+                SHAddActionPanel.Content = "+";
             }
         }
     }
