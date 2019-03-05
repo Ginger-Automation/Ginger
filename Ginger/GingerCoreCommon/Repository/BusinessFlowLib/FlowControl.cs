@@ -89,7 +89,8 @@ namespace GingerCore.FlowControlLib
     public enum eFCOperator
     {
         Legacy,
-        Modern,
+        [EnumValueDescription("Modern")]
+        CSharp,
     }
 
     public class FlowControl : RepositoryItemBase
