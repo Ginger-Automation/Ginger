@@ -19,7 +19,6 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
-    <PackageReference Include="PureWebSockets" Version="2.4.2" />
   </ItemGroup>
 
   <ItemGroup>
