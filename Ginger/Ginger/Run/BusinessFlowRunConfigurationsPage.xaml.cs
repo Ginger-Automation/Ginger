@@ -53,23 +53,24 @@ namespace Ginger.Run
         ObservableList<BusinessFlow> mPrevBusinessFlowsInFlow;
 
         GingerRunner mGingerRunner;
+        Context mContext;
 
-
-        public BusinessFlowRunConfigurationsPage(GingerRunner mRunner, BusinessFlow businessFlow, ObservableList<BusinessFlow> prevBusinessFlowsInFlow)
+        public BusinessFlowRunConfigurationsPage(GingerRunner runner, BusinessFlow businessFlow, ObservableList<BusinessFlow> prevBusinessFlowsInFlow)
         {
             InitializeComponent();
 
             mWindowMode = eWindowMode.Configuration;
 
-            mGingerRunner = mRunner;
+            mGingerRunner = runner;
             mBusinessFlow = businessFlow;
+            mContext = new Context() { BusinessFlow = businessFlow, Runner = runner };
             mPrevBusinessFlowsInFlow = prevBusinessFlowsInFlow;
             
             mBusinessFlow.SaveBackup();
 
 			App.ObjFieldBinding(MandatoryBusinessFlowCB, CheckBox.IsCheckedProperty, businessFlow, BusinessFlow.Fields.Mandatory, BindingMode.TwoWay);
 
-			RunDescritpion.Init(businessFlow, BusinessFlow.Fields.RunDescription);
+			RunDescritpion.Init(mContext, businessFlow, BusinessFlow.Fields.RunDescription);
 
             grdVariables.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditVar));
             grdVariables.AddToolbarTool("@Undo_16x16.png", "Reset " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " to Original Configurations", new RoutedEventHandler(ResetBusFlowVariables));
@@ -280,7 +281,7 @@ namespace Ginger.Run
             VariableBase varToEdit = (VariableBase)grdVariables.CurrentItem;
             string originalFormula = varToEdit.Formula;
             string originalValue= varToEdit.Value;            
-            VariableEditPage w = new VariableEditPage(varToEdit, true);
+            VariableEditPage w = new VariableEditPage(varToEdit, new Context() { BusinessFlow = mBusinessFlow }, true);
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             if (varToEdit.Formula != originalFormula || varToEdit.Value != originalValue)//variable was changed
             {

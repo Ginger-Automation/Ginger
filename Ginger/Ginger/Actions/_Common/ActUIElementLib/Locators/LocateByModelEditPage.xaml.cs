@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using GingerCore.Actions.Common;
 using System.Windows.Controls;
 
@@ -35,7 +36,7 @@ namespace Ginger.Actions._Common.ActUIElementLib.Locators
 
             // Bind LocateValue and init VE
             App.ObjFieldBinding(txtLocateValue, TextBox.TextProperty, mAction, ActUIElement.Fields.ElementLocateValue);
-            txtLocateValue.Init(mAction, ActUIElement.Fields.ElementLocateValue);
+            txtLocateValue.Init(Context.GetAsContext(mAction.Context), mAction, ActUIElement.Fields.ElementLocateValue);
         }
     }
 }

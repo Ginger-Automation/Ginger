@@ -46,21 +46,15 @@ namespace Ginger.BusinessFlowFolder
     public partial class ActivitiesPage : Page
     {
         BusinessFlow mBusinessFlow;
+        Context mContext = new Context();
 
-        public ActivitiesPage(BusinessFlow businessFlow = null, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.SharedReposiotry)
+        public ActivitiesPage(BusinessFlow businessFlow, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.SharedReposiotry)
         {
             InitializeComponent();
-
-            if (businessFlow != null)
-            {
-                mBusinessFlow = businessFlow;
-                mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
-            }
-            else
-            {
-                mBusinessFlow = App.BusinessFlow;
-                mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
-                App.PropertyChanged += AppPropertychanged;
+            
+            UpdateBusinessFlow(businessFlow);
+            if (editMode == General.RepositoryItemPageViewMode.Automation)
+            {                
                 grdActivities.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Activity", FloatingContinueRunActivityButton_Click, 4);
                 grdActivities.AddFloatingImageButton("@RunAction_20x20.png", "Run Selected Action", RunActionButton_Click, 4);
                 grdActivities.AddFloatingImageButton("@Run2_20x20.png", "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity), RunFloatingButtonClicked, 4); 
@@ -116,18 +110,16 @@ namespace Ginger.BusinessFlowFolder
             }
         }
 
-        private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "BusinessFlow")
+        public void UpdateBusinessFlow(BusinessFlow bf)
+        {            
+            if (mBusinessFlow != bf)
             {
-                if (App.BusinessFlow != mBusinessFlow)
-                {
-                    mBusinessFlow = App.BusinessFlow;
-                    if (mBusinessFlow != null)
-                        mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
-                }
-                RefreshActivitiesGrid();
+                mBusinessFlow = bf;
+                mContext.BusinessFlow = mBusinessFlow;
+                if (mBusinessFlow != null)
+                    mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
             }
+            RefreshActivitiesGrid();
         }
 
         private void BusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -171,17 +163,6 @@ namespace Ginger.BusinessFlowFolder
                 mBusinessFlow.SetActivityTargetApplication(instance);
                 mBusinessFlow.AddActivity(instance);
                 
-                //Placing the item after current item
-                int selectedActIndex = -1;
-                ObservableList<Activity> actsList = mBusinessFlow.Activities;
-                if (actsList.CurrentItem != null)
-                {
-                    selectedActIndex = actsList.IndexOf((Activity)actsList.CurrentItem);
-                }
-                if (selectedActIndex >= 0)
-                {
-                    actsList.Move(actsList.Count - 1, selectedActIndex + 1);
-                }            
             }                
             else if (droppedItem.GetType() == typeof(ActivitiesGroup))
             {
@@ -190,17 +171,7 @@ namespace Ginger.BusinessFlowFolder
                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                 mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                 mBusinessFlow.AttachActivitiesGroupsAndActivities();
-
-                int selectedActIndex = -1;
-                ObservableList<ActivitiesGroup> actsList = App.BusinessFlow.ActivitiesGroups;
-                if (actsList.CurrentItem != null)
-                {
-                    selectedActIndex = actsList.IndexOf((ActivitiesGroup)actsList.CurrentItem);
-                }
-                if (selectedActIndex >= 0)
-                {
-                    actsList.Move(actsList.Count - 1, selectedActIndex + 1);
-                }
+                        
             }
         }
         
@@ -315,10 +286,8 @@ namespace Ginger.BusinessFlowFolder
         }
 
         private void AddToRepository(object sender, RoutedEventArgs e)
-
         {
-            Repository.SharedRepositoryOperations.AddItemsToRepository(grdActivities.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
-          
+            (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, grdActivities.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
         }
 
         private void EditActivity(object sender, RoutedEventArgs e)
@@ -341,8 +310,7 @@ namespace Ginger.BusinessFlowFolder
             a.TargetApplication = mBusinessFlow.MainApplication;
             a.ActivityName = "New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
             mBusinessFlow.AddActivity(a);
-            mBusinessFlow.Activities.CurrentItem = a;
-            mBusinessFlow.CurrentActivity = a;
+            mBusinessFlow.Activities.CurrentItem = a;         
         }
         
         private void RefreshActivitiesGrid()

@@ -84,7 +84,7 @@ namespace Ginger.Actions
             grdTableData.btnRefresh.Visibility = Visibility.Visible;
             grdTableData.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshTable));
 
-            ValueUC.Init(mActDSTblElem.GetOrCreateInputParam(ActInputValue.Fields.Value), true);
+            ValueUC.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem.GetOrCreateInputParam(ActInputValue.Fields.Value), true);
 
             ControlActionPanel.Visibility = Visibility.Visible;
             ActionRow.Height = new GridLength(55);            
@@ -433,8 +433,8 @@ namespace Ginger.Actions
             GingerCore.General.FillComboFromEnumType(ControlActionComboBox, typeof(ActDSTableElement.eControlAction));
             GingerCore.General.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mActDSTblElem, ActJavaElement.Fields.ControlAction);
 
-            ExcelFilePath.Init(mActDSTblElem, ActDSTableElement.Fields.ExcelPath, true, true, UCValueExpression.eBrowserType.File, "xlsx");
-            ExcelSheetName.Init(mActDSTblElem, ActDSTableElement.Fields.ExcelSheetName, true);
+            ExcelFilePath.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem, ActDSTableElement.Fields.ExcelPath, true, true, UCValueExpression.eBrowserType.File, "xlsx");
+            ExcelSheetName.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem, ActDSTableElement.Fields.ExcelSheetName, true);
             ExcelFilePath.ValueTextBox.TextChanged += ExcelFilePathTextBox_TextChanged;
             ExcelSheetName.ValueTextBox.TextChanged += ExcelSheetNameTextBox_TextChanged;
             ExcelFilePath.ValueTextBox.LostFocus += ExcelFilePathTextBox_LostFocus;
@@ -1008,7 +1008,7 @@ namespace Ginger.Actions
 
         private void RowSelectorValueVE_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mActDSTblElem, ActDSTableElement.Fields.LocateRowValue);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mActDSTblElem, ActDSTableElement.Fields.LocateRowValue, Context.GetAsContext(mActDSTblElem.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             RowSelectorValue.Text = mActDSTblElem.LocateRowValue;           
         }
@@ -1021,7 +1021,7 @@ namespace Ginger.Actions
         //}
         private void QueryValVE_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mActDSTblElem, ActDSTableElement.Fields.QueryValue);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mActDSTblElem, ActDSTableElement.Fields.QueryValue, Context.GetAsContext(mActDSTblElem.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             QueryVal.Text = mActDSTblElem.QueryValue;
         }
@@ -1623,7 +1623,7 @@ namespace Ginger.Actions
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActDSConditon ADSC = (ActDSConditon)grdCondition.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ADSC, ActDSConditon.Fields.wValue);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ADSC, ActDSConditon.Fields.wValue, Context.GetAsContext(mActDSTblElem.Context));
             VEEW.ShowAsWindow();
         }
 

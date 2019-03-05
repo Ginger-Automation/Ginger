@@ -53,7 +53,7 @@ namespace Ginger.WindowExplorer.Common
         {
             Act act = (Act)((Act)(mActions.CurrentItem)).CreateCopy();
             act.Active = true;
-            App.BusinessFlow.AddAct(act);
+            //App.BusinessFlow.AddAct(act);
             ActionEditPage AEP = new ActionEditPage(act);
             AEP.ShowAsWindow();
         }

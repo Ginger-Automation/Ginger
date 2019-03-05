@@ -18,27 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Repository;
-using Ginger.BusinessFlowFolder;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
 using GingerWPF.BusinessFlowsLib;
 using GingerWPF.UserControlsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -48,14 +35,15 @@ namespace Ginger.BusinessFlowWindows
     public partial class BusinessFlowsAutomatePage : Page
     {
         SingleItemTreeViewExplorerPage mBusFlowsPage;
-        Page mAutomatePage;
+        AutomatePage mAutomatePage;
+        NewAutomatePage mNewAutomatePage;
 
         public BusinessFlowsAutomatePage()
         {
             InitializeComponent();
 
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
-             WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+            WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
 
             Reset();
         }
@@ -64,7 +52,24 @@ namespace Ginger.BusinessFlowWindows
         {
             if (args.EventType == AutomateEventArgs.eEventType.Automate)
             {
-                ShiftToAutoMateView();
+                if (WorkSpace.Instance.BetaFeatures.ShowNewautomate)
+                {
+                    if (mNewAutomatePage == null)
+                    {
+                        mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);
+                    }
+                    xContentFrame.Content = mNewAutomatePage;
+                }
+                else
+                {
+                    if (mAutomatePage == null)
+                    {
+                        mAutomatePage = new AutomatePage((BusinessFlow)args.Object);
+                        mAutomatePage.GoToBusFlowsListHandler(GoToBusinessFlowsList);
+                    }
+                    xContentFrame.Content = mAutomatePage;
+                }
+
             }
         }
 
@@ -90,24 +95,6 @@ namespace Ginger.BusinessFlowWindows
                 mBusFlowsPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.BusinessFlows), eImageType.BusinessFlow, busFlowsRootFolder, busFlowsRootFolder.SaveAllTreeFolderItemsHandler, busFlowsRootFolder.AddItemHandler, treeItemDoubleClickHandler: BusinessFlowsTree_ItemDoubleClick);
             }
             xContentFrame.Content = mBusFlowsPage;
-        }
-
-        private void ShiftToAutoMateView()
-        {
-            if (mAutomatePage == null)
-            {
-                if (WorkSpace.Instance.BetaFeatures.ShowNewautomate)
-                {
-                    mAutomatePage = new NewAutomatePage(); 
-                }
-                else
-                {
-                    mAutomatePage = new AutomatePage();
-                    ((AutomatePage)mAutomatePage).GoToBusFlowsListHandler(GoToBusinessFlowsList);
-                }
-                
-            }
-            xContentFrame.Content = mAutomatePage;
         }
 
         private void GoToBusinessFlowsList(object sender, RoutedEventArgs e)

@@ -59,16 +59,16 @@ namespace Ginger.Actions._Common.ActUIElementLib
             InitializeComponent();
 
             //TODO: Binding of all UI elements            
-            Value.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.Value), true, false, UCValueExpression.eBrowserType.Folder);
+            Value.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.Value), true, false, UCValueExpression.eBrowserType.Folder);
             HandleElementType.BindControl(mAct,ActUIElement.Fields.HandleElementType, Platform.GetPlatformUIElementsType());
             HandleLocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.HandleElementLocateBy), Platform.GetPlatformUIElementLocatorsList(), false, null);
-            HandleLocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.HandleElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
+            HandleLocatorValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.HandleElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
 
             ValidationType.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationType), Platform.GetPlatformUIValidationTypesList(), false, null);
             ValidationElement.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElement), Platform.GetPlatformUIElementsType(), false, null);
             LocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocateBy), Platform.GetPlatformUIElementLocatorsList(), false, null);
-            LocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
-            ValidationElementValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementValue), true, false, UCValueExpression.eBrowserType.Folder);
+            LocatorValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
+            ValidationElementValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementValue), true, false, UCValueExpression.eBrowserType.Folder);
             GingerCore.General.ActInputValueBinding(DefineHandleAction, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.DefineHandleAction, "False"));         
         }        
         
@@ -95,7 +95,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private ePlatformType GetActionPlatform()
         {
-            string targetapp = App.BusinessFlow.CurrentActivity.TargetApplication;
+            string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
             ePlatformType platform = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             return platform;
         }

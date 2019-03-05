@@ -90,7 +90,7 @@ namespace Ginger.Actions
             App.ObjFieldBinding(WhereColumnTitle, ComboBox.TextProperty, mAct, ActTableElement.Fields.WhereColumnTitle);
             App.ObjFieldBinding(WhereProperty, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.WhereProperty);
             App.ObjFieldBinding(WhereOperator, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.WhereOperator);     
-            WhereColumnValue.Init(mAct.GetOrCreateInputParam(ActTableElement.Fields.WhereColumnValue));
+            WhereColumnValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActTableElement.Fields.WhereColumnValue));
 
             App.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.ControlAction);
             if (WhereColumn.SelectedIndex == -1)
@@ -377,7 +377,7 @@ namespace Ginger.Actions
                 WhereOperator.SelectedIndex = 0;
             WherePanel.Visibility = Visibility.Collapsed;
             WhereDataRow.Height = new GridLength(0);
-            WhereColumnValue.Init(ACJT.GetOrCreateInputParam(ActTableElement.Fields.WhereColumnValue));
+            WhereColumnValue.Init(Context.GetAsContext(mAct.Context), ACJT.GetOrCreateInputParam(ActTableElement.Fields.WhereColumnValue));
         }
 
         private void ColSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -691,7 +691,7 @@ namespace Ginger.Actions
 
         private void RowSelectorValueVE_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActTableElement.Fields.LocateRowValue);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActTableElement.Fields.LocateRowValue, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             RowSelectorValue.Text = mAct.LocateRowValue;           
         }        

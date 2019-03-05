@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -63,6 +64,8 @@ namespace Ginger.Actions
 
         bool IsPageClosing = false;
 
+        private static  readonly List<GingerCore.General.ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForCombo(typeof(eOperator));
+
         ObservableList<DataSourceBase> mDSList = new ObservableList<DataSourceBase>();
         ObservableList<DataSourceTable> mDSTableList = new ObservableList<DataSourceTable>();
         List<string> mDSNames = new List<string>();
@@ -92,16 +95,24 @@ namespace Ginger.Actions
                 mAction.SaveBackup();
             }
 
-            RunDescritpion.Init(act, Act.Fields.RunDescription);
+            RunDescritpion.Init(Context.GetAsContext(mAction.Context), act, Act.Fields.RunDescription);
 
             if (actParentBusinessFlow != null)
+            {
                 mActParentBusinessFlow = actParentBusinessFlow;
-            else
-                mActParentBusinessFlow = App.BusinessFlow;
+            }
+            else if (mAction.Context != null)
+            {
+                mActParentBusinessFlow = Context.GetAsContext(mAction.Context).BusinessFlow;
+            }
             if (actParentActivity != null)
+            {
                 mActParentActivity = actParentActivity;
-            else
-                mActParentActivity = (Activity)App.BusinessFlow.CurrentActivity;
+            }
+            else if (mAction.Context != null)
+            {
+                mActParentActivity = (Activity)Context.GetAsContext(mAction.Context).BusinessFlow.CurrentActivity;
+            }
 
             EditMode = editMode;
             mAction.PropertyChanged += ActionPropertyChanged;
@@ -120,7 +131,7 @@ namespace Ginger.Actions
             }
 
 
-            if (mActParentActivity.GetType() == typeof(ErrorHandler))
+            if (mActParentActivity != null && mActParentActivity.GetType() == typeof(ErrorHandler))
             {
                 RetyrMechainsmTab.IsEnabled = false;
                 ScreenShotTab.IsEnabled = false;
@@ -129,7 +140,7 @@ namespace Ginger.Actions
             txtDescription.BindControl(mAction, Act.Fields.Description);
             cboLocateBy.BindControl(mAction, Act.Fields.LocateBy, act.AvailableLocateBy());
             comboWindowsToCapture.BindControl(mAction, Act.Fields.WindowsToCapture);
-            txtLocateValue.BindControl(mAction, Act.Fields.LocateValue);
+            txtLocateValue.BindControl(Context.GetAsContext(mAction.Context), mAction, Act.Fields.LocateValue);
 
             //Run Details binding
             App.ObjFieldBinding(RTStatusLabel, Label.ContentProperty, mAction, Act.Fields.Status, BindingMode.OneWay);
@@ -145,7 +156,7 @@ namespace Ginger.Actions
             App.ObjFieldBinding(FailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.FailIgnored);
 
             comboFinalStatus.BindControl(mAction, Act.Fields.StatusConverter);
-            xWaittxtWait.BindControl(mAction, nameof(Act.WaitVE));
+            xWaittxtWait.BindControl(Context.GetAsContext(mAction.Context), mAction, nameof(Act.WaitVE));
             App.ObjFieldBinding(txtTimeout, TextBox.TextProperty, mAction, Act.Fields.Timeout);
             App.ObjFieldBinding(StatusLabel, Label.ContentProperty, mAction, Act.Fields.Status);
             GingerCore.General.ObjFieldBinding(ErrorTextBlock, TextBlock.TextProperty, mAction, Act.Fields.Error);
@@ -161,7 +172,7 @@ namespace Ginger.Actions
             App.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);
             App.ObjFieldBinding(EnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
 
-            txtLocateValue.BindControl(mAction, Act.Fields.LocateValue);
+            txtLocateValue.BindControl(Context.GetAsContext(mAction.Context), mAction, Act.Fields.LocateValue);
             txtLocateValue.ValueTextBox.Text = mAction.LocateValue;  // Why ?
 
             SwitchingInputValueBoxAndGrid(mAction);
@@ -299,7 +310,7 @@ namespace Ginger.Actions
                 }
                 else if (a.InputValues.Count == 1)
                 {
-                    ValueUC.Init(mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
@@ -310,7 +321,7 @@ namespace Ginger.Actions
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     a.Value = "";
-                    ValueUC.Init(a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(Context.GetAsContext(a.Context), a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                 }
             }
             else if (a.GetType() == typeof(ActGenElement))
@@ -320,13 +331,13 @@ namespace Ginger.Actions
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     a.AddOrUpdateInputParamValue("Value", "");
-                    ValueUC.Init(a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(Context.GetAsContext(a.Context), a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                 }
                 else
                 {
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
                 }
             }
             else if (a.GetType() == typeof(ActLaunchJavaWSApplication) || a.GetType() == typeof(ActJavaEXE))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
@@ -349,20 +360,20 @@ namespace Ginger.Actions
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     a.AddOrUpdateInputParamValue("Value", "");
-                    ValueUC.Init(a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(Context.GetAsContext(a.Context), a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                 }
                 else
                 {
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
                 }
             }
             else if (a.GetType() == typeof(ActDBValidation))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
                 if (a.InputValues.Count == 1)
                 {
-                    ValueUC.Init(mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;
                     ValueUC.ValueTextBox.Text = mAction.InputValues.FirstOrDefault().Value;
@@ -372,7 +383,7 @@ namespace Ginger.Actions
                 {
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;
-                    ValueUC.Init(a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(Context.GetAsContext(mAction.Context), a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                 }
             }
             else if (a.GetType() == typeof(ActScript))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
@@ -384,7 +395,7 @@ namespace Ginger.Actions
                 }
                 else if (a.InputValues.Count == 1)
                 {
-                    ValueUC.Init(mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
@@ -397,7 +408,7 @@ namespace Ginger.Actions
                 {   
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
                     ValueLabel.Content = a.InputValues.FirstOrDefault().Param;
                 }
@@ -416,7 +427,7 @@ namespace Ginger.Actions
 
         private void AddReturnValue(object sender, RoutedEventArgs e)
         {
-            mAction.ReturnValues.Add(new ActReturnValue() { Active = true });
+            mAction.ReturnValues.Add(new ActReturnValue() { Active = true ,Operator=eOperator.Equals});
         }
 
         private void AddInputValue(object sender, RoutedEventArgs e)
@@ -461,13 +472,25 @@ namespace Ginger.Actions
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Actual, Header = "Actual Value", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["AddActualToExpectButton"] });
 
+            viewCols.Add(new GridColView() { Field = nameof(ActReturnValue.Operator), Header = "Operator", WidthWeight = 150, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = OperatorList });
+            // viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["AddActualToExpectButton"] });
+
+
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Expected, Header = "Expected Value", WidthWeight = 150 });
             viewCols.Add(new GridColView() { Field = ".....", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ValueExpressionButton"] });
             viewCols.Add(new GridColView() { Field = "Clear Expected Value", Header = "X", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ClearExpectedValueBtnTemplate"] });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.ExpectedCalculated, Header = "Calculated Expected", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Status, WidthWeight = 70, BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new ActReturnValueStatusConverter(), TextBlock.ForegroundProperty)) });
-            
-            List<String> varsCollc = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
+
+            List<String> varsCollc;
+            if (mActParentBusinessFlow != null)
+            {
+                varsCollc = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
+            }
+            else
+            {
+                varsCollc = WorkSpace.UserProfile.Solution.Variables.Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
+            }
             varsCollc.Sort();
             if (varsCollc.Count > 0)
                 varsCollc.Insert(0, string.Empty);//to be used for clearing selection
@@ -494,7 +517,7 @@ namespace Ginger.Actions
 
             OutputValuesGrid.ShowViewCombo = Visibility.Collapsed;
             OutputValuesGrid.ShowEdit = Visibility.Collapsed;
-        }
+                    }
 
         private void SetActInputValuesGrid()
         {
@@ -713,13 +736,13 @@ namespace Ginger.Actions
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Expected);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Expected, Context.GetAsContext(mAction.Context));
             VEEW.ShowAsWindow();
         }
         private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)InputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mAction.Context));
             VEEW.ShowAsWindow();
         }
         private void GridAddActualToExpectButton_Click(object sender, RoutedEventArgs e)
@@ -737,7 +760,7 @@ namespace Ginger.Actions
         private void SimulatedOutputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.SimulatedActual);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.SimulatedActual, Context.GetAsContext(mAction.Context));
             VEEW.ShowAsWindow();
         }
 
@@ -960,13 +983,13 @@ namespace Ginger.Actions
         private void GridParamVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Param);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Param, Context.GetAsContext(mAction.Context));
             VEEW.ShowAsWindow();
         }
         private void GridPathVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Path);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Path, Context.GetAsContext(mAction.Context));
             VEEW.ShowAsWindow();
         }
 
@@ -1132,7 +1155,7 @@ namespace Ginger.Actions
                 //Instead of check make it disabled ?
                 if (driver is IWindowExplorer)
                 {
-                    WindowExplorerPage WEP = new WindowExplorerPage(aa, mAction);
+                    WindowExplorerPage WEP = new WindowExplorerPage(aa, Context.GetAsContext(mAction.Context),  mAction);
                     WEP.ShowAsWindow();
                 }
                 else

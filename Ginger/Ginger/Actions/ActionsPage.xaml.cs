@@ -42,11 +42,12 @@ namespace Ginger.Actions
     /// </summary>
     public partial class ActionsPage : Page
     {
-        Activity mCurrentActivity;
-        
+        Activity mCurrentActivity;        
         public General.RepositoryItemPageViewMode EditMode { get; set; }
+        BusinessFlow mBusinessFlow;
+        Context mContext = new Context();
 
-        public ActionsPage(Activity activity=null, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
+        public ActionsPage(Activity activity=null, BusinessFlow businessFlow=null, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
         {
             InitializeComponent();            
             EditMode = editMode;
@@ -60,21 +61,13 @@ namespace Ginger.Actions
             }
             else
             {
-                EditMode = General.RepositoryItemPageViewMode.Automation;               
-                //App.BusinessFlow dynamic Activity
-                UpdateActionGrid();
-
-                // Hook to Business flow properties changes
-                App.BusinessFlow.PropertyChanged += BusinessFlowPropertyChanged;
-                //Hook when App Property changes
-                App.PropertyChanged += AppPropertyChanged;
-                App.ActionsGrid = grdActions;
-
+                EditMode = General.RepositoryItemPageViewMode.Automation;
                 grdActions.AddToolbarTool("@Split_16x16.png", "Split to " + GingerDicser.GetTermResValue(eTermResKey.Activities), new RoutedEventHandler(Split));
                 grdActions.AddToolbarTool(eImageType.Reset, "Reset Run Details", new RoutedEventHandler(ResetAction));
                 grdActions.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Action", FloatingContinueRunActionButton_Click, 4);
                 grdActions.AddFloatingImageButton("@RunAction_20x20.png", "Run Action", FloatingRunActionButton_Click, 4);
-            }            
+            }
+            UpdateParentBusinessFlow(businessFlow);
             SetActionsGridView();
                                    
             SetGridRowStyle();
@@ -160,7 +153,7 @@ namespace Ginger.Actions
             mCurrentActivity.Acts.Add(instance);
             
             int selectedActIndex = -1;
-            ObservableList<IAct> actsList = App.BusinessFlow.CurrentActivity.Acts;
+            ObservableList<IAct> actsList = mBusinessFlow.CurrentActivity.Acts;
             if (actsList.CurrentItem != null)
             {
                 selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
@@ -205,7 +198,7 @@ namespace Ginger.Actions
             Activity activity = new Activity() { Active=true};
             activity.TargetApplication = mCurrentActivity.TargetApplication;
             activity.ActivityName = CurrentAction.Description;
-            App.BusinessFlow.AddActivity(activity);
+            
 
             // Find the action index to split on
             int i = 0;
@@ -229,7 +222,8 @@ namespace Ginger.Actions
             {
                 IAct a1 = mCurrentActivity.Acts[j];
                mCurrentActivity.Acts.Remove(a1);
-            }            
+            }
+            mBusinessFlow.AddActivity(activity);
         }
 
         private void AddAction(object sender, RoutedEventArgs e)
@@ -240,7 +234,7 @@ namespace Ginger.Actions
             }
             else
             {
-                AddActionPage addAction = new AddActionPage();
+                AddActionPage addAction = new AddActionPage(new Context() { BusinessFlow = mBusinessFlow , Activity= mCurrentActivity});
                 addAction.ShowAsWindow(mCurrentActivity.Acts);
             }
         }
@@ -255,34 +249,33 @@ namespace Ginger.Actions
 
         private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Acts" && mCurrentActivity==App.BusinessFlow.CurrentActivity)
+            if (e.PropertyName == nameof(Activity.Acts) && mCurrentActivity == mBusinessFlow.CurrentActivity)
             {
-                UpdateActionGrid();           
+                UpdateActionGrid();
             }
         }
 
-        private void AppPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-           GingerCore.General.DoEvents();
-            if (e.PropertyName == "BusinessFlow")
+        public void UpdateParentBusinessFlow(BusinessFlow bf)
+        {            
+            mBusinessFlow = bf;
+            mContext.BusinessFlow = bf;
+            if (mBusinessFlow != null)
             {
-                if (App.BusinessFlow != null)
+                if (mBusinessFlow.CurrentActivity == null)
+                    mBusinessFlow.CurrentActivity = mBusinessFlow.Activities.FirstOrDefault();
+                if (mBusinessFlow.CurrentActivity != null)
                 {
-                    if (App.BusinessFlow.CurrentActivity == null)
-                        App.BusinessFlow.CurrentActivity = App.BusinessFlow.Activities.FirstOrDefault();
-                    if (App.BusinessFlow.CurrentActivity != null)
-                    {
-                        UpdateActionGrid();
-                    }
-                    //rehook
-                    App.BusinessFlow.PropertyChanged += BusinessFlowPropertyChanged;
+                    UpdateActionGrid();
                 }
+                //rehook
+                mBusinessFlow.PropertyChanged += BusinessFlowPropertyChanged;
             }
+            GingerCore.General.DoEvents();
         }
 
         private void AddToRepository(object sender, RoutedEventArgs e)
         {
-            Repository.SharedRepositoryOperations.AddItemsToRepository(grdActions.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
+          (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, grdActions.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
         } 
 
         private void RefreshGrid(object sender, RoutedEventArgs e)
@@ -295,6 +288,7 @@ namespace Ginger.Actions
             if (grdActions.CurrentItem != null)
             {
                 Act a=(Act)grdActions.CurrentItem;
+                a.Context = new Context() { BusinessFlow = mBusinessFlow };
                 ActionEditPage actedit = new ActionEditPage(a,EditMode);
                 actedit.ap = this;
                 actedit.ShowAsWindow();
@@ -368,26 +362,26 @@ namespace Ginger.Actions
             grdActions.PreviewDragItem += grdActions_PreviewDragItem;
             grdActions.MarkUnMarkAllActive += MarkUnMarkAllActions;
         }
-        
+
         private void BusinessFlowPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-           GingerCore.General.DoEvents();
-            //TODO: use const string
-            this.Dispatcher.Invoke(() => {
-                if (e.PropertyName == "CurrentActivity")
-                {
+            this.Dispatcher.Invoke(() =>
+            {
+                if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))
+                {                    
                     UpdateActionGrid();
-                }            
+                    GingerCore.General.DoEvents();
+                }
             });
         }
 
         public void UpdateActionGrid()
         {
-            if (App.BusinessFlow !=null &&  App.BusinessFlow.CurrentActivity != null)
+            if (mBusinessFlow !=null &&  mBusinessFlow.CurrentActivity != null)
             {
-                if (mCurrentActivity != App.BusinessFlow.CurrentActivity)
+                if (mCurrentActivity != mBusinessFlow.CurrentActivity)
                 {
-                    mCurrentActivity = (Activity)App.BusinessFlow.CurrentActivity;
+                    mCurrentActivity = (Activity)mBusinessFlow.CurrentActivity;
                     mCurrentActivity.PropertyChanged += Activity_PropertyChanged;
                     mCurrentActivity.Acts.PropertyChanged += ActsPropChanged;                    
                 }
@@ -437,6 +431,7 @@ namespace Ginger.Actions
         {
             Act a = (Act)grdActions.CurrentItem;
             a.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            a.Context = new Context() { BusinessFlow = mBusinessFlow };
             ActionEditPage actedit = new ActionEditPage(a, EditMode);
             actedit.ap = this;
             actedit.ShowAsWindow();

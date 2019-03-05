@@ -36,7 +36,7 @@ namespace Ginger.DataSource
         {
             InitializeComponent();
 
-            ExcelFilePath.Init(null, false, true, UCValueExpression.eBrowserType.File, "xlsx", new RoutedEventHandler(BrowseButton_Click));
+            ExcelFilePath.Init(null, null, false, true, UCValueExpression.eBrowserType.File, "xlsx", new RoutedEventHandler(BrowseButton_Click));
 
             if (sTableName == "")
             {
