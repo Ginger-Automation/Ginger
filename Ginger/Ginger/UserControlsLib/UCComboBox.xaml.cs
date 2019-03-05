@@ -16,8 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -269,7 +271,12 @@ namespace Ginger.UserControlsLib
 
         public void VEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(obj, AttrName);
+            Context context = null;
+            if(obj is Act)
+            {
+                context = Context.GetAsContext(((Act)obj).Context);
+            }
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(obj, AttrName, context);
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             ComboBox.Text = w.ValueUCTextEditor.textEditor.Text;
         }

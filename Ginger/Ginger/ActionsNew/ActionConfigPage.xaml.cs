@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using GingerCore.Actions;
@@ -71,7 +72,7 @@ namespace Ginger.ActionLib
                 l.Style = App.GetStyle("@InputFieldLabelStyle");                
                 Grid.SetRow(l, rnum);
 
-                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(param);             
+                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(Context.GetAsContext(mAct.Context), param);             
                 actionInputValueUserControl.Margin = new Thickness(5);
                 ActionConfigGrid.Children.Add(actionInputValueUserControl);
                 Grid.SetRow(actionInputValueUserControl, rnum);

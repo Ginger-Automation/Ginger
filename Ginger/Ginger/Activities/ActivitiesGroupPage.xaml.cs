@@ -40,6 +40,7 @@ namespace Ginger.Activities
     public partial class ActivitiesGroupPage : Page
     {
         ActivitiesGroup mActivitiesGroup;
+        BusinessFlow mBusinessFlow = null;
         GenericWindow _pageGenericWin = null;
         public bool OKButtonClicked = false;
 
@@ -51,12 +52,13 @@ namespace Ginger.Activities
 
         public eEditMode mEditMode;
 
-        public ActivitiesGroupPage(ActivitiesGroup activitiesGroup, eEditMode mode = eEditMode.ExecutionFlow)
+        public ActivitiesGroupPage(ActivitiesGroup activitiesGroup, BusinessFlow parentBusinessFlow = null, eEditMode mode = eEditMode.ExecutionFlow)
         {
             InitializeComponent();
             mEditMode = mode;
-            mActivitiesGroup = activitiesGroup;            
-                mActivitiesGroup.SaveBackup();
+            mActivitiesGroup = activitiesGroup;
+            mActivitiesGroup.SaveBackup();
+            mBusinessFlow = parentBusinessFlow;
 
             App.ObjFieldBinding(txtGroupName, TextBox.TextProperty, mActivitiesGroup, ActivitiesGroup.Fields.Name);
             App.ObjFieldBinding(txtGroupDescription, TextBox.TextProperty, mActivitiesGroup, ActivitiesGroup.Fields.Description);
@@ -71,13 +73,13 @@ namespace Ginger.Activities
             TagsViewer.Init(mActivitiesGroup.Tags);
 
             if (mEditMode == eEditMode.ExecutionFlow)
-                SharedRepoInstanceUC.Init(mActivitiesGroup, App.BusinessFlow);
+                SharedRepoInstanceUC.Init(mActivitiesGroup, mBusinessFlow);
             else
             {
                 SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                 SharedRepoInstanceUC_Col.Width = new GridLength(0);
             }
-        }       
+        }     
 
         private void SetGroupedActivitiesGridView()
         {
@@ -100,7 +102,7 @@ namespace Ginger.Activities
             ObservableList<Activity> activitiesRepository = new ObservableList<Activity>();
 
             if (mEditMode == eEditMode.ExecutionFlow)
-                activitiesRepository = App.BusinessFlow.Activities;
+                activitiesRepository = mBusinessFlow.Activities;
             else if (mEditMode == eEditMode.SharedRepository)
                 activitiesRepository = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 

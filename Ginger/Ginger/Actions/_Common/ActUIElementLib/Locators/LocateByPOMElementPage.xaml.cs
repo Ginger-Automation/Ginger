@@ -56,7 +56,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         public delegate void ElementChangedEventHandler();
 
         public event ElementChangedEventHandler ElementChangedPageEvent;
-
+        Context mContext;
 
         public void ElementChangedEvent()
         {
@@ -66,7 +66,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
-        public LocateByPOMElementPage(Object objectElementType, string elementTypeFieldName, Object objectLocateValue, string locateValueFieldName, bool onlyPOMRequest = false)
+        public LocateByPOMElementPage(Context context, Object objectElementType, string elementTypeFieldName, Object objectLocateValue, string locateValueFieldName, bool onlyPOMRequest = false)
         {
             InitializeComponent();
 
@@ -75,6 +75,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mObjectLocateValue = objectLocateValue;
             mLocateValueFieldName = locateValueFieldName;
             mOnlyPOMRequest = onlyPOMRequest;
+            mContext = context;
 
             DataContext = this;
 
@@ -153,7 +154,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                                                                                     SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,
                                                                                     new Tuple<string, string>(  nameof(ApplicationPOMModel.TargetApplicationKey) + "." +
                                                                                                                 nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), 
-                                                                                                                App.BusinessFlow.CurrentActivity.TargetApplication));
+                                                                                                                mContext.BusinessFlow.CurrentActivity.TargetApplication));
             }
 
             List<object> selectedPOMs = mApplicationPOMSelectionPage.ShowAsWindow();
@@ -275,7 +276,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void HighlightElementClicked(object sender, RoutedEventArgs e)
         {
-            ApplicationAgent currentAgent = (ApplicationAgent)App.AutomateTabGingerRunner.ApplicationAgents.Where(z => z.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent currentAgent = (ApplicationAgent)App.AutomateTabGingerRunner.ApplicationAgents.Where(z => z.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
             if ((currentAgent == null) || !(((Agent)currentAgent.Agent).Driver is IWindowExplorer) || (((Agent)currentAgent.Agent).Status != Agent.eStatus.Running))
             {
                 Reporter.ToUser(eUserMsgKey.NoRelevantAgentInRunningStatus);

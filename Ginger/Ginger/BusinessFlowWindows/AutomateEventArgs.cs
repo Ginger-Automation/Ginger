@@ -29,6 +29,8 @@ namespace Ginger.BusinessFlowWindows
         public enum eEventType
         {
             Automate,
+            ClearAutomate,
+            UpdateAppAgentsMapping,
             SetupRunnerForExecution,
             RunCurrentAction,
             RunCurrentActivity,

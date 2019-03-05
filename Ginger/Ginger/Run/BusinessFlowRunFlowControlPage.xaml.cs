@@ -74,7 +74,7 @@ namespace Ginger.Run
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
             FlowControl FC = (FlowControl)FlowControlGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(FC, FlowControl.Fields.Condition);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(FC, FlowControl.Fields.Condition, new Context() { BusinessFlow = mActParentBusinessFlow });
             VEEW.ShowAsWindow();
         }
 

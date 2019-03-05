@@ -46,12 +46,12 @@ namespace Ginger.Actions.VisualTesting
 
             InitLayout();
 
-            ApplicationNameUCVE.Init(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsParamApplicationName, App.BusinessFlow.MainApplication), true, false);
+            ApplicationNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsParamApplicationName, (Context.GetAsContext(mAct.Context)).BusinessFlow.MainApplication), true, false);
             
-            TestNameUCVE.Init(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsParamTestName, App.BusinessFlow.CurrentActivity.ActivityName), true, false);
+            TestNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsParamTestName, (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
 
 
-            ApplitoolsKeyUCVE.Init(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsKey), true, false);
+            ApplitoolsKeyUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsKey), true, false);
             SetMatchLevelComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ApplitoolsMatchLevel, ApplitoolsAnalyzer.eMatchLevel.Strict.ToString()), typeof(ApplitoolsAnalyzer.eMatchLevel), false, null);
             GingerCore.General.ActInputValueBinding(DoNotFailActionOnMismatch, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.FailActionOnMistmach, "False"));
 

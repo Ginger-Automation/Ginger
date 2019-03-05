@@ -108,7 +108,7 @@ namespace Ginger.SolutionWindows
 
                 //Create default items                
                 AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);                
-                App.UpdateApplicationsAgentsMapping();
+                App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
                 AddDefaultDataSource();
                 AddDeafultReportTemplate();
                 AutomatePage.CreateDefaultEnvironment();
