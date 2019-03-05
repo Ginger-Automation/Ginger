@@ -2239,20 +2239,10 @@ namespace Ginger.Run
                     }
                     FC.CalcualtedValue(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, this.DSList);
 
-                    string rc = VBS.ExecuteVBSEval(FC.ConditionCalculated.Trim());
+                
 
-                    bool IsConditionTrue;
-                    if (rc == "-1")
-                    {
-                        FC.ConditionCalculated += " is True";
-                        IsConditionTrue = true;
-                    }
-                    else
-                    {
-                        FC.ConditionCalculated += " is False";
-                        IsConditionTrue = false;
-                    }
-
+                    bool IsConditionTrue= CalculateFlowControlStatus(FC.ConditionCalculated,FC.Operator);
+                 
                     if (IsConditionTrue)
                     {
                         //Perform the action as condition is true
@@ -2400,7 +2390,33 @@ namespace Ginger.Run
                 Reporter.ToLog(eLogLevel.ERROR, "Exception occurred in DoFlowControl", ex);
             }
         }
-        
+
+        private bool CalculateFlowControlStatus(string Expression, GingerCore.FlowControlLib.eFCOperator FCoperator)
+        {
+            bool FCStatus;
+            if (FCoperator == GingerCore.FlowControlLib.eFCOperator.Legacy)
+            {
+                string rc = VBS.ExecuteVBSEval(Expression.Trim());
+                if (rc == "-1")
+                {
+
+                    FCStatus = true;
+                }
+                else
+                {
+
+                    FCStatus = false;
+                }
+
+            }
+            else
+            {
+                FCStatus = CodeProcessor.EvalCondition(Expression);
+            }
+
+            return FCStatus;
+        }
+
         private bool GotoActivity(FlowControl fc, Act act)
         {
             Activity a =(Activity) CurrentBusinessFlow.GetActivity(fc.GetGuidFromValue(), fc.GetNameFromValue());
