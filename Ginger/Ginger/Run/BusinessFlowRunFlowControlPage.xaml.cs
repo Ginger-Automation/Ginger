@@ -24,6 +24,7 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.FlowControlLib;
 using Ginger.Actions.UserControls;
+using System.Collections.Generic;
 
 namespace Ginger.Run
 {
@@ -34,6 +35,7 @@ namespace Ginger.Run
     {
         GingerRunner mBfParentRunner = null;
         BusinessFlow mActParentBusinessFlow = null;
+        private static readonly List<GingerCore.General.ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForCombo(typeof(eFCOperator));
 
         public BusinessFlowRunFlowControlPage(GingerRunner mRunner, BusinessFlow actParentBusinessFlow)
         {
@@ -53,6 +55,7 @@ namespace Ginger.Run
         private void AddFlowControl(object sender, RoutedEventArgs e)
         {
             FlowControl FC = new FlowControl();
+            FC.Operator = eFCOperator.CSharp;
             FC.Active = true;
             mActParentBusinessFlow.BFFlowControls.Add(FC);
         }
@@ -64,6 +67,7 @@ namespace Ginger.Run
             view.GridColsView = viewCols;
             viewCols.Add(new GridColView() { Field = FlowControl.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = FlowControl.Fields.Condition, Header = "Condition", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.getDataColValueExpressionTemplate("ConditionVE") });
+            viewCols.Add(new GridColView() { Field = nameof(FlowControl.Operator), Header = "Operator", WidthWeight = 50, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = OperatorList });
             viewCols.Add(new GridColView() { Field = FlowControl.Fields.ConditionCalculated, Header = "Condition Calculated", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = FlowControl.Fields.BusinessFlowControlAction, Header = "Action", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = GetDataColActionFlowControlTemplate("ActionForEdit") });
             viewCols.Add(new GridColView() { Field = FlowControl.Fields.Status, WidthWeight = 150 });

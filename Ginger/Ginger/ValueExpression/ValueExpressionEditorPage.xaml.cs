@@ -196,26 +196,114 @@ namespace Ginger
 
         private void AddFlowControlConditions()
         {
-            TreeViewItem tviVars = new TreeViewItem();
-            SetItemView(tviVars, "Flow Control Conditions", "", "VBS16x16.png");
-            xObjectsTreeView.Items.Add(tviVars); 
 
-            AddVBSIfEval(tviVars, "Action Status = Passed", "\"{ActionStatus}\" = \"Passed\"");
-            AddVBSIfEval(tviVars, "Action Status = Failed", "\"{ActionStatus}\" = \"Failed\"");
 
-            AddVBSIfEval(tviVars, "Last " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Status = Passed", "\"{LastActivityStatus}\" = \"Passed\"");
-            AddVBSIfEval(tviVars, "Last " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Status = Failed", "\"{LastActivityStatus}\" = \"Failed\"");
+
+
+            TreeViewItem Parent = new TreeViewItem();
+            SetItemView(Parent, "Flow Control Conditions", "", "@Config3_16x16.png");
+            xObjectsTreeView.Items.Add(Parent);
+
+
+
+            ValueExpressionReference VERActionpassd = new ValueExpressionReference
+            {
+                Name = "Action is Passed",
+                Expression = "{CS Exp=\"{ActionStatus}\".Equals(\"Passed\")}",
+                UseCase = "Flowcontrol Condition will execute if the action is Passed",
+            };
+            TreeViewItem tvi = new TreeViewItem();
+            SetItemView(tvi, VERActionpassd.Name, VERActionpassd.Expression, VERActionpassd.IconImageName == null ? "@Config3_16x16.png" : VERActionpassd.IconImageName);
+            Parent.Items.Add(tvi);
+            tvi.MouseDoubleClick += tvi_MouseDoubleClick;
+            tvi.Selected += UpdateHelpForCSFunction;
+            tvi.Tag = VERActionpassd;
+
+
+
+
+            ValueExpressionReference VERACtionFailed = new ValueExpressionReference
+            {
+                Name = "Action is Failed",
+                Expression = "{CS Exp=\"{ActionStatus}\".Equals(\"Failed\")}",
+                UseCase = "Flowcontrol Condition will execute if the action is Failed",
+            };
+            TreeViewItem tvi2 = new TreeViewItem();
+            SetItemView(tvi2, VERACtionFailed.Name, VERACtionFailed.Expression, VERACtionFailed.IconImageName == null ? "@Config3_16x16.png" : VERACtionFailed.IconImageName);
+            Parent.Items.Add(tvi2);
+            tvi2.MouseDoubleClick += tvi_MouseDoubleClick;
+            tvi2.Selected += UpdateHelpForCSFunction;
+            tvi2.Tag = VERACtionFailed;
+
+
+
+
+            ValueExpressionReference VERLastActivityPassed = new ValueExpressionReference
+            {
+                Name = "Last Activity Passed",
+                Expression = "{CS Exp=\"{LastActivityStatus}\".Equals(\"Passed\")}",
+                UseCase = "Flowcontrol Condition will execute if the Last Activity is Passed",
+            };
+            TreeViewItem tvi3 = new TreeViewItem();
+            SetItemView(tvi3, VERLastActivityPassed.Name, VERLastActivityPassed.Expression, VERLastActivityPassed.IconImageName == null ? "@Config3_16x16.png" : VERLastActivityPassed.IconImageName);
+            Parent.Items.Add(tvi3);
+            tvi3.MouseDoubleClick += tvi_MouseDoubleClick;
+            tvi3.Selected += UpdateHelpForCSFunction;
+            tvi3.Tag = VERLastActivityPassed;
+
+
+            ValueExpressionReference VERLastActivityFailed = new ValueExpressionReference
+            {
+                Name = "Last Activity Failed",
+                Expression = "{CS Exp=\"{LastActivityStatus}\".Equals(\"Failed\")}",
+                UseCase = "Flowcontrol Condition will execute if the Last Activity is Failed",
+            };
+            TreeViewItem tvi4 = new TreeViewItem();
+            SetItemView(tvi4, VERLastActivityFailed.Name, VERLastActivityFailed.Expression, VERLastActivityFailed.IconImageName == null ? "@Config3_16x16.png" : VERLastActivityFailed.IconImageName);
+            Parent.Items.Add(tvi4);
+            tvi4.MouseDoubleClick += tvi_MouseDoubleClick;
+            tvi4.Selected += UpdateHelpForCSFunction;
+            tvi4.Tag = VERLastActivityFailed;
+
+
+
         }
 
         //Added for Business Flow Control in RunSet
         private void AddBusinessFlowControlConditions()
         {
-            TreeViewItem tviVars = new TreeViewItem();
-            SetItemView(tviVars, "Flow Control Conditions", "", "VBS16x16.png");
-            xObjectsTreeView.Items.Add(tviVars);
 
-            AddVBSIfEval(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Status = Passed", "\"{BusinessFlowStatus}\" = \"Passed\"");
-            AddVBSIfEval(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Status = Failed", "\"{BusinessFlowStatus}\" = \"Failed\"");
+
+            TreeViewItem Parent = new TreeViewItem();
+            SetItemView(Parent, "Flow Control Conditions", "", "@Config3_16x16.png");
+            xObjectsTreeView.Items.Add(Parent);
+
+            ValueExpressionReference VERActionpassd = new ValueExpressionReference
+            {
+                Name = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " is Passed",
+                Expression = "{CS Exp=\"{BusinessFlowStatus}\".Equals(\"Passed\")}",
+                UseCase = "BusinessFlowStatus Condition will execute if the action is Passed",
+            };
+            TreeViewItem tvi = new TreeViewItem();
+            SetItemView(tvi, VERActionpassd.Name, VERActionpassd.Expression, VERActionpassd.IconImageName == null ? "@Config3_16x16.png" : VERActionpassd.IconImageName);
+            Parent.Items.Add(tvi);
+            tvi.MouseDoubleClick += tvi_MouseDoubleClick;
+            tvi.Selected += UpdateHelpForCSFunction;
+            tvi.Tag = VERActionpassd;
+
+            ValueExpressionReference VERACtionFailed = new ValueExpressionReference
+            {
+                Name = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " is Failed",
+                Expression = "{CS Exp=\"{BusinessFlowStatus}\".Equals(\"Failed\")}",
+                UseCase = "Flowcontrol Condition will execute if the action is Failed",
+            };
+            TreeViewItem tvi2 = new TreeViewItem();
+            SetItemView(tvi2, VERACtionFailed.Name, VERACtionFailed.Expression, VERACtionFailed.IconImageName == null ? "@Config3_16x16.png" : VERACtionFailed.IconImageName);
+            Parent.Items.Add(tvi2);
+            tvi2.MouseDoubleClick += tvi_MouseDoubleClick;
+            tvi2.Selected += UpdateHelpForCSFunction;
+            tvi2.Tag = VERACtionFailed;
+
         }
 
         private void AddVBSIfFunctions()
@@ -234,7 +322,7 @@ namespace Ginger
 
         private void AddCSFunctions()
         {
-            WorkSpace.VERefrences = VEReferenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json" }));
+            WorkSpace.VERefrences= VEReferenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json" }));
 
 
             foreach (ValueExpressionReference VER in WorkSpace.VERefrences.Refrences)
@@ -550,7 +638,23 @@ namespace Ginger
         private void tvi_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             TreeViewItem tvi = (TreeViewItem)e.Source;
-            AddExpToValue(tvi.Tag + "");            
+            if (tvi.Tag.GetType() == typeof(ValueExpressionReference))
+            {
+                ValueExpressionReference ver = tvi.Tag as ValueExpressionReference;
+
+                AddExpToValue(ver.Expression + "");
+            }
+            else if (typeof(VariableBase).IsInstanceOfType(tvi.Tag))
+            {
+
+                AddExpToValue("{Var Name=" + tvi.Tag + "} ");
+            }
+            else
+            {
+
+
+                AddExpToValue(tvi.Tag + "");
+            }
         }
 
         private void tviAddNewVarTreeItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
