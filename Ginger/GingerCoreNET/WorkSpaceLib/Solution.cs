@@ -285,6 +285,8 @@ namespace Ginger.SolutionGeneral
         public string ALMProject { get; set; }
         [IsSerializedForLocalRepository]
         public string ALMProjectKey { get; set; }
+        [IsSerializedForLocalRepository]
+        public string ConfigPackageFolderPath { get; set; }
         public void SetReportsConfigurations()
         {
             try {
