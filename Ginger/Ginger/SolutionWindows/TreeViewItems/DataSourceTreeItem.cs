@@ -373,11 +373,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 DataSourceBase ADC;
                 ADC = new AccessDataSource();
-                if (DSDetails.FilePath.StartsWith("~"))
-                {
-                    DSDetails.FileFullPath = DSDetails.FilePath.Replace(@"~\", "").Replace("~", "");
-                    DSDetails.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, DSDetails.FileFullPath);
-                }
+                //if (DSDetails.FilePath.StartsWith("~"))
+                //{
+                //    DSDetails.FileFullPath = DSDetails.FilePath.Replace(@"~\", "").Replace("~", "");
+                //    DSDetails.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, DSDetails.FileFullPath);
+                //}
+                DSDetails.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DSDetails.FilePath);
+
                 ADC.Init(DSDetails.FileFullPath);
                 DSDetails.DSC = ADC;
             }

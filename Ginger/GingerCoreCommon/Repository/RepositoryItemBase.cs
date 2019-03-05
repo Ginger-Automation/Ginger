@@ -122,11 +122,8 @@ namespace Amdocs.Ginger.Repository
             }
             return ShortName;
         }
-
         
         static NewRepositorySerializer mRepositorySerializer = new NewRepositorySerializer();
-
-
         public IRepositorySerializer RepositorySerializer
         {
             get
@@ -134,7 +131,6 @@ namespace Amdocs.Ginger.Repository
                 return mRepositorySerializer;                
             }
         }
-
 
         public void OnPropertyChanged(string name)
         {

@@ -298,7 +298,7 @@ namespace GingerCoreCommonTest.Repository
             mSolutionRepository.AddRepositoryItem(MRI);
             // Now we get again all MRIs and want to see that new MRI is included  -checking the list cache
             ObservableList<MyRepositoryItem> MRIs2 = mSolutionRepository.GetAllRepositoryItems<MyRepositoryItem>();
-            MyRepositoryItem MRx = (from x in MRIs2 where x.Guid == MRI.Guid select x).FirstOrDefault();
+            MyRepositoryItem MRx = (from x in MRIs2 where x.Guid == MRI.Guid select x).SingleOrDefault();
 
             //Assert
             Assert.AreEqual(MRI, MRx);
@@ -513,15 +513,18 @@ namespace GingerCoreCommonTest.Repository
         [TestMethod]
         public void ValidateInvlidCharsinFilename()
         {
-            //Arrange
-            MyRepositoryItem MRI = new MyRepositoryItem("MRI with invalid char for file name ???");
+            // This behaviour is different on Windows and Linux - some chars are allowed on Linux for example '?' 
+
+            //Arrange            
+            string invalidPathChars = "?";
+            MyRepositoryItem MRI = new MyRepositoryItem("MRI with invalid char for file name " + invalidPathChars);
 
             //Act
             mSolutionRepository.AddRepositoryItem(MRI);
 
             //Assert            
             Assert.IsTrue(File.Exists(MRI.FilePath));
-            Assert.IsFalse(MRI.FilePath.Contains("?"));
+            Assert.IsFalse(MRI.FilePath.Contains(invalidPathChars));
         }
 
 

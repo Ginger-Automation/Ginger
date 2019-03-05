@@ -74,15 +74,33 @@ namespace GingerTest.POMs.Common
                             checkbox = General.GetVisualChild<CheckBox>(cell);
                         }
 
-                        if (checkbox.IsChecked == true)
-                        {
-                            checkbox.IsChecked = false;
-                        }
-                        else
-                        {
-                            checkbox.IsChecked = true;
-                        }
+                        checkbox.IsChecked = !checkbox.IsChecked;
                     });
+                }
+            }
+        }
+
+        public void ReOrderGridRows(string fieldToSearchOnHeader, string fieldValueToSearch, int newIndex)
+        {
+            foreach (var item in mGrid.DataSourceList)
+            {
+                string actualFieldName = item.GetType().GetProperty(fieldToSearchOnHeader).GetValue(item).ToString();
+                if (actualFieldName == fieldValueToSearch)
+                {
+                    Execute(() =>
+                    {
+                        mGrid.Grid.SelectedItem = item;
+                        mGrid.ScrollToViewCurrentItem();
+                    });
+
+                    Execute(() =>
+                    {
+                        int currentIndex = mGrid.Grid.Items.IndexOf(item);
+                        mGrid.DataSourceList.Move(currentIndex, newIndex);
+                        mGrid.ScrollToViewCurrentItem();
+                    });
+
+                    break;
                 }
             }
         }

@@ -57,7 +57,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.WindowsAutomation; // just a dummy driver not really for use
  
-            mGR.SolutionAgents = new ObservableList<IAgent>();
+            mGR.SolutionAgents = new ObservableList<Agent>();
             mGR.SolutionAgents.Add(a);
             
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "App1", Agent = a });
@@ -156,7 +156,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             ActDummy act4 = new ActDummy() { Description = "A2", Active = true };
             a1.Acts.Add(act4);
-            //Act            
+            //Act           
+            mGR.ResetRunnerExecutionDetails();
             mGR.RunRunner();
 
             //Assert

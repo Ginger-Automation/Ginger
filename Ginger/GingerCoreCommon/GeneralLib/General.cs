@@ -28,7 +28,7 @@ using System.Linq;
 namespace Amdocs.Ginger.Common.GeneralLib
 {
     public static class General
-    {      
+    {
 
 
         public static string LocalUserApplicationDataFolderPath
@@ -63,7 +63,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
-        
+
 
         /// <summary>
         /// Should use the function temporary till solution will be implemented for VE fields search
@@ -78,7 +78,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 fieldName == "ObjFolderName" || fieldName == "ContainingFolder" || fieldName == "ContainingFolderFullPath" ||
                 fieldName == "ActInputValues" || fieldName == "ActReturnValues" || fieldName == "ActFlowControls" ||
                 fieldName == "ScreenShots" ||
-                fieldName == "ListStringValue" || fieldName == "ListDynamicValue")
+                fieldName == "ListStringValue" || fieldName == "ListDynamicValue" || fieldName == "ValueExpression")
             {
                 return true;
             }
@@ -101,6 +101,19 @@ namespace Amdocs.Ginger.Common.GeneralLib
             {
                 return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
             }
+        }        
+
+        public static Tuple<int, int> GetImageHeightWidth(string path)
+        {
+            Tuple<int, int> a;
+            using (Stream stream = File.OpenRead(path))
+            {
+                using (System.Drawing.Image sourceImage = System.Drawing.Image.FromStream(stream, false, false))
+                {
+                    a = new Tuple<int, int>(sourceImage.Width, sourceImage.Height);
+                }
+            }
+            return a;
         }
 
 
@@ -206,8 +219,23 @@ namespace Amdocs.Ginger.Common.GeneralLib
             foreach (FileInfo file in di.GetFiles())
                 file.Delete();
             foreach (DirectoryInfo dir in di.GetDirectories())
+            {
                 dir.Delete(true);
+            }
         }
 
+        public static string RemoveInvalidFileNameChars(string fileName)
+        {
+            foreach (char invalidChar in Path.GetInvalidFileNameChars())
+            {
+                fileName = fileName.Replace(invalidChar.ToString(), "");
+            }
+            fileName = fileName.Replace(@".", "");
+            fileName = fileName.Replace(@"?", "");  // on Linux it is valid but we do not want it
+            // !!!!!!!!!!!!!!!!!
+            //TODO: add more chars remove - see https://blog.josephscott.org/2007/02/12/things-that-shouldnt-be-in-file-names-for-1000-alex/
+
+            return fileName;
+        }
     }
 }

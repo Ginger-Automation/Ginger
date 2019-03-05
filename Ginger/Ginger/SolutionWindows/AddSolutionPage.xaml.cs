@@ -106,12 +106,13 @@ namespace Ginger.SolutionWindows
                 
                 App.SetSolution(mSolution.Folder);
 
-                //Create default items
+                //Create default items                
                 AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);                
                 App.UpdateApplicationsAgentsMapping();
                 AddDefaultDataSource();
                 AddDeafultReportTemplate();
                 AutomatePage.CreateDefaultEnvironment();
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(App.GetNewBusinessFlow("Flow 1", true));
 
                 //show success message to user
                 Mouse.OverrideCursor = null;
@@ -127,7 +128,7 @@ namespace Ginger.SolutionWindows
 
         private void AddDeafultReportTemplate()
         {
-            HTMLReportConfiguration r =  HTMLReportTemplatePage.SetHTMLReportConfigurationWithDefaultValues("Default");
+            HTMLReportConfiguration r = HTMLReportConfiguration.SetHTMLReportConfigurationWithDefaultValues("Default");
             r.Name = "Default";
             r.IsDefault = true;
                         

@@ -47,6 +47,7 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -109,10 +110,13 @@ namespace Ginger
         {
             InitializeComponent();
 
-            if (App.BusinessFlow == null) //Not supposed to happen because now Automate is done from BF itself           
+            if (App.BusinessFlow == null)          
             {
-                App.SetDefaultBusinessFlow();
+                //App.SetDefaultBusinessFlow();
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Failed to find {0} to load into Automate page.", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)));
+                return;
             }
+
             AddRunnerListeners();
             //Ribbon
             btnRunActivity.Label = "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity);
@@ -456,6 +460,7 @@ namespace Ginger
                 }
                 App.UpdateApplicationsAgentsMapping();
                 BindEnvsCombo();
+                AddRunnerListeners();
             }
         }
 
@@ -813,6 +818,7 @@ namespace Ginger
         {
             if (e.PropertyName == nameof(App.BusinessFlow))
             {
+                StopAutomateRun();
                 SetExpanders();
                 SetGherkinOptions();
             }
@@ -860,10 +866,9 @@ namespace Ginger
         private void btnActionConversion_Click(object sender, RoutedEventArgs e)
         {
             AutoLogProxy.UserOperationStart("btnConversionMechanism_Click");
-            ActionConverterPage gtb = new ActionConverterPage(App.BusinessFlow);
-            // combine in the abover constructor
-            gtb.Init( WorkSpace.UserProfile.Solution, App.BusinessFlow);
-            gtb.ShowAsWindow();
+            
+
+            WizardWindow.ShowWizard(new ActionsConversionWizard(), 900, 700);
             AutoLogProxy.UserOperationEnd();
         }
 
@@ -979,6 +984,7 @@ namespace Ginger
                 SetAutomateTabRunnerForExecution();
 
                 mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
+                
                 RunActivity();
                 AutoLogProxy.UserOperationEnd();
             }
@@ -997,8 +1003,8 @@ namespace Ginger
         {
             App.AutomateTabGingerRunner.ProjEnvironment = App.AutomateTabEnvironment;
             App.AutomateTabGingerRunner.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
-            App.AutomateTabGingerRunner.DSList = new ObservableList<DataSourceBase>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().ListItems.ConvertAll(x => (DataSourceBase)x).ToList());
-            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<IAgent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x).ToList());
+            App.AutomateTabGingerRunner.DSList = new ObservableList<DataSourceBase>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<Agent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>());
             App.AutomateTabGingerRunner.SolutionApplications =  WorkSpace.UserProfile.Solution.ApplicationPlatforms;
 
             SetGingerRunnerSpeed();
@@ -1124,8 +1130,9 @@ namespace Ginger
 
             //execute preparations
             SetAutomateTabRunnerForExecution();
-            App.AutomateTabGingerRunner.ResetRunnerExecutionDetails(true);
+            App.AutomateTabGingerRunner.ResetRunnerExecutionDetails();
             mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
+            
         }
 
         private void EnableDisableAutomateTabGrids(bool enableGrids)
@@ -1443,7 +1450,7 @@ namespace Ginger
         {
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
             bfs.Add(App.BusinessFlow);
-            ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false,  WorkSpace.UserProfile.Solution.Variables));
+            ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
             ExportResultsToALMConfigPage.Instance.ShowAsWindow();
         }
 

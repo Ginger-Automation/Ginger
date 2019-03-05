@@ -24,6 +24,7 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
+using GingerCoreNET.RosLynLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -120,8 +121,7 @@ namespace GingerCore
         public bool DecryptFlag { get; set; } = false;
         private string mValueCalculated = null;
 
-        ObservableList<VariableBase> mSolutionVariables = null;
-
+        
         public string Value { get; set; }
 
         public string ValueCalculated
@@ -145,7 +145,7 @@ namespace GingerCore
             return Value;
         }
 
-        public ValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null)
+        public ValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true)
         {
             this.Env = Env;
             this.BF = BF;
@@ -153,7 +153,6 @@ namespace GingerCore
             this.bUpdate = bUpdate;
             this.updateValue = UpdateValue;
             this.bDone = bDone;
-            mSolutionVariables = solutionVariables;
         }
 
         /// <summary>
@@ -191,11 +190,28 @@ namespace GingerCore
             ReplaceDataSources();
 
             CalculateFunctions();
-
+            EvaluateCSharpFunctions();
             if (!string.IsNullOrEmpty(SolutionFolder))
+
+            if (WorkSpace.Instance != null && WorkSpace.Instance.SolutionRepository != null)
             {
-                mValueCalculated = mValueCalculated.Replace(@"~\", SolutionFolder);
+                mValueCalculated = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mValueCalculated);
             }
+            else if (!string.IsNullOrWhiteSpace(SolutionFolder))
+                {
+                    if (mValueCalculated.StartsWith("~"))
+                    {
+                        mValueCalculated = mValueCalculated.TrimStart(new char[] { '~', '\\', '/' });
+                        mValueCalculated = Path.Combine(SolutionFolder, mValueCalculated);
+                    }
+                }
+
+        }
+
+        private void EvaluateCSharpFunctions()
+        {
+            mValueCalculated = CodeProcessor.GetResult(mValueCalculated);
+
 
         }
 
@@ -316,11 +332,12 @@ namespace GingerCore
 
             if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
-                if (DataSource.FileFullPath.StartsWith("~"))
-                {
-                    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
-                    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
-                }
+                //if (DataSource.FileFullPath.StartsWith("~"))
+                //{
+                //    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
+                //    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
+                //}
+                DataSource.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 DataSource.Init(DataSource.FileFullPath);
             }
 
@@ -645,6 +662,7 @@ namespace GingerCore
 
             }
             ProcessGeneralFuncations();
+
         }
 
         private void ProcessGeneralFuncations()
@@ -693,9 +711,14 @@ namespace GingerCore
 
             VariableBase vb = null;
             if (BF != null)
+            {
                 vb = BF.GetHierarchyVariableByName(VarName);
-            else if (mSolutionVariables != null)
-                vb = (from v1 in mSolutionVariables where v1.Name == VarName select v1).FirstOrDefault();
+            }
+            else
+            {
+                vb = (from v1 in WorkSpace.UserProfile.Solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
+            }
+                
             if (vb != null)
             {
                 if (DecryptFlag == true && vb is VariablePasswordString)
@@ -750,14 +773,18 @@ namespace GingerCore
 
         private void ReplaceVBSCalcWithValue(string p, string[] a)
         {
+            bool FailonUnix = false;
             try
             {      
                 string Expr = p.Replace("\r\n", "vbCrLf");
                 Expr = Expr.Substring(1, Expr.Length - 2);
                 Expr = Expr.Replace("VBS Eval=", "");
                 //check whether the Expr contains Split.If yes the take user entered number and decreased it to -1
-                if (p.Contains("{VBS Eval=Split("))
+                if (p.Contains("{VBS Eval"))
                 {
+
+
+                     FailonUnix = true;
                     Expr = DecreaseVBSSplitFunIndexNumber(Expr);
                 }
                 string v = VBS.ExecuteVBSEval(@"" + Expr);
@@ -767,6 +794,12 @@ namespace GingerCore
             {
                 //TODO: err
                 mValueCalculated = mValueCalculated.Replace(p, "ERROR: " + e.Message);
+            }
+            if (FailonUnix && !System.Environment.OSVersion.Platform.ToString().StartsWith("Win"))
+            {
+
+
+                throw new PlatformNotSupportedException("VBS functions are not supported on Unix/Mac systems");
             }
         }
 
@@ -1006,7 +1039,16 @@ namespace GingerCore
             }
 
             string VarValue;
-            VariableBase vb = BF.GetHierarchyVariableByName(VarName);
+            VariableBase vb = null;
+            if (BF != null)
+            {
+                vb = BF.GetHierarchyVariableByName(VarName);
+            }
+            else
+            {
+                vb = (from v1 in WorkSpace.UserProfile.Solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
+            }
+
             if (vb != null)
             {
                 VarValue = vb.Value;

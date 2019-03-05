@@ -28,6 +28,8 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
+
 namespace GingerCore.Actions
 {
     public class ActSwitchWindow : Act, IObsoleteAction
@@ -79,17 +81,20 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
         public Int32 WaitTime
         {
             get
             {
                 string val = GetInputParamValue("WaitTime");
-                Int32 intVal = -1;
-                if (String.IsNullOrEmpty(val))
-                    intVal = -1;
-                else
+                Int32 intVal = 30;
+                if (!String.IsNullOrEmpty(val))
+                {
                     Int32.TryParse(val, out intVal);
+                }
+                if (intVal <= 0)
+                {
+                    intVal = 30;
+                }
                 return intVal;
             }
             set

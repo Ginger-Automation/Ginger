@@ -283,7 +283,10 @@ namespace Ginger.SolutionGeneral
 
         [IsSerializedForLocalRepository]
         public string ALMProject { get; set; }
-
+        [IsSerializedForLocalRepository]
+        public string ALMProjectKey { get; set; }
+        [IsSerializedForLocalRepository]
+        public string ConfigPackageFolderPath { get; set; }
         public void SetReportsConfigurations()
         {
             try {
@@ -344,25 +347,22 @@ namespace Ginger.SolutionGeneral
                     return null;
                 }
             }
-        }
-        
-        [IsSerializedForLocalRepository]
-        public string LastBusinessFlowFileName { get; set; }
+        }       
 
         MRUManager mRecentUsedBusinessFlows;
 
-        public MRUManager RecentlyUsedBusinessFlows
-        {
-            get
-            {
-                if (mRecentUsedBusinessFlows == null)
-                {
-                    mRecentUsedBusinessFlows = new MRUManager();
-                    mRecentUsedBusinessFlows.Init(Path.Combine(Folder, "RecentlyUsed.dat"));
-                }
-                return mRecentUsedBusinessFlows;
-            }
-        }
+        //public MRUManager RecentlyUsedBusinessFlows
+        //{
+        //    get
+        //    {
+        //        if (mRecentUsedBusinessFlows == null)
+        //        {
+        //            mRecentUsedBusinessFlows = new MRUManager();
+        //            mRecentUsedBusinessFlows.Init(Path.Combine(Folder, "RecentlyUsed.dat"));
+        //        }
+        //        return mRecentUsedBusinessFlows;
+        //    }
+        //}
 
         // Need to be tree view
         public override string GetNameForFileName() { return Name; }

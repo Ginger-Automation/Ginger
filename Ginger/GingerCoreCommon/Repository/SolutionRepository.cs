@@ -215,23 +215,21 @@ namespace Amdocs.Ginger.Repository
         public RepositoryFolderBase GetRepositoryFolderByPath(string folderPath)
         {
             RepositoryFolderBase repoFolder = null;
+            var inputURI = new Uri(folderPath+"\\"); // path must end with slash for isBaseOf to work correctly
             Parallel.ForEach(mSolutionRootFolders, folder =>
             {
-
-                if (repoFolder == null)
-                {
-                    if (Path.GetFullPath(folderPath) == Path.GetFullPath(folder.FolderFullPath))
-                    {
-                        repoFolder = folder;                        
-                    }
-                    else if (Path.GetFullPath(folderPath).ToLower().Contains(Path.GetFullPath(folder.FolderFullPath).ToLower()))
-                    {
-                        Uri fullPath = new Uri(folderPath, UriKind.Absolute);
-                        Uri relRoot = new Uri(SolutionFolder, UriKind.Absolute);
-                        string relPath = "~\\" + Uri.UnescapeDataString(relRoot.MakeRelativeUri(fullPath).ToString().Replace("/", "\\"));
-                        repoFolder = folder.GetSubFolderByName(relPath, true);
-                    }
-                }
+                 if (repoFolder == null)
+                 {
+                     if (Path.GetFullPath(folderPath) == Path.GetFullPath(folder.FolderFullPath))
+                     {
+                         repoFolder = folder;
+                     }
+                     else if (new Uri(folder.FolderFullPath+"\\").IsBaseOf(inputURI))
+                     {
+                         string relPath = "~" + folderPath.Replace(SolutionFolder, "");
+                         repoFolder = folder.GetSubFolderByName(relPath, true);
+                     }
+                 }
             });
             return repoFolder;
         }
@@ -362,6 +360,36 @@ namespace Amdocs.Ginger.Repository
                 }
             }
             return FullPath;
+        }
+
+        /// <summary>
+        /// Convert Solution Relative Path to Full path
+        /// </summary>
+        /// <param name="relativePath">Path like "~\Documents\Scripts\aa.vbs"</param>
+        /// <returns></returns>
+        public string ConvertSolutionRelativePath(string relativePath)
+        {
+            if (relativePath.TrimStart().StartsWith("~"))
+            {
+                string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
+                fullPath = Path.Combine(mSolutionFolderPath, fullPath);
+                return fullPath;
+            }
+            else
+            {
+                return relativePath;
+            }
+        }
+
+        /// <summary>
+        /// Converts path of file inside the Solution to be relative
+        /// </summary>
+        /// <param name="fullPath"></param>
+        /// <returns></returns>
+        public string ConvertFullPathToBeRelative(string fullPath)
+        {
+            string relative = fullPath.ToLower().Replace(mSolutionFolderPath.ToLower(), cSolutionRootFolderSign);            
+            return relative;
         }
 
         /// <summary>
@@ -552,15 +580,8 @@ namespace Amdocs.Ginger.Repository
                     fileFolderPath = Path.Combine(A, B);
                 }
 
-                //FILE
-                string fileName = name;
-                //Removing all possible invalid path chars and checking the file name length is legal (<= 255)                      
-                foreach (char invalidChar in Path.GetInvalidFileNameChars())
-                {
-                    fileName = fileName.Replace(invalidChar.ToString(), "");
-                }
-                fileName = fileName.Replace(@".", "");
-                
+                string fileName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(name);
+                                
                 string fullName = v.Pattern.Replace("*", fileName);
 
 
@@ -655,7 +676,7 @@ namespace Amdocs.Ginger.Repository
             if (RF != null && targetRF != null)
             {
                 RF.DeleteRepositoryItem(repositoryItem);
-                targetRF.AddRepositoryItem(repositoryItem);                              
+                targetRF.AddRepositoryItem(repositoryItem);
             }
             else
             {
@@ -672,20 +693,20 @@ namespace Amdocs.Ginger.Repository
         {
             if (repositoryItem.FileName != null && File.Exists(repositoryItem.FileName))
             {
-                RepositoryFolderBase repostitoryFolder = GetItemRepositoryFolder(repositoryItem);
+                RepositoryFolderBase repostitoryRootFolder = GetItemRepositoryRootFolder(repositoryItem);
                 
-                string targetPath=Path.Combine(repostitoryFolder.FolderFullPath, "PrevVersions");
+                string targetPath=Path.Combine(repostitoryRootFolder.FolderFullPath, "PrevVersions");
                 if (!Directory.Exists(targetPath))
                 {
-                    repostitoryFolder.PauseFileWatcher();
+                    repostitoryRootFolder.PauseFileWatcher();
                     //We do not want to file watcher track PrevVersions Folder. So creating it explicity using Create directory
                     Directory.CreateDirectory(targetPath);
-                    repostitoryFolder.ResumeFileWatcher();
+                    repostitoryRootFolder.ResumeFileWatcher();
                 }
                             
                 string dts = DateTime.Now.ToString("yyyyMMddHHmm");
               
-                string targetFileName = Path.GetFileName(repositoryItem.FileName)+"." + dts + "." + repositoryItem.ObjFileExt;
+                string targetFileName = repositoryItem.ItemName +"." + dts + "." + repositoryItem.ObjFileExt+".xml";
 
                 targetFileName = Path.Combine(targetPath, targetFileName);
 
@@ -701,8 +722,9 @@ namespace Amdocs.Ginger.Repository
                         File.Delete(targetFileName);
                     }
                     //We want to delete the item and remove it from cache. So first we copy it to destination and then delete using Repository Folder.
-                    File.Copy(repositoryItem.FileName, targetFileName);                   
-                    repostitoryFolder.DeleteRepositoryItem(repositoryItem);
+                    File.Copy(repositoryItem.FileName, targetFileName);
+                    RepositoryFolderBase repositoryFolder = GetItemRepositoryFolder(repositoryItem);
+                    repositoryFolder.DeleteRepositoryItem(repositoryItem);
 
                 }
                 catch (IOException ex)

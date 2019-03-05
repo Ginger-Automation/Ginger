@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -61,16 +62,14 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
             // TODO: create a simple plugin for unit test which will download faster.
 
-            string PluginId = "PACT";
-            string PluginVersion = "1.6";
+            string PluginId = "PACT";            
             string path = TestResources.GetTestTempFolder(@"Solutions\PluginsManagerSR1");
             if (Directory.Exists(path))
             {
                 Directory.Delete(path, true);
             }
 
-            SolutionRepository solutionRepository = new SolutionRepository();
-            solutionRepository.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", PropertyNameForFileName: nameof(PluginPackage.PluginId));
+            SolutionRepository solutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             solutionRepository.CreateRepository(path);
             solutionRepository.Open(path);            
             

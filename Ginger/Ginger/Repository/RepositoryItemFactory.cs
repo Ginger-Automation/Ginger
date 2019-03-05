@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.AnalyzerLib;
 using Ginger.GeneralLib;
@@ -83,9 +84,9 @@ namespace Ginger.Repository
             return new ValueExpression(mProjEnvironment, mBusinessFlow, (ObservableList<GingerCore.DataSource.DataSourceBase>)DSList);
         }
 
-        public IValueExpression CreateValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null)
+        public IValueExpression CreateValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true)
         {
-            return new ValueExpression(Env, BF, (ObservableList<GingerCore.DataSource.DataSourceBase>)DSList, bUpdate, UpdateValue, bDone, solutionVariables);            
+            return new ValueExpression(Env, BF, (ObservableList<GingerCore.DataSource.DataSourceBase>)DSList, bUpdate, UpdateValue, bDone);            
         }
 
         public IValueExpression CreateValueExpression(object obj, string attr)
@@ -95,21 +96,21 @@ namespace Ginger.Repository
 
 
  
-        public ObservableList<IDatabase> GetDatabaseList()
-        {
-            return new ObservableList<IDatabase>();
-        }
+        //public ObservableList<IDatabase> GetDatabaseList()
+        //{
+        //    return new ObservableList<IDatabase>();
+        //}
 
-        public ObservableList<DataSourceBase> GetDatasourceList()
-        {
-            return new ObservableList<DataSourceBase>();
-        }
+        //public ObservableList<DataSourceBase> GetDatasourceList()
+        //{
+        //    return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+        //}
 
 
-        public ObservableList<IAgent> GetAllIAgents()
-        {
-            return new ObservableList<IAgent>( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x));
-        }
+        //public ObservableList<IAgent> GetAllIAgents()
+        //{
+        //    return new ObservableList<IAgent>( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x));
+        //}
   
         public void StartAgentDriver(IAgent agent)
         {
@@ -158,17 +159,14 @@ namespace Ginger.Repository
                             case eDriverType.SeleniumEdge:
                                 Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Edge);
                                 break;
-                            case eDriverType.SeleniumPhantomJS:
-                                Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.PhantomJS);
-                                break;
-                            case eDriverType.ASCF:                                
+                            case eDriverType.ASCF:
                                 Driver = new ASCFDriver(BusinessFlow, zAgent.Name);
                                 break;
-                            case eDriverType.DOSConsole:                                
+                            case eDriverType.DOSConsole:
                                 Driver = new DOSConsoleDriver(BusinessFlow);
                                 break;
-                            case eDriverType.UnixShell:                                
-                                 Driver = new UnixShellDriver(BusinessFlow, ProjEnvironment);
+                            case eDriverType.UnixShell:
+                                Driver = new UnixShellDriver(BusinessFlow, ProjEnvironment);
                                 ((UnixShellDriver)Driver).SetScriptsFolder(System.IO.Path.Combine(zAgent.SolutionFolder, @"Documents\sh\"));
                                 break;
                             case eDriverType.MobileAppiumAndroid:
@@ -229,13 +227,17 @@ namespace Ginger.Repository
                                     throw new Exception("Please set device config folder");
                                 }
                                 break;
-                                //TODO: default mess
+                            default:
+                                {
+                                    throw new Exception("Matching Driver was not found.");
+                                }
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, zAgent.Name, e.Message);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to set Agent Driver", e);
+                    return;
                 }
 
                 if (zAgent.AgentType == eAgentType.Service)
@@ -271,18 +273,19 @@ namespace Ginger.Repository
                 }
                 else
                 {
-                    // Give the driver time to start            
-                    Thread.Sleep(500);
+                    if (Driver != null)
+                    {
+                        // Give the driver time to start            
+                        Thread.Sleep(500);
+                        Driver.IsDriverRunning = true;
+                        Driver.driverMessageEventHandler += zAgent.driverMessageEventHandler;
+                    }
+
                     zAgent.mIsStarting = false;
-                    Driver.IsDriverRunning = true;
                     zAgent.OnPropertyChanged(Fields.Status);
-                    Driver.driverMessageEventHandler += zAgent.driverMessageEventHandler;
                     zAgent.OnPropertyChanged(Fields.IsWindowExplorerSupportReady);
                 }
             }
-
-
-            //return Driver;
         }
 
         public Type GetDriverType(IAgent agent)
@@ -302,9 +305,7 @@ namespace Ginger.Repository
                 case Agent.eDriverType.SeleniumRemoteWebDriver:
                     return (typeof(SeleniumDriver));                    
                 case Agent.eDriverType.SeleniumEdge:
-                    return (typeof(SeleniumDriver));                    
-                case Agent.eDriverType.SeleniumPhantomJS:
-                    return (typeof(SeleniumDriver));                    
+                    return (typeof(SeleniumDriver));                                     
                 case Agent.eDriverType.ASCF:
                     return (typeof(ASCFDriver));                    
                 case Agent.eDriverType.DOSConsole:
@@ -341,16 +342,9 @@ namespace Ginger.Repository
                     
             }
         }
+        
 
-        public ObservableList<VariableBase> GetVariaables()
-        {
-            return  WorkSpace.UserProfile.Solution.Variables;
-        }
-
-        public Type GetPage(string a)
-        {
-            throw new NotImplementedException();
-        }
+    
 
         public async Task<int> AnalyzeRunset(object a, bool runInSilentMode)
         {
@@ -760,12 +754,12 @@ namespace Ginger.Repository
             return true;
         }
 
-        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening)
+        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
         {
             Dictionary<Guid, string> defectsOpeningResults;
             if ((defectsForOpening != null) && (defectsForOpening.Count > 0))
             {
-                defectsOpeningResults = ALMIntegration.Instance.CreateNewALMDefects(defectsForOpening);
+                defectsOpeningResults = ALMIntegration.Instance.CreateNewALMDefects(defectsForOpening, defectsFields);
             }
             else
                 return;
@@ -782,7 +776,7 @@ namespace Ginger.Repository
             }
         }
 
-        public void HTMLReportAttachment(string extraInformationCalculated, string emailReadyHtml, string reportsResultFolder, string runSetFolder, object Report, object conf)
+        public void HTMLReportAttachment(string extraInformationCalculated, ref string emailReadyHtml, ref string reportsResultFolder, string runSetFolder, object Report, object conf)
         {
             EmailHtmlReportAttachment rReport = (EmailHtmlReportAttachment)Report;
             HTMLReportsConfiguration currentConf = (HTMLReportsConfiguration)conf;
@@ -851,7 +845,8 @@ namespace Ginger.Repository
         {
             //TODO: Remove from here and execute it in actual RunSetActionScript.cs (Not perticularly tested)
             ActScript act = new ActScript();
-            string FileName = ScriptFileName.Replace(@"~\", SolutionFolder);
+            //string FileName = ScriptFileName.Replace(@"~\", SolutionFolder);
+            string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScriptFileName);
 
             Ginger.Run.RunSetActions.RunSetActionScript actionScript = new RunSetActionScript();
             actionScript.VerifySolutionFloder(SolutionFolder, FileName);

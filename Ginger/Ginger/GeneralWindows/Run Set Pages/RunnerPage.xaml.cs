@@ -549,10 +549,15 @@ namespace Ginger.Run
 
         private void xRunRunnerBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (mRunner.BusinessFlows.Count <= 0)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one Business Flow to '" + mRunner.Name + "' to start run.");
+                return;
+            }
             RunRunner();
         }
         public async void RunRunner()
-        {            
+        {
             if (mRunner.IsRunning)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Runner is already running.");
@@ -562,7 +567,6 @@ namespace Ginger.Run
             mRunner.ResetRunnerExecutionDetails();
             App.RunsetExecutor.ConfigureRunnerForExecution(mRunner);
             await mRunner.RunRunnerAsync();
-
             GingerCore.General.DoEvents();   //needed?                 
         }
         public void UpdateRunnerInfo()

@@ -27,7 +27,7 @@
                 <UserControls:ImageMakerControl x:Name="xMessageImage" Grid.Column="0" ImageType="Info" Width="32" Height="32"/>
                 <TextBlock x:Name="xMessageTextBlock" Grid.Column="1" Style="{StaticResource $DetailsTextBlockStyle}"
                    Text="Message Text Can be also long text - no issue and is really fun aaaa bbbb"                    
-                   VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                   VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,20,0"/>
             </Grid>
 
             <Border Grid.Row="1" BorderBrush="LightGray" BorderThickness="1">

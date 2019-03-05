@@ -284,8 +284,35 @@ namespace GingerCore.Actions
         public string LocateRowType { get; set; }
         //[IsSerializedForLocalRepository]
         public string LocateRowValue { get; set; }
-        public string ExcelPath { get; set; }
-        public string ExcelSheetName { get; set; }
+
+        string mExcelPath;
+        public string ExcelPath
+        {
+            get { return mExcelPath;  }
+            set {
+
+                if (mExcelPath != value)
+                {
+                    mExcelPath = value;
+                    OnPropertyChanged(nameof(ExcelPath)); 
+                }
+            }
+        }
+
+        string mExcelSheetName;
+        public string ExcelSheetName
+        {
+            get { return mExcelSheetName; }
+            set
+            {
+
+                if (mExcelSheetName != value)
+                {
+                    mExcelSheetName = value;
+                    OnPropertyChanged(nameof(ExcelSheetName));
+                }
+            }
+        }
 
         public ObservableList<ActDSConditon> ActDSConditions
         {

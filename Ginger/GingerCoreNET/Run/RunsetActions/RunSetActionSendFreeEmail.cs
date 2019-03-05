@@ -10,6 +10,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
+using GingerCore;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -31,14 +32,14 @@ namespace Ginger.Run.RunSetActions
         [IsSerializedForLocalRepository]
         public Email Email = new Email();
 
-        IValueExpression mValueExpression = null;
-        IValueExpression mVE
+        ValueExpression mValueExpression = null;
+        ValueExpression mVE
         {
             get
             {
                 if (mValueExpression == null)
                 {
-                    mValueExpression = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, RepositoryItemHelper.RepositoryItemFactory.GetVariaables());
+                    mValueExpression = new ValueExpression(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
                 }
                 return mValueExpression;
             }

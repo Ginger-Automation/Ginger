@@ -73,7 +73,7 @@
     <Reference Include="AjaxMin">
       <HintPath>..\packages\AjaxMin.5.14.5506.26202\lib\net40\AjaxMin.dll</HintPath>
     </Reference>
-    <Reference Include="ALMRepository, Version=7.7.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="ALMRepository, Version=8.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\ALMRepository.dll</HintPath>
     </Reference>
@@ -158,6 +158,9 @@
     <Reference Include="Ionic.Zip, Version=1.9.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Eyes.Images.1.18.0\lib\net35\Ionic.Zip.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="JiraRepository">
+      <HintPath>DLLs\JiraRepository.dll</HintPath>
     </Reference>
     <Reference Include="LibGit2Sharp, Version=0.24.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -505,7 +508,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\ActionConversion\ActionConversionHandler.cs" />
     <Compile Include="Actions\RobotFramework\ActRobot.cs" />
     <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
     <Compile Include="Actions\VisualTesting\VisualCompareAnalyzerIntegration.cs" />
@@ -520,11 +522,8 @@
     <Compile Include="Actions\JSON\ActJSONTagValidation.cs" />
     <Compile Include="Actions\VisualTesting\ApplitoolsAnalyzer.cs" />
     <Compile Include="Actions\VisualTesting\IVisualAnalyzer.cs" />
-    <Compile Include="Actions\VisualTesting\IVisualTestingDriver.cs" />
     <Compile Include="Actions\VisualTesting\MagickAnalyzer.cs" />
     <Compile Include="Actions\VisualTesting\UIElementsAnalyzer.cs" />
-    <Compile Include="Actions\VisualTesting\VisualElement.cs" />
-    <Compile Include="Actions\VisualTesting\VisualElementsInfo.cs" />
     <Compile Include="Actions\WebServices\ActSoapUI.cs" />
     <Compile Include="Actions\ActFileOperations.cs" />
     <Compile Include="Actions\ActReadTextFile.cs" />
@@ -536,7 +535,6 @@
     <Compile Include="Actions\ActGetMsgboxText.cs" />
     <Compile Include="Actions\ActButton.cs" />
     <Compile Include="Actions\ActCheckbox.cs" />
-    <Compile Include="Actions\ActClearAllVariables.cs" />
     <Compile Include="Actions\ActFileTransfer.cs" />
     <Compile Include="Actions\ActConsoleCommand.cs" />
     <Compile Include="Actions\ActDBValidation.cs" />
@@ -577,7 +575,6 @@
     <Compile Include="Actions\Android\ActShell.cs" />
     <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
     <Compile Include="Actions\Common\ActUIElement.cs" />
-    <Compile Include="Actions\Common\IObsoleteAction.cs" />
     <Compile Include="Actions\Common\UIElementPropertyValueLocator.cs" />
     <Compile Include="Actions\Communication\ActeMail.cs" />
     <Compile Include="Actions\ActBrowserElement.cs" />
@@ -623,6 +620,14 @@
     <Compile Include="Actions\XML\XMLProcessor.cs" />
     <Compile Include="ALM\ALMConfig.cs" />
     <Compile Include="ALM\ALMCore.cs" />
+    <Compile Include="ALM\JiraCore.cs" />
+    <Compile Include="ALM\JIRA\Bll\JiraExportManager.cs" />
+    <Compile Include="ALM\JIRA\Data Contracts\TestRunData.cs" />
+    <Compile Include="ALM\JIRA\Bll\JiraImportManager.cs" />
+    <Compile Include="ALM\JIRA\JiraTestSet.cs" />
+    <Compile Include="ALM\JIRA\JiraTest.cs" />
+    <Compile Include="ALM\JIRA\JiraTestParameter.cs" />
+    <Compile Include="ALM\JIRA\JiraTestStep.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
     <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />
     <Compile Include="ALM\QCRestAPI\ImportFromQCRest.cs" />
@@ -658,6 +663,7 @@
     <Compile Include="ALM\RQM\RQMFieldsMappingConfig.cs" />
     <Compile Include="ALM\RQM\RQMTestPlan.cs" />
     <Compile Include="ALM\RQM\RQMConnect.cs" />
+    <Compile Include="ALM\JIRA\Bll\JiraConnectManager.cs" />
     <Compile Include="DataSource\ActDSTableElement.cs" />
     <Compile Include="DataSource\ActDSConditon.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
@@ -908,6 +914,10 @@
     <Content Include="DLLs\RQM_Repository.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="ALM\JIRA\JiraSettings\Export\test.json" />
+    <None Include="ALM\JIRA\JiraSettings\Export\testexecution.json" />
+    <None Include="ALM\JIRA\JiraSettings\Export\testset.json" />
+    <None Include="ALM\JIRA\JiraSettings\JiraSettings.json" />
     <None Include="GingerCore.ruleset" />
     <None Include="RallyRestAPI.NET.shfbproj" />
     <None Include="Resources\%40EmptyStart_16x16.gif" />
@@ -974,6 +984,7 @@
     <None Include="Resources\Pin32x32.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Actions\ActionConversion\" />
     <Folder Include="Actions\PlugIns\" />
     <Folder Include="Actions\Simulators\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\CCM\fa1qm1\" />
@@ -1156,6 +1167,10 @@
       <Project>{6FACD2AB-8747-473B-AF43-5B6691775F62}</Project>
       <Name>GingerCoreNET</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj">
+      <Project>{67ecc7f4-78d3-4260-bbe1-20688942c6d1}</Project>
+      <Name>GingerPluginCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GingerPlugIns\GingerPlugIns.csproj">
       <Project>{d5329d81-7ff0-4af1-b186-a2fd65ef0583}</Project>
       <Name>GingerPlugIns</Name>
@@ -1171,6 +1186,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+    <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
     <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.165\build\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.1.0.165\build\LibGit2Sharp.NativeBinaries.props'))" />
     <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
     <Error Condition="!Exists('..\packages\SQLite.3.13.0\build\net45\SQLite.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SQLite.3.13.0\build\net45\SQLite.props'))" />

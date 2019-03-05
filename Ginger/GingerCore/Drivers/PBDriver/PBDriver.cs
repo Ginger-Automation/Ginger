@@ -998,6 +998,11 @@ namespace GingerCore.Drivers.PBDriver
             return GetControlFromMousePosition();           
         }
 
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        {
+            return EI;
+        }
+
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)
         {
             return GetElementProperties(ElementInfo);         
@@ -1081,6 +1086,21 @@ namespace GingerCore.Drivers.PBDriver
             {
                 Thread.Sleep(1000);
             }
+        }
+
+        public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartSpying()
+        {
+            throw new NotImplementedException();
         }
     }
 }

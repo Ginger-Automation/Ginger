@@ -169,8 +169,15 @@ namespace GingerCore
                 // Get the combo to be sorted
                 comboBox.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("text", System.ComponentModel.ListSortDirection.Ascending));
             }
-            
-            comboBox.SelectedItem = EnumObj;
+
+            //if ((values == null) && (valuesCollView != null))
+            //{
+                comboBox.SelectedItem = EnumObj;
+            //}
+            //else
+            //{
+            //    comboBox.SelectedValue = EnumObj;
+            //}
         }
 
         public static void FillComboFromEnumType(ComboBox comboBox, Type Etype, List<object> values = null)
@@ -1110,11 +1117,13 @@ namespace GingerCore
 
             if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
-                if (DataSource.FileFullPath.StartsWith("~"))
-                {
-                    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
-                    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
-                }
+                //if (DataSource.FileFullPath.StartsWith("~"))
+                //{
+                //    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
+                //    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
+                //}
+                DataSource.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
+
                 DataSource.Init(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();
                 foreach (DataSourceTable dst in dsTables)

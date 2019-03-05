@@ -3,12 +3,13 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"      
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:Ginger="clr-namespace:Ginger"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="800"
 	Title="RunSetActionGenerateTestNGReportEditPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         
         <StackPanel>
             <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Target TestNG Report Folder:</Label>
@@ -30,8 +31,19 @@
                         </RadioButton.Content>
                     </RadioButton>
                 </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <CheckBox x:Name="xUseDynamicParameters" Content="Use Dynamic Parameters" Style="{StaticResource @CheckBoxStyle}" Margin="5,5,5,0" VerticalAlignment="Center" Checked="useDynamicParameters_Checked" Unchecked="useDynamicParameters_Checked"/>
+                    <DockPanel x:Name="dynamicParametersPnl"  HorizontalAlignment="Stretch" Visibility="Collapsed" Margin="5,10,0,0" MinWidth="300" MinHeight="120">
+                        <Ginger:ucGrid x:Name="grdTestNGReportParameters" DockPanel.Dock="Top" Title="TestNG Report Parameters" ShowEdit="Visible" ShowSearch="Visible" ShowAdd="Visible" ShowClearAll="Visible" ShowDelete="Visible" ShowRefresh="Visible" ShowUpDown="Visible" />
+
+                    </DockPanel>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
-
+        <Grid.Resources>
+            <DataTemplate x:Key="ParamValueExpressionButton">
+                <Button x:Name="ParamsGridVEButton" Content="..." Click="ParamsGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
+        </Grid.Resources>
     </Grid>
 </Page>

@@ -86,6 +86,12 @@ namespace GingerCore.FlowControlLib
         [EnumValueDescription("Set Variable Value")]
         SetVariableValue,
     }
+    public enum eFCOperator
+    {
+        Legacy,
+        [EnumValueDescription("Modern")]
+        CSharp,
+    }
 
     public class FlowControl : RepositoryItemBase
     {        
@@ -158,6 +164,28 @@ namespace GingerCore.FlowControlLib
                 OnPropertyChanged(Fields.Value);
             }
         }
+
+
+        private eFCOperator? mOperator;
+        [IsSerializedForLocalRepository]
+        public eFCOperator Operator
+        {
+            get
+            {
+                if (mOperator == null)
+                {
+                    return eFCOperator.Legacy;
+                }
+
+                return mOperator.Value;
+            }
+
+            set
+            {
+                mOperator = value;
+            }
+        }
+
 
         private string mValueCalculated { get; set; }
         public string ValueCalculated

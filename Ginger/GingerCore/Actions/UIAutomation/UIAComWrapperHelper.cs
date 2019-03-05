@@ -36,7 +36,7 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 
 // a lot of samples from Microsoft on UIA at: https://uiautomationverify.svn.codeplex.com/svn/UIAVerify/
-// DO NOT add any specific driver here, this is generic windows app driver helper
+// DO NOT add any specific driver here, this is generic windows app driver helper 
 
 namespace GingerCore.Drivers
 {
@@ -434,6 +434,11 @@ namespace GingerCore.Drivers
                         {
                             continue;
                         }
+                        if(CheckUserSpecificProcess(window) == false)
+                        {
+                            continue;
+                        }
+
                         //list All Windows except PB windows - FNW
 
                         if (!window.Current.ClassName.StartsWith("FNW"))
@@ -476,7 +481,11 @@ namespace GingerCore.Drivers
 
                     foreach (AutomationElement window in AppWindows)
                     {
-                        if (!IsWindowValid(window))
+                        if (!IsWindowValid(window)) 
+                        {
+                            continue;
+                        }
+                        if (CheckUserSpecificProcess(window) == false)
                         {
                             continue;
                         }
@@ -523,6 +532,19 @@ namespace GingerCore.Drivers
 
             return list;
         }
+        private bool CheckUserSpecificProcess(AutomationElement window)
+        {
+            Process currentProcess = Process.GetProcessById(window.Current.ProcessId);
+            if (currentProcess.StartInfo.Environment["USERNAME"] != Environment.UserName)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+ 
 
         #endregion RECORDING DRIVER
 
@@ -1218,7 +1240,7 @@ namespace GingerCore.Drivers
                             }
                             else
                             {
-                                throw new Exception("Cannot find element '" + value + "[" + index2 + "] Because array contains only " + AEC.Count + " Elements");
+                                Reporter.ToLog(eLogLevel.DEBUG, "Cannot find element" + value + "[" + index2 + "] Because array contains only " + AEC.Count + "Elements");
                             }
                         }
                     }
@@ -1226,7 +1248,7 @@ namespace GingerCore.Drivers
 
                     if (AE == null )
                     {
-                        throw new Exception("Cannot find element, Found path to element at: " + PathOK + " ,But couldn't find next element: " + PathNode);
+                        Reporter.ToLog(eLogLevel.DEBUG, "Cannot find element, Found path to element at:" + PathOK + ",But couldn't find next element:" + PathNode);
                     }
                     else
                     {
@@ -3087,13 +3109,11 @@ namespace GingerCore.Drivers
                             if (vp != null)
                             {
                                 ((ValuePattern)vp).SetValue(value);
-                            }                            
+                            }
                             else
                             {
-                                Reporter.ToLog(eLogLevel.DEBUG, "In Combo Box Exception vp is null::");
-                                throw new Exception("Element doesn't support ValuePattern.Pattern, make sure locator is finding the correct element");
+                                SetCombobValueByUIA(element, value);
                             }
-
                         }
                         break;
 
@@ -3323,6 +3343,40 @@ namespace GingerCore.Drivers
                 throw new Exception("Unable to set value. Value - " + value);
             }
         }
+
+        /// <summary>
+        /// This method is used to select the
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="val"></param>
+        private void SetCombobValueByUIA(AutomationElement element, string val)
+        {
+            try
+            {
+                ExpandCollapsePattern exPat = element.GetCurrentPattern(ExpandCollapsePattern.Pattern)
+                                                                              as ExpandCollapsePattern;
+
+                if (exPat == null)
+                {
+                    throw new ApplicationException("Unable to set value");
+                }
+
+                exPat.Expand();
+
+                AutomationElement itemToSelect = element.FindFirst(TreeScope.Descendants, new
+                                      PropertyCondition(AutomationElement.NameProperty, val));
+
+                SelectionItemPattern sPat = itemToSelect.GetCurrentPattern(
+                                                          SelectionItemPattern.Pattern) as SelectionItemPattern;
+                sPat.Select();
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "In Combo Box Exception vp is null::");
+                throw new Exception("Element doesn't support ValuePattern.Pattern, make sure locator is finding the correct element");
+            }
+        }
+
         private bool ComparePBActualExpected(string actual,string exp)
         {
             return false;
@@ -3589,7 +3643,7 @@ namespace GingerCore.Drivers
                         propValue = element.Current.Name;
                         break;
                     case "Value":
-                        object tempVal = element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
+                        object tempVal = GetControlValue(element);
                         if (tempVal != null)
                             propValue = tempVal.ToString();
                         break;
@@ -3807,10 +3861,10 @@ namespace GingerCore.Drivers
                     }
 
                 }
-                val = (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
+                val = GetElementValueByValuePattern(element);
                 if (String.IsNullOrEmpty(val))
                 {
-                    val = (String)element.GetCurrentPropertyValue(LegacyIAccessiblePatternIdentifiers.ValueProperty);
+                    val = GetElementValueByLegacyIAccessiblePattern(element);
                 }
             }
             catch (Exception ex)
@@ -3829,52 +3883,54 @@ namespace GingerCore.Drivers
         public override String GetControlValue(object obj)
         {
             AutomationElement element = (AutomationElement) obj;
-
             object vp;
             string ControlType = element.Current.LocalizedControlType.ToString();
             if (General.CompareStringsIgnoreCase(ControlType ,"Edit Box" )||General.CompareStringsIgnoreCase(ControlType, "edit")||
                 General.CompareStringsIgnoreCase(ControlType, "item")|| General.CompareStringsIgnoreCase(ControlType, ""))
             {
-                string val = (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
-                if (String.IsNullOrEmpty(val))
-                {
-                    val = (String)element.GetCurrentPropertyValue(LegacyIAccessiblePatternIdentifiers.ValueProperty);
-                }
+                string elementValue = GetElementValueByValuePattern(element);
 
-                if (string.IsNullOrEmpty(val) && General.CompareStringsIgnoreCase(ControlType, ""))
+                if (String.IsNullOrEmpty(elementValue))
                 {
-                    val = GetControlValueFromChildControl(element);
+                    elementValue = GetElementValueByLegacyIAccessiblePattern(element);
                 }
-                return val;
+                if (String.IsNullOrEmpty(elementValue))
+                {
+                    elementValue = GetElementValueByTextpattern(element);
+                }
+                if (string.IsNullOrEmpty(elementValue) && General.CompareStringsIgnoreCase(ControlType, ""))
+                {
+                    elementValue = GetControlValueFromChildControl(element);
+                }
+                return elementValue;
             }
 
             if (General.CompareStringsIgnoreCase(ControlType, "text"))
             {
-                string val = element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty).ToString();
-                if (string.IsNullOrEmpty(val) && mPlatform.Equals(ePlatform.PowerBuilder))
+                string value = GetElementValueByValuePattern(element);
+                if (string.IsNullOrEmpty(value) && mPlatform.Equals(ePlatform.PowerBuilder))
                 {
-                    val = GetControlValueFromChildControl(element);
+                    value = GetControlValueFromChildControl(element);
                 }
-                if (string.IsNullOrEmpty(val))
+                if (string.IsNullOrEmpty(value))
                 {
                     // In some cases the name is the actual control value, wierd but exist...maybe there is no developer name
-                    val = element.Current.Name;
+                    value = element.Current.Name;
                 }
-                return val;
+                return value;
             }
 
             if (General.CompareStringsIgnoreCase(ControlType, "combo box"))
             {
-                string val = GetControlValueFromChildControl(element);
-                return val;
+                string value = GetControlValueFromChildControl(element);
+                return value;
             }
             //-----------------------------------
 
             else if (General.CompareStringsIgnoreCase(ControlType, "document"))
             {
-                element.TryGetCurrentPattern(TextPattern.Pattern, out vp);
-                string val = ((TextPattern)vp).DocumentRange.GetText(-1);
-                return val;
+                string value = GetElementValueByTextpattern(element);
+                return value;
             }
             // check box handler
             if (General.CompareStringsIgnoreCase(ControlType, "check box"))
@@ -3911,8 +3967,8 @@ namespace GingerCore.Drivers
             }
             if (General.CompareStringsIgnoreCase(ControlType, "title bar"))
             {
-                string val = element.Current.Name.ToString();
-                return val;
+                string value = element.Current.Name.ToString();
+                return value;
             }
 
             //DatePicker
@@ -3921,8 +3977,7 @@ namespace GingerCore.Drivers
                 //We have query on below DatePicker Control as the Pattern is not supporting.
                 if (General.CompareStringsIgnoreCase(ControlType, "SysDateTimePick32"))
                 {
-                    element.TryGetCurrentPattern(ValuePattern.Pattern, out vp);
-                    string str = ((ValuePattern)vp).Current.Value;
+                    string str = GetElementValueByValuePattern(element);
                     return str;
                 }
                 else if (General.CompareStringsIgnoreCase(ControlType, "pbdw126"))
@@ -3943,8 +3998,8 @@ namespace GingerCore.Drivers
             }
             if (General.CompareStringsIgnoreCase(ControlType, "button"))
             {
-                string val = element.Current.Name;
-                return val;
+                string value = element.Current.Name;
+                return value;
             }
             else if (General.CompareStringsIgnoreCase(ControlType, "radio button"))
             {
@@ -4069,7 +4124,7 @@ namespace GingerCore.Drivers
                 element.TryGetCurrentPattern(ValuePattern.Pattern, out vp);
                 if (vp != null)
                 {
-                    return (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
+                    return GetElementValueByValuePattern(element);
 
                 }
                 else
@@ -6375,6 +6430,53 @@ namespace GingerCore.Drivers
                     Reporter.ToUser(eUserMsgKey.PatternNotHandled, "Pattern not handled yet - " + PatternType);
                     break;
             }
+        }
+
+        public String GetElementValueByValuePattern(AutomationElement element)
+        {
+            string value = string.Empty;
+            try
+            {
+                value = (String)element.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetValueProperty while GetCurrentPropertyValue::", ex);
+            }
+            return value;
+        }
+
+        public String GetElementValueByLegacyIAccessiblePattern(AutomationElement element)
+        {
+            string value = string.Empty;
+            try
+            {
+                value = (String)element.GetCurrentPropertyValue(LegacyIAccessiblePatternIdentifiers.ValueProperty);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetValueProperty while GetCurrentPropertyValue::", ex);
+            }
+            return value;
+        }
+
+        public String GetElementValueByTextpattern(AutomationElement element)
+        {
+            string value = string.Empty;
+            object vp;
+            try
+            {
+                element.TryGetCurrentPattern(TextPattern.Pattern, out vp);
+                if (vp != null)
+                {
+                    value = ((TextPattern)vp).DocumentRange.GetText(-1);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetPattern while TryGetCurrentPattern::", ex);
+            }
+            return value;
         }
     }
 

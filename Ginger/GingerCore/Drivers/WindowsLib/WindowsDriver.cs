@@ -633,6 +633,11 @@ namespace GingerCore.Drivers.WindowsLib
             return GetControlFromMousePosition();
         }
 
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        {
+            return EI;
+        }
+
         List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
         {
             List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
@@ -893,7 +898,7 @@ namespace GingerCore.Drivers.WindowsLib
             }
          }
 
-        public Bitmap GetScreenShot()
+        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null)
         {
             Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
             return bmp;
@@ -956,6 +961,21 @@ namespace GingerCore.Drivers.WindowsLib
             {
                 Thread.Sleep(1000);
             }
+        }
+
+        public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartSpying()
+        {
+            throw new NotImplementedException();
         }
     }
 }
