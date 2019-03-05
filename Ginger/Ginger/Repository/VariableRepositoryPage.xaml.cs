@@ -39,14 +39,25 @@ namespace Ginger.Repository
     public partial class VariablesRepositoryPage : Page
     {
         readonly RepositoryFolder<VariableBase> mVariablesFolder;
+        BusinessFlow mBusinessFlow;
+        Context mContext = new Context();
 
-        public VariablesRepositoryPage(RepositoryFolder<VariableBase> variablesFolder)
+        public VariablesRepositoryPage(RepositoryFolder<VariableBase> variablesFolder, BusinessFlow businessFlow)
         {
             InitializeComponent();
 
             mVariablesFolder = variablesFolder;
+            mBusinessFlow = businessFlow;
+            mContext.BusinessFlow = mBusinessFlow;
+
             SetVariablesGridView();
             SetGridAndTreeData();
+        }
+
+        public void UpdateBusinessFlow(BusinessFlow bf)
+        {
+            mBusinessFlow = bf;
+            mContext.BusinessFlow = mBusinessFlow;
         }
 
         private void SetGridAndTreeData()
@@ -89,11 +100,11 @@ namespace Ginger.Repository
             {
                 foreach (VariableBase selectedItem in xVariablesGrid.Grid.SelectedItems)
                 {
-                    App.BusinessFlow.AddVariable((VariableBase)selectedItem.CreateInstance(true));
+                    mBusinessFlow.AddVariable((VariableBase)selectedItem.CreateInstance(true));
                 }                    
                 
                 int selectedActIndex = -1;
-                ObservableList<VariableBase> varList = App.BusinessFlow.Variables;
+                ObservableList<VariableBase> varList = mBusinessFlow.Variables;
                 if (varList.CurrentItem != null)
                 {
                     selectedActIndex = varList.IndexOf((VariableBase)varList.CurrentItem);
@@ -114,7 +125,7 @@ namespace Ginger.Repository
                 VariableBase selectedVarb = (VariableBase)xVariablesGrid.CurrentItem;
                 selectedVarb.NameBeforeEdit = selectedVarb.Name;
 
-                VariableEditPage w = new VariableEditPage(selectedVarb, false, VariableEditPage.eEditMode.SharedRepository);
+                VariableEditPage w = new VariableEditPage(selectedVarb, mContext, false, VariableEditPage.eEditMode.SharedRepository);
                 w.ShowAsWindow(eWindowShowStyle.Dialog);
 
             }
@@ -149,9 +160,7 @@ namespace Ginger.Repository
             VariableBase dragedItem = (VariableBase)((DragInfo)sender).Data;
             if (dragedItem != null)
             {
-                //App.LocalRepository.AddItemToRepositoryWithPreChecks(dragedItem, null);
-
-                SharedRepositoryOperations.AddItemToRepository(dragedItem);
+                (new SharedRepositoryOperations()).AddItemToRepository(mContext, dragedItem);
 
                 //refresh and select the item
                 try

@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Utils;
@@ -26,6 +27,7 @@ using Amdocs.Ginger.Utils;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
+using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -346,6 +348,16 @@ namespace Ginger.SolutionGeneral
                 }
             }
         }       
+
+        public ObservableList<TargetBase> GetSolutionTargetApplications()
+        {
+            ObservableList<TargetBase> solTargetApplications = new ObservableList<TargetBase>();
+            foreach (ApplicationPlatform app in ApplicationPlatforms)
+            {
+                solTargetApplications.Add(new TargetApplication() { AppName = app.AppName, Guid = app.Guid });
+            }
+            return solTargetApplications;
+        }
 
         MRUManager mRecentUsedBusinessFlows;
 

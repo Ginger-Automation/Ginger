@@ -53,11 +53,10 @@
 
             <!-- Search Text Box -->
             <!-- overlay with hint text & Clear button-->
-            <TextBox x:Name="xSearchTextBox" Grid.Column="1" MinWidth="50" Height="25" Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChanged" BorderBrush="White" />
-            <TextBlock  x:Name="xSearchNullText" Grid.Column="1" Margin="3,0,0,0" Width="40" Text="Search" 
-                   Foreground="Gray" Visibility="Visible"  VerticalAlignment="Center" HorizontalAlignment="Left" />
-            
+            <TextBox x:Name="xSearchTextBox" Grid.Column="1" MinWidth="50" Height="25" Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChangedAsync" BorderBrush="White" />
+           
             <usercontrols:ucButton x:Name="xSearchClearBtn" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="xSearchClearBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
+            <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" Click="xSearchBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
         </Grid>
 
         <!-- Tree Section-->

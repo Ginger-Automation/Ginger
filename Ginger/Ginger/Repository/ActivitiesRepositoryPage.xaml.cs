@@ -47,6 +47,7 @@ namespace Ginger.Repository
         BusinessFlow mBusinessFlow;
         ObservableList<Guid> mTags = new ObservableList<Guid>();
         RoutedEventHandler mAddActivityHandler;
+        Context mContext = new Context();
 
         public ActivitiesRepositoryPage(RepositoryFolder<Activity> activitiesFolder, BusinessFlow businessFlow=null,ObservableList<Guid> Tags=null, RoutedEventHandler AddActivityHandler = null)
         {          
@@ -65,13 +66,9 @@ namespace Ginger.Repository
             else
                 mAddActivityHandler = AddFromRepository;
 
-            if (businessFlow != null)
-                mBusinessFlow = businessFlow;
-            else
-            {
-                mBusinessFlow = App.BusinessFlow;
-                App.PropertyChanged += AppPropertychanged;
-            }
+            
+            mBusinessFlow = businessFlow;
+            mContext.BusinessFlow = mBusinessFlow;
 
             SetActivitiesRepositoryGridView();            
             SetGridAndTreeData();
@@ -89,15 +86,10 @@ namespace Ginger.Repository
             }
         }
 
-        private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public void UpdateBusinessFlow(BusinessFlow bf)
         {
-            if (e.PropertyName == "BusinessFlow")
-            {
-                if (App.BusinessFlow != mBusinessFlow)
-                {
-                    mBusinessFlow = App.BusinessFlow;
-                }
-            }
+            mBusinessFlow = bf;
+            mContext.BusinessFlow = mBusinessFlow;
         }
 
         private void SetActivitiesRepositoryGridView()
@@ -186,7 +178,7 @@ namespace Ginger.Repository
             if (dragedItem != null)
             {
                 ////check if the Activity is part of a group which not exist in ActivitiesGroups repository                
-                SharedRepositoryOperations.AddItemToRepository(dragedItem);
+                (new SharedRepositoryOperations()).AddItemToRepository(mContext, dragedItem);
 
                 //refresh and select the item
                 try

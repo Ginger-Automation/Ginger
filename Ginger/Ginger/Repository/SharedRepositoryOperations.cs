@@ -35,12 +35,12 @@ using GingerWPF.WizardLib;
 namespace Ginger.Repository
 {
     public class SharedRepositoryOperations
-    {
-        public static void AddItemsToRepository(List<RepositoryItemBase> listSelectedRepoItems)
+    {        
+        public void AddItemsToRepository(Context context, List<RepositoryItemBase> listSelectedRepoItems)
         {
             if (listSelectedRepoItems != null && listSelectedRepoItems.Count>0)
             {
-                WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(listSelectedRepoItems), 1200);                
+                WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(context, listSelectedRepoItems), 1200);                
             }
             else
             {
@@ -48,14 +48,14 @@ namespace Ginger.Repository
             }
         }
 
-        public static void AddItemToRepository(RepositoryItemBase item)
+        public void AddItemToRepository(Context context, RepositoryItemBase item)
         {
             List<RepositoryItemBase> itemList = new List<RepositoryItemBase>();
             itemList.Add(item);
-            AddItemsToRepository(itemList);
+            AddItemsToRepository(context, itemList);
         }
 
-        public static Boolean UploadItemToRepository(UploadItemSelection itemToUpload)
+        public Boolean UploadItemToRepository(Context context, UploadItemSelection itemToUpload)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace Ginger.Repository
 
                
 
-                bool blockingIssuesHandled= HandleItemValidationIssues(itemToUpload, itemCopy, ref isOverwrite);
+                bool blockingIssuesHandled= HandleItemValidationIssues(context, itemToUpload, itemCopy, ref isOverwrite);
 
                 if(blockingIssuesHandled==false)
                 {
@@ -88,11 +88,14 @@ namespace Ginger.Repository
                 if (isOverwrite)
                 {
                     WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(itemToUpload.ExistingItem);
-                    //To be removed from here and need to handle from solution repository
-                    itemCopy.ContainingFolder = itemToUpload.ExistingItem.ContainingFolder;
-                    itemCopy.ContainingFolderFullPath = itemToUpload.ExistingItem.ContainingFolderFullPath;                  
+                
+                    RepositoryFolderBase repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(itemToUpload.ExistingItem.ContainingFolderFullPath);
+                    repositoryFolder.AddRepositoryItem(itemCopy);
+                }
+                else
+                {
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);
                 }     
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);
 
                 itemToUpload.UsageItem.IsSharedRepositoryInstance = true;
 
@@ -137,7 +140,7 @@ namespace Ginger.Repository
             return itemCopy;
         }
 
-        private static bool HandleItemValidationIssues(UploadItemSelection selectedItem, RepositoryItemBase itemCopy, ref bool isOverwrite)
+        private bool HandleItemValidationIssues(Context context, UploadItemSelection selectedItem, RepositoryItemBase itemCopy, ref bool isOverwrite)
         {
             bool blockingIssuesHandled = true;
             List<ItemValidationBase> itemIssues = ItemValidationBase.GetAllIssuesForItem(selectedItem);
@@ -152,7 +155,7 @@ namespace Ginger.Repository
                             {
                                 foreach (string missingVariableName in issue.missingVariablesList)
                                 {
-                                    VariableBase missingVariable = App.BusinessFlow.GetHierarchyVariableByName(missingVariableName);
+                                    VariableBase missingVariable = context.BusinessFlow.GetHierarchyVariableByName(missingVariableName);
 
                                     if (missingVariable != null)
                                     {
@@ -197,6 +200,10 @@ namespace Ginger.Repository
             {
                 foreach (RepositoryItemBase item in items)
                 {
+                    if (item == null)
+                    {
+                        continue;
+                    }
                     if (GetMatchingRepoItem(item, existingRepoItems, ref linkIsByExternalID, ref linkIsByParentID) != null)
                     {
                         item.IsSharedRepositoryInstance = true;

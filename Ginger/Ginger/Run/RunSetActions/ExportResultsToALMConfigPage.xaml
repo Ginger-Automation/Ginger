@@ -24,7 +24,7 @@
             </CheckBox>
             <CheckBox x:Name="UseVariableInTCRunNameCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5" Content="Use User Variable In TC Run Instance Name" Checked="UseVariableInTCRunNameCbx_Checked" Unchecked="UseVariableInTCRunNameCbx_Unchecked"></CheckBox>
             <StackPanel Margin="5,0,0,15" x:Name="VariableForTCRunNamePanel" Orientation="Vertical" IsEnabled="False">
-                <Actions:UCValueExpression x:Name="VariableForTCRunName" ToolTip="From" HideVEBusinessFlowAndActivityVariables="True"/>
+                <Actions:UCValueExpression x:Name="VariableForTCRunName" ToolTip="From" />
             </StackPanel>
             <Button x:Name="xExportToALMBtn" Content="Export To ALM" Style="{StaticResource @WindowButtonStyle}" Width="100" Margin="5 0 0 0" HorizontalAlignment="Left" Visibility="Collapsed" Click="xExportToALMBtn_Click"></Button>
             <usercontrols:ImageMakerControl x:Name="xExportToALMLoadingIcon" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Left" Width="25" Height="25" Visibility="Collapsed" />

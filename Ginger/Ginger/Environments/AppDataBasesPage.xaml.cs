@@ -84,7 +84,7 @@ namespace Ginger.Environments
                 }
                 db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                 db.ProjEnvironment = App.AutomateTabEnvironment;
-                db.BusinessFlow = App.BusinessFlow;
+                db.BusinessFlow =  null;
                 if (string.IsNullOrEmpty(db.ConnectionString) && !string.IsNullOrEmpty(db.TNS) && db.TNS.ToLower().Contains("data source=") && db.TNS.ToLower().Contains("password=") && db.TNS.ToLower().Contains("user id="))
                 {
                     System.Data.SqlClient.SqlConnectionStringBuilder scSB = new System.Data.SqlClient.SqlConnectionStringBuilder();
@@ -180,28 +180,28 @@ namespace Ginger.Environments
         private void GridTNSVEButton_Click(object sender, RoutedEventArgs e)
         {
             Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, Database.Fields.TNS, true);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, Database.Fields.TNS, null);
             VEEW.ShowAsWindow();
         }
 
         private void GridUserVEButton_Click(object sender, RoutedEventArgs e)
         {
             Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, Database.Fields.User, true);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, Database.Fields.User, null);
             VEEW.ShowAsWindow();
         }
 
         private void GridPswdVEButton_Click(object sender, RoutedEventArgs e)
         {
             Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, Database.Fields.Pass, true);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, Database.Fields.Pass, null);
             VEEW.ShowAsWindow();
         }
 
         private void GridConnStrVEButton_Click(object sender, RoutedEventArgs e)
         {
             Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, Database.Fields.ConnectionString, true);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, Database.Fields.ConnectionString, null);
             VEEW.ShowAsWindow();
         }
     }

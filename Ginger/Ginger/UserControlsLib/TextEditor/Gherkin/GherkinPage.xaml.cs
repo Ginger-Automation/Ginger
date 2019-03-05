@@ -554,11 +554,11 @@ namespace Ginger.GherkinLib
 
             GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(GherkinTextEditor.FileName) + " , Target Business Flow: " + mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, (Style)TryFindResource("@ucGridTitleLightStyle"));
 
-            if(App.BusinessFlow == mBizFlow)
-            {
-                App.BusinessFlow = mBizFlow;
-                App.BusinessFlow.SaveBackup();                
-            }            
+            //if(App.BusinessFlow == mBizFlow)
+            //{
+            //    App.BusinessFlow = mBizFlow;
+            //    App.BusinessFlow.SaveBackup();                
+            //}            
         }
 
 
