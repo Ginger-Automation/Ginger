@@ -509,7 +509,7 @@ namespace Ginger.Run.RunSetActions
                         chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsFailed).ToList().Sum(), 1));
                         chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsStopped).ToList().Sum(), 2));
                         chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsOther).ToList().Sum(), 3));
-                        CreateChart(chartData, "Businessflow" + reportTimeStamp + ".jpeg", "Business Flows");
+                        CreateChart(chartData, "Businessflow" + reportTimeStamp + ".jpeg", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows));
 
                         List<BusinessFlowReport> bfTotalList = new List<BusinessFlowReport>();
                         ((RunSetReport)RI.ReportInfoRootObject).GingerReports.ForEach(x => x.BusinessFlowReports.ForEach(y => bfTotalList.Add(y)));
@@ -519,7 +519,7 @@ namespace Ginger.Run.RunSetActions
                         chartData.Add(new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesFailed).ToList().Sum(), 1));
                         chartData.Add(new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesStopped).ToList().Sum(), 2));
                         chartData.Add(new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesOther).ToList().Sum(), 3));
-                        CreateChart(chartData, "Activity" + reportTimeStamp + ".jpeg", "Activities");
+                        CreateChart(chartData, "Activity" + reportTimeStamp + ".jpeg", GingerDicser.GetTermResValue(eTermResKey.Activities));
 
                         List<ActivityReport> activitiesTotalList = new List<ActivityReport>();
                         bfTotalList.ForEach(x => x.Activities.ForEach(y => activitiesTotalList.Add(y)));

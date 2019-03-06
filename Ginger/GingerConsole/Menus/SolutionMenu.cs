@@ -45,10 +45,10 @@ namespace Amdocs.Ginger.GingerConsole
         {
             OpenSolutionMenuItem = new MenuItem(ConsoleKey.O, "Open", () => OpenSolution(), true);
             CloseSolutionMenuItem = new MenuItem(ConsoleKey.C, "Close", CloseSolution, false);
-            BusinessFlowsCountMenuItem = new MenuItem(ConsoleKey.B, "Business Flows Count", BusinessFlowsCount, false);
-            BusinessFlowsListMenuItem = new MenuItem(ConsoleKey.L, "Business Flows List", BusinessFlowsList, false);
+            BusinessFlowsCountMenuItem = new MenuItem(ConsoleKey.B, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " Count", BusinessFlowsCount, false);
+            BusinessFlowsListMenuItem = new MenuItem(ConsoleKey.L, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " List", BusinessFlowsList, false);
             EnvironmentsListMenuItem = new MenuItem(ConsoleKey.E, "Environments List", EnvironmentsList, false);
-            RunBusinessFlowMenuItem = new MenuItem(ConsoleKey.R, "Run Business Flow", RunBusinessFlow, false);
+            RunBusinessFlowMenuItem = new MenuItem(ConsoleKey.R, "Run " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) , RunBusinessFlow, false);
             RunSetMenuItem = new MenuItem(ConsoleKey.S, "Run set", RunSet, false);
 
             MenuItem SolutionMenu = new MenuItem(ConsoleKey.S, "Solution");

@@ -29,7 +29,11 @@
         <StackPanel Orientation="Horizontal" Grid.ColumnSpan="2" Background="White">
             <UserControls:ImageMakerControl ImageType="BusinessFlow" Width="32" Height="32"/>
             <TextBlock Margin="10,14,0,0">
-                <Hyperlink x:Name="BusinessFlowsHyperlink" Click="BusinessFlowsHyperlink_Click">Business Flows</Hyperlink>
+                <Hyperlink x:Name="BusinessFlowsHyperlink" Click="BusinessFlowsHyperlink_Click">
+                    <Ginger:ucGrid.Title>
+                     <GingerCore:ucTextDicResource Text="[Business Flows]"/>
+                    </Ginger:ucGrid.Title>
+                </Hyperlink>
             </TextBlock>
             <Label>|</Label>
             <Label x:Name="FlowPathLabel" Content="~\Flow Path\"  Foreground="DarkGray"/>
