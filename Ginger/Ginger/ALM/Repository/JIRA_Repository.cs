@@ -15,6 +15,7 @@ using GingerCore.ALM.JIRA;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Platforms;
 using System.IO;
+using System.IO.Compression;
 
 
 namespace Ginger.ALM.Repository
@@ -262,7 +263,30 @@ namespace Ginger.ALM.Repository
 
         public override bool LoadALMConfigurations()
         {
-            throw new NotImplementedException();
+            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
+            dlg.DefaultExt = "*.zip";
+            dlg.Filter = "zip Files (*.zip)|*.zip";
+            dlg.Title = "Select Jira Configuration Zip File";
+
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                if (!((JiraCore)ALMIntegration.Instance.AlmCore).ValidateConfigurationFile(dlg.FileName))
+                    return false;
+
+                string folderPath = Path.Combine(WorkSpace.UserProfile.Solution.Folder, "Configurations");
+                DirectoryInfo di = Directory.CreateDirectory(folderPath);
+
+                folderPath = Path.Combine(folderPath, "JiraConfigurationsPackage");
+                if (Directory.Exists(folderPath))
+                    Amdocs.Ginger.Common.GeneralLib.General.ClearDirectoryContent(folderPath);
+
+                ZipFile.ExtractToDirectory(dlg.FileName, folderPath);
+                if (!((JiraCore)ALMIntegration.Instance.AlmCore).IsConfigPackageExists())
+                    return false;
+
+                ALMIntegration.Instance.SetALMCoreConfigurations();
+            }
+            return true; //Browse Dialog Canceled
         }
 
         public override string SelectALMTestLabPath()
