@@ -98,7 +98,8 @@ namespace GingerCore.Actions
             KEYBOARD_DONE,
             KEYBOARD_PREVIOUS,
             KEYBOARD_ENTER,
-            KEYBOARD_SUBMIT
+            KEYBOARD_SUBMIT,
+            KEYBOARD_RETURN
         }
 
         [IsSerializedForLocalRepository]
