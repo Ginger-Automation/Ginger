@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.Repository
                 {
                     OptionalValue OptionalValue = new OptionalValue() { Value = Value };
                     if (!string.IsNullOrEmpty(Value))
-                        OptionalValue.IsDefault = true;
+                        OptionalValue.IsDefault = true; 
 
                     AMP.OptionalValuesList.Add(OptionalValue);
                     ParameterValuesUpdated = true;
