@@ -30,44 +30,102 @@ namespace Amdocs.Ginger.Common
         /// </summary>
         /// <param name="schema"></param>
         /// <returns></returns>
-        public static string JsonSchemaFaker(JsonSchema4 schema, bool UseXMlNames = false)
+        /// 
+
+        private static Dictionary<object, object> CachedValues = new Dictionary<object, object>();
+        public static string JsonSchemaFaker(JsonSchema4 schema, List<object> ReferenceStack, bool UseXMlNames = false)
         {
+            if (ReferenceStack == null)
+            {
+                ReferenceStack = new List<object>();
+            }
+            ReferenceStack.Add(schema);
+            if (CachedValues.ContainsKey(schema))
+            {
+                object returnValue;
+                CachedValues.TryGetValue(schema, out returnValue);
+                return (string)returnValue;
+            }
+
+
+      
 
             if (schema.HasReference)
             {
-                return JsonSchemaFaker(schema.Reference, UseXMlNames);
+
+                if (ReferenceStack.Contains(schema.Reference))
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    
+                    return JsonSchemaFaker(schema.Reference, ReferenceStack, UseXMlNames);
+                }
+
+
             }
 
-            Dictionary<string, object> JsonBody = new Dictionary<string, object>();
 
+
+            Dictionary<string, object> JsonBody = new Dictionary<string, object>();
             foreach (KeyValuePair<string, JsonProperty> jkp in schema.ActualProperties)
             {
+                //code
                 string key = jkp.Key;
                 if (UseXMlNames && jkp.Value.Xml != null)
                 {
                     key = jkp.Value.Xml.Name;
                 }
-                if (jkp.Value.HasReference)
+                if (jkp.Value.HasReference && !ReferenceStack.Contains(jkp.Value.Reference))
                 {
-                    JsonBody.Add(key, JsonSchemaFaker(jkp.Value.Reference, UseXMlNames));
+                    if (jkp.Value.Reference.HasReference == false && jkp.Value.Reference.Properties.Count == 0)
+                    {
+
+                        object o1 = GenerateJsonObjectFromJsonSchema4(jkp.Value, ReferenceStack, UseXMlNames);
+                        JsonBody.Add(key, o1);
+                    }
+                    else
+                    {
+                        if (!jkp.Value.Reference.Equals(jkp.Value))
+                        {
+                            string property = JsonSchemaFaker(jkp.Value.Reference, ReferenceStack, UseXMlNames);
+                            object o = JsonConvert.DeserializeObject(property);
+                            JsonBody.Add(key, o);
+                        }
+                    }
                 }
                 else
                 {
-                    JsonBody.Add(key, GenerateJsonObjectFromJsonSchema4(jkp.Value, UseXMlNames));
+                    object o = GenerateJsonObjectFromJsonSchema4(jkp.Value, ReferenceStack, UseXMlNames);
+                    JsonBody.Add(key, o);
                 }
 
             }
 
+                ReferenceStack.Remove(schema);
 
-
-            return JsonConvert.SerializeObject(JsonBody);
+            string output = JsonConvert.SerializeObject(JsonBody);
+            CachedValues.Add(schema, output);
+            return output;
         }
 
 
-        private static object GenerateJsonObjectFromJsonSchema4(JsonProperty value, bool UseXMlNames)
+        private static object GenerateJsonObjectFromJsonSchema4(JsonProperty value, List<object> ReferenceStack, bool UseXMlNames)
         {
 
+            if(CachedValues.ContainsKey(value))
+            {
+                object returnValue;
+                CachedValues.TryGetValue(value,out returnValue);
+                return returnValue;
+            }
+            if (ReferenceStack == null)
+            {
+                ReferenceStack = new List<object>();
+            }
 
+            List<object> PrivateStack = new List<object>();
             object output = "";
             switch (value.Type)
             {
@@ -81,8 +139,11 @@ namespace Amdocs.Ginger.Common
                         {
                             key = jkp.Value.Xml.Name;
                         }
-                        JsonBody.Add(key, JsonConvert.SerializeObject(GenerateJsonObjectFromJsonSchema4(jkp.Value, UseXMlNames)));
-
+                        ReferenceStack.Add(jkp.Value);
+                        PrivateStack.Add(jkp.Value);
+                        object JObject = GenerateJsonObjectFromJsonSchema4(jkp.Value, ReferenceStack, UseXMlNames);
+                        JsonBody.Add(key, JsonConvert.SerializeObject(JObject));
+                    
                     }
                     output = JsonBody;
                     break;
@@ -98,36 +159,38 @@ namespace Amdocs.Ginger.Common
                         {
                             key = item.Value.Xml.Name;
                         }
-
-
-                        jb.Add(key, JsonConvert.SerializeObject(GenerateJsonObjectFromJsonSchema4(item.Value, UseXMlNames)));
+                        ReferenceStack.Add(item.Value);
+                        PrivateStack.Add(item.Value);
+                        object JsonObject = GenerateJsonObjectFromJsonSchema4(item.Value, ReferenceStack, UseXMlNames);
+                        jb.Add(key, JsonConvert.SerializeObject(JsonObject));
+                       
                     }
                     if (value.Item.HasReference)
                     {
-                        foreach (var item in value.Item.Reference.ActualProperties)
+                        if (!ReferenceStack.Contains(value.Item.Reference))
                         {
-                            if (item.Value.Equals(value))
-                            {
-                                jb.Add(item.Key, "");
-                            }
-                            else
-                            {
 
-                                string key = item.Key;
-                                if (key.ToUpper() == "orderTerm".ToUpper())
+                            foreach (var item in value.Item.Reference.ActualProperties)
+                            {
+                                if (item.Value.Equals(value))
+                                {
+                                    jb.Add(item.Key, "");
+                                }
+                                else
                                 {
 
-                                }
-                                if (UseXMlNames && item.Value.Xml != null)
-                                {
-                                    key = item.Value.Xml.Name;
-                                }
+                                    string key = item.Key;
+                                    if (UseXMlNames && item.Value.Xml != null)
+                                    {
+                                        key = item.Value.Xml.Name;
+                                    }
 
+                                    object o = GenerateJsonObjectFromJsonSchema4(item.Value, ReferenceStack, UseXMlNames);
 
-                                jb.Add(key, JsonConvert.SerializeObject(GenerateJsonObjectFromJsonSchema4(item.Value, UseXMlNames)));
+                                    jb.Add(key, (JToken)o);
+                                }
                             }
                         }
-
                     }
 
                     JArray ja = new JArray();
@@ -165,7 +228,11 @@ namespace Amdocs.Ginger.Common
 
             }
 
-
+            foreach(object obj in PrivateStack)
+            {
+                ReferenceStack.Remove(obj);
+            }
+            CachedValues.Add(value, output);
             return output;
         }
     }

@@ -23,6 +23,8 @@ using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 
 namespace GingerCore.Actions
 {
@@ -32,7 +34,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Password Action"; } }
         public override string ActionUserDescription { get { return "Perform Password Action"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform any Password actions.");
             TBH.AddLineBreak();

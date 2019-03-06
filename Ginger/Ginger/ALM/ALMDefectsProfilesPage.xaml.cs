@@ -125,8 +125,8 @@ namespace Ginger.ALM
 
             view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ExternalItemFieldBase.Name), Header = "Defect's Field Name", WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ExternalItemFieldBase.Mandatory), Header = "Field Is Mandatory", WidthWeight = 15, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ExternalItemFieldBase.Name), Header = "Defect's Field Name", WidthWeight = 20, ReadOnly = true, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ExternalItemFieldBase.Mandatory), Header = "Field Is Mandatory", WidthWeight = 15, ReadOnly = true, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ExternalItemFieldBase.SelectedValue), Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ExternalItemFieldBase.Fields.PossibleValues, ExternalItemFieldBase.Fields.SelectedValue, true), WidthWeight = 20 });
 
             grdDefectsFields.SetAllColumnsDefaultView(view);
@@ -217,7 +217,7 @@ namespace Ginger.ALM
         {
             if (grdDefectsProfiles.Grid.SelectedItems.Count > 0)
             {
-                if (Reporter.ToUser(eUserMsgKeys.AskBeforeDefectProfileDeleting) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKey.AskBeforeDefectProfileDeleting) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     List<ALMDefectProfile> selectedItemsToDelete = new List<ALMDefectProfile>();
                     foreach (ALMDefectProfile selectedProfile in grdDefectsProfiles.Grid.SelectedItems)
@@ -236,7 +236,7 @@ namespace Ginger.ALM
         {
             if (mALMDefectProfiles.Where(x => x.IsDefault == true).ToList().Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoDefaultDefectProfileSelected);
+                Reporter.ToUser(eUserMsgKey.NoDefaultDefectProfileSelected);
                 return;
             }
 
@@ -250,7 +250,7 @@ namespace Ginger.ALM
                                                                                                                                             && x.ExternalID != "Summary" && (x.SelectedValue == null || x.SelectedValue == string.Empty)).FirstOrDefault();
                 if (notPopulatedMandatoryField != null)
                 {
-                    Reporter.ToUser(eUserMsgKeys.MissedMandatotryFields, notPopulatedMandatoryField.Name, _ALMDefectProfile.Name);
+                    Reporter.ToUser(eUserMsgKey.MissedMandatotryFields, notPopulatedMandatoryField.Name, _ALMDefectProfile.Name);
                     return;
                 }
 
@@ -260,7 +260,7 @@ namespace Ginger.ALM
                                                                                                                  x.PossibleValues.Count > 0 && (!x.PossibleValues.Contains(x.SelectedValue))).FirstOrDefault();    
                 if (wrongSelectedField != null)
                 {
-                    Reporter.ToUser(eUserMsgKeys.WrongValueSelectedFromTheList, wrongSelectedField.Name, _ALMDefectProfile.Name);
+                    Reporter.ToUser(eUserMsgKey.WrongValueSelectedFromTheList, wrongSelectedField.Name, _ALMDefectProfile.Name);
                     return;
                 }
 
@@ -271,7 +271,7 @@ namespace Ginger.ALM
                                                                                                                       !(int.TryParse(x.SelectedValue, out numeric))).FirstOrDefault();
                 if (wrongNonNumberValueField != null)
                 {
-                    Reporter.ToUser(eUserMsgKeys.WrongNonNumberValueInserted, wrongNonNumberValueField.Name, _ALMDefectProfile.Name);
+                    Reporter.ToUser(eUserMsgKey.WrongNonNumberValueInserted, wrongNonNumberValueField.Name, _ALMDefectProfile.Name);
                     return;
                 }
 
@@ -282,21 +282,21 @@ namespace Ginger.ALM
                                                                                                                       !(DateTime.TryParseExact(x.SelectedValue, "yyyy-mm-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out dt))).FirstOrDefault();
                 if (wrongDateValueField != null)
                 {
-                    Reporter.ToUser(eUserMsgKeys.WrongDateValueInserted, wrongDateValueField.Name, _ALMDefectProfile.Name);
+                    Reporter.ToUser(eUserMsgKey.WrongDateValueInserted, wrongDateValueField.Name, _ALMDefectProfile.Name);
                     return;
                 }
             }
 
             foreach (ALMDefectProfile _ALMDefectProfile in mALMDefectProfiles.Where(x => x.ToUpdate == true).ToList())
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, _ALMDefectProfile.GetNameForFileName(), "item");
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, _ALMDefectProfile.GetNameForFileName(), "item");
                 if ((_ALMDefectProfile.ContainingFolder == null) || (_ALMDefectProfile.ContainingFolder == string.Empty))
                 {
-                    _ALMDefectProfile.ContainingFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, _ALMDefectProfile.ObjFolderName);
+                    _ALMDefectProfile.ContainingFolder = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, _ALMDefectProfile.ObjFolderName);
                     _ALMDefectProfile.FilePath = _ALMDefectProfile.ContainingFolder + @"\" + _ALMDefectProfile.FilePath;
                 }
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(_ALMDefectProfile);
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
 
             genWin.Close();

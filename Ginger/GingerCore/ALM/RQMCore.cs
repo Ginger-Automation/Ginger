@@ -32,6 +32,7 @@ using System.IO.Compression;
 using Newtonsoft.Json;
 using GingerCore.External;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.ALM
 {
@@ -71,7 +72,7 @@ namespace GingerCore.ALM
             return RQMConnect.Instance.GetRQMDomains();
         }
 
-        public override List<string> GetALMDomainProjects(string ALMDomain)
+        public override Dictionary<string, string> GetALMDomainProjects(string ALMDomain)
         {
             AlmConfig.ALMDomain = ALMDomain;
             return RQMConnect.Instance.GetRQMDomainProjects();
@@ -93,10 +94,10 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
-            return ImportFromRQM.GetALMItemFields(bw, online);
+            return UpdatedAlmFields(ImportFromRQM.GetALMItemFields(bw, online));
         }
 
-        public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST)
+        public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST)
         {
             return null;
         }
@@ -113,7 +114,7 @@ namespace GingerCore.ALM
             set { ImportFromRQM.GingerActivitiesRepo = value; }
         }
 
-        public override void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject)
+        public override void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject, string ALMProjectKey)
         {
             AlmConfig.ALMServerURL = GetServerValueFromDict(GetDynamicServerConfigAndSetPaths());
             AlmConfig.UseRest = UseRest;
@@ -121,6 +122,7 @@ namespace GingerCore.ALM
             AlmConfig.ALMPassword = ALMPassword;
             AlmConfig.ALMDomain = ALMDomain;
             AlmConfig.ALMProjectName = ALMProject;
+            AlmConfig.ALMProjectKey = ALMProjectKey;
         }
         
         #region RQM Configurations Package
@@ -148,7 +150,7 @@ namespace GingerCore.ALM
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error reading ALM RQMConfigPackage at: " + Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml"), e);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error reading ALM RQMConfigPackage at: " + Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml"), e);
                 }
             }
             return new Dictionary<string, object>();
@@ -169,13 +171,13 @@ namespace GingerCore.ALM
                 else
                 {
                     //Missing RQMSettings.xml file
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "RQM Configuration package not exist in solution, RqmSettings.xml not exist at: " + Path.Combine(CurrRQMConfigPath, "RQMSettings.xml"));
+                    Reporter.ToLog(eLogLevel.WARN, "RQM Configuration package not exist in solution, RqmSettings.xml not exist at: " + Path.Combine(CurrRQMConfigPath, "RQMSettings.xml"));
                 }
             }
             else
             {
                 //Missing RQM Configurations Folder
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "RQMServerConfigurationsPackage folder not exist at: " + CurrRQMConfigPath);
+                Reporter.ToLog(eLogLevel.WARN, "RQMServerConfigurationsPackage folder not exist at: " + CurrRQMConfigPath);
             }
 
             return false;

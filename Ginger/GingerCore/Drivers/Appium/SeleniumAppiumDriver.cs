@@ -26,7 +26,6 @@ using OpenQA.Selenium.Appium.Android;
 using OpenQA.Selenium.Appium.Interfaces;
 using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Appium.MultiTouch;
-using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -174,15 +173,18 @@ namespace GingerCore.Drivers.Appium
             DriverWindow.DesignWindowInitialLook();
             DriverWindow.Show();
       
-                   ConnectedToDevice = ConnectToAppium();
-                if (ConnectedToDevice) {               
+            ConnectedToDevice = ConnectToAppium();
+            if (ConnectedToDevice)
+            {               
                 OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-                Dispatcher = DriverWindow.Dispatcher;
+                Dispatcher = new DriverWindowDispatcher(DriverWindow.Dispatcher);
                 System.Windows.Threading.Dispatcher.Run();
             
             }
-            else {
-                if (DriverWindow != null) {
+            else
+            {
+                if (DriverWindow != null)
+                {
                     DriverWindow.Close();
                     DriverWindow = null;
                 }
@@ -221,30 +223,29 @@ namespace GingerCore.Drivers.Appium
                     DriverDeviceType = eDeviceType.Phone;
 
                 //Setting capabilities
-                DesiredCapabilities capabilities = new DesiredCapabilities();
-                capabilities = this.GetCapabilities();
+                DriverOptions driverOptions = this.GetCapabilities();
 
                 foreach(DriverConfigParam UserCapability in AdvanceDriverConfigurations)
                 {
                  
-                    capabilities.SetCapability(UserCapability.Parameter, UserCapability.Value);
+                    driverOptions.AddAdditionalCapability(UserCapability.Parameter, UserCapability.Value);
                 }
                 //creating driver
                 switch (DriverPlatformType)
                 {
                     case eSeleniumPlatformType.Android:
-                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, capabilities, INIT_TIMEOUT_SEC);
+                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, INIT_TIMEOUT_SEC);
                         break;
                     case eSeleniumPlatformType.iOS:
-                        Driver = new IOSDriver<AppiumWebElement>(serverUri, capabilities, INIT_TIMEOUT_SEC);
+                        Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, INIT_TIMEOUT_SEC);
                         break;
                     case eSeleniumPlatformType.AndroidBrowser:
-                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, capabilities, INIT_TIMEOUT_SEC);
+                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, INIT_TIMEOUT_SEC);
                         Driver.Navigate().GoToUrl("http://www.google.com");
                         break;
                     case eSeleniumPlatformType.iOSBrowser:
                         //TODO: start ios-web-proxy automatically
-                        Driver = new IOSDriver<AppiumWebElement>(serverUri, capabilities, INIT_TIMEOUT_SEC);
+                        Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, INIT_TIMEOUT_SEC);
                         break;
                 }
                 mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
@@ -256,7 +257,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch (Exception ex)
             {
-                    Reporter.ToUser(eUserMsgKeys.MobileConnectionFailed, ex.Message);
+                    Reporter.ToUser(eUserMsgKey.MobileConnectionFailed, ex.Message);
                 return false;
             }      
         }
@@ -346,7 +347,7 @@ namespace GingerCore.Drivers.Appium
                         File.Delete(currFileName);
                     }catch(Exception e) {
                         //Could't delete log file
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                     }
                 }
             }
@@ -371,12 +372,12 @@ namespace GingerCore.Drivers.Appium
             catch (UnauthorizedAccessException ex) {
                 //Access denied - probably when file is being used by another process
                 Thread.Sleep(2000);
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
             catch(Exception e){
                 //Still launching Appium Server Or reading file exception
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 return null;
             }
             //Still launching Appium Server
@@ -428,9 +429,9 @@ namespace GingerCore.Drivers.Appium
             return portIsFree;
         }
 
-        private DesiredCapabilities GetCapabilities()
+        private DriverOptions GetCapabilities()
         {
-            DesiredCapabilities capabilities = new DesiredCapabilities();
+            DriverOptions driverOptions = new AppiumOptions();
 
             //see http://appium.io/slate/en/master/?csharp#appium-server-capabilities for full list of capabilities values
 
@@ -440,28 +441,28 @@ namespace GingerCore.Drivers.Appium
                     //Appium capabilities
                     //capabilities.SetCapability("automationName", "Appium");
                     //capabilities.SetCapability("platformName", "Android");                    
-                    capabilities.SetCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
+                    driverOptions.AddAdditionalCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
 
                     //Tested device capabilities
-                    capabilities.SetCapability("deviceName", DeviceName); //don't really impact anything, can be used for AppPackage+AppActivity switch case based on device type
-                    capabilities.SetCapability("platformVersion", DevicePlatformVersion);//Mobile OS version                  
+                    driverOptions.AddAdditionalCapability("deviceName", DeviceName); //don't really impact anything, can be used for AppPackage+AppActivity switch case based on device type
+                    driverOptions.AddAdditionalCapability("platformVersion", DevicePlatformVersion);//Mobile OS version                  
                     if (!string.IsNullOrEmpty(DeviceID))
-                        capabilities.SetCapability("udid", DeviceID);
+                        driverOptions.AddAdditionalCapability("udid", DeviceID);
 
                     //Tested application capabilities     
                     if (!string.IsNullOrEmpty(AppInstallerPath))
                     {
-                        capabilities.SetCapability("app", AppInstallerPath);
-                        capabilities.SetCapability("browserName", "");
+                        driverOptions.AddAdditionalCapability("app", AppInstallerPath);
+                        driverOptions.AddAdditionalCapability("browserName", "");
                     }
                     else
                     {
                         if (!string.IsNullOrEmpty(InstalledAppPackage))
                         {
-                            capabilities.SetCapability("appPackage", InstalledAppPackage);
-                            capabilities.SetCapability("appActivity", InstalledAppActivity);
-                            capabilities.SetCapability("appWaitPackage", InstalledAppPackage);
-                            capabilities.SetCapability("appWaitActivity", InstalledAppActivity);
+                            driverOptions.AddAdditionalCapability("appPackage", InstalledAppPackage);
+                            driverOptions.AddAdditionalCapability("appActivity", InstalledAppActivity);
+                            driverOptions.AddAdditionalCapability("appWaitPackage", InstalledAppPackage);
+                            driverOptions.AddAdditionalCapability("appWaitActivity", InstalledAppActivity);
                         }
                     }
                     break;
@@ -470,61 +471,61 @@ namespace GingerCore.Drivers.Appium
                     //Appium capabilities
                     //capabilities.SetCapability("automationName", "Appium");                    
                     //capabilities.SetCapability("platformName", "iOS");
-                    capabilities.SetCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
+                    driverOptions.AddAdditionalCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
 
                     //Tested device capabilities
-                    capabilities.SetCapability("deviceName", DeviceName); 
-                    capabilities.SetCapability("platformVersion", DevicePlatformVersion);//Mobile OS version 
+                    driverOptions.AddAdditionalCapability("deviceName", DeviceName); 
+                    driverOptions.AddAdditionalCapability("platformVersion", DevicePlatformVersion);//Mobile OS version 
                     if (!string.IsNullOrEmpty(DeviceID))
-                        capabilities.SetCapability("udid", DeviceID);
+                        driverOptions.AddAdditionalCapability("udid", DeviceID);
 
                     //Tested application capabilities     
                     if (!string.IsNullOrEmpty(AppInstallerPath))
                     {
-                        capabilities.SetCapability("app", AppInstallerPath);
-                        capabilities.SetCapability("browserName", "");
+                        driverOptions.AddAdditionalCapability("app", AppInstallerPath);
+                        driverOptions.AddAdditionalCapability("browserName", "");
                     }
                     if (!string.IsNullOrEmpty(InstalledAppBundleID))
-                        capabilities.SetCapability("bundleId", InstalledAppBundleID);                   
+                        driverOptions.AddAdditionalCapability("bundleId", InstalledAppBundleID);                   
                     break;
 
                 case eSeleniumPlatformType.AndroidBrowser:
                     //Appium capabilities
-                    capabilities.SetCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
+                    driverOptions.AddAdditionalCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
 
                     //Tested device capabilities
-                    capabilities.SetCapability("deviceName", DeviceName); //don't really impact anything, can be used for AppPackage+AppActivity switch case based on device type
-                    capabilities.SetCapability("platformVersion", DevicePlatformVersion);//Mobile OS version  
+                    driverOptions.AddAdditionalCapability("deviceName", DeviceName); //don't really impact anything, can be used for AppPackage+AppActivity switch case based on device type
+                    driverOptions.AddAdditionalCapability("platformVersion", DevicePlatformVersion);//Mobile OS version  
                     if (!string.IsNullOrEmpty(DeviceID))
-                        capabilities.SetCapability("udid", DeviceID);
+                        driverOptions.AddAdditionalCapability("udid", DeviceID);
 
                     //Tested application capabilities 
-                    capabilities.SetCapability("browserName", "chrome");
+                    driverOptions.AddAdditionalCapability("browserName", "chrome");
                     //capabilities.SetCapability("chromedriverExecutable", ""); //The absolute local path to webdriver executable (if Chromium embedder provides its own webdriver, it should be used instead of original chromedriver bundled with Appium); exp: /abs/path/to/webdriver
                     //capabilities.SetCapability("chromeOptions", ""); //Allows passing chromeOptions capability for chrome driver. For more information see chromeOptions: https://sites.google.com/a/chromium.org/chromedriver/capabilities
                     break;
 
                 case eSeleniumPlatformType.iOSBrowser:
                     //Appium capabilities
-                    capabilities.SetCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
+                    driverOptions.AddAdditionalCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
 
                     //Tested device capabilities
-                    capabilities.SetCapability("deviceName", DeviceName);
-                    capabilities.SetCapability("platformVersion", DevicePlatformVersion);//Mobile OS version 
+                    driverOptions.AddAdditionalCapability("deviceName", DeviceName);
+                    driverOptions.AddAdditionalCapability("platformVersion", DevicePlatformVersion);//Mobile OS version 
                     if (!string.IsNullOrEmpty(DeviceID))
-                        capabilities.SetCapability("udid", DeviceID);
+                        driverOptions.AddAdditionalCapability("udid", DeviceID);
 
                     //Tested application capabilities 
-                    capabilities.SetCapability("browserName", "safari");
+                    driverOptions.AddAdditionalCapability("browserName", "safari");
                     //capabilities.setCapability("safariInitialUrl", "");  //(Sim-only) (>= 8.1) Initial safari url, default is a local welcome page
-                    capabilities.SetCapability("safariAllowPopups", false);  //(Sim-only) Prevent Safari from showing a fraudulent website warning. Default keeps current sim setting.
+                    driverOptions.AddAdditionalCapability("safariAllowPopups", false);  //(Sim-only) Prevent Safari from showing a fraudulent website warning. Default keeps current sim setting.
                     //capabilities.setCapability("safariOpenLinksInBackground", false);  //(Sim-only) Whether Safari should allow links to open in new windows. Default keeps current sim setting.
                     if (!string.IsNullOrEmpty(InstalledAppBundleID))
-                        capabilities.SetCapability("bundleId", InstalledAppBundleID);
+                        driverOptions.AddAdditionalCapability("bundleId", InstalledAppBundleID);
                     break;
             }
 
-            return capabilities;                        
+            return driverOptions;                        
         }
 
 
@@ -539,7 +540,7 @@ namespace GingerCore.Drivers.Appium
                     DriverWindow = null;
                 }
             } catch (InvalidOperationException e) {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
 
             if (Driver != null){
@@ -733,7 +734,7 @@ namespace GingerCore.Drivers.Appium
                                     }
                                 }
                             }
-                            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             switch (DriverPlatformType)
                             {
                                 case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
@@ -832,7 +833,7 @@ namespace GingerCore.Drivers.Appium
                                         return;
                                 }                               
                                 attribute = e.GetAttribute(value);
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                             }
                             act.AddOrUpdateReturnParamActual("Actual", attribute);
                         }
@@ -1022,7 +1023,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
             act.AddScreenShot(tmp);
         }
@@ -1070,7 +1071,7 @@ namespace GingerCore.Drivers.Appium
                     Driver.Navigate().Back();
                     break;
                 case eSeleniumPlatformType.iOS:
-                    Reporter.ToUser(eUserMsgKeys.MissingImplementation2);
+                    Reporter.ToUser(eUserMsgKey.MissingImplementation2);
                     break;
             }
         }
@@ -1084,7 +1085,7 @@ namespace GingerCore.Drivers.Appium
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(3);
                     break;
                 case eSeleniumPlatformType.iOS:
-                    Reporter.ToUser(eUserMsgKeys.MissingImplementation2);
+                    Reporter.ToUser(eUserMsgKey.MissingImplementation2);
                     break;
             }
         }
@@ -1097,7 +1098,7 @@ namespace GingerCore.Drivers.Appium
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Menu);
                     break;
                 case eSeleniumPlatformType.iOS:
-                    Reporter.ToUser(eUserMsgKeys.MissingImplementation2);
+                    Reporter.ToUser(eUserMsgKey.MissingImplementation2);
                     break;
             }
         }
@@ -1164,20 +1165,7 @@ namespace GingerCore.Drivers.Appium
             return "TBD";
         }
 
-        public override List<ActWindow> GetAllWindows()
-        {
-            return null;
-        }
-
-        public override List<ActLink> GetAllLinks()
-        {
-            return null;
-        }
-
-        public override List<ActButton> GetAllButtons()
-        {
-            return null;
-        }
+        
 
         public override bool IsRunning()
         {
@@ -1503,9 +1491,28 @@ namespace GingerCore.Drivers.Appium
             throw new NotImplementedException();
         }
 
-        public bool TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
+        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
         {
             throw new NotImplementedException();
+        }
+
+        public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartSpying()
+        {
+            throw new NotImplementedException();
+        }
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        {
+            return EI;
         }
     }
 }

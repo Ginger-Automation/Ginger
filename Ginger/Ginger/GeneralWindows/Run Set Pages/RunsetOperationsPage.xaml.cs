@@ -29,6 +29,7 @@ using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using System.Collections.Generic;
 
+
 namespace Ginger.Run
 {
     /// <summary>
@@ -197,9 +198,9 @@ namespace Ginger.Run
         }
         private void AddHTMLReport(object sender, RoutedEventArgs e)
         {
-            if (!App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationIsEnabled)
+            if (! WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationIsEnabled)
             {
-                Reporter.ToUser(eUserMsgKeys.ExecutionsResultsProdIsNotOn);
+                Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
             }
 
@@ -212,15 +213,15 @@ namespace Ginger.Run
 
         private void AddAutomatedALMDefectsOperation(object sender, RoutedEventArgs e)
         {
-            if (!App.UserProfile.Solution.UseRest)
+            if (! WorkSpace.UserProfile.Solution.UseRest && WorkSpace.UserProfile.Solution.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
             {
-                Reporter.ToUser(eUserMsgKeys.ALMDefectsUserInOtaAPI);
+                Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI);
                 return;
             }
             ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
             if ((ALMDefectProfiles == null) || (ALMDefectProfiles.Count < 1))
             {
-                Reporter.ToUser(eUserMsgKeys.NoDefectProfileCreated);
+                Reporter.ToUser(eUserMsgKey.NoDefectProfileCreated);
                 return;
             }
 

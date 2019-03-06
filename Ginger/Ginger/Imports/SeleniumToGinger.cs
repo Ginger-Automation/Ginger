@@ -28,6 +28,7 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Import
 {
@@ -151,7 +152,7 @@ namespace Ginger.Import
             }
             catch (Exception)
             {
-                Reporter.ToUser(eUserMsgKeys.ImportSeleniumScriptError);
+                Reporter.ToUser(eUserMsgKey.ImportSeleniumScriptError);
             }
             return null;
         }

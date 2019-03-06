@@ -130,7 +130,7 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
 
                 default:                    
-                    Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
+                    Reporter.ToUser(eUserMsgKey.ActionNotImplemented, controlType);
                     break;
 
             }
@@ -681,6 +681,21 @@ namespace GingerCore.Drivers.WindowsLib
 
             return rc;
         }
+        public string GetElementID(ElementInfo EI)
+        {
+            return "";
+        }
+
+        public string GetElementTagName(ElementInfo EI)
+        {
+            return "";
+        }
+
+        public List<object> GetAllElementsByLocator(eLocateBy LocatorType, string LocValue)
+        {
+            return null;
+        }
+        
 
         public ElementInfo GetPreviousSibling(ElementInfo EI)
         {

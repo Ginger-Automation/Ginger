@@ -1,6 +1,25 @@
-﻿using Amdocs.Ginger;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Functionalities;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
@@ -19,7 +38,7 @@ namespace UnitTests.NonUITests
     {
 
         static ObservableList<BusinessFlow> mBFList = new ObservableList<BusinessFlow>();
-        static ObservableList<Act> mRepoActions = new ObservableList<Act>();
+        static ObservableList<IAct> mRepoActions = new ObservableList<IAct>();
         static ObservableList<ApplicationAPIModel> mApplicationAPIModels = new ObservableList<ApplicationAPIModel>();
         static Activity a1 = new Activity();
         static SearchConfig mSearchConfig1;
@@ -90,7 +109,7 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void FindEqualStringValueTest()
         {
             ResetActionList();
@@ -106,7 +125,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void FindStringValueMatchCaseNotAllWordTest()
         {
             ResetActionList();
@@ -121,7 +140,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void FindStringValueNotMatchCaseButAllWordTest()
         {
             ResetActionList();
@@ -140,7 +159,7 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ReplaceRootedStringValueTest()
         {
             ResetActionList();
@@ -157,7 +176,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(value, "My Variable is Changed String", "string Value Validation");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ReplaceInnerListStringValueTest()
         {
             ResetActionList();
@@ -174,7 +193,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(value, "bla bli bla Changed String bla bla bla", "InnerList string Value Validation");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ReplaceBoolValueTest()
         {
             ResetActionList();
@@ -191,7 +210,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(value, false, "bool Value Validation");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ReplaceEnumValueTest()
         {
             ResetActionList();
@@ -209,7 +228,7 @@ namespace UnitTests.NonUITests
         }
 
         
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ReplaceIntValueTest()
         {
             ResetActionList();
@@ -229,7 +248,7 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void FindValuesFromRootedStringField_NameAndValueTest()
         {
             ResetActionList();
@@ -244,7 +263,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void FindValuesFromRootedIntField_NameAndValueTest()
         {
             ResetActionList();
@@ -259,7 +278,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void FindValuesFromRootedEnumField_NameAndValueTest()
         {
             ResetActionList();
@@ -274,7 +293,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void FindValuesFromListField_NameAndValueTest()
         {
             ResetActionList();
@@ -290,7 +309,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(foundItemsList[1].FieldValue, "I expect you to VTFInsideList behave", "Value Validation");
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void FindValuesFromList_PathGenerationTest()
         {
             ResetActionList();

@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowFolder;
@@ -37,7 +55,7 @@ namespace Ginger.BusinessFlowWindows
             InitializeComponent();
 
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
-            App.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+             WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
 
             Reset();
         }
@@ -66,7 +84,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void ShiftToBusinessFlowView()
         {
-            if(mBusFlowsPage == null && App.UserProfile.Solution != null)
+            if(mBusFlowsPage == null &&  WorkSpace.UserProfile.Solution != null)
             {
                 BusinessFlowsFolderTreeItem busFlowsRootFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
                 mBusFlowsPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.BusinessFlows), eImageType.BusinessFlow, busFlowsRootFolder, busFlowsRootFolder.SaveAllTreeFolderItemsHandler, busFlowsRootFolder.AddItemHandler, treeItemDoubleClickHandler: BusinessFlowsTree_ItemDoubleClick);

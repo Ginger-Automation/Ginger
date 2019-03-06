@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 // This class is for dummy act - good for agile, and to be replace later on when real
 //  act is available, so tester can write the step to be.
 namespace GingerCore.Actions
@@ -36,7 +36,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Text File Operations"; } }
         public override string ActionUserDescription { get { return "Read/Write/Append on text file"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action to perform validations Using Value Expression editor ");
 
@@ -141,7 +141,8 @@ namespace GingerCore.Actions
         {
             string FileText = String.Empty;
             string calculatedFilePath = GetInputParamCalculatedValue(Fields.TextFilePath);
-            calculatedFilePath = calculatedFilePath.Replace(@"~\", SolutionFolder);
+            //calculatedFilePath = calculatedFilePath.Replace(@"~\", SolutionFolder);
+            calculatedFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedFilePath);
             string filePath = Path.GetDirectoryName(calculatedFilePath);
             bool isRootedPath = Path.IsPathRooted(filePath);
             if (!isRootedPath)

@@ -26,6 +26,8 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 
 namespace GingerCore.Actions
 {
@@ -35,7 +37,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "ASCF Control Action"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
         }        
 

@@ -222,11 +222,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             try
             {
                 mConsoleDriver.Disconnect();
+                mConsoleDriver.mConsoleDriverWindow = null;
                 mConsoleDriver.CloseDriver();
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message);
             }
         }
         private void ApplyStyleToText(string result,ref Paragraph p)
@@ -252,7 +253,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in ApplyStyleToResultAsync", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in ApplyStyleToResultAsync", e);
             }
         }
         private bool ApplyASCIICodeFormat(string TargetString, string format, ref Paragraph p)

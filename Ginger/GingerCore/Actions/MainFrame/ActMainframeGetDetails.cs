@@ -21,7 +21,7 @@ using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.MainFrame
 {
     public class ActMainframeGetDetails : Act
@@ -29,7 +29,7 @@ namespace GingerCore.Actions.MainFrame
         public override string ActionDescription { get { return "Get Details from MainFrame"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action to get Text/Details of a filed at a particular location in Terminal");
         }

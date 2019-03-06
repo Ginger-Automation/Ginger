@@ -16,19 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
-using GingerCore;
-using GingerCore.Actions;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests.NonUITests
 {
+    // This class will run only on windows since it uses VBS
+
     [TestClass]
     [Level1]
     public class ExpectedWithActual 
@@ -39,7 +34,7 @@ namespace UnitTests.NonUITests
             
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedIsSimpleNumber()
         {
             //Arrange
@@ -63,7 +58,7 @@ namespace UnitTests.NonUITests
             GingerRunner.CalculateARCStatus(ARC);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedIsSimpleString()
         {
             //Arrange
@@ -79,7 +74,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(ARC.Status,ActReturnValue.eStatus.Passed);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedActualGreaterThanNumber()
         {
             //Arrange
@@ -96,7 +91,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void CheckforStartingwithNot()
         {
             //Arrange
@@ -112,7 +107,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedActualLowerThanNumber()
         {
             //Arrange
@@ -128,7 +123,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(ARC.Status , ActReturnValue.eStatus.Passed);            
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedActualLowerThanNumberIsFalse()
         {
             //Arrange
@@ -145,7 +140,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedActulContainsString()
         {
             //Arrange
@@ -161,7 +156,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);            
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedActulContainsStringIsFalse()
         {
             //Arrange
@@ -178,7 +173,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedActulWithOrNumbers()
         {
             //Arrange
@@ -194,7 +189,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(ARC.Status , ActReturnValue.eStatus.Passed);    
         }
 
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ExpectedActulWithOrNumbersANDCond()
         {
             //Arrange

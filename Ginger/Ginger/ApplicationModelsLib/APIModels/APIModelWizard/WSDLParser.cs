@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using GingerCoreNET.ReporterLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -364,12 +363,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             foreach (Part part in messagePartsList)
             {
 
-                string staringPartTagToAppend = GetStartingPartTypeToAppend(part, NameSpacesToInclude);
+                string startingPartTagToAppend = GetStartingPartTypeToAppend(part, NameSpacesToInclude);
                 string endingPartTagToAppend = GetEndingPartTypeToAppend(part, NameSpacesToInclude);
                 if (!(HeaderNamesList.Contains(part.PartName) && part.PartElementType == Part.ePartElementType.Element))
                 {
                     ComplexType ParametersComplexType = GetNextComplexTypeByElementNameAndNameSpace(part.ElementName, part.ElementNameSpace, NameSpacesToInclude);
-                    RequestBody.Append(staringPartTagToAppend);
+                    RequestBody.Append(startingPartTagToAppend);
                     if (ParametersComplexType != null)
                     {
                         string PathToPass = ParametersComplexType.Source + ":" + ParametersComplexType.Name + "/";
@@ -417,19 +416,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private string GetStartingPartTypeToAppend(Part part, Dictionary<string, string> NameSpacesToInclude)
         {
-            string staringPartTypeToAppend = string.Empty;
+            string startingPartTypeToAppend = string.Empty;
             if (part.PartElementType == Part.ePartElementType.Element)
             {
-                staringPartTypeToAppend = tab2 + "<" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.ElementName + ">" + Environment.NewLine;
+                startingPartTypeToAppend = tab2 + "<" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.ElementName + ">" + Environment.NewLine;
             }
             else
             {
                 if (!NameSpacesToInclude.ContainsKey("http://www.w3.org/2001/XMLSchema-instance"))
                     NameSpacesToInclude.Add("http://www.w3.org/2001/XMLSchema-instance", "xsi");
-                staringPartTypeToAppend = tab2 + "<" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.PartName + " xsi:type=\"" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.ElementName + "\" " + "xmlns:" + NameSpacesToInclude[part.ElementNameSpace] + "=\"" + part.ElementNameSpace + "\">" + Environment.NewLine;
+                startingPartTypeToAppend = tab2 + "<" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.PartName + " xsi:type=\"" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.ElementName + "\" " + "xmlns:" + NameSpacesToInclude[part.ElementNameSpace] + "=\"" + part.ElementNameSpace + "\">" + Environment.NewLine;
             }
 
-            return staringPartTypeToAppend;
+            return startingPartTypeToAppend;
         }
 
         private void AppendEnvelope(StringBuilder requestBody, List<Part> messagePartsList, string soapEnvelopeURL, Dictionary<string, string> NameSpacesToInclude)
@@ -667,7 +666,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                             }
                             else if (NextComplexType.Restriction != null)
                             {
-                                AppendComplexTypeElements(RequestBody, null, ChildElement, NextComplexType, NameSpaceName, CurrentTab + tab1, NameSpacesToInclude, PathToPass, AMPList);
+                                if (NextComplexType.Restriction.ComplexTypeElementsList.Count != 0)
+                                {
+                                    RequestBody.Append(CurrentTab + "<" + NameSpaceName + ":" + ChildElement.Name + ">" + Environment.NewLine);
+                                    AppendComplexTypeElementList(RequestBody, NextComplexType.Restriction.ComplexTypeElementsList, RefElement, SourceElement, ComplexType, NameSpacesToInclude[NextComplexType.Restriction.BaseNameSpace], CurrentTab + tab1, NameSpacesToInclude, PathToPass, AMPList);
+                                    RequestBody.Append(CurrentTab + "</" + NameSpaceName + ":" + ChildElement.Name + ">" + Environment.NewLine);
+                                }
+                                else
+                                {
+                                    AppendComplexTypeElements(RequestBody, null, ChildElement, NextComplexType, NameSpaceName, CurrentTab + tab1, NameSpacesToInclude, PathToPass, AMPList);
+                                }
+                                
                             }
                             else
                             {
@@ -986,6 +995,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 Element = ElementsList.Where(x => x.Name == ElementName && ElementSource.Contains(x.Source.Replace("%20", " "))).FirstOrDefault();
             else
                 Element = ElementsList.Where(x => x.Name == ElementName).FirstOrDefault();
+            if (Element == null)
+            {
+                Element = ElementsList.Where(x => x.Name == ElementName && string.IsNullOrEmpty(x.Source)).FirstOrDefault();
+            }
             return Element;
         }
 
@@ -1115,23 +1128,24 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 if (!string.IsNullOrEmpty(URLTuple.Item1))
                 {
                     string CompleteURL = GetCompleteURL(URLTuple.Item1, URLTuple.Item2);
-                    XmlTextReader reader = new XmlTextReader(CompleteURL);
-                    XmlSchema schema = XmlSchema.Read(reader, null);
-
-                    if (!string.IsNullOrEmpty(schema.TargetNamespace) && !AllNameSpaces.ContainsKey(schema.TargetNamespace))
+                    using (XmlReader reader = XmlReader.Create(CompleteURL))
                     {
-                        List<string> AllNameSpaceURLs = new List<string>();
-                        AllNameSpaceURLs.Add(CompleteURL);
-                        AllNameSpaces.Add(schema.TargetNamespace, AllNameSpaceURLs);
-                        AllSourcesNameSpaces.Add(AllNameSpaceURLs, schema.TargetNamespace);
+                        XmlSchema schema = XmlSchema.Read(reader, null);
+                        if (!string.IsNullOrEmpty(schema.TargetNamespace) && !AllNameSpaces.ContainsKey(schema.TargetNamespace))
+                        {
+                            List<string> AllNameSpaceURLs = new List<string>();
+                            AllNameSpaceURLs.Add(CompleteURL);
+                            AllNameSpaces.Add(schema.TargetNamespace, AllNameSpaceURLs);
+                            AllSourcesNameSpaces.Add(AllNameSpaceURLs, schema.TargetNamespace);
+                        }
+                        else if (schema.TargetNamespace != null && AllNameSpaces.ContainsKey(schema.TargetNamespace))
+                        {
+                            AllNameSpaces[schema.TargetNamespace].Add(CompleteURL);
+                            KeyValuePair<List<string>, string> KeyValue = AllSourcesNameSpaces.Where(x => x.Value == schema.TargetNamespace).FirstOrDefault();
+                            KeyValue.Key.Add(CompleteURL);
+                        }
+                        GetAllElementsAndComplexTypesFromImportedSchema(schema);
                     }
-                    else if (schema.TargetNamespace != null && AllNameSpaces.ContainsKey(schema.TargetNamespace))
-                    {
-                        AllNameSpaces[schema.TargetNamespace].Add(CompleteURL);
-                        KeyValuePair<List<string>, string> KeyValue = AllSourcesNameSpaces.Where(x => x.Value == schema.TargetNamespace).FirstOrDefault();
-                        KeyValue.Key.Add(CompleteURL);
-                    }
-                    GetAllElementsAndComplexTypesFromImportedSchema(schema);
                 }
             }
         }
@@ -1195,10 +1209,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
                     XmlSchemaComplexType XmlSchemaComplexType = item as XmlSchemaComplexType;
 
-                    if (XmlSchemaComplexType.Name == "BaseCancelRechargeMethod")
-                    {
-
-                    }
 
                     XmlSchemaParticle XmlSchemaParticle = XmlSchemaComplexType.Particle;
                     List<ComplexTypeChild> ComplexTypeElementsList = new List<ComplexTypeChild>();
@@ -1288,6 +1298,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                                         Restriction.Attributes.Add(Attribute.UnhandledAttributes[i].LocalName);
                                     i++;
                                 }
+                            }
+                            if (XmlSchemaComplexContentRestriction.Particle is XmlSchemaSequence)
+                            {
+                                XmlSchemaSequence XmlSchemaSequence = XmlSchemaComplexContentRestriction.Particle as XmlSchemaSequence;
+                                Restriction.ComplexTypeElementsList = GetComplexTypeChildListFromXmlSchemaObjectCollection(XmlSchemaSequence.Items);
                             }
                             RestrictionChild = Restriction;
                         }
@@ -1993,7 +2008,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             if (directory != containigFolder)
             {
                 int ContainingFolderLeanth = containigFolder.Length;
-                if (ContainingFolderLeanth < directory.Length)
+                if (ContainingFolderLeanth < directory.Length && !directory.StartsWith("http"))
                     relativeDirectories = directory.Substring(ContainingFolderLeanth).TrimStart('\\');
             }
             GetAllURLsFFromSchemaItems(Items, relativeDirectories, containigFolder);
@@ -2154,7 +2169,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         public string MinLeanth;
         public string Source;
         public string BaseNameSpace;
-
+        public List<ComplexTypeChild> ComplexTypeElementsList = new List<ComplexTypeChild>();
         public List<string> Attributes = new List<string>();
     }
 

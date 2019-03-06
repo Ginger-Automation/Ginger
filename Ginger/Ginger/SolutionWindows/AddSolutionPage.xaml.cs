@@ -62,7 +62,7 @@ namespace Ginger.SolutionWindows
                             || MainPlatformComboBox.SelectedItem == null || MainPlatformComboBox.SelectedItem.ToString() == "Null")
                 {
                     Mouse.OverrideCursor = null;
-                    Reporter.ToUser(eUserMsgKeys.MissingAddSolutionInputs);
+                    Reporter.ToUser(eUserMsgKey.MissingAddSolutionInputs);
                     return;
                 }
                 
@@ -100,34 +100,35 @@ namespace Ginger.SolutionWindows
                 {
                     //solution already exist
                     Mouse.OverrideCursor = null;
-                    Reporter.ToUser(eUserMsgKeys.SolutionAlreadyExist);
+                    Reporter.ToUser(eUserMsgKey.SolutionAlreadyExist);
                     return;
                 }
                 
                 App.SetSolution(mSolution.Folder);
 
-                //Create default items
+                //Create default items                
                 AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);                
                 App.UpdateApplicationsAgentsMapping();
                 AddDefaultDataSource();
                 AddDeafultReportTemplate();
                 AutomatePage.CreateDefaultEnvironment();
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(App.GetNewBusinessFlow("Flow 1", true));
 
                 //show success message to user
                 Mouse.OverrideCursor = null;
-                Reporter.ToUser(eUserMsgKeys.AddSolutionSucceed);
+                Reporter.ToUser(eUserMsgKey.AddSolutionSucceed);
                 _pageGenericWin.Close();
             }
             catch (Exception ex)
             {
                 Mouse.OverrideCursor = null;
-                Reporter.ToUser(eUserMsgKeys.AddSolutionFailed, ex.Message);
+                Reporter.ToUser(eUserMsgKey.AddSolutionFailed, ex.Message);
             }
         }
 
         private void AddDeafultReportTemplate()
         {
-            HTMLReportConfiguration r =  HTMLReportTemplatePage.SetHTMLReportConfigurationWithDefaultValues("Default");
+            HTMLReportConfiguration r = HTMLReportConfiguration.SetHTMLReportConfigurationWithDefaultValues("Default");
             r.Name = "Default";
             r.IsDefault = true;
                         
@@ -169,7 +170,7 @@ namespace Ginger.SolutionWindows
                     agent.DriverType = Agent.eDriverType.JavaDriver;
                     break;
                 default:                    
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "No default driver set for first agent");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No default driver set for first agent");
                     break;
             }
 

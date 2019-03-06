@@ -72,7 +72,7 @@
     <Reference Include="AjaxMin">
       <HintPath>..\packages\AjaxMin.5.14.5506.26202\lib\net40\AjaxMin.dll</HintPath>
     </Reference>
-    <Reference Include="ALMRepository, Version=7.7.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="ALMRepository, Version=8.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\ALMRepository.dll</HintPath>
     </Reference>
@@ -84,8 +84,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\ALM_Common.dll</HintPath>
     </Reference>
-    <Reference Include="appium-dotnet-driver, Version=3.0.0.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Appium.WebDriver.3.0.0.2\lib\net45\appium-dotnet-driver.dll</HintPath>
+    <Reference Include="appium-dotnet-driver, Version=4.0.0.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Appium.WebDriver.4.0.0.4-beta\lib\net45\appium-dotnet-driver.dll</HintPath>
     </Reference>
     <Reference Include="AutoMapper, Version=6.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.6.1.1\lib\net45\AutoMapper.dll</HintPath>
@@ -93,9 +93,17 @@
     <Reference Include="Cassandra, Version=3.99.0.0, Culture=neutral, PublicKeyToken=10b231fbfc8c4b4d, processorArchitecture=MSIL">
       <HintPath>..\packages\CassandraCSharpDriver.3.2.1\lib\net45\Cassandra.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.3.4.1\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.Core, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.Core.3.4.1\lib\net40\Common.Logging.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Couchbase.NetClient, Version=2.7.3.0, Culture=neutral, PublicKeyToken=05e9c6b5a9ec94c2, processorArchitecture=MSIL">
+      <HintPath>..\packages\CouchbaseNetClient.2.7.3\lib\net452\Couchbase.NetClient.dll</HintPath>
     </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=2.8.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
       <HintPath>..\packages\DocumentFormat.OpenXml.2.8.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
@@ -144,6 +152,9 @@
       <HintPath>..\packages\Eyes.Images.1.18.0\lib\net35\Ionic.Zip.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="JiraRepository">
+      <HintPath>DLLs\JiraRepository.dll</HintPath>
+    </Reference>
     <Reference Include="LibGit2Sharp, Version=0.24.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLL's\LibGit2Sharp.dll</HintPath>
@@ -157,14 +168,29 @@
     <Reference Include="Magick.NET-Q16-AnyCPU, Version=7.2.1.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
       <HintPath>..\packages\Magick.NET-Q16-AnyCPU.7.3.0\lib\net40\Magick.NET-Q16-AnyCPU.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.1.0.0\lib\netstandard1.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Configuration, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Logging.1.0.0\lib\netstandard1.1\Microsoft.Extensions.Logging.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.1.0.0\lib\netstandard1.1\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Configuration.Binder, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Binder.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Options.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -190,8 +216,8 @@
       <HintPath>..\packages\MySql.Data.8.0.11\lib\net452\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Npgsql, Version=3.2.2.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
       <HintPath>..\packages\Npgsql.3.2.2\lib\net45\Npgsql.dll</HintPath>
@@ -199,6 +225,9 @@
     <Reference Include="Open3270, Version=1.5.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Ginger\DLLs\Open3270.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTracing, Version=0.12.0.0, Culture=neutral, PublicKeyToken=61503406977abdaf, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTracing.0.12.0\lib\net45\OpenTracing.dll</HintPath>
     </Reference>
     <Reference Include="Oracle.ManagedDataAccess, Version=4.121.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
       <HintPath>..\packages\Oracle.ManagedDataAccess.12.1.24160719\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
@@ -209,13 +238,11 @@
     <Reference Include="PdfSharp.Charting-WPF">
       <HintPath>..\packages\PDFsharp-MigraDoc-WPF.1.32.2608.0\lib\net20\PdfSharp.Charting-WPF.dll</HintPath>
     </Reference>
-    <Reference Include="PerfectoLab, Version=6.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PerfectoLab.6.5.0.0\lib\PerfectoLab.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="PerfectoLab, Version=18.4.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PerfectoLab.18.4.0.1\lib\PerfectoLab.dll</HintPath>
     </Reference>
-    <Reference Include="PerfectoLab.Extended, Version=6.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PerfectoLab.Extended.6.5.0.0\lib\PerfectoLab.Extended.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="PerfectoLab.Extended, Version=18.4.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PerfectoLab.Extended.18.4.0.1\lib\PerfectoLab.Extended.dll</HintPath>
     </Reference>
     <Reference Include="Protractor, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Protractor.0.11.0\lib\net40\Protractor.dll</HintPath>
@@ -241,6 +268,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\RQM_Repository.dll</HintPath>
     </Reference>
+    <Reference Include="SeleniumExtras.PageObjects, Version=3.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetSeleniumExtras.PageObjects.3.11.0\lib\net45\SeleniumExtras.PageObjects.dll</HintPath>
+    </Reference>
     <Reference Include="SharpAdbClient">
       <HintPath>..\packages\SharpAdbClient.2.0.274\lib\net45\SharpAdbClient.dll</HintPath>
     </Reference>
@@ -253,33 +283,82 @@
     <Reference Include="System">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll</HintPath>
     </Reference>
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.4.5.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Drawing.Common.4.5.1\lib\net461\System.Drawing.Common.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.IO.Compression">
       <HintPath>..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.IO.Compression.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Packaging, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Packaging.4.5.0\lib\net46\System.IO.Packaging.dll</HintPath>
+    </Reference>
     <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
     </Reference>
     <Reference Include="System.Management" />
-    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.1\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.2\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Speech" />
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.1\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
@@ -298,11 +377,11 @@
     <Reference Include="UIAComWrapper, Version=1.1.0.14, Culture=neutral, PublicKeyToken=78cbcf77433a85e5, processorArchitecture=MSIL">
       <HintPath>..\packages\UIAComWrapper.1.1.0.14\lib\net40\UIAComWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="WebDriver, Version=3.12.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Selenium.WebDriver.3.12.1\lib\net45\WebDriver.dll</HintPath>
+    <Reference Include="WebDriver, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.WebDriver.3.141.0\lib\net45\WebDriver.dll</HintPath>
     </Reference>
-    <Reference Include="WebDriver.Support, Version=3.12.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Selenium.Support.3.12.1\lib\net45\WebDriver.Support.dll</HintPath>
+    <Reference Include="WebDriver.Support, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.Support.3.141.0\lib\net45\WebDriver.Support.dll</HintPath>
     </Reference>
     <Reference Include="WebDriverExtended, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WebDriverExtended.1.2.0.0\lib\net45\WebDriverExtended.dll</HintPath>
@@ -410,32 +489,22 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\ActAgentManipulation.cs" />
-    <Compile Include="Actions\ActionConversion\ActionConversionHandler.cs" />
     <Compile Include="Actions\RobotFramework\ActRobot.cs" />
     <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
     <Compile Include="Actions\VisualTesting\VisualCompareAnalyzerIntegration.cs" />
     <Compile Include="Actions\RobotFramework\GingerParam.cs" />
-    <Compile Include="Actions\WebServices\ActSoapUiInputValue.cs" />
     <Compile Include="Actions\WebServices\WebAPI\ActWebAPIModel.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\WebAPIKeyBodyValues.cs" />
-    <Compile Include="Actions\ActOutDataSourceConfig.cs" />
     <Compile Include="Actions\Common\ActMedia.cs" />
     <Compile Include="Actions\Common\ActBattery.cs" />
     <Compile Include="Actions\Common\ActPhone.cs" />
     <Compile Include="Actions\Common\ActDevice.cs" />
     <Compile Include="Actions\ActDemoPage.cs" />
-    <Compile Include="Actions\Common\ActionParamInfo.cs" />
     <Compile Include="Actions\Common\ElementConfigControl.cs" />
     <Compile Include="Actions\JSON\ActJSONTagValidation.cs" />
-    <Compile Include="Actions\PlugIns\ActPlugIn.cs" />
     <Compile Include="Actions\VisualTesting\ApplitoolsAnalyzer.cs" />
     <Compile Include="Actions\VisualTesting\IVisualAnalyzer.cs" />
-    <Compile Include="Actions\VisualTesting\IVisualTestingDriver.cs" />
     <Compile Include="Actions\VisualTesting\MagickAnalyzer.cs" />
     <Compile Include="Actions\VisualTesting\UIElementsAnalyzer.cs" />
-    <Compile Include="Actions\VisualTesting\VisualElement.cs" />
-    <Compile Include="Actions\VisualTesting\VisualElementsInfo.cs" />
     <Compile Include="Actions\WebServices\ActSoapUI.cs" />
     <Compile Include="Actions\ActFileOperations.cs" />
     <Compile Include="Actions\ActReadTextFile.cs" />
@@ -443,17 +512,14 @@
     <Compile Include="Actions\ActImage.cs" />
     <Compile Include="Actions\ActLowLevelClicks.cs" />
     <Compile Include="Actions\ActCreatePDFChart.cs" />
-    <Compile Include="Actions\Act.cs" />
     <Compile Include="Actions\ActActivateRow.cs" />
     <Compile Include="Actions\ActGetMsgboxText.cs" />
     <Compile Include="Actions\ActButton.cs" />
     <Compile Include="Actions\ActCheckbox.cs" />
-    <Compile Include="Actions\ActClearAllVariables.cs" />
     <Compile Include="Actions\ActFileTransfer.cs" />
     <Compile Include="Actions\ActConsoleCommand.cs" />
     <Compile Include="Actions\ActDBValidation.cs" />
     <Compile Include="Actions\ActDropDownList.cs" />
-    <Compile Include="Actions\ActDummy.cs" />
     <Compile Include="Actions\ActExcel.cs" />
     <Compile Include="Actions\ActFunction.cs" />
     <Compile Include="Actions\ActASCFControl.cs" />
@@ -471,14 +537,12 @@
     <Compile Include="Actions\ActCompareImgs.cs" />
     <Compile Include="Actions\ActSendKeys.cs" />
     <Compile Include="Actions\ActSetConfig.cs" />
-    <Compile Include="Actions\ActSetVariableValue.cs" />
     <Compile Include="Actions\ActSmartSync.cs" />
     <Compile Include="Actions\ActLink.cs" />
     <Compile Include="Actions\ActMenuItem.cs" />
     <Compile Include="Actions\ActMultiselectList.cs" />
     <Compile Include="Actions\ActPassword.cs" />
     <Compile Include="Actions\ActRadiobutton.cs" />
-    <Compile Include="Actions\ActScreenShot.cs" />
     <Compile Include="Actions\ActSubmit.cs" />
     <Compile Include="Actions\ActSwitchWindow.cs" />
     <Compile Include="Actions\ActTextBox.cs" />
@@ -488,12 +552,10 @@
     <Compile Include="Actions\ActWebService.cs" />
     <Compile Include="Actions\ActWebSitePerformanceTiming.cs" />
     <Compile Include="Actions\ActWindow.cs" />
-    <Compile Include="Actions\Common\ActionDetails.cs" />
     <Compile Include="Actions\Common\ActDeviceButton.cs" />
     <Compile Include="Actions\Android\ActShell.cs" />
     <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
     <Compile Include="Actions\Common\ActUIElement.cs" />
-    <Compile Include="Actions\Common\IObsoleteAction.cs" />
     <Compile Include="Actions\Common\UIElementPropertyValueLocator.cs" />
     <Compile Include="Actions\Communication\ActeMail.cs" />
     <Compile Include="Actions\ActBrowserElement.cs" />
@@ -523,7 +585,6 @@
       <DependentUpon>ActionHelper.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\UIAutomation\ActUIASwitchWindow.cs" />
-    <Compile Include="Actions\ActWithoutDriver.cs" />
     <Compile Include="Actions\UIAutomation\ActUIAGrid.cs" />
     <Compile Include="Actions\UIAutomation\ActUIALabel.cs" />
     <Compile Include="Actions\UIAutomation\ActUIAClickOnPoint.cs" />
@@ -538,11 +599,16 @@
     <Compile Include="Actions\XML\ActXMLTagValidation.cs" />
     <Compile Include="Actions\XML\ActXMLProcessing.cs" />
     <Compile Include="Actions\XML\XMLProcessor.cs" />
-    <Compile Include="Activities\ActivitiesGroup.cs" />
-    <Compile Include="Activities\ActivityIdentifiers.cs" />
     <Compile Include="ALM\ALMConfig.cs" />
     <Compile Include="ALM\ALMCore.cs" />
-    <Compile Include="ALM\PublishToALMConfig.cs" />
+    <Compile Include="ALM\JiraCore.cs" />
+    <Compile Include="ALM\JIRA\Bll\JiraExportManager.cs" />
+    <Compile Include="ALM\JIRA\Data Contracts\TestRunData.cs" />
+    <Compile Include="ALM\JIRA\Bll\JiraImportManager.cs" />
+    <Compile Include="ALM\JIRA\JiraTestSet.cs" />
+    <Compile Include="ALM\JIRA\JiraTest.cs" />
+    <Compile Include="ALM\JIRA\JiraTestParameter.cs" />
+    <Compile Include="ALM\JIRA\JiraTestStep.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
     <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />
     <Compile Include="ALM\QCRestAPI\ImportFromQCRest.cs" />
@@ -578,11 +644,10 @@
     <Compile Include="ALM\RQM\RQMFieldsMappingConfig.cs" />
     <Compile Include="ALM\RQM\RQMTestPlan.cs" />
     <Compile Include="ALM\RQM\RQMConnect.cs" />
+    <Compile Include="ALM\JIRA\Bll\JiraConnectManager.cs" />
     <Compile Include="DataSource\ActDSTableElement.cs" />
     <Compile Include="DataSource\ActDSConditon.cs" />
-    <Compile Include="DataSource\DataSourceBase.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
-    <Compile Include="DataSource\DataSourceTable.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriver.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml.cs">
       <DependentUpon>AndroidADBDriverWindow.xaml</DependentUpon>
@@ -617,6 +682,7 @@
     <Compile Include="Drivers\CommunicationProtocol\MessageEventArgs.cs" />
     <Compile Include="Drivers\CommunicationProtocol\ObjectReflectionHelper.cs" />
     <Compile Include="Drivers\CommunicationProtocol\Payload.cs" />
+    <Compile Include="Drivers\DriverWindowDispatcher.cs" />
     <Compile Include="Drivers\InternalBrowserLib\DeviceEmulation.cs" />
     <Compile Include="Drivers\InternalBrowserLib\WebBrowserPage.xaml.cs">
       <DependentUpon>WebBrowserPage.xaml</DependentUpon>
@@ -630,7 +696,6 @@
     <Compile Include="Drivers\MainFrame\MainFrameDriver.cs" />
     <Compile Include="Drivers\MainFrame\MainFrameUIHelper.cs" />
     <Compile Include="Drivers\MainFrame\Terminal.cs" />
-    <Compile Include="Drivers\DriverMessageEventArgs.cs" />
     <Compile Include="Drivers\PBDriver\HTMLHelper.cs" />
     <Compile Include="Drivers\Selenium\SeleniumBMP\Browser.cs" />
     <Compile Include="Drivers\Selenium\SeleniumBMP\Cache.cs" />
@@ -657,23 +722,23 @@
     <Compile Include="Drivers\WebServicesDriverLib\HttpWebClientUtils.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\SoapUIUtils.cs" />
     <Compile Include="Drivers\WindowsLib\FlaUIHelper.cs" />
-    <Compile Include="External\ExternalItemField.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
     <Compile Include="GeneralLib\CommonLib.cs" />
     <Compile Include="GeneralLib\JSONHelper.cs" />
     <Compile Include="GeneralLib\StringCompressor.cs" />
     <Compile Include="Extensions\Screenshot.cs" />
     <Compile Include="DataSource\AccessDataSource.cs" />
-    <Compile Include="GeneralLib\EncryptionHandler.cs" />
     <Compile Include="GeneralLib\ComboBoxWindow.xaml.cs">
       <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HTMLHelper.cs" />
+    <Compile Include="NoSqlBase\GingerCouchbase.cs" />
     <Compile Include="NoSqlBase\GingerUDTMap.cs" />
     <Compile Include="NoSqlBase\GingerCassandra.cs" />
     <Compile Include="NoSqlBase\MyClassBuilder.cs" />
     <Compile Include="NoSqlBase\NoSqlBase.cs" />
     <Compile Include="Platforms\PlatformsInfo\AndroidPlatformInfo.cs" />
+    <Compile Include="Platforms\PlatformsInfo\MobilePlatform.cs" />
     <Compile Include="Platforms\PlatformsInfo\WindowsPlatform.cs" />
     <Compile Include="Platforms\PlatformsInfo\PowerBuilderPlatform.cs" />
     <Compile Include="Platforms\PlatformsInfo\JavaPlatform.cs" />
@@ -694,15 +759,10 @@
     <Compile Include="UserControls\ucTextDicResource.xaml.cs">
       <DependentUpon>ucTextDicResource.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Variables\DecimalRandom.cs" />
-    <Compile Include="Variables\VariableDependency.cs" />
-    <Compile Include="Activities\ErrorHandler.cs" />
-    <Compile Include="Activities\Activity.cs" />
     <Compile Include="Animations\Animations.cs" />
     <Compile Include="DragDrop\VisualDrag.xaml.cs">
       <DependentUpon>VisualDrag.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\AgentAttribute.cs" />
     <Compile Include="Drivers\CommunicationProtocol\GingerSocketServer.cs" />
     <Compile Include="Drivers\Appium\AppiumDriverWindow.xaml.cs">
       <DependentUpon>AppiumDriverWindow.xaml</DependentUpon>
@@ -731,50 +791,30 @@
     </Compile>
     <Compile Include="Drivers\WebServicesDriverLib\WebServiceXML.cs" />
     <Compile Include="Drivers\WindowsLib\WindowsDriver.cs" />
-    <Compile Include="Environments\EnvApplication.cs" />
-    <Compile Include="Environments\LoginUser.cs" />
-    <Compile Include="Environments\ProjEnvironment.cs" />
-    <Compile Include="Environments\UnixServer.cs" />
-    <Compile Include="FlowControlLib\FlowControl.cs" />
     <Compile Include="Environments\Database.cs" />
     <Compile Include="GeneralLib\General.cs" />
     <Compile Include="GeneralLib\GenericWindow.xaml.cs">
       <DependentUpon>GenericWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GeneralLib\VBS.cs" />
-    <Compile Include="Helpers\TextBlockHelper.cs" />
-    <Compile Include="Platforms\ApplicationAgent.cs" />
     <Compile Include="Platforms\ApplicationPlatform.cs" />
-    <Compile Include="Platforms\TargetApplication.cs" />
     <Compile Include="Reporter\GingerHelperMsgsPool.cs" />
-    <Compile Include="Variables\VariableDynamic.cs" />
-    <Compile Include="Variables\VariableSelectionList.cs" />
-    <Compile Include="Variables\VariablePasswordString.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1050000_to_V1060000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1040000_to_V1050000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1030000_to_V1040000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v10203_TO_v1020000.cs" />
     <Compile Include="GeneralFunctions\RegistryFunctions.cs" />
     <Compile Include="GeneralLib\SMS.cs" />
-    <Compile Include="GeneralLib\Email.cs" />
     <Compile Include="GeneralLib\InputBoxWindow.xaml.cs">
       <DependentUpon>InputBoxWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Platforms\Agent.cs" />
-    <Compile Include="Platforms\DriverConfigParam.cs" />
-    <Compile Include="Platforms\Platform.cs" />
-    <Compile Include="Reporter\Reporter.cs" />
     <Compile Include="Reporter\BotDialog.xaml.cs">
       <DependentUpon>BotDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\XMLViewer.xaml.cs">
       <DependentUpon>XMLViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reporter\UserMessagesPool.cs" />
     <Compile Include="Repository\RepositorySerializer.cs" />
-    <Compile Include="BusinessFlow.cs" />
     <Compile Include="Drivers\ASCF\ASCFDriver.cs" />
-    <Compile Include="Drivers\DriverBase.cs" />
     <Compile Include="Drivers\InternalBrowserLib\InternalBrowserWindow.xaml.cs">
       <DependentUpon>InternalBrowserWindow.xaml</DependentUpon>
     </Compile>
@@ -791,14 +831,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Repository\RepositoryItem.cs" />
-    <Compile Include="ValueExpression.cs" />
-    <Compile Include="Variables\VariableBase.cs" />
-    <Compile Include="Variables\VariableRandomString.cs" />
-    <Compile Include="Variables\VariableSequence.cs" />
-    <Compile Include="Variables\VariableTimer.cs" />
-    <Compile Include="Variables\VariableString.cs" />
-    <Compile Include="Variables\VariableList.cs" />
-    <Compile Include="Variables\VariableRandomNumber.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1020000_to_V1030000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v2010000_to_V2020000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v2000000_to_V2010000.cs" />
@@ -849,7 +881,6 @@
     <Content Include="DLLs\ALM_Common.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="DLLs\GingerExternal.dll" />
     <Content Include="DLLs\Interop.TDAPIOLELib.dll" />
     <Content Include="DLLs\LibGit2Sharp.dll" />
     <Content Include="DLLs\ObjectsUtils.dll">
@@ -864,6 +895,10 @@
     <Content Include="DLLs\RQM_Repository.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="ALM\JIRA\JiraSettings\Export\test.json" />
+    <None Include="ALM\JIRA\JiraSettings\Export\testexecution.json" />
+    <None Include="ALM\JIRA\JiraSettings\Export\testset.json" />
+    <None Include="ALM\JIRA\JiraSettings\JiraSettings.json" />
     <None Include="GingerCore.ruleset" />
     <None Include="RallyRestAPI.NET.shfbproj" />
     <None Include="Resources\%40EmptyStart_16x16.gif" />
@@ -930,6 +965,8 @@
     <None Include="Resources\Pin32x32.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Actions\ActionConversion\" />
+    <Folder Include="Actions\PlugIns\" />
     <Folder Include="Actions\Simulators\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\CCM\fa1qm1\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />
@@ -1111,6 +1148,10 @@
       <Project>{6FACD2AB-8747-473B-AF43-5B6691775F62}</Project>
       <Name>GingerCoreNET</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj">
+      <Project>{67ecc7f4-78d3-4260-bbe1-20688942c6d1}</Project>
+      <Name>GingerPluginCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GingerPlugIns\GingerPlugIns.csproj">
       <Project>{d5329d81-7ff0-4af1-b186-a2fd65ef0583}</Project>
       <Name>GingerPlugIns</Name>
@@ -1126,10 +1167,10 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-    <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.1\build\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.1\build\NETStandard.Library.targets'))" />
+    <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
     <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.165\build\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.1.0.165\build\LibGit2Sharp.NativeBinaries.props'))" />
   </Target>
-  <Import Project="..\packages\NETStandard.Library.2.0.1\build\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.1\build\NETStandard.Library.targets')" />
+  <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

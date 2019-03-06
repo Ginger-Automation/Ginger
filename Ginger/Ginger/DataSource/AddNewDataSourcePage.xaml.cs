@@ -76,29 +76,29 @@ namespace Ginger.DataSource
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             //validate details
-            if (FilePathTextBox.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKeys.MissingNewDSDetails, "File Path"); return; }
-            else if (DSTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKeys.MissingNewDSDetails, "DB type"); return; }
+            if (FilePathTextBox.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "File Path"); return; }
+            else if (DSTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "DB type"); return; }
 
-            mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~", App.UserProfile.Solution.Folder);
+            mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~",  WorkSpace.UserProfile.Solution.Folder);
 
             if (!Directory.Exists(Path.GetDirectoryName(mDSDetails.FileFullPath)))
-            { Reporter.ToUser(eUserMsgKeys.InvalidDSPath, Path.GetDirectoryName(mDSDetails.FileFullPath)); return; }
+            { Reporter.ToUser(eUserMsgKey.InvalidDSPath, Path.GetDirectoryName(mDSDetails.FileFullPath)); return; }
 
-            mDSDetails.FilePath = mDSDetails.FilePath.Replace(App.UserProfile.Solution.Folder, "~");//Pending                       
+            mDSDetails.FilePath = mDSDetails.FilePath.Replace( WorkSpace.UserProfile.Solution.Folder, "~");//Pending                       
             
            
 
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             foreach(DataSourceBase ds in DSList)
                 if(ds.FilePath == mDSDetails.FilePath)
-                { Reporter.ToUser(eUserMsgKeys.DuplicateDSDetails, FilePathTextBox.Text.Trim()); return; }
+                { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, FilePathTextBox.Text.Trim()); return; }
             
             okClicked = true;           
             
-            if (File.Exists(mDSDetails.FileFullPath.Replace("~",App.UserProfile.Solution.Folder)) == false)
+            if (File.Exists(mDSDetails.FileFullPath.Replace("~", WorkSpace.UserProfile.Solution.Folder)) == false)
             {
                 byte[] obj = Properties.Resources.GingerDataSource;
-                System.IO.FileStream fs = new System.IO.FileStream(mDSDetails.FileFullPath.Replace("~", App.UserProfile.Solution.Folder), System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                System.IO.FileStream fs = new System.IO.FileStream(mDSDetails.FileFullPath.Replace("~",  WorkSpace.UserProfile.Solution.Folder), System.IO.FileMode.Create, System.IO.FileAccess.Write);
                 fs.Write(obj, 0, obj.Count());
                 fs.Close();
                 fs.Dispose();
@@ -124,12 +124,12 @@ namespace Ginger.DataSource
         // Handles browsing of Script File from user desktop
         private void FileBrowse_Click(object sender, RoutedEventArgs e)
         {
-            string path = FilePathTextBox.Text.Replace("~", App.UserProfile.Solution.Folder);
+            string path = FilePathTextBox.Text.Replace("~",  WorkSpace.UserProfile.Solution.Folder);
             var dlg = new System.Windows.Forms.OpenFileDialog();
             if (path != "")
                 dlg.InitialDirectory = Path.GetDirectoryName(path);
             else
-                dlg.InitialDirectory = System.IO.Path.Combine(App.UserProfile.Solution.Folder, "DataSources");
+                dlg.InitialDirectory = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, "DataSources");
             dlg.Title = "Select DB File";
             if(mFileType != "")
                 dlg.Filter = mFileType.ToUpper() + " Files (*." + mFileType + ")|*." + mFileType + "|All Files (*.*)|*.*";
@@ -194,10 +194,13 @@ namespace Ginger.DataSource
                 string FilePath = FilePathTextBox.Text;
                 if(FilePath == "" || FilePath.StartsWith(@"~DataSources\") || FilePath.StartsWith(@"~\DataSources\"))
                 {
-                    if (DSName.Text != "")                
-                        FilePathTextBox.Text = mTargetFolder.FolderRelativePath + @"\" + DSName.Text + ".mdb";                
-                    else               
-                            FilePathTextBox.Text = "";                        
+                    if (DSName.Text != "")
+                    {
+                        string FileName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(DSName.Text);
+                        FilePathTextBox.Text = mTargetFolder.FolderRelativePath + @"\" + FileName + ".mdb";
+                    }
+                    else
+                        FilePathTextBox.Text = "";                        
                 }               
             }            
         }

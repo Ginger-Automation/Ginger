@@ -45,6 +45,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public string Folder { get; set; }
         public string Path { get; set; }
 
+        public DataSourceTreeItem(DataSourceBase dsDetails, DataSourceFolderTreeItem.eDataTableView TableView)
+        {
+            DSDetails = dsDetails;
+            TableTreeView = TableView;
+            InitDSConnection();
+        }
+
         Object ITreeViewItem.NodeObject()
         {
             return DSDetails;
@@ -67,12 +74,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
              List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
             
-            if (mDataSourcePage == null)
-            {
-                mDataSourcePage = new DataSourcePage(DSDetails);
-            }            
-            //Add Data Sources
-            DSDetails.DSTableList = mDataSourcePage.GetTableList();
+                      
+            //Get Data Source Tables List
+            DSDetails.DSTableList = DSDetails.DSC.GetTablesList();
             if (DSDetails.DSTableList == null)
                 DSDetails.DSTableList = new ObservableList<DataSourceTable>();
             
@@ -156,7 +160,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
         }
 
@@ -181,7 +185,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
         }
 
@@ -206,7 +210,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
         }
 
@@ -234,8 +238,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKeys.CreateTableError, ex.Message);
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToUser(eUserMsgKey.CreateTableError, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return fileName;
         }
@@ -245,7 +249,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Ginger.DataSource.DataSourceExportToExcel DSEE = new Ginger.DataSource.DataSourceExportToExcel();
             DSEE.ShowAsWindow();
 
-            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
             string sExcelPath = DSEE.ExcelPath;
             string sSheetName = DSEE.SheetName;
 
@@ -260,22 +264,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 return;
             }
-
-            if (DSDetails.DSTableList == null)
-            {
-                if (mDataSourcePage == null)
-                {
-                    mDataSourcePage = new DataSourcePage(DSDetails);
-                }
-                //Add Data Sources
-                DSDetails.DSTableList = mDataSourcePage.GetTableList();
-            }
+            
+                
+            //Add Data Source Tables List
+            DSDetails.DSTableList = DSDetails.DSC.GetTablesList();
 
             foreach (DataSourceTable dsTable in DSDetails.DSTableList)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportItem, null, dsTable.Name, "Data Source Table");
+                Reporter.ToStatus(eStatusMsgKey.ExportItem, null, dsTable.Name, "Data Source Table");
                 dsTable.DSC.ExporttoExcel(dsTable.Name, sExcelPath, dsTable.Name);                    
-                Reporter.CloseGingerHelper();
+                Reporter.HideStatusMessage();
             }
         }
 
@@ -305,8 +303,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Error while deleting Data Source File", ex);
-                    Reporter.ToUser(eUserMsgKeys.DeleteDSFileError, DSDetails.FileFullPath);                    
+                    Reporter.ToLog(eLogLevel.WARN, "Error while deleting Data Source File", ex);
+                    Reporter.ToUser(eUserMsgKey.DeleteDSFileError, DSDetails.FileFullPath);                    
                 }
             }
                 
@@ -332,11 +330,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void Duplicate(object sender, RoutedEventArgs e)
         {   
             AccessDataSource dsDetailsCopy = (AccessDataSource)CopyTreeItemWithNewName((RepositoryItemBase)DSDetails);
+            if (dsDetailsCopy == null)
+            { 
+                return;
+            }
+            //TODO: use Path.Combine instead of string concat
             dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".mdb";
             dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\"+ dsDetailsCopy.Name + ".mdb";
 
             if (File.Exists(dsDetailsCopy.FileFullPath))
-            { Reporter.ToUser(eUserMsgKeys.DuplicateDSDetails, dsDetailsCopy.FileFullPath); return; }
+            { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, dsDetailsCopy.FileFullPath); return; }
 
             File.Copy(DSDetails.FileFullPath, dsDetailsCopy.FileFullPath);            
 
@@ -346,6 +349,23 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void Rename(object sender, RoutedEventArgs e)
         {
             RenameItem("DataSource Name:", DSDetails, DataSourceBase.Fields.Name);
+        }
+        private void InitDSConnection()
+        {
+            if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
+            {
+                DataSourceBase ADC;
+                ADC = new AccessDataSource();
+                //if (DSDetails.FilePath.StartsWith("~"))
+                //{
+                //    DSDetails.FileFullPath = DSDetails.FilePath.Replace(@"~\", "").Replace("~", "");
+                //    DSDetails.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, DSDetails.FileFullPath);
+                //}
+                DSDetails.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DSDetails.FilePath);
+
+                ADC.Init(DSDetails.FileFullPath);
+                DSDetails.DSC = ADC;
+            }
         }
     }
 }

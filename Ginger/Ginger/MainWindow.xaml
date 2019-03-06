@@ -4,7 +4,7 @@
         xmlns:h="clr-namespace:Ginger.Help"
         xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
-        Title="Amdocs BEAT Ginger Automation"        
+        Title="Ginger by amdocs"        
         Icon="GingerIconNew.ico"
         Height="600" Width="1000" WindowState="Normal" 
         Closing="MainWindow_Closing" PreviewKeyDown="MainWindow_PreviewKeyDown">
@@ -239,6 +239,16 @@
                                 <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Email" Margin="0,0,0,0"/>
                             </MenuItem.Icon>
                         </MenuItem>
+                        <MenuItem x:Name="xUpgradeMenuItem" Header="Check for Upgrade" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True" Click="xCheckForUpgradeMenuItem_Click">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Upgrade" Margin="0,0,0,0"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem x:Name="xContributeMenuItem" Header="Contribute Ginger on GitHub" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True" Click="xGingerGithubMenuItem_Click">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="GitHub" Margin="0,0,0,0"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <MenuItem  Header="About" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="btnAbout_Click">
                             <MenuItem.Icon>
                                 <usercontrols:ImageMakerControl ImageType="Info" Width="16" SetAsFontImageWithSize="16"/>
@@ -255,7 +265,7 @@
         </Grid>
 
         <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1"/>
-        <usercontrols:ImageMakerControl x:Name="xNoLoadedSolutionImg" Grid.Row="1" ImageType="GingerIconGray" Width="100" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <usercontrols:ImageMakerControl x:Name="xNoLoadedSolutionImg" Grid.Row="1" ImageType="GingerLogoGray" Width="250" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
         <Border Grid.Row="2" Background="{StaticResource $BackgroundColor_White}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" >
             <DockPanel VerticalAlignment="Center">

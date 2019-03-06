@@ -25,6 +25,8 @@ using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 
 namespace GingerCore.Actions
 {
@@ -266,7 +268,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Generic Element"; } }
         public override string ActionUserDescription { get { return "Click on a generic control object"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate a click on an object from type generic control.");
             TBH.AddLineBreak();
@@ -419,7 +421,9 @@ namespace GingerCore.Actions
             [EnumValueDescription("Scroll Down")]
             ScrollDown = 64,
             [EnumValueDescription("Scroll Up")]
-            ScrollUp = 65
+            ScrollUp = 65,
+            [EnumValueDescription("Set Attribute Value")]
+            SetAttributeValue = 66
         }
         
         [IsSerializedForLocalRepository]

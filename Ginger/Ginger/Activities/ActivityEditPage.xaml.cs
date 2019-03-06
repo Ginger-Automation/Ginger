@@ -31,6 +31,8 @@ using Ginger.Repository;
 using Ginger.Activities;
 using Amdocs.Ginger;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.Repository;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -65,10 +67,10 @@ namespace Ginger.BusinessFlowWindows
             else
                 mActivityParentBusinessFlow = App.BusinessFlow;
 
-            List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(Activity.eActivityAutomationStatus));
+            List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(eActivityAutomationStatus));
             AutomationStatusCombo.ItemsSource = automationStatusList;
             RunOptionCombo.BindControl(activity, Activity.Fields.ActionRunOption);            
-            HandlerTypeCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(ErrorHandler.eHandlerType));
+            HandlerTypeCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eHandlerType));
 
             App.FillComboFromEnumVal(cmbErrorHandlerMapping, mActivity.ErrorHandlerMappingType);
             App.ObjFieldBinding(txtActivityName, TextBox.TextProperty, mActivity, Activity.Fields.ActivityName);
@@ -136,9 +138,21 @@ namespace Ginger.BusinessFlowWindows
 
         private void FillTargetAppsComboBox()
         {
-            TargetApplicationComboBox.ItemsSource = mActivityParentBusinessFlow.TargetApplications;
-            TargetApplicationComboBox.SelectedValuePath = TargetApplication.Fields.AppName;
-            TargetApplicationComboBox.DisplayMemberPath = TargetApplication.Fields.AppName;
+            if (mActivityParentBusinessFlow != null)
+            {
+                TargetApplicationComboBox.ItemsSource = mActivityParentBusinessFlow.TargetApplications;
+            }
+            else//temp wrokaround, full solution exist on Master
+            {
+                ObservableList<TargetBase> targetApplications = new ObservableList<TargetBase>();
+                foreach (ApplicationPlatform app in WorkSpace.UserProfile.Solution.ApplicationPlatforms)
+                {
+                    targetApplications.Add(new TargetApplication() { AppName = app.AppName });
+                }
+                TargetApplicationComboBox.ItemsSource = targetApplications;
+            }
+            TargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
+            TargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
         }
 
         public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset=false)
@@ -193,7 +207,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void CloseWinClicked(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 UndoChangesAndClose();
             }
@@ -206,7 +220,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void ParentItemSaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (mActivityParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning) == MessageBoxResult.Yes)
+            if (mActivityParentBusinessFlow != null && Reporter.ToUser(eUserMsgKey.SaveItemParentWarning) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {                
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivityParentBusinessFlow);
                 saveWasDone = true;
@@ -276,7 +290,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void cmbErrorHandlerMapping_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cmbErrorHandlerMapping.SelectedValue.ToString() == Activity.eHandlerMappingType.SpecificErrorHandlers.ToString())
+            if (cmbErrorHandlerMapping.SelectedValue.ToString() == eHandlerMappingType.SpecificErrorHandlers.ToString())
             {
                 btnSpecificErrorHandler.Visibility = Visibility.Visible;
 

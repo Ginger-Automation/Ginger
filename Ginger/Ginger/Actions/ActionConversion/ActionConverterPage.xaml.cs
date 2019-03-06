@@ -25,12 +25,13 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerCore;
 using Ginger.UserControls;
-using Ginger.SolutionGeneral;
+
 using GingerCore.Actions;
-using GingerCore.Actions.ActionConversion;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Windows.Input;
+using Ginger.SolutionGeneral;
+using Amdocs.Ginger.CoreNET;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -42,7 +43,7 @@ namespace Ginger.Actions.ActionConversion
         private Solution mSolution;
         private BusinessFlow mBusinessFlow;
         private bool isGridSet = false;
-        ObservableList<ActionConversionHandler> lstActionToBeConverted = new ObservableList<ActionConversionHandler>();
+        ObservableList<ConvertableActionDetails> lstActionToBeConverted = new ObservableList<ConvertableActionDetails>();
 
         GenericWindow _pageGenericWin = null;
 
@@ -70,7 +71,7 @@ namespace Ginger.Actions.ActionConversion
 
             btnConvert.Visibility = Visibility.Collapsed;
 
-            cmbTargetApp.BindControl(mBusinessFlow.TargetApplications.Select(x => x.AppName).ToList());
+            cmbTargetApp.BindControl(mBusinessFlow.TargetApplications.Select(x => x.Name).ToList());
             if ((cmbTargetApp != null) && (cmbTargetApp.Items.Count > 0))
             {
                 cmbTargetApp.SelectedIndex = 0;
@@ -97,8 +98,8 @@ namespace Ginger.Actions.ActionConversion
             if (gridConvertibleActions.DataSourceList.Count <= 0) return;
             if (gridConvertibleActions.DataSourceList.Count > 0)
             {
-                ObservableList<ActionConversionHandler> lstMarkUnMarkActions = (ObservableList<ActionConversionHandler>)gridConvertibleActions.DataSourceList;
-                foreach (ActionConversionHandler act in lstMarkUnMarkActions)
+                ObservableList<ConvertableActionDetails> lstMarkUnMarkActions = (ObservableList<ConvertableActionDetails>)gridConvertibleActions.DataSourceList;
+                foreach (ConvertableActionDetails act in lstMarkUnMarkActions)
                 {
                     act.Selected = ActiveStatus;
                 }
@@ -130,10 +131,10 @@ namespace Ginger.Actions.ActionConversion
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.Selected, Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.SourceActionTypeName, WidthWeight = 15, Header = "Source Action Type" });
-            view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.Activities, WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
-            view.GridColsView.Add(new GridColView() { Field = ActionConversionHandler.Fields.TargetActionTypeName, WidthWeight = 15, Header = "Target Action Type" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Selected), Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.SourceActionTypeName), WidthWeight = 15, Header = "Source Action Type" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.TargetActionTypeName), WidthWeight = 15, Header = "Target Action Type" });
             gridConvertibleActions.SetAllColumnsDefaultView(view);
             gridConvertibleActions.InitViewItems();
             gridConvertibleActions.SetTitleLightStyle = true;
@@ -145,7 +146,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 mBusinessFlow.CurrentActivity = (Activity)grdGroups.CurrentItem;
                 if (mBusinessFlow.CurrentActivity != null)
-                    mBusinessFlow.CurrentActivity.PropertyChanged += CurrentActivity_PropertyChanged;
+                   ((Activity) mBusinessFlow.CurrentActivity).PropertyChanged += CurrentActivity_PropertyChanged;
             }
         }
 
@@ -160,14 +161,14 @@ namespace Ginger.Actions.ActionConversion
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Actions Conversion", this);
         }
 
-        private bool DoExistingPlatformCheck(ObservableList<ActionConversionHandler> lstActionToBeConverted) 
+        private bool DoExistingPlatformCheck(ObservableList<ConvertableActionDetails> lstActionToBeConverted) 
         {
             // fetch list of existing platforms in the business flow
             List<ePlatformType> lstExistingPlatform = mSolution.ApplicationPlatforms.Where(x => mBusinessFlow.TargetApplications
-                                               .Any(a => a.AppName == x.AppName)).Select(x => x.Platform).ToList();
+                                               .Any(a => a.Name == x.AppName)).Select(x => x.Platform).ToList();
             Dictionary<ePlatformType, string> lstMissingPlatform = new Dictionary<ePlatformType, string>();
             // create list of missing platforms
-            foreach (ActionConversionHandler ACH in lstActionToBeConverted)
+            foreach (ConvertableActionDetails ACH in lstActionToBeConverted)
             {
                 if (ACH.Selected && !lstExistingPlatform.Contains(ACH.TargetPlatform) 
                     && !lstMissingPlatform.ContainsKey(ACH.TargetPlatform))
@@ -182,7 +183,7 @@ namespace Ginger.Actions.ActionConversion
                 foreach (var item in lstMissingPlatform)
                 {
                     // ask the user if he wants to continue with the conversion, if there are missing target platforms
-                    if (Reporter.ToUser(eUserMsgKeys.MissingTargetPlatformForConversion, item.Value, item.Key) == MessageBoxResult.No)
+                    if (Reporter.ToUser(eUserMsgKey.MissingTargetPlatformForConversion, item.Value, item.Key) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                         return false;
                 }
             }
@@ -194,7 +195,7 @@ namespace Ginger.Actions.ActionConversion
             // Check if no actions are selected to be converted
             if (lstActionToBeConverted.All(act => act.Selected == false))
             {
-                Reporter.ToUser(eUserMsgKeys.NoConvertibleActionSelected);
+                Reporter.ToUser(eUserMsgKey.NoConvertibleActionSelected);
                 return;
             }
 
@@ -211,7 +212,7 @@ namespace Ginger.Actions.ActionConversion
 
                     // setting the conversion status label as visible
                     lblConversionStatus.Visibility = Visibility.Visible;
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.BusinessFlowConversion, null, mBusinessFlow.Name);
+                    Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, mBusinessFlow.Name);
 
                     // create a new converted activity
                     if ((bool)radNewActivity.IsChecked)
@@ -301,8 +302,8 @@ namespace Ginger.Actions.ActionConversion
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - " , ex);
-                    Reporter.ToUser(eUserMsgKeys.ActivitiesConversionFailed);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - " , ex);
+                    Reporter.ToUser(eUserMsgKey.ActivitiesConversionFailed);
                 }
                 finally
                 {
@@ -310,10 +311,10 @@ namespace Ginger.Actions.ActionConversion
                 }
             }
             lblConversionStatus.Visibility = Visibility.Hidden;
-            Reporter.CloseGingerHelper();
+            Reporter.HideStatusMessage();
 
             // ask the user if he wants to convert more actions once the conversion is done successfully                       
-            if (Reporter.ToUser(eUserMsgKeys.SuccessfulConversionDone) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKey.SuccessfulConversionDone) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 _pageGenericWin.Close();
             }
@@ -336,10 +337,10 @@ namespace Ginger.Actions.ActionConversion
                         if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
                             (act.Active))
                         {
-                            ActionConversionHandler existingConvertibleActionType = lstActionToBeConverted.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
+                            ConvertableActionDetails existingConvertibleActionType = lstActionToBeConverted.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
                             if (existingConvertibleActionType == null)
                             {
-                                ActionConversionHandler newConvertibleActionType = new ActionConversionHandler();
+                                ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();
                                 newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
                                 newConvertibleActionType.SourceActionType = act.GetType();
                                 newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
@@ -380,7 +381,7 @@ namespace Ginger.Actions.ActionConversion
                     btnConvert.Visibility = Visibility.Collapsed;
                     conversionConfigLblPanel.Visibility = Visibility.Collapsed;
                     conversionConfigRadBtnPanel.Visibility = Visibility.Collapsed;
-                    Reporter.ToUser(eUserMsgKeys.NoConvertibleActionsFound);
+                    Reporter.ToUser(eUserMsgKey.NoConvertibleActionsFound);
                     return;
                 }
             }
@@ -389,7 +390,7 @@ namespace Ginger.Actions.ActionConversion
                 btnConvert.Visibility = Visibility.Collapsed;
                 conversionConfigLblPanel.Visibility = Visibility.Collapsed;
                 conversionConfigRadBtnPanel.Visibility = Visibility.Collapsed;
-                Reporter.ToUser(eUserMsgKeys.NoActivitySelectedForConversion);
+                Reporter.ToUser(eUserMsgKey.NoActivitySelectedForConversion);
 
 
         }
@@ -414,7 +415,7 @@ namespace Ginger.Actions.ActionConversion
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            cmbTargetApp.BindControl(mBusinessFlow.TargetApplications.Select(x => x.AppName).ToList());
+            cmbTargetApp.BindControl(mBusinessFlow.TargetApplications.Select(x => x.Name).ToList());
             if ((cmbTargetApp != null) && (cmbTargetApp.Items.Count > 0))
             {
                 cmbTargetApp.SelectedIndex = 0;

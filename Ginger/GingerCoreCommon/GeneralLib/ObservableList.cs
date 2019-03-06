@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using GingerCore.DataSource;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -60,6 +62,8 @@ namespace Amdocs.Ginger.Common
             : base(list)
         {
         }
+
+     
         void IObservableList.Move(int oldIndex, int newIndex)
         {
             //SaveUndoData();
@@ -351,7 +355,7 @@ namespace Amdocs.Ginger.Common
                 }
                 catch (Exception ex)
                 {
-                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Deserialize the lazy load section: '{0}'", s), ex);
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Deserialize the lazy load section: '{0}'", s), ex);
                 }
 
                 mStringData = null;
@@ -405,5 +409,9 @@ namespace Amdocs.Ginger.Common
             Move(Count - 1, 0);
         }
 
+        public static implicit operator ObservableList<T>(ObservableList<DataSourceBase> v)
+        {
+            throw new NotImplementedException();
+        }
     } 
 }

@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
@@ -57,9 +58,7 @@ namespace UnitTests.NonUITests
             mBF.Activities.Add(aaa);
 
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
+            p.PlatformType = ePlatformType.Web;            
            
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "App1" });
 
@@ -77,7 +76,7 @@ namespace UnitTests.NonUITests
             mGR.BusinessFlows.Add(mBF);
         }
 
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void OLD_ReadDataFromXLS()
         //{
         //    //TODO:  Obsolete remove old style
@@ -95,7 +94,7 @@ namespace UnitTests.NonUITests
 
         //}
         [Level2]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void ReadDataFromXLSGetRowCount()
         {            
             // Arrange
@@ -119,7 +118,7 @@ namespace UnitTests.NonUITests
         /// Functionality checked: 1) read 1 val from Excel; 2) validate return value in action; 3) populate variable w return value
         /// </summary>
         
-        //[TestMethod]
+        //[TestMethod]  [Timeout(60000)]
         //public void Read1ValueValidateAndPopulateVariable()
         //{
 

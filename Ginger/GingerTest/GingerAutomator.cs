@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using GingerWPFUnitTest.POMs;
 using System;
 using System.Reflection;
@@ -24,7 +25,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
-namespace GingerWPFUnitTest
+namespace GingerTest
 {
 
     public class GingerAutomator
@@ -93,7 +94,7 @@ namespace GingerWPFUnitTest
                 Ginger.App.RunningFromUnitTest = true;
                 splash = new Ginger.SplashWindow();
                 splash.Show();                
-                //Ginger.App.UserProfile.AutoLoadLastSolution = false;                
+                //Ginger. WorkSpace.UserProfile.AutoLoadLastSolution = false;                
 
                 while (!app.IsReady && splash.IsVisible)
                 {
@@ -121,7 +122,7 @@ namespace GingerWPFUnitTest
             int i = 0;
             while (MainWindowPOM == null && i <600)
             {
-                Thread.Sleep(100);
+                    Thread.Sleep(100);
                 i++;
             }
 
@@ -268,6 +269,11 @@ namespace GingerWPFUnitTest
 
         }
 
-
+        internal void ReloadSolution()
+        {
+            string path =  WorkSpace.UserProfile.Solution.ContainingFolderFullPath;
+            CloseSolution();
+            OpenSolution(path);
+        }
     }
 }

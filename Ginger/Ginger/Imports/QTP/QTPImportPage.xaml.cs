@@ -16,28 +16,28 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.UIElement;
+using Ginger.Actions;
+using Ginger.Imports.UFT;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Variables;
-using System.Data;
-using System.Text.RegularExpressions;
-using System.IO;
-using System.Windows.Media.Imaging;
-using System;
-using System.Diagnostics;
-using Ginger.Actions;
-using System.Windows.Data;
 using GingerCore.Platforms;
-using Ginger.Imports.UFT;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using amdocs.ginger.GingerCoreNET;
+using GingerCore.Variables;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Media.Imaging;
 
 namespace Ginger.Imports.QTP
 {
@@ -63,7 +63,7 @@ namespace Ginger.Imports.QTP
         public List<ObjectRepositoryItem> Objectlist_ORI = new List<ObjectRepositoryItem>();
         public List<BusFunction> BusList = new List<BusFunction>();
         public List<string> ListOfSelectedGuis = new List<string>();
-        public ObservableList<TargetApplication> TargetApplicationsList = new ObservableList<TargetApplication>();
+        public ObservableList<TargetBase> TargetApplicationsList = new ObservableList<TargetBase>();
 
         // Data Table
         public DataTable dt_BizFlow = new DataTable();
@@ -83,17 +83,13 @@ namespace Ginger.Imports.QTP
 
             eFilter mFilter = eFilter.AllLines;
             App.FillComboFromEnumVal(FilterComboBox, mFilter);
-
-            //TODO: Clear the hardcode values
-            UFTObjectRepositoryTextBox.Text = @"C:\RaviKethe\T-Mobile\TMO-POC-QTP\uVerse_OR.xml";  //""; 
-            ScriptFileTextBox.Text = @"C:\RaviKethe\T-Mobile\TMO-POC-QTP\Sc005_Original.txt";   //""; //
-
+            
             InitCommonFunctionMappingUCGrid();
 
             TargetApplication sTarget = new TargetApplication();
-            if (App.UserProfile.Solution != null )
+            if ( WorkSpace.UserProfile.Solution != null)
             {
-                sTarget.AppName = App.UserProfile.Solution.MainApplication.ToString();
+                sTarget.AppName =  WorkSpace.UserProfile.Solution.MainApplication.ToString();
                 sTarget.Selected = true;
                 TargetApplicationsList.Add(sTarget);
                 mBusinessFlow.TargetApplications = TargetApplicationsList;
@@ -157,7 +153,7 @@ namespace Ginger.Imports.QTP
         {
             if (UFTObjectRepositoryTextBox.Text.Trim().Length == 0)
             {                
-                Reporter.ToUser(eUserMsgKeys.RepositoryNameCantEmpty);
+                Reporter.ToUser(eUserMsgKey.RepositoryNameCantEmpty);
                 return;
             }
 
@@ -246,7 +242,7 @@ namespace Ginger.Imports.QTP
         {
             if (BusinessFlowNameTextBox.Text.Trim().Length == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, (GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) +" name cannot be empty", "QTP to Ginger Converter", MessageBoxButton.OK));
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, (GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) +" name cannot be empty", "QTP to Ginger Converter", Amdocs.Ginger.Common.eUserMsgOption.OK));
                 return; 
             }
             mBusinessFlow.Name = BusinessFlowNameTextBox.Text;
@@ -254,7 +250,7 @@ namespace Ginger.Imports.QTP
             
 
             //TODO: open the new BF in Automate tab + make sure it is added to the tree
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.ScriptImported_RefreshSolution);
+            Reporter.ToStatus(eStatusMsgKey.ScriptImported_RefreshSolution);
             _pageGenericWin.Close();
         }
 
@@ -263,7 +259,7 @@ namespace Ginger.Imports.QTP
         {
             if (mCCL.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
+                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
                 return;
             }
             else
@@ -388,13 +384,13 @@ namespace Ginger.Imports.QTP
         private void SaveCommonFunctionMapping(object sender, RoutedEventArgs e)
         {
             //temp TODO: fix me to select file
-            mCommonFunctionConvertor.SaveToFile(@"c:\temp\CommonFunctionConvertor.xml");
+            //mCommonFunctionConvertor.SaveToFile(@"c:\temp\CommonFunctionConvertor.xml");
         }
 
         private void AddAction(object sender, RoutedEventArgs e)
         {
 
-            ObservableList<Act> ActionsList = new ObservableList<Act>();
+            ObservableList<IAct> ActionsList = new ObservableList<IAct>();
 
             // We create one dummy activity in case we convert code without function
             mBusinessFlow.Activities = new ObservableList<Activity>();
@@ -402,14 +398,14 @@ namespace Ginger.Imports.QTP
             at.ActivityName = "Activity1";
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
-            mBusinessFlow.CurrentActivity.TargetApplication = App.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
+            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
             App.BusinessFlow = mBusinessFlow;
            
             AddActionPage addAction = new AddActionPage();
             addAction.ShowAsWindow(ActionsList);
 
             // We will get only one action currently
-            Act a = ActionsList[0];
+            Act a =(Act) ActionsList[0];
 
             CommonFunctionMapping CFM = new CommonFunctionMapping();                        
             CFM.TargetAction = a;
@@ -926,7 +922,7 @@ namespace Ginger.Imports.QTP
 
         private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Process wordProcess = new Process();
+            System.Diagnostics.Process wordProcess = new System.Diagnostics.Process();
             wordProcess.StartInfo.FileName = Directory.GetCurrentDirectory() + @"\Help\Import_From_ASAP.pdf";
             wordProcess.StartInfo.UseShellExecute = true;
             wordProcess.Start();

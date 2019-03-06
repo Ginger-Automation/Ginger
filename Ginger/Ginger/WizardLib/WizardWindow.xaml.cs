@@ -24,6 +24,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common;
 
 namespace GingerWPF.WizardLib
 {
@@ -39,10 +41,11 @@ namespace GingerWPF.WizardLib
 
         List<ValidationError> mValidationErrors = new List<ValidationError>();
 
-        public static void ShowWizard(WizardBase wizard, double width = 800, bool DoNotShowAsDialog = false)
+        public static void ShowWizard(WizardBase wizard, double width = 800, double height = 800, bool DoNotShowAsDialog = false)
         {
             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Width = width;
+            wizardWindow.Height = height;
 
             if (DoNotShowAsDialog)
             {
@@ -155,7 +158,7 @@ namespace GingerWPF.WizardLib
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantMoveNextWhileInProcess);
+                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Next");
             }
             else
             {
@@ -213,12 +216,13 @@ namespace GingerWPF.WizardLib
                         {
                             Ginger.Agents.ucAgentControl agentControl = (Ginger.Agents.ucAgentControl)child;
                             bindingExpression = agentControl.GetBindingExpression(Ginger.Agents.ucAgentControl.SelectedAgentProperty);
-                        }
+                        }                        
 
                         if (bindingExpression != null)
                         {
                             // do if there is validation bindingExpression.
-                            bindingExpression.UpdateSource();
+                            bindingExpression.UpdateSource();                            
+                            
                             if (bindingExpression.HasValidationError)
                             {
                                 errorsFound = true;
@@ -229,7 +233,13 @@ namespace GingerWPF.WizardLib
                         if (errorsFound == false)
                         {
                             if (child is ucGrid)
+                            { 
                                 errorsFound = ((ucGrid)child).HasValidationError();
+                            }
+                            else if (child is UCTreeView)
+                            { 
+                                errorsFound = ((UCTreeView)child).HasValidationError();
+                            }
                         }
                     }
 
@@ -271,7 +281,7 @@ namespace GingerWPF.WizardLib
         {
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantMovePrevWhileInProcess);
+                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Previous");
             }
             else
             {
@@ -283,24 +293,27 @@ namespace GingerWPF.WizardLib
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
+        {            
             WindowCloseWasHandled = true;
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantFinishWhileInProcess);
+                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Cancel");
             }
             else
             {
-                mWizard.Cancel();
-                if (sender != null && sender is bool && (bool)sender == false)
-                {
-                    return;//close already been done
-                }
-                else
-                {
-                    CloseWizard();
-                }
+                //if (Reporter.ToUser(eUserMsgKey.WizardSureWantToCancel) == eUserMsgSelection.Yes)
+                //{
+                    mWizard.Cancel();
+                    if (sender != null && sender is bool && (bool)sender == false)
+                    {
+                        return;//close already been done
+                    }
+                    else
+                    {
+                        CloseWizard();
+                    }
+                //}
             }
         }
 
@@ -311,7 +324,7 @@ namespace GingerWPF.WizardLib
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                Reporter.ToUser(eUserMsgKeys.WizardCantFinishWhileInProcess);
+                Reporter.ToUser(eUserMsgKey.WizardCantMoveWhileInProcess, "Finish");
             }
             else
             {

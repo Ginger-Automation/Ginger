@@ -19,9 +19,11 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.SolutionWindows.TreeViewItems;
+using GingerCore;
 using GingerCore.Platforms;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -39,8 +41,8 @@ namespace GingerWPF.AgentsLib
     /// </summary>
     public partial class MapApplicationAgentPage : Page
     {
-        ObservableList<ApplicationAgent> mApps;
-        public MapApplicationAgentPage(ObservableList<ApplicationAgent> Apps)
+        ObservableList<IApplicationAgent> mApps;
+        public MapApplicationAgentPage(ObservableList<IApplicationAgent> Apps)
         {
             InitializeComponent();
 
@@ -78,7 +80,7 @@ namespace GingerWPF.AgentsLib
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             ApplicationAgent a = (ApplicationAgent)mApps.CurrentItem;
-            a.Agent.StartDriver();
+           ((Agent) a.Agent).StartDriver();
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)

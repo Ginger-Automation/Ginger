@@ -32,7 +32,7 @@ using GingerCore.Helpers;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace Ginger.Actions
 {
 
@@ -42,7 +42,7 @@ namespace Ginger.Actions
         public override string ActionDescription { get { return "Send Keys Action"; } }
         public override string ActionUserDescription { get { return "Send Keys to specific window"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {            
             TBH.AddText("Use this action in case you need to send keys to specific window");            
             TBH.AddLineBreak();
@@ -161,7 +161,7 @@ namespace Ginger.Actions
             catch (Exception e)
             {
                 Error = "Failed to get the window Locate By/Value";
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}", e);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}", e);
                 return;
             }
 
@@ -272,7 +272,7 @@ namespace Ginger.Actions
                 
                 if (WindowTitle == null)
                     WindowTitle = "";
-                Reporter.ToLog(eAppReporterLogLevel.INFO, $"Method - {MethodBase.GetCurrentMethod().Name}, WindowTitle - {WindowTitle}");
+                Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, WindowTitle - {WindowTitle}");
                 switch (LocateBy)
                 {
                        

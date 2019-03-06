@@ -19,11 +19,10 @@ limitations under the License.
 using Amdocs.Ginger.Common.Enums;
 using Ginger;
 using Ginger.Run;
+using GingerCore;
 using GingerCore.Actions;
 using GingerCoreNET.RunLib;
 using GingerWPF.AgentsLib;
-using GingerWPF.BindingLib;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -35,7 +34,7 @@ namespace GingerWPF.RunLib
     public partial class GingerRunnerControlsPage : Page
     {
         GingerRunner mGingerRunner;
-        Stopwatch mStopwatch;
+        System.Diagnostics.Stopwatch mStopwatch;
         public GingerRunnerControlsPage(GingerRunner GingerRunner)
         {
             InitializeComponent();
@@ -69,7 +68,7 @@ namespace GingerWPF.RunLib
 
             StatusImageControl.ImageType = eImageType.Processing;
 
-            if (mStopwatch == null) mStopwatch = new Stopwatch();
+            if (mStopwatch == null) mStopwatch = new System.Diagnostics.Stopwatch();
             mStopwatch.Reset();
             mStopwatch.Start();
         }
@@ -105,7 +104,7 @@ namespace GingerWPF.RunLib
         private async void RunActivityButton_Click(object sender, RoutedEventArgs e)
         {
             DisbleRunButtons();            
-            int result = await mGingerRunner.RunActivityAsync(mGingerRunner.CurrentBusinessFlow.CurrentActivity);
+            int result = await mGingerRunner.RunActivityAsync((Activity)mGingerRunner.CurrentBusinessFlow.CurrentActivity);
             EnableRunButtons();
         }
 

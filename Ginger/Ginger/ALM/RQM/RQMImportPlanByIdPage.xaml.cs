@@ -21,6 +21,7 @@ using GingerCore.ALM.RQM;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM.RQM
 {
@@ -74,8 +75,8 @@ namespace Ginger.ALM.RQM
             testPlanId = txtTestPlanId.Text;
             if (testPlanId != "")
             {
-                RQMTestPlan testPlan = RQMConnect.Instance.GetRQMTestPlanByIdByProject(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName,
-                    App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, testPlanId);
+                RQMTestPlan testPlan = RQMConnect.Instance.GetRQMTestPlanByIdByProject( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,
+                     WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject, testPlanId);
                 ImportTestPlan(testPlan);
             }
             else

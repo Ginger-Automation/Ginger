@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common.GeneralLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
+using System.IO;
 
 namespace GingerCoreNETUnitTest.GeneralLib.JSON
 {
@@ -36,11 +37,11 @@ namespace GingerCoreNETUnitTest.GeneralLib.JSON
         }
 
         [Level2]
-        [TestMethod]
+        [TestMethod]  [Timeout(60000)]
         public void XMLDocGetAllNodesTest()
         {
             //Arrange
-            string jsonfilepath = TestResources.GetTestResourcesFile(@"JSON\sample.json");
+            string jsonfilepath = TestResources.GetTestResourcesFile(@"JSON" + Path.DirectorySeparatorChar + "sample.json");
             string JSOnText = System.IO.File.ReadAllText(jsonfilepath);
 
             //Act

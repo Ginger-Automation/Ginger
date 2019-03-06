@@ -20,7 +20,7 @@ using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-
+using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     // This class is for Running functions    
@@ -29,7 +29,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Function Action (Obsolete - Do Not Use)"; } }
         public override string ActionUserDescription { get { return "Function Action (Obsolete - Do Not Use)"; } }
 
-        public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("This action is used to test any function. Function Action (Obsolete - Do Not Use)");            
         }        
