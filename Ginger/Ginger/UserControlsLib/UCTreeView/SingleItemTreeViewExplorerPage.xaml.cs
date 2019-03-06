@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.Enums;
 using Ginger.Help;
+using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Windows;
@@ -65,7 +66,11 @@ namespace GingerWPF.UserControlsLib
 
             if (tvItem is ITreeViewItem)
             {
-                DetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();            
+                DetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
+                if(tvItem is NewTreeViewItemBase)
+                {
+                    ((NewTreeViewItemBase)tvItem).PrepareItemForEdit();
+                }                
             }
             else
             {

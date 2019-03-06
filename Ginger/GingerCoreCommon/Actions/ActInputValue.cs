@@ -59,7 +59,7 @@ namespace Amdocs.Ginger.Repository
             {
                 if (mValue != value)
                 {
-                    mValue = value;
+                    mValue = value;                    
                     OnPropertyChanged(Fields.Value);
                 }
             }

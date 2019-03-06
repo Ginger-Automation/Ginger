@@ -51,7 +51,8 @@ namespace Amdocs.Ginger.Common
         LoadingSolution,
         ExportItem,
         StartAgentFailed,
-        BusinessFlowConversion
+        BusinessFlowConversion,
+        Search
     }
 
     public static class StatusMsgsPool
@@ -141,6 +142,8 @@ namespace Amdocs.Ginger.Common
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ShowBetaFeatures, new StatusMsg(eStatusMsgType.INFO, "Show beta Features is: ", "{0}"));
 
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.GingerHelpLibrary, new StatusMsg(eStatusMsgType.INFO, "Ginger Help Library is Ready!", "Press [F1] from anywhere and view User Guides & Videos related to the topic you working on!"));
+
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.Search, new StatusMsg(eStatusMsgType.PROCESS, "Searching...", "Searching {0}..."));
         }
     }
 }

@@ -229,25 +229,27 @@ public class ASCFHelper {
 		}
 		return false;
 	}
-	public boolean performUIFDoClick(Component c) 
+	public boolean performUIFDoClick(Component component) 
 	{	
 			try 
 			{
 				    GingerAgent.WriteLog("Inside performUIFDoClick");
-					Class DumpME = c.getClass().getEnclosingClass();
-					GingerAgent.WriteLog("Dump Class Method: " + DumpME.getName() );					
-					Method[] method = DumpME.getDeclaredMethods();	
-					//Get the EnclosingClass object
-					Field field = c.getClass().getDeclaredField("this$0");
-				    field.setAccessible(true);
-				    
-				    Object o = field.get(c);
-				    System.out.println("Obj = " + o.getClass().getName());
+					Class enclosingClassObject = component.getClass().getEnclosingClass();
 					
-					Method m = DumpME.getMethod("doClick");
-					m.setAccessible(true);						
-					m.invoke(o);
-					return true;
+					if(enclosingClassObject==null)
+					{
+						GingerAgent.WriteLog("Enclosing class object is null");
+						return false;		
+					}
+					
+					if(performClickUsingField(component, enclosingClassObject)==false)
+					{
+						Method method = enclosingClassObject.getMethod("doClick");
+						method.setAccessible(true);						
+						method.invoke(component);
+						return true;
+					}
+			
 			}		
 			catch (Exception e) 
 			{
@@ -255,6 +257,30 @@ public class ASCFHelper {
 				e.printStackTrace();
 			}
 			return false;	
+	}
+	
+	private boolean performClickUsingField(Component component, Class enclosingClassObject)
+	{
+	
+		try
+		{
+			//Get the EnclosingClass object
+			Field field = component.getClass().getDeclaredField("this$0");					
+		    field.setAccessible(true);
+		    
+		    Object targetObject = field.get(component);
+		   
+		    Method method = enclosingClassObject.getMethod("doClick");
+			method.setAccessible(true);						
+			method.invoke(targetObject);
+			return true;
+		}
+		catch(Exception e)
+		{
+			GingerAgent.WriteLog("Exception Details = "+ e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	public String GetNodeText(Object node)

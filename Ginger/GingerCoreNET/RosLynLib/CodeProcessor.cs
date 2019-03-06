@@ -27,11 +27,14 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace GingerCoreNET.RosLynLib
 {
     public class CodeProcessor
     {
+      static  Regex Pattern = new Regex("{CS(\\s)*Exp(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\((\")*([^\\)}\\({])*(\")*\\)}", RegexOptions.Compiled);
         public object EvalExpression(string expression)
         {
            
@@ -44,10 +47,94 @@ namespace GingerCoreNET.RosLynLib
             return task.Result;
         }
 
-        
-        public bool EvalCondition(string condition)
+        public static string GetResult(string Expression)
         {
-            bool result = EvalConditionAsync(condition).Result;
+            if (!Expression.Contains(@"{CS"))
+            {
+                return Expression;
+
+            }
+            ScriptOptions SO = ScriptOptions.Default.WithReferences(new Assembly[] { Assembly.GetAssembly(typeof(string)), Assembly.GetAssembly(typeof(System.Net.Dns)) });
+     
+            SO.WithReferences(Assembly.GetAssembly(typeof(string)));
+
+
+            string pattern = "^[^{}]*" +
+                       "(" +
+                       "((?'Open'{)[^{}]*)+" +
+                       "((?'Close-Open'})[^{}]*)+" +
+                       ")*" +
+                       "(?(Open)(?!))";
+             pattern = "{CS({|}|.)*}";
+
+
+            Pattern =   new Regex(pattern);
+            Regex Clean =new  Regex("{CS(\\s)*Exp(\\s)*=");
+
+            foreach (Match M in Pattern.Matches(Expression))
+            {
+                string match = M.Value;
+                string exp = match;
+                exp = exp.Replace(Clean.Match(exp).Value, "");
+                //not doing string replacement to
+                exp = exp.Remove(exp.Length-1);
+                string Evalresult = exp;
+                try
+                {
+//TODO: Improve this and cache
+                    System.Collections.Generic.List<String> Refrences = typeof(System.DateTime).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>();
+                    Refrences.AddRange(typeof(string).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>());
+
+               object Result=     CSharpScript.EvaluateAsync(exp, ScriptOptions.Default.WithImports(Refrences)).Result;
+                    //c# generate True/False for bool.tostring which fails in subsequent expressions 
+                    if(Result.GetType()==typeof(Boolean))
+                    {
+                        Evalresult = Result.ToString().ToLower();
+                    }
+                    else
+                    {
+                        Evalresult = Result.ToString();
+                    }
+                }
+
+                catch (Exception e)
+                {
+                    Console.Write(e.Message);
+                }
+                Expression = Expression.Replace(match, Evalresult);
+            }
+
+            return Expression;
+
+        }
+
+
+        public static bool EvalCondition(string condition)
+        {
+            try
+            {
+                bool Conditionparse;
+                if (bool.TryParse(condition, out Conditionparse))
+                {
+                    return Conditionparse;
+                }
+            }
+            catch(Exception Ex)
+            {
+
+            }
+            bool result = false;
+            try
+            {
+                result = (bool)CSharpScript.EvaluateAsync(condition).Result;
+            }
+            catch(Exception EvalExcep)
+            {
+                Reporter.ToLog(eLogLevel.INFO, condition + System.Environment.NewLine + " not a valid c# expression to evaluate", EvalExcep);
+
+
+                result = false;
+            }
             return result;
         }
 

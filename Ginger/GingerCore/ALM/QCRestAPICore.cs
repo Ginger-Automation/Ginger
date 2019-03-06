@@ -55,7 +55,7 @@ namespace GingerCore.ALM
             return QCRestAPIConnect.GetQCDomains();
         }
 
-        public override List<string> GetALMDomainProjects(string ALMDomainName)
+        public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
         {
             ALMCore.AlmConfig.ALMDomain = ALMDomainName;
             return QCRestAPIConnect.GetQCDomainProjects(ALMCore.AlmConfig.ALMDomain);
@@ -71,7 +71,7 @@ namespace GingerCore.ALM
             return ImportFromQCRest.ConvertQCTestSetToBF(testSet);
         }
 
-        public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST = false)
+        public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false)
         {
             return GingerCore.ALM.QC.ImportFromQC.CreateNewDefectQCREST(defectsForOpening);
         }

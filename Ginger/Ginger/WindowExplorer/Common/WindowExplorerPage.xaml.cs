@@ -436,7 +436,8 @@ namespace Ginger.WindowExplorer
             {
                 StatusTextBlock.Text = "Spying Element, Please Wait...";
                 GingerCore.General.DoEvents();
-                mSpyElement = mWindowExplorerDriver.GetControlFromMousePosition();                
+                mSpyElement = mWindowExplorerDriver.GetControlFromMousePosition();
+                mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
                 if (mSpyElement != null)
                 {
                     StatusTextBlock.Text = mSpyElement.XPath;
@@ -469,7 +470,6 @@ namespace Ginger.WindowExplorer
             {
                 foreach (ElementInfo EI in VisibleElementsInfoList)
                 {
-                    mWindowExplorerDriver.UpdateElementInfoFields(EI);
                     if (EI.XPath == mSpyElement.XPath && EI.Path == mSpyElement.Path)
                     {
                         VisibleElementsInfoList.CurrentItem = EI;
