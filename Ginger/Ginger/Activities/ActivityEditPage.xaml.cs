@@ -31,6 +31,8 @@ using Ginger.Repository;
 using Ginger.Activities;
 using Amdocs.Ginger;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.Repository;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -136,7 +138,19 @@ namespace Ginger.BusinessFlowWindows
 
         private void FillTargetAppsComboBox()
         {
-            TargetApplicationComboBox.ItemsSource = mActivityParentBusinessFlow.TargetApplications;
+            if (mActivityParentBusinessFlow != null)
+            {
+                TargetApplicationComboBox.ItemsSource = mActivityParentBusinessFlow.TargetApplications;
+            }
+            else//temp wrokaround, full solution exist on Master
+            {
+                ObservableList<TargetBase> targetApplications = new ObservableList<TargetBase>();
+                foreach (ApplicationPlatform app in WorkSpace.UserProfile.Solution.ApplicationPlatforms)
+                {
+                    targetApplications.Add(new TargetApplication() { AppName = app.AppName });
+                }
+                TargetApplicationComboBox.ItemsSource = targetApplications;
+            }
             TargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             TargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
         }

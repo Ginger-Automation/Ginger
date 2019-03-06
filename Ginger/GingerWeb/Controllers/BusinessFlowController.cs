@@ -98,7 +98,7 @@ namespace GingerWeb.Controllers
             //Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(RI);
 
             string templatesFolder = @"C:\Users\yaronwe\source\repos\Ginger\Ginger\Ginger\Reports\GingerExecutionReport\"; // !!!!!!!!!!!!!!!!!!!!!!! temp fix me
-            HTMLReportConfiguration selectedHTMLReportConfiguration = HTMLReportConfiguration.SetHTMLReportConfigurationWithDefaultValues("DefaultTemplate", true);
+            HTMLReportConfiguration selectedHTMLReportConfiguration = new HTMLReportConfiguration("DefaultTemplate", true);
 
             HTMLReportsConfiguration hTMLReportsConfiguration = new HTMLReportsConfiguration();
 

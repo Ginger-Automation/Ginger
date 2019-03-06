@@ -118,6 +118,19 @@ namespace GingerCore.ALM
                 }
             }
         }
+        private string mALMConfigPackageFolderPath;
+        public string ALMConfigPackageFolderPath
+        {
+            get { return mALMConfigPackageFolderPath; }
+            set
+            {
+                if (mALMConfigPackageFolderPath != value)
+                {
+                    mALMConfigPackageFolderPath = value;
+                    OnPropertyChanged(nameof(mALMConfigPackageFolderPath));
+                }
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)
         {
