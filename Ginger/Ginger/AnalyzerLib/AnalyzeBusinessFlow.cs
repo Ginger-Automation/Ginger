@@ -19,9 +19,13 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Platforms;
 
 namespace Ginger.AnalyzerLib
@@ -30,10 +34,12 @@ namespace Ginger.AnalyzerLib
     {
         static string MissingTargetApp = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " is missing target Application(s)";
         static string MissingActivities = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " is missing " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-
+        public  static readonly string LegacyOutPutValidationDescription = "Output validation contains legacy operators which are very slow and does not work on Linux";
+        private static Regex rxVarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public BusinessFlow mBusinessFlow { get; set; }
-        private Solution mSolution { get; set; }        
+        private Solution mSolution { get; set; }
 
+        public List<ActReturnValue> ReturnValues { get; set; } = new List<ActReturnValue>();
         public static List<AnalyzerItemBase> Analyze(Solution Solution, BusinessFlow BusinessFlow)
         {
             // Put all tests on BF here
@@ -72,6 +78,7 @@ namespace Ginger.AnalyzerLib
                 ABF.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " and add " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " or remove this " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                 ABF.CanAutoFix = AnalyzerItemBase.eCanFix.No;    // we can autofix by delete, but don't want to
                 ABF.Status = AnalyzerItemBase.eStatus.NeedFix;
+
                 ABF.IssueType = eType.Warning;
                 ABF.ItemParent = "NA";
                 ABF.mBusinessFlow = BusinessFlow;
@@ -80,7 +87,69 @@ namespace Ginger.AnalyzerLib
                 IssuesList.Add(ABF);
             }
 
+            // Check BF have actions with legacy outputValidation
+
+            AnalyzeBusinessFlow OutputValidationIssue = GetOutputvalidationErros(BusinessFlow);
+            if (OutputValidationIssue.ReturnValues.Count > 0)
+            {
+                OutputValidationIssue.Description = LegacyOutPutValidationDescription;
+                OutputValidationIssue.IssueType = eType.Warning;
+                OutputValidationIssue.mBusinessFlow = BusinessFlow;
+                OutputValidationIssue.Severity = eSeverity.Medium;
+                OutputValidationIssue.ItemClass = "BusinessFlow";
+                OutputValidationIssue.CanAutoFix = eCanFix.Yes;
+                OutputValidationIssue.Status = AnalyzerItemBase.eStatus.NeedFix;
+                IssuesList.Add(OutputValidationIssue);
+                OutputValidationIssue.FixItHandler = FixOutputValidationIssue;
+                IssuesList.Add(OutputValidationIssue);
+            }
             return IssuesList;
+        }
+
+        private static void FixOutputValidationIssue(object sender, EventArgs e)
+        {
+            AnalyzeBusinessFlow ABF = (AnalyzeBusinessFlow)sender;
+            foreach(ActReturnValue ARV in ABF.ReturnValues)
+            {
+                if (!string.IsNullOrEmpty(ARV.Expected)&&!ARV.Expected.Contains("{"))
+                {
+                    ARV.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
+                }
+                else
+                {
+
+                    if (!string.IsNullOrEmpty(ARV.Expected) && ARV.Expected.StartsWith(@"{Var "))
+                    {
+                        MatchCollection matches = rxVarPattern.Matches(ARV.Expected);
+                        if (matches.Count == 1)
+                        {
+                            if (matches[0].Value.Equals(ARV.Expected))
+                            {
+                                ARV.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
+                            }
+                        }
+
+                       
+                    }
+                }
+            }
+
+        }
+
+        private static AnalyzeBusinessFlow GetOutputvalidationErros(BusinessFlow businessFlow)
+        {
+            AnalyzeBusinessFlow ABF = new AnalyzeBusinessFlow();
+
+            IEnumerable<ObservableList<IAct>> ActionList = businessFlow.Activities.Select(x => x.Acts);
+
+            foreach(ObservableList<IAct> ActList in ActionList)
+            {
+                foreach(Act action in ActList)
+                {
+                    ABF.ReturnValues.AddRange(action.ActReturnValues.Where(x => x.Operator == Amdocs.Ginger.Common.Expressions.eOperator.Legacy));
+                }
+            }
+            return ABF;
         }
 
         private static void FixMissingTargetApp(object sender, EventArgs e)
