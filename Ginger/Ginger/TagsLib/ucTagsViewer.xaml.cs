@@ -194,15 +194,6 @@ namespace Ginger
                     tag.xDeleteTagBtn.Click += XDeleteTagBtn_Click;
                     TagsStackPanl.Children.Add(tag);                    
                 }
-                else
-                {
-                    //removing tag which not exist on solution anymore from the item tags list
-                    if (mItemTagsType == eItemTagsType.Guid)
-                        mItemTagsGUID.RemoveAt(i);
-                    else
-                        mItemTagsKey.RemoveAt(i);
-                    i--;
-                }
             }
         }
 
