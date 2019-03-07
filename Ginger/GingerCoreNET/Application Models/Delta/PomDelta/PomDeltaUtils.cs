@@ -60,7 +60,14 @@ namespace GingerCoreNET.Application_Models
                 PomLearnUtils.PrepareLearningConfigurations();
                 PomLearnUtils.LearnScreenShot();//this will set screen size to be same as in learning time
                 PrepareCurrentPOMElementsData();
-                mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements, true);
+                if (PomLearnUtils.LearnOnlyMappedElements)
+                {
+                    mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.AutoMapElementTypesList.Where(x => x.Selected).ToList().Select(y => y.ElementType).ToList(), POMLatestElements, true);
+                }
+                else
+                {
+                    mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements, true);
+                }
                 SetUnidentifiedElementsDeltaDetails();
                 DoEndOfRelearnElementsSorting();
             }
