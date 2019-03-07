@@ -101,10 +101,26 @@ namespace Ginger.Actions.ActionConversion
             xGridConvertibleActions.SetAllColumnsDefaultView(view);
             xGridConvertibleActions.InitViewItems();
             xGridConvertibleActions.SetTitleLightStyle = true;
+            xGridConvertibleActions.btnMarkAll.Visibility = System.Windows.Visibility.Visible;
+            xGridConvertibleActions.MarkUnMarkAllActive += MarkUnMarkAllActions;
             xGridConvertibleActions.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
             {
                 ucGrid.eUcGridValidationRules.CheckedRowCount
             };
+        }
+
+        private void MarkUnMarkAllActions(bool ActiveStatus)
+        {
+            if (xGridConvertibleActions.DataSourceList.Count <= 0) return;
+            if (xGridConvertibleActions.DataSourceList.Count > 0)
+            {
+                ObservableList<ConvertableActionDetails> lstMarkUnMarkActions = (ObservableList<ConvertableActionDetails>)xGridConvertibleActions.DataSourceList;
+                foreach (ConvertableActionDetails act in lstMarkUnMarkActions)
+                {
+                    act.Selected = ActiveStatus;
+                }
+                xGridConvertibleActions.DataSourceList = lstMarkUnMarkActions;
+            }
         }
     }
 }

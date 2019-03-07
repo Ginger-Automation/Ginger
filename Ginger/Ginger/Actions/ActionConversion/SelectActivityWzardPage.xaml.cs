@@ -63,6 +63,7 @@ namespace Ginger.Actions.ActionConversion
             xGrdGroups.SetAllColumnsDefaultView(defView);
             xGrdGroups.InitViewItems();
             xGrdGroups.SetTitleLightStyle = true;
+            xGrdGroups.btnMarkAll.Visibility = System.Windows.Visibility.Visible;
 
             ActionConversionUtils utils = new ActionConversionUtils();
             ObservableList<Activity> lst = utils.GetConvertableActivitiesFromBusinessFlow(mWizard.BusinessFlow);
