@@ -157,6 +157,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 //HTMLGingerReportTreeItem r = new HTMLGingerReportTreeItem(mHTMLReportConfiguration);
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(mHTMLReportConfiguration);
             }
+            else
+            {
+                WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq - 1;
+            }
         }
 
         private void OpenHTMLReportsFolder(object sender, RoutedEventArgs e)

@@ -485,8 +485,11 @@ namespace Amdocs.Ginger.Repository
                         WaitforFileIsReadable(e.FullPath);
                         // reLoad the object to mem updating fields
                         item = GetItemFromCacheByFileName(e.FullPath);
-                        NewRepositorySerializer.ReloadObjectFromFile(item);
-                        item.RefreshSourceControlStatus();
+                        if (item != null)
+                        {
+                            NewRepositorySerializer.ReloadObjectFromFile(item);
+                            item.RefreshSourceControlStatus();
+                        }
                         break;
                     case WatcherChangeTypes.Deleted:
                         //remove from cache and list
