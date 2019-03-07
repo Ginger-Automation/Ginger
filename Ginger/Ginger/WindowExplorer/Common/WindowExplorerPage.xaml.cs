@@ -841,22 +841,19 @@ namespace Ginger.WindowExplorer
 
         private async void RefreshControlsGrid()
         {
-            if (mWindowExplorerDriver != null)
+            if (WindowsComboBox.SelectedValue != null && mWindowExplorerDriver != null)
             {
                 List<ElementInfo> list = await Task.Run(() => mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList()));
+
+                StatusTextBlock.Text = "Ready";
                 // Convert to obserable for the grid
-                Dispatcher.Invoke(() =>
+                VisibleElementsInfoList.Clear();
+                foreach (ElementInfo EI in list)
                 {
-                    StatusTextBlock.Text = "Ready";
+                    VisibleElementsInfoList.Add(EI);
+                }
 
-                    VisibleElementsInfoList.Clear();
-                    foreach (ElementInfo EI in list)
-                    {
-                        VisibleElementsInfoList.Add(EI);
-                    }
-
-                    WindowControlsGridView.DataSourceList = VisibleElementsInfoList;
-                });
+                WindowControlsGridView.DataSourceList = VisibleElementsInfoList;
 
             }
         }
