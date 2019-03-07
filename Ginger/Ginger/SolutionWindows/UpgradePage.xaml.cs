@@ -147,7 +147,10 @@ namespace Ginger.SolutionWindows
                     try
                     {
                         //first copy to backup folder
-                        string BakFile = filePath.Replace(mSolutionFolder, BackupFolderTextBox.Text + @"\");
+                        string BakFile = filePath.Replace(mSolutionFolder, BackupFolderTextBox.Text);
+                        string LongPathPrefix = @"\\?\";
+                        BakFile = LongPathPrefix + BakFile;
+                        filePath = LongPathPrefix + filePath;
                         MakeSurePathExistforBakFile(BakFile);
                         System.IO.File.Copy(filePath, BakFile, true);
 

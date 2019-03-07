@@ -72,6 +72,9 @@ namespace Amdocs.Ginger.Repository
         public  void SaveToFile(RepositoryItemBase ri, string FileName)
         {
             string txt = SerializeToString(ri);
+
+            string LongPathPrefix = @"\\?\";
+            FileName = LongPathPrefix + FileName;
             File.WriteAllText(FileName, txt);
         }
 
@@ -440,6 +443,8 @@ namespace Amdocs.Ginger.Repository
         //TODO: Not using t why is it needed?
         public RepositoryItemBase DeserializeFromFile(Type t, string FileName)
         {
+            string LongPathPrefix = @"\\?\";
+            FileName = LongPathPrefix + FileName;
             Reporter.ToConsole(eLogLevel.DEBUG, "DeserializeFromFile the file: " + FileName);
             
             if (FileName.Length > 0 && File.Exists(FileName))
@@ -506,7 +511,8 @@ namespace Amdocs.Ginger.Repository
 
         public RepositoryItemBase DeserializeFromFile(string FileName)
         {
-
+            string LongPathPrefix = @"\\?\";
+            FileName = LongPathPrefix + FileName;
             if (FileName.Length > 0 && File.Exists(FileName))
             {
                 string xml = File.ReadAllText(FileName);

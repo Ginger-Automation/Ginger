@@ -46,7 +46,8 @@ namespace GingerCore.Repository.UpgradeLib
         {
             ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = new ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>>();
             // read all XMLs and check for version
-            Parallel.ForEach(solutionFiles, FileName =>
+            //Parallel.ForEach(solutionFiles, FileName =>
+            foreach(string FileName in solutionFiles)
             {
                 string fileVer = string.Empty;
                 eGingerVersionComparisonResult versionRes = CompareSolutionFileGingerVersionToCurrent(FileName, ref fileVer);
@@ -55,7 +56,7 @@ namespace GingerCore.Repository.UpgradeLib
                     solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName + "--> File Version: " + fileVer));
                 else
                     solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName));
-            });
+            }//);
 
             return solutionFilesWithVersion;
         }
@@ -132,10 +133,12 @@ namespace GingerCore.Repository.UpgradeLib
         public static string GetSolutonFileGingerVersion(string xmlFilePath, string xml = "")
         {
             string fileVersion;
-
             //get the XML if needed
             if (string.IsNullOrEmpty(xml))
-            {                
+            {
+                string LongPathPrefix = @"\\?\";
+                xmlFilePath = LongPathPrefix + xmlFilePath;
+
                 using (StreamReader reader = new StreamReader(xmlFilePath))
                 {
                     //get XML 
