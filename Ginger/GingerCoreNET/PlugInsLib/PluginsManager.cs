@@ -266,11 +266,9 @@ namespace Amdocs.Ginger.Repository
         
 
         public bool IsSessionService(string pluginId, string serviceId)
-        {
-            // TODO: Cache
+        {            
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
-            pluginPackage.LoadServicesFromJSON();
-            PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
+            PluginServiceInfo pluginServiceInfo = pluginPackage.GetService(serviceId);
             return pluginServiceInfo.IsSession;
         }
 
