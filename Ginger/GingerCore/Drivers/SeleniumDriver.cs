@@ -6785,7 +6785,10 @@ namespace GingerCore.Drivers
             EI.ElementType = GenerateElementType(webElement);
             EI.ElementTypeEnum = GetElementTypeEnum(webElement).Item2;
             EI.Path = ChildElementInfo.Path;
-            EI.XPath = ChildElementInfo.XPath.Substring(0, ChildElementInfo.XPath.LastIndexOf("/"));
+            if (!string.IsNullOrEmpty(ChildElementInfo.XPath))
+            {
+                EI.XPath = ChildElementInfo.XPath.Substring(0, ChildElementInfo.XPath.LastIndexOf("/"));
+            }
             EI.ElementObject = el;
             EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
             return EI;
@@ -6793,9 +6796,17 @@ namespace GingerCore.Drivers
 
         string IXPath.GetElementProperty(ElementInfo ElementInfo, string PropertyName)
         {
+            string elementProperty = null;
+            
+            if (ElementInfo.ElementObject == null)
+            {
+                ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+            }
 
-            IWebElement el = Driver.FindElement(By.XPath(ElementInfo.XPath));
-            string elementProperty = el.GetAttribute(PropertyName);
+            if (ElementInfo.ElementObject != null)
+            {
+                elementProperty = ((IWebElement)ElementInfo.ElementObject).GetAttribute(PropertyName);
+            }
             return elementProperty;
         }
 
