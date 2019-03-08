@@ -46,8 +46,7 @@ namespace GingerCore.Repository.UpgradeLib
         {
             ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = new ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>>();
             // read all XMLs and check for version
-            //Parallel.ForEach(solutionFiles, FileName =>
-            foreach(string FileName in solutionFiles)
+            Parallel.ForEach(solutionFiles, FileName =>
             {
                 string fileVer = string.Empty;
                 eGingerVersionComparisonResult versionRes = CompareSolutionFileGingerVersionToCurrent(FileName, ref fileVer);
@@ -56,7 +55,7 @@ namespace GingerCore.Repository.UpgradeLib
                     solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName + "--> File Version: " + fileVer));
                 else
                     solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName));
-            }//);
+            });
 
             return solutionFilesWithVersion;
         }
@@ -136,25 +135,29 @@ namespace GingerCore.Repository.UpgradeLib
             //get the XML if needed
             if (string.IsNullOrEmpty(xml))
             {
-                string LongPathPrefix = @"\\?\";
-                xmlFilePath = LongPathPrefix + xmlFilePath;
-
-                using (StreamReader reader = new StreamReader(xmlFilePath))
+                try
                 {
-                    //get XML 
-                    reader.ReadLine();//no need first line
-                    xml = reader.ReadLine();
-                    if (xml != null)
+                    using (StreamReader reader = new StreamReader(xmlFilePath))
                     {
-                        if (xml.ToLower().Contains("version") == false)//to handle new line gap in some old xml's
+                        //get XML 
+                        reader.ReadLine();//no need first line
+                        xml = reader.ReadLine();
+                        if (xml != null)
                         {
-                            xml = reader.ReadLine();
+                            if (xml.ToLower().Contains("version") == false)//to handle new line gap in some old xml's
+                            {
+                                xml = reader.ReadLine();
+                            }
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the Ginger Version of the file: '{0}'", xmlFilePath));
                         }
                     }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the Ginger Version of the file: '{0}'", xmlFilePath));
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Upgrade for file: '{0}'", xmlFilePath));
                 }
             }
 
