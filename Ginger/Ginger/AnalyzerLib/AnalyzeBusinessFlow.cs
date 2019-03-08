@@ -92,14 +92,14 @@ namespace Ginger.AnalyzerLib
             AnalyzeBusinessFlow OutputValidationIssue = GetOutputvalidationErros(BusinessFlow);
             if (OutputValidationIssue.ReturnValues.Count > 0)
             {
+                OutputValidationIssue.ItemName = BusinessFlow.Name;
                 OutputValidationIssue.Description = LegacyOutPutValidationDescription;
                 OutputValidationIssue.IssueType = eType.Warning;
                 OutputValidationIssue.mBusinessFlow = BusinessFlow;
                 OutputValidationIssue.Severity = eSeverity.Medium;
                 OutputValidationIssue.ItemClass = "BusinessFlow";
-                OutputValidationIssue.CanAutoFix = eCanFix.Yes;
+                OutputValidationIssue.CanAutoFix = eCanFix.Maybe;
                 OutputValidationIssue.Status = AnalyzerItemBase.eStatus.NeedFix;
-                IssuesList.Add(OutputValidationIssue);
                 OutputValidationIssue.FixItHandler = FixOutputValidationIssue;
                 IssuesList.Add(OutputValidationIssue);
             }
