@@ -103,8 +103,10 @@ namespace Ginger.Actions
                 mActParentBusinessFlow = App.BusinessFlow;
             if (actParentActivity != null)
                 mActParentActivity = actParentActivity;
-            else
+            else if (App.BusinessFlow != null)
+            {
                 mActParentActivity = (Activity)App.BusinessFlow.CurrentActivity;
+            }
 
             EditMode = editMode;
             mAction.PropertyChanged += ActionPropertyChanged;
@@ -123,7 +125,7 @@ namespace Ginger.Actions
             }
 
 
-            if (mActParentActivity.GetType() == typeof(ErrorHandler))
+            if (mActParentActivity != null && mActParentActivity.GetType() == typeof(ErrorHandler))
             {
                 RetyrMechainsmTab.IsEnabled = false;
                 ScreenShotTab.IsEnabled = false;
@@ -474,7 +476,15 @@ namespace Ginger.Actions
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.ExpectedCalculated, Header = "Calculated Expected", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Status, WidthWeight = 70, BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new ActReturnValueStatusConverter(), TextBlock.ForegroundProperty)) });
 
-            List<String> varsCollc = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
+            List<String> varsCollc;
+            if (mActParentBusinessFlow != null)
+            {
+                varsCollc = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
+            }
+            else
+            {
+                varsCollc = WorkSpace.UserProfile.Solution.Variables.Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
+            }
             varsCollc.Sort();
             if (varsCollc.Count > 0)
                 varsCollc.Insert(0, string.Empty);//to be used for clearing selection

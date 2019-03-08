@@ -99,6 +99,10 @@ namespace Ginger.ALM
             WorkSpace.UserProfile.Solution.ALMDomain = ALMCore.AlmConfig.ALMDomain;
             WorkSpace.UserProfile.Solution.ALMProject = ALMCore.AlmConfig.ALMProjectName;
             WorkSpace.UserProfile.Solution.ALMProjectKey = ALMCore.AlmConfig.ALMProjectKey;
+            if ((eALMType)WorkSpace.UserProfile.Solution.AlmType == eALMType.Jira)
+            {
+                WorkSpace.UserProfile.Solution.ConfigPackageFolderPath = ALMCore.AlmConfig.ALMConfigPackageFolderPath;
+            }
         }
 
         public ALMConfig AlmConfigurations

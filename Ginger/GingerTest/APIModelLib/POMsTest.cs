@@ -103,14 +103,14 @@ namespace GingerTest.APIModelLib
         [TestMethod]
         [Timeout(60000)]
         public void ValidateLearnedItems()
-        {
+         {
             //Act
             ElementInfo EI1 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "input radio country Mexico" && x.ElementTypeEnum == eElementType.RadioButton).FirstOrDefault();
             ElementInfo EI2 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "input text id123" && x.ElementTypeEnum == eElementType.TextBox).FirstOrDefault();
 
             //Assert  
-            Assert.AreEqual(mLearnedPOM.MappedUIElements.Count, 27, "POM.MappedUIElements.Coun check");
-            Assert.AreEqual(mLearnedPOM.UnMappedUIElements.Count, 92, "POM.UnMappedUIElements.Count check");
+            Assert.AreEqual(mLearnedPOM.MappedUIElements.Count, 19, "POM.MappedUIElements.Count check");
+            Assert.AreEqual(mLearnedPOM.UnMappedUIElements.Count, 100, "POM.UnMappedUIElements.Count check");
             Assert.IsNotNull(EI1, "POM.Element learned check");
             Assert.IsNotNull(EI2, "POM.Element learned check");
         }
@@ -125,7 +125,7 @@ namespace GingerTest.APIModelLib
 
             //Assert  
             Assert.AreEqual(ButtonEI.Properties.Count, 12, "POM.properties check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Platform Element Type", "INPUT"),"POM.property 0 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Platform Element Type", "input"),"POM.property 0 check");
             //Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"XPath", "/html[1]/body[1]/div[19]/input[1]"), "POM.property 2 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Relative XPath", "//input[@id='submit1']"), "POM.property 3 check");
@@ -138,7 +138,7 @@ namespace GingerTest.APIModelLib
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "type", "submit"), "POM.property 11 check");
 
             Assert.AreEqual(ComboBoxEI.Properties.Count, 12, "POM.properties check");
-            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "Platform Element Type", "SELECT"), "POM.property 0 check");
+            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "Platform Element Type", "select"), "POM.property 0 check");
             //Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"XPath", "/html[1]/body[1]/div[9]/select[1]"), "POM.property 2 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Relative XPath", "//select[@id='sel1']"), "POM.property 3 check");

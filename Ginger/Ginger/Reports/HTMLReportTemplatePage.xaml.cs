@@ -73,9 +73,8 @@ namespace Ginger.Reports
 
         public HTMLReportTemplatePage()
         {
+            _HTMLReportConfiguration = new HTMLReportConfiguration("");
             InitializeComponent();
-
-            _HTMLReportConfiguration = HTMLReportConfiguration.SetHTMLReportConfigurationWithDefaultValues();
             SetControlsNewTemplate();
             SetDefaultLogoImage();
             SetHTMLReportsConfigFieldsGridsView();
@@ -279,8 +278,6 @@ namespace Ginger.Reports
             _HTMLReportConfiguration.Description = TemplateDescriptionTextBox.Text.ToString();
             _newHTMLReportConfiguration = _HTMLReportConfiguration;
             _pageGenericWin.Hide();
-
-             WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
              WorkSpace.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
 
             if (_existingTemplatePage)
