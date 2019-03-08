@@ -109,7 +109,10 @@ namespace Ginger.AnalyzerLib
         private static void FixOutputValidationIssue(object sender, EventArgs e)
         {
             AnalyzeBusinessFlow ABF = (AnalyzeBusinessFlow)sender;
-            foreach(ActReturnValue ARV in ABF.ReturnValues)
+
+            int issueCount = ABF.ReturnValues.Count;
+            int FixedIssueCount = 0;
+            foreach (ActReturnValue ARV in ABF.ReturnValues)
             {
                 if (!string.IsNullOrEmpty(ARV.Expected)&&!ARV.Expected.Contains("{"))
                 {
@@ -125,6 +128,7 @@ namespace Ginger.AnalyzerLib
                         {
                             if (matches[0].Value.Equals(ARV.Expected))
                             {
+                                FixedIssueCount++;
                                 ARV.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
                             }
                         }
@@ -134,6 +138,18 @@ namespace Ginger.AnalyzerLib
                 }
             }
 
+            if(FixedIssueCount==0)
+            {
+                ABF.Status = eStatus.CannotFix;
+            }
+            else if (FixedIssueCount< issueCount)
+            {
+                ABF.Status = eStatus.PartiallyFixed;
+            }
+            else
+            {
+                ABF.Status = eStatus.Fixed;
+            }
         }
 
         private static AnalyzeBusinessFlow GetOutputvalidationErros(BusinessFlow businessFlow)
