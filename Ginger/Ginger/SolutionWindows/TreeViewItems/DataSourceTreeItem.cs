@@ -272,9 +272,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             foreach (DataSourceTable dsTable in DSDetails.DSTableList)
             {
                 Reporter.ToStatus(eStatusMsgKey.ExportItem, null, dsTable.Name, "Data Source Table");
-                dsTable.DSC.ExporttoExcel(dsTable.Name, sExcelPath, dsTable.Name);                    
-                Reporter.HideStatusMessage();
+                dsTable.DSC.ExporttoExcel(dsTable.Name, sExcelPath, dsTable.Name);                                    
             }
+            Reporter.HideStatusMessage();
+            Reporter.ToUser(eUserMsgKey.ExportDetails);            
         }
 
         private void RefreshItems(object sender, RoutedEventArgs e)
