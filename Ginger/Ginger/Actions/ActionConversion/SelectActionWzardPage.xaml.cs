@@ -94,7 +94,7 @@ namespace Ginger.Actions.ActionConversion
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Selected), Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Selected), Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = System.Windows.Data.BindingMode.TwoWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.SourceActionTypeName), WidthWeight = 15, Header = "Source Action Type" });
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.TargetActionTypeName), WidthWeight = 15, Header = "Target Action Type" });
@@ -111,15 +111,9 @@ namespace Ginger.Actions.ActionConversion
 
         private void MarkUnMarkAllActions(bool ActiveStatus)
         {
-            if (xGridConvertibleActions.DataSourceList.Count <= 0) return;
-            if (xGridConvertibleActions.DataSourceList.Count > 0)
+            foreach (ConvertableActionDetails act in xGridConvertibleActions.DataSourceList)
             {
-                ObservableList<ConvertableActionDetails> lstMarkUnMarkActions = (ObservableList<ConvertableActionDetails>)xGridConvertibleActions.DataSourceList;
-                foreach (ConvertableActionDetails act in lstMarkUnMarkActions)
-                {
-                    act.Selected = ActiveStatus;
-                }
-                xGridConvertibleActions.DataSourceList = lstMarkUnMarkActions;
+                act.Selected = ActiveStatus;
             }
         }
     }
