@@ -41,8 +41,15 @@ namespace Ginger.Actions
         }
 
         private void SetComboListsValues()
-        {            
-            mVars = App.BusinessFlow.GetAllHierarchyVariables();
+        {
+            if (App.BusinessFlow != null)
+            {
+                mVars = App.BusinessFlow.GetAllHierarchyVariables();
+            }
+            else//temp wrokaround, full solution exist on Master
+            {
+                mVars = amdocs.ginger.GingerCoreNET.WorkSpace.UserProfile.Solution.Variables;
+            }
          
             foreach (VariableBase v in mVars.OrderBy(nameof(VariableBase.Name)))
             {

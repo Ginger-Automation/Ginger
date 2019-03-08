@@ -20,10 +20,22 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         public ApplicationPOMModel POM;
         public ObservableList<UIElementFilter> AutoMapElementTypesList = new ObservableList<UIElementFilter>();
         public List<eElementType> SelectedElementTypesList = new List<eElementType>();
-        public ObservableList<ElementLocator> AutoMapElementLocatorsList = new ObservableList<ElementLocator>();
+        public ObservableList<ElementLocator> ElementLocatorsSettingsList = new ObservableList<ElementLocator>();
         List<eLocateBy> mElementLocatorsList = new List<eLocateBy>();
         public ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();
-        
+
+        bool mLearnOnlyMappedElements = true;
+        public bool LearnOnlyMappedElements
+        {
+            get
+            {
+                return mLearnOnlyMappedElements;
+            }
+            set
+            {
+                mLearnOnlyMappedElements = value;
+            }
+        }
 
         private Agent mAgent = null;
         public Agent Agent
@@ -105,7 +117,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         public void PrepareLearningConfigurations()
         {
             SelectedElementTypesList = AutoMapElementTypesList.Where(x => x.Selected == true).Select(x => x.ElementType).ToList();
-            mElementLocatorsList = AutoMapElementLocatorsList.Select(x => x.LocateBy).ToList();           
+            mElementLocatorsList = ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();           
         }
 
         public void LearnScreenShot()
@@ -124,7 +136,14 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             POM.MappedUIElements.Clear();
             POM.UnMappedUIElements.Clear();
             mElementsList.Clear();
-            IWindowExplorerDriver.GetVisibleControls(null, mElementsList, true);
+            if (LearnOnlyMappedElements)
+            {
+                IWindowExplorerDriver.GetVisibleControls(AutoMapElementTypesList.Where(x=>x.Selected).ToList().Select(y=>y.ElementType).ToList(), mElementsList, true);
+            }
+            else
+            {
+                IWindowExplorerDriver.GetVisibleControls(null, mElementsList, true);
+            }
         }
 
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -160,7 +179,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             List<ElementLocator> orderedLocatorsList = element.Locators.OrderBy(m => mElementLocatorsList.IndexOf(m.LocateBy)).ToList();
             foreach (ElementLocator elemLoc in orderedLocatorsList)
             {
-                elemLoc.Active = AutoMapElementLocatorsList.Where(m => m.LocateBy == elemLoc.LocateBy).FirstOrDefault().Active;
+                elemLoc.Active = ElementLocatorsSettingsList.Where(m => m.LocateBy == elemLoc.LocateBy).FirstOrDefault().Active;
             }
             element.Locators = new ObservableList<ElementLocator>(orderedLocatorsList);
 
