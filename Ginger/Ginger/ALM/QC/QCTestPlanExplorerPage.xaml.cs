@@ -38,9 +38,8 @@ namespace Ginger.ALM.QC
         {
             InitializeComponent();
 
-            TestPlanExplorerTreeView.TreeTitle = "'" + ALMCore.AlmConfig.ALMDomain + " \\ " + ALMCore.AlmConfig.ALMProjectName + "' - Test Plan Explorer";
-            TestPlanExplorerTreeView.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
-
+            TestPlanExplorerTreeView.TreeTitle2 = "'" + ALMCore.AlmConfig.ALMDomain + " \\ " + ALMCore.AlmConfig.ALMProjectName + "' - Test Plan Explorer";
+            TestPlanExplorerTreeView.SetTitleSection();
             //set root item
             QCTestPlanFolderTreeItem tvi = new QCTestPlanFolderTreeItem();
             tvi.Folder = "Subject";
