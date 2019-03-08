@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -38,8 +38,7 @@ namespace Amdocs.Ginger.Common.Repository
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-                GingerVersionAsLong = fvi.FileMajorPart * 1000000 + fvi.FileMinorPart * 10000 + fvi.FileBuildPart * 100 + fvi.FilePrivatePart;
-                // fvi.IsDebug use in help about!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                GingerVersionAsLong = fvi.FileMajorPart * 1000000 + fvi.FileMinorPart * 10000 + fvi.FileBuildPart * 100 + fvi.FilePrivatePart;                
             }
             return GingerVersionAsLong;
         }
