@@ -1007,6 +1007,7 @@ namespace GingerCore.Actions
             if (ARC == null && (AddNewReturnParams == true || ConfigOutputDS == true))
             {
                 ARC = new ActReturnValue();
+                ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
                 ARC.Active = true;
                 ReturnValues.Add(ARC);
                 ARC.Param = ParamName;
@@ -1015,6 +1016,10 @@ namespace GingerCore.Actions
             if (ARC != null)
             {
                 ARC.Actual = ActualValue;
+                if(string.IsNullOrEmpty(ExpectedValue))
+                {
+                    ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
+                }
                 if (!ExpectedValue.Equals("dummy"))
                 {
                     ARC.Expected = ExpectedValue;
@@ -1051,6 +1056,7 @@ namespace GingerCore.Actions
             if (ARC == null && (AddNewReturnParams == true || ConfigOutputDS == true))
             {
                 ARC = new ActReturnValue();
+                ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
                 ARC.Active = true;
                 ReturnValues.Add(ARC);
                 ARC.Param = ParamName;
@@ -1058,7 +1064,13 @@ namespace GingerCore.Actions
             }
 
             if (ARC != null)
+            {
+                if(string.IsNullOrEmpty(ARC.Expected))
+                {
+                    ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
+                }
                 ARC.Actual = ActualValue;
+            }
         }
 
 
