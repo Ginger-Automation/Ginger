@@ -71,8 +71,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     {
                         agent.Tag = string.Empty;
                     }
-                    xAgentControlUC.Init(mWizard.OptionalAgentsList);
                     App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard.mPomLearnUtils, nameof(mWizard.mPomLearnUtils.Agent));
+                    xAgentControlUC.Init(mWizard.OptionalAgentsList);                   
                     xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
 
                     AddValidations();

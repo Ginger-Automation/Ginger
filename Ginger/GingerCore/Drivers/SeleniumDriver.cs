@@ -7028,7 +7028,9 @@ namespace GingerCore.Drivers
                 mIsDriverBusy = true;
                 SwitchFrame(EI);
                 foreach (ElementLocator el in EI.Locators)
+                {
                     el.LocateStatus = ElementLocator.eLocateStatus.Pending;
+                }
 
                 List<ElementLocator> activesElementLocators = EI.Locators.Where(x => x.Active == true).ToList();
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
@@ -7063,6 +7065,10 @@ namespace GingerCore.Drivers
             }
             finally
             {
+                foreach (ElementLocator el in EI.Locators.Where(x=>x.LocateStatus == ElementLocator.eLocateStatus.Pending).ToList())
+                {
+                    el.LocateStatus = ElementLocator.eLocateStatus.Unknown;
+                }
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
                 mIsDriverBusy = false;
             }
