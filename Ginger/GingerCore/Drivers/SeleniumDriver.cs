@@ -4730,7 +4730,15 @@ namespace GingerCore.Drivers
                         string id = string.Empty;
                         if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null && !string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).ID))
                         {
-                            id = ((HTMLElementInfo)ElementInfo).ID;
+                            HtmlAttribute idAttribute = ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes.Where(x => x.Name == "id").FirstOrDefault();
+                            if (idAttribute != null)
+                            {
+                                id = idAttribute.Value;
+                            }
+                            else
+                            {
+                                id = ((HTMLElementInfo)ElementInfo).ID;
+                            }
                         }
                         else
                         {
@@ -4748,7 +4756,15 @@ namespace GingerCore.Drivers
                         string name = string.Empty;
                         if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null && !string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).Name))
                         {
-                            name = ((HTMLElementInfo)ElementInfo).Name;
+                            HtmlAttribute nameAttribute = ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes.Where(x => x.Name == "name").FirstOrDefault();
+                            if (nameAttribute != null)
+                            {
+                                name = nameAttribute.Value;
+                            }
+                            else
+                            {
+                                name = ((HTMLElementInfo)ElementInfo).Name;
+                            }
                         }
                         else
                         {
