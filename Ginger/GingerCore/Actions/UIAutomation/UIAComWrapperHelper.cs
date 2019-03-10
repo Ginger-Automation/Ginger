@@ -6476,6 +6476,11 @@ namespace GingerCore.Drivers
             }
             return value;
         }
+
+        public string GetElementXpath(ElementInfo EI)
+        {
+            return null;
+        }
     }
 
 }
