@@ -82,10 +82,20 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                     POM.ScreenShotImage = BitmapToBase64(ScreenShot);
                 }
             }
+
+            if(Agent != null)
+            {
+                POM.LastUsedAgent = Agent.Guid;
+            }
+
             if (mPomModelsFolder != null)
+            {
                 mPomModelsFolder.AddRepositoryItem(POM);
+            }
             else
+            {
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
+            }
         }
 
         private string BitmapToBase64(Bitmap bImage)
