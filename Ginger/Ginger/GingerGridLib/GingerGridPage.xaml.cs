@@ -66,7 +66,7 @@ namespace Ginger.GingerGridLib
             // Base on view type we can show simple list or screen shots or...
             if (mGingerGrid.NodeList.Count == 0)
             {
-                xGingersGrid.Children.Clear();
+                xServicesGrid.Children.Clear();
                 // TODO: show a label no nodes found
                 return;
             }
@@ -80,7 +80,7 @@ namespace Ginger.GingerGridLib
             DataGrid DG = new DataGrid();
             DG.IsReadOnly = true;            
             DG.ItemsSource = mGingerGrid.NodeList.ToList();
-            xGingersGrid.Children.Add(DG);
+            xServicesGrid.Children.Add(DG);
         }
 
         private void ShowUIGrid()
@@ -96,13 +96,13 @@ namespace Ginger.GingerGridLib
                 // Connect to LiveView Channel - this is not via Run act
                 Frame f = new Frame();
                 f.Content = p;
-                xGingersGrid.Children.Add(f);
+                xServicesGrid.Children.Add(f);
 
                 Grid.SetRow(f, row);
                 Grid.SetColumn(f, col);
 
                 col++;
-                if (col > xGingersGrid.ColumnDefinitions.Count)
+                if (col > xServicesGrid.ColumnDefinitions.Count)
                 {
                     col = 0;
                     row++;
@@ -124,21 +124,21 @@ namespace Ginger.GingerGridLib
             for (int r = 0; r < rows; r++)
             {
                 RowDefinition RD = new RowDefinition() { Height = new GridLength(100, GridUnitType.Star) };
-                xGingersGrid.RowDefinitions.Add(RD);
+                xServicesGrid.RowDefinitions.Add(RD);
             }
 
             for (int c = 0; c < columns; c++)
             {
                 ColumnDefinition CD = new ColumnDefinition() { Width = new GridLength(100, GridUnitType.Star) };
-                xGingersGrid.ColumnDefinitions.Add(CD);
+                xServicesGrid.ColumnDefinitions.Add(CD);
             }
         }
 
         private void ClearGingersGrid()
         {
-            xGingersGrid.RowDefinitions.Clear();
-            xGingersGrid.ColumnDefinitions.Clear();
-            xGingersGrid.Children.Clear();
+            xServicesGrid.RowDefinitions.Clear();
+            xServicesGrid.ColumnDefinitions.Clear();
+            xServicesGrid.Children.Clear();
         }
 
         private void xUIViewButton_Click(object sender, RoutedEventArgs e)
@@ -147,7 +147,7 @@ namespace Ginger.GingerGridLib
             ShowUIGrid();
         }
 
-        private void xListButton_Click(object sender, RoutedEventArgs e)
+        private void xTableButton_Click(object sender, RoutedEventArgs e)
         {
             ClearGingersGrid();            
             ShowNodes();
