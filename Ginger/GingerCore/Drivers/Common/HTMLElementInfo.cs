@@ -108,7 +108,8 @@ namespace GingerCore.Drivers.Common
             {
                 return null;
             }
-            string xPath = ((IXPath)WindowExplorer).GetXPathHelper(this).GetElementXpathAbsulote(this);
+            //string xPath = ((IXPath)WindowExplorer).GetXPathHelper(this).GetElementXpathAbsulote(this); // Doing Temporary workaround because GetXPathHelper is not working properly for SeleniumDriver
+            string xPath = ((IXPath)WindowExplorer).GetElementXpath(this);
             return xPath;
         }        
     }

@@ -3888,7 +3888,6 @@ namespace GingerCore.Drivers
             if (string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/")
             {
                 EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
-
             }
 
             EI.ElementName = GetElementName(EI as HTMLElementInfo);
@@ -7147,6 +7146,11 @@ namespace GingerCore.Drivers
         {
             Driver.SwitchTo().DefaultContent();
             InjectSpyIfNotIngected();
+        }
+
+        public string GetElementXpath(ElementInfo EI)
+        {
+            return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
         }
     }
 }
