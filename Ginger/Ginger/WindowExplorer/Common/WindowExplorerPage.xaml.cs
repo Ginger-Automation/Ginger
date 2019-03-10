@@ -437,9 +437,9 @@ namespace Ginger.WindowExplorer
                 StatusTextBlock.Text = "Spying Element, Please Wait...";
                 GingerCore.General.DoEvents();
                 mSpyElement = mWindowExplorerDriver.GetControlFromMousePosition();
-                mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
                 if (mSpyElement != null)
                 {
+                    mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
                     StatusTextBlock.Text = mSpyElement.XPath;
                     if (mSyncControlsViewWithLiveSpy)
                     {
@@ -839,20 +839,22 @@ namespace Ginger.WindowExplorer
             WindowControlsGridView.InitViewItems();
         }
 
-        private void RefreshControlsGrid()
+        private async void RefreshControlsGrid()
         {
             if (WindowsComboBox.SelectedValue != null && mWindowExplorerDriver != null)
             {
-                List<ElementInfo> list = mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList());
-                                
+                List<ElementInfo> list = await Task.Run(() => mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList()));
+
+                StatusTextBlock.Text = "Ready";
                 // Convert to obserable for the grid
                 VisibleElementsInfoList.Clear();
                 foreach (ElementInfo EI in list)
-                {                
+                {
                     VisibleElementsInfoList.Add(EI);
                 }
-               
+
                 WindowControlsGridView.DataSourceList = VisibleElementsInfoList;
+
             }
         }
 
@@ -1144,8 +1146,11 @@ namespace Ginger.WindowExplorer
 
             StatusTextBlock.Text = "Searching Elements";
             GingerCore.General.DoEvents();
+            
             isSearched = RefreshFilteredElements();
-            StatusTextBlock.Text = "Ready";
+
+            
+
             return isSearched;
         }
 
