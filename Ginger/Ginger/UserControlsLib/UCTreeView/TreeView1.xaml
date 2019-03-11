@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="xGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
             <RowDefinition Height="25"/>
@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
 
         <!--Title Section-->
-        <DockPanel Grid.Row="0" VerticalAlignment="Center" >
+        <DockPanel Grid.Row="0" VerticalAlignment="Center" x:Name="xTitleSection">
             <StackPanel x:Name="xTreeItemHeaderPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="5,5,5,0">
                 <usercontrols:ImageMakerControl x:Name="xTreeIcon" ImageType="Empty" Width="32" VerticalAlignment="Top" HorizontalAlignment="Left" Foreground="{StaticResource $BackgroundColor_DarkBlue}" Margin="0,5,0,0" MaxHeight="32"/>
                 <Label x:Name="xTreeTitle" Content="Item Name" FontSize="25"  Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,-3,0,0" />
@@ -26,7 +26,7 @@
                 <usercontrols:ucButton x:Name="xSaveAllButton" ToolTip="Save All Changed Items" VerticalAlignment="Bottom" HorizontalAlignment="Right" DockPanel.Dock="Right" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Visibility="Collapsed" Margin="0,0,-4,0"></usercontrols:ucButton>
             </DockPanel>
         </DockPanel>
-
+        
         <GridSplitter Height="1" ResizeDirection="Rows" Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,5,0,5" IsEnabled="False" Background="LightGray" />
 
         <!-- Tree Tool Bar Section-->
