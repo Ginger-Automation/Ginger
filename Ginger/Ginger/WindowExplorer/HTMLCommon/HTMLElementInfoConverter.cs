@@ -68,7 +68,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
                 HTTI.ElementInfo = EI;
                 return HTTI;
             }
-            else if (EI.ElementType.ToUpper() == "JEDITOR.TABLE")
+            else if (EI.ElementTypeEnum == eElementType.EditorTable)
             {
                 JEditorHTMLTableTreeItem HTTI = new JEditorHTMLTableTreeItem();
                 HTTI.ElementInfo = EI;
