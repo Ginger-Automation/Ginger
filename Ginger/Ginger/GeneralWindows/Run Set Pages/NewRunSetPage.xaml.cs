@@ -219,7 +219,7 @@ namespace Ginger.Run
                 xRunRunsetBtn.IsEnabled = false;
                 xStopRunsetBtn.IsEnabled = false;
                 xContinueRunsetBtn.IsEnabled = false;
-                controls.IsEnabled = false;
+                xRunnersControlPnl.IsEnabled = false;
                 xRunSetOperationsPanel.IsEnabled = false;
                 LoadRunSetConfig(runSetConfig, false, true);
             }
@@ -802,7 +802,7 @@ namespace Ginger.Run
                 mFlowDiagram.Ismovable = false;
                 mFlowX = 0;
                 mFlowY = 0;
-                xRunnersFrame.Content = mFlowDiagram;
+                xRunnersCanvasFrame.Content = mFlowDiagram;
             }
             else
             {
@@ -861,8 +861,8 @@ namespace Ginger.Run
         {
             this.Dispatcher.Invoke(() =>
             {
-                xRunnersFrame.Refresh();
-                xRunnersFrame.NavigationService.Refresh();
+                xRunnersCanvasFrame.Refresh();
+                xRunnersCanvasFrame.NavigationService.Refresh();
                 //Init Runner FlowDiagram            
                 InitFlowDiagram();
             });
@@ -1891,8 +1891,8 @@ namespace Ginger.Run
         {
             Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
             {
-                xRunnersFrame.Refresh();
-                xRunnersFrame.NavigationService.Refresh();
+                xRunnersCanvasFrame.Refresh();
+                xRunnersCanvasFrame.NavigationService.Refresh();
 
                 if (mSolutionWasChanged)
                 {
@@ -1956,38 +1956,32 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
+
+        bool mRunnersCanvasIsShown = true;
         private void xRunnerDetailView_Click(object sender, RoutedEventArgs e)
-        {
-            if (xRunnersGrid.RowDefinitions[1].Height.Value == 0)
-            {               
-                xRunnersGrid.RowDefinitions[1].Height = new GridLength(270);
-                xRunnerDetailViewBtn.ButtonImageType = eImageType.CollapseAll;
-                controls.Visibility = Visibility.Visible;
-                xRunnersCombo.Visibility = Visibility.Collapsed;
-                xRunnerNamelbl.Visibility = Visibility.Visible;
-                xOtherControlsDocPanel.Visibility = Visibility.Visible;
-                xActionsRunnerItemsGrid.RowDefinitions[1].Height = new GridLength(375);
-                xActivitiesRunnerItemsGrid.RowDefinitions[1].Height = new GridLength(375);
-                xBusinessFlowsRunnerItemsGrid.RowDefinitions[1].Height = new GridLength(375);
-                xRunnerButtonsDocPanel.Visibility = Visibility.Collapsed;
-                xRunnerInfoDocPanel.Visibility = Visibility.Collapsed;
-                xRunnersFrame.Visibility = Visibility.Visible;                
+        {            
+            if (mRunnersCanvasIsShown)
+            {
+                //show Runners mini view
+                xRunnersViewRow.Height = new GridLength(50);
+                xRunnersCanvasControls.Visibility = Visibility.Collapsed;
+                xRunnersCanvasView.Visibility = Visibility.Collapsed;
+                xRunnersMiniView.Visibility = Visibility.Visible;
+                xRunnerDetailViewBtn.ButtonImageType = eImageType.ExpandAll;
+                xRunnerNamelbl.Visibility = Visibility.Collapsed;
+                SetComboRunnerInitialView();
+                mRunnersCanvasIsShown = false;
             }
             else
-            {               
-                xRunnersGrid.RowDefinitions[1].Height = new GridLength(0);
-                xRunnerDetailViewBtn.ButtonImageType = eImageType.ExpandAll;
-                controls.Visibility = Visibility.Collapsed;
-                xRunnersCombo.Visibility = Visibility.Visible;
-                xRunnerNamelbl.Visibility = Visibility.Collapsed;
-                xOtherControlsDocPanel.Visibility = Visibility.Collapsed;
-                xActionsRunnerItemsGrid.RowDefinitions[1].Height = new GridLength(640);
-                xActivitiesRunnerItemsGrid.RowDefinitions[1].Height = new GridLength(640);
-                xBusinessFlowsRunnerItemsGrid.RowDefinitions[1].Height = new GridLength(640);
-                xRunnerButtonsDocPanel.Visibility = Visibility.Visible;
-                xRunnerInfoDocPanel.Visibility = Visibility.Visible;
-                xRunnersFrame.Visibility = Visibility.Collapsed;
-                SetComboRunnerInitialView();
+            {
+                //show Runners Canvas view
+                xRunnersViewRow.Height = new GridLength(270);
+                xRunnersCanvasControls.Visibility = Visibility.Visible;
+                xRunnersCanvasView.Visibility = Visibility.Visible;
+                xRunnersMiniView.Visibility = Visibility.Collapsed;
+                xRunnerNamelbl.Visibility = Visibility.Visible;
+                xRunnerDetailViewBtn.ButtonImageType = eImageType.CollapseAll;
+                mRunnersCanvasIsShown = true;
             }
         }
         private void SetComboRunnerInitialView()
