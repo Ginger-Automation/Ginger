@@ -31,7 +31,7 @@
 
         <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Content="API Type:" />
 
-        <ComboBox Grid.Row="0" Grid.Column="1"  Name="APITypeComboBox" ContextMenu="{x:Null}" Width="200"  Style="{StaticResource @InputComboBoxStyle}"  VerticalAlignment="Center"  SelectionChanged="APIType_SelectionChanged"  HorizontalAlignment="Left"  >
+        <ComboBox Grid.Row="0" Grid.Column="1"  Name="APITypeComboBox" ContextMenu="{x:Null}" Width="200"  Style="{StaticResource $FlatEditInputComboBoxStyle}"  VerticalAlignment="Center"  SelectionChanged="APIType_SelectionChanged"  HorizontalAlignment="Left"  >
         </ComboBox>
 
         <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" Content="Source Type:"  />

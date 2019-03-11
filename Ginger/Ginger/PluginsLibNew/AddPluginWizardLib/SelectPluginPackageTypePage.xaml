@@ -1,4 +1,4 @@
-    <Page x:Class="GingerWPF.PluginsLib.AddPluginWizardLib.SelectPluginPackageTypePage"
+<Page x:Class="GingerWPF.PluginsLib.AddPluginWizardLib.SelectPluginPackageTypePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -8,13 +8,13 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="SelectPluginTypePage">
 
-    <Grid>
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <StackPanel>
-        <Label>Select Plugin type</Label>
-            <RadioButton IsChecked="True">Plugin folder located on this machine</RadioButton>
-            <RadioButton>Download from Ginger Plugin market</RadioButton>
+            <Label Style="{StaticResource $LabelStyle}" >Select Plugin Source Type:</Label>
+            <RadioButton IsChecked="True" Style="{StaticResource $InputRadioButtonStyle}">Plugin folder located on this machine</RadioButton>
+            <!--<RadioButton>Download from Ginger Plugin market</RadioButton>
             <RadioButton>From Ginger Grid Node</RadioButton>
-            <RadioButton>Create new Plugin</RadioButton>
+            <RadioButton>Create new Plugin</RadioButton>-->
         </StackPanel>
     </Grid>
 </Page>

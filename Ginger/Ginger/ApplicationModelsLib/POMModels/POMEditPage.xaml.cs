@@ -63,6 +63,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 mAgent = value;
                 mPomAllElementsPage.SetAgent(mAgent);
+                if (mAgent != null)
+                {
+                    mPOM.LastUsedAgent = mAgent.Guid;
+                }
             }
         }
 
@@ -102,12 +106,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTargetApplicationComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             FillTargetAppsComboBox();
             xTargetApplicationComboBox.Init(mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
-            xTagsViewer.Init(mPOM.TagsKeys);
-
-            ePlatformType mAppPlatform =  WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
-            ObservableList<Agent>  optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
-            xAgentControlUC.Init(optionalAgentsList);
-            App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
+            xTagsViewer.Init(mPOM.TagsKeys);            
 
             BitmapSource source = null;
             if (mPOM.ScreenShotImage != null)
@@ -123,6 +122,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             UIElementTabTextBlockUpdate();
 
+            ePlatformType mAppPlatform = WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
+            ObservableList<Agent> optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
+            App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
+            xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);         
         }
 
         private void FillTargetAppsComboBox()

@@ -81,6 +81,17 @@ namespace GingerWPFUnitTest.POMs
             });
         }
 
+        /// <summary>
+        /// Set the Checked Value of check box 
+        /// </summary>
+        /// <param name="obj"></param>
+        public void SetCheckedValue(bool value)
+        {
+            Execute(() => {
+                ((CheckBox)dependencyObject).IsChecked = value;
+            });
+        }
+
 
 
         /// <summary>

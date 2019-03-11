@@ -82,7 +82,10 @@ namespace GingerCore.Drivers.Common
 
             while (node != null)
             {
-                if (Xpath.Length > 0) Xpath = @"/" + Xpath; 
+                if (Xpath.Length > 0)
+                {
+                    Xpath = @"/" + Xpath;
+                } 
                
                 string nodepath = GetElemntNodeXpath(node);
                 nodepath = nodepath.Replace("/", XpathSlash);                                

@@ -31,7 +31,9 @@ namespace Ginger.AnalyzerLib
             Fixed = 3,
             CannotFix = 4,
             MissingFixHandler =5,
-            FixedSaved =6
+            FixedSaved =6,
+            PartiallyFixed = 7,
+
         }
 
         public enum eSeverity
