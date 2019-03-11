@@ -55,9 +55,6 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-
-
-
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> UnMappedUIElements = new ObservableList<ElementInfo>();
 
@@ -105,5 +102,9 @@ namespace Amdocs.Ginger.Repository
                 return nameof(this.Name);
             }
         }
+
+        Guid mLastUsedAgent;
+        [IsSerializedForLocalRepository]
+        public Guid LastUsedAgent { get { return mLastUsedAgent; } set { if (mLastUsedAgent != value) { mLastUsedAgent = value; OnPropertyChanged(nameof(LastUsedAgent)); } } }
     }
 }

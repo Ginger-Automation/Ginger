@@ -105,7 +105,19 @@ namespace GingerCore
             public static string ErrorHandlerMappingType = "ErrorHandlerMappingType";
         }
 
-        public bool SelectedForConversion { get; set; }
+        bool mSelectedForConversion;
+        public bool SelectedForConversion
+        {
+            get { return mSelectedForConversion; }
+            set
+            {
+                if (mSelectedForConversion != value)
+                {
+                    mSelectedForConversion = value;
+                    OnPropertyChanged(Fields.SelectedForConversion);
+                }
+            }
+        }
 
         #region Activity-Error Handler Mapping
         [IsSerializedForLocalRepository]

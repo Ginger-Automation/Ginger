@@ -373,7 +373,10 @@ namespace Amdocs.Ginger.Common.UIElement
         {
             get
             {
-                if (mXPath == null) mXPath = GetAbsoluteXpath();
+                if (mXPath == null)
+                {
+                    mXPath = GetAbsoluteXpath();
+                }
                 return mXPath;
             }
             set
@@ -566,6 +569,8 @@ namespace Amdocs.Ginger.Common.UIElement
             Tab,
             [EnumValueDescription("Editor Pane")]
             EditorPane,
+            [EnumValueDescription("Editor Table")]
+            EditorTable,
             //HTML Elements
             Div,
             Span,
