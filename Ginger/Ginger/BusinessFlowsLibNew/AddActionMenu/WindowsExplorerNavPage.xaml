@@ -10,8 +10,8 @@
       d:DesignHeight="700" d:DesignWidth="450"
       Title="WindowsExplorerNavPage">
 
-    <!--<Grid Background="LightGray">
-        <Grid.RowDefinitions>
+    <Grid Background="LightGray">
+        <!--<Grid.RowDefinitions>
             <RowDefinition x:Name="WindowComboboxRow" Height="30" />
             <RowDefinition x:Name="ControlsViewRow" Height="35*" MinHeight="35"/>
         </Grid.RowDefinitions>
@@ -42,7 +42,7 @@
                     <Ginger:ucGrid x:Name="WindowControlsGridView" Title="Window Visible Controls" RowChangedEvent="WindowControlsGridView_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"/>
                 </Grid>
             </Expander.Content>
-        </Expander>
+        </Expander>-->
 
-    </Grid>-->
+    </Grid>
 </Page>

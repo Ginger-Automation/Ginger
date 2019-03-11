@@ -2998,7 +2998,7 @@
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
-    <Style TargetType="Button" x:Key="@PanelButtonStyle" >
+    <!--<Style TargetType="Button" x:Key="@PanelButtonStyle" >
         <Setter Property="Background" Value="DeepSkyBlue" />
         <Setter Property="Foreground" Value="DeepSkyBlue" />
         <Setter Property="FontWeight" Value="Bold" />
@@ -3026,7 +3026,40 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 
+    <Style TargetType="Button" x:Key="@PanelButtonStyle">
+        <Setter Property="Background" Value="DeepSkyBlue" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="Padding" Value="5,0,5,0"/>
+        <Setter Property="Width" Value="200" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="DeepSkyBlue" BorderThickness="1" CornerRadius="15">
+                        <ContentPresenter 
+                                TextElement.Foreground="White" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="Cursor" Value="Hand"></Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common.Enums;
+using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.Help;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -23,6 +24,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// </summary>
     public partial class POMNavPage : Page
     {
+        readonly PomAllElementsPage mPomAllElementsPage;
         public POMNavPage()
         {
             InitializeComponent();
@@ -48,7 +50,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             itemTypeRootNode.SetTools(xTreeView);
             xTreeView.SetTopToolBarTools(saveAllHandler, addHandler);
 
-            //xTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
+            xTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
 
             //if (treeItemDoubleClickHandler != null)
             //{
@@ -56,20 +58,21 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             //}
         }
 
-        //private void MainTreeView_ItemSelected(object sender, EventArgs e)
-        //{
-            //TreeViewItem TVI = (TreeViewItem)sender;
-            //object tvItem = TVI.Tag;
+        private void MainTreeView_ItemSelected(object sender, EventArgs e)
+        {
+            TreeViewItem TVI = (TreeViewItem)sender;
+            object tvItem = TVI.Tag;
 
-            //if (tvItem is ITreeViewItem)
-            //{
-            //    DetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
-            //}
-            //else
-            //{
-            //    DetailsFrame.Content = "View/Edit page is not available yet for the tree item '" + tvItem.GetType().Name + "'";
-            //}
-        //}
+            if (tvItem is ITreeViewItem)
+            {
+                //mPomAllElementsPage = new PomAllElementsPage();
+                //DetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
+            }
+            else
+            {
+                //DetailsFrame.Content = "View/Edit page is not available yet for the tree item '" + tvItem.GetType().Name + "'";
+            }
+        }
 
     }
 }

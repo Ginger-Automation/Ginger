@@ -127,7 +127,9 @@ namespace Ginger.Actions
             }
             //Binding            
             txtDescription.BindControl(mAction, Act.Fields.Description);
-            cboLocateBy.BindControl(mAction, Act.Fields.LocateBy, act.AvailableLocateBy());
+            //List<eLocateBy> locateByList = act.AvailableLocateBy().Where(e => e != eLocateBy.POMElement).ToList();
+            //cboLocateBy.BindControl(mAction, Act.Fields.LocateBy, act.AvailableLocateBy());
+            cboLocateBy.BindControl(mAction, Act.Fields.LocateBy, act.AvailableLocateBy().Where(e => e != eLocateBy.POMElement).ToList());
             comboWindowsToCapture.BindControl(mAction, Act.Fields.WindowsToCapture);
             txtLocateValue.BindControl(mAction, Act.Fields.LocateValue);
 

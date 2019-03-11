@@ -638,6 +638,9 @@
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\UCWindowsGrid.xaml.cs">
+      <DependentUpon>UCWindowsGrid.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WizardLib\ValidationDetails.cs" />
     <Compile Include="GeneralValidationRules\FileValidationRule.cs" />
     <Compile Include="GeneralValidationRules\GridValidationRule.cs" />
@@ -3102,6 +3105,10 @@
     <Page Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinTargetFolder.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControlsLib\UCWindowsGrid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\VisualFlow\FlowDiagramPage.xaml">
       <Generator>MSBuild:Compile</Generator>

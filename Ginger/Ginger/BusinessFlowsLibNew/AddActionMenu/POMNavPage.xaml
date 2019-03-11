@@ -9,17 +9,20 @@
       d:DesignHeight="500" d:DesignWidth="300"
       Title="POMNavAction">
 
-        <Grid>
-            <!--<Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300"/>
-                <ColumnDefinition Width="275*"/>
-            </Grid.ColumnDefinitions>-->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="300*"/>
+            <RowDefinition Height="275*"/>
+        </Grid.RowDefinitions>
 
-            <UCTreeView:TreeView1 x:Name="xTreeView" TreeTitle="Title">
-            </UCTreeView:TreeView1>
+        <UCTreeView:TreeView1 x:Name="xTreeView" TreeTitle="Title" Grid.Row="0">
+        </UCTreeView:TreeView1>
 
-            <!--<GridSplitter ResizeDirection="Columns" Grid.Column="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True"/>-->
+        <GridSplitter ResizeDirection="Rows" Grid.Row="1" Width="5" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="Black" IsEnabled="True" />
+        <Frame x:Name="xPOMLDetailsFrame" Grid.Row="1" Margin="0,5,0,0" />
 
-            <!--<Frame x:Name="DetailsFrame" Grid.Column="1" Margin="5,0,0,0"/>-->
-        </Grid>
-    </Page>
+        <!--<GridSplitter ResizeDirection="Columns" Grid.Column="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True"/>-->
+
+        <!--<Frame x:Name="DetailsFrame" Grid.Column="1" Margin="5,0,0,0"/>-->
+    </Grid>
+</Page>
