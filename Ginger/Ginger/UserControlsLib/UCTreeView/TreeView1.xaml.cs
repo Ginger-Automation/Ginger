@@ -43,12 +43,17 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         public UCTreeView Tree => xTreeViewTree;
 
+        public Grid TreeGrid
+        {
+            get { return xGrid; }
+        }
+
         public string TreeTitle
         {
             get { return xTreeTitle.Content.ToString(); }
             set { xTreeTitle.Content = value; }
         }
-
+       
         public eImageType TreeIcon
         {
             get { return xTreeIcon.ImageType; }
@@ -119,7 +124,17 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 xTreeViewTree.CurrentSelectedTreeViewItem.SetTools(this);
             }
         }
-       
+        
+        public void SetTitleSection(double margin, double GridLength, double TitleFontSize, FontWeight TitleFontWeight)
+        {
+            xTreeItemHeaderPnl.Margin = new Thickness(margin);
+            xTreeTitle.FontSize = TitleFontSize;
+            xTreeTitle.FontWeight = TitleFontWeight;
+            xTitleSection.HorizontalAlignment = HorizontalAlignment.Center;
+            TreeGrid.RowDefinitions[0].Height = new GridLength(GridLength);
+            xTreeActionsIconsPnl.Visibility = Visibility.Collapsed;
+        }
+
         private async void xSearchTextBox_TextChangedAsync(object sender, TextChangedEventArgs e)
         {
             if (string.IsNullOrEmpty(xSearchTextBox.Text))

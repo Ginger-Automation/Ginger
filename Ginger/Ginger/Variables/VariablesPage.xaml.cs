@@ -136,6 +136,7 @@ namespace Ginger.Variables
                         if ( WorkSpace.UserProfile.Solution != null)
                         {
                             mVariablesParentObj =  WorkSpace.UserProfile.Solution;
+                            ((Solution)mVariablesParentObj).PropertyChanged -= Solution_PropertyChanged;
                             ((Solution)mVariablesParentObj).PropertyChanged += Solution_PropertyChanged;//Hook to catch Solution Variables changes
                         }
                         else
@@ -149,6 +150,7 @@ namespace Ginger.Variables
                         if (App.BusinessFlow != null)
                         {
                             mVariablesParentObj = App.BusinessFlow;
+                            ((BusinessFlow)mVariablesParentObj).PropertyChanged -= BusinessFlow_PropertyChanged;//Hook to catch Business Flow Variables changes
                             ((BusinessFlow)mVariablesParentObj).PropertyChanged += BusinessFlow_PropertyChanged;//Hook to catch Business Flow Variables changes
                         }
                         else
@@ -162,13 +164,18 @@ namespace Ginger.Variables
                         if (App.BusinessFlow != null && App.BusinessFlow.CurrentActivity != null)
                         {
                             mVariablesParentObj = App.BusinessFlow.CurrentActivity;
+                            App.BusinessFlow.PropertyChanged -= BusinessFlow_PropertyChanged;
                             App.BusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;//Hook to catch Current Activity changes                           
                         }
                         else
                             mVariablesParentObj = new Activity();//to avoid crashing
                     }
                     if (mVariablesParentObj != null)
+                    {
+                        ((Activity)mVariablesParentObj).PropertyChanged -= Activity_PropertyChanged;
                         ((Activity)mVariablesParentObj).PropertyChanged += Activity_PropertyChanged;//Hook to catch Activity Variables changes
+                    }
+                        
                     break;
             }
         }
@@ -205,6 +212,7 @@ namespace Ginger.Variables
 
                 if (grdVariables.DataSourceList != null)
                 {
+                    grdVariables.DataSourceList.CollectionChanged -= VariablesPage_CollectionChanged;
                     grdVariables.DataSourceList.CollectionChanged += VariablesPage_CollectionChanged;
                 }
             }
