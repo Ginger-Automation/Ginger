@@ -252,6 +252,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
                     ElementType = eElementType.HyperLink,
+                    IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Click,
                                                                 ActUIElement.eElementAction.DoubleClick,
@@ -284,6 +285,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
                     ElementType = eElementType.List,
+                    IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {
                                                                ActUIElement.eElementAction.Select,

@@ -40,7 +40,7 @@ namespace GingerTest.POMs
 
         private ApplicationPOMModel CreatePOMOnWizard(string POMName,string POMDescription, string targetApp, Agent agent, string URL,List<eElementType> elementTypeCheckBoxToClickList, List<ElementLocator> prioritizedLocatorsList)
         {
-            WizardPOM wizard = WizardPOM.CurrentWizard;
+            WizardPOM wizard = WizardPOM.CurrentWizard;            
             wizard.NextButton.Click();
             ucAgentControl ucAgentControl = (ucAgentControl)wizard.CurrentPage["ucAgentControl AID"].dependencyObject;
             ucAgentControlPOM ucAgentControlPOM = new ucAgentControlPOM(ucAgentControl);
@@ -69,6 +69,9 @@ namespace GingerTest.POMs
             {
                 ucElementTypesGridPOM.ClickOnCheckBox(nameof(UIElementFilter.Selected), nameof(UIElementFilter.ElementType), elementType.ToString());
             }
+
+            wizard.CurrentPage["LearnOnlyMappedElementsCheckBox AID"].SetCheckedValue(false);//to it will learn all
+
             string html = TestResources.GetTestResourcesFile(URL);
             agent.Driver.RunAction(new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, ValueForDriver = html });
             SleepWithDoEvents(10000);
