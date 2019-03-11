@@ -43,9 +43,9 @@ namespace Ginger.Help
         public HelpWindow(string SearchText = null)
         {
             InitializeComponent();
-
-            MainTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
-
+           
+            MainTreeView.Tree.ItemSelected += MainTreeView_ItemSelected; 
+            
             mHelpFolder = GetGingerHelpLibraryFolder(false);
             mLibraryFolder = GetGingerHelpLibraryFolder();
 
@@ -104,8 +104,7 @@ namespace Ginger.Help
         }
 
         private void BuildLibraryTreeView()
-        {
-            MainTreeView.TreeTitleStyle= (Style)TryFindResource("@ucTitleStyle_2");
+        {           
 
             //add Library root folder
             HelpDocumentsFolderTreeItem DFTI = new HelpDocumentsFolderTreeItem();
