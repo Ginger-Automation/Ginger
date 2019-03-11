@@ -248,5 +248,10 @@ namespace GingerCore.Drivers.Common
                 act.Error = e.Message;
             }
         }
+
+        public string GetElementXpath(ElementInfo EI)
+        {
+            return null;
+        }
     }
 }

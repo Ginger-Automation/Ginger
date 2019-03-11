@@ -112,6 +112,17 @@ namespace GingerCore.Actions
                     else
                         outVal = ETERC.ValueCalculated;
                     break;
+                case eControlAction.DeleteRow:
+                    ValueExpression veDel = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
+                    veDel.Value = ValueExp;
+                    outVal = veDel.ValueCalculated;
+                    int rowCount = 0;
+                    if(!string.IsNullOrEmpty(outVal) && !int.TryParse(outVal, out rowCount))
+                    {
+                        this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        Error = outVal;
+                    }
+                    break;
                 default:
                     ValueExpression VEDR = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
                     VEDR.Value = ValueExp;

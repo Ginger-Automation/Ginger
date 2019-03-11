@@ -2435,6 +2435,11 @@ namespace GingerCore.Drivers.PBDriver
             return null;
         }
 
+        public string GetElementXpath(ElementInfo EI)
+        {
+            return null;
+        }
+
         #endregion
     }
 }

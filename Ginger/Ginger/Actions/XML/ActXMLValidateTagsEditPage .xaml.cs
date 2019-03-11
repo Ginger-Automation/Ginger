@@ -86,12 +86,12 @@ namespace Ginger.Actions.XML
             if (mAct.DocumentType == ActXMLTagValidation.eDocumentType.XML)
             {
                 dlg.DefaultExt = "*.xml";
-                dlg.Filter = "XML Template File (*.xml)|*.xml "+"|All Files(*.*)| *.* ";
+                dlg.Filter = "XML Template File (*.xml)|*.xml|All Files (*.*)|*.*";
             }
             else if (mAct.DocumentType == ActXMLTagValidation.eDocumentType.JSON)
             {
                 dlg.DefaultExt = "*.json";
-                dlg.Filter = "JSON Template File (*.json)|*.json" + "|All Files(*.*)| *.* ";
+                dlg.Filter = "JSON Template File (*.json)|*.json|All Files (*.*)|*.*";
             }
 
             string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
