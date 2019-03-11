@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.Actions;
 using GingerWPF.WizardLib;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,24 +42,9 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
             {
                 case EventType.Init:
                     wiz = (AddPluginPackageWizard)WizardEventArgs.Wizard;
-                    FolderTextBox.BindControl(wiz, nameof(AddPluginPackageWizard.Folder));
+                    xPluginFolderUC.Init(wiz, nameof(AddPluginPackageWizard.Folder), false, true, UCValueExpression.eBrowserType.Folder);
                     break;
             }
-        }
-
-        private void BrowseButton_Click(object sender, RoutedEventArgs e)
-        {
-            string s = General.OpenSelectFolderDialog("Select Plugin Folder");
-            if (!string.IsNullOrEmpty(s))
-            {
-                FolderTextBox.Text = s;
-            }
-        }
-
-        private void FolderTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            // TODO: check folder exist and info file exist
-            wiz.PluginPackage = new PluginPackage(FolderTextBox.Text);
         }
     }
 }

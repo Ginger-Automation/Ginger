@@ -94,17 +94,27 @@ namespace Ginger.Actions.ActionConversion
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Selected), Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Selected), Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = System.Windows.Data.BindingMode.TwoWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.SourceActionTypeName), WidthWeight = 15, Header = "Source Action Type" });
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.TargetActionTypeName), WidthWeight = 15, Header = "Target Action Type" });
             xGridConvertibleActions.SetAllColumnsDefaultView(view);
             xGridConvertibleActions.InitViewItems();
             xGridConvertibleActions.SetTitleLightStyle = true;
+            xGridConvertibleActions.btnMarkAll.Visibility = System.Windows.Visibility.Visible;
+            xGridConvertibleActions.MarkUnMarkAllActive += MarkUnMarkAllActions;
             xGridConvertibleActions.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
             {
                 ucGrid.eUcGridValidationRules.CheckedRowCount
             };
+        }
+
+        private void MarkUnMarkAllActions(bool ActiveStatus)
+        {
+            foreach (ConvertableActionDetails act in xGridConvertibleActions.DataSourceList)
+            {
+                act.Selected = ActiveStatus;
+            }
         }
     }
 }

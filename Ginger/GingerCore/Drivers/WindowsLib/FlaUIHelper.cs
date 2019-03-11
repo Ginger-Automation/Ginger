@@ -860,5 +860,10 @@ namespace GingerCore.Drivers.WindowsLib
         {
             throw new NotImplementedException();
         }
+
+        public string GetElementXpath(ElementInfo EI)
+        {
+            return null;
+        }
     }
 }
