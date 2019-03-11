@@ -55,7 +55,7 @@ namespace Ginger.Run
         private void AddFlowControl(object sender, RoutedEventArgs e)
         {
             FlowControl FC = new FlowControl();
-            FC.Operator = eFCOperator.CSharp;
+            FC.Operator = eFCOperator.ActionPassed;
             FC.Active = true;
             mActParentBusinessFlow.BFFlowControls.Add(FC);
         }

@@ -2241,7 +2241,7 @@ namespace Ginger.Run
 
                 
 
-                    bool IsConditionTrue= CalculateFlowControlStatus(FC.ConditionCalculated,FC.Operator);
+                    bool IsConditionTrue= CalculateFlowControlStatus(act, mLastExecutedActivity,FC.Operator,FC.ConditionCalculated);
                  
                     if (IsConditionTrue)
                     {
@@ -2391,28 +2391,71 @@ namespace Ginger.Run
             }
         }
 
-        private bool CalculateFlowControlStatus(string Expression, GingerCore.FlowControlLib.eFCOperator FCoperator)
+        public static bool CalculateFlowControlStatus(Act mAct,Activity mLastActivity,eFCOperator FCoperator,string Expression)
         {
             bool FCStatus;
-            if (FCoperator == GingerCore.FlowControlLib.eFCOperator.Legacy)
+
+
+
+
+
+            switch (FCoperator)
             {
-                string rc = VBS.ExecuteVBSEval(Expression.Trim());
-                if (rc == "-1")
-                {
+                case eFCOperator.Legacy:
+                    string rc = VBS.ExecuteVBSEval(Expression.Trim());
+                    if (rc == "-1")
+                    {
 
-                    FCStatus = true;
-                }
-                else
-                {
+                        FCStatus = true;
+                    }
+                    else
+                    {
 
+                        FCStatus = false;
+                    }
+
+                    break;
+                case eFCOperator.ActionPassed:
+                    FCStatus = mAct.Status.Value == eRunStatus.Passed ? true : false;
+                    break;
+
+                case eFCOperator.ActionFailed:
+                    FCStatus = mAct.Status.Value == eRunStatus.Failed ? true : false;
+                    break;
+                case eFCOperator.LastActivityPassed:
+                    if (mLastActivity != null)
+                    {
+                        FCStatus = mLastActivity.Status == eRunStatus.Passed ? true : false;
+                    }
+                    else
+                    {
+                        FCStatus = false;
+                    }
+
+                    break;
+                case eFCOperator.LastActivityFailed:
+                    if (mLastActivity != null)
+                    {
+                        FCStatus = mLastActivity.Status == eRunStatus.Failed ? true : false;
+                    }
+                    else
+                    {
+                        FCStatus = false;
+                    }
+                    break;
+                case eFCOperator.CSharp:
+
+                    FCStatus = CodeProcessor.EvalCondition(Expression);
+                    break;
+
+                default:
                     FCStatus = false;
-                }
+                    break;
+            }
 
-            }
-            else
-            {
-                FCStatus = CodeProcessor.EvalCondition(Expression);
-            }
+
+
+
 
             return FCStatus;
         }
