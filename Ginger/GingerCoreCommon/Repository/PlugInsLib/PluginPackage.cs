@@ -27,6 +27,7 @@ using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Plugin.Core;
 using Newtonsoft.Json;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
+using Amdocs.Ginger.Common.GeneralLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -163,9 +164,15 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                userFolder = Path.Combine(userFolder, "Ginger", "PluginPackages");
-                return userFolder;
+                //string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                //userFolder = Path.Combine(userFolder, "Ginger", "PluginPackages");
+                //return userFolder;
+                string folder= Path.Combine(General.LocalUserApplicationDataFolderPath, "PluginsPackages");
+                if(Directory.Exists(folder) == false)
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                return folder;
             }
         }
       

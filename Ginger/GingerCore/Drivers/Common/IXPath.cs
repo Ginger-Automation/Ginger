@@ -63,5 +63,6 @@ namespace GingerCore.Drivers.Common
         string GetElementTagName(ElementInfo EI);
         List<object> GetAllElementsByLocator(eLocateBy LocatorType, string LocValue);
 
+        string GetElementXpath(ElementInfo EI);
     }
 }

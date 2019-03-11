@@ -65,7 +65,7 @@ namespace GingerCoreNET.RosLynLib
                        "((?'Close-Open'})[^{}]*)+" +
                        ")*" +
                        "(?(Open)(?!))";
-             pattern = "{CS({|}|.)*}";
+             pattern = "{CS({.*}|[^{}]*)*}";
 
 
             Pattern =   new Regex(pattern);

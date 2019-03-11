@@ -373,7 +373,10 @@ namespace Amdocs.Ginger.Common.UIElement
         {
             get
             {
-                if (mXPath == null) mXPath = GetAbsoluteXpath();
+                if (mXPath == null)
+                {
+                    mXPath = GetAbsoluteXpath();
+                }
                 return mXPath;
             }
             set

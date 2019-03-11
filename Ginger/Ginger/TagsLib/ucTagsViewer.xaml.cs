@@ -80,12 +80,14 @@ namespace Ginger
 
             mFullTagsList.CollectionChanged += mFullTagsList_CollectionChanged;
 
-            if(mItemTagsType == eItemTagsType.Guid)
+            LoadItemTagsToView();//show current saved tags
+
+            if (mItemTagsType == eItemTagsType.Guid)
                 mItemTagsGUID.CollectionChanged += MItemTags_CollectionChanged;
             else
                 mItemTagsKey.CollectionChanged += MItemTags_CollectionChanged;
 
-            LoadItemTagsToView();//show current saved tags
+           
             SetComboTagsSource();
             if (mAddTags == false)
             {
