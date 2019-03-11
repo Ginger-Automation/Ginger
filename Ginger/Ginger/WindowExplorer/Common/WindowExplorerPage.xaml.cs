@@ -95,7 +95,7 @@ namespace Ginger.WindowExplorer
         public WindowExplorerPage(ApplicationAgent ApplicationAgent,  Act Act = null, eWindowExplorerPageContext Context = eWindowExplorerPageContext.WindowExplorerPage)
         {           
             InitializeComponent();
-
+            WindowControlsTreeView.TreeGrid.RowDefinitions[0].Height = new GridLength(0);                   
             mContext = Context;
             
             mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
