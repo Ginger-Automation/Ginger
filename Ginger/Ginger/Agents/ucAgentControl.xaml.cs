@@ -117,16 +117,27 @@ namespace Ginger.Agents
             }
         }
 
-        public void Init(ObservableList<Agent> optionalAgentsList)
+        public void Init(ObservableList<Agent> optionalAgentsList, Guid defualtAgent = default(Guid))
         {
             mOptionalAgentsList = optionalAgentsList;
             xAgentsComboBox.ItemsSource = mOptionalAgentsList;
             xAgentsComboBox.DisplayMemberPath = nameof(Agent.Name);
 
-            if (mOptionalAgentsList != null && mOptionalAgentsList.Count > 0)
-                xAgentsComboBox.SelectedItem = mOptionalAgentsList[0];
-
             App.ObjFieldBinding(xAgentsComboBox, ComboBox.SelectedItemProperty, this, nameof(this.SelectedAgent));
+
+            if (mOptionalAgentsList != null && mOptionalAgentsList.Count > 0)
+            {
+                Agent defAgent = mOptionalAgentsList.Where(x => x.Guid == defualtAgent).FirstOrDefault();
+                if (defAgent != null)
+                {
+                    SelectedAgent = defAgent;
+                }
+                else
+                {
+                    SelectedAgent = mOptionalAgentsList[0];
+                }
+            }
+            
             SetAgentStatusView();
         }       
 
