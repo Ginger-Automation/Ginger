@@ -34,7 +34,7 @@
                 <StackPanel Orientation="Vertical">
                     <CheckBox x:Name="xUseDynamicParameters" Content="Use Dynamic Parameters" Style="{StaticResource @CheckBoxStyle}" Margin="5,5,5,0" VerticalAlignment="Center" Checked="useDynamicParameters_Checked" Unchecked="useDynamicParameters_Checked"/>
                     <DockPanel x:Name="dynamicParametersPnl"  HorizontalAlignment="Stretch" Visibility="Collapsed" Margin="5,10,0,0" MinWidth="300" MinHeight="120">
-                        <Ginger:ucGrid x:Name="grdTestNGReportParameters" DockPanel.Dock="Top" Title="TestNG Report Parameters" ShowEdit="Visible" ShowSearch="Visible" ShowAdd="Visible" ShowClearAll="Visible" ShowDelete="Visible" ShowRefresh="Visible" ShowUpDown="Visible" />
+                        <Ginger:ucGrid x:Name="grdTestNGReportParameters" DockPanel.Dock="Top" Title="TestNG Report Parameters" ShowEdit="Collapsed" ShowSearch="Visible" ShowAdd="Visible" ShowClearAll="Visible" ShowDelete="Visible" ShowRefresh="Collapsed" ShowUpDown="Visible" />
 
                     </DockPanel>
                 </StackPanel>
