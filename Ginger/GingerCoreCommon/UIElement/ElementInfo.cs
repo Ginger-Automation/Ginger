@@ -569,6 +569,8 @@ namespace Amdocs.Ginger.Common.UIElement
             Tab,
             [EnumValueDescription("Editor Pane")]
             EditorPane,
+            [EnumValueDescription("Editor Table")]
+            EditorTable,
             //HTML Elements
             Div,
             Span,
