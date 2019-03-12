@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -289,7 +289,7 @@ namespace GingerCore.Drivers
             }
             catch (ElementNotAvailableException ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in FocusChangedHandler", ex);
                 //TODO: Need to handle the exception
             }
             //Check that the item in focus is in our window we are recording as focus can go to any desktop window and we get a call            
@@ -322,7 +322,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in DragDropControl", ex);
             }
         }
 
@@ -409,7 +409,7 @@ namespace GingerCore.Drivers
                     // 2. Expand "Managed Debugging Assistants"
                     // 3. Uncheck the NonComVisibleBaseClass Thrown option.        
                     // 4. Click [Ok]
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception in GetListOfWindows", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetListOfWindows", ex);
                 }
             }
             return appWindows;
@@ -526,7 +526,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "GetListofDriverAppWindows: InnerException:" + ex.InnerException + " Error details:", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetListOfDriverAppWindows", ex);
                 throw ex;
             }
 
@@ -844,7 +844,7 @@ namespace GingerCore.Drivers
                             catch (Exception e)
                             {
                                 element = OLD_GetElementByXpath_OLD(locateValue);
-                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                                Reporter.ToLog(eLogLevel.DEBUG, "Exception in Getting Element by XPath", e);
                             }
                             break;
                         case eLocateBy.ByAutomationID:
@@ -882,8 +882,7 @@ namespace GingerCore.Drivers
                 {
                     ecount++;
                     Thread.Sleep(100);
-                    Reporter.ToLog(eLogLevel.DEBUG, "FindElementByLocator In Exception-" + count);
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Exception in FindElementByLocator", e);
                     if (ecount<5)
                         continue;
                 }
@@ -940,7 +939,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "GetCurrentActiveWindow: Exception - ", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetCurrentActiveWindow", ex);
             }
             return currentWin;
         }
@@ -1002,7 +1001,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickContexMenuItem", ex);
             }
             return result;
         }
@@ -1525,7 +1524,7 @@ namespace GingerCore.Drivers
             {
                 act.Error += "ERROR::";
                 act.ExInfo += ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Method IsWindowExist : Error in getting the window.", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in getting the window", ex);
             }               
             
             return isExist;
@@ -1549,7 +1548,7 @@ namespace GingerCore.Drivers
             {
                 act.Error += "ERROR::";
                 act.ExInfo += ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Method CloseWindow : Error in getting the window.", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in closing the window.", ex);
             }
 
             return isClosed;
@@ -1592,7 +1591,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Method GetWindowElementByLocator : Error in getting the window.", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetWindowElementByLocator", ex);
             }
             return AEWindow;
         }
@@ -1678,7 +1677,7 @@ namespace GingerCore.Drivers
             catch (Exception ex)
             {
                 // object is not able to perform the requested action                
-                Reporter.ToLog(eLogLevel.ERROR, "Method SetWindowVisualState : Error.", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in SetWindowVisualState", ex);
                 return ex.Message;
             }
         }
@@ -1719,7 +1718,7 @@ namespace GingerCore.Drivers
             catch (Exception ex)
             {
                 // object is not able to perform the requested action                
-                Reporter.ToLog(eLogLevel.ERROR, "Method SetWindowVisualState : Error.", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in SetWindowVisualState", ex);
                 return ex.Message;
             }
         }
@@ -2458,22 +2457,22 @@ namespace GingerCore.Drivers
             }
             catch (COMException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using Click using Invoke pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickElementUsingInvokePattern", e);
                 return e.Message;
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using Invoke pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickElementUsingInvokePattern", e);
                 return e.Message;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using Invoke pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickElementUsingInvokePattern", e);
                 return e.Message;
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using Invoke pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickElementUsingInvokePattern", e);
                 return e.Message;
             }
 
@@ -2497,22 +2496,22 @@ namespace GingerCore.Drivers
             }
             catch (COMException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using  Legacy pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickElementUsingLegacyPattern", e);
                 return e.Message;
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using  Legacy pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickElementUsingLegacyPattern", e);
                 return e.Message;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using Legacy pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickElementUsingLegacyPattern", e);
                 return e.Message;
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Inside Click using Legacy pattern Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickElementUsingLegacyPattern", e);
                 return e.Message;
             }
             return "Clicked Successfully using Legacy Pattern";
@@ -2589,7 +2588,7 @@ namespace GingerCore.Drivers
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Element you are trying to click is not Enabled.");
+                Reporter.ToLog(eLogLevel.DEBUG, "Element you are trying to click is not Enabled.");
                 return "Element you are trying to click is not Enabled.";
             }
         }
@@ -2994,7 +2993,7 @@ namespace GingerCore.Drivers
                             {
                                 winAPI.SetElementText(element, value);
                                 element.TryGetCurrentPattern(ValuePattern.Pattern, out vp);
-                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                                Reporter.ToLog(eLogLevel.DEBUG, "Error in SetControlValue", e);
                             }
                         }
                         else
@@ -3099,7 +3098,7 @@ namespace GingerCore.Drivers
                                 catch (Exception e)
                                 {
                                     winAPI.SetElementText(element, value);
-                                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                                    Reporter.ToLog(eLogLevel.DEBUG, "Error in SetControlValue", e);
                                 }
                             }
                         }
@@ -3339,7 +3338,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Unable to set value" + e.Message , e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Unable to set value", e);
                 throw new Exception("Unable to set value. Value - " + value);
             }
         }
@@ -3729,18 +3728,18 @@ namespace GingerCore.Drivers
             }
             catch (COMException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "COM Exception when GetControlPropertyValue Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetControlPropertyValue", e);
                 throw e;
 
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when GetControlPropertyValue Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetControlPropertyValue", e);
                 throw e;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Argument Exception when GetControlPropertyValue Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetControlPropertyValue", e);
                 throw e;
             } 
            
@@ -3768,7 +3767,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "GetControlText ::Unable to get the value" + ex.Message, ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetControlText", ex);
             }
 
             return val;
@@ -3788,7 +3787,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "GetClipboardText ::Unable to get clipboard text" + ex.Message, ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetClipboardText", ex);
                     bDone = true;
                 }
             });
@@ -3813,7 +3812,7 @@ namespace GingerCore.Drivers
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "GetClipboardText ::Unable to clear clipboard text" + ex.Message, ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetClipboardText", ex);
                     bDone = true;
                 }
             });
@@ -3869,7 +3868,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "GetControlValueFromXYCoordinates: Unable to get the value" + ex.Message, ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetControlValueFromXYCoordinates", ex);
             }
 
             return val;
@@ -4389,7 +4388,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "SwitchWindow: Exception Try Count: " + count + ", " + act.GetType() + " Description:" + act.Description + " Error details:", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error in SwitchWindow", ex);
                     isLoaded = false;
                     if (count == 6)
                     {                        
@@ -4488,7 +4487,7 @@ namespace GingerCore.Drivers
                 }                
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "SwitchToWindow: Exception Try Count: " + count + ", Title:" + Title + " Description:" + ex.InnerException + " Error details:", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error in SwitchToWindow", ex);
                     isLoaded = false;
                     if (count == 6)
                     {                       
@@ -4520,8 +4519,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                act.Error = "Failed to create UIAutomation application window screenshot. Error= " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to create UIAutomation application window screenshot", ex);
             }
         }
 
@@ -4615,13 +4613,13 @@ namespace GingerCore.Drivers
                     string name = element.Current.Name;
                     if (element.Current.ProcessId == 0)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Exception when checking IsWindowValid with process Id as zero");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Exception when checking IsWindowValid with process Id as zero");
                         return false;
                     }
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception when checking IsWindowValid", e);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Exception when checking IsWindowValid", e);
                     return false;
                 }
             }            
@@ -4647,23 +4645,23 @@ namespace GingerCore.Drivers
             }
             catch (COMException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "COM Exception when GetWindowInfo Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetWindowInfo", e);
                 throw e;
 
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when GetWindowInfo Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetWindowInfo", e);
                 throw e;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Argument Exception when GetWindowInfo Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetWindowInfo", e);
                 throw e;
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "General Exception when GetWindowInfo Error details:", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetWindowInfo", e);
                 throw e;
             }
             return locVal;
@@ -5105,7 +5103,7 @@ namespace GingerCore.Drivers
             catch (System.Runtime.InteropServices.COMException e)
             {
                 parentDictionary.Remove(AE);
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eLogLevel.DEBUG,"Error in HandleGridcontrolAction", e);
                 throw new System.Runtime.InteropServices.COMException();
             }
         }
@@ -5889,7 +5887,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "COM Exception when HandlePBControlAction Error details:", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "COM Exception when HandlePBControlAction Error", ex);
             }            
             return isPresent;
         }
@@ -6029,7 +6027,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in GetElementParent", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetElementParent", e);
                 return null;
             }
         }
@@ -6199,7 +6197,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in GetPreviousSibling", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetPreviousSibling", e);
                 return null;
             }
         }
@@ -6215,7 +6213,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in GetNextSibling", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetNextSibling", e);
                 return null;
             }
 }
@@ -6326,7 +6324,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"",ex);
+                Reporter.ToLog(eLogLevel.DEBUG,"",ex);
                 return new List<ElementInfo>();
             }
 
@@ -6477,6 +6475,11 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetPattern while TryGetCurrentPattern::", ex);
             }
             return value;
+        }
+
+        public string GetElementXpath(ElementInfo EI)
+        {
+            return null;
         }
     }
 

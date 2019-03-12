@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
 using Ginger.WizardLib;
 using GingerCore;
-using GingerCore.Platforms.PlatformsInfo;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
@@ -35,7 +33,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private bool mManualElementConfiguration;
         public bool ManualElementConfiguration { get { return mManualElementConfiguration; } set { mManualElementConfiguration = value; } }
-
+        
 
         public AddPOMWizard(RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
         {

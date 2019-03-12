@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1007,6 +1007,7 @@ namespace GingerCore.Actions
             if (ARC == null && (AddNewReturnParams == true || ConfigOutputDS == true))
             {
                 ARC = new ActReturnValue();
+                ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
                 ARC.Active = true;
                 ReturnValues.Add(ARC);
                 ARC.Param = ParamName;
@@ -1015,6 +1016,10 @@ namespace GingerCore.Actions
             if (ARC != null)
             {
                 ARC.Actual = ActualValue;
+                if(string.IsNullOrEmpty(ExpectedValue))
+                {
+                    ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
+                }
                 if (!ExpectedValue.Equals("dummy"))
                 {
                     ARC.Expected = ExpectedValue;
@@ -1051,6 +1056,7 @@ namespace GingerCore.Actions
             if (ARC == null && (AddNewReturnParams == true || ConfigOutputDS == true))
             {
                 ARC = new ActReturnValue();
+                ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
                 ARC.Active = true;
                 ReturnValues.Add(ARC);
                 ARC.Param = ParamName;
@@ -1058,7 +1064,13 @@ namespace GingerCore.Actions
             }
 
             if (ARC != null)
+            {
+                if(string.IsNullOrEmpty(ARC.Expected))
+                {
+                    ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
+                }
                 ARC.Actual = ActualValue;
+            }
         }
 
 
@@ -1459,13 +1471,16 @@ namespace GingerCore.Actions
                 //    this.ReturnValues.Add(returnValue);
                 //}  
 
-
+                              
                 for (int indx = 0; indx < this.ReturnValues.Count; indx++)
                 {
                     ActReturnValue value = this.ReturnValues[indx];
                     if ((String.IsNullOrEmpty(value.Expected) == false || String.IsNullOrEmpty(value.StoreToValue) == false || String.IsNullOrEmpty(value.SimulatedActual) == false))
                     {
-                        continue;
+                        //If outputvalue is configured then reset it
+                        value.Actual = null;
+                        value.ExpectedCalculated = null;
+                        value.Status = ActReturnValue.eStatus.Pending;
                     }
                     else
                     {
@@ -1473,14 +1488,7 @@ namespace GingerCore.Actions
                         indx--;
                     }
                 }
-
-                // reset output
-                foreach (ActReturnValue ARV in this.ReturnValues)
-                {
-                    ARV.Actual = null;
-                    ARV.ExpectedCalculated = null;
-                    ARV.Status = ActReturnValue.eStatus.Pending;
-                }
+                            
 
                 //foreach (ActDataSourceConfig ADSC in this.DSOutputConfigParams)
                 //{

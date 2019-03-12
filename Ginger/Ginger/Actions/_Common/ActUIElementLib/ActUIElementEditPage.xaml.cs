@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -569,13 +569,16 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             ElementInfo selectedPOMElement = null;
             mExistingPOMAndElementGuidString = mAction.ElementLocateValue;
-            string[] pOMandElementGUIDs = mAction.ElementLocateValue.Split('_');
-            Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
-            ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
-            if (currentPOM != null)
+            if (mAction.ElementLocateValue != null && mAction.ElementLocateValue.Contains("_"))
             {
-                Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                string[] pOMandElementGUIDs = mAction.ElementLocateValue.Split('_');
+                Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
+                ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+                if (currentPOM != null)
+                {
+                    Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
+                    selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                }
             }
             return selectedPOMElement;
         }

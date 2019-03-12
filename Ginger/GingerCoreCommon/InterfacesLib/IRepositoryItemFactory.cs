@@ -1,19 +1,6 @@
-﻿using System;
-using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCore;
-using GingerCore.DataSource;
-using GingerCore.Environments;
-using GingerCore.Variables;
-using Ginger.Run;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using GingerCore.ALM;
-using GingerCore.Activities;
-using Amdocs.Ginger.Repository;
-
-#region License
+﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,6 +15,19 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
+
+using System;
+using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCore;
+using GingerCore.DataSource;
+using GingerCore.Environments;
+using GingerCore.Variables;
+using Ginger.Run;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using GingerCore.ALM;
+using GingerCore.Activities;
+using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.Common
 {

@@ -11,7 +11,7 @@
     <Grid x:Name="ExplorerTreeGrid">
         
 
-        <UCTreeView:TreeView2 x:Name="TestPlanExplorerTreeView" TreeTitle="Test Plan Explorer"/>
+        <UCTreeView:TreeView1 x:Name="TestPlanExplorerTreeView" TreeTitle="Test Plan Explorer"/>
     </Grid>
 
 </Page>

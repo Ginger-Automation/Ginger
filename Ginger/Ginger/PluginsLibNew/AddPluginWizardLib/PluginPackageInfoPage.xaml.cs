@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using GingerWPF.WizardLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
@@ -47,16 +48,24 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
                     wiz = (AddPluginPackageWizard)WizardEventArgs.Wizard;
                     break;
                 case EventType.Active:
-                    mPluginPackage = wiz.PluginPackage;
-                    xIDTextBox.Text = mPluginPackage.PluginId;
-                    xVersionTextBox.Text = mPluginPackage.PluginPackageVersion;
-                    FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
-                    mPluginPackage.LoadServicesFromJSON();
-                    
-                   ServicesGrid.ItemsSource = mPluginPackage.Services;
-                    
-                    ActionsDataGrid.ItemsSource = mPluginPackage.Services[0].Actions;   
-                    
+                    try
+                    {
+                        wiz.PluginPackage = new PluginPackage(wiz.Folder);
+                    }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Failed to find the Plugin package, error: '{0}'", ex));
+                    }
+                    if (wiz.PluginPackage != null)
+                    {
+                        mPluginPackage = wiz.PluginPackage;
+                        xIDTextBox.Text = mPluginPackage.PluginId;
+                        xVersionTextBox.Text = mPluginPackage.PluginPackageVersion;
+                        FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
+                        mPluginPackage.LoadServicesFromJSON();
+                        ServicesGrid.ItemsSource = mPluginPackage.Services;
+                        ActionsDataGrid.ItemsSource = mPluginPackage.Services[0].Actions;
+                    }
                     break;
 
             }

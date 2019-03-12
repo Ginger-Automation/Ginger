@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -58,11 +58,12 @@ namespace Ginger.Actions.ActionConversion
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.SelectedForConversion, WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" });
+            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.SelectedForConversion, WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select", BindingMode = System.Windows.Data.BindingMode.TwoWay });
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ActivityName, WidthWeight = 15, Header = "Name of " + GingerDicser.GetTermResValue(eTermResKey.Activity) });
             xGrdGroups.SetAllColumnsDefaultView(defView);
             xGrdGroups.InitViewItems();
             xGrdGroups.SetTitleLightStyle = true;
+            xGrdGroups.btnMarkAll.Visibility = System.Windows.Visibility.Visible;
 
             ActionConversionUtils utils = new ActionConversionUtils();
             ObservableList<Activity> lst = utils.GetConvertableActivitiesFromBusinessFlow(mWizard.Context.BusinessFlow);
@@ -86,18 +87,9 @@ namespace Ginger.Actions.ActionConversion
 
         private void MarkUnMarkAllActivities(bool ActiveStatus)
         {
-            if (xGrdGroups.DataSourceList.Count <= 0)
+            foreach (Activity act in xGrdGroups.DataSourceList)
             {
-                return;
-            }
-            if (xGrdGroups.DataSourceList.Count > 0)
-            {
-                ObservableList<Activity> lstMarkUnMarkActivities = (ObservableList<Activity>)xGrdGroups.DataSourceList;
-                foreach (Activity act in lstMarkUnMarkActivities)
-                {
-                    act.SelectedForConversion = ActiveStatus;
-                }
-                xGrdGroups.DataSourceList = lstMarkUnMarkActivities;
+                act.SelectedForConversion = ActiveStatus;
             }
         }
     }

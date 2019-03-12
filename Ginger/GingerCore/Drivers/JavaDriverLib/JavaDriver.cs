@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1927,10 +1927,80 @@ namespace GingerCore.Drivers.JavaDriverLib
             EI.Value = PL.GetValueString();
             EI.Name = PL.GetValueString();
             EI.ElementType = PL.GetValueString();
+            EI.ElementTypeEnum = GetHTMLElementType(EI.ElementType);
             EI.Path = PL.GetValueString();
             EI.XPath = PL.GetValueString();
             EI.RelXpath = PL.GetValueString();
             return EI;
+        }
+
+
+        private static eElementType GetHTMLElementType(string elementTypeString)
+        {
+            elementTypeString = elementTypeString.ToUpper();
+
+            switch(elementTypeString)
+            {
+                case "INPUT.TEXT":
+                case "TEXTAREA":
+                case "INPUT.UNDEFINED":
+                case "INPUT.PASSWORD":
+                case "INPUT.EMAIL":
+                    return eElementType.TextBox;
+
+                case "INPUT.BUTTON":
+                case "BUTTON":
+                case "INPUT.IMAGE":         
+                case "INPUT.SUBMIT":
+                    return eElementType.Button;
+
+
+                case "INPUT.CHECKBOX":
+                    return eElementType.CheckBox;
+
+                case "INPUT.RADIO":
+                    return eElementType.RadioButton;
+
+                case "DIV":
+                    return eElementType.Div;
+
+                case "SPAN":
+                    return eElementType.Span;
+
+                case "IFRAME":
+                    return eElementType.Iframe;
+
+                case "TD":
+                case "TH":
+                    return eElementType.TableItem;
+
+                case "LINK":
+                case "A":
+                    return eElementType.HyperLink;
+
+                case "LABEL":
+                    return eElementType.Label;
+
+                case "SELECT":
+                    return eElementType.ComboBox;
+
+                case "TABLE":
+                    return eElementType.Table;
+
+                case "JEDITOR.TABLE":
+                    return eElementType.EditorTable;
+
+                case "IMG":
+                    return eElementType.Image;
+
+
+                case "CANVAS":
+                    return eElementType.Canvas;
+
+                default:
+                    return eElementType.Unknown;
+            }
+            
         }
 
         void IWindowExplorer.SwitchWindow(string Title)

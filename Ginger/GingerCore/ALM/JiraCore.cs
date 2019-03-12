@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ namespace GingerCore.ALM
         }
         public JiraCore()
         {
-            jiraRepObj = new JiraRepository.JiraRepository();
+            jiraRepObj = new JiraRepository.JiraRepository(AlmConfig.ALMConfigPackageFolderPath);
             exportMananger = new JiraExportManager(jiraRepObj);
             jiraConnectObj = new JiraConnectManager(jiraRepObj);
             jiraImportObj = new JiraImportManager(jiraRepObj);
@@ -152,6 +152,37 @@ namespace GingerCore.ALM
         {
             jiraImportObj.UpdateBussinessFlow(ref businessFlow);
         }
-
+        public bool ValidateConfigurationFile(string PackageFileName)
+        {
+            bool containJiraSettingsFile = false;
+            using (FileStream configPackageZipFile = new FileStream(PackageFileName, FileMode.Open))
+            {
+                using (ZipArchive zipArchive = new ZipArchive(configPackageZipFile))
+                {
+                    foreach (ZipArchiveEntry entry in zipArchive.Entries)
+                        if (entry.FullName == @"JiraSettings/")
+                        {
+                            containJiraSettingsFile = true;
+                            break;
+                        }
+                }
+            }
+            return containJiraSettingsFile;
+        }
+        public bool IsConfigPackageExists()
+        {
+            string CurrJiraConfigPath = Path.Combine(ALMCore.SolutionFolder, "Configurations", "JiraConfigurationsPackage");
+            if (Directory.Exists(Path.Combine(CurrJiraConfigPath, "JiraSettings")))
+            {
+                AlmConfig.ALMConfigPackageFolderPath = CurrJiraConfigPath;
+                jiraConnectObj.CreateJiraRepository();
+                return true;
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Jira Configuration package not exist in solution, Jira Settings not exist at: " + Path.Combine(CurrJiraConfigPath, "JiraSettings"));
+            }
+            return false;
+        }
     }
 }

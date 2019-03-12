@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -125,6 +125,7 @@ namespace Ginger.Variables
                     if (variablesParentObj != null)
                     {
                         mVariablesParentObj = variablesParentObj;
+                        ((Solution)mVariablesParentObj).PropertyChanged -= Solution_PropertyChanged;
                         ((Solution)mVariablesParentObj).PropertyChanged += Solution_PropertyChanged;//Hook to catch Solution Variables changes
                         LoadGridData();
                     }
@@ -161,6 +162,7 @@ namespace Ginger.Variables
             mVariablesParentObj = activity;
             if (mVariablesParentObj != null)
             {
+                ((Activity)mVariablesParentObj).PropertyChanged -= Activity_PropertyChanged;
                 ((Activity)mVariablesParentObj).PropertyChanged += Activity_PropertyChanged;//Hook to catch Activity Variables changes
                 LoadGridData();
             }
@@ -198,6 +200,7 @@ namespace Ginger.Variables
 
                 if (grdVariables.DataSourceList != null)
                 {
+                    grdVariables.DataSourceList.CollectionChanged -= VariablesPage_CollectionChanged;
                     grdVariables.DataSourceList.CollectionChanged += VariablesPage_CollectionChanged;
                 }
             }

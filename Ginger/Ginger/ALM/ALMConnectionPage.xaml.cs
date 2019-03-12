@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -438,10 +438,10 @@ namespace Ginger.ALM
                     JiraRadioButton.IsChecked = true;
                     JiraRadioButton.FontWeight = FontWeights.ExtraBold;
                     JiraRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-                    RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
-                    DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    RQMLoadConfigPackageButton.Visibility = Visibility.Visible;
+                    DownloadPackageLink.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
-                    ExampleURLHint.Content = "Example: https://ServerName";
+                    SetLoadJiraPackageButtonContent();
                     if (!isServerDetailsCorrect)
                     {
                         ServerURLTextBox.IsEnabled = true;
@@ -464,6 +464,21 @@ namespace Ginger.ALM
                     RallyRadioButton.FontWeight = FontWeights.Regular;
                     RallyRadioButton.Foreground = Brushes.Black;
                     break;
+            }
+        }
+
+        private void SetLoadJiraPackageButtonContent()
+        {
+            if (!string.IsNullOrEmpty(ServerURLTextBox.Text))
+            {
+                RQMLoadConfigPackageButton.Content = "Replace";
+                ExampleURLHint.Content = "and click Replace to change Jira Configuration Package";
+
+            }
+            else
+            {
+                RQMLoadConfigPackageButton.Content = "Load";
+                ExampleURLHint.Content = "and Load Jira Configuration Package";
             }
         }
 
