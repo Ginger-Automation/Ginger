@@ -66,6 +66,30 @@ namespace GingerWPF.UserControlsLib
 
             if (tvItem is ITreeViewItem)
             {
+                //Get Parent Node And Prepare For Edit
+                try
+                {
+                    ItemsControl parent = ItemsControl.ItemsControlFromItemContainer(TVI);
+                    if (parent != null)
+                    {
+                        while (!(parent is TreeViewItem || parent is TreeView))
+                        {
+                            parent = ItemsControl.ItemsControlFromItemContainer(TVI);
+                        }
+                    }
+                    TreeViewItem treeItemParent = parent as TreeViewItem;
+                    object tvItemParent = treeItemParent.Tag;
+                    DetailsFrame.Content = ((ITreeViewItem)tvItemParent).EditPage();
+                    if (tvItemParent is NewTreeViewItemBase)
+                    {
+                        ((NewTreeViewItemBase)tvItemParent).PrepareItemForEdit();
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+                //Selected Child Node
                 DetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
                 if(tvItem is NewTreeViewItemBase)
                 {
