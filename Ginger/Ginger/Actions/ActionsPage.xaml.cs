@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ namespace Ginger.Actions
                 //App.BusinessFlow dynamic Activity
                 UpdateActionGrid();
 
-                // Hook to Business flow properties changes
+                // Hook to Business flow properties changes                
                 App.BusinessFlow.PropertyChanged += BusinessFlowPropertyChanged;
                 //Hook when App Property changes
                 App.PropertyChanged += AppPropertyChanged;
@@ -276,6 +276,7 @@ namespace Ginger.Actions
                         UpdateActionGrid();
                     }
                     //rehook
+                    App.BusinessFlow.PropertyChanged -= BusinessFlowPropertyChanged;
                     App.BusinessFlow.PropertyChanged += BusinessFlowPropertyChanged;
                 }
             }
@@ -383,7 +384,7 @@ namespace Ginger.Actions
         }
 
         public void UpdateActionGrid()
-        {
+        {         
             if (App.BusinessFlow !=null &&  App.BusinessFlow.CurrentActivity != null)
             {
                 if (mCurrentActivity != App.BusinessFlow.CurrentActivity)

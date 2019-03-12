@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -43,9 +43,9 @@ namespace Ginger.Help
         public HelpWindow(string SearchText = null)
         {
             InitializeComponent();
-
-            MainTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
-
+           
+            MainTreeView.Tree.ItemSelected += MainTreeView_ItemSelected; 
+            
             mHelpFolder = GetGingerHelpLibraryFolder(false);
             mLibraryFolder = GetGingerHelpLibraryFolder();
 
@@ -104,8 +104,7 @@ namespace Ginger.Help
         }
 
         private void BuildLibraryTreeView()
-        {
-            MainTreeView.TreeTitleStyle= (Style)TryFindResource("@ucTitleStyle_2");
+        {           
 
             //add Library root folder
             HelpDocumentsFolderTreeItem DFTI = new HelpDocumentsFolderTreeItem();

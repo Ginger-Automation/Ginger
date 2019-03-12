@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -53,19 +53,18 @@ namespace Ginger.BusinessFlowFolder
 
             if (businessFlow != null)
             {
-                mBusinessFlow = businessFlow;
-                mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
+                mBusinessFlow = businessFlow;                
             }
             else
             {
                 mBusinessFlow = App.BusinessFlow;
-                mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
                 App.PropertyChanged += AppPropertychanged;
                 grdActivities.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Activity", FloatingContinueRunActivityButton_Click, 4);
                 grdActivities.AddFloatingImageButton("@RunAction_20x20.png", "Run Selected Action", RunActionButton_Click, 4);
                 grdActivities.AddFloatingImageButton("@Run2_20x20.png", "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity), RunFloatingButtonClicked, 4); 
-            }
-          
+            }                        
+           
+            mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
             SetActivitiesGridView();
             RefreshActivitiesGrid();
             SetGridRowStyle();
@@ -124,7 +123,11 @@ namespace Ginger.BusinessFlowFolder
                 {
                     mBusinessFlow = App.BusinessFlow;
                     if (mBusinessFlow != null)
+                    {
+                        mBusinessFlow.PropertyChanged -= BusinessFlow_PropertyChanged;
                         mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
+                    }
+                        
                 }
                 RefreshActivitiesGrid();
             }
@@ -143,12 +146,7 @@ namespace Ginger.BusinessFlowFolder
             App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActivity, null); 
         }
-
-        private void CurrentActivity_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "HandlerType")
-                grdActivities.setDefaultView();
-        }      
+               
 
         private void grdActivities_PreviewDragItem(object sender, EventArgs e)
         {
@@ -193,8 +191,7 @@ namespace Ginger.BusinessFlowFolder
             if (mBusinessFlow != null)
             {
                 mBusinessFlow.CurrentActivity = (Activity)grdActivities.CurrentItem;
-                if (mBusinessFlow.CurrentActivity != null)
-                  ((Activity)  mBusinessFlow.CurrentActivity).PropertyChanged += CurrentActivity_PropertyChanged;
+                
             }
         }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -71,8 +71,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     {
                         agent.Tag = string.Empty;
                     }
-                    xAgentControlUC.Init(mWizard.OptionalAgentsList);
                     App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard.mPomLearnUtils, nameof(mWizard.mPomLearnUtils.Agent));
+                    xAgentControlUC.Init(mWizard.OptionalAgentsList);                   
                     xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
 
                     AddValidations();
