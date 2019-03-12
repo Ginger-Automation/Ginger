@@ -175,6 +175,11 @@ namespace Ginger.SourceControl
       
         private async void CheckInButton_Click(object sender, RoutedEventArgs e)
         {
+            if (String.IsNullOrEmpty(WorkSpace.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorName) || String.IsNullOrEmpty(WorkSpace.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorEmail))
+            {
+                Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, "Please Provide Author Name And Email In Source Control Connection Details Page.");
+                return;
+            }
             try
             {
                 xProcessingIcon.Visibility = Visibility.Visible;
