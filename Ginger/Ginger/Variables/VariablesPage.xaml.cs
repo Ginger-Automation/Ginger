@@ -162,7 +162,7 @@ namespace Ginger.Variables
             mVariablesParentObj = activity;
             if (mVariablesParentObj != null)
             {
-                ((Activity)mVariablesParentObj).PropertyChanged -= Activity_PropertyChanged
+                ((Activity)mVariablesParentObj).PropertyChanged -= Activity_PropertyChanged;
                 ((Activity)mVariablesParentObj).PropertyChanged += Activity_PropertyChanged;//Hook to catch Activity Variables changes
                 LoadGridData();
             }
