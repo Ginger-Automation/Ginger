@@ -100,10 +100,6 @@ namespace Ginger.BusinessFlowWindows
                     }
                 }
             }
-            if (App.BusinessFlow == mBusinessFlow)
-            {
-                App.UpdateApplicationsAgentsMapping();
-            }
             if (mBusinessFlow.TargetApplications.Count > 0|| mApplicationsPlatforms.Count==0)
             {
                 _pageGenericWin.Close();

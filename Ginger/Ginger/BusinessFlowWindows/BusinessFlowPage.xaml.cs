@@ -27,6 +27,7 @@ using Ginger.Variables;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.Platforms;
+using GingerCore.Variables;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -46,8 +47,9 @@ namespace Ginger.BusinessFlowFolder
         RepositoryPage mReposiotryPage;
         ActivitiesGroupsPage mActivitiesGroupsPage;
         VariablesPage mVariablesPage;
-        ActivitiesPage mActivitiesPage;    
-        
+        ActivitiesPage mActivitiesPage;
+        Context mContext;
+
         GridLength mlastRepositoryColWidth = new GridLength(150);
         GridLength mMinColsExpanderSize = new GridLength(35);
         GenericWindow _pageGenericWin = null;
@@ -61,7 +63,8 @@ namespace Ginger.BusinessFlowFolder
             InitializeComponent();
 
             mBusinessFlow = BizFlow;
-            RunDescritpion.Init(BizFlow, BusinessFlow.Fields.RunDescription);
+            mContext = new Context() { BusinessFlow = BizFlow };
+            RunDescritpion.Init(mContext, BizFlow, BusinessFlow.Fields.RunDescription);
             mEditMode = editMode;
             LoadBizFlowData();
             App.PropertyChanged += AppPropertychanged;
@@ -93,7 +96,7 @@ namespace Ginger.BusinessFlowFolder
                 BfActivitiesGroupsFrame.Content = mActivitiesGroupsPage;
                 if (mBusinessFlow.ActivitiesGroups.Count == 0) ActivitiesGroupsExpander.IsExpanded = false;
 
-                mVariablesPage = new VariablesPage(GingerCore.Variables.eVariablesLevel.BusinessFlow, mBusinessFlow, mEditMode);
+                mVariablesPage = new VariablesPage(eVariablesLevel.BusinessFlow, mBusinessFlow, mEditMode);
                 mVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
                 BfVariablesFrame.Content = mVariablesPage;
                 if (mBusinessFlow.Variables.Count == 0) VariablesExpander.IsExpanded = false;

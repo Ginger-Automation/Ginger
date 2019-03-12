@@ -16,16 +16,26 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ValueExpression;
+using Amdocs.Ginger.Repository;
+using Ginger.Actions;
+using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib.TextEditor.ValueExpression;
+using Ginger.Variables;
 using GingerCore;
+using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -60,29 +70,28 @@ namespace Ginger
 
     public partial class ValueExpressionEditorPage : Page
     {
-        private static Regex VBSReg = new Regex(@"{VBS Eval=([^}])*}", RegexOptions.Compiled);
-        ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, App.BusinessFlow,WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(),false,"",false);
+        private static Regex VBSReg = new Regex(@"{VBS Eval=([^}])*}", RegexOptions.Compiled);      
         VEReferenceList Tvel = new VEReferenceList();
         GenericWindow mWin;
         object mObj;
         string mAttrName;
-
+        Context mContext;
+        ValueExpression mVE = null;
         static List<HighlightingRule> mHighlightingRules = null;
-
-        bool mHideBusinessFlowAndActivityVariables= false;
         private Dictionary<string, TreeViewItem> Categories = new Dictionary<string, TreeViewItem>();
-        public ValueExpressionEditorPage(object obj, string AttrName, bool hideBusinessFlowAndActivityVariables = false)
+
+        public ValueExpressionEditorPage(object obj, string AttrName, Context context)
         {
             InitializeComponent();
 
             mObj = obj;
             mAttrName = AttrName;
-            mHideBusinessFlowAndActivityVariables = hideBusinessFlowAndActivityVariables;
+            mContext = context;
 
             ValueUCTextEditor.Bind(obj, AttrName);
             ValueUCTextEditor.HideToolBar();
             ValueUCTextEditor.lblTitle.Content = "Value";
-            ValueUCTextEditor.SetDocumentEditor(new ValueExpressionEditor());
+            ValueUCTextEditor.SetDocumentEditor(new ValueExpressionEditor(mContext));
 
             GetHighlightingRules();
             
@@ -511,41 +520,38 @@ namespace Ginger
 
         private void AddVariables()
         {
-            if ( WorkSpace.UserProfile.Solution != null)
+            if (WorkSpace.UserProfile.Solution != null)
             {
                 TreeViewItem solutionVars = new TreeViewItem();
                 solutionVars.Items.IsLiveSorting = true;
                 SetItemView(solutionVars, "Global " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
                 xObjectsTreeView.Items.Add(solutionVars);
-                 
-                foreach (VariableBase v in  WorkSpace.UserProfile.Solution.Variables.OrderBy("Name"))
+
+                foreach (VariableBase v in WorkSpace.UserProfile.Solution.Variables.OrderBy("Name"))
                     InsertNewVarTreeItem(solutionVars, v);
                 InsertAddNewVarTreeItem(solutionVars, eVariablesLevel.Solution);
             }
 
-            if (mHideBusinessFlowAndActivityVariables == false)
+            if (mContext!= null && mContext.BusinessFlow != null)
             {
-                if (App.BusinessFlow != null)
-                {
-                    TreeViewItem tviVars = new TreeViewItem();
-                    tviVars.Items.IsLiveSorting = true;
-                    SetItemView(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
-                    xObjectsTreeView.Items.Add(tviVars);
-                    
-                    foreach (VariableBase v in App.BusinessFlow.Variables.OrderBy("Name"))
-                        InsertNewVarTreeItem(tviVars, v);
-                    InsertAddNewVarTreeItem(tviVars, eVariablesLevel.BusinessFlow);
-                    tviVars.IsExpanded = true;
-                }
+                TreeViewItem tviVars = new TreeViewItem();
+                tviVars.Items.IsLiveSorting = true;
+                SetItemView(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
+                xObjectsTreeView.Items.Add(tviVars);
 
-                if (App.BusinessFlow.CurrentActivity != null)
+                foreach (VariableBase v in mContext.BusinessFlow.Variables.OrderBy("Name"))
+                    InsertNewVarTreeItem(tviVars, v);
+                InsertAddNewVarTreeItem(tviVars, eVariablesLevel.BusinessFlow);
+                tviVars.IsExpanded = true;
+
+                if (mContext.BusinessFlow.CurrentActivity != null)
                 {
                     TreeViewItem activityVars = new TreeViewItem();
                     activityVars.Items.IsLiveSorting = true;
                     SetItemView(activityVars, GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
                     xObjectsTreeView.Items.Add(activityVars);
 
-                    foreach (VariableBase v in App.BusinessFlow.CurrentActivity.Variables.OrderBy("Name"))
+                    foreach (VariableBase v in mContext.BusinessFlow.CurrentActivity.Variables.OrderBy("Name"))
                         InsertNewVarTreeItem(activityVars, v);
                     InsertAddNewVarTreeItem(activityVars, eVariablesLevel.Activity);
                 }
@@ -661,14 +667,14 @@ namespace Ginger
                     ((Solution) WorkSpace.UserProfile.Solution).AddVariable(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
-                    ((BusinessFlow)App.BusinessFlow).AddVariable(newStringVar);
+                    ((BusinessFlow)mContext.BusinessFlow).AddVariable(newStringVar);
                     break;
                 case eVariablesLevel.Activity:
-                    ((Activity)App.BusinessFlow.CurrentActivity).AddVariable(newStringVar);
+                    ((Activity)mContext.BusinessFlow.CurrentActivity).AddVariable(newStringVar);
                     break;
             }
 
-            VariableEditPage varEditPage = new VariableEditPage(newStringVar);
+            VariableEditPage varEditPage = new VariableEditPage(newStringVar, mContext);
             varEditPage.ShowAsWindow(eWindowShowStyle.Dialog);
 
             //make sure name is unique
@@ -678,10 +684,10 @@ namespace Ginger
                     ((Solution) WorkSpace.UserProfile.Solution).SetUniqueVariableName(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
-                    ((BusinessFlow)App.BusinessFlow).SetUniqueVariableName(newStringVar);
+                    ((BusinessFlow)mContext.BusinessFlow).SetUniqueVariableName(newStringVar);
                     break;
                 case eVariablesLevel.Activity:
-                    ((Activity)App.BusinessFlow.CurrentActivity).SetUniqueVariableName(newStringVar);
+                    ((Activity)mContext.BusinessFlow.CurrentActivity).SetUniqueVariableName(newStringVar);
                     break;
             }
 
@@ -745,6 +751,10 @@ namespace Ginger
 
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
+            if (mVE == null)
+            {
+                mVE = new ValueExpression(App.AutomateTabEnvironment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+            }
             mVE.Value = this.ValueUCTextEditor.textEditor.Text;
             ValueCalculatedTextBox.Text = mVE.ValueCalculated;
         }

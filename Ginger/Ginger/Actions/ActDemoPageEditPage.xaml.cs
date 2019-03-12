@@ -46,13 +46,13 @@ namespace Ginger.Actions
             GingerCore.General.ActInputValueBinding(ExampleTextBox, TextBox.TextProperty, mAct.GetOrCreateInputParam(ActDemoPage.Fields.RegularTextBox));
 
             //UCValueExpression Example
-            ExampleTextBoxNoBrowser.Init(mAct.GetOrCreateInputParam(ActDemoPage.Fields.TextBoxParamNoBrowser), true, false, UCValueExpression.eBrowserType.Folder);
+            ExampleTextBoxNoBrowser.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDemoPage.Fields.TextBoxParamNoBrowser), true, false, UCValueExpression.eBrowserType.Folder);
 
-            ExampleTextBoxNoVE.Init(mAct.GetOrCreateInputParam(ActDemoPage.Fields.TextBoxParamNoVE), false, true, UCValueExpression.eBrowserType.File, "exe");
+            ExampleTextBoxNoVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDemoPage.Fields.TextBoxParamNoVE), false, true, UCValueExpression.eBrowserType.File, "exe");
 
-            ExampleTextBoxFile.Init(mAct.GetOrCreateInputParam(ActDemoPage.Fields.TextBoxParamFile),true, true, UCValueExpression.eBrowserType.File , "xml", new RoutedEventHandler(BrowseButtonExample_Click));
+            ExampleTextBoxFile.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDemoPage.Fields.TextBoxParamFile),true, true, UCValueExpression.eBrowserType.File , "xml", new RoutedEventHandler(BrowseButtonExample_Click));
 
-            ExampleTextBoxFolder.Init(mAct.GetOrCreateInputParam(ActDemoPage.Fields.TextBoxParamFolder), true, true, UCValueExpression.eBrowserType.Folder, extraBrowserSelectionHandler: new RoutedEventHandler(BrowseButtonExample_Click));
+            ExampleTextBoxFolder.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDemoPage.Fields.TextBoxParamFolder), true, true, UCValueExpression.eBrowserType.Folder, extraBrowserSelectionHandler: new RoutedEventHandler(BrowseButtonExample_Click));
            
             List<GingerCore.General.ComboItem> comboBoxItemsList = GeneratecomboBoxItemsList();
 
@@ -66,7 +66,7 @@ namespace Ginger.Actions
             GingerCore.General.ActInputValueBinding(ExampleCheckBox, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDemoPage.Fields.CheckBoxParam));
             
             //UCInputValueGrid Example
-            ExampleUCInputValuesGrid.Init(mAct.ActionGrid, "Grid Title", "Property Name", "Property Value", "Property Calculated Value");
+            ExampleUCInputValuesGrid.Init(Context.GetAsContext(mAct.Context), mAct.ActionGrid, "Grid Title", "Property Name", "Property Value", "Property Calculated Value");
             
             //Radio Button 
             RadioButtonInit();

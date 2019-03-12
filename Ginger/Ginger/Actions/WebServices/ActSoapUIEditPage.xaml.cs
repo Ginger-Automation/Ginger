@@ -54,7 +54,7 @@ namespace Ginger.Actions.WebServices
 
         public void Bind()
         {
-            XMLFilePathTextBox.Init(mAct.GetOrCreateInputParam(ActSoapUI.Fields.XMLFile),true, true, UCValueExpression.eBrowserType.File, "xml", new RoutedEventHandler(BrowseButtonXML_Click));
+            XMLFilePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActSoapUI.Fields.XMLFile),true, true, UCValueExpression.eBrowserType.File, "xml", new RoutedEventHandler(BrowseButtonXML_Click));
 
             GingerCore.General.ActInputValueBinding(DoNotImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.ImportFile));
 
@@ -68,13 +68,13 @@ namespace Ginger.Actions.WebServices
             InitPropertiesGrid(mAct.AllProperties, "Properties", "Property Type", "Property Name", "Property Value", "Property Calculated Value");
 
             //place holder property list
-            TestSuitePlaceHolderGrid.Init(mAct.TestSuitePlaceHolder, "PlaceHolder Properties", "PlaceHolder Name", "PlaceHolder Value", "PlaceHolder Calculated Value");
+            TestSuitePlaceHolderGrid.Init(Context.GetAsContext(mAct.Context), mAct.TestSuitePlaceHolder, "PlaceHolder Properties", "PlaceHolder Name", "PlaceHolder Value", "PlaceHolder Calculated Value");
 
-            EndPointTextBox.Init(mAct.GetOrCreateInputParam(ActSoapUI.Fields.EndPoint));
-            HostPortTextBox.Init(mAct.GetOrCreateInputParam(ActSoapUI.Fields.HostPort));
-            UsernameTextBox.Init(mAct.GetOrCreateInputParam(ActSoapUI.Fields.Username));
-            PasswordTextBox.Init(mAct.GetOrCreateInputParam(ActSoapUI.Fields.Password));
-            DomainTextBox.Init(mAct.GetOrCreateInputParam(ActSoapUI.Fields.Domain));
+            EndPointTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActSoapUI.Fields.EndPoint));
+            HostPortTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActSoapUI.Fields.HostPort));
+            UsernameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActSoapUI.Fields.Username));
+            PasswordTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActSoapUI.Fields.Password));
+            DomainTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActSoapUI.Fields.Domain));
 
 
 
@@ -87,8 +87,8 @@ namespace Ginger.Actions.WebServices
                 TestCaseComboBox.SelectedValue = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.TestCase);
             }
 
-            SystemPropertiesVEGrid.Init(mAct.SystemProperties,"System Properties","Property Name","Property Value","Property Calculated Value");
-            GlobalPropertiesVEGrid.Init(mAct.GlobalProperties, "Global Properties", "Property Name", "Property Value", "Property Calculated Value");
+            SystemPropertiesVEGrid.Init(Context.GetAsContext(mAct.Context), mAct.SystemProperties,"System Properties","Property Name","Property Value","Property Calculated Value");
+            GlobalPropertiesVEGrid.Init(Context.GetAsContext(mAct.Context), mAct.GlobalProperties, "Global Properties", "Property Name", "Property Value", "Property Calculated Value");
             ExpendPopulatedExpenders();
 
             GingerCore.General.ActInputValueBinding(AddXMLTagsToOutput, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.AddXMLResponse));
@@ -383,14 +383,14 @@ namespace Ginger.Actions.WebServices
 
         private void TestSuiteVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActSoapUI.Fields.TestSuite);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActSoapUI.Fields.TestSuite, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             TestSuiteComboBox.Text = w.ValueUCTextEditor.textEditor.Text;
         }
 
         private void TestCaseVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActSoapUI.Fields.TestCase);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActSoapUI.Fields.TestCase, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             TestCaseComboBox.Text = w.ValueUCTextEditor.textEditor.Text;
         }

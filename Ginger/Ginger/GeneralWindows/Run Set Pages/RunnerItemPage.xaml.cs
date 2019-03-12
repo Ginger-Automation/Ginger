@@ -60,6 +60,8 @@ namespace Ginger.Run
             }
         }
 
+        public Context Context { get; set; }
+
         ////TODO: why 2 events handler?
         //public delegate void SyncRunnerEventHandler(SyncRunnerItemEventArgs EventArgs);
         //public static event SyncRunnerEventHandler SyncRunnerItemEvent;
@@ -146,14 +148,15 @@ namespace Ginger.Run
         public void LoadChildRunnerItems()
         {
             mItemChilds = new ObservableList<RunnerItemPage>();
+            
             if (ItemObject.GetType() == typeof(BusinessFlow))
-            {
+            {               
                 foreach (Activity ac in ((BusinessFlow)ItemObject).Activities)
                 {
                     if (ac.GetType() == typeof(ErrorHandler)) continue;//do not show Error Handler for now
 
                     RunnerItemPage ri = new RunnerItemPage(ac);
-
+                    ri.Context = this.Context;
                     ri.ItemName = ac.ActivityName;
                     if (string.IsNullOrEmpty(ac.Description))
                     {
@@ -171,10 +174,12 @@ namespace Ginger.Run
                 }
             }
             else if (ItemObject.GetType() == typeof(Activity))
-            {
+            {                
                 foreach (GingerCore.Actions.Act act in ((Activity)ItemObject).Acts)
                 {
                     RunnerItemPage ri = new RunnerItemPage(act);
+                    ri.Context = this.Context;
+                    act.Context = this.Context;
                     ri.xItemSeparator.Visibility = Visibility.Collapsed;
                     ri.ItemName = act.Description;
                     ri.ItemGuid = act.Guid;

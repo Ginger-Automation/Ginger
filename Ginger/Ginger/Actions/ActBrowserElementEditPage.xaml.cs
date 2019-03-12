@@ -27,6 +27,7 @@ using GingerCore.Platforms.PlatformsInfo;
 using System.Collections.Generic;
 using System;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Actions
 {
@@ -55,12 +56,12 @@ namespace Ginger.Actions
             App.FillComboFromEnumVal(xControlActionComboBox, mAct.ControlAction, supportedControlActions.Cast<object>().ToList());
             App.ObjFieldBinding(xControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActBrowserElement.Fields.ControlAction);
 
-            ValueUC.Init(mAct.GetOrCreateInputParam("Value"));
-            xLocateValueVE.BindControl(mAct, Act.Fields.LocateValue);
+            ValueUC.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam("Value"));
+            xLocateValueVE.BindControl(Context.GetAsContext(mAct.Context), mAct, Act.Fields.LocateValue);
             xGotoURLTypeRadioButton.Init(typeof(ActBrowserElement.eGotoURLType), xGotoURLTypeRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString()));
             xURLSrcRadioButton.Init(typeof(ActBrowserElement.eURLSrc), xURLSrcRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString()), URLSrcRadioButton_Clicked);
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy);
-            xImplicitWaitVE.BindControl(mAct, ActBrowserElement.Fields.ImplicitWait);
+            xImplicitWaitVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.ImplicitWait);
 
             SetVisibleControlsForAction();
         }
@@ -81,7 +82,7 @@ namespace Ginger.Actions
 
         private ePlatformType GetActivityPlatform()
         {
-            string targetapp = App.BusinessFlow.CurrentActivity.TargetApplication;
+            string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
             ePlatformType platform = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             return platform;
         }
@@ -160,7 +161,7 @@ namespace Ginger.Actions
                 case eLocateBy.POMElement:
                     xLocateValueVE.Visibility = System.Windows.Visibility.Collapsed;
                     xLocateValueEditFrame.Visibility = System.Windows.Visibility.Visible;
-                    Page p = new LocateByPOMElementPage(null, null, mAct, nameof(ActBrowserElement.LocateValue));
+                    Page p = new LocateByPOMElementPage(Context.GetAsContext(mAct.Context), null, null, mAct, nameof(ActBrowserElement.LocateValue));
                     xLocateValueEditFrame.Content = p;
                     break;
                 default:
@@ -193,7 +194,7 @@ namespace Ginger.Actions
 
         private void SetLocateValueFrame()
         {
-            LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAct, null, mAct, nameof(ActBrowserElement.Fields.PomGUID), true);
+            LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(Context.GetAsContext(mAct.Context), mAct, null, mAct, nameof(ActBrowserElement.Fields.PomGUID), true);
             xPOMUrlFrame.Content = locateByPOMElementPage;
         }
     }

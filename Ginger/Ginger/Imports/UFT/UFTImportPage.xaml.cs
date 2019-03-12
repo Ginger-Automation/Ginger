@@ -184,10 +184,10 @@ namespace Ginger.Imports.UFT
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
             mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
-            App.BusinessFlow = mBusinessFlow;
+            //App.BusinessFlow = mBusinessFlow;
            
-            AddActionPage addAction = new AddActionPage();
-            addAction.ShowAsWindow(ActionsList);
+            //AddActionPage addAction = new AddActionPage();
+            //addAction.ShowAsWindow(ActionsList);
 
             // We will get only one action currently
             Act a = (Act)ActionsList[0];

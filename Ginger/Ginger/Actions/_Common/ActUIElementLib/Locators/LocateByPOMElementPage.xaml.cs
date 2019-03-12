@@ -56,6 +56,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         public delegate void ElementChangedEventHandler();
 
         public event ElementChangedEventHandler ElementChangedPageEvent;
+        Context mContext;
 
         string mTargetApplication;
 
@@ -67,7 +68,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
-        public LocateByPOMElementPage(Object objectElementType, string elementTypeFieldName, Object objectLocateValue, string locateValueFieldName, bool onlyPOMRequest = false)
+        public LocateByPOMElementPage(Context context, Object objectElementType, string elementTypeFieldName, Object objectLocateValue, string locateValueFieldName, bool onlyPOMRequest = false)
         {
             InitializeComponent();
 
@@ -76,9 +77,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mObjectLocateValue = objectLocateValue;
             mLocateValueFieldName = locateValueFieldName;
             mOnlyPOMRequest = onlyPOMRequest;
-            if (App.BusinessFlow != null)//temp wrokaround, full is in Master 
+            mContext = context;
+
+            if (mContext.BusinessFlow != null)//temp wrokaround, full is in Master 
             {
-                mTargetApplication = App.BusinessFlow.CurrentActivity.TargetApplication;
+                mTargetApplication = mContext.BusinessFlow.CurrentActivity.TargetApplication;
             }
             else
             {
