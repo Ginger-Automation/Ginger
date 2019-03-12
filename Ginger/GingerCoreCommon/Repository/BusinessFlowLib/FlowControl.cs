@@ -88,9 +88,17 @@ namespace GingerCore.FlowControlLib
     }
     public enum eFCOperator
     {
-        Legacy,
-        [EnumValueDescription("Modern")]
+        [EnumValueDescription("Action Passed")]
+        ActionPassed,
+        [EnumValueDescription("Action Failed")]
+        ActionFailed,
+        [EnumValueDescription("Last Activity Passed")]
+        LastActivityPassed,
+        [EnumValueDescription("Last Activity Failed")]
+        LastActivityFailed,
+        [EnumValueDescription("Expressions")]
         CSharp,
+        Legacy
     }
 
     public class FlowControl : RepositoryItemBase
