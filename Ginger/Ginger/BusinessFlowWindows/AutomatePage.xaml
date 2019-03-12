@@ -1,17 +1,15 @@
     <Page
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-     xmlns:h="clr-namespace:Ginger.Help"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:h="clr-namespace:Ginger.Help"
     xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
-    xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
-    xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
     x:Class="Ginger.AutomatePage" 
     h:GingerHelpProvider.HelpString="Automate"
     mc:Ignorable="d" 
     d:DesignHeight="600" d:DesignWidth="800"
-	Title="AutomatePage">
+	Title="AutomatePage" >
 
 
     <Grid x:Name="PageMainGrid" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}">
@@ -114,7 +112,7 @@
                         <StackPanel Orientation="Vertical">
                             <StackPanel Orientation="Horizontal">
                                 <Label HorizontalAlignment="Center">Speed:</Label>
-                                <ComboBox Name="cboSpeed" Style="{DynamicResource @InputComboBoxStyle}" Width="40" Margin="5,5,5,3">
+                                <ComboBox Name="cboSpeed" Style="{DynamicResource @InputComboBoxStyle}" Width="40" Margin="5,5,5,3" SelectionChanged="CboSpeed_SelectionChanged">
                                     <ComboBoxItem ToolTip="Super Fast">0</ComboBoxItem>
                                     <ComboBoxItem ToolTip="1 Sec wait between actions">1</ComboBoxItem>
                                     <ComboBoxItem ToolTip="2 Sec wait between actions">2</ComboBoxItem>

@@ -14,10 +14,10 @@
             <RowDefinition Height="49*"/>
             <RowDefinition Height="49*"/>
         </Grid.RowDefinitions>
-        <Label Content="Gingers Grid" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0" />
+        <Label Content="Services Grid" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0" />
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,0,0">
             <!--<Button x:Name="ListButton" Click="ListButton_Click">List</Button>-->
-            <UserControls:ucButton x:Name="xListButton" ToolTip="List"  ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="List" Click="xListButton_Click"/>
+            <UserControls:ucButton x:Name="xTableButton" ToolTip="Table View"  ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Table" Click="xTableButton_Click"/>
             <!--<Button x:Name="UIViewButton" Click="UIViewButton_Click">UI View</Button>-->
             <UserControls:ucButton x:Name="xUIViewButton" ToolTip="UI View"  ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="View" Click="xUIViewButton_Click"/>
             <!--<Button x:Name="ClearButton" Click="ClearButton_Click">Clear</Button>-->
@@ -27,7 +27,8 @@
         </StackPanel>
         
         
-        <Grid x:Name="xGingersGrid" Grid.Row="2"/>
+        <Grid x:Name="xServicesGrid" Grid.Row="2"/>
+        
         <DataGrid x:Name="xProcessesDataGrid" Grid.Row="3" IsReadOnly="True"/>
 
     </Grid>

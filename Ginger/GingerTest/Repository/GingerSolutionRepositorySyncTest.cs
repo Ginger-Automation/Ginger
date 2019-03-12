@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ namespace GingerTest
     public class GingerSolutionRepositorySyncTest
     {
         static SolutionRepository mSolutionRepository;
-        static BusinessFlow mBF;
+        static BusinessFlow mBF;        
         static string solutionName; 
 
         [ClassInitialize]
@@ -97,7 +97,7 @@ namespace GingerTest
 
             // prepare to add the variable to the shared repository
             UploadItemSelection uploadItemSelection = new UploadItemSelection() { UsageItem = V1, ItemUploadType = UploadItemSelection.eItemUploadType.New};
-            SharedRepositoryOperations.UploadItemToRepository(uploadItemSelection);
+            (new SharedRepositoryOperations()).UploadItemToRepository(new Context() { BusinessFlow = mBF }, uploadItemSelection);
 
             // find the newly added variable from the shared repo
             VariableBase sharedVariableBase = (from x in mSolutionRepository.GetAllRepositoryItems<VariableBase>() where x.Name == variableName select x).SingleOrDefault();
@@ -139,7 +139,7 @@ namespace GingerTest
 
             // prepare to add the variable to the shared repository
             UploadItemSelection uploadItemSelection = new UploadItemSelection() { UsageItem = V1, ItemUploadType = UploadItemSelection.eItemUploadType.New };
-            SharedRepositoryOperations.UploadItemToRepository(uploadItemSelection);
+            (new SharedRepositoryOperations()).UploadItemToRepository(new Context() { BusinessFlow = mBF }, uploadItemSelection);
 
             // find the newly added variable in the shared repo
             VariableBase sharedVariableBase = (from x in mSolutionRepository.GetAllRepositoryItems<VariableBase>() where x.Name == variableName select x).SingleOrDefault();
@@ -183,7 +183,7 @@ namespace GingerTest
 
             // prepare to add the variable to the shared repository
             UploadItemSelection uploadItemSelection = new UploadItemSelection() { UsageItem = V1, ItemUploadType = UploadItemSelection.eItemUploadType.New };
-            SharedRepositoryOperations.UploadItemToRepository(uploadItemSelection);
+            (new SharedRepositoryOperations()).UploadItemToRepository(new Context() { BusinessFlow = mBF }, uploadItemSelection);
 
             // find the newly added variable in the shared repo
             VariableBase sharedVariableBase = (from x in mSolutionRepository.GetAllRepositoryItems<VariableBase>() where x.Name == variableName select x).SingleOrDefault();

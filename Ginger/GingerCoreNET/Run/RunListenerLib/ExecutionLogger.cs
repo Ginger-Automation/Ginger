@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -109,7 +109,10 @@ namespace Ginger.Run
                 if (value != null)
                 {
                     mConfiguration = value;
-
+                    if (mConfiguration.ExecutionLoggerConfigurationExecResultsFolder.StartsWith(@"~\"))
+                    {
+                        mConfiguration.ExecutionLoggerConfigurationExecResultsFolder=mConfiguration.ExecutionLoggerConfigurationExecResultsFolder.Replace(@"~\",WorkSpace.Instance.Solution.Folder);
+                    }
                     if (!CheckOrCreateDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder))
                     {
                         mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
@@ -428,6 +431,7 @@ namespace Ginger.Run
                 RunSetReport.Elapsed = (double)RunSetReport.Watch.ElapsedMilliseconds / 1000;
                 RunSetReport.MachineName = Environment.MachineName.ToString();
                 RunSetReport.ExecutedbyUser = Environment.UserName.ToString();
+                RunSetReport.GingerVersion = WorkSpace.AppVersion.ToString();
 
                 if (LogFolder == null)
                 {

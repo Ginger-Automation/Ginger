@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -266,11 +266,9 @@ namespace Amdocs.Ginger.Repository
         
 
         public bool IsSessionService(string pluginId, string serviceId)
-        {
-            // TODO: Cache
+        {            
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
-            pluginPackage.LoadServicesFromJSON();
-            PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
+            PluginServiceInfo pluginServiceInfo = pluginPackage.GetService(serviceId);
             return pluginServiceInfo.IsSession;
         }
 

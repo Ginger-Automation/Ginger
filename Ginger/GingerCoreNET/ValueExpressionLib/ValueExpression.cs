@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
+using GingerCoreNET.RosLynLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -189,19 +190,29 @@ namespace GingerCore
             ReplaceDataSources();
 
             CalculateFunctions();
+            EvaluateCSharpFunctions();
+            if (!string.IsNullOrEmpty(SolutionFolder))
 
             if (WorkSpace.Instance != null && WorkSpace.Instance.SolutionRepository != null)
             {
                 mValueCalculated = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mValueCalculated);
             }
-            else if(!string.IsNullOrWhiteSpace(SolutionFolder)) 
-            {                
-                if (mValueCalculated.StartsWith("~"))
+            else if (!string.IsNullOrWhiteSpace(SolutionFolder))
                 {
-                    mValueCalculated = mValueCalculated.TrimStart(new char[] { '~', '\\', '/' });
-                    mValueCalculated = Path.Combine(SolutionFolder, mValueCalculated);
+                    if (mValueCalculated.StartsWith("~"))
+                    {
+                        mValueCalculated = mValueCalculated.TrimStart(new char[] { '~', '\\', '/' });
+                        mValueCalculated = Path.Combine(SolutionFolder, mValueCalculated);
+                    }
                 }
-            }
+
+        }
+
+        private void EvaluateCSharpFunctions()
+        {
+            mValueCalculated = CodeProcessor.GetResult(mValueCalculated);
+
+
         }
 
         private void ReplaceGlobalParameters()
@@ -651,6 +662,7 @@ namespace GingerCore
 
             }
             ProcessGeneralFuncations();
+
         }
 
         private void ProcessGeneralFuncations()
@@ -761,14 +773,18 @@ namespace GingerCore
 
         private void ReplaceVBSCalcWithValue(string p, string[] a)
         {
+            bool FailonUnix = false;
             try
             {      
                 string Expr = p.Replace("\r\n", "vbCrLf");
                 Expr = Expr.Substring(1, Expr.Length - 2);
                 Expr = Expr.Replace("VBS Eval=", "");
                 //check whether the Expr contains Split.If yes the take user entered number and decreased it to -1
-                if (p.Contains("{VBS Eval=Split("))
+                if (p.Contains("{VBS Eval"))
                 {
+
+
+                     FailonUnix = true;
                     Expr = DecreaseVBSSplitFunIndexNumber(Expr);
                 }
                 string v = VBS.ExecuteVBSEval(@"" + Expr);
@@ -778,6 +794,12 @@ namespace GingerCore
             {
                 //TODO: err
                 mValueCalculated = mValueCalculated.Replace(p, "ERROR: " + e.Message);
+            }
+            if (FailonUnix && !System.Environment.OSVersion.Platform.ToString().StartsWith("Win"))
+            {
+
+
+                throw new PlatformNotSupportedException("VBS functions are not supported on Unix/Mac systems");
             }
         }
 

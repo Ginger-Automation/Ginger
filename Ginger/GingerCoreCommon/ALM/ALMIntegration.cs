@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,7 +25,9 @@ namespace GingerCoreNET.ALMLib
         public enum eALMType
         {
             QC = 1,
-            RQM = 2
+            RQM = 2,
+            RALLY = 3,
+            Jira = 4
         }
 
         public enum eALMConnectType

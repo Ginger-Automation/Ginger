@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,26 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ValueExpression;
+using Amdocs.Ginger.Repository;
+using Ginger.Actions;
+using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib.TextEditor.ValueExpression;
+using Ginger.Variables;
 using GingerCore;
+using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -46,35 +56,42 @@ using System.IO;
 using System.Dynamic;
 using Newtonsoft.Json.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
-
+using System.Linq;
+using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
+using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 namespace Ginger
 {
     /// <summary>
     /// Interaction logic for ActionValueEditorWindow.xaml
     /// </summary>
+
+  
+
     public partial class ValueExpressionEditorPage : Page
-    {        
-        ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, App.BusinessFlow,WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(),false,"",false);
+    {
+        private static Regex VBSReg = new Regex(@"{VBS Eval=([^}])*}", RegexOptions.Compiled);      
+        VEReferenceList Tvel = new VEReferenceList();
         GenericWindow mWin;
         object mObj;
         string mAttrName;
-
+        Context mContext;
+        ValueExpression mVE = null;
         static List<HighlightingRule> mHighlightingRules = null;
+        private Dictionary<string, TreeViewItem> Categories = new Dictionary<string, TreeViewItem>();
 
-        bool mHideBusinessFlowAndActivityVariables= false;
-
-        public ValueExpressionEditorPage(object obj, string AttrName, bool hideBusinessFlowAndActivityVariables = false)
+        public ValueExpressionEditorPage(object obj, string AttrName, Context context)
         {
             InitializeComponent();
 
             mObj = obj;
             mAttrName = AttrName;
-            mHideBusinessFlowAndActivityVariables = hideBusinessFlowAndActivityVariables;
+            mContext = context;
 
             ValueUCTextEditor.Bind(obj, AttrName);
             ValueUCTextEditor.HideToolBar();
             ValueUCTextEditor.lblTitle.Content = "Value";
-            ValueUCTextEditor.SetDocumentEditor(new ValueExpressionEditor());
+            ValueUCTextEditor.SetDocumentEditor(new ValueExpressionEditor(mContext));
 
             GetHighlightingRules();
             
@@ -85,6 +102,7 @@ namespace Ginger
                                 "The value expression can have more than one " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " in it and from different types- just add as many as you need!"
                                 + Environment.NewLine +
                                 "Environment Parameters enable to use the same solution on multiple environments easily.";
+            ValueUCTextEditor_LostFocus(ValueUCTextEditor, null);
         }
 
         class RedBrush : HighlightingBrush
@@ -132,9 +150,10 @@ namespace Ginger
             AddVariables();
             AddEnvParams();
             AddGlobalParameters();
-            AddVBSFunctions();
-            AddRegexFunctions();
-            AddVBSIfFunctions();
+            AddCSFunctions();
+           //AddVBSFunctions();
+            //AddRegexFunctions();
+            //AddVBSIfFunctions();
             AddDataSources();
             AddSecurityConfiguration();
 
@@ -150,7 +169,11 @@ namespace Ginger
                     AddFlowControlConditions();
                 }                
             }
+
+
         }
+
+    
 
         private void AddGlobalParameters()
         {
@@ -173,26 +196,114 @@ namespace Ginger
 
         private void AddFlowControlConditions()
         {
-            TreeViewItem tviVars = new TreeViewItem();
-            SetItemView(tviVars, "Flow Control Conditions", "", "VBS16x16.png");
-            xObjectsTreeView.Items.Add(tviVars); 
 
-            AddVBSIfEval(tviVars, "Action Status = Passed", "\"{ActionStatus}\" = \"Passed\"");
-            AddVBSIfEval(tviVars, "Action Status = Failed", "\"{ActionStatus}\" = \"Failed\"");
 
-            AddVBSIfEval(tviVars, "Last " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Status = Passed", "\"{LastActivityStatus}\" = \"Passed\"");
-            AddVBSIfEval(tviVars, "Last " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Status = Failed", "\"{LastActivityStatus}\" = \"Failed\"");
+
+
+            TreeViewItem Parent = new TreeViewItem();
+            SetItemView(Parent, "Flow Control Conditions", "", "@Config3_16x16.png");
+            xObjectsTreeView.Items.Add(Parent);
+
+
+
+            ValueExpressionReference VERActionpassd = new ValueExpressionReference
+            {
+                Name = "Action is Passed",
+                Expression = "{CS Exp=\"{ActionStatus}\".Equals(\"Passed\")}",
+                UseCase = "Flowcontrol Condition will execute if the action is Passed",
+            };
+            TreeViewItem tvi = new TreeViewItem();
+            SetItemView(tvi, VERActionpassd.Name, VERActionpassd.Expression, VERActionpassd.IconImageName == null ? "@Config3_16x16.png" : VERActionpassd.IconImageName);
+            Parent.Items.Add(tvi);
+            tvi.MouseDoubleClick += tvi_MouseDoubleClick;
+            tvi.Selected += UpdateHelpForCSFunction;
+            tvi.Tag = VERActionpassd;
+
+
+
+
+            ValueExpressionReference VERACtionFailed = new ValueExpressionReference
+            {
+                Name = "Action is Failed",
+                Expression = "{CS Exp=\"{ActionStatus}\".Equals(\"Failed\")}",
+                UseCase = "Flowcontrol Condition will execute if the action is Failed",
+            };
+            TreeViewItem tvi2 = new TreeViewItem();
+            SetItemView(tvi2, VERACtionFailed.Name, VERACtionFailed.Expression, VERACtionFailed.IconImageName == null ? "@Config3_16x16.png" : VERACtionFailed.IconImageName);
+            Parent.Items.Add(tvi2);
+            tvi2.MouseDoubleClick += tvi_MouseDoubleClick;
+            tvi2.Selected += UpdateHelpForCSFunction;
+            tvi2.Tag = VERACtionFailed;
+
+
+
+
+            ValueExpressionReference VERLastActivityPassed = new ValueExpressionReference
+            {
+                Name = "Last Activity Passed",
+                Expression = "{CS Exp=\"{LastActivityStatus}\".Equals(\"Passed\")}",
+                UseCase = "Flowcontrol Condition will execute if the Last Activity is Passed",
+            };
+            TreeViewItem tvi3 = new TreeViewItem();
+            SetItemView(tvi3, VERLastActivityPassed.Name, VERLastActivityPassed.Expression, VERLastActivityPassed.IconImageName == null ? "@Config3_16x16.png" : VERLastActivityPassed.IconImageName);
+            Parent.Items.Add(tvi3);
+            tvi3.MouseDoubleClick += tvi_MouseDoubleClick;
+            tvi3.Selected += UpdateHelpForCSFunction;
+            tvi3.Tag = VERLastActivityPassed;
+
+
+            ValueExpressionReference VERLastActivityFailed = new ValueExpressionReference
+            {
+                Name = "Last Activity Failed",
+                Expression = "{CS Exp=\"{LastActivityStatus}\".Equals(\"Failed\")}",
+                UseCase = "Flowcontrol Condition will execute if the Last Activity is Failed",
+            };
+            TreeViewItem tvi4 = new TreeViewItem();
+            SetItemView(tvi4, VERLastActivityFailed.Name, VERLastActivityFailed.Expression, VERLastActivityFailed.IconImageName == null ? "@Config3_16x16.png" : VERLastActivityFailed.IconImageName);
+            Parent.Items.Add(tvi4);
+            tvi4.MouseDoubleClick += tvi_MouseDoubleClick;
+            tvi4.Selected += UpdateHelpForCSFunction;
+            tvi4.Tag = VERLastActivityFailed;
+
+
+
         }
 
         //Added for Business Flow Control in RunSet
         private void AddBusinessFlowControlConditions()
         {
-            TreeViewItem tviVars = new TreeViewItem();
-            SetItemView(tviVars, "Flow Control Conditions", "", "VBS16x16.png");
-            xObjectsTreeView.Items.Add(tviVars);
 
-            AddVBSIfEval(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Status = Passed", "\"{BusinessFlowStatus}\" = \"Passed\"");
-            AddVBSIfEval(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Status = Failed", "\"{BusinessFlowStatus}\" = \"Failed\"");
+
+            TreeViewItem Parent = new TreeViewItem();
+            SetItemView(Parent, "Flow Control Conditions", "", "@Config3_16x16.png");
+            xObjectsTreeView.Items.Add(Parent);
+
+            ValueExpressionReference VERActionpassd = new ValueExpressionReference
+            {
+                Name = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " is Passed",
+                Expression = "{CS Exp=\"{BusinessFlowStatus}\".Equals(\"Passed\")}",
+                UseCase = "BusinessFlowStatus Condition will execute if the action is Passed",
+            };
+            TreeViewItem tvi = new TreeViewItem();
+            SetItemView(tvi, VERActionpassd.Name, VERActionpassd.Expression, VERActionpassd.IconImageName == null ? "@Config3_16x16.png" : VERActionpassd.IconImageName);
+            Parent.Items.Add(tvi);
+            tvi.MouseDoubleClick += tvi_MouseDoubleClick;
+            tvi.Selected += UpdateHelpForCSFunction;
+            tvi.Tag = VERActionpassd;
+
+            ValueExpressionReference VERACtionFailed = new ValueExpressionReference
+            {
+                Name = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " is Failed",
+                Expression = "{CS Exp=\"{BusinessFlowStatus}\".Equals(\"Failed\")}",
+                UseCase = "Flowcontrol Condition will execute if the action is Failed",
+            };
+            TreeViewItem tvi2 = new TreeViewItem();
+            SetItemView(tvi2, VERACtionFailed.Name, VERACtionFailed.Expression, VERACtionFailed.IconImageName == null ? "@Config3_16x16.png" : VERACtionFailed.IconImageName);
+            Parent.Items.Add(tvi2);
+            tvi2.MouseDoubleClick += tvi_MouseDoubleClick;
+            tvi2.Selected += UpdateHelpForCSFunction;
+            tvi2.Tag = VERACtionFailed;
+
         }
 
         private void AddVBSIfFunctions()
@@ -208,6 +319,37 @@ namespace Ginger
             AddVBSIfEval(tviVars, "Actual SubString from char in position 2 length 3 is 'ABC'", "Mid({Actual},2,3)=\"ABC\"");
             AddVBSIfEval(tviVars, "Actual to Upper Case = 'ABC'", "UCase({Actual})=\"ABC\"");
         }
+
+        private void AddCSFunctions()
+        {
+            WorkSpace.VERefrences= VEReferenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json" }));
+
+
+            foreach (ValueExpressionReference VER in WorkSpace.VERefrences.Refrences)
+            {
+                TreeViewItem Parent;
+                if (!Categories.TryGetValue(VER.Category, out Parent))
+                {
+                    Parent = new TreeViewItem();
+                    SetItemView(Parent, VER.Category, "",VER.IconImageName==null? "@Config3_16x16.png":VER.IconImageName);
+                    xObjectsTreeView.Items.Add(Parent);
+                    Categories.Add(VER.Category, Parent);
+                }
+
+                TreeViewItem tvi = new TreeViewItem();
+
+                SetItemView(tvi, VER.Name, VER.Expression, VER.IconImageName == null ? "@Config3_16x16.png" : VER.IconImageName);
+                Parent.Items.Add(tvi);
+                tvi.MouseDoubleClick += tvi_MouseDoubleClick;
+                tvi.Selected += UpdateHelpForCSFunction;
+                tvi.Tag = VER;
+            }
+
+
+        }
+
+   
+     
 
         private void AddVBSFunctions()
         {
@@ -292,7 +434,8 @@ namespace Ginger
             SetItemView(tvi, Desc, VarExpression, "@Regex16x16.png");
             tviVars.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
-        }
+            Tvel.Refrences.Add(new ValueExpressionReference() { Category = "Regular Expressions", Name = Desc, Expression = Eval,IconImageName= "@Regex16x16.png"});
+            }
 
         private void AddVBSEval(TreeViewItem tviVars, string Desc, string Eval)
         {
@@ -300,7 +443,8 @@ namespace Ginger
             string VarExpression = "{VBS Eval=" + Eval + "}";
             SetItemView(tvi, Desc, VarExpression, "VBS16x16.png");
             tviVars.Items.Add(tvi);
-            tvi.MouseDoubleClick += tvi_MouseDoubleClick;                        
+            tvi.MouseDoubleClick += tvi_MouseDoubleClick;
+            Tvel.Refrences.Add(new ValueExpressionReference() { Category = "Date Time Functions", Name = Desc, Expression = Eval });
         }
 
         private void AddWSSecurityConfig(TreeViewItem tviSecSets, string Desc, string Eval)
@@ -310,6 +454,7 @@ namespace Ginger
             SetItemView(tviSecuritySettings, Desc, VarExpression, "@Config_16x16.png");
             tviSecSets.Items.Add(tviSecuritySettings);
             tviSecuritySettings.MouseDoubleClick += tvi_MouseDoubleClick;
+        
         }
 
         private void AddVBSIfEval(TreeViewItem tviVars, string Desc, string Eval)
@@ -319,6 +464,8 @@ namespace Ginger
             SetItemView(tvi, Desc, VarExpression, "VBS16x16.png");
             tviVars.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
+
+            Tvel.Refrences.Add(new ValueExpressionReference() {Category="Date Time Functions",Name=Desc,Expression=Eval });
         }
 
         private void AddEnvParams()
@@ -373,41 +520,38 @@ namespace Ginger
 
         private void AddVariables()
         {
-            if ( WorkSpace.UserProfile.Solution != null)
+            if (WorkSpace.UserProfile.Solution != null)
             {
                 TreeViewItem solutionVars = new TreeViewItem();
                 solutionVars.Items.IsLiveSorting = true;
                 SetItemView(solutionVars, "Global " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
                 xObjectsTreeView.Items.Add(solutionVars);
-                 
-                foreach (VariableBase v in  WorkSpace.UserProfile.Solution.Variables.OrderBy("Name"))
+
+                foreach (VariableBase v in WorkSpace.UserProfile.Solution.Variables.OrderBy("Name"))
                     InsertNewVarTreeItem(solutionVars, v);
                 InsertAddNewVarTreeItem(solutionVars, eVariablesLevel.Solution);
             }
 
-            if (mHideBusinessFlowAndActivityVariables == false)
+            if (mContext!= null && mContext.BusinessFlow != null)
             {
-                if (App.BusinessFlow != null)
-                {
-                    TreeViewItem tviVars = new TreeViewItem();
-                    tviVars.Items.IsLiveSorting = true;
-                    SetItemView(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
-                    xObjectsTreeView.Items.Add(tviVars);
-                    
-                    foreach (VariableBase v in App.BusinessFlow.Variables.OrderBy("Name"))
-                        InsertNewVarTreeItem(tviVars, v);
-                    InsertAddNewVarTreeItem(tviVars, eVariablesLevel.BusinessFlow);
-                    tviVars.IsExpanded = true;
-                }
+                TreeViewItem tviVars = new TreeViewItem();
+                tviVars.Items.IsLiveSorting = true;
+                SetItemView(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
+                xObjectsTreeView.Items.Add(tviVars);
 
-                if (App.BusinessFlow.CurrentActivity != null)
+                foreach (VariableBase v in mContext.BusinessFlow.Variables.OrderBy("Name"))
+                    InsertNewVarTreeItem(tviVars, v);
+                InsertAddNewVarTreeItem(tviVars, eVariablesLevel.BusinessFlow);
+                tviVars.IsExpanded = true;
+
+                if (mContext.BusinessFlow.CurrentActivity != null)
                 {
                     TreeViewItem activityVars = new TreeViewItem();
                     activityVars.Items.IsLiveSorting = true;
                     SetItemView(activityVars, GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
                     xObjectsTreeView.Items.Add(activityVars);
 
-                    foreach (VariableBase v in App.BusinessFlow.CurrentActivity.Variables.OrderBy("Name"))
+                    foreach (VariableBase v in mContext.BusinessFlow.CurrentActivity.Variables.OrderBy("Name"))
                         InsertNewVarTreeItem(activityVars, v);
                     InsertAddNewVarTreeItem(activityVars, eVariablesLevel.Activity);
                 }
@@ -421,6 +565,10 @@ namespace Ginger
             SetItemView(tvi, vb.Name, VarExpression, "@Variable_16x16.png");
             parentTvi.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
+            tvi.Selected += UpdateHelpForVariables;
+            tvi.Tag = vb;
+      
+
         }
 
         private void InsertAddNewVarTreeItem(TreeViewItem parentTvi, eVariablesLevel varLevel)
@@ -490,7 +638,23 @@ namespace Ginger
         private void tvi_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             TreeViewItem tvi = (TreeViewItem)e.Source;
-            AddExpToValue(tvi.Tag + "");            
+            if (tvi.Tag.GetType() == typeof(ValueExpressionReference))
+            {
+                ValueExpressionReference ver = tvi.Tag as ValueExpressionReference;
+
+                AddExpToValue(ver.Expression + "");
+            }
+            else if (typeof(VariableBase).IsInstanceOfType(tvi.Tag))
+            {
+
+                AddExpToValue("{Var Name=" + tvi.Tag + "} ");
+            }
+            else
+            {
+
+
+                AddExpToValue(tvi.Tag + "");
+            }
         }
 
         private void tviAddNewVarTreeItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -503,14 +667,14 @@ namespace Ginger
                     ((Solution) WorkSpace.UserProfile.Solution).AddVariable(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
-                    ((BusinessFlow)App.BusinessFlow).AddVariable(newStringVar);
+                    ((BusinessFlow)mContext.BusinessFlow).AddVariable(newStringVar);
                     break;
                 case eVariablesLevel.Activity:
-                    ((Activity)App.BusinessFlow.CurrentActivity).AddVariable(newStringVar);
+                    ((Activity)mContext.BusinessFlow.CurrentActivity).AddVariable(newStringVar);
                     break;
             }
 
-            VariableEditPage varEditPage = new VariableEditPage(newStringVar);
+            VariableEditPage varEditPage = new VariableEditPage(newStringVar, mContext);
             varEditPage.ShowAsWindow(eWindowShowStyle.Dialog);
 
             //make sure name is unique
@@ -520,10 +684,10 @@ namespace Ginger
                     ((Solution) WorkSpace.UserProfile.Solution).SetUniqueVariableName(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
-                    ((BusinessFlow)App.BusinessFlow).SetUniqueVariableName(newStringVar);
+                    ((BusinessFlow)mContext.BusinessFlow).SetUniqueVariableName(newStringVar);
                     break;
                 case eVariablesLevel.Activity:
-                    ((Activity)App.BusinessFlow.CurrentActivity).SetUniqueVariableName(newStringVar);
+                    ((Activity)mContext.BusinessFlow.CurrentActivity).SetUniqueVariableName(newStringVar);
                     break;
             }
 
@@ -587,8 +751,12 @@ namespace Ginger
 
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
+            if (mVE == null)
+            {
+                mVE = new ValueExpression(App.AutomateTabEnvironment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+            }
             mVE.Value = this.ValueUCTextEditor.textEditor.Text;
-            ValueCalculatedTextBox.Text = mVE.ValueCalculated;            
+            ValueCalculatedTextBox.Text = mVE.ValueCalculated;
         }
                 
         private void OKButton_Click(object sender, RoutedEventArgs e)
@@ -631,9 +799,101 @@ namespace Ginger
         {
             ValueCalculatedTextBox.Text = "";
         }
-        
-        private void ValueUCTextEditor_Loaded(object sender, RoutedEventArgs e)
-        {     
+
+        private void UpdateHelpForVariables(object sender, RoutedEventArgs e)
+        {
+
+            TreeViewItem TVI = sender as TreeViewItem;
+            VariableBase Var = TVI.Tag as VariableBase;
+
+            UpdateHelp(true,"Variable: " +Var.Name, "Variable " + Var.VariableType(), "Current Value", Var.Value);
+        }
+
+        private void UpdateHelpForCSFunction(object sender, RoutedEventArgs e)
+        {
+
+            TreeViewItem TVI = sender as TreeViewItem;
+            ValueExpressionReference VER = TVI.Tag as ValueExpressionReference;
+            string samples = string.Empty;
+            foreach (string sample in VER.Samples)
+            {
+                if (string.IsNullOrEmpty(samples))
+                {
+                    samples = sample;
+                }
+                else
+                {
+                    samples += System.Environment.NewLine + sample;
+                }
+
+            }
+            UpdateHelp(false, VER.Name, VER.Category, "Samples", samples, "Expression:" + System.Environment.NewLine + VER.Expression);
+        }
+
+        private void UpdateHelp(bool ShowHelpCategory, string Title, string Category, string HelpContentName, string HelpContent, string HelpExtraInfo = null)
+        {
+
+            xWarningPanel.Visibility = Visibility.Collapsed;
+            xHelpPanel.Visibility = Visibility.Visible;
+
+            if (ShowHelpCategory)
+            {
+                xHelpCategoryPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+
+                xHelpCategoryPanel.Visibility = Visibility.Collapsed;
+            }
+
+            xHelpTitle.Content = Title;
+            XHelpCategory.Content = Category;
+            XHelpContentName.Text = HelpContentName + ": ";
+            XHelpContent.Text = HelpContent;
+            XHelpExtra.Text = HelpExtraInfo == null ? string.Empty : HelpExtraInfo;
+        }
+
+        private async void ValueUCTextEditor_LostFocus(object sender, RoutedEventArgs e)
+        {
+            string warningExpression = string.Empty;
+            string VEText = ValueUCTextEditor.Text;
+            await Task.Run(() =>
+            {
+                foreach (Match m in VBSReg.Matches(VEText))
+                {
+                    if (string.IsNullOrEmpty(warningExpression))
+                    {
+                        warningExpression = m.Value;
+                    }
+                    else
+                    {
+                        warningExpression += System.Environment.NewLine + m.Value;
+                    }
+                }
+            });
+
+            if (!string.IsNullOrEmpty(warningExpression))
+            {
+                xWarningPanel.Visibility = Visibility.Visible;
+                xHelpPanel.Visibility = Visibility.Collapsed;
+                XWarningValueExpression.Text = warningExpression;
+            }
+            else
+            {
+                xWarningPanel.Visibility = Visibility.Collapsed;
+                xHelpPanel.Visibility = Visibility.Collapsed;
+                XWarningValueExpression.Text = string.Empty;
+            }
+        }
+
+        private void XObjectsTreeView_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if(!string.IsNullOrEmpty(XWarningValueExpression.Text))
+            {
+                xWarningPanel.Visibility = Visibility.Visible;
+                xHelpPanel.Visibility = Visibility.Collapsed;
+            
+            }
         }
     }
 }

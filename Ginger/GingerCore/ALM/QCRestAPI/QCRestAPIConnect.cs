@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -135,9 +135,9 @@ namespace GingerCore.ALM.QCRestAPI
             return QcRestClient.getDomainsList();
         }
 
-        public static List<string> GetQCDomainProjects(string domainName)
+        public static Dictionary<string, string> GetQCDomainProjects(string domainName)
         {
-            return QcRestClient.getProjectsList(domainName);
+            return QcRestClient.getProjectsList(domainName).ToDictionary(prj => prj, prj => prj); 
         }
 
         public static int GetLastTestPlanIdFromPath(string PathNode)

@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -20,10 +38,22 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         public ApplicationPOMModel POM;
         public ObservableList<UIElementFilter> AutoMapElementTypesList = new ObservableList<UIElementFilter>();
         public List<eElementType> SelectedElementTypesList = new List<eElementType>();
-        public ObservableList<ElementLocator> AutoMapElementLocatorsList = new ObservableList<ElementLocator>();
+        public ObservableList<ElementLocator> ElementLocatorsSettingsList = new ObservableList<ElementLocator>();
         List<eLocateBy> mElementLocatorsList = new List<eLocateBy>();
         public ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();
-        
+
+        bool mLearnOnlyMappedElements = true;
+        public bool LearnOnlyMappedElements
+        {
+            get
+            {
+                return mLearnOnlyMappedElements;
+            }
+            set
+            {
+                mLearnOnlyMappedElements = value;
+            }
+        }
 
         private Agent mAgent = null;
         public Agent Agent
@@ -70,10 +100,20 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                     POM.ScreenShotImage = BitmapToBase64(ScreenShot);
                 }
             }
+
+            if(Agent != null)
+            {
+                POM.LastUsedAgent = Agent.Guid;
+            }
+
             if (mPomModelsFolder != null)
+            {
                 mPomModelsFolder.AddRepositoryItem(POM);
+            }
             else
+            {
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
+            }
         }
 
         private string BitmapToBase64(Bitmap bImage)
@@ -105,7 +145,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         public void PrepareLearningConfigurations()
         {
             SelectedElementTypesList = AutoMapElementTypesList.Where(x => x.Selected == true).Select(x => x.ElementType).ToList();
-            mElementLocatorsList = AutoMapElementLocatorsList.Select(x => x.LocateBy).ToList();           
+            mElementLocatorsList = ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();           
         }
 
         public void LearnScreenShot()
@@ -124,7 +164,14 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             POM.MappedUIElements.Clear();
             POM.UnMappedUIElements.Clear();
             mElementsList.Clear();
-            IWindowExplorerDriver.GetVisibleControls(null, mElementsList, true);
+            if (LearnOnlyMappedElements)
+            {
+                IWindowExplorerDriver.GetVisibleControls(AutoMapElementTypesList.Where(x=>x.Selected).ToList().Select(y=>y.ElementType).ToList(), mElementsList, true);
+            }
+            else
+            {
+                IWindowExplorerDriver.GetVisibleControls(null, mElementsList, true);
+            }
         }
 
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -160,7 +207,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             List<ElementLocator> orderedLocatorsList = element.Locators.OrderBy(m => mElementLocatorsList.IndexOf(m.LocateBy)).ToList();
             foreach (ElementLocator elemLoc in orderedLocatorsList)
             {
-                elemLoc.Active = AutoMapElementLocatorsList.Where(m => m.LocateBy == elemLoc.LocateBy).FirstOrDefault().Active;
+                elemLoc.Active = ElementLocatorsSettingsList.Where(m => m.LocateBy == elemLoc.LocateBy).FirstOrDefault().Active;
             }
             element.Locators = new ObservableList<ElementLocator>(orderedLocatorsList);
 

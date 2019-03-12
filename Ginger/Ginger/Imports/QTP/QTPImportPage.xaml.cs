@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -399,10 +399,10 @@ namespace Ginger.Imports.QTP
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
             mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
-            App.BusinessFlow = mBusinessFlow;
+            //App.BusinessFlow = mBusinessFlow;
            
-            AddActionPage addAction = new AddActionPage();
-            addAction.ShowAsWindow(ActionsList);
+            //AddActionPage addAction = new AddActionPage();
+            //addAction.ShowAsWindow(ActionsList);
 
             // We will get only one action currently
             Act a =(Act) ActionsList[0];

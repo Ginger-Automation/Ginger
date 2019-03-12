@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ using System.Linq;
 namespace Amdocs.Ginger.Common.GeneralLib
 {
     public static class General
-    {      
+    {
 
 
         public static string LocalUserApplicationDataFolderPath
@@ -63,7 +63,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
-        
+
 
         /// <summary>
         /// Should use the function temporary till solution will be implemented for VE fields search
@@ -78,7 +78,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 fieldName == "ObjFolderName" || fieldName == "ContainingFolder" || fieldName == "ContainingFolderFullPath" ||
                 fieldName == "ActInputValues" || fieldName == "ActReturnValues" || fieldName == "ActFlowControls" ||
                 fieldName == "ScreenShots" ||
-                fieldName == "ListStringValue" || fieldName == "ListDynamicValue")
+                fieldName == "ListStringValue" || fieldName == "ListDynamicValue" || fieldName == "ValueExpression")
             {
                 return true;
             }

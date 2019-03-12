@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -69,7 +69,9 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
                     if (selectedItem.Selected )
                     {
                         if (selectedItem.ItemUploadStatus != UploadItemSelection.eItemUploadStatus.Uploaded)
-                            SharedRepositoryOperations.UploadItemToRepository(selectedItem);
+                        {
+                          (new SharedRepositoryOperations()).UploadItemToRepository(UploadItemToRepositoryWizard.Context, selectedItem);
+                        }
                     }
                     else 
                         selectedItem.ItemUploadStatus = UploadItemSelection.eItemUploadStatus.Skipped;

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -55,9 +55,6 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-
-
-
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> UnMappedUIElements = new ObservableList<ElementInfo>();
 
@@ -105,5 +102,9 @@ namespace Amdocs.Ginger.Repository
                 return nameof(this.Name);
             }
         }
+
+        Guid mLastUsedAgent;
+        [IsSerializedForLocalRepository]
+        public Guid LastUsedAgent { get { return mLastUsedAgent; } set { if (mLastUsedAgent != value) { mLastUsedAgent = value; OnPropertyChanged(nameof(LastUsedAgent)); } } }
     }
 }

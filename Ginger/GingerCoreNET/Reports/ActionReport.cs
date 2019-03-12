@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -424,7 +424,7 @@ namespace Ginger.Reports
         private string GetValueForDriverWithoutDescrypting(string value)
         {
             // !!!!!!!!!!!!!!!!!!!!!!!!! should not use WorkSpace.BF here 
-            ValueExpression VE = new ValueExpression(mExecutionEnviroment, WorkSpace.Businessflow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+            ValueExpression VE = new ValueExpression(mExecutionEnviroment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
             VE.DecryptFlag = false;
             VE.Value = value;
 

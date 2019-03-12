@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using System.Windows;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 
 namespace Ginger.Actions
@@ -38,8 +39,8 @@ namespace Ginger.Actions
             App.FillComboFromEnumVal(ActionNameComboBox, Act.GenElementAction);                     
             App.ObjFieldBinding(ActionNameComboBox, ComboBox.SelectedValueProperty, Act, "GenElementAction"); 
 
-            Xoffset.Init(mAct.GetOrCreateInputParam(ActGenElement.Fields.Xoffset), true);
-            Yoffset.Init(mAct.GetOrCreateInputParam(ActGenElement.Fields.Yoffset), true);
+            Xoffset.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActGenElement.Fields.Xoffset), true);
+            Yoffset.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActGenElement.Fields.Yoffset), true);
         }
 
         private void ActionNameSelectionChanged(object sender, SelectionChangedEventArgs e)

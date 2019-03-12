@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Amdocs.Ginger.Common
 {
@@ -209,9 +210,9 @@ namespace Amdocs.Ginger.Common
                 {
                     ToConsole(eLogLevel.DEBUG, "Showing Status Message: " + messageContent);
                 }
-
-                mLastStatusTime.Start();
+            
                 WorkSpaceReporter.ToStatus(messageToShow.MessageType, messageContent);
+                mLastStatusTime.Start();
             }
             catch (Exception ex)
             {
@@ -228,17 +229,24 @@ namespace Amdocs.Ginger.Common
                 return;
             }
             bClosing = true;
-            
-            Task t = new Task(() => {
-                while (mLastStatusTime.ElapsedMilliseconds < 1000)  // let the message show for at least one second
-                {
-                    Task.Delay(100);
-                }                
-                WorkSpaceReporter.ToStatus(eStatusMsgType.INFO, null);
-                mLastStatusTime.Reset();
-                bClosing = false;
-            });
-            t.Start();
+        
+            if(mLastStatusTime.IsRunning)  
+            {
+                // let the message show for at least one second
+                var timer = new Timer();
+                timer.Interval = 1000; // In milliseconds
+                timer.AutoReset = false; // Stops it from repeating
+                timer.Elapsed += new ElapsedEventHandler(HideMessage_Event);
+                timer.Start();
+            }          
+
+        }
+
+        private static void HideMessage_Event(object sender, ElapsedEventArgs e)
+        {
+            WorkSpaceReporter.ToStatus(eStatusMsgType.INFO, null);
+            mLastStatusTime.Reset();
+            bClosing = false;
         }
         #endregion ToStatus
 

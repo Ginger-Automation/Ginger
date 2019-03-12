@@ -30,7 +30,7 @@
                 <CheckBox x:Name="UseAlternativeHTMLReportFolderCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5,9,5,5" Content="Save HTML report to alternative folder/shared path" Checked="UseAlternativeHTMLReportFolderCbx_Checked" Unchecked="UseAlternativeHTMLReportFolderCbx_Unchecked"></CheckBox>
                 <StackPanel x:Name="HTMLReportFolderPanel" Orientation="Vertical" IsEnabled="False">
                     <StackPanel Orientation="Horizontal">
-                        <Actions:UCValueExpression x:Name="HTMLReportFolderTextBox"   ToolTip="HTML Report path" Width="500" Margin="5,5,0,5" HideVEBusinessFlowAndActivityVariables="True"/>
+                        <Actions:UCValueExpression x:Name="HTMLReportFolderTextBox"   ToolTip="HTML Report path" Width="500" Margin="5,5,0,5"/>
                         
                     </StackPanel>
                 </StackPanel>

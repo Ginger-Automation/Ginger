@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ using GingerCore.Actions;
 using GingerCore.FlowControlLib;
 using Ginger.Actions.UserControls;
 using Ginger.BusinessFlowFolder;
+using System.Collections.Generic;
 
 namespace Ginger.Actions
 {
@@ -37,8 +38,9 @@ namespace Ginger.Actions
     {
         private Act mAct;
         BusinessFlow mActParentBusinessFlow = null;
-        Activity mActParentActivity = null;       
-        
+        Activity mActParentActivity = null;
+        private static readonly List<GingerCore.General.ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForCombo(typeof(eFCOperator));
+
         public ActionFlowControlPage(Act act, BusinessFlow actParentBusinessFlow, Activity actParentActivity, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
         {
             InitializeComponent();
@@ -62,6 +64,7 @@ namespace Ginger.Actions
         private void AddFlowControl(object sender, RoutedEventArgs e)
         {
             FlowControl FC = new FlowControl();
+            FC.Operator = eFCOperator.ActionPassed;
             FC.Active = true;
             mAct.FlowControls.Add(FC);
         }
@@ -80,7 +83,8 @@ namespace Ginger.Actions
             view.GridColsView = viewCols;
 
             viewCols.Add(new GridColView() { Field = nameof(FlowControl.Active), WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(FlowControl.Condition), Header = "Condition", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.getDataColValueExpressionTemplate(nameof(FlowControl.ConditionVE)) });
+            viewCols.Add(new GridColView() { Field = nameof(FlowControl.Operator), Header = "Condition", WidthWeight = 150, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = OperatorList });
+            view.GridColsView.Add(new GridColView() { Field = nameof(FlowControl.Condition), Header = "Expression", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.getDataColValueExpressionTemplate(nameof(FlowControl.ConditionVE)) });
             viewCols.Add(new GridColView() { Field = nameof(FlowControl.ConditionCalculated), Header = "Condition Calculated", WidthWeight = 150, BindingMode = BindingMode.OneWay });            
             view.GridColsView.Add(new GridColView() { Field = nameof(FlowControl.FlowControlAction), Header = "Action", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = GetDataColActionFlowControlTemplate(nameof(FlowControl.ActionForEdit)) });
             viewCols.Add(new GridColView() { Field = nameof(FlowControl.Status), WidthWeight = 150 });      

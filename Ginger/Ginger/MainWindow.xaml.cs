@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -312,7 +312,7 @@ namespace Ginger
                 else
                 {
                     xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
-                    App.LastBusinessFlow = null;
+                   
                     GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
                     GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
                     xSolutionTabsListView.SelectedItem = null;
@@ -522,7 +522,7 @@ namespace Ginger
 
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
         {
-            if(!ALMIntegration.Instance.AlmConfigurations.UseRest)
+            if(!ALMIntegration.Instance.AlmConfigurations.UseRest && ALMIntegration.Instance.GetALMType() != ALMIntegration.eALMType.Jira)
             {
                 Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
                 return;
@@ -587,7 +587,7 @@ namespace Ginger
             else
                 SourceControlIntegration.GetLatest( WorkSpace.UserProfile.Solution.Folder,  WorkSpace.UserProfile.Solution.SourceControl);
 
-            App.UpdateApplicationsAgentsMapping(false);
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping,null);
             Reporter.HideStatusMessage();
 
             AutoLogProxy.UserOperationEnd();
@@ -742,8 +742,8 @@ namespace Ginger
             {
                 //TODO: load Business Flows tab
                 xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
-                App.BusinessFlow = (BusinessFlow)args.Object;
-                App.BusinessFlow.SaveBackup();
+                //App.BusinessFlow = (BusinessFlow)args.Object;
+                //App.BusinessFlow.SaveBackup();
             }
         }
 

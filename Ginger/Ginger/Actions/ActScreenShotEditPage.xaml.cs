@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 
 namespace Ginger.Actions
@@ -35,7 +36,7 @@ namespace Ginger.Actions
         {
             InitializeComponent();
             mAct = act;
-            SavetoFolderNameTextBox.Init(mAct.GetOrCreateInputParam(ActScreenShot.Fields.SaveToFileName));
+            SavetoFolderNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActScreenShot.Fields.SaveToFileName));
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)

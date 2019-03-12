@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -156,6 +156,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 //HTMLGingerReportTreeItem r = new HTMLGingerReportTreeItem(mHTMLReportConfiguration);
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(mHTMLReportConfiguration);
+            }
+            else
+            {
+                WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq - 1;
             }
         }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -106,6 +106,16 @@ namespace GingerWPF.TreeViewItemsLib
         {
             //do in Folder node if needed
         }
+
+        public void PrepareItemForEdit()
+        {
+            object treeObject = ((ITreeViewItem)this).NodeObject();
+            if (treeObject!=null && treeObject is RepositoryItemBase)
+            {
+                ((RepositoryItemBase)treeObject).StartDirtyTracking();
+            }
+        }
+
         private void SaveTreeItemHandler(object sender, RoutedEventArgs e)
         {
             if (SaveTreeItem(((ITreeViewItem)this).NodeObject()))
