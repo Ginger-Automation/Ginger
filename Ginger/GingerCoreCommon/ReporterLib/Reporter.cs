@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Amdocs.Ginger.Common
 {
@@ -228,11 +229,21 @@ namespace Amdocs.Ginger.Common
                 return;
             }
             bClosing = true;
-
-            while (mLastStatusTime.IsRunning && mLastStatusTime.ElapsedMilliseconds < 1000)  // let the message show for at least one second
+        
+            if(mLastStatusTime.IsRunning)  
             {
-                Task.Delay(100);
-            }
+                // let the message show for at least one second
+                var timer = new Timer();
+                timer.Interval = 1000; // In milliseconds
+                timer.AutoReset = false; // Stops it from repeating
+                timer.Elapsed += new ElapsedEventHandler(HideMessage_Event);
+                timer.Start();
+            }          
+
+        }
+
+        private static void HideMessage_Event(object sender, ElapsedEventArgs e)
+        {
             WorkSpaceReporter.ToStatus(eStatusMsgType.INFO, null);
             mLastStatusTime.Reset();
             bClosing = false;
