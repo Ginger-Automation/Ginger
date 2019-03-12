@@ -164,6 +164,7 @@ namespace Ginger.Run
                 {
                     // Very slow
                     BusinessFlow BFCopy = (BusinessFlow)businessFlow.CreateCopy(false);
+                    BFCopy.ContainingFolder = businessFlow.ContainingFolder;
                     BFCopy.Reset();
                     BFCopy.Active = businessFlowRun.BusinessFlowIsActive;
                     BFCopy.Mandatory = businessFlowRun.BusinessFlowIsMandatory;

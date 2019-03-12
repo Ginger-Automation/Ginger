@@ -11,22 +11,19 @@
       >
 
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="xPageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="25" />
-            <RowDefinition Height="250"/>
-            
+            <RowDefinition x:Name="xZoomRow" Height="25" />
+            <RowDefinition Height="250*"/>
         </Grid.RowDefinitions>
-
-        <ScrollViewer x:Name="xScrollViewer" Background="White" Grid.Row="1" Margin="0,5" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" >
-            <Canvas x:Name="MainCanvas"  Width="10000" Height="10000"
-                    MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown" Drop="MainCanvas_Drop" MouseMove="MainCanvas_MouseMove" MouseLeftButtonUp="MainCanvas_MouseLeftButtonUp" MouseLeave="MainCanvas_MouseLeave"
-                    />
-        </ScrollViewer>
 
         <StackPanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
             <local:ZoomPanel x:Name="ZoomPanel"></local:ZoomPanel>
         </StackPanel>
+        
+        <ScrollViewer x:Name="xScrollViewer" Background="White" Grid.Row="1" Margin="0,5" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+            <Canvas x:Name="MainCanvas"  Width="10000" Height="10000" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown" Drop="MainCanvas_Drop" MouseMove="MainCanvas_MouseMove" MouseLeftButtonUp="MainCanvas_MouseLeftButtonUp" MouseLeave="MainCanvas_MouseLeave"/>
+        </ScrollViewer>
        
     </Grid>
 </Page>
