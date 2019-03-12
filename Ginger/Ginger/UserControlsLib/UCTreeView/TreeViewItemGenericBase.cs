@@ -353,7 +353,6 @@ namespace GingerWPF.TreeViewItemsLib
                     if (System.IO.Directory.Exists(path) == true && originalName.ToUpper() != newFolderName.ToUpper())
                     {                        
                         Reporter.ToUser(eUserMsgKey.FolderExistsWithName);
-                        mTreeView.Tree.RefreshSelectedTreeNodeParent();
                         return;
                     }
                     else
