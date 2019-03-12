@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -144,7 +144,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         internal void AddPOM(object sender, RoutedEventArgs e)
         {            
-            WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder), DoNotShowAsDialog:true);            
+            WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder),1000,800, DoNotShowAsDialog:true);            
         }
     }
 }

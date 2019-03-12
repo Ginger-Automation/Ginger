@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -272,9 +272,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             foreach (DataSourceTable dsTable in DSDetails.DSTableList)
             {
                 Reporter.ToStatus(eStatusMsgKey.ExportItem, null, dsTable.Name, "Data Source Table");
-                dsTable.DSC.ExporttoExcel(dsTable.Name, sExcelPath, dsTable.Name);                    
-                Reporter.HideStatusMessage();
+                dsTable.DSC.ExporttoExcel(dsTable.Name, sExcelPath, dsTable.Name);                                    
             }
+            Reporter.HideStatusMessage();
+            Reporter.ToUser(eUserMsgKey.ExportDetails);            
         }
 
         private void RefreshItems(object sender, RoutedEventArgs e)

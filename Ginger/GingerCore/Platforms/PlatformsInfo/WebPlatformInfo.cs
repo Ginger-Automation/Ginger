@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -252,6 +252,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
                     ElementType = eElementType.HyperLink,
+                    IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Click,
                                                                 ActUIElement.eElementAction.DoubleClick,
@@ -284,6 +285,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
                     ElementType = eElementType.List,
+                    IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {
                                                                ActUIElement.eElementAction.Select,

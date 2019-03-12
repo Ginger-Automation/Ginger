@@ -14,7 +14,7 @@
             <ColumnDefinition Width="700*"/>
         </Grid.ColumnDefinitions>
 
-        <UCTreeView:TreeView2 x:Name="MainTreeView" Grid.Column="0" TreeTitle="Help Library Content" Margin="0,0,5,0" />
+        <UCTreeView:TreeView1 x:Name="MainTreeView" Grid.Column="0" TreeIcon="FileVideo" TreeTitle="Help Library Content" Margin="0,0,5,0" />
 
         <GridSplitter x:Name="HelpSplitter" ResizeDirection="Columns" Grid.Column="0" Width="5" HorizontalAlignment="Right" Grid.Row="0"  Grid.RowSpan="6" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" Margin="0,0,0,0"/>
 
