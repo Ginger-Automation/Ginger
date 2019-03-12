@@ -157,7 +157,8 @@ namespace GingerCore.Repository.UpgradeLib
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Upgrade for file: '{0}'", xmlFilePath));
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the Ginger Version of the file: '{0}'", xmlFilePath), ex);
+                    return null;
                 }
             }
 
