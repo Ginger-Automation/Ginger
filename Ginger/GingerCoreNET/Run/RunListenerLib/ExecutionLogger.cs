@@ -109,16 +109,7 @@ namespace Ginger.Run
                 if (value != null)
                 {
                     mConfiguration = value;
-                    if (mConfiguration.ExecutionLoggerConfigurationExecResultsFolder.StartsWith(@"~\"))
-                    {
-                        mConfiguration.ExecutionLoggerConfigurationExecResultsFolder=mConfiguration.ExecutionLoggerConfigurationExecResultsFolder.Replace(@"~\",WorkSpace.Instance.Solution.Folder);
-                    }
-                    if (!CheckOrCreateDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder))
-                    {
-                        mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
-                    }
-
-
+                    mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = GetLoggerDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder);
                     switch (this.ExecutedFrom)
                     {
                         case Amdocs.Ginger.Common.eExecutedFrom.Automation:
