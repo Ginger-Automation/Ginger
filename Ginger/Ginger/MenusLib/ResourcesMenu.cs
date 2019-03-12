@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -108,9 +108,9 @@ namespace Ginger.MenusLib
             twoLevelMenu.Add(DocumentsMenu);
 
             TopMenuItem PluginsMenu = new TopMenuItem(eImageType.PluginPackage, "Plugins", ConsoleKey.P, "Plugins AID", "Ginger extension Add-ons");
-            PluginsMenu.Add(eImageType.PluginPackage, "Installed", PluginsList, ConsoleKey.P, "Plugin which are installed in the solution", "AID");
-            PluginsMenu.Add(eImageType.PluginPackage, "Online", OnlinePlugins, ConsoleKey.O, "Online plugins which can be downloaded", "Online Plugins");
-            PluginsMenu.Add(eImageType.PluginPackage, "Local", LocalPlugins, ConsoleKey.L, "Local plugins which are already downloaded on the user machine", "Online Plugins");
+            PluginsMenu.Add(eImageType.PluginPackage, "Installed", PluginsList, ConsoleKey.P, "Plugins which are installed in the solution", "AID");
+            PluginsMenu.Add(eImageType.Download, "Download Plugins", OnlinePlugins, ConsoleKey.O, "Online plugins which can be downloaded", "Online Plugins");
+            //PluginsMenu.Add(eImageType.PluginPackage, "Local", LocalPlugins, ConsoleKey.L, "Local plugins which are already downloaded on the user machine", "Online Plugins");
             twoLevelMenu.Add(PluginsMenu);
 
             return twoLevelMenu;

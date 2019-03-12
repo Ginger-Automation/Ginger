@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,10 @@ using Amdocs.Ginger.Repository;
 using Ginger.PlugInsWindows;
 using GingerWPF.TreeViewItemsLib;
 using System;
+using Amdocs.Ginger.Common.Enums;
+using System.IO;
+using System.Diagnostics;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -83,9 +87,23 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
+
+            TreeViewUtils.AddMenuItem(mContextMenu, "Open Plugin Package Folder", OpenPackageFolder, null, eImageType.OpenFolder);
+
             AddItemNodeBasicManipulationsOptions(mContextMenu, allowSave: false, allowCopy: false, allowCut: false, allowDuplicate: false, allowDelete: true);
+
         }
 
-        
+        private void OpenPackageFolder(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (Directory.Exists(mPluginPackage.Folder))
+            {
+                Process.Start(mPluginPackage.Folder);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Failed to find the folder '{0}'", mPluginPackage.Folder));
+            }
+        }
     }
 }

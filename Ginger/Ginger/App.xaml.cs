@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -577,6 +577,7 @@ namespace Ginger
             AddClass(list, typeof(RunSetActionSendSMS));
             AddClass(list, typeof(RunSetActionPublishToQC));
             AddClass(list, typeof(ActSetVariableValue));
+            AddClass(list, typeof(ActClearAllVariables));
             AddClass(list, typeof(ActAgentManipulation));       
             AddClass(list, typeof(UserProfile));
             AddClass(list, typeof(Solution));

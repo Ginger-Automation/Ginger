@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using System.Threading.Tasks;
 
 namespace Ginger.WindowExplorer.Common
 {
@@ -76,16 +77,18 @@ namespace Ginger.WindowExplorer.Common
             GingerCore.General.LoadGenericWindow(ref _GenWin, null, windowStyle, Title, this, winButtons);
         }
 
-        private void DoSearch(object sender, RoutedEventArgs e)
+        private async void DoSearch(object sender, RoutedEventArgs e)
         {
-            bool isSearched = mWindowExlorerPage.DoSearchControls();
-            int FoundItemsCount = mWindowExlorerPage.WindowControlsGridView.DataSourceList.Count;
-            if (isSearched)
-            {
-                Amdocs.Ginger.Common.eUserMsgSelection resultCloseWindow = Reporter.ToUser(eUserMsgKey.CloseFilterPage, FoundItemsCount);
-                if (resultCloseWindow == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-                    _GenWin.Close();
-            }
+            mWindowExlorerPage.DoSearchControls();
+            //bool isSearched = await Task.Run(() => mWindowExlorerPage.DoSearchControls());
+            _GenWin.Close();
+            //int FoundItemsCount = mWindowExlorerPage.WindowControlsGridView.DataSourceList.Count;
+            //if (isSearched)
+            //{
+            //    Amdocs.Ginger.Common.eUserMsgSelection resultCloseWindow = Reporter.ToUser(eUserMsgKey.CloseFilterPage, FoundItemsCount);
+            //    if (resultCloseWindow == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            //        _GenWin.Close();
+            //}
         }
 
             private void SetControlsGridView()

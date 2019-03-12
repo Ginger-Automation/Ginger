@@ -67,7 +67,7 @@
             </Expander.Header>
             <Expander.Content>
                     <Grid Background="{StaticResource $BackgroundColor_LightGray}">                      
-                        <UCTreeView:TreeView2 x:Name="WindowControlsTreeView" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                        <UCTreeView:TreeView1 x:Name="WindowControlsTreeView" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                         <Ginger:ucGrid x:Name="WindowControlsGridView" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"/>
                     </Grid>
             </Expander.Content>

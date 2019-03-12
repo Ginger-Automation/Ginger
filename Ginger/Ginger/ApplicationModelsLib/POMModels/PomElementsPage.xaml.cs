@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -147,12 +147,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void PasteElementEvent(PasteItemEventArgs EventArgs)
         {
-            ((ElementInfo)EventArgs.RepositoryItemBaseObject).IsAutoLearned = false;
+            ElementInfo copiedElement = (ElementInfo)EventArgs.RepositoryItemBaseObject;
+            copiedElement.IsAutoLearned = false;
+            foreach(ElementLocator locator in copiedElement.Locators)
+            {
+                locator.IsAutoLearned = false;
+            }
         }
 
         private void PasteLocatorEvent(PasteItemEventArgs EventArgs)
         {
-            ((ElementLocator)EventArgs.RepositoryItemBaseObject).IsAutoLearned = false;
+            ElementLocator copiedLocator = (ElementLocator)EventArgs.RepositoryItemBaseObject;
+            copiedLocator.IsAutoLearned = false;            
         }
 
         private void Properties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -452,7 +458,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65 });
             defView.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xLocateValueVETemplate"] });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25 });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
@@ -503,7 +509,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         bool disabeledLocatorsMsgShown;
         private void LocatorsGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
-            if (e.Column.Header.ToString() != nameof(ElementLocator.Active) && mSelectedLocator.IsAutoLearned)
+            if (e.Column.Header.ToString() != nameof(ElementLocator.Active) && e.Column.Header.ToString() != nameof(ElementLocator.Help) && mSelectedLocator.IsAutoLearned)
             {
                 if (!disabeledLocatorsMsgShown)
                 {

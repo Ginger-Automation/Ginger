@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,10 +22,11 @@ using System;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions;
+using System.ComponentModel;
 
 namespace Amdocs.Ginger.CoreNET
 {
-    public class ConvertableActionDetails
+    public class ConvertableActionDetails : INotifyPropertyChanged
     {
         // holds the list of parent activities containing convertible actions
         public List<string> ActivityList { get; set; }
@@ -34,7 +35,29 @@ namespace Amdocs.Ginger.CoreNET
         public List<Act> Actions { get; set; }
 
         // whether selected to be converted or not
-        public bool Selected { get; set; }
+        bool mSelected;
+        public bool Selected
+        {
+            get { return mSelected; }
+            set
+            {
+                if (mSelected != value)
+                {
+                    mSelected = value;
+                    OnPropertyChanged(nameof(ConvertableActionDetails.Selected));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyname)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyname));
+            }
+        }
+
         public string SourceActionTypeName { get; set; }
         public string TargetActionTypeName { get; set;}
 
