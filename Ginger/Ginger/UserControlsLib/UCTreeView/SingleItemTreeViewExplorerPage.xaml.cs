@@ -87,7 +87,7 @@ namespace GingerWPF.UserControlsLib
                 }
                 catch (Exception ex)
                 {
-
+                    //TODO: It can be ignored
                 }
                 //Selected Child Node
                 DetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
