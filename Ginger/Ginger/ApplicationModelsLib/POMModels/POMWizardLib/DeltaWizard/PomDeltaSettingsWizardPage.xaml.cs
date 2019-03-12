@@ -1,27 +1,14 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
-using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 {
@@ -49,10 +36,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                         mAppPlatform = WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(mWizard.mPomDeltaUtils.POM.TargetApplicationKey);
                     }
 
-                    SetAutoMapElementTypes();
+                    SetAutoMapElementTypes();                    
                     SetAutoMapElementTypesGridView();
-                    SetAutoMapElementLocatorssSection();                    
-                    SetAutoMapElementLocatorsGridView();
+                    xLearnOnlyMappedElements.BindControl(mWizard.mPomDeltaUtils.PomLearnUtils, nameof(mWizard.mPomDeltaUtils.PomLearnUtils.LearnOnlyMappedElements));
+                    SetElementLocatorsSettingsData();                    
+                    SetElementLocatorsSettingsGridView();
 
                     xAvoidPropertiesAllRadioButton.IsChecked = true;
                     xKeepLocatorsOrderCheckBox.IsChecked = true;
@@ -77,18 +65,18 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             xAutoMapElementTypesGrid.DataSourceList = mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementTypesList;
         }
 
-        private void SetAutoMapElementLocatorssSection()
+        private void SetElementLocatorsSettingsData()
         {
-            if (mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementLocatorsList.Count == 0)
+            if (mWizard.mPomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList.Count == 0)
             {
                 switch (mAppPlatform)
                 {
                     case ePlatformType.Web:
-                        mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementLocatorsList = new WebPlatform().GetLearningLocators();
+                        mWizard.mPomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList = new WebPlatform().GetLearningLocators();
                         break;
                 }
             }
-            xAutoMapElementLocatorsGrid.DataSourceList = mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementLocatorsList;
+            xElementLocatorsSettingsGrid.DataSourceList = mWizard.mPomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList;
         }
 
         private void SetAutoMapElementTypesGridView()
@@ -108,7 +96,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             xAutoMapElementTypesGrid.InitViewItems();
         }
 
-        private void SetAutoMapElementLocatorsGridView()
+        private void SetElementLocatorsSettingsGridView()
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
@@ -117,10 +105,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25, ReadOnly = true });
 
-            xAutoMapElementLocatorsGrid.SetAllColumnsDefaultView(defView);
-            xAutoMapElementLocatorsGrid.InitViewItems();
+            xElementLocatorsSettingsGrid.SetAllColumnsDefaultView(defView);
+            xElementLocatorsSettingsGrid.InitViewItems();
 
-            xAutoMapElementLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
+            xElementLocatorsSettingsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
         }
 
         private void CheckUnCheckAllElements(object sender, RoutedEventArgs e)

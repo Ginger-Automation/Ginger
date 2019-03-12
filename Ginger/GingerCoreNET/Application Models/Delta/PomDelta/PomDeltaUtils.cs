@@ -60,7 +60,14 @@ namespace GingerCoreNET.Application_Models
                 PomLearnUtils.PrepareLearningConfigurations();
                 PomLearnUtils.LearnScreenShot();//this will set screen size to be same as in learning time
                 PrepareCurrentPOMElementsData();
-                mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements, true);
+                if (PomLearnUtils.LearnOnlyMappedElements)
+                {
+                    mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.AutoMapElementTypesList.Where(x => x.Selected).ToList().Select(y => y.ElementType).ToList(), POMLatestElements, true);
+                }
+                else
+                {
+                    mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements, true);
+                }
                 SetUnidentifiedElementsDeltaDetails();
                 DoEndOfRelearnElementsSorting();
             }
@@ -371,7 +378,7 @@ namespace GingerCoreNET.Application_Models
                 else
                 {
                     //unknown
-                    DeltaViewElements.Add(ConvertElementToDelta(unidentifiedElement, eDeltaStatus.Unknown, unidentifiedElement.ElementGroup, true, "Element exist on page but could not be compared"));
+                    DeltaViewElements.Add(ConvertElementToDelta(unidentifiedElement, eDeltaStatus.Unknown, unidentifiedElement.ElementGroup, false, "Element exist on page but could not be compared"));
                 }
             }
         }
@@ -381,15 +388,17 @@ namespace GingerCoreNET.Application_Models
             List<DeltaElementInfo> deletedMappedElements = DeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Deleted && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Mapped).ToList();
             List<DeltaElementInfo> modifiedMappedElements = DeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Changed && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Mapped).ToList();
             List<DeltaElementInfo> newMappedElements = DeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Added && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Mapped).ToList();
+            List<DeltaElementInfo> unknownMappedElements = DeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Unknown && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Mapped).ToList();
 
             List<DeltaElementInfo> deletedUnMappedElements = DeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Deleted && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Unmapped).ToList();
             List<DeltaElementInfo> modifiedUnMappedElements = DeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Changed && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Unmapped).ToList();
             List<DeltaElementInfo> newUnMappedElements = DeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Added && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Unmapped).ToList();
+            List<DeltaElementInfo> unknownUnMappedElements = DeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Unknown && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Unmapped).ToList();
 
             List<DeltaElementInfo> unchangedMapped = DeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Unchanged && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Mapped).ToList();
             List<DeltaElementInfo> unchangedUnmapped = DeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Unchanged && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Unmapped).ToList();
 
-            List<List<DeltaElementInfo>> ElementsLists = new List<List<DeltaElementInfo>>() { deletedMappedElements, modifiedMappedElements, newMappedElements, deletedUnMappedElements, modifiedUnMappedElements, newUnMappedElements, unchangedMapped, unchangedUnmapped };
+            List<List<DeltaElementInfo>> ElementsLists = new List<List<DeltaElementInfo>>() { deletedMappedElements, modifiedMappedElements, newMappedElements, unknownMappedElements, deletedUnMappedElements, modifiedUnMappedElements, newUnMappedElements, unknownUnMappedElements, unchangedMapped, unchangedUnmapped };
             DeltaViewElements.Clear();
             foreach (List<DeltaElementInfo> elementsList in ElementsLists)
             {

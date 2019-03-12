@@ -104,8 +104,13 @@ namespace GingerCore.Drivers.Common
 
         public override string GetAbsoluteXpath()
         {
-            if (WindowExplorer == null) return null;
-            return ((IXPath)WindowExplorer).GetXPathHelper(this).GetElementXpathAbsulote(this);
+            if (WindowExplorer == null)
+            {
+                return null;
+            }
+            //string xPath = ((IXPath)WindowExplorer).GetXPathHelper(this).GetElementXpathAbsulote(this); // Doing Temporary workaround because GetXPathHelper is not working properly for SeleniumDriver
+            string xPath = ((IXPath)WindowExplorer).GetElementXpath(this);
+            return xPath;
         }        
     }
 }

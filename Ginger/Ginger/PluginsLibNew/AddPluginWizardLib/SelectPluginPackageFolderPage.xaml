@@ -5,22 +5,16 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:GingerWPF.PluginsLib.AddPluginWizardLib"
       xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:Actions="clr-namespace:Ginger.Actions"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="SelectPluginFolderPage">
 
-    <Grid>
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <StackPanel>
-            <Label>Select Plugin folder</Label>
+            <Label Style="{StaticResource $LabelStyle}">Select Plugin folder:</Label>
 
-            <Button x:Name="BrowseButton" Click="BrowseButton_Click"   Height="50" Width="200" >
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Browse</TextBlock>
-                    <UserControls:ImageMakerControl ImageType="Open" Width="32" Margin="5,0,0,0"/>
-                </StackPanel>
-            </Button>
-
-            <TextBox x:Name="FolderTextBox" TextChanged="FolderTextBox_TextChanged"></TextBox>
+            <Actions:UCValueExpression x:Name="xPluginFolderUC" VerticalAlignment="Center" ToolTip="Plugin folder full path"/>
         </StackPanel>
     </Grid>
 </Page>
