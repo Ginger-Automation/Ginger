@@ -7,8 +7,8 @@
              xmlns:local="clr-namespace:Ginger.UserControlsLib"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Grid.Row="0" x:Name="xWindowGrid">
-        <!--<Grid.ColumnDefinitions>
+    <Grid x:Name="xWindowGrid">
+        <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60"/>
             <ColumnDefinition Width="100*"/>
             <ColumnDefinition Width="20"/>
@@ -20,7 +20,7 @@
         </Button>
         <Button Grid.Column="3" x:Name="AddSwitchWindowActionButton" Click="AddSwitchWindowActionButton_Click" ToolTip="Add Switch Window Action to Business Flow" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">
             <Image Source="{StaticResource @AddToList_16x16}" Height="16" Width="16"/>
-        </Button>-->
+        </Button>
     </Grid>
 
 </UserControl>

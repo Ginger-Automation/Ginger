@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:userControl="clr-namespace:Ginger.UserControlsLib"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
       mc:Ignorable="d" 
@@ -14,21 +15,8 @@
             <RowDefinition Height="30" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" x:Name="xWindowGrid">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="100*"/>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="20"/>
-            </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Content="Window:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <ComboBox Grid.Column="1" x:Name="WindowsComboBox" SelectionChanged="WindowsComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
-            <Button Grid.Column="2" x:Name="RefreshWindowsButton" Click="RefreshWindowsButton_Click" usercontrols:ImageMaker.Content="Refresh" Width="18" ToolTip="Refresh Windows List" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">
-            </Button>
-            <Button Grid.Column="3" x:Name="AddSwitchWindowActionButton" Click="AddSwitchWindowActionButton_Click" ToolTip="Add Switch Window Action to Business Flow" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Image Source="{StaticResource @AddToList_16x16}" Height="16" Width="16"/>
-            </Button>
-        </Grid>
+
+        <userControl:UCWindowsGrid x:Name="xWinGridUC" Grid.Row="0" />
 
         <Button x:Name="RecordingButton" Click="RecordingButton_Click"  IsEnabled="true" ToolTip="Start Recording" HorizontalAlignment="Left" VerticalAlignment="Top" Width="Auto" Margin="10" UseLayoutRounding="True" Background="DeepSkyBlue" Grid.Row="1">
             <Grid>

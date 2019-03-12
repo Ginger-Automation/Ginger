@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.Help;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -24,7 +25,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// </summary>
     public partial class POMNavPage : Page
     {
-        readonly PomAllElementsPage mPomAllElementsPage;
+        public PomElementsPage mappedUIElementsPage;
+        ApplicationPOMModel mPOM;
         public POMNavPage()
         {
             InitializeComponent();
@@ -65,8 +67,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             if (tvItem is ITreeViewItem)
             {
-                //mPomAllElementsPage = new PomAllElementsPage();
-                //DetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
+                if(TVI is ApplicationPOMModel)
+                {
+
+                }
+                mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped);
+                //ApplicationPOMModel appPOM = tvItem as ApplicationPOMModel
+                //mPomAllElementsPage = new PomAllElementsPage(appPOM, this);
+                xPOMLDetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
             }
             else
             {

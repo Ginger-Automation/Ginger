@@ -1,5 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.MenusLib;
 using Ginger.Repository;
@@ -7,6 +9,8 @@ using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.DataSource;
+using GingerCore.Drivers;
 using GingerCore.Platforms;
 using System;
 using System.Collections.Generic;
@@ -31,6 +35,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     public partial class MainAddActionsNavigationPage : Page
     {
         BusinessFlow mBusinessFlow;
+        IWindowExplorer WindowExplorerDriver;
+
         public MainAddActionsNavigationPage(BusinessFlow businessFlow)
         {
             mBusinessFlow = businessFlow;
@@ -85,9 +91,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XNavWinExp_Click(object sender, RoutedEventArgs e)
         {
-            Activity mActParentActivity = mBusinessFlow.CurrentActivity;
-            ApplicationAgent appAgent = (ApplicationAgent)App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
-            LoadActionFrame(new WindowExplorerPage(appAgent));
+            LoadActionFrame(new WindowsExplorerNavPage());
         }
 
         private void UcButton_Click(object sender, RoutedEventArgs e)

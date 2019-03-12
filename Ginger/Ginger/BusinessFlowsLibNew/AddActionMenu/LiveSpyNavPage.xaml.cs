@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -21,6 +22,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     public partial class LiveSpyNavPage : Page
     {
         bool isSpying = false;
+        private IWindowExplorer mWindowExplorerDriver;
+
         public LiveSpyNavPage()
         {
             InitializeComponent();

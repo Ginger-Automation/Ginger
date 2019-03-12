@@ -6,44 +6,36 @@
       xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
       xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
-      Title="MainAddActionsNavigationPage">
+      Title="MainAddActionsNavigationPage" Background="White">
 
-    <Grid Name="AddActionsGrid" Background="White" >
+    <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="15" />
+            <ColumnDefinition Width="20" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-        <Grid Grid.Column="0">
-            <UserControls:ucButton ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="GoBack" Click="UcButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" />
-            <GridSplitter ResizeDirection="Columns" Grid.Column="0" Width="15" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="DeepSkyBlue" IsEnabled="True"/>
+        <Grid Name="navigationBar" Background="DeepSkyBlue" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" >
+            <UserControls:ucButton ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="GoBack" Click="UcButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Margin="0,0,0,0" />
+            <Label Name="navBarTitle" Content="Title" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="ExtraBold" Foreground="White" FontSize="15" Grid.Row="0" Grid.Column="1"/>
         </Grid>
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
 
-
-            <Grid Name="navigationBar" Grid.Row="0" Background="DeepSkyBlue" Grid.Column="0" Grid.ColumnSpan="2">
-                <Label Name="navBarTitle" Content="Title" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="ExtraBold" Foreground="White" FontSize="15"/>
-            </Grid>
-
-            <Grid Grid.Row="1">
-                <WrapPanel>
-                    <StackPanel Name="navHomeStackPnl">
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+            <WrapPanel>
+                <StackPanel Name="navHomeStackPnl">
                     <UserControls:ucButton ButtonText="Shared Repository"  ButtonType="PanelButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="SharedRepositoryItem" Click="XNavSharedRepo_Click"   HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10" />
                     <UserControls:ucButton ButtonText="Page Objects Model" ButtonType="PanelButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="ApplicationPOMModel"  Click="XNavPOM_Click"          HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10" />
                     <UserControls:ucButton ButtonText="Actions Library"    ButtonType="PanelButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Action"               Click="XNavActLib_Click"       HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10" />
                     <UserControls:ucButton ButtonText="Record"             ButtonType="PanelButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Camera"               Click="XRecord_Click"          HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10" />
                     <UserControls:ucButton ButtonText="Live Spy"           ButtonType="PanelButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Spy"                  Click="XNavSpy_Click"          HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10" />
                     <UserControls:ucButton ButtonText="Windows Explorer"   ButtonType="PanelButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Search"               Click="XNavWinExp_Click"       HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10" />
-                    </StackPanel>
-                </WrapPanel>
-                <Frame Name="navPnlActionFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" />
-            </Grid>
+                </StackPanel>
+            </WrapPanel>
+            <Frame Name="navPnlActionFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" />
         </Grid>
-
 
         <!--<Grid Name="requestedView" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Visible">
             <StackPanel Name="navHomeStackPnlReq">

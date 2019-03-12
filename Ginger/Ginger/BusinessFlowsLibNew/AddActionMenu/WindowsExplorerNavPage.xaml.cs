@@ -39,5 +39,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
 
         }
+
+        private void ControlsViewsExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
