@@ -3925,7 +3925,7 @@ namespace Ginger.Run
             if(CurrentBusinessFlow != null)
             {
                 mExecutedActivityWhenStopped = (Activity)CurrentBusinessFlow.CurrentActivity;
-                mExecutedActionWhenStopped = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                mExecutedActionWhenStopped = (Act)CurrentBusinessFlow.CurrentActivity?.Acts.CurrentItem;
                 mExecutedBusinessFlowWhenStopped = (BusinessFlow)CurrentBusinessFlow;
             }            
         }
