@@ -20,9 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
-
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.AnalyzerLib;
@@ -311,10 +309,30 @@ namespace Ginger.Run
                             {
                                 GingerRunnerHighlight(rp);
                             }
-                        }
+                        }                        
                     }
+
+                    UpdateRunButtonIcon();
                 }
             });
+        }
+
+        private void UpdateRunButtonIcon()
+        {
+            if (RunSetConfig.GingerRunners.Where(x => x.IsRunning == true).FirstOrDefault() != null)
+            {
+                xRunRunsetBtn.ButtonText = "Running";
+                xRunRunsetBtn.ToolTip = "Execution of at least one Runner is in progress";
+                xRunRunsetBtn.ButtonImageType = eImageType.Running;
+            }
+            else
+            {
+                xRunRunsetBtn.ButtonText = "Run";
+                xRunRunsetBtn.ToolTip = "Rest & Run All Runners";
+                xRunRunsetBtn.ButtonImageType = eImageType.Play;
+            }
+
+            xRunRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
         }
 
         private void ExecutionsHistoryList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -466,6 +484,7 @@ namespace Ginger.Run
             this.Dispatcher.Invoke(() =>
             {
                 UpdateRunnersTabHeader();
+                UpdateRunnersCanvasSize();
             });
         }
         private void UpdateBusinessflowCounter()
@@ -473,7 +492,16 @@ namespace Ginger.Run
             xBusinessflowName.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), mCurrentSelectedRunner.Runner.BusinessFlows.Count);
         }
 
+        private void UpdateRunnersCanvasSize()
+        {            
+            if (mFlowDiagram != null)
+            {
+                mFlowDiagram.Height = 240;
+                mFlowDiagram.CanvasHeight = 240;
+                mFlowDiagram.CanvasWidth = mRunSetConfig.GingerRunners.Count() * 600;
+            }
 
+        }
         void InitRunSetConfigurations()
         {
             GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xRunSetNameTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
@@ -794,6 +822,7 @@ namespace Ginger.Run
             if(mFlowDiagram == null)
             {
                 mFlowDiagram = new FlowDiagramPage();
+                mFlowDiagram.SetView(Brushes.White, false, false);                
                 mFlowDiagram.SetHighLight = false;
                 mFlowDiagram.BackGround = Brushes.White;            
                 mFlowDiagram.ZoomPanelContainer.Visibility = Visibility.Collapsed;
@@ -903,6 +932,7 @@ namespace Ginger.Run
                 SetEnvironmentsCombo();
                 SetRunnersCombo();
                 UpdateRunnersTabHeader();
+                UpdateRunnersCanvasSize();
                 xZoomPanel.ZoomSliderContainer.ValueChanged += ZoomSliderContainer_ValueChanged;
             });
             return 1;
@@ -911,11 +941,11 @@ namespace Ginger.Run
         private void ZoomSliderContainer_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
 
-            if ((mFlowDiagram.GetCanvas()) == null) return;  // will happen only at page load
+            if ((mFlowDiagram.Canvas) == null) return;  // will happen only at page load
 
             // Set the Canvas scale based on ZoomSlider value
             ScaleTransform ST = new ScaleTransform(e.NewValue, e.NewValue);
-            (mFlowDiagram.GetCanvas()).LayoutTransform = ST;
+            (mFlowDiagram.Canvas).LayoutTransform = ST;
 
             xZoomPanel.PercentLabel.Content = (int)(e.NewValue * 100) + "%";
         }
@@ -1676,6 +1706,7 @@ namespace Ginger.Run
                 foreach (BusinessFlow bf in selectedBfs)
                 {
                     BusinessFlow bfToAdd = (BusinessFlow)bf.CreateCopy(false);
+                    bfToAdd.ContainingFolder = bf.ContainingFolder;
                     bfToAdd.Active = true;
                     bfToAdd.Reset();
                     bfToAdd.InstanceGuid = Guid.NewGuid();
@@ -1868,7 +1899,8 @@ namespace Ginger.Run
             if (mCurrentBusinessFlowRunnerItem != null)
             {
                 BusinessFlow bf = (BusinessFlow)mCurrentBusinessFlowRunnerItem.ItemObject;
-                BusinessFlow bCopy = (BusinessFlow)bf.CreateCopy(false);                
+                BusinessFlow bCopy = (BusinessFlow)bf.CreateCopy(false);
+                bCopy.ContainingFolder = bf.ContainingFolder;
                 bCopy.InstanceGuid = Guid.NewGuid();
                 bCopy.Reset();
                 mCurrentSelectedRunner.AddBuinessFlowToRunner(bCopy, xBusinessflowsRunnerItemsListView.SelectedIndex + 1);
