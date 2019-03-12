@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -278,6 +279,31 @@ namespace Amdocs.Ginger.Repository
         {        
             mSolutionRepository = solutionRepository;
             GetPackages();
+
+            Task.Run(() =>{
+                ObservableList<OnlinePluginPackage> OnlinePlugins = null;
+                foreach (PluginPackage SolutionPlugin in mPluginPackages)
+                {
+                    if (SolutionPlugin.Folder.Contains("AppData\\Roaming") && !System.IO.File.Exists(Path.Combine(SolutionPlugin.Folder, @"Ginger.PluginPackage.Services.json")))
+                    {
+                        if (OnlinePlugins == null)
+                        {
+                            OnlinePlugins = WorkSpace.Instance.PlugInsManager.GetOnlinePluginsIndex();
+                        }
+
+                        OnlinePluginPackage OnlinePlugin = OnlinePlugins.Where(x => x.Id == SolutionPlugin.PluginId).FirstOrDefault();
+                      
+
+                        OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
+
+                        OnlinePlugin.InstallPluginPackage(OPR);
+                        //WorkSpace.Instance.PlugInsManager.InstallPluginPackage(OnlinePlugin, OPR);
+                    }
+
+
+                }
+            });
+
          }
     }
 }
