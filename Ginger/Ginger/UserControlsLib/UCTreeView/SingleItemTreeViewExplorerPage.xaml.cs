@@ -66,39 +66,26 @@ namespace GingerWPF.UserControlsLib
 
             if (tvItem is ITreeViewItem)
             {
-                //Get Parent Node And Prepare For Edit
-                try
-                {
-                    ItemsControl parent = ItemsControl.ItemsControlFromItemContainer(TVI);
-                    if (parent != null)
-                    {
-                        while (!(parent is TreeViewItem || parent is TreeView))
-                        {
-                            parent = ItemsControl.ItemsControlFromItemContainer(TVI);
-                        }
-                    }
-                    TreeViewItem treeItemParent = parent as TreeViewItem;
-                    object tvItemParent = treeItemParent.Tag;
-                    DetailsFrame.Content = ((ITreeViewItem)tvItemParent).EditPage();
-                    if (tvItemParent is NewTreeViewItemBase)
-                    {
-                        ((NewTreeViewItemBase)tvItemParent).PrepareItemForEdit();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    //TODO: It can be ignored
-                }
-                //Selected Child Node
                 DetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
                 if(tvItem is NewTreeViewItemBase)
                 {
                     ((NewTreeViewItemBase)tvItem).PrepareItemForEdit();
+                    PrepareParentItemsForEdit(TVI);
                 }                
             }
             else
             {
                 DetailsFrame.Content = "View/Edit page is not available yet for the tree item '" + tvItem.GetType().Name + "'";
+            }
+        }
+
+        private void PrepareParentItemsForEdit(TreeViewItem treeViewItem)
+        {
+            TreeViewItem parent = ItemsControl.ItemsControlFromItemContainer(treeViewItem) as TreeViewItem;
+            while (parent != null)
+            {
+                ((NewTreeViewItemBase)parent.Tag)?.PrepareItemForEdit();
+                parent = ItemsControl.ItemsControlFromItemContainer(parent) as TreeViewItem;
             }
         }
     }
