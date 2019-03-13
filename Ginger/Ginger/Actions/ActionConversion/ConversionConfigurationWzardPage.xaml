@@ -43,7 +43,7 @@
                 <ColumnDefinition Width="170" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <CheckBox x:Name="xChkDefaultTargetApp" Height="20" Grid.Column="0" Grid.Row="0"  Margin="25,5,0,0" HorizontalAlignment="Left" IsChecked="{Binding Path=DefaultTaretApp, Mode=TwoWay}">
+            <CheckBox x:Name="xChkDefaultTargetApp" Height="20" Grid.Column="0" Grid.Row="0"  Margin="25,5,0,0" HorizontalAlignment="Left" IsChecked="{Binding Path=DefaultTargetAppChecked, Mode=TwoWay}">
                 <CheckBox.Content>
                     <GingerCore:ucTextDicResource Text="Set default target application to modified [Activities]"/>
                 </CheckBox.Content>

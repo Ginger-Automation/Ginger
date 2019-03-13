@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -92,14 +92,14 @@ namespace Ginger.AnalyzerLib
             AnalyzeBusinessFlow OutputValidationIssue = GetOutputvalidationErros(BusinessFlow);
             if (OutputValidationIssue.ReturnValues.Count > 0)
             {
+                OutputValidationIssue.ItemName = BusinessFlow.Name;
                 OutputValidationIssue.Description = LegacyOutPutValidationDescription;
                 OutputValidationIssue.IssueType = eType.Warning;
                 OutputValidationIssue.mBusinessFlow = BusinessFlow;
                 OutputValidationIssue.Severity = eSeverity.Medium;
                 OutputValidationIssue.ItemClass = "BusinessFlow";
-                OutputValidationIssue.CanAutoFix = eCanFix.Yes;
+                OutputValidationIssue.CanAutoFix = eCanFix.Maybe;
                 OutputValidationIssue.Status = AnalyzerItemBase.eStatus.NeedFix;
-                IssuesList.Add(OutputValidationIssue);
                 OutputValidationIssue.FixItHandler = FixOutputValidationIssue;
                 IssuesList.Add(OutputValidationIssue);
             }
@@ -109,7 +109,10 @@ namespace Ginger.AnalyzerLib
         private static void FixOutputValidationIssue(object sender, EventArgs e)
         {
             AnalyzeBusinessFlow ABF = (AnalyzeBusinessFlow)sender;
-            foreach(ActReturnValue ARV in ABF.ReturnValues)
+
+            int issueCount = ABF.ReturnValues.Count;
+            int FixedIssueCount = 0;
+            foreach (ActReturnValue ARV in ABF.ReturnValues)
             {
                 if (!string.IsNullOrEmpty(ARV.Expected)&&!ARV.Expected.Contains("{"))
                 {
@@ -125,6 +128,7 @@ namespace Ginger.AnalyzerLib
                         {
                             if (matches[0].Value.Equals(ARV.Expected))
                             {
+                                FixedIssueCount++;
                                 ARV.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
                             }
                         }
@@ -134,6 +138,18 @@ namespace Ginger.AnalyzerLib
                 }
             }
 
+            if(FixedIssueCount==0)
+            {
+                ABF.Status = eStatus.CannotFix;
+            }
+            else if (FixedIssueCount< issueCount)
+            {
+                ABF.Status = eStatus.PartiallyFixed;
+            }
+            else
+            {
+                ABF.Status = eStatus.Fixed;
+            }
         }
 
         private static AnalyzeBusinessFlow GetOutputvalidationErros(BusinessFlow businessFlow)

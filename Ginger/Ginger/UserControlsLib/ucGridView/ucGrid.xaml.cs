@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -133,10 +133,10 @@ namespace Ginger
                             grdMain.SelectedIndex = 0;
                             grdMain.CurrentItem = value[0];
                             // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
-                            mObjList.CurrentItem = value[0];
+                            mObjList.CurrentItem = value[0];                          
                         }
                     });
-                    UpdateFloatingButtons();                   
+                    UpdateFloatingButtons();
                 }
                 catch (InvalidOperationException ioe)
                 {
@@ -1049,11 +1049,11 @@ namespace Ginger
                         grdMain.CurrentItem = mObjList.CurrentItem;
                         int index = grdMain.Items.IndexOf(mObjList.CurrentItem);
                         grdMain.SelectedIndex = index;
+                        UpdateFloatingButtons();
                     }
                 });
-
-                UpdateFloatingButtons();
-            }
+              
+            }           
         }
         public object CurrentItem
         {
@@ -1063,7 +1063,7 @@ namespace Ginger
                 this.Dispatcher.Invoke(() =>
                 {
                     o = grdMain.SelectedItem;
-                });
+            });
                 return o;
             }
         }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -78,9 +78,12 @@ namespace Ginger.UserControlsLib.VisualFlow
                 MainCanvas.Width = mCanvasWidth = value;
             }
         }
-        public Canvas GetCanvas()
+        public Canvas Canvas
         {
-            return MainCanvas;
+            get
+            {
+                return MainCanvas;
+            }
         }
         public Brush BackGround { get; set; }
         public double FlowDiagramHeight { get; set; }
@@ -510,6 +513,22 @@ namespace Ginger.UserControlsLib.VisualFlow
             this.MainCanvas.LayoutTransform = ST;
 
             ZoomPanel.ZoomPercentLabel.Content = (int)(e.NewValue * 100) + "%";
+        }
+
+        public void SetView(Brush backgroundBrush, bool showZoomPnl = true, bool showScroll=true)            
+        {
+            if (!showZoomPnl)
+            {
+                xZoomRow.Height = new GridLength(0);
+            }
+
+            if (!showScroll)
+            {
+                xScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+                xScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
+            }
+
+            xPageGrid.Background = backgroundBrush;
         }
     }
 }
