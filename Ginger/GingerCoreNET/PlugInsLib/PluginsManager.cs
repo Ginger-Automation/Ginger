@@ -47,6 +47,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public bool BackgroudDownloadInprogress { get;  set; }
 
         public PluginsManager(SolutionRepository solutionRepository)
         {
@@ -281,26 +282,35 @@ namespace Amdocs.Ginger.Repository
             GetPackages();
 
             Task.Run(() =>{
-                ObservableList<OnlinePluginPackage> OnlinePlugins = null;
-                foreach (PluginPackage SolutionPlugin in mPluginPackages)
+                WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = true;
+                try
                 {
-                    if (SolutionPlugin.Folder.Contains("AppData\\Roaming") && !System.IO.File.Exists(Path.Combine(SolutionPlugin.Folder, @"Ginger.PluginPackage.Services.json")))
+                    ObservableList<OnlinePluginPackage> OnlinePlugins = null;
+                    foreach (PluginPackage SolutionPlugin in mPluginPackages)
                     {
-                        if (OnlinePlugins == null)
+                        if (SolutionPlugin.Folder.Contains("AppData\\Roaming") && !System.IO.File.Exists(Path.Combine(SolutionPlugin.Folder, @"Ginger.PluginPackage.Services.json")))
                         {
-                            OnlinePlugins = WorkSpace.Instance.PlugInsManager.GetOnlinePluginsIndex();
+                            if (OnlinePlugins == null)
+                            {
+                                OnlinePlugins = WorkSpace.Instance.PlugInsManager.GetOnlinePluginsIndex();
+                            }
+
+                            OnlinePluginPackage OnlinePlugin = OnlinePlugins.Where(x => x.Id == SolutionPlugin.PluginId).FirstOrDefault();
+
+
+                            OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
+
+                            OnlinePlugin.InstallPluginPackage(OPR);
+                            //WorkSpace.Instance.PlugInsManager.InstallPluginPackage(OnlinePlugin, OPR);
                         }
 
-                        OnlinePluginPackage OnlinePlugin = OnlinePlugins.Where(x => x.Id == SolutionPlugin.PluginId).FirstOrDefault();
-                      
 
-                        OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
-
-                        OnlinePlugin.InstallPluginPackage(OPR);
-                        //WorkSpace.Instance.PlugInsManager.InstallPluginPackage(OnlinePlugin, OPR);
                     }
+                }
 
-
+                finally
+                {
+                    WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = false;
                 }
             });
 
