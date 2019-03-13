@@ -506,7 +506,6 @@ namespace Amdocs.Ginger.Repository
 
         public RepositoryItemBase DeserializeFromFile(string FileName)
         {
-
             if (FileName.Length > 0 && File.Exists(FileName))
             {
                 string xml = File.ReadAllText(FileName);

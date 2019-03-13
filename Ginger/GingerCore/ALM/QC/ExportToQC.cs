@@ -293,24 +293,13 @@ namespace GingerCore.ALM.QC
                 //set item fields
                 foreach (ExternalItemFieldBase field in testCaseFields)
                 {
-                    if (field.ToUpdate)
+                    if (field.ToUpdate || field.Mandatory)
                     {
                         if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
                             test[field.ID] = field.SelectedValue;
                         else
                             try { test[field.ID] = "NA"; }
                             catch { }
-                    }
-                    if(field.Mandatory)
-                    {
-                        string[] fieldNameTokens = field.ItemName.Split(':');
-                        if(fieldNameTokens.Count() > 1)
-                        {
-                            if(int.TryParse(fieldNameTokens[0],out int num))
-                            {
-                                field.ItemName = fieldNameTokens[1].Trim();
-                            }
-                        }
                     }
                 }
                 
@@ -443,7 +432,7 @@ namespace GingerCore.ALM.QC
                 //set item fields
                 foreach (ExternalItemFieldBase field in testSetFields)
                 {
-                    if (field.ToUpdate)
+                    if (field.ToUpdate || field.Mandatory)
                     {
                         if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
                             testSet[field.ID] = field.SelectedValue;
