@@ -164,11 +164,11 @@ namespace Ginger.Repository
 
                                 }
 
-                                selectedItem.Comment = "Missing variables added to activity.";
+                                selectedItem.Comment = "Missing " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " added to " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                             }
                             else
                             {
-                                selectedItem.Comment = "Uploaded without adding missing variables";
+                                selectedItem.Comment = "Uploaded without adding missing " + GingerDicser.GetTermResValue(eTermResKey.Variables);
                             }
                             break;
 

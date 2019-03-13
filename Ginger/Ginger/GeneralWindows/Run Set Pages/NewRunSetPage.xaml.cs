@@ -967,7 +967,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking Run Set Business Flow files change", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking Run Set " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " files change", ex);
             }
         }
 
@@ -1279,7 +1279,7 @@ namespace Ginger.Run
             //check runner is not empty
             if (mCurrentSelectedRunner.Runner.BusinessFlows.Count <= 0)
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one Business Flow to '"+mCurrentSelectedRunner.Name+"' to start run.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '"+mCurrentSelectedRunner.Name+"' to start run.");
                 return;
             }
             //run analyzer
