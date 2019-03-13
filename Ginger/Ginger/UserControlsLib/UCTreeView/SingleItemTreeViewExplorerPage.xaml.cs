@@ -70,11 +70,22 @@ namespace GingerWPF.UserControlsLib
                 if(tvItem is NewTreeViewItemBase)
                 {
                     ((NewTreeViewItemBase)tvItem).PrepareItemForEdit();
+                    PrepareParentItemsForEdit(TVI);
                 }                
             }
             else
             {
                 DetailsFrame.Content = "View/Edit page is not available yet for the tree item '" + tvItem.GetType().Name + "'";
+            }
+        }
+
+        private void PrepareParentItemsForEdit(TreeViewItem treeViewItem)
+        {
+            TreeViewItem parent = ItemsControl.ItemsControlFromItemContainer(treeViewItem) as TreeViewItem;
+            while (parent != null)
+            {
+                ((NewTreeViewItemBase)parent.Tag)?.PrepareItemForEdit();
+                parent = ItemsControl.ItemsControlFromItemContainer(parent) as TreeViewItem;
             }
         }
     }
