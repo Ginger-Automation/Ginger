@@ -96,8 +96,9 @@ namespace GingerCore.FlowControlLib
         LastActivityPassed,
         [EnumValueDescription("Last Activity Failed")]
         LastActivityFailed,
-        [EnumValueDescription("Expressions")]
+        [EnumValueDescription("Custom Condition")]
         CSharp,
+        [EnumValueDescription("Legacy Custom Condition")]
         Legacy
     }
 
@@ -191,6 +192,10 @@ namespace GingerCore.FlowControlLib
             set
             {
                 mOperator = value;
+                if(!(mOperator.Value==eFCOperator.Legacy||mOperator.Value==eFCOperator.CSharp))
+                {
+                    Condition = string.Empty;
+                }
             }
         }
 
