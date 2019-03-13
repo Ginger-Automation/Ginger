@@ -651,6 +651,12 @@ namespace Ginger.Run
 
         public override void ActionStart(uint eventTime, Act action)
         {
+            SetActionFolder(action);
+            ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Action", action.Description, null);
+        }
+
+        public void SetActionFolder(Act action)
+        {
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
                 string ActionFolder = string.Empty;
@@ -681,8 +687,6 @@ namespace Ginger.Run
                 System.IO.Directory.CreateDirectory(ExecutionLogfolder + ActionFolder);
 
             }
-
-            ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Action", action.Description, null);
         }
 
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode=false)

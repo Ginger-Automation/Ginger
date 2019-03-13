@@ -302,7 +302,6 @@ namespace GingerWPF.TreeViewItemsLib
                 {
                     //delete root and refresh tree                    
                     WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)((ITreeViewItem)this).NodeObject());
-                    mTreeView.Tree.RefreshSelectedTreeNodeParent();
                 }
             }
             finally
@@ -445,8 +444,7 @@ namespace GingerWPF.TreeViewItemsLib
             if (Reporter.ToUser(eUserMsgKey.SureWantToDoRevert) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 Reporter.ToStatus(eStatusMsgKey.RevertChangesFromSourceControl);
-                SourceControlIntegration.Revert( WorkSpace.UserProfile.Solution.SourceControl, this.NodePath());                
-                mTreeView.Tree.RefreshSelectedTreeNodeParent();
+                SourceControlIntegration.Revert( WorkSpace.UserProfile.Solution.SourceControl, this.NodePath()); 
                 Reporter.HideStatusMessage();
             }
         }
@@ -460,8 +458,6 @@ namespace GingerWPF.TreeViewItemsLib
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
                 SourceControlIntegration.GetLatest(this.NodePath(),  WorkSpace.UserProfile.Solution.SourceControl);
-            
-            mTreeView.Tree.RefreshSelectedTreeNodeParent();
             Reporter.HideStatusMessage();
         }
 
