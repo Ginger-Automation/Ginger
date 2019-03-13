@@ -96,8 +96,9 @@ namespace GingerCore.FlowControlLib
         LastActivityPassed,
         [EnumValueDescription("Last Activity Failed")]
         LastActivityFailed,
-        [EnumValueDescription("Expressions")]
+        [EnumValueDescription("Custom Condition")]
         CSharp,
+        [EnumValueDescription("Legacy Custom Condition")]
         Legacy
     }
 
