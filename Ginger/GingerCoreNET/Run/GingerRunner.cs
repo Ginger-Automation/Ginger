@@ -2165,7 +2165,10 @@ namespace Ginger.Run
                 if (AP.ParamType == typeof(string))
                 {
                     p.AddValue(AP.ValueForDriver.ToString());
-
+                }
+                if (AP.ParamType == typeof(int))
+                {
+                    p.AddValue(AP.IntValue);
                 }
                 else if (AP.ParamType == typeof(bool))
                 {
@@ -2181,7 +2184,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    throw new Exception("Unknown param typee to pack: " + AP.ParamType.FullName);
+                    throw new Exception("Unknown param type to pack: " + AP.ParamType.FullName);
                 }
                 p.ClosePackage();
                 Params.Add(p);
