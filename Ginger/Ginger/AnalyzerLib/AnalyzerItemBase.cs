@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,7 +31,9 @@ namespace Ginger.AnalyzerLib
             Fixed = 3,
             CannotFix = 4,
             MissingFixHandler =5,
-            FixedSaved =6
+            FixedSaved =6,
+            PartiallyFixed = 7,
+
         }
 
         public enum eSeverity

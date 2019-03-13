@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,9 +18,12 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -64,19 +67,21 @@ namespace Ginger.PlugInsWindows
 
         private void SetGridView()
         {
-            xPluginsGrid.btnRefresh.Click += BtnRefresh_Click;        
+                 
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
                                     
-            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Id), WidthWeight = 30 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Description), WidthWeight = 30 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.URL), WidthWeight = 30 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Status), WidthWeight = 30 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Id), Header="Plugin ID", WidthWeight = 30, ReadOnly=true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Description), WidthWeight = 30, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.URL), WidthWeight = 30, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Status), WidthWeight = 30, ReadOnly = true });
 
             xPluginsGrid.SetAllColumnsDefaultView(view);
             xPluginsGrid.InitViewItems();
 
+            xPluginsGrid.AddToolbarTool(eImageType.OpenFolder, "View Downloaded Plugins Packages", new RoutedEventHandler(OpenDownloadedPluginsFolder));
+            xPluginsGrid.btnRefresh.Click += BtnRefresh_Click;
             xPluginsGrid.SelectedItemChanged += XPluginsGrid_SelectedItemChanged;
         }
 
@@ -123,20 +128,34 @@ namespace Ginger.PlugInsWindows
 
         private void xInstallButonn_Click(object sender, RoutedEventArgs e)
         {
+            xInstallButonn.ButtonText = "Downloading & Installing...";
             xProcessingImage.Visibility = Visibility.Visible;
             OnlinePluginPackageRelease release = (OnlinePluginPackageRelease)xVersionComboBox.SelectedItem;
             Task.Factory.StartNew(() =>
-            {                                
+            {
                 OnlinePluginPackage onlinePluginPackage = (OnlinePluginPackage)xPluginsGrid.CurrentItem;
                 WorkSpace.Instance.PlugInsManager.InstallPluginPackage(onlinePluginPackage, release);
                 onlinePluginPackage.Status = "Installed";
             }).ContinueWith((a) =>
-            {                
+            {
                 Dispatcher.Invoke(() =>
                 {
                     xProcessingImage.Visibility = Visibility.Collapsed;
+                    xInstallButonn.ButtonText = "Install";
                 });
             });
+        }
+
+        private void OpenDownloadedPluginsFolder(object sender, RoutedEventArgs e)
+        {
+            if (Directory.Exists(PluginPackage.LocalPluginsFolder))
+            {
+                Process.Start(PluginPackage.LocalPluginsFolder);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Failed to find the folder '{0}'", PluginPackage.LocalPluginsFolder));
+            }
         }
     }
 }

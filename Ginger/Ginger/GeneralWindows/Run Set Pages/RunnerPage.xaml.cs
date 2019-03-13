@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -181,6 +181,7 @@ namespace Ginger.Run
         {
             RunnerItemPage ri = new RunnerItemPage(bf, ViewMode1);           
             ri.ItemName = bf.Name;
+            ri.ItemTitleTooltip = System.IO.Path.Combine(bf.ContainingFolder, bf.Name);
             if (string.IsNullOrEmpty(bf.Description))
             {
                 ri.xItemSeparator.Visibility = Visibility.Collapsed;              
