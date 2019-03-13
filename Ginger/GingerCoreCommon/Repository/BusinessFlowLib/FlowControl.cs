@@ -192,6 +192,10 @@ namespace GingerCore.FlowControlLib
             set
             {
                 mOperator = value;
+                if(!(mOperator.Value==eFCOperator.Legacy||mOperator.Value==eFCOperator.CSharp))
+                {
+                    Condition = string.Empty;
+                }
             }
         }
 
