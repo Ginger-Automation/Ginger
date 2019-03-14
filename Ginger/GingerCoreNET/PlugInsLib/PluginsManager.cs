@@ -231,11 +231,12 @@ namespace Amdocs.Ginger.Repository
 
         public void CloseAllRunningPluginProcesses()
         {
+            WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();//??? do proper Reset()
             foreach (PluginProcessWrapper process in mProcesses)
             {
                 process.Close();                
             }
-            mProcesses.Clear();
+            mProcesses.Clear();            
         }
 
         public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
