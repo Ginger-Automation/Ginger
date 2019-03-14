@@ -34,12 +34,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// </summary>
     public partial class MainAddActionsNavigationPage : Page
     {
-        BusinessFlow mBusinessFlow;
         IWindowExplorer WindowExplorerDriver;
-
-        public MainAddActionsNavigationPage(BusinessFlow businessFlow)
+        Context mContext;
+        public MainAddActionsNavigationPage(Context context)
         {
-            mBusinessFlow = businessFlow;
+            mContext = context;
             InitializeComponent();
             navigationBar.Visibility = Visibility.Collapsed;
             navPnlActionFrame.ContentRendered += NavPnlActionFrame_ContentRendered;
@@ -64,7 +63,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XNavSharedRepo_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(new RepositoryPage(mBusinessFlow));
+            LoadActionFrame(new RepositoryPage(mContext.BusinessFlow));
             //LoadActionFrame(new SharedRepositoryNavPage()); // WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>()));
         }
 
@@ -76,22 +75,22 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XRecord_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(new RecordNavPage());
+            LoadActionFrame(new RecordNavPage(mContext));
         }
 
         private void XNavActLib_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(new ActionsLibraryNavPage(mBusinessFlow.CurrentActivity.Acts));
+            LoadActionFrame(new ActionsLibraryNavPage(mContext));
         }
 
         private void XNavSpy_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(new LiveSpyNavPage());
+            LoadActionFrame(new LiveSpyNavPage(mContext));
         }
 
         private void XNavWinExp_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(new WindowsExplorerNavPage());
+            LoadActionFrame(new WindowsExplorerNavPage(mContext));
         }
 
         private void UcButton_Click(object sender, RoutedEventArgs e)

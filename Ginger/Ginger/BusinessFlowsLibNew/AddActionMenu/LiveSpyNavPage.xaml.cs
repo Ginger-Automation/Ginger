@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
@@ -23,10 +24,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     {
         bool isSpying = false;
         private IWindowExplorer mWindowExplorerDriver;
+        Context mContext;
 
-        public LiveSpyNavPage()
+        public LiveSpyNavPage(Context context)
         {
             InitializeComponent();
+            mContext = context;
+            xWinGridUC.mContext = mContext;
         }
         private void SpyingButton_Click(object sender, RoutedEventArgs e)
         {

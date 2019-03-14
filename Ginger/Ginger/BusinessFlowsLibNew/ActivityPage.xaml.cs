@@ -38,16 +38,17 @@ namespace GingerWPF.BusinessFlowsLib
     {
         Activity mActivity;
         GingerRunner mGingerRunner;
-
+        public Context mContext;
         // We keep a static page so even if we move between activities the Run controls and info stay the same
-        public ActivityPage(Activity Activity)
+        public ActivityPage(Context context)
         {
             InitializeComponent();
-
-            mActivity = Activity;
+            mContext = context;
+            mActivity = mContext.Activity;
 
             ActivityNameLabel.Content = mActivity.ActivityName; // TODO: use binding !!!!!!!!!!!!!!!!!!!!!!!
 
+            App.AutomateTabGingerRunner.CurrentBusinessFlow = context.BusinessFlow;
             mGingerRunner = App.AutomateTabGingerRunner;
             //WorkSpace.Instance.GingerRunner.CurrentBusinessFlow.Activities.PropertyChanged += CurrentBusinessFlow_PropertyChanged;
             mGingerRunner.CurrentBusinessFlow.Activities.PropertyChanged += CurrentBusinessFlow_PropertyChanged;

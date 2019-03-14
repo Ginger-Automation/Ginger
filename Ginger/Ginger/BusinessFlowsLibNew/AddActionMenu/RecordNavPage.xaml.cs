@@ -43,9 +43,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         bool isRecording = false;
         IWindowExplorer mWindowExplorerDriver;
         private Activity mActParentActivity = null;
-        public RecordNavPage()
+        Context mContext;
+        public RecordNavPage(Context context)
         {
             InitializeComponent();
+            mContext = context;
+            xWinGridUC.mContext = mContext;
         }
 
         private void RecordingButton_Click(object sender, RoutedEventArgs e)

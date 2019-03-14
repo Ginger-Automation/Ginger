@@ -49,15 +49,17 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         GenericWindow _pageGenericWin = null;
         ObservableList<IAct> mActionsList;
         // bool IsPlugInAvailable = false;
+        Context mContext;
 
-        public ActionsLibraryNavPage(ObservableList<IAct> ActionsList)
+        public ActionsLibraryNavPage(Context context)
         {
             InitializeComponent();
             SetActionsGridsView();
+            mContext = context;
             LoadGridData();
             LoadPluginsActions();
 
-            mActionsList = ActionsList;
+            mActionsList = mContext.BusinessFlow.CurrentActivity.Acts;
 
             Button addActionBtn = new Button();
             addActionBtn.Content = "Add Action";
@@ -113,7 +115,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 foreach (Act cA in OrderedActions)
                 {
                     if (cA.LegacyActionPlatformsList.Intersect(WorkSpace.UserProfile.Solution.ApplicationPlatforms
-                                                                    .Where(x => App.BusinessFlow.CurrentActivity.TargetApplication == x.AppName)
+                                                                    .Where(x => mContext.BusinessFlow.CurrentActivity.TargetApplication == x.AppName)
                                                                     .Select(x => x.Platform).ToList()).Any())
                     {
                         LegacyActions.Add(cA);
@@ -162,13 +164,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (a.IsSelectableAction == false)
                     continue;
 
-                TargetApplication TA = (TargetApplication)(from x in App.BusinessFlow.TargetApplications where x.Name == App.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
+                TargetApplication TA = (TargetApplication)(from x in mContext.BusinessFlow.TargetApplications where x.Name == mContext.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
                 if (TA == null)
                 {
-                    if (App.BusinessFlow.TargetApplications.Count == 1)
+                    if (mContext.BusinessFlow.TargetApplications.Count == 1)
                     {
-                        TA = (TargetApplication)App.BusinessFlow.TargetApplications.FirstOrDefault();
-                        App.BusinessFlow.CurrentActivity.TargetApplication = TA.AppName;
+                        TA = (TargetApplication)mContext.BusinessFlow.TargetApplications.FirstOrDefault();
+                        mContext.BusinessFlow.CurrentActivity.TargetApplication = TA.AppName;
                     }
                     else
                     {
@@ -291,13 +293,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
                         //Check if target already exist else add it
                         // TODO: search only in targetplugin type
-                        TargetPlugin targetPlugin = (TargetPlugin)(from x in App.BusinessFlow.TargetApplications where x.Name == p.ServiceId select x).SingleOrDefault();
+                        TargetPlugin targetPlugin = (TargetPlugin)(from x in mContext.BusinessFlow.TargetApplications where x.Name == p.ServiceId select x).SingleOrDefault();
                         if (targetPlugin == null)
                         {
                             // check if interface add it
                             // App.BusinessFlow.TargetApplications.Add(new TargetPlugin() { AppName = p.ServiceId });
 
-                            App.BusinessFlow.TargetApplications.Add(new TargetPlugin() { PluginId = p.PluginId, ServiceId = p.ServiceId });
+                            mContext.BusinessFlow.TargetApplications.Add(new TargetPlugin() { PluginId = p.PluginId, ServiceId = p.ServiceId });
 
                             //Search for default agent which match 
                             App.AutomateTabGingerRunner.UpdateApplicationAgents();

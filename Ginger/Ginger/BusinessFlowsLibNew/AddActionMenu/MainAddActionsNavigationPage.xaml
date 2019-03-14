@@ -9,21 +9,22 @@
       Title="MainAddActionsNavigationPage" Background="White">
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Name="navigationBar" Background="DeepSkyBlue" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" >
-            <UserControls:ucButton ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="GoBack" Click="UcButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Margin="0,0,0,0" />
-            <Label Name="navBarTitle" Content="Title" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="ExtraBold" Foreground="White" FontSize="15" Grid.Row="0" Grid.Column="1"/>
+        <Grid Name="navigationBar" Background="DeepSkyBlue" Grid.Row="0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <UserControls:ucButton ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="GoBack" Click="UcButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Margin="0,0,0,0" />
+            <Label Name="navBarTitle" Content="Title" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="ExtraBold" Foreground="White" FontSize="15" Grid.Column="1"/>
         </Grid>
 
-        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+        <Grid Grid.Row="1">
             <WrapPanel>
                 <StackPanel Name="navHomeStackPnl">
                     <UserControls:ucButton ButtonText="Shared Repository"  ButtonType="PanelButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="SharedRepositoryItem" Click="XNavSharedRepo_Click"   HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10" />

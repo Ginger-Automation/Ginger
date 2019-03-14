@@ -64,17 +64,19 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             TreeViewItem TVI = (TreeViewItem)sender;
             object tvItem = TVI.Tag;
-
+            ITreeViewItem mPOMObj = tvItem as ITreeViewItem;
+            SolutionWindows.TreeViewItems.ApplicationModelsTreeItems.ApplicationPOMTreeItem treeItem = tvItem as SolutionWindows.TreeViewItems.ApplicationModelsTreeItems.ApplicationPOMTreeItem;
+            ApplicationPOMModel mPOM = mPOMObj.NodeObject() as ApplicationPOMModel;
             if (tvItem is ITreeViewItem)
             {
-                if(TVI is ApplicationPOMModel)
+                if(mPOM is ApplicationPOMModel)
                 {
-
+                    mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped);
+                    xPOMLDetailsFrame.Content = mappedUIElementsPage;
                 }
-                mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped);
                 //ApplicationPOMModel appPOM = tvItem as ApplicationPOMModel
                 //mPomAllElementsPage = new PomAllElementsPage(appPOM, this);
-                xPOMLDetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
+                //xPOMLDetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
             }
             else
             {

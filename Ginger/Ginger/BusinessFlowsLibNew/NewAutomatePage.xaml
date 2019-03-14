@@ -156,7 +156,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"/>
                     <ColumnDefinition Width="15"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Button Content="+" Name="SHAddActionPanel" Grid.Column="0" VerticalAlignment="Center" Click="SHAddActionPanel_Click" Width="50" Height="50" Style="{StaticResource @InputButtonStyleRoundCorner}" FontSize="25" />
                 <GridSplitter Grid.Column="1" Width="15" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="DeepSkyBlue" IsEnabled="True"/>

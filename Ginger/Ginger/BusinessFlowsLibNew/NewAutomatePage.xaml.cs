@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Ginger;
 using Ginger.BusinessFlowLib;
 using Ginger.BusinessFlowsLibNew.AddActionMenu;
@@ -56,12 +57,11 @@ namespace GingerWPF.BusinessFlowsLib
 
         BusinessFlow mBusinessFlow;
         GingerRunner mGingerRunner;
+        Context mContext;
         public NewAutomatePage(BusinessFlow businessFlow)
         {
             InitializeComponent();
-
-        
-
+            mContext = new Context() { BusinessFlow = businessFlow, Activity = businessFlow.Activities[0] };
             mGingerRunner = App.AutomateTabGingerRunner;
 
             mBusinessFlow = businessFlow;
@@ -91,7 +91,8 @@ namespace GingerWPF.BusinessFlowsLib
 
             App.PropertyChanged += App_PropertyChanged;
 
-            CurrentActivityFrame.Content = new ActivityPage((Activity)mBusinessFlow.Activities[0]);  // TODO: use binding? or keep each activity page
+            //CurrentActivityFrame.Content = new ActivityPage((Activity)mBusinessFlow.Activities[0]);  // TODO: use binding? or keep each activity page
+            CurrentActivityFrame.Content = new ActivityPage(mContext);  // TODO: use binding? or keep each activity page
 
             InitGingerRunnerControls();
         }
@@ -179,7 +180,9 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 SelectedActivity.Acts.CurrentItem = SelectedActivity.Acts[0];
             }
-            CurrentActivityFrame.Content = new ActivityPage(SelectedActivity);
+            mContext.Activity = SelectedActivity;
+            //CurrentActivityFrame.Content = new ActivityPage(SelectedActivity);
+            CurrentActivityFrame.Content = new ActivityPage(mContext);
         }
 
         private void BusinessFlowsHyperlink_Click(object sender, RoutedEventArgs e)
@@ -196,7 +199,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void SHAddActionPanel_Click(object sender, RoutedEventArgs e)
         {
             if (AddActionMenuFrame.Content == null)
-                AddActionMenuFrame.Content = new MainAddActionsNavigationPage(mBusinessFlow);
+                AddActionMenuFrame.Content = new MainAddActionsNavigationPage(mContext);
 
             if (AddActionMenuFrame.Visibility == Visibility.Collapsed)
             {

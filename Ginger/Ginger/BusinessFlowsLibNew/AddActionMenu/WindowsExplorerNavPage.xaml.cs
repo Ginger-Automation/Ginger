@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Amdocs.Ginger.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// </summary>
     public partial class WindowsExplorerNavPage : Page
     {
-        public WindowsExplorerNavPage()
+        Context mContext;
+        public WindowsExplorerNavPage(Context context)
         {
             InitializeComponent();
+            mContext = context;
+            xWinGridUC.mContext = mContext;
         }
 
         private void ControlsViewsExpander_Collapsed(object sender, RoutedEventArgs e)

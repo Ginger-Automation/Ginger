@@ -47,28 +47,15 @@ namespace Ginger.UserControlsLib
         ITreeViewItem mRootItem;
         TreeView2 WindowControlsTreeView;
         ObservableList<DataSourceBase> mDSList = new ObservableList<DataSourceBase>();
+        public static readonly DependencyProperty ContextProperty = DependencyProperty.Register("mContext", typeof(Context), typeof(UCWindowsGrid));
+        public Context mContext
+        {
+            get { return GetValue(ContextProperty) as Context; }
+            set { SetValue(ContextProperty, value); UpdateWindowsList(); }
+        }
         public UCWindowsGrid()
         {
             InitializeComponent();
-            Activity mActParentActivity = (Activity)App.BusinessFlow.CurrentActivity;
-            ApplicationAgent appAgent = (ApplicationAgent)App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
-
-            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            if (appAgent != null)
-            {
-                if (((Agent)appAgent.Agent).Driver == null)
-                {
-                    ((Agent)appAgent.Agent).DSList = mDSList;
-                    ((Agent)appAgent.Agent).StartDriver();
-                }
-                DriverBase driver = ((Agent)appAgent.Agent).Driver;
-                if (driver is IWindowExplorer)
-                {
-                    mWindowExplorerDriver = (IWindowExplorer)((Agent)appAgent.Agent).Driver;
-                }
-            }
-
-            UpdateWindowsList();
         }
 
         private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -191,6 +178,28 @@ namespace Ginger.UserControlsLib
 
         private void UpdateWindowsList()
         {
+            if (mContext == null)
+                return;
+
+            Activity mActParentActivity = mContext.BusinessFlow.CurrentActivity;
+            ApplicationAgent appAgent = (ApplicationAgent)App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
+            //appAgent = mContext.BusinessFlow.Applications
+
+            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            if (appAgent != null)
+            {
+                if (((Agent)appAgent.Agent).Driver == null)
+                {
+                    ((Agent)appAgent.Agent).DSList = mDSList;
+                    ((Agent)appAgent.Agent).StartDriver();
+                }
+                DriverBase driver = ((Agent)appAgent.Agent).Driver;
+                if (driver is IWindowExplorer)
+                {
+                    mWindowExplorerDriver = (IWindowExplorer)((Agent)appAgent.Agent).Driver;
+                }
+            }
+
             try
             {
                 List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();
