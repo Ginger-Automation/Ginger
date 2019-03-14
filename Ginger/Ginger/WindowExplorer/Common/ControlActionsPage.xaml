@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.WindowExplorer.ControlActionsPage" 
       mc:Ignorable="d" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       d:DesignHeight="300" d:DesignWidth="500"
 	Title="ControlActionsPage">
 
@@ -54,7 +55,10 @@
             <Button x:Name="TestButton" Click="TestButton_Click" ToolTip="Test Selected Action" Width="24" Height="24" Style="{StaticResource @InputImageButtonStyle_NoBorder}">
                 <Image Source="{StaticResource @Run_24x24.png}"/>
             </Button>
-            <Button x:Name="AddActionButton" Click="AddActionButton_Click" ToolTip="Add Selected Action to Business Flow" Width="24" Height="24" Style="{StaticResource @InputImageButtonStyle_NoBorder}">
+            <Button x:Name="AddActionButton" Click="AddActionButton_Click" Width="24" Height="24" Style="{StaticResource @InputImageButtonStyle_NoBorder}">
+                <Button.ToolTip>
+                    <GingerCore:ucTextDicResource Text="Add Selected Action to [BusinessFlow]"/>
+                </Button.ToolTip>
                 <Image Source="{StaticResource @AddToList_24x24}"/>
             </Button>
             <Button x:Name="SelectLocatorButton" Click="SelectLocatorButton_Click"  ToolTip="Update Selected Action Locator" Width="24" Height="24" Style="{StaticResource @InputImageButtonStyle_NoBorder}">
