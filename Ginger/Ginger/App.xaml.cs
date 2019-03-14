@@ -328,7 +328,8 @@ namespace Ginger
 
             if (WorkSpace.Instance.BetaFeatures.ShowDebugConsole)
             {
-                DebugConsoleWindow.Show();
+                DebugConsoleWindow debugConsole = new DebugConsoleWindow();
+                debugConsole.ShowAsWindow();
                 WorkSpace.Instance.BetaFeatures.DisplayStatus();
             }
 

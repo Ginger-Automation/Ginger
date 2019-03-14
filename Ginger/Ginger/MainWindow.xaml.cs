@@ -702,7 +702,8 @@ namespace Ginger
 
         private void btnLaunchConsole_Click(object sender, RoutedEventArgs e)
         {
-            DebugConsoleWindow.Show();
+            DebugConsoleWindow debugConsole = new DebugConsoleWindow();
+            debugConsole.ShowAsWindow();
         }
 
         private void xBetaFeaturesIcon_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
@@ -90,6 +91,8 @@ namespace Ginger.GingerCoreNETTestLib
             Actions.Add(new MyAction() { Name = "Open BF With Old Actions", Action = () => OpenBFWithOldActions() });
             Actions.Add(new MyAction() { Name = "Run Action", Action = () => RunAction() });
             Actions.Add(new MyAction() { Name = "Repository Item Base Report", Action = () => RepositoryItemBaseReport() });
+            Actions.Add(new MyAction() { Name = "Test crash on non UI thread", Action = () => TestCrash() });
+            Actions.Add(new MyAction() { Name = "LongPath Test", Action = () => LongPathTest() });
             ActionsListBox.ItemsSource = Actions;
             MainDataGrid.MouseDoubleClick += MainDataGrid_MouseDoubleClick;
         }
@@ -377,6 +380,21 @@ namespace Ginger.GingerCoreNETTestLib
                 throw ex;
             }
         }
+        private void TestCrash()
+        {
+            ThreadStart newThreadStart = new ThreadStart(newThread_Execute);
+            Thread newThread = new Thread(newThreadStart);
+            newThread.Start();
+        }
+        void newThread_Execute()
+        {
+            throw new Exception("Thread crash");
+        }
+        private void LongPathTest()
+        {
+            io.testPath();
+        }
+
 
         bool RunCrazy = false;
         private void CrazyRandomRun_Click(object sender, RoutedEventArgs e)
