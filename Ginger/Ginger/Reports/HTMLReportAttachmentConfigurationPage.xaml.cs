@@ -52,7 +52,7 @@ namespace Ginger.Reports
         private void Init()
         {
             GingerCore.General.ObjFieldBinding(DefaultTemplatePickerCbx, ComboBox.SelectedValueProperty, mEmailAttachment, EmailHtmlReportAttachment.Fields.SelectedHTMLReportTemplateID);
-            HTMLReportFolderTextBox.Init(mEmailAttachment, EmailAttachment.Fields.ExtraInformation, true, true, UCValueExpression.eBrowserType.Folder,"*.*", null); 
+            HTMLReportFolderTextBox.Init(null, mEmailAttachment, EmailAttachment.Fields.ExtraInformation, true, true, UCValueExpression.eBrowserType.Folder,"*.*", null); 
             
             GingerCore.General.ObjFieldBinding(UseAlternativeHTMLReportFolderCbx, CheckBox.IsCheckedProperty, mEmailAttachment, EmailHtmlReportAttachment.Fields.IsAlternameFolderUsed);
             RadioButtonInit(mEmailAttachment.IsLinkEnabled);

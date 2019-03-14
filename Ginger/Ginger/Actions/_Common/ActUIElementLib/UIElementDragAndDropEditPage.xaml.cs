@@ -18,6 +18,7 @@ limitations under the License.
 
 using System.Windows;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.Common;
 using GingerCore.Platforms.PlatformsInfo;
@@ -38,9 +39,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
             DragDropType.Init(mAction.GetOrCreateInputParam(ActUIElement.Fields.DragDropType), mPlatform.GetPlatformDragDropTypeList(), false, new SelectionChangedEventHandler(DragDropType_SelectionChanged));
             TargetElement.BindControl(mAction, ActUIElement.Fields.TargetLocateBy, mPlatform.GetPlatformUIElementsType());
             TargetLocateByComboBox.BindControl(mAction, ActUIElement.Fields.TargetLocateBy, mPlatform.GetPlatformUIElementLocatorsList());
-            TargetLocatorValue.Init(mAction.GetOrCreateInputParam(ActUIElement.Fields.TargetLocateValue), true, false, UCValueExpression.eBrowserType.Folder);
-            SourceDragXY.Init(mAction.GetOrCreateInputParam(ActUIElement.Fields.SourceDragXY), true, false);
-            TargetDropXY.Init(mAction.GetOrCreateInputParam(ActUIElement.Fields.TargetDropXY), true, false);
+            TargetLocatorValue.Init(Context.GetAsContext(mAction.Context), mAction.GetOrCreateInputParam(ActUIElement.Fields.TargetLocateValue), true, false, UCValueExpression.eBrowserType.Folder);
+            SourceDragXY.Init(Context.GetAsContext(mAction.Context), mAction.GetOrCreateInputParam(ActUIElement.Fields.SourceDragXY), true, false);
+            TargetDropXY.Init(Context.GetAsContext(mAction.Context), mAction.GetOrCreateInputParam(ActUIElement.Fields.TargetDropXY), true, false);
             ElementSpecificControl();
             InitTargetLocateValue();
         }
@@ -83,8 +84,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void InitTargetLocateValue()
         {
-            txtLocateValueX.Init(mAction.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate), true, false, UCValueExpression.eBrowserType.Folder);
-            txtLocateValueY.Init(mAction.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate), true, false, UCValueExpression.eBrowserType.Folder);
+            txtLocateValueX.Init(Context.GetAsContext(mAction.Context), mAction.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate), true, false, UCValueExpression.eBrowserType.Folder);
+            txtLocateValueY.Init(Context.GetAsContext(mAction.Context), mAction.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate), true, false, UCValueExpression.eBrowserType.Folder);
         }
     }
 }

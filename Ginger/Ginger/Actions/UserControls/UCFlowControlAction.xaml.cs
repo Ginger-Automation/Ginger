@@ -116,7 +116,7 @@ namespace Ginger.Actions.UserControls
             }                               
 
             App.ObjFieldBinding(ActionValueTextBox, TextBox.TextProperty, FC, FlowControl.Fields.Value);
-            ActionValueTextBox.Init(FC, FlowControl.Fields.Value);
+            ActionValueTextBox.Init(new Context() { BusinessFlow = mActParentBusinessFlow }, FC, FlowControl.Fields.Value);
             ActionValueTextBox.ValueTextBox.Text = FC.Value;
 
             SetActionValueComboData();
@@ -209,7 +209,7 @@ namespace Ginger.Actions.UserControls
                             foreach (Act a in mActParentActivity.Acts)
                             {
                                 //avoid current Action
-                                if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && App.BusinessFlow.CurrentActivity.Acts.CurrentItem == a)//TODO: do better condition 
+                                if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && mActParentBusinessFlow.CurrentActivity.Acts.CurrentItem == a)//TODO: do better condition 
                                 {
                                     continue;
                                 }
@@ -246,7 +246,7 @@ namespace Ginger.Actions.UserControls
                         {
                             foreach (Activity a in mActParentBusinessFlow.Activities)
                             {
-                                if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && App.BusinessFlow.CurrentActivity == a)//TODO: do better condition 
+                                if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && mActParentBusinessFlow.CurrentActivity == a)//TODO: do better condition 
                                 {
                                     continue;
                                 }

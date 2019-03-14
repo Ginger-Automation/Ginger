@@ -100,7 +100,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActionsRepositoryPage == null)
             {
-                mActionsRepositoryPage = new ActionsRepositoryPage(mActionsFolder);
+                mActionsRepositoryPage = new ActionsRepositoryPage(mActionsFolder, null);
             }
             return mActionsRepositoryPage;
         }

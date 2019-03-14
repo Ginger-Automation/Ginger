@@ -41,21 +41,20 @@ namespace Ginger.Agents
     /// Interaction logic for ApplicationAgentsMapPage.xaml
     /// </summary>
     public partial class ApplicationAgentsMapPage : Page
-    {
-        private GingerRunner mGR;
+    {        
         public ObservableList<ApplicationAgent> ApplicationAgents;
-
-        public ApplicationAgentsMapPage(GingerRunner GR)
+        Context mContext;
+        public ApplicationAgentsMapPage(Context context)
         {
             InitializeComponent();
-            mGR=GR;
-            mGR.PropertyChanged += MGR_PropertyChanged; 
+            mContext = context;
+            mContext.Runner.PropertyChanged += MGR_PropertyChanged; 
             RefreshApplicationAgentsList();
         }
 
         private void MGR_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(mGR.ApplicationAgents))
+            if (e.PropertyName == nameof(mContext.Runner.ApplicationAgents))
             {
                 RefreshApplicationAgentsList();
             }
@@ -65,9 +64,9 @@ namespace Ginger.Agents
         {
             ApplicationAgents = new ObservableList<ApplicationAgent>();
 
-            foreach (ApplicationAgent Apag in mGR.ApplicationAgents)
+            foreach (ApplicationAgent Apag in mContext.Runner.ApplicationAgents)
             {
-                if (mGR.SolutionApplications.Where(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() == null)
+                if (mContext.Runner.SolutionApplications.Where(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() == null)
                 {
                     ApplicationAgents.Add(Apag);
                 }
@@ -106,7 +105,7 @@ namespace Ginger.Agents
         {
             ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
 
-            ApplicationAgentSelectionPage w = new ApplicationAgentSelectionPage(mGR, AG);
+            ApplicationAgentSelectionPage w = new ApplicationAgentSelectionPage(mContext.Runner, AG);
             w.ShowAsWindow();
         }
 
@@ -134,7 +133,7 @@ namespace Ginger.Agents
                 //Once all the driver implementing IwindowExplorer are ready, simply checking is IWindowExplorer will server the purpose and flag IsWindowExplorerSupportReady can be removed
                 if (((Agent)AG.Agent).IsWindowExplorerSupportReady)
                 {
-                    WindowExplorerPage WEP = new WindowExplorerPage(AG);
+                    WindowExplorerPage WEP = new WindowExplorerPage(AG, mContext);
                     WEP.ShowAsWindow();
                 }               
                 else
@@ -151,14 +150,14 @@ namespace Ginger.Agents
             if (((Agent)AG.Agent).Status == Agent.eStatus.Running) ((Agent)AG.Agent).Close();
 
             ((Agent)AG.Agent).ProjEnvironment = App.AutomateTabEnvironment;
-            ((Agent)AG.Agent).BusinessFlow = App.BusinessFlow; ;
+            ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow; 
             ((Agent)AG.Agent).SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
             ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             ((Agent)AG.Agent).StartDriver();               
             //For ASCF, launch explorer automatically when launching Agent
             if (((Agent)AG.Agent).IsShowWindowExplorerOnStart && ((Agent)AG.Agent).Status == Agent.eStatus.Running)
             {
-                WindowExplorerPage WEP = new WindowExplorerPage(AG);
+                WindowExplorerPage WEP = new WindowExplorerPage(AG, mContext);
                 WEP.ShowAsWindow();
             }
 
@@ -170,7 +169,7 @@ namespace Ginger.Agents
         {
             ApplicationAgent AG = (ApplicationAgent)AppAgentsListBox.SelectedItem;
             if (AG == null) return;
-            ApplicationAgentSelectionPage w = new ApplicationAgentSelectionPage(mGR, AG);
+            ApplicationAgentSelectionPage w = new ApplicationAgentSelectionPage(mContext.Runner, AG);
             w.ShowAsWindow();
         }
 

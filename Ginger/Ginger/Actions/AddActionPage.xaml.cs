@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Repository;
@@ -45,13 +46,19 @@ namespace Ginger.Actions
     /// </summary>
     public partial class AddActionPage : Page
     {
+        BusinessFlow mBusinessFlow;
         GenericWindow _pageGenericWin = null;
         ObservableList<IAct> mActionsList;
         // bool IsPlugInAvailable = false;
-
-        public AddActionPage()
+        Context mContext;
+        
+        public AddActionPage(Context context)
         {
             InitializeComponent();
+
+            mContext = context;
+            mBusinessFlow = context.BusinessFlow;
+
             SetActionsGridsView();
             LoadGridData();
             LoadPluginsActions();
@@ -112,7 +119,7 @@ namespace Ginger.Actions
                 foreach (Act cA in OrderedActions)
                 {
                     if (cA.LegacyActionPlatformsList.Intersect( WorkSpace.UserProfile.Solution.ApplicationPlatforms
-                                                                    .Where(x => App.BusinessFlow.CurrentActivity.TargetApplication == x.AppName)
+                                                                    .Where(x => mContext.Activity.TargetApplication == x.AppName)
                                                                     .Select(x => x.Platform).ToList()).Any())
                     {
                         LegacyActions.Add(cA);
@@ -141,51 +148,55 @@ namespace Ginger.Actions
             AppDomain.CurrentDomain.Load("GingerCoreCommon");
             AppDomain.CurrentDomain.Load("GingerCoreNET");
             
-
             var ActTypes = new List<Type>();
-            foreach (Assembly GC in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name.Contains("GingerCore")))
-               
+            foreach (Assembly GC in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name.Contains("GingerCore")))               
             {
-
                 var types = from type in GC.GetTypes() where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) select type;
                 ActTypes.AddRange(types);
             }
- 
-                  
 
+            ObservableList<TargetBase> targetApplications;
+            if (mBusinessFlow != null)
+            {
+                targetApplications = mBusinessFlow.TargetApplications;
+            }
+            else
+            {
+                targetApplications = WorkSpace.UserProfile.Solution.GetSolutionTargetApplications();
+            }
+            TargetApplication targetApp = (TargetApplication)(from x in targetApplications where x.Name == mContext.Activity.TargetApplication select x).FirstOrDefault();
+            if (targetApp == null)
+            {
+                if (targetApplications.Count == 1)
+                {
+                    targetApp = (TargetApplication)targetApplications.FirstOrDefault();
+                    mContext.Activity.TargetApplication = targetApp.AppName;
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.MissingActivityAppMapping);
+                    return null;
+                }
+            }
+            ApplicationPlatform appPlatform = (from x in WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetApp.AppName select x).FirstOrDefault();
 
             foreach (Type t in ActTypes)
             {
-                Act a = (Act)Activator.CreateInstance(t);
+                Act action = (Act)Activator.CreateInstance(t);
 
-                if (a.IsSelectableAction == false) 
+                if (action.IsSelectableAction == false) 
                     continue;
 
-                TargetApplication TA = (TargetApplication)(from x in App.BusinessFlow.TargetApplications where x.Name == App.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
-                if (TA == null)
+                if (appPlatform != null)
                 {
-                    if (App.BusinessFlow.TargetApplications.Count == 1)
-                    {
-                        TA = (TargetApplication)App.BusinessFlow.TargetApplications.FirstOrDefault();
-                        App.BusinessFlow.CurrentActivity.TargetApplication = TA.AppName;
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.MissingActivityAppMapping);
-                        return null;
-                    }
-                }
-                ApplicationPlatform AP = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == TA.AppName select x).FirstOrDefault();
-                if (AP != null)
-                {
-                    if (a.Platforms.Contains(AP.Platform))
+                    if (action.Platforms.Contains(appPlatform.Platform))
                     {
                         //DO Act.GetSampleAct in base
-                        if ((Acts.Where(c => c.GetType() == a.GetType()).FirstOrDefault()) == null)
+                        if ((Acts.Where(c => c.GetType() == action.GetType()).FirstOrDefault()) == null)
                         {
-                            a.Description = a.ActionDescription;
-                            a.Active = true;
-                            Acts.Add(a);
+                            action.Description = action.ActionDescription;
+                            action.Active = true;
+                            Acts.Add(action);
                         }
                     }
                 }
@@ -237,7 +248,7 @@ namespace Ginger.Actions
                         throw new Exception("Action edit page not found - " + classname);
                     }                    
 
-                    WizardBase wizard = (GingerWPF.WizardLib.WizardBase)Activator.CreateInstance(t);
+                    WizardBase wizard = (GingerWPF.WizardLib.WizardBase)Activator.CreateInstance(t, mContext);
                     WizardWindow.ShowWizard(wizard);
                 }
                 else
@@ -248,6 +259,7 @@ namespace Ginger.Actions
                     {
                         Act selectedAction = (Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem);
                         aNew = (Act)selectedAction.CreateCopy();
+                        aNew.Context = mContext;
                         // copy param ex info
                         for (int i=0;i< selectedAction.InputValues.Count;i++)
                         {
@@ -290,13 +302,13 @@ namespace Ginger.Actions
 
                         //Check if target already exist else add it
                         // TODO: search only in targetplugin type
-                        TargetPlugin targetPlugin = (TargetPlugin)(from x in App.BusinessFlow.TargetApplications where x.Name == p.ServiceId select x).SingleOrDefault();
+                        TargetPlugin targetPlugin = (TargetPlugin)(from x in mBusinessFlow.TargetApplications where x.Name == p.ServiceId select x).SingleOrDefault();
                         if (targetPlugin == null)
                         {
                             // check if interface add it
                             // App.BusinessFlow.TargetApplications.Add(new TargetPlugin() { AppName = p.ServiceId });
 
-                            App.BusinessFlow.TargetApplications.Add(new TargetPlugin() {PluginId = p.PluginId,  ServiceId = p.ServiceId });
+                            mBusinessFlow.TargetApplications.Add(new TargetPlugin() {PluginId = p.PluginId,  ServiceId = p.ServiceId });
 
                             //Search for default agent which match 
                             App.AutomateTabGingerRunner.UpdateApplicationAgents();

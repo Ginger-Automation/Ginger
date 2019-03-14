@@ -33,7 +33,7 @@ namespace Ginger.Variables
             InitializeComponent();
             mVariableDynamic = var;
             App.ObjFieldBinding(ValueExpressionTextBox, TextBox.TextProperty, var, nameof(VariableDynamic.ValueExpression));
-            ValueExpressionTextBox.Init(mVariableDynamic, nameof(VariableDynamic.ValueExpression));
+            ValueExpressionTextBox.Init(null, mVariableDynamic, nameof(VariableDynamic.ValueExpression));
             mVariableDynamic.PropertyChanged +=mVariableDynamic_PropertyChanged; 
         }
 
@@ -41,7 +41,7 @@ namespace Ginger.Variables
         {
             if (e.PropertyName == nameof(VariableBase.Formula))
             {
-                ValueExpressionTextBox.Init(mVariableDynamic, nameof(VariableDynamic.ValueExpression));
+                ValueExpressionTextBox.Init(null, mVariableDynamic, nameof(VariableDynamic.ValueExpression));
             }
         }
     }

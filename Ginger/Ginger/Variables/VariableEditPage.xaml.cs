@@ -57,8 +57,10 @@ namespace Ginger.Variables
         }
 
         public eEditMode editMode { get; set; }
-                
-        public VariableEditPage(VariableBase v, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.BusinessFlow, RepositoryItemBase parent = null)
+
+        Context mContext;
+
+        public VariableEditPage(VariableBase v, Context context, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.BusinessFlow, RepositoryItemBase parent = null)
         {
             InitializeComponent();
            
@@ -67,7 +69,7 @@ namespace Ginger.Variables
             mVariable.SaveBackup();
             editMode = mode;
             mParent = parent;
-
+            mContext = context;
             App.ObjFieldBinding(txtVarName, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
             App.ObjFieldBinding(txtVarDescritpion, TextBox.TextProperty, mVariable, nameof(VariableBase.Description));
             App.ObjFieldBinding(txtFormula, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
@@ -106,7 +108,10 @@ namespace Ginger.Variables
 
             if (editMode == eEditMode.BusinessFlow || editMode == eEditMode.Activity)
             {
-                SharedRepoInstanceUC.Init(mVariable, App.BusinessFlow);
+                if (mContext != null && mContext.BusinessFlow != null)
+                {
+                    SharedRepoInstanceUC.Init(mVariable, mContext.BusinessFlow);
+                }
             }
             else
             {
@@ -290,9 +295,9 @@ namespace Ginger.Variables
             varsList.Add(string.Empty); //added to allow unlinking of variable
 
             //get all similar variables from upper level to link to
-            if (App.BusinessFlow != null)
+            if (mContext != null && mContext.BusinessFlow != null)
             {
-                foreach (VariableBase variable in App.BusinessFlow.GetAllHierarchyVariables())
+                foreach (VariableBase variable in mContext.BusinessFlow.GetAllHierarchyVariables())
                 {
                     if (variable.GetType() == mVariable.GetType() && variable.Name != mVariable.Name)
                     {
@@ -327,7 +332,7 @@ namespace Ginger.Variables
                     setValueAct.VariableName = mVariable.LinkedVariableName;
                     setValueAct.SetVariableValueOption = VariableBase.eSetValueOptions.SetValue;
                     setValueAct.Value = mVariable.Value;
-                    setValueAct.RunOnBusinessFlow = App.BusinessFlow;
+                    setValueAct.RunOnBusinessFlow = mContext.BusinessFlow;
                     setValueAct.Execute();
 
                     if (string.IsNullOrEmpty(setValueAct.Error) == false)

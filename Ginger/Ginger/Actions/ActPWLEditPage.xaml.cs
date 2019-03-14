@@ -18,6 +18,7 @@ limitations under the License.
 
 using System.Collections.Generic;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 
 namespace Ginger.Actions
@@ -45,7 +46,7 @@ namespace Ginger.Actions
             App.FillComboFromEnumVal(ActionNameComboBox, Act.PWLAction);
             //TODO: fix hard coded ButtonAction use Fields
             App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "PWLAction");
-            txtoLocateValue.Init(f, ActPWL.Fields.OLocateValue);
+            txtoLocateValue.Init(Context.GetAsContext(f.Context), f, ActPWL.Fields.OLocateValue);
 
             txtoLocateValue.ValueTextBox.Text = f.OLocateValue;
         }

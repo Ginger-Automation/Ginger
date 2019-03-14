@@ -39,28 +39,27 @@ namespace GingerWPF.BusinessFlowsLib
     {
         BusinessFlow mBusinessFlow;
         GingerRunner mGingerRunner;
-        public NewAutomatePage()
+        public NewAutomatePage(BusinessFlow businessFlow)
         {
             InitializeComponent();
 
             mGingerRunner = App.AutomateTabGingerRunner;
-            // Temp - this page need to get BF as param
-            BusinessFlow BusinessFlow = App.BusinessFlow;
-            mBusinessFlow = BusinessFlow;
+
+            mBusinessFlow = businessFlow;
             //Binding
-            BusinessFlowNameLabel.BindControl(BusinessFlow, nameof(BusinessFlow.Name));
+            BusinessFlowNameLabel.BindControl(mBusinessFlow, nameof(BusinessFlow.Name));
             // TODO: break it down to each folder and show parts with hyperlink
-            FlowPathLabel.Content = BusinessFlow.ContainingFolder;
+            FlowPathLabel.Content = mBusinessFlow.ContainingFolder;
             EnvironmentComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
             EnvironmentComboBox.DisplayMemberPath = nameof(ProjEnvironment.Name);
 
-            if (BusinessFlow.CurrentActivity == null && BusinessFlow.Activities.Count > 0)
+            if (mBusinessFlow.CurrentActivity == null && mBusinessFlow.Activities.Count > 0)
             {
-                BusinessFlow.CurrentActivity = BusinessFlow.Activities[0];
+                mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
             }
 
-            FlowDiagramFrmae.Content = new BusinessFlowDiagramPage(BusinessFlow);
-            ActivitiesList.ItemsSource = BusinessFlow.Activities;
+            FlowDiagramFrmae.Content = new BusinessFlowDiagramPage(mBusinessFlow);
+            ActivitiesList.ItemsSource = mBusinessFlow.Activities;
 
             //TODO: Move these lines to GR to be one function call
             //WorkSpace.Instance.GingerRunner.BusinessFlows.Clear();
@@ -73,7 +72,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             App.PropertyChanged += App_PropertyChanged;
 
-            CurrentActivityFrame.Content = new ActivityPage((Activity)BusinessFlow.Activities[0]);  // TODO: use binding? or keep each activity page
+            CurrentActivityFrame.Content = new ActivityPage((Activity)mBusinessFlow.Activities[0]);  // TODO: use binding? or keep each activity page
 
             InitGingerRunnerControls();
         }

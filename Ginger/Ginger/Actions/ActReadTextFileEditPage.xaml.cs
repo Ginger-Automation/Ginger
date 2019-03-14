@@ -19,6 +19,7 @@ limitations under the License.
 using System.Windows;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 namespace Ginger.Actions
 {
@@ -33,9 +34,9 @@ namespace Ginger.Actions
         {
             InitializeComponent();
             mAct = act;
-            TextFileNameTextBox.Init(mAct.GetOrCreateInputParam(ActReadTextFile.Fields.TextFilePath));
-            TextToWrite.Init(mAct.GetOrCreateInputParam(ActReadTextFile.Fields.TextToWrite));
-            LineNumber.Init(mAct.GetOrCreateInputParam(ActReadTextFile.Fields.AppendLineNumber));
+            TextFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActReadTextFile.Fields.TextFilePath));
+            TextToWrite.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActReadTextFile.Fields.TextToWrite));
+            LineNumber.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActReadTextFile.Fields.AppendLineNumber));
 
             mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 

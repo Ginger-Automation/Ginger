@@ -48,7 +48,7 @@ namespace Ginger.Run
                 runSetActionPublishToQC.VariableForTCRunName = "GingerRun_{VBS Eval=now()}";
             }
 
-            VariableForTCRunName.Init(runSetActionPublishToQC, RunSetActionPublishToQC.Fields.VariableForTCRunName);
+            VariableForTCRunName.Init(null, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.VariableForTCRunName);
 
             App.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.VariableForTCRunName);
             App.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.isVariableInTCRunUsed);
@@ -63,7 +63,7 @@ namespace Ginger.Run
             {
                 VariableForTCRunName.Content = "GingerRun_{VBS Eval=now()}";
             }
-            VariableForTCRunName.Init(mPublishToALMConfig, nameof(PublishToALMConfig.VariableForTCRunName));
+            VariableForTCRunName.Init(null, mPublishToALMConfig, nameof(PublishToALMConfig.VariableForTCRunName));
             App.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, mPublishToALMConfig, nameof(PublishToALMConfig.VariableForTCRunName));
             App.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.IsVariableInTCRunUsed));
             App.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.ToAttachActivitiesGroupReport));

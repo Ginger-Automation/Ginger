@@ -49,14 +49,14 @@ namespace Ginger.WindowExplorer.Common
 
             AppNameLabel.Content = mApplicationAgent.AppName;
 
-            BFNameLabel.Content = App.BusinessFlow.Name;
+            //BFNameLabel.Content = App.BusinessFlow.Name;
 
 
-            ActivityComboBox.ItemsSource = App.BusinessFlow.Activities;
+            //ActivityComboBox.ItemsSource = App.BusinessFlow.Activities;
             ActivityComboBox.DisplayMemberPath = nameof(Activity.ActivityName);
 
             Binding b = new Binding();
-            b.Source = App.BusinessFlow;
+            //b.Source = App.BusinessFlow;
             b.Path = new PropertyPath("CurrentActivity");
             ActivityComboBox.SetBinding(ComboBox.SelectedValueProperty, b);
 

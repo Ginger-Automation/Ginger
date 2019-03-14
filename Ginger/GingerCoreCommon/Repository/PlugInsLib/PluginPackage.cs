@@ -295,7 +295,10 @@ namespace Amdocs.Ginger.Repository
             }            
         }
 
-        
+        public PluginServiceInfo GetService(string serviceId)
+        {
+            return (from x in Services where x.ServiceId == serviceId select x).SingleOrDefault();
+        }
 
         private void LoadGingerPluginsDLL()
         {

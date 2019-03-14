@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
@@ -66,8 +67,16 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private ePlatformType GetActionPlatform()
         {
-            string targetapp = App.BusinessFlow.CurrentActivity.TargetApplication;
-            ePlatformType platform = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            ePlatformType platform;            
+            if ((Context.GetAsContext(mAction.Context)).BusinessFlow != null)
+            {
+                string targetapp = (Context.GetAsContext(mAction.Context)).BusinessFlow.CurrentActivity.TargetApplication;
+                platform = (from x in WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            }
+            else
+            {
+                platform = WorkSpace.UserProfile.Solution.ApplicationPlatforms[0].Platform;
+            }             
             return platform;
         }
 
@@ -319,7 +328,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         Margin = new Thickness(10, 0, 0, 0)
                     };
 
-                    txtBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
+                    txtBox.Init(Context.GetAsContext(mAction.Context), mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
                     ((Ginger.Actions.UCValueExpression)txtBox).ValueTextBox.Text = element.PossibleValues.ElementAt(0);
                     dynamicPanel.Children.Add(elementLabel);
                     dynamicPanel.Children.Add(txtBox);
@@ -476,14 +485,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 case eLocateBy.POMElement:                 
                     //ElementTypeComboBox.IsEnabled = false;
-                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mAction, nameof(ActUIElement.ElementType), mAction, nameof(ActUIElement.ElementLocateValue));
+                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(Context.GetAsContext(mAction.Context), mAction, nameof(ActUIElement.ElementType), mAction, nameof(ActUIElement.ElementLocateValue));
                     locateByPOMElementPage.ElementChangedPageEvent -= POMElementChanged;
                     locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
                     return locateByPOMElementPage;
                 case eLocateBy.ByXY:                   
                     return new LocateByXYEditPage(mAction, mAction, ActUIElement.Fields.ElementLocateValue);
                 default:                 
-                    return new LocateValueEditPage(mAction, ActUIElement.Fields.ElementLocateValue);
+                    return new LocateValueEditPage(Context.GetAsContext(mAction.Context), mAction, ActUIElement.Fields.ElementLocateValue);
             }
         }
 

@@ -262,7 +262,11 @@ namespace Ginger.Run
         {
             mBusinessflowRunnerItems = new ObservableList<RunnerItemPage>();
             foreach (BusinessFlow bff in mRunner.BusinessFlows)
-                mBusinessflowRunnerItems.Add(CreateBusinessFlowRunnerItem(bff, ViewMode));
+            {
+                RunnerItemPage bfItem = CreateBusinessFlowRunnerItem(bff, ViewMode);
+                bfItem.Context = new Context() { BusinessFlow = bff, Runner = mRunner };
+                mBusinessflowRunnerItems.Add(bfItem);
+            }
         }
         private void Businessflow_ClickGenerateReport(object sender, RoutedEventArgs e)
         {

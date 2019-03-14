@@ -65,10 +65,10 @@ namespace Ginger.Actions
 
             //Free SQL
             //needs to be unmarked when fixed VE issue
-            SQLUCValueExpression.Init(mValidationDB.GetOrCreateInputParam(ActDBValidation.Fields.SQL));
+            SQLUCValueExpression.Init(Context.GetAsContext(mValidationDB.Context), mValidationDB.GetOrCreateInputParam(ActDBValidation.Fields.SQL));
 
             //Read from sql file
-            QueryFile.Init(mValidationDB.GetOrCreateInputParam(ActDBValidation.Fields.QueryFile), true, true, UCValueExpression.eBrowserType.File, "sql", BrowseQueryFile_Click);
+            QueryFile.Init(Context.GetAsContext(mValidationDB.Context), mValidationDB.GetOrCreateInputParam(ActDBValidation.Fields.QueryFile), true, true, UCValueExpression.eBrowserType.File, "sql", BrowseQueryFile_Click);
 
             QueryFile.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
 
@@ -441,35 +441,35 @@ namespace Ginger.Actions
         
         private void DBNamVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.DBName);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.DBName, Context.GetAsContext(mValidationDB.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             DBNameComboBox.Text = mValidationDB.DBName;
         }
         
         private void AppNamVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.AppName);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.AppName, Context.GetAsContext(mValidationDB.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             AppNameComboBox.Text = mValidationDB.AppName;
         }
 
         private void TablesVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.Table);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.Table, Context.GetAsContext(mValidationDB.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             TablesComboBox.Text = mValidationDB.Table;
         }
 
         private void ColumnsVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.Column);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.Column, Context.GetAsContext(mValidationDB.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             ColumnComboBox.Text = mValidationDB.Column;
         }
 
         private void KeySpaceVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.Keyspace);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.Keyspace, Context.GetAsContext(mValidationDB.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             KeySpaceComboBox.Text = mValidationDB.Keyspace;
         }
@@ -527,7 +527,7 @@ namespace Ginger.Actions
         private void QueryParamGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)QueryParamsGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mValidationDB.Context));
             VEEW.ShowAsWindow();
         }
     }

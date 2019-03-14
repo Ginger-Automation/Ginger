@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using System;
@@ -46,7 +47,7 @@ namespace Ginger.Actions
                 
         public void Bind()
         {
-            DataFileNameTextBox.Init(mAct.GetOrCreateInputParam(ActCreatePDFChart.Fields.DataFileName), ActInputValue.Fields.Value);
+            DataFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActCreatePDFChart.Fields.DataFileName), ActInputValue.Fields.Value);
             GingerCore.General.ObjFieldBinding(ParamsComboBox.ComboBox, ComboBox.SelectedValueProperty, mAct, ActCreatePDFChart.Fields.ParamName);
             GingerCore.General.ObjFieldBinding(ParamsComboBox.ComboBox, ComboBox.ItemsSourceProperty, mAct, ActCreatePDFChart.Fields.ParamList);
             DataFileNameTextBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;

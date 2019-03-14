@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common;
 using GingerCore;
 
 namespace Ginger.Activities
@@ -33,11 +34,7 @@ namespace Ginger.Activities
         private string fileType;
         eBrowserType mBrowserType;
         public enum eBrowserType { File, Folder }
-
-        public bool HideVEBusinessFlowAndActivityVariables
-        {
-            get;set;
-        }
+        Context mContext;
         
         public UCValueExpression()
         {
@@ -51,22 +48,24 @@ namespace Ginger.Activities
                 if (e.NewValue.GetType() == typeof(ValueExpression))
                 {
                     ValueExpression ve = (ValueExpression)e.NewValue;                    
-                    Init(ve.Obj, ve.ObjAttr);                    
+                    Init(mContext, ve.Obj, ve.ObjAttr);                    
                 }
         }
 
-        public void Init(object obj, string AttrName)
+        public void Init(Context context, object obj, string AttrName)
         {
             // If the VE is on stand alone form:
             this.obj = obj;
             this.AttrName = AttrName;
+            mContext = context;
             GingerCore.General.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);       
         }
 
-        public void Init(object obj, string AttrName, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler = null)
+        public void Init(Context context, object obj, string AttrName, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler = null)
         {
             this.obj = obj;
             this.AttrName = AttrName;
+            mContext = context;
             GingerCore.General.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
 
             if (isBrowseNeeded)
@@ -91,7 +90,7 @@ namespace Ginger.Activities
 
         private void OpenExpressionEditorButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(obj, AttrName, HideVEBusinessFlowAndActivityVariables);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(obj, AttrName, mContext);
             w.ShowAsWindow();
         }
 
