@@ -345,6 +345,7 @@ namespace Ginger.ALM
         private void CloseWindow(object sender, EventArgs e)
         {
             ALMIntegration.Instance.SyncConfigurations();
+            _pageGenericWin.Close();
         }
 
         private void StyleRadioButtons()

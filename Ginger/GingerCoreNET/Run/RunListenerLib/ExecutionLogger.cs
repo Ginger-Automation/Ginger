@@ -109,16 +109,7 @@ namespace Ginger.Run
                 if (value != null)
                 {
                     mConfiguration = value;
-                    if (mConfiguration.ExecutionLoggerConfigurationExecResultsFolder.StartsWith(@"~\"))
-                    {
-                        mConfiguration.ExecutionLoggerConfigurationExecResultsFolder=mConfiguration.ExecutionLoggerConfigurationExecResultsFolder.Replace(@"~\",WorkSpace.Instance.Solution.Folder);
-                    }
-                    if (!CheckOrCreateDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder))
-                    {
-                        mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
-                    }
-
-
+                    mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = GetLoggerDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder);
                     switch (this.ExecutedFrom)
                     {
                         case Amdocs.Ginger.Common.eExecutedFrom.Automation:
@@ -660,6 +651,12 @@ namespace Ginger.Run
 
         public override void ActionStart(uint eventTime, Act action)
         {
+            SetActionFolder(action);
+            ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Action", action.Description, null);
+        }
+
+        public void SetActionFolder(Act action)
+        {
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
                 string ActionFolder = string.Empty;
@@ -690,8 +687,6 @@ namespace Ginger.Run
                 System.IO.Directory.CreateDirectory(ExecutionLogfolder + ActionFolder);
 
             }
-
-            ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Action", action.Description, null);
         }
 
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode=false)
