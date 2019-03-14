@@ -133,7 +133,7 @@ namespace Ginger.Imports.QTP
 
             // for "Save To Business Flow" Button in dialog
             Button SaveBusinessFlowButton = new Button();
-            SaveBusinessFlowButton.Content = "Save to Business Flow";
+            SaveBusinessFlowButton.Content = "Save to " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
             SaveBusinessFlowButton.Click += new RoutedEventHandler(SaveBusinessFlowButton_Button_Click);
             
             // for "Clear" Button in dialog

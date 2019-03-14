@@ -4,13 +4,18 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.Actions"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="ActClearAllVariablesEditPage">
 
     <Grid>
         <StackPanel>
-            <CheckBox x:Name="xSetEmptyValueForStringVariable" Content="Set Empty Value For String Variables" Margin="20,10" Style="{StaticResource @InputCheckBoxStyle}"></CheckBox>
+            <CheckBox x:Name="xSetEmptyValueForStringVariable" Margin="20,10" Style="{StaticResource @InputCheckBoxStyle}">
+                <CheckBox.Content>
+                    <GingerCore:ucTextDicResource Text="Set Empty Value For String [Variables]"></GingerCore:ucTextDicResource>
+                </CheckBox.Content>
+            </CheckBox>
         </StackPanel>
     </Grid>
 </Page>

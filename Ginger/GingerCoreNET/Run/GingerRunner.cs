@@ -4039,9 +4039,9 @@ namespace Ginger.Run
             }
             else if (CurrentBusinessFlow != null) // Automate Tab
             {
-                foreach (TargetApplication TA in CurrentBusinessFlow.TargetApplications)
+                foreach (TargetBase TA in CurrentBusinessFlow.TargetApplications)
                 {
-                    if (bfsTargetApplications.Where(x => x.Name == TA.AppName).FirstOrDefault() == null)
+                    if (bfsTargetApplications.Where(x => x.Name == TA.Name).FirstOrDefault() == null)
                         bfsTargetApplications.Add(TA);
                 }
             }
