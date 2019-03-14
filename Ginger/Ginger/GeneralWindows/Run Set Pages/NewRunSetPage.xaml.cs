@@ -319,7 +319,7 @@ namespace Ginger.Run
 
         private void UpdateRunButtonIcon()
         {
-            if (RunSetConfig.GingerRunners.Where(x => x.IsRunning == true).FirstOrDefault() != null)
+            if (RunSetConfig.GingerRunners.Where(x => x.Status == eRunStatus.Running).FirstOrDefault() != null)
             {
                 xRunRunsetBtn.ButtonText = "Running";
                 xRunRunsetBtn.ToolTip = "Execution of at least one Runner is in progress";
@@ -498,7 +498,7 @@ namespace Ginger.Run
             {
                 mFlowDiagram.Height = 240;
                 mFlowDiagram.CanvasHeight = 240;
-                mFlowDiagram.CanvasWidth = mRunSetConfig.GingerRunners.Count() * 600;
+                mFlowDiagram.CanvasWidth = mRunSetConfig.GingerRunners.Count() * 620;
             }
 
         }

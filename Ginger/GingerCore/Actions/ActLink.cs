@@ -64,7 +64,7 @@ namespace GingerCore.Actions
 
         public enum eLinkAction
         {
-            Click = 1,
+            Click = 0,
             Hover= 2, //This is needed for hovering to expand menus.
             GetValue=3, //for validation
             Visible=4, //for validation
@@ -152,7 +152,8 @@ namespace GingerCore.Actions
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
-            newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            if (!string.IsNullOrEmpty(this.LocateValue))
+                newAct.ElementLocateValue = String.Copy(this.LocateValue);
             if (!uIElementTypeAssigned)
                 newAct.ElementType = eElementType.HyperLink;
             newAct.Active = true;
