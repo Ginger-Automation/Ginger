@@ -56,7 +56,7 @@ namespace GingerCore.NoSqlBase
                 String deCryptValue = EncryptionHandler.DecryptString(Db.PassCalculated.ToString(), ref res, false);
                 if (res == true)
                 {
-                    clusterCB.Authenticate(Db.UserCalculated.ToString(), deCryptValue.ToString());
+                    clusterCB.Authenticate(Db.UserCalculated.ToString(), deCryptValue);
                 }
                 else
                 {
