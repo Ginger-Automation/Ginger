@@ -272,5 +272,15 @@ namespace Ginger.Run.RunSetActions
             xLabelPass.Visibility = Visibility.Collapsed;
             xLabelUser.Visibility = Visibility.Collapsed;
         }
+
+        private void GridParamCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            EmailAttachment item = (EmailAttachment)AttachmentsGrid.CurrentItem;
+
+            if (item.AttachmentType == EmailAttachment.eAttachmentType.File)
+            {
+                item.ZipIt = (bool)(sender as System.Windows.Controls.CheckBox).IsChecked;
+            }
+        }
     }
 }

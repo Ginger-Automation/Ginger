@@ -82,7 +82,7 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-        bool mZipit = true;
+        bool mZipit;
         [IsSerializedForLocalRepository]
         public bool ZipIt
         {
