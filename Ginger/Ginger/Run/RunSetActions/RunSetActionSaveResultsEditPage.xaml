@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       d:DesignHeight="400" d:DesignWidth="600"
 	Title="RunSetActionSaveResultsEditPage">
 
@@ -15,7 +16,11 @@
                 <TextBox x:Name="TemplateNameTextBox" Width="500" Style="{StaticResource @TextBoxStyle}" ></TextBox>
                 <Button x:Name="SelectTemplateButton" Click="SelectTemplateButton_Click" Style="{StaticResource @InputButtonStyle}" Width="50" Margin="5,0,0,0" VerticalAlignment="Center">Select</Button>
             </StackPanel>
-            <CheckBox x:Name="SaveindividualBFReportCheckBox" Style="{StaticResource @CheckBoxStyle}" Margin="5" Content="Also Save Report per Business Flow"></CheckBox>
+            <CheckBox x:Name="SaveindividualBFReportCheckBox" Style="{StaticResource @CheckBoxStyle}" Margin="5">
+                <CheckBox.Content>
+                    <GingerCore:ucTextDicResource Text="Also Save Report per [BusinessFlow]"></GingerCore:ucTextDicResource>
+                </CheckBox.Content>
+            </CheckBox>
             
             <Label Content="Save Destination Path/s:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" Margin="0,15,0,0" FontSize="14"></Label>
             <StackPanel Margin="10,0,0,0" HorizontalAlignment="Left">

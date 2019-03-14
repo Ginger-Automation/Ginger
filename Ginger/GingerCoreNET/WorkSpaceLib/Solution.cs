@@ -306,6 +306,7 @@ namespace Ginger.SolutionGeneral
                     this.HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
                     HTMLReportsConfiguration HTMLReportsConfiguration = new HTMLReportsConfiguration();
                     HTMLReportsConfiguration.IsSelected = true;
+                    HTMLReportsConfiguration.HTMLReportTemplatesSeq = 1;
                     HTMLReportsConfiguration.HTMLReportsFolder = @"~\HTMLReports\";
                     HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
                     HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);

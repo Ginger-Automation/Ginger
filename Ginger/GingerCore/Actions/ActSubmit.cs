@@ -129,7 +129,8 @@ namespace GingerCore.Actions
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
-            newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            if (!string.IsNullOrEmpty(this.LocateValue))
+                newAct.ElementLocateValue = String.Copy(this.LocateValue);
             if (!uIElementTypeAssigned)
                 newAct.ElementType = eElementType.Button;
             newAct.Active = true;

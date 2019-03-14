@@ -64,7 +64,7 @@ namespace GingerCore.Actions
 
         public enum eLabelAction
         {
-            IsVisible = 1,
+            IsVisible = 0,
             GetInnerText=2,
             GetWidth = 22,
             GetHeight = 23,
@@ -140,7 +140,8 @@ namespace GingerCore.Actions
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
-            newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            if (!string.IsNullOrEmpty(this.LocateValue))
+                newAct.ElementLocateValue = String.Copy(this.LocateValue);
             if (!uIElementTypeAssigned)
                 newAct.ElementType = eElementType.Label;
             newAct.Active = true;
