@@ -350,12 +350,17 @@ namespace Amdocs.Ginger.Common
 
                 ObservableList<T> l = new ObservableList<T>();
                 try
-                {
+                {                   
                     NewRepositorySerializer.DeserializeObservableListFromText(this, s);
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Deserialize the lazy load section: '{0}'", s), ex);
+                    string serlizedStringToShowInLog = s;
+                    if (string.IsNullOrEmpty(serlizedStringToShowInLog) == false && serlizedStringToShowInLog.Length > 1000)
+                    {
+                        serlizedStringToShowInLog = serlizedStringToShowInLog.Substring(0, 1000) + "...";
+                    }
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Deserialize the lazy load section: '{0}'", serlizedStringToShowInLog), ex);
                 }
 
                 mStringData = null;
