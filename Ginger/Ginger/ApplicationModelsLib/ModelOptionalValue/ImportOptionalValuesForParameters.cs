@@ -53,7 +53,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
 
         const string CURRENT_VAL_PARAMETER = "{Current Value}";
-        const string PARAMETER_NAME = "Parameter Name";
+        const string PARAMETER_NAME = "Parameter_Name";
         const string DESCRIPTION = "Description";
 
         public bool ShowMessage { get; set; }//For Non UI Unit Test
@@ -988,7 +988,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         
             for (int index = 1; index <= colCount; index++)
             {
-                dtTemplate.Columns.Add(string.Format("Value {0}", index), typeof(string));
+                dtTemplate.Columns.Add(string.Format("Value_{0}", index), typeof(string));
             }
 
             foreach (AppParameters prm in parameters)
@@ -1037,9 +1037,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         public bool ExportTemplateExcelFileForImportOptionalValues(List<AppModelParameter> Parameters,string PathToExport)
         {
             DataTable dtTemplate = new DataTable(ParameterType.ToString());
-            dtTemplate.Columns.Add("Parameter Name", typeof(string));
-            dtTemplate.Columns.Add("Value 1", typeof(string));
-            dtTemplate.Columns.Add("Value 2", typeof(string));
+            dtTemplate.Columns.Add("Parameter_Name", typeof(string));
+            dtTemplate.Columns.Add("Value_1", typeof(string));
+            dtTemplate.Columns.Add("Value_2", typeof(string));
             foreach (AppModelParameter prm in Parameters)
             {
                 dtTemplate.Rows.Add(prm.ItemName.ToString(), string.Empty);
