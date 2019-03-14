@@ -413,10 +413,11 @@ namespace GingerCore.Environments
                         bool isConnectionCB;
                         isConnectionCB = CouchbaseDriver.Connect();
                         if (isConnectionCB == true)
-                        { 
+                        {
                             LastConnectionUsedTime = DateTime.Now;
+                            return true;
                         }
-                        return true;
+                        else { return false; }
                         break;
 
                     case eDBTypes.MySQL:
