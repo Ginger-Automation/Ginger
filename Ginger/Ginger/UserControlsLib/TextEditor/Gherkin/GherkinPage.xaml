@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:TextEditor="clr-namespace:Ginger.UserControlsLib.TextEditor" xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib" x:Class="Ginger.GherkinLib.GherkinPage" 
       mc:Ignorable="d" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       d:DesignHeight="600" d:DesignWidth="1000"
 	Title="GherkinPage" >
 
@@ -54,8 +55,11 @@
                         <RowDefinition Height="225*"/>
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button x:Name="UpdateBFButton" Click="GeneratBFButton_Click" Width="165" Style="{StaticResource @WindowButtonStyle}" Content="Update Business Flow"/>
-                        
+                        <Button x:Name="UpdateBFButton" Click="GeneratBFButton_Click" Width="165" Style="{StaticResource @WindowButtonStyle}">
+                            <Button.Content>
+                                <GingerCore:ucTextDicResource Text="Update [BusinessFlow]"></GingerCore:ucTextDicResource>
+                            </Button.Content>
+                        </Button>
                     </StackPanel>
                     <Ginger:ucGrid x:Name="OptimizedStepsGrid" IsSupportDragDrop="False" Title="Optimized Steps" Grid.Row="1" ShowAdd="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed"/>
                 </Grid>

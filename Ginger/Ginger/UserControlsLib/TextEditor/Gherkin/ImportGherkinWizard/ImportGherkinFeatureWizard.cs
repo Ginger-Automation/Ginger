@@ -70,7 +70,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
             if(mContext == eImportGherkinFileContext.DocumentsFolder)
             {
-                AddPage(Name: "SelectBusinessFlowFolder", Title: "Target Business Flow Path", SubTitle: "Select Target Folder...", Page: importGherkinTargetFolder);
+                AddPage(Name: "SelectBusinessFlowFolder", Title: "Target " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Path", SubTitle: "Select Target Folder...", Page: importGherkinTargetFolder);
             }
 
             AddPage(Name: "Summary", Title: "Summary", SubTitle: "here is what will happen when you click finish", Page: new ImportGherkinFeatureSummaryPage());
