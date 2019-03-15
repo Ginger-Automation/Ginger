@@ -95,7 +95,12 @@ namespace Ginger.WindowExplorer
         public WindowExplorerPage(ApplicationAgent ApplicationAgent,  Act Act = null, eWindowExplorerPageContext Context = eWindowExplorerPageContext.WindowExplorerPage)
         {           
             InitializeComponent();
-            WindowControlsTreeView.TreeGrid.RowDefinitions[0].Height = new GridLength(0);                   
+            WindowControlsTreeView.TreeGrid.RowDefinitions[0].Height = new GridLength(0);
+
+            WindowControlsTreeView.SearchStarted += WindowControlsTreeView_SearchStarted;
+            WindowControlsTreeView.SearchCancelled += WindowControlsTreeView_SearchCancelled;
+            WindowControlsTreeView.SearchCompleted += WindowControlsTreeView_SearchCompleted;
+
             mContext = Context;
             
             mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
@@ -209,7 +214,7 @@ namespace Ginger.WindowExplorer
             GingerCore.General.LoadGenericWindow(ref _GenWin, null, windowStyle, Title, this, closeEventHandler: CloseWindow);            
         }
 
-        private void CloseWindow(object sender, EventArgs e)
+        private async void CloseWindow(object sender, EventArgs e)
         {
             //stop Live Spy
             if (LiveSpyButton.IsChecked == true)
@@ -219,6 +224,11 @@ namespace Ginger.WindowExplorer
             //stop Recording
             if (RecordingButton.IsChecked == true)
                 StopRecording();
+
+            if(WindowControlsTreeView.IsSearchRunning())
+            {
+                await WindowControlsTreeView.CancelSearchAsync();
+            }
 
             _GenWin.Close();
         }
@@ -572,6 +582,20 @@ namespace Ginger.WindowExplorer
                 ShowCurrentControlInfo();
 
             }
+        }
+        private void WindowControlsTreeView_SearchStarted(object sender, EventArgs e)
+        {
+            StatusTextBlock.Text = "Searching...";
+        }
+
+        private void WindowControlsTreeView_SearchCancelled(object sender, EventArgs e)
+        {
+            StatusTextBlock.Text = "Ready";
+        }
+
+        private void WindowControlsTreeView_SearchCompleted(object sender, EventArgs e)
+        {
+            StatusTextBlock.Text = "Ready";
         }
 
         private void ShowCurrentControlInfo()
@@ -1036,7 +1060,7 @@ namespace Ginger.WindowExplorer
 
         private void ControlsRefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            StatusTextBlock.Text = "Searching Elements";
+            StatusTextBlock.Text = "Loading Elements...";
             GingerCore.General.DoEvents();
 
             if (WindowControlsTreeView.Visibility == System.Windows.Visibility.Visible)
@@ -1144,7 +1168,7 @@ namespace Ginger.WindowExplorer
                         CheckedFilteringCreteriaList.Add(filter);
                 }
 
-            StatusTextBlock.Text = "Searching Elements";
+            StatusTextBlock.Text = "Searching Elements...";
             GingerCore.General.DoEvents();
             
             isSearched = RefreshFilteredElements();
