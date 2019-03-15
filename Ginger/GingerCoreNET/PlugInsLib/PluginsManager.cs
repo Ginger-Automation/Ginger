@@ -278,43 +278,62 @@ namespace Amdocs.Ginger.Repository
         }
 
         public void SolutionChanged(SolutionRepository solutionRepository)
-        {        
+        {
             mSolutionRepository = solutionRepository;
             GetPackages();
+            if (WorkSpace.RunningInExecutionMode)
+            {
+                Reporter.ToConsole(eLogLevel.INFO, "Ensuring all prequired plugins are present");
+                DownloadMissingPlugins();
 
-            Task.Run(() =>{
-                WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = true;
-                try
+            }
+
+            else
+            {
+                Task.Run(() =>
                 {
-                    ObservableList<OnlinePluginPackage> OnlinePlugins = null;
-                    foreach (PluginPackage SolutionPlugin in mPluginPackages)
+                    DownloadMissingPlugins();
+                });
+            }
+        }
+
+
+
+        private void DownloadMissingPlugins()
+        {
+            WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = true;
+            try
+            {
+                ObservableList<OnlinePluginPackage> OnlinePlugins = null;
+                foreach (PluginPackage SolutionPlugin in mPluginPackages)
+                {
+                    //TODO: Make it work for linux environments 
+                    if (SolutionPlugin.Folder.Contains("AppData\\Roaming") && !System.IO.File.Exists(Path.Combine(SolutionPlugin.Folder, @"Ginger.PluginPackage.Services.json")))
                     {
-                        if (SolutionPlugin.Folder.Contains("AppData\\Roaming") && !System.IO.File.Exists(Path.Combine(SolutionPlugin.Folder, @"Ginger.PluginPackage.Services.json")))
+                        if (OnlinePlugins == null)
                         {
-                            if (OnlinePlugins == null)
-                            {
-                                OnlinePlugins = WorkSpace.Instance.PlugInsManager.GetOnlinePluginsIndex();
-                            }
-
-                            OnlinePluginPackage OnlinePlugin = OnlinePlugins.Where(x => x.Id == SolutionPlugin.PluginId).FirstOrDefault();
-
-
-                            OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
-
-                            OnlinePlugin.InstallPluginPackage(OPR);
-                            //WorkSpace.Instance.PlugInsManager.InstallPluginPackage(OnlinePlugin, OPR);
+                            OnlinePlugins = WorkSpace.Instance.PlugInsManager.GetOnlinePluginsIndex();
                         }
 
+                        OnlinePluginPackage OnlinePlugin = OnlinePlugins.Where(x => x.Id == SolutionPlugin.PluginId).FirstOrDefault();
 
+
+                        OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
+
+                        OnlinePlugin.InstallPluginPackage(OPR);
+
+
+                        //WorkSpace.Instance.PlugInsManager.InstallPluginPackage(OnlinePlugin, OPR);
                     }
-                }
 
-                finally
-                {
-                    WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = false;
-                }
-            });
 
-         }
+                }
+            }
+
+            finally
+            {
+                WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = false;
+            }
+        }
     }
 }
