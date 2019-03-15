@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
        xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
 	Title="MenuControlActionsPage">
@@ -23,7 +24,10 @@
             <Button x:Name="TestButton" Click="TestButton_Click" ToolTip="Test Selected Action" Width="24" Height="24" Style="{StaticResource @InputImageButtonStyle_NoBorder}" Margin="20,0,0,0">
                 <Image Source="{StaticResource @Run_24x24.png}"/>
             </Button>
-            <Button x:Name="AddActionButton" Click="AddActionButton_Click" ToolTip="Add Selected Action to Business Flow" Width="24" Height="24" Style="{StaticResource @InputImageButtonStyle_NoBorder}">
+            <Button x:Name="AddActionButton" Click="AddActionButton_Click" Width="24" Height="24" Style="{StaticResource @InputImageButtonStyle_NoBorder}">
+                <Button.ToolTip>
+                    <GingerCore:ucTextDicResource Text="Add Selected Action to [BusinessFlow]"/>
+                </Button.ToolTip>
                 <Image Source="{StaticResource @AddToList_24x24}"/>
             </Button>
         </StackPanel>               

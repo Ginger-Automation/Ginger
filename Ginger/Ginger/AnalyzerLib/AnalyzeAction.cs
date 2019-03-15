@@ -326,11 +326,11 @@ namespace Ginger.AnalyzerLib
                     {
                         AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                         AA.Description = "The " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " '" + Var + "' is missing";
-                        AA.Details = "The Variable: '" + Var + "' Does not exist In " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '" + BusinessFlow.Name + "' => " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + parentActivity.ActivityName + "' =>" + "Action '" + a.Description + "' ";
-                        AA.HowToFix = " Create new variable or Delete it from the action.";
+                        AA.Details = "The " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ": '" + Var + "' Does not exist In " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '" + BusinessFlow.Name + "' => " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + parentActivity.ActivityName + "' =>" + "Action '" + a.Description + "' ";
+                        AA.HowToFix = " Create new " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " or Delete it from the action.";
                         AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                         AA.IssueType = eType.Error;
-                        AA.Impact = GingerDicser.GetTermResValue(eTermResKey.Activity) + " will fail due to missing Variable";
+                        AA.Impact = GingerDicser.GetTermResValue(eTermResKey.Activity) + " will fail due to missing " + GingerDicser.GetTermResValue(eTermResKey.Variable);
                         AA.Severity = eSeverity.High;
 
                         IssuesList.Add(AA);
@@ -356,7 +356,7 @@ namespace Ginger.AnalyzerLib
                         AA.HowToFix = " Create new Application Global Parameter or Delete it from the action.";
                         AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                         AA.IssueType = eType.Error;
-                        AA.Impact = GingerDicser.GetTermResValue(eTermResKey.Activity) + " will fail due to missing Variable";
+                        AA.Impact = GingerDicser.GetTermResValue(eTermResKey.Activity) + " will fail due to missing " + GingerDicser.GetTermResValue(eTermResKey.Variable);
                         AA.Severity = eSeverity.High;
                         IssuesList.Add(AA);
                     }
