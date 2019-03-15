@@ -140,6 +140,7 @@ namespace Amdocs.Ginger.Common
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
         AskIfToUndoChanges, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification,WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
+        PluginDownloadInProgress,
     }
 
     public static class UserMsgsPool
@@ -503,6 +504,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.SolutionFileNotFound, new UserMsg(eUserMsgType.ERROR, "Solution File Not Found", "Cannot find Solution File at - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.PlugInFileNotFound, new UserMsg(eUserMsgType.ERROR, "Plugin Configuration File Not Found", "Cannot find Plugin Configuration File at - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.PluginDownloadInProgress, new UserMsg(eUserMsgType.ERROR,"Plugin Download in Progress" ,"Plugin Download in progress, Please wait -{0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ActionIDNotFound, new UserMsg(eUserMsgType.ERROR, "Action ID Not Found", "Cannot find action with ID - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
