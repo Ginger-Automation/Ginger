@@ -405,8 +405,11 @@ namespace GingerCore.Environments
                         bool isConnection;
                         isConnection= CassandraDriver.Connect();
                         if (isConnection == true)
+                        {
                             LastConnectionUsedTime = DateTime.Now;
-                        return true;
+                            return true;
+                        }
+                        else { return false; }
                         break;
                     case eDBTypes.Couchbase:
                         GingerCouchbase CouchbaseDriver = new GingerCouchbase(this);
