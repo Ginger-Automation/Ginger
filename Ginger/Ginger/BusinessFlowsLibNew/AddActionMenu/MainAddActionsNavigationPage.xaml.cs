@@ -63,8 +63,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XNavSharedRepo_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(new RepositoryPage(mContext.BusinessFlow));
-            //LoadActionFrame(new SharedRepositoryNavPage()); // WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>()));
+            //LoadActionFrame(new RepositoryPage(mContext.BusinessFlow));
+            LoadActionFrame(new SharedRepositoryNavPage(mContext)); // WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>()));
         }
 
         private void XNavPOM_Click(object sender, RoutedEventArgs e)

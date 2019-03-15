@@ -7,13 +7,15 @@
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="600"
       Title="RecordNavAction">
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
-            <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <userControl:UCWindowsGrid x:Name="xWinGridUC" Grid.Row="0" />

@@ -18,6 +18,7 @@ using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Platforms;
+using GingerCore.Platforms.PlatformsInfo;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -48,6 +49,9 @@ namespace Ginger.UserControlsLib
         TreeView2 WindowControlsTreeView;
         ObservableList<DataSourceBase> mDSList = new ObservableList<DataSourceBase>();
         public static readonly DependencyProperty ContextProperty = DependencyProperty.Register("mContext", typeof(Context), typeof(UCWindowsGrid));
+        public object comboBoxSelectedValue = null;
+        public PlatformInfoBase mPlatform;
+
         public Context mContext
         {
             get { return GetValue(ContextProperty) as Context; }
@@ -60,6 +64,7 @@ namespace Ginger.UserControlsLib
 
         private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            comboBoxSelectedValue = WindowsComboBox.SelectedItem;
             AppWindow AW = (AppWindow)WindowsComboBox.SelectedItem;
             if (AW == null)
                 return;
@@ -182,24 +187,32 @@ namespace Ginger.UserControlsLib
                 return;
 
             Activity mActParentActivity = mContext.BusinessFlow.CurrentActivity;
-            ApplicationAgent appAgent = (ApplicationAgent)App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
-            //appAgent = mContext.BusinessFlow.Applications
+            ApplicationAgent appAgent = (ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
+            mPlatform = PlatformInfoBase.GetPlatformImpl(appAgent.Agent.Platform);
 
             mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (appAgent != null)
             {
-                if (((Agent)appAgent.Agent).Driver == null)
+                if (appAgent.Agent.Driver == null)
                 {
-                    ((Agent)appAgent.Agent).DSList = mDSList;
-                    ((Agent)appAgent.Agent).StartDriver();
+                    appAgent.Agent.DSList = mDSList;
+                    appAgent.Agent.StartDriver();
                 }
-                DriverBase driver = ((Agent)appAgent.Agent).Driver;
+                else if(!appAgent.Agent.Driver.IsRunning())
+                {
+                    if (Reporter.ToUser(eUserMsgKey.PleaseStartAgent, eUserMsgOption.OKCancel, eUserMsgSelection.OK) == eUserMsgSelection.OK)
+                    {
+                        appAgent.Agent.StartDriver();
+                    }
+                    else
+                        return;
+                }
+                DriverBase driver = appAgent.Agent.Driver;
                 if (driver is IWindowExplorer)
                 {
-                    mWindowExplorerDriver = (IWindowExplorer)((Agent)appAgent.Agent).Driver;
+                    mWindowExplorerDriver = (IWindowExplorer)appAgent.Agent.Driver;
                 }
             }
-
             try
             {
                 List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();

@@ -6,12 +6,11 @@
       xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
       xmlns:Ginger="clr-namespace:Ginger"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="300"
       Title="ActionsLibraryNavAction">
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="200*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="59*" />

@@ -57,12 +57,15 @@ namespace GingerWPF.BusinessFlowsLib
 
         BusinessFlow mBusinessFlow;
         GingerRunner mGingerRunner;
-        Context mContext;
+        Context mContext = new Context();
         public NewAutomatePage(BusinessFlow businessFlow)
         {
             InitializeComponent();
-            mContext = new Context() { BusinessFlow = businessFlow, Activity = businessFlow.Activities[0] };
+            App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+            App.AutomateTabGingerRunner.UpdateApplicationAgents();
+
             mGingerRunner = App.AutomateTabGingerRunner;
+            mContext = new Context() { BusinessFlow = businessFlow, Activity = businessFlow.Activities[0], Runner = mGingerRunner };
 
             mBusinessFlow = businessFlow;
             //Binding
@@ -213,6 +216,11 @@ namespace GingerWPF.BusinessFlowsLib
                 xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(0, GridUnitType.Pixel);
                 SHAddActionPanel.Content = "+";
             }
+        }
+
+        public void GoToBusFlowsListHandler(RoutedEventHandler clickHandler)
+        {
+            xStepBack.Click += clickHandler;
         }
     }
 }
