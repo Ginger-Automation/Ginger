@@ -698,7 +698,7 @@ namespace Ginger.Run
 
             mCurrentSelectedRunner.RunnerPageEvent -= RunnerPageEvent;
             mCurrentSelectedRunner.RunnerPageEvent += RunnerPageEvent;
-            mCurrentSelectedRunner.RunnerPageListener.UpdateBusinessflowActivities = UpdateBusinessflowActivities;
+           
             UpdateRunnerTime();            
 
             //set it as flow diagram current item
@@ -908,6 +908,8 @@ namespace Ginger.Run
                     
                     runnerPage.RunnerPageEvent -= RunnerPageEvent;
                     runnerPage.RunnerPageEvent += RunnerPageEvent;
+                    runnerPage.RunnerPageListener.UpdateBusinessflowActivities -= UpdateBusinessflowActivities;
+                    runnerPage.RunnerPageListener.UpdateBusinessflowActivities += UpdateBusinessflowActivities;
                 });
             }
 
