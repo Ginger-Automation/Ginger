@@ -522,12 +522,14 @@ namespace Ginger
 
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
         {
-            if(!ALMIntegration.Instance.AlmConfigurations.UseRest && ALMIntegration.Instance.GetALMType() != ALMIntegration.eALMType.Jira)
+            if (ALMIntegration.Instance.GetALMType() == ALMIntegration.eALMType.QC)
             {
-                Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
-                return;
+                ALMIntegration.Instance.ALMDefectsProfilesPage();
             }
-            ALMIntegration.Instance.ALMDefectsProfilesPage();
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.ALMDefectsProfileForQc, "");
+            }
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
