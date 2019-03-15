@@ -109,9 +109,11 @@ namespace Amdocs.Ginger.Repository
 
         public string InstallPluginPackage(OnlinePluginPackageRelease release)
         {
+            Reporter.ToConsole(eLogLevel.INFO, "Downloading Plugin" + Id + " " + release.Version);
             string pluginSubFolder = Path.Combine(Id, release.Version);
             string folder = DownloadPackage(release.assets[0].browser_download_url, pluginSubFolder).Result;
             return folder;
+       
         }
 
         async Task<string> DownloadPackage(string url, string subfolder)
