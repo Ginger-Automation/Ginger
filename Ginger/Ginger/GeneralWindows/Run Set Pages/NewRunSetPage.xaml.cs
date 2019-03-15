@@ -695,12 +695,11 @@ namespace Ginger.Run
                 GRP.xRunnerNameTxtBlock.Foreground = FindResource("$SelectionColor_Pink") as Brush;
             }                
             mCurrentSelectedRunner = GRP;
-            
+
             mCurrentSelectedRunner.RunnerPageEvent -= RunnerPageEvent;
             mCurrentSelectedRunner.RunnerPageEvent += RunnerPageEvent;
-            UpdateRunnerTime();
-
-            // mCurrentSelectedRunner.Runner.GingerRunnerEvent += Runner_GingerRunnerEvent;
+            mCurrentSelectedRunner.RunnerPageListener.UpdateBusinessflowActivities = UpdateBusinessflowActivities;
+            UpdateRunnerTime();            
 
             //set it as flow diagram current item
             List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
@@ -719,26 +718,20 @@ namespace Ginger.Run
         }
 
         
-        private void Runner_GingerRunnerEvent(GingerRunnerEventArgs EventArgs)
+        private void UpdateBusinessflowActivities(object sender, EventArgs e)
         {
-            switch (EventArgs.EventType)
+            this.Dispatcher.Invoke(() =>
             {
-                case GingerRunnerEventArgs.eEventType.BusinessflowWasReset:
-                case GingerRunnerEventArgs.eEventType.DynamicActivityWasAddedToBusinessflow:
-                    this.Dispatcher.Invoke(() =>
+                if (sender is BusinessFlow)
+                {
+                    BusinessFlow changedBusinessflow = (BusinessFlow)sender;
+                    if (mCurrentBusinessFlowRunnerItem.ItemObject == changedBusinessflow)
                     {
-                        if (EventArgs.Object is BusinessFlow)
-                        {
-                            BusinessFlow changedBusinessflow = (BusinessFlow)EventArgs.Object;
-                            if (mCurrentBusinessFlowRunnerItem.ItemObject == changedBusinessflow)
-                            {
-                                mCurrentBusinessFlowRunnerItem.LoadChildRunnerItems();//reloading activities to make sure include dynamically added/removed activities.
-                                xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ItemChilds;
-                            }
-                        }
-                    });
-                    break;
-            }
+                        mCurrentBusinessFlowRunnerItem.LoadChildRunnerItems();//reloading activities to make sure include dynamically added/removed activities.
+                        xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ItemChilds;
+                    }
+                }
+            });             
         }
 
         private void InitRunnerExecutionDebugSection()
