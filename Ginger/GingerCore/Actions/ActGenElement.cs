@@ -303,7 +303,7 @@ namespace GingerCore.Actions
 
         public enum eGenElementAction
         {
-            Click = 1,
+            Click = 0,
             Hover = 2, //This is needed for hovering to expand menus.
             [EnumValueDescription("Get Value")]
             GetValue = 3, //for validation

@@ -826,7 +826,7 @@ namespace Ginger.GherkinLib
 
         void SetOptimizedGridView()
         {
-            if (isBFexists) { UpdateBFButton.Content = "Create Business Flow"; } else { UpdateBFButton.Content = "Update Business Flow"; }
+            if (isBFexists) { UpdateBFButton.Content = "Create " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow); } else { UpdateBFButton.Content = "Update " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow); }
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;

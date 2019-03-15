@@ -63,7 +63,7 @@ namespace GingerCore.Actions
 
         public enum eHandleBrowseAlert
         {
-            AcceptAlertBox = 1,
+            AcceptAlertBox = 0,
             DismissAlertBox = 2,
             GetAlertBoxText = 3,
             SendKeysAlertBox = 4,

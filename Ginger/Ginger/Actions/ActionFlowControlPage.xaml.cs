@@ -84,7 +84,7 @@ namespace Ginger.Actions
 
             viewCols.Add(new GridColView() { Field = nameof(FlowControl.Active), WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
             viewCols.Add(new GridColView() { Field = nameof(FlowControl.Operator), Header = "Condition", WidthWeight = 150, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = OperatorList });
-            view.GridColsView.Add(new GridColView() { Field = nameof(FlowControl.Condition), Header = "Expression", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.getDataColValueExpressionTemplate(nameof(FlowControl.ConditionVE)) });
+            view.GridColsView.Add(new GridColView() { Field = nameof(FlowControl.Condition), Header = "Custom Condition", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.getDataColValueExpressionTemplate(nameof(FlowControl.ConditionVE)) });
             viewCols.Add(new GridColView() { Field = nameof(FlowControl.ConditionCalculated), Header = "Condition Calculated", WidthWeight = 150, BindingMode = BindingMode.OneWay });            
             view.GridColsView.Add(new GridColView() { Field = nameof(FlowControl.FlowControlAction), Header = "Action", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = GetDataColActionFlowControlTemplate(nameof(FlowControl.ActionForEdit)) });
             viewCols.Add(new GridColView() { Field = nameof(FlowControl.Status), WidthWeight = 150 });      

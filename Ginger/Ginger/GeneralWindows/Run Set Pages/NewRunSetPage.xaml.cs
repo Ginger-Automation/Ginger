@@ -319,7 +319,7 @@ namespace Ginger.Run
 
         private void UpdateRunButtonIcon()
         {
-            if (RunSetConfig.GingerRunners.Where(x => x.IsRunning == true).FirstOrDefault() != null)
+            if (RunSetConfig.GingerRunners.Where(x => x.Status == eRunStatus.Running).FirstOrDefault() != null)
             {
                 xRunRunsetBtn.ButtonText = "Running";
                 xRunRunsetBtn.ToolTip = "Execution of at least one Runner is in progress";
@@ -498,7 +498,7 @@ namespace Ginger.Run
             {
                 mFlowDiagram.Height = 240;
                 mFlowDiagram.CanvasHeight = 240;
-                mFlowDiagram.CanvasWidth = mRunSetConfig.GingerRunners.Count() * 600;
+                mFlowDiagram.CanvasWidth = mRunSetConfig.GingerRunners.Count() * 620;
             }
 
         }
@@ -990,7 +990,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking Run Set Business Flow files change", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking Run Set " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " files change", ex);
             }
         }
 
@@ -1302,7 +1302,7 @@ namespace Ginger.Run
             //check runner is not empty
             if (mCurrentSelectedRunner.Runner.BusinessFlows.Count <= 0)
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one Business Flow to '"+mCurrentSelectedRunner.Name+"' to start run.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '"+mCurrentSelectedRunner.Name+"' to start run.");
                 return;
             }
             //run analyzer
