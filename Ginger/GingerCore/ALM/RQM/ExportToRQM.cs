@@ -518,7 +518,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                result = "Failed to export the Business Flow to RQM/ALM " + ex.Message;
+                result = "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to RQM/ALM " + ex.Message;
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Business Flow to RQM/ALM", ex);
                 return false;
             }

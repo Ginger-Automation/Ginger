@@ -113,7 +113,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 MenuItem GherkinMenu = TreeViewUtils.CreateSubMenu(CM, "Gherkin");
                 //TOD Change Icon
-                TreeViewUtils.AddSubMenuItem(GherkinMenu, "Automate mapped Business Flow", GoToGherkinBusinessFlow, null, eImageType.File);
+                TreeViewUtils.AddSubMenuItem(GherkinMenu, "Automate mapped " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GoToGherkinBusinessFlow, null, eImageType.File);
             }
         }
 

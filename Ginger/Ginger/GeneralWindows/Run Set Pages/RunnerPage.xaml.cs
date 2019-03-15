@@ -181,6 +181,7 @@ namespace Ginger.Run
         {
             RunnerItemPage ri = new RunnerItemPage(bf, ViewMode1);           
             ri.ItemName = bf.Name;
+            ri.ItemTitleTooltip = System.IO.Path.Combine(bf.ContainingFolder, bf.Name);
             if (string.IsNullOrEmpty(bf.Description))
             {
                 ri.xItemSeparator.Visibility = Visibility.Collapsed;              
@@ -551,7 +552,7 @@ namespace Ginger.Run
         {
             if (mRunner.BusinessFlows.Count <= 0)
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one Business Flow to '" + mRunner.Name + "' to start run.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '" + mRunner.Name + "' to start run.");
                 return;
             }
             RunRunner();

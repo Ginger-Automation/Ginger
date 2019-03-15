@@ -1049,11 +1049,10 @@ namespace Ginger
                         grdMain.CurrentItem = mObjList.CurrentItem;
                         int index = grdMain.Items.IndexOf(mObjList.CurrentItem);
                         grdMain.SelectedIndex = index;
-                        UpdateFloatingButtons();
                     }
                 });
-              
-            }           
+                UpdateFloatingButtons();
+            }
         }
         public object CurrentItem
         {

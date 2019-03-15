@@ -1396,6 +1396,7 @@ namespace Ginger.Run
             if (mStopRun)
             {
                 UpdateActionStatus(action, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped, st);
+                ExecutionLogger.SetActionFolder(action);
                 //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
                 SetDriverPreviousRunStoppedFlag(true);
                 return;
@@ -1417,7 +1418,7 @@ namespace Ginger.Run
                 if (typeof(ActPlugIn).IsAssignableFrom(action.GetType()))
                 {
                     ActExecutorType = eActionExecutorType.RunOnPlugIn;
-
+                    
                     
                 }
                 else if (typeof(ActWithoutDriver).IsAssignableFrom(action.GetType()))
@@ -2165,7 +2166,10 @@ namespace Ginger.Run
                 if (AP.ParamType == typeof(string))
                 {
                     p.AddValue(AP.ValueForDriver.ToString());
-
+                }
+                else if (AP.ParamType == typeof(int))
+                {
+                    p.AddValue(AP.IntValue);
                 }
                 else if (AP.ParamType == typeof(bool))
                 {
@@ -2181,7 +2185,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    throw new Exception("Unknown param typee to pack: " + AP.ParamType.FullName);
+                    throw new Exception("Unknown param type to pack: " + AP.ParamType.FullName);
                 }
                 p.ClosePackage();
                 Params.Add(p);
@@ -4035,9 +4039,9 @@ namespace Ginger.Run
             }
             else if (CurrentBusinessFlow != null) // Automate Tab
             {
-                foreach (TargetApplication TA in CurrentBusinessFlow.TargetApplications)
+                foreach (TargetBase TA in CurrentBusinessFlow.TargetApplications)
                 {
-                    if (bfsTargetApplications.Where(x => x.Name == TA.AppName).FirstOrDefault() == null)
+                    if (bfsTargetApplications.Where(x => x.Name == TA.Name).FirstOrDefault() == null)
                         bfsTargetApplications.Add(TA);
                 }
             }

@@ -123,7 +123,7 @@ namespace Ginger.ALM.QC
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.TestSetName, Header = "Test Set", WidthWeight = 25, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.TestCaseName, Header = "Test Case", WidthWeight = 25, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.ActivitiesGroupName, Header = "Matching Activities Group", WidthWeight = 25, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.ActivitiesGroupName, Header = "Matching " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), WidthWeight = 25, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.ActivitiesGroupAutomationPrecentage, Header = "Automation Coverage", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.NumberOfExecutions, Header = "Executions Count.", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.PassRate, Header = "Pass Rate", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode=BindingMode.OneWay});

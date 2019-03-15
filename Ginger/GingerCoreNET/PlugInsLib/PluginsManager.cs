@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -46,6 +47,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public bool BackgroudDownloadInprogress { get;  set; }
 
         public PluginsManager(SolutionRepository solutionRepository)
         {
@@ -229,11 +231,12 @@ namespace Amdocs.Ginger.Repository
 
         public void CloseAllRunningPluginProcesses()
         {
+            WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();//??? do proper Reset()
             foreach (PluginProcessWrapper process in mProcesses)
             {
                 process.Close();                
             }
-            mProcesses.Clear();
+            mProcesses.Clear();            
         }
 
         public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
@@ -275,9 +278,62 @@ namespace Amdocs.Ginger.Repository
         }
 
         public void SolutionChanged(SolutionRepository solutionRepository)
-        {        
+        {
             mSolutionRepository = solutionRepository;
             GetPackages();
-         }
+            if (WorkSpace.RunningInExecutionMode)
+            {
+                Reporter.ToConsole(eLogLevel.INFO, "Ensuring all prequired plugins are present");
+                DownloadMissingPlugins();
+
+            }
+
+            else
+            {
+                Task.Run(() =>
+                {
+                    DownloadMissingPlugins();
+                });
+            }
+        }
+
+
+
+        private void DownloadMissingPlugins()
+        {
+            WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = true;
+            try
+            {
+                ObservableList<OnlinePluginPackage> OnlinePlugins = null;
+                foreach (PluginPackage SolutionPlugin in mPluginPackages)
+                {
+                    //TODO: Make it work for linux environments 
+                    if (SolutionPlugin.Folder.Contains("AppData\\Roaming") && !System.IO.File.Exists(Path.Combine(SolutionPlugin.Folder, @"Ginger.PluginPackage.Services.json")))
+                    {
+                        if (OnlinePlugins == null)
+                        {
+                            OnlinePlugins = WorkSpace.Instance.PlugInsManager.GetOnlinePluginsIndex();
+                        }
+
+                        OnlinePluginPackage OnlinePlugin = OnlinePlugins.Where(x => x.Id == SolutionPlugin.PluginId).FirstOrDefault();
+
+
+                        OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
+
+                        OnlinePlugin.InstallPluginPackage(OPR);
+
+
+                        //WorkSpace.Instance.PlugInsManager.InstallPluginPackage(OnlinePlugin, OPR);
+                    }
+
+
+                }
+            }
+
+            finally
+            {
+                WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = false;
+            }
+        }
     }
 }
