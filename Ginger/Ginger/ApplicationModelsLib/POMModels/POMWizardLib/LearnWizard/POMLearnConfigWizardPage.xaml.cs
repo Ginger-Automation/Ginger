@@ -76,11 +76,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
 
                     AddValidations();
-                    ClearAutoMapElementTypesSection();
 
+                    ClearAutoMapElementTypesSection();
                     SetAutoMapElementTypesGridView();
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
                     SetElementLocatorsSettingsGridView();
+                    UpdateConfigsBasedOnAgentStatus();
                     break;
             }
         }
@@ -159,21 +160,26 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (e.PropertyName == nameof(ucAgentControl.AgentIsRunning))
             {
-                if (xAgentControlUC.AgentIsRunning)
-                {
-                    SetAutoMapElementTypesSection();                    
-                    SetElementLocatorsSettingsSection();
-                }
-                else
-                {
-                    ClearAutoMapElementTypesSection();
-                }
-                xLearnOnlyMappedElements.IsEnabled = xAgentControlUC.AgentIsRunning;
-                xAutoMapElementTypesExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
-                xAutoMapElementTypesExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
-                xElementLocatorsSettingsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
-                xElementLocatorsSettingsExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
+                UpdateConfigsBasedOnAgentStatus();
             }
+        }
+
+        private void UpdateConfigsBasedOnAgentStatus()
+        {
+            if (xAgentControlUC.AgentIsRunning)
+            {
+                SetAutoMapElementTypesSection();
+                SetElementLocatorsSettingsSection();
+            }
+            else
+            {
+                ClearAutoMapElementTypesSection();
+            }
+            xLearnOnlyMappedElements.IsEnabled = xAgentControlUC.AgentIsRunning;
+            xAutoMapElementTypesExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
+            xAutoMapElementTypesExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
+            xElementLocatorsSettingsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
+            xElementLocatorsSettingsExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
         }
 
         private void ClearAutoMapElementTypesSection()
