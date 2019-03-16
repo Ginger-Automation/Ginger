@@ -70,6 +70,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         Page ITreeViewItem.EditPage()
         {
             ProjEnvironment.SaveBackup();//to mark the env as changed
+            ProjEnvironment.StartDirtyTracking();
             if (mApplicationPage == null)
             {
                 mApplicationPage = new ApplicationPage(EnvApplication);

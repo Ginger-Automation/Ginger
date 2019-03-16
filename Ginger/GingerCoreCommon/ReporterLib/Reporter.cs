@@ -227,11 +227,11 @@ namespace Amdocs.Ginger.Common
             if (bClosing)
             {
                 return;
-            }
-            bClosing = true;
+            }            
         
             if(mLastStatusTime.IsRunning)  
             {
+                bClosing = true;
                 // let the message show for at least one second
                 var timer = new Timer();
                 timer.Interval = 1000; // In milliseconds
