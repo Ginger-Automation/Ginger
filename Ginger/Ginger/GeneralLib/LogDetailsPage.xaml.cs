@@ -199,7 +199,7 @@ namespace Ginger.GeneralLib
 
         private void CopyToClipboradBtn_Click(object sender, RoutedEventArgs e)
         {            
-            Clipboard.SetText(mLogText);
+            Clipboard.SetText(mTextBlockHelper.GetText());
         }
 
         private void ViewLogBtn_Click(object sender, RoutedEventArgs e)
@@ -256,7 +256,7 @@ namespace Ginger.GeneralLib
             html.Append(@"<tr><td><p>" + "2. " + "<br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "3. " + "<br><br><br></p></td></tr>").AppendLine();          
             html.Append(@"<tr><td><p>" + "<b>Log Details:</b> " + "<br></p></td></tr>").AppendLine();
-            html.Append(@"<tr><td><p>" + mLogText.Replace("\n", "<br>") + "<br></p></td></tr>").AppendLine();
+            html.Append(@"<tr><td><p>" + mTextBlockHelper.GetText().Replace("\n", "<br>") + "<br></p></td></tr>").AppendLine();
             html.Append(@"</table></body></html>").AppendLine();
 
             return html.ToString();
