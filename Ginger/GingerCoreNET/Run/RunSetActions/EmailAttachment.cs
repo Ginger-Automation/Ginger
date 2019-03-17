@@ -95,8 +95,11 @@ namespace Ginger.Run.RunSetActions
             }
             set
             {
-                mZipit = value;
-                OnPropertyChanged(Fields.ZipIt);
+                if (mZipit != value)
+                {
+                    mZipit = value;
+                    OnPropertyChanged(Fields.ZipIt);
+                }
             }
         }
 
