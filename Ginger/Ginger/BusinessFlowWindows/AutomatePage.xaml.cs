@@ -96,21 +96,11 @@ namespace Ginger
         AutomatePageRunnerListener mAutomatePageRunnerListener;
         ExecutionLogger mExecutionLogger;
 
-        public void GoToBusFlowsListHandler(RoutedEventHandler clickHandler)
-        {           
-            xToBusinessFlowsListBtn.Visibility = Visibility.Visible;
-            xToBusinessFlowsListBtn.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 32);
-            xToBusinessFlowsListBtn.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 16);
-            xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
-            xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
-            xToBusinessFlowsListBtn.Click += clickHandler;
-        }
-
         public AutomatePage()
         {
             InitializeComponent();
 
-            if (App.BusinessFlow == null)          
+            if (App.BusinessFlow == null)
             {
                 //App.SetDefaultBusinessFlow();
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Failed to find {0} to load into Automate page.", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)));
@@ -130,8 +120,6 @@ namespace Ginger
             App.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, App.AutomateTabGingerRunner, Ginger.Run.GingerRunner.Fields.RunInSimulationMode);
             AppAgentsMappingExpander2Frame.Content = new ApplicationAgentsMapPage(App.AutomateTabGingerRunner);
 
-            
-
             SetExpanders();
 
             //Bind between Menu expanders and actual grid expanders
@@ -145,13 +133,11 @@ namespace Ginger
             ActivityVariablesExpander.IsExpanded = false;
             mlastBFVariablesRowHeight = new GridLength(200, GridUnitType.Star);
             mlastActivityVariablesRowHeight = new GridLength(200, GridUnitType.Star);
-            SetFramesContent();            
+            SetFramesContent();
 
             App.PropertyChanged += AppPropertychanged;
-             WorkSpace.UserProfile.PropertyChanged += UserProfilePropertyChanged;
+            WorkSpace.UserProfile.PropertyChanged += UserProfilePropertyChanged;
 
-
-            
             App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEvent;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
 
@@ -159,6 +145,23 @@ namespace Ginger
             SetGherkinOptions();
 
             BindEnvsCombo();
+
+            GoToBusFlowsListHandler();
+        }
+
+        public void GoToBusFlowsListHandler()
+        {
+            xToBusinessFlowsListBtn.Visibility = Visibility.Visible;
+            xToBusinessFlowsListBtn.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 32);
+            xToBusinessFlowsListBtn.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 16);
+            xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
+            xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
+            xToBusinessFlowsListBtn.Click += XToBusinessFlowsListBtn_Click; ;
+        }
+
+        private void XToBusinessFlowsListBtn_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ShowBusinessFlowsList, App.BusinessFlow);
         }
 
         private void AddRunnerListeners()
