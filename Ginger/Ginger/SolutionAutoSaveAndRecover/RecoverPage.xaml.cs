@@ -68,7 +68,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
 
         private void closeEventHandler(object sender, EventArgs e)
         {
-            App.AppSolutionRecover.CleanUp();            
+            //App.AppSolutionRecover.CleanUp();     //??why cleanup?       
         }
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
