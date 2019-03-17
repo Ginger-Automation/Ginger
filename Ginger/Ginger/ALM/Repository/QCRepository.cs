@@ -54,7 +54,7 @@ namespace Ginger.ALM.Repository
                 else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, e.Message);
 
-                Reporter.ToLog(eLogLevel.ERROR, "Error connecting to QC server", e);
+                Reporter.ToLog(eLogLevel.WARN, "Error connecting to QC server", e);
                 return false;
             }
         }
