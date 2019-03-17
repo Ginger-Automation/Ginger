@@ -435,6 +435,17 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return string.Empty;
         }
 
+        public object GetSelectedTreeNodeObject()
+        {
+            TreeViewItem TVI = (TreeViewItem)Tree.SelectedItem;
+            if (TVI != null && TVI.Tag != null)
+            {
+                return ((ITreeViewItem)TVI.Tag).NodeObject();
+            }
+
+            return null;
+        }
+
         private StackPanel SetSelectedTreeNodeHeaderStyle(StackPanel header)
         {
             if (header != null)
@@ -619,9 +630,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return TVI;
         }
 
-        public TreeViewItem FindMatchingTreeItemByObject(TreeViewItem root, Object searchItem)
+        public TreeViewItem FindMatchingTreeItemByObject(Object searchItem, TreeViewItem root = null)
         {
             Object currentItem = null;
+
+            if (root == null)
+            {
+                root = (TreeViewItem)Tree.Items[0];
+            }
 
             foreach (TreeViewItem TVI in root.Items)
             {
@@ -638,7 +654,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 if (TVI.Items.Count > 0)
                 {
                     TVI.IsExpanded = true;
-                    TreeViewItem vv = FindMatchingTreeItemByObject(TVI, searchItem);
+                    TreeViewItem vv = FindMatchingTreeItemByObject(searchItem, TVI);
                     if (vv != null) return vv;
                 }
             }
