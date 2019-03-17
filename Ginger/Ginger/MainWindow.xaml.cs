@@ -661,7 +661,7 @@ namespace Ginger
 
         private void btnViewLogDetails_Click(object sender, RoutedEventArgs e)
         {
-            LogDetailsPage log = new LogDetailsPage();
+            LogDetailsPage log = new LogDetailsPage(LogDetailsPage.eLogShowLevel.ALL);
             log.ShowAsWindow();
         }
 
@@ -715,7 +715,7 @@ namespace Ginger
 
         private void xLogErrors_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {            
-            LogDetailsPage logDetailsPage = new LogDetailsPage();
+            LogDetailsPage logDetailsPage = new LogDetailsPage(LogDetailsPage.eLogShowLevel.ERROR);
             logDetailsPage.ShowAsWindow();
 
             xLogErrorsPnl.Visibility = Visibility.Collapsed;            

@@ -34,17 +34,39 @@ namespace Ginger.GeneralLib
     /// </summary>
     public partial class LogDetailsPage : Page
     {
+        public enum eLogShowLevel
+        {
+            ALL, DEBUG, INFO, WARN, ERROR, FATAL
+        }
+
+        eLogShowLevel mLogLevel { get; set; }
         string mLogText;
         TextBlockHelper mTextBlockHelper;
         GenericWindow mPageGenericWin;
         string mLogFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\\amdocs\\Ginger\\WorkingFolder\\Logs\\Ginger_Log.txt";
 
-        public LogDetailsPage()
+        /// <summary>
+        /// Log Details Page
+        /// </summary>
+        /// <param name="logLevelToShow">Selecte Log level to show</param>
+        public LogDetailsPage(eLogShowLevel logLevelToShow = eLogShowLevel.ALL)
         {
             InitializeComponent();
 
+            mLogLevel = logLevelToShow;
+            GingerCore.General.FillComboFromEnumType(xLogTypeCombo, typeof(eLogShowLevel));
+           
+            xLogTypeCombo.SelectedValue = mLogLevel;
+            xLogTypeCombo.SelectionChanged += XLogTypeCombo_SelectionChanged;
+
             FillLogData();
             xScrollViewer.ScrollToBottom();
+        }
+
+        private void XLogTypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            mLogLevel = (eLogShowLevel)xLogTypeCombo.SelectedValue;
+            FillLogData();
         }
 
         private void FillLogData()
@@ -70,39 +92,84 @@ namespace Ginger.GeneralLib
 
             xLogDetailsTextBlock.Text = string.Empty;
             mTextBlockHelper = new TextBlockHelper(xLogDetailsTextBlock);
+            bool allowLogDetailsWrite = true;
             foreach (string log in logs)
             {
                 if (log == string.Empty)
                 {
-                    mTextBlockHelper.AddLineBreak();
+                    if (allowLogDetailsWrite)
+                    {
+                        mTextBlockHelper.AddLineBreak();
+                    }
                     continue;
                 }
                 else if (log.Contains("#### Application version"))
                 {
                     mTextBlockHelper.AddFormattedText(log, Brushes.Black, true);
                 }
-                else if(log.Contains("| INFO  |"))
+                else if(IsLogHeader(log))
                 {
-                    mTextBlockHelper.AddFormattedText(log, Brushes.Blue);
-                }
-                else if (log.Contains("| DEBUG |"))
-                {
-                    mTextBlockHelper.AddFormattedText(log, Brushes.Purple);
-                }
-                else if (log.Contains("| WARN  |"))
-                {
-                    mTextBlockHelper.AddFormattedText(log, Brushes.Orange);
-                }
-                else if(log.Contains("| ERROR |") || log.Contains("| FATAL |"))
-                {
-                    mTextBlockHelper.AddFormattedText(log, Brushes.Red, isBold:true);
+                    if (mLogLevel == eLogShowLevel.ALL || log.Contains("| " + mLogLevel.ToString()))
+                    {
+                        mTextBlockHelper.AddFormattedText(log, GetProperLogTypeBrush(log), isBold: true);
+                        mTextBlockHelper.AddLineBreak();
+                        allowLogDetailsWrite = true;
+                    }
+                    else
+                    {
+                        allowLogDetailsWrite = false;
+                    }
                 }
                 else
                 {
-                    mTextBlockHelper.AddText(log);
-                }
+                    if (allowLogDetailsWrite)
+                    {
+                        mTextBlockHelper.AddText(log);
+                        mTextBlockHelper.AddLineBreak();
+                    }
+                }                
+            }
+        }
 
-                mTextBlockHelper.AddLineBreak();
+        private bool IsLogHeader(string log)
+        {
+            if (log.Contains("| " + eLogLevel.DEBUG.ToString()) || log.Contains("| " + eLogLevel.ERROR.ToString()) ||
+                log.Contains("| " + eLogLevel.FATAL.ToString()) || log.Contains("| " + eLogLevel.INFO.ToString()) ||
+                log.Contains("| " + eLogLevel.WARN.ToString()))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private Brush GetProperLogTypeBrush(string log)
+        {
+            if (log.Contains("| " + eLogLevel.INFO.ToString()))
+            {
+                return Brushes.Blue;
+            }
+            else if (log.Contains("| " + eLogLevel.DEBUG.ToString()))
+            {
+                return Brushes.Purple;
+            }
+            else if (log.Contains("| " + eLogLevel.WARN.ToString()))
+            {
+                return Brushes.Orange;
+            }
+            else if (log.Contains("| " + eLogLevel.ERROR.ToString()))
+            {
+                return Brushes.Red;
+            }
+            else if (log.Contains("| " + eLogLevel.FATAL.ToString()))
+            {
+                return Brushes.DarkRed;
+            }
+            else
+            {
+                return Brushes.Black;
             }
         }
 
@@ -131,8 +198,8 @@ namespace Ginger.GeneralLib
         }
 
         private void CopyToClipboradBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Clipboard.SetText(mLogText);
+        {            
+            Clipboard.SetText(mTextBlockHelper.GetText());
         }
 
         private void ViewLogBtn_Click(object sender, RoutedEventArgs e)
@@ -189,10 +256,12 @@ namespace Ginger.GeneralLib
             html.Append(@"<tr><td><p>" + "2. " + "<br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "3. " + "<br><br><br></p></td></tr>").AppendLine();          
             html.Append(@"<tr><td><p>" + "<b>Log Details:</b> " + "<br></p></td></tr>").AppendLine();
-            html.Append(@"<tr><td><p>" + mLogText.Replace("\n", "<br>") + "<br></p></td></tr>").AppendLine();
+            html.Append(@"<tr><td><p>" + mTextBlockHelper.GetText().Replace("\n", "<br>") + "<br></p></td></tr>").AppendLine();
             html.Append(@"</table></body></html>").AppendLine();
 
             return html.ToString();
         }
+
+
     }
 }

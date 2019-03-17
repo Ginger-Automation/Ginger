@@ -3944,10 +3944,8 @@ namespace Ginger.Run
             {
                 foreach (BusinessFlow businessFlow in BusinessFlows)
                 {
-                    businessFlow.Reset();
-
-                   
-                    NotifyBusinessflowWasReset(CurrentBusinessFlow);
+                    businessFlow.Reset();                   
+                    NotifyBusinessflowWasReset(businessFlow);
                 }
             }
         }

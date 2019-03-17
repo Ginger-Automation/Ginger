@@ -112,7 +112,8 @@ namespace Ginger.GeneralWindows
                   
                    if(WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress)
                     {
-                        MessageBox.Show("Plugin Downloads is active in backgroud. Please wait");
+                        Reporter.ToUser(eUserMsgKey.PluginDownloadInProgress);
+                      
                         return;
                     }
                 }
