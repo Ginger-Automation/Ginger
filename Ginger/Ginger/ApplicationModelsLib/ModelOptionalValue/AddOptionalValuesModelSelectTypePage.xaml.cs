@@ -41,6 +41,7 @@ using Amdocs.Ginger.ValidationRules;
 using System.IO;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 {
@@ -171,6 +172,13 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 dlg.Filter = "Json files (*.json)|*.json|Text files (*.txt)|*.txt";
             }
+            else if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.DB.ToString())
+            {
+                if (Convert.ToString(xDBTypeComboBox.SelectedValue) == eDBTypes.MSAccess.ToString())
+                {
+                    dlg.Filter = "MSAccess files|*.accdb;*.mdb";
+                }
+            }
 
             if (!string.IsNullOrEmpty(xPathTextBox.Text))
             {
@@ -196,7 +204,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                             xSheetNameComboBox.SelectedIndex = 0;
                         }                        
                     }
-                    else
+                    else if ((xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.DB.ToString()))
+                    {
+                        xBDHostTextBox.Text = dlg.FileName;
+                    }
+                    else 
                     {
                         foreach (String file in dlg.FileNames)
                         {
@@ -285,6 +297,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 xSheetLable.Visibility = Visibility.Collapsed;
                 xDBStackPanel.Visibility = Visibility.Visible;
                 xImportOptionalValuesGrid.Visibility = Visibility.Collapsed;
+                xDBBrowseButton.Visibility = Visibility.Hidden;
                 FillDBTypeComboBox();                
             }
             xSaveExcelLable.Visibility = Visibility.Collapsed;
@@ -356,6 +369,12 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             BrowseFiles(false);
         }
+
+        private void xDBBrowseButton_Click(object sender, RoutedEventArgs e)
+        {
+            BrowseFiles(false);
+        }
+        
         private void FillSheetCombo()
         {
             mAddModelOptionalValuesWizard.ProcessStarted();
@@ -464,6 +483,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         private void xDBTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (Convert.ToString(xDBTypeComboBox.SelectedValue) == eDBTypes.MSAccess.ToString())
+            {
+                xDBBrowseButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xDBBrowseButton.Visibility = Visibility.Hidden;
+            }
         }
         private void xConnectDBButton_Click(object sender, RoutedEventArgs e)
         {
