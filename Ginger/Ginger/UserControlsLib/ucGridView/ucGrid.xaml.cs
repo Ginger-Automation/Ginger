@@ -1535,15 +1535,18 @@ public void RemoveCustomView(string viewName)
             return template;
         }
 
-        public static DataTemplate getDataColValueExpressionTemplate(string Path)
+        public static DataTemplate getDataColValueExpressionTemplate(string Path,bool HideVEBusinessFlowAndActivityVariables=false)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory factory = new FrameworkElementFactory(typeof(UCValueExpression));
             factory.SetBinding(UCDataColGrid.DataContextProperty, new Binding(Path));
+            factory.SetValue(UCValueExpression.HideVEBusinessFlowAndActivityVariablesProperty, HideVEBusinessFlowAndActivityVariables);
             template.VisualTree = factory;
+          
 
             return template;
         }
+ 
 
         public static DataTemplate getDataColActionDetailsTemplate(string Path)
         {

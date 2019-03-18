@@ -654,7 +654,24 @@ namespace GingerCore
             }
             return list;
         }
-        
+
+
+        public static List<GingerCore.General.ComboEnumItem> GetEnumValuesForComboFromList(Type Etype,List<Object> Items)
+        {
+            List<GingerCore.General.ComboEnumItem> list = new List<GingerCore.General.ComboEnumItem>();
+            foreach (object item in Items)
+            {
+                GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
+                CEI.text = GingerCore.General.GetEnumValueDescription(Etype, item);
+                CEI.Value = item;
+
+                list.Add(CEI);
+            }
+            return list;
+        }
+
+
+
         public static void SelectComboValue(ComboBox comboBox, string Value)
         {
             string itemVal = "";

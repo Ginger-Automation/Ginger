@@ -55,7 +55,7 @@ namespace Ginger.BusinessFlowWindows
             InitializeComponent();
 
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
-             WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+            WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
 
             Reset();
         }
@@ -65,6 +65,10 @@ namespace Ginger.BusinessFlowWindows
             if (args.EventType == AutomateEventArgs.eEventType.Automate)
             {
                 ShiftToAutoMateView();
+            }
+            else if(args.EventType == AutomateEventArgs.eEventType.ShowBusinessFlowsList)
+            {
+                ShiftToBusinessFlowView((BusinessFlow)args.Object);
             }
         }
 
@@ -79,10 +83,10 @@ namespace Ginger.BusinessFlowWindows
         private void Reset()
         {
             mBusFlowsPage = null;                      
-            ShiftToBusinessFlowView();
+            ShiftToBusinessFlowView(null);
         }
 
-        private void ShiftToBusinessFlowView()
+        private void ShiftToBusinessFlowView(BusinessFlow bf)
         {
             if(mBusFlowsPage == null &&  WorkSpace.UserProfile.Solution != null)
             {
@@ -90,6 +94,11 @@ namespace Ginger.BusinessFlowWindows
                 mBusFlowsPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.BusinessFlows), eImageType.BusinessFlow, busFlowsRootFolder, busFlowsRootFolder.SaveAllTreeFolderItemsHandler, busFlowsRootFolder.AddItemHandler, treeItemDoubleClickHandler: BusinessFlowsTree_ItemDoubleClick);
             }
             xContentFrame.Content = mBusFlowsPage;
+
+            //if (bf != null && mBusFlowsPage.TreeView.Tree.GetSelectedTreeNodeObject() != bf)
+            //{
+            //    mBusFlowsPage.TreeView.Tree.SelectItem((ITreeViewItem)mBusFlowsPage.TreeView.Tree.FindMatchingTreeItemByObject(bf, null));
+            //}
         }
 
         private void ShiftToAutoMateView()
@@ -102,17 +111,10 @@ namespace Ginger.BusinessFlowWindows
                 }
                 else
                 {
-                    mAutomatePage = new AutomatePage();
-                    ((AutomatePage)mAutomatePage).GoToBusFlowsListHandler(GoToBusinessFlowsList);
-                }
-                
+                    mAutomatePage = new AutomatePage();                   
+                }                
             }
             xContentFrame.Content = mAutomatePage;
-        }
-
-        private void GoToBusinessFlowsList(object sender, RoutedEventArgs e)
-        {
-            ShiftToBusinessFlowView();
         }
 
         private void BusinessFlowsTree_ItemDoubleClick(object sender, EventArgs e)

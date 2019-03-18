@@ -4,15 +4,20 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.GeneralLib"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="LogDetailsPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-        <ScrollViewer x:Name="xScrollViewer" VerticalScrollBarVisibility="Visible"  HorizontalScrollBarVisibility="Visible">
+    <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Label Content="Log Types to Show:" Style="{StaticResource $LabelStyle}"/>
+            <ComboBox x:Name="xLogTypeCombo" Width="100"  FontWeight="Bold" Style="{StaticResource $FlatInputComboBoxStyle}" Foreground="{StaticResource $HighlightColor_Purple}"/>
+        </StackPanel>
+        <ScrollViewer x:Name="xScrollViewer" VerticalScrollBarVisibility="Visible"  HorizontalScrollBarVisibility="Visible" DockPanel.Dock="Top">
             <Border BorderThickness="1" BorderBrush="{StaticResource $Color_DarkBlue}">
                 <TextBlock x:Name="xLogDetailsTextBlock"  Height="Auto" Style="{StaticResource $DetailsTextBlockStyle}" Text="Log Details" Margin="0,5,0,0" TextWrapping="NoWrap"></TextBlock>
             </Border>
         </ScrollViewer>
-    </Grid>
+    </DockPanel>
 </Page>
