@@ -39,7 +39,7 @@ namespace Ginger.Actions
         private Act mAct;
         BusinessFlow mActParentBusinessFlow = null;
         Activity mActParentActivity = null;
-        private static readonly List<GingerCore.General.ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForCombo(typeof(eFCOperator));
+        private static readonly List<GingerCore.General.ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForComboFromList(typeof(eFCOperator),FlowControl.ActionFlowControls);
 
         public ActionFlowControlPage(Act act, BusinessFlow actParentBusinessFlow, Activity actParentActivity, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
         {
