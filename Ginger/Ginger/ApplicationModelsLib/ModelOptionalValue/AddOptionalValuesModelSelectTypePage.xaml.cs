@@ -176,7 +176,6 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 if (Convert.ToString(xDBTypeComboBox.SelectedValue) == eDBTypes.MSAccess.ToString())
                 {
-                    dlg.InitialDirectory = Path.Combine(((Amdocs.Ginger.Repository.RepositoryItemBase)WorkSpace.Instance.Solution).ContainingFolderFullPath, "DataSource");
                     dlg.Filter = "MSAccess files|*.accdb;*.mdb";
                 }
             }
