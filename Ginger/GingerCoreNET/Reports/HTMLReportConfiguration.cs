@@ -165,11 +165,11 @@ namespace Ginger.Reports
             {
                 configID = SetReportTemplateSequence(true);
                 this.ID = configID;
-                if (Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations().Count == 0)
-                    this.IsDefault = true;
-                else
-                    this.IsDefault = false;
             }
+            if (Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations().Count == 0)
+                this.IsDefault = true;
+            else
+                this.IsDefault = false;
             this.Name = SetReportTempalteName(name, configID);
             SetHTMLReportConfigurationWithDefaultValues(this);
         }
