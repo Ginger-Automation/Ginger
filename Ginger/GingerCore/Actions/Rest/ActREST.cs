@@ -256,7 +256,7 @@ namespace GingerCore.Actions.REST
             {
                 if (mPlatforms.Count == 0)
                 {
-                    AddAllPlatforms();
+                    mPlatforms.Add(ePlatformType.WebServices);
                 }
                 return mPlatforms;
             }

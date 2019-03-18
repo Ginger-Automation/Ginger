@@ -77,7 +77,7 @@ namespace Ginger.GingerCoreNETTestLib
             Actions.Add(new MyAction() { Name = "Get All BFs and Save", Action = () => GetAllBFsandSave() });
             Actions.Add(new MyAction() { Name = "Get All BFs and Copy", Action = () => GetBFsAndCopy() });
             Actions.Add(new MyAction() { Name = "Create 100 Big BFs", Action = () => Create100BigBFs() });
-            Actions.Add(new MyAction() { Name = "Clear Business Flows Cache", Action = () => ClearBusinessFlowsCache() });
+            Actions.Add(new MyAction() { Name = "Clear " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Cache", Action = () => ClearBusinessFlowsCache() });
             Actions.Add(new MyAction() { Name = "GetEnvironments", Action = () => GetEnvironments() });
             Actions.Add(new MyAction() { Name = "Start Ginger Grid", Action = () => StartGingerGrid() });
             Actions.Add(new MyAction() { Name = "List Ginger Grid Nodes", Action = () => ListGingerGridNodes() });

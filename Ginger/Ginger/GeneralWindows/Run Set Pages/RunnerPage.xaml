@@ -97,7 +97,7 @@
                                 <usercontrols:ImageMakerControl ImageType="Reset" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
                             </MenuItem.Icon>
                             <MenuItem.Header>
-                                <GingerCore:ucTextDicResource Text="Reset Run Set Status"/>
+                                <GingerCore:ucTextDicResource Text="Reset [RunSet] Status"/>
                             </MenuItem.Header>
                         </MenuItem>
                     </MenuItem>

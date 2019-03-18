@@ -2167,7 +2167,7 @@ namespace Ginger.Run
                 {
                     p.AddValue(AP.ValueForDriver.ToString());
                 }
-                if (AP.ParamType == typeof(int))
+                else if (AP.ParamType == typeof(int))
                 {
                     p.AddValue(AP.IntValue);
                 }

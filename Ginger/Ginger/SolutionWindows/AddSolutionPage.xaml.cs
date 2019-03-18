@@ -128,7 +128,7 @@ namespace Ginger.SolutionWindows
 
         private void AddDeafultReportTemplate()
         {
-            HTMLReportConfiguration r = new HTMLReportConfiguration("Default");
+            HTMLReportConfiguration r = new HTMLReportConfiguration("Default",true);
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(r);
         }
 

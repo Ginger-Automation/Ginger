@@ -405,7 +405,7 @@ namespace GingerCore.ALM.QCRestAPI
             {
                 if (ex.Message.Contains("The Test Set already exists"))
                 {
-                    string result = "Cannot export Business Flow - The Test Set already exists in the selected folder. ";
+                    string result = "Cannot export " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " - The Test Set already exists in the selected folder. ";
                     Reporter.ToLog(eLogLevel.ERROR, result, ex);
                     return null;
                 }
