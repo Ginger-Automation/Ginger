@@ -17,6 +17,7 @@
 
                 <Label DockPanel.Dock="Top" HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}">New Elements Learning Settings:</Label>
                 <DockPanel x:Name="xLearningConfigsPnl" DockPanel.Dock="Top" Margin="5,0,10,0">
+                    <CheckBox x:Name="xLearnOnlyMappedElements" Content="Learn Only Mapped Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" Style="{StaticResource $CeckBoxStyle}"/>
                     <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" IsExpanded="False" Margin="5,0,0,0">
                         <Expander.Header>
                             <Label x:Name="xPropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12" Content="Elements Types to Auto Map"/>
@@ -25,7 +26,6 @@
                             <Ginger:ucGrid x:Name="xAutoMapElementTypesGrid" AutomationProperties.AutomationId="AutoMapElementTypesGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
                         </Expander.Content>
                     </Expander>
-                    <CheckBox x:Name="xLearnOnlyMappedElements" Content="Learn Only Mapped Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" Style="{StaticResource $CeckBoxStyle}"/>
                     <Expander x:Name="xElementLocatorsSettingsExpander" DockPanel.Dock="Top" Visibility="Visible"  IsExpanded="False" Margin="5,0,0,15">
                         <Expander.Header>
                             <Label x:Name="xLocatorsExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12" Content="Learned Elements Locators Preferences"/>
