@@ -62,7 +62,7 @@
                 <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="GridAttachment">
                     <Grid.Resources>
                         <DataTemplate x:Key="ReportAttachment">
-                            <CheckBox x:Name="AttachmentsGrid_TemplateIsReport"  Style="{StaticResource @CheckBoxStyle}" IsEnabled="{Binding IsReport}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="{Binding ZipIt}"/>
+                            <CheckBox x:Name="AttachmentsGrid_TemplateIsReport" Style="{StaticResource @CheckBoxStyle}" IsEnabled="{Binding IsReport}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="{Binding ZipIt,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                         </DataTemplate>
                         <DataTemplate x:Key="ParamValueExpressionButton" >
                             <Button x:Name="GridParamVEButton" Content="..." Click="GridParamVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}" IsEnabled="True" />

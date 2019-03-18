@@ -105,19 +105,6 @@ namespace Ginger.GeneralWindows
                 xSelectedItemFrame.SetContent(null);
                 return;
             }
-            else
-            {
-                if (SelectedMainListItem.Name == "Plugins")
-                {
-                  
-                   if(WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress)
-                    {
-                        Reporter.ToUser(eUserMsgKey.PluginDownloadInProgress);
-                      
-                        return;
-                    }
-                }
-            }
 
             SetSelectedListItemStyle(xMainNavigationListView, (SolidColorBrush)FindResource("$Color_DarkBlue"));
 
