@@ -2245,7 +2245,7 @@ namespace Ginger.Run
 
                 
 
-                    bool IsConditionTrue= CalculateFlowControlStatus(act, mLastExecutedActivity,FC.Operator,FC.ConditionCalculated);
+                    bool IsConditionTrue= CalculateFlowControlStatus(act, mLastExecutedActivity,CurrentBusinessFlow, FC.Operator,FC.ConditionCalculated);
                  
                     if (IsConditionTrue)
                     {
@@ -2395,7 +2395,7 @@ namespace Ginger.Run
             }
         }
 
-        public static bool CalculateFlowControlStatus(Act mAct,Activity mLastActivity,eFCOperator FCoperator,string Expression)
+        public static bool CalculateFlowControlStatus(Act mAct,Activity mLastActivity,BusinessFlow CurrentBF,eFCOperator FCoperator,string Expression)
         {
             bool FCStatus;
 
@@ -2447,6 +2447,14 @@ namespace Ginger.Run
                         FCStatus = false;
                     }
                     break;
+                case eFCOperator.BusinessFlowPassed:
+
+                    FCStatus = CurrentBF.RunStatus == eRunStatus.Passed ? true : false;
+                    break;
+                case eFCOperator.BusinessFlowFailed:
+                    FCStatus = CurrentBF.RunStatus == eRunStatus.Failed ? true : false;
+                    break;
+
                 case eFCOperator.CSharp:
 
                     FCStatus = CodeProcessor.EvalCondition(Expression);
@@ -3944,10 +3952,8 @@ namespace Ginger.Run
             {
                 foreach (BusinessFlow businessFlow in BusinessFlows)
                 {
-                    businessFlow.Reset();
-
-                   
-                    NotifyBusinessflowWasReset(CurrentBusinessFlow);
+                    businessFlow.Reset();                   
+                    NotifyBusinessflowWasReset(businessFlow);
                 }
             }
         }
@@ -4039,9 +4045,9 @@ namespace Ginger.Run
             }
             else if (CurrentBusinessFlow != null) // Automate Tab
             {
-                foreach (TargetApplication TA in CurrentBusinessFlow.TargetApplications)
+                foreach (TargetBase TA in CurrentBusinessFlow.TargetApplications)
                 {
-                    if (bfsTargetApplications.Where(x => x.Name == TA.AppName).FirstOrDefault() == null)
+                    if (bfsTargetApplications.Where(x => x.Name == TA.Name).FirstOrDefault() == null)
                         bfsTargetApplications.Add(TA);
                 }
             }

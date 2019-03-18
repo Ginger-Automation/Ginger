@@ -52,12 +52,16 @@ namespace GingerCore.NoSqlBase
                     Servers = new List<Uri> { new Uri(Db.TNSCalculated.ToString()) },                    
                 });
                 bool res = false;
+                //TODO: need to decrypt the password in the Database->PassCalculated
                 String deCryptValue = EncryptionHandler.DecryptString(Db.PassCalculated.ToString(), ref res, false);
                 if (res == true)
                 {
-                    Db.Pass = deCryptValue;                    
+                    clusterCB.Authenticate(Db.UserCalculated.ToString(), deCryptValue);
                 }
-                clusterCB.Authenticate(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());
+                else
+                {
+                    clusterCB.Authenticate(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());
+                }
                 return true;
             }
             catch (Exception e)
