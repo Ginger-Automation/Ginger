@@ -52,7 +52,7 @@ namespace Amdocs.Ginger.Common
         ExportItem,
         StartAgentFailed,
         BusinessFlowConversion,
-        Search
+        Search, DownloadingMissingPluginPackages,
     }
 
     public static class StatusMsgsPool
@@ -144,6 +144,9 @@ namespace Amdocs.Ginger.Common
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.GingerHelpLibrary, new StatusMsg(eStatusMsgType.INFO, "Ginger Help Library is Ready!", "Press [F1] from anywhere and view User Guides & Videos related to the topic you working on!"));
 
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.Search, new StatusMsg(eStatusMsgType.PROCESS, "Searching...", "Searching {0}..."));
+
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.DownloadingMissingPluginPackages, new StatusMsg(eStatusMsgType.PROCESS, "Restoring Missing Plugin Packages", "Restoring Missing Plugin Packages..."));
+            
         }
     }
 }

@@ -82,7 +82,7 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-        bool mZipit = true;
+        bool mZipit;
         [IsSerializedForLocalRepository]
         public bool ZipIt
         {
@@ -95,8 +95,11 @@ namespace Ginger.Run.RunSetActions
             }
             set
             {
-                mZipit = value;
-                OnPropertyChanged(Fields.ZipIt);
+                if (mZipit != value)
+                {
+                    mZipit = value;
+                    OnPropertyChanged(Fields.ZipIt);
+                }
             }
         }
 

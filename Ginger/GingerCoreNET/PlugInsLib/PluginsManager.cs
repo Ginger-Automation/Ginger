@@ -58,7 +58,6 @@ namespace Amdocs.Ginger.Repository
         private void GetPackages()
         {
             mPluginPackages = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
-
         }
 
         public class DriverInfo
@@ -234,9 +233,9 @@ namespace Amdocs.Ginger.Repository
             WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();//??? do proper Reset()
             foreach (PluginProcessWrapper process in mProcesses)
             {
-                process.Close();                
+                process.Close();
             }
-            mProcesses.Clear();            
+            mProcesses.Clear();
         }
 
         public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
@@ -280,27 +279,28 @@ namespace Amdocs.Ginger.Repository
         public void SolutionChanged(SolutionRepository solutionRepository)
         {
             mSolutionRepository = solutionRepository;
+
+            //download missing plugins
             GetPackages();
-            if (WorkSpace.RunningInExecutionMode)
-            {
-                Reporter.ToConsole(eLogLevel.INFO, "Ensuring all prequired plugins are present");
-                DownloadMissingPlugins();
-
-            }
-
-            else
-            {
-                Task.Run(() =>
+            if (mPluginPackages != null && mPluginPackages.Count > 0)
+            {                
+                if (WorkSpace.RunningInExecutionMode)
+                {                    
+                    DownloadMissingPlugins(); //need to download it before execution starts
+                }
+                else
                 {
-                    DownloadMissingPlugins();
-                });
+                    Task.Run(() =>
+                    {
+                        DownloadMissingPlugins(); //downloading the plugins async
+                    });
+                }
             }
         }
 
-
-
         private void DownloadMissingPlugins()
         {
+            Reporter.ToStatus(eStatusMsgKey.DownloadingMissingPluginPackages);
             WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = true;
             try
             {
@@ -317,22 +317,18 @@ namespace Amdocs.Ginger.Repository
 
                         OnlinePluginPackage OnlinePlugin = OnlinePlugins.Where(x => x.Id == SolutionPlugin.PluginId).FirstOrDefault();
 
-
                         OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
 
                         OnlinePlugin.InstallPluginPackage(OPR);
 
-
                         //WorkSpace.Instance.PlugInsManager.InstallPluginPackage(OnlinePlugin, OPR);
                     }
-
-
                 }
             }
-
             finally
             {
                 WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = false;
+                Reporter.HideStatusMessage();
             }
         }
     }
