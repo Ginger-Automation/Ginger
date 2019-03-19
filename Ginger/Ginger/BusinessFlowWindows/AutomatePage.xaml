@@ -37,7 +37,11 @@
             </UserControls:ucButton.ButtonText>--><!--
         </UserControls:ucButton>-->
         <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Gray}" HorizontalAlignment="Stretch">
-            <Label x:Name="xMainBusinessFlowlabel" Content="Business Flow Name" Style="{StaticResource $HeaderStyle}" Foreground="{StaticResource $SelectionColor_Pink}" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Label x:Name="xMainBusinessFlowlabel" Style="{StaticResource $HeaderStyle}" Foreground="{StaticResource $SelectionColor_Pink}" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Label.Content>
+                    <GingerCore:ucTextDicResource Text="[BusinessFlow] Name"></GingerCore:ucTextDicResource>
+                </Label.Content>
+            </Label>
         </Border>
 
         <Ribbon x:Name="xRibbon" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Title="" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Loaded="xRibbon_Loaded" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
@@ -47,7 +51,11 @@
             <RibbonTab x:Name="AutomateRibbon" AutomationProperties.AutomationId="AutomateRibbon" Header="Automate" h:GingerHelpProvider.HelpString="Automate"  ToolTip="Automate Tab" ContextMenu="{x:Null}" KeyTip="A" Margin="0,3,0,-3" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle_Hidden}" IsHitTestVisible="True">
                 <RibbonGroup x:Name="BusFlowGroup" ContextMenu="{x:Null}" Header="{DynamicResource BusinessFlow}">
                     <RibbonButton x:Name="xToBusinessFlowsListBtn" ContextMenu="{x:Null}" Foreground="{StaticResource $SelectionColor_LightBlue}"/>
-                    <RibbonButton x:Name="SaveBizFlowButton" Click="SaveBizFlowButton_Click"  ContextMenu="{x:Null}" Label="Save" LargeImageSource="{StaticResource @Save_32x32}" SmallImageSource="{StaticResource @Save_16x16}" ToolTip="Save the currently opened Business Flow" />
+                    <RibbonButton x:Name="SaveBizFlowButton" Click="SaveBizFlowButton_Click"  ContextMenu="{x:Null}" Label="Save" LargeImageSource="{StaticResource @Save_32x32}" SmallImageSource="{StaticResource @Save_16x16}">
+                        <RibbonButton.ToolTip>
+                            <GingerCore:ucTextDicResource Text="Save the currently opened [BusinessFlow]"></GingerCore:ucTextDicResource>
+                        </RibbonButton.ToolTip>
+                    </RibbonButton>
                     <RibbonButton x:Name="UndoBizFlowChangesButton" ContextMenu="{x:Null}" ToolTip="Undo all changes made" Click="UndoBizFlowChangesButton_Click" Label="Undo All Changes" LargeImageSource="{StaticResource @Undo_32x32.png}" SmallImageSource="{StaticResource @Undo_16x16}" />
                     <RibbonButton x:Name="AutomateAnalyzerButton" Label="Analyzer" ContextMenu="{x:Null}"  Click="AutomateAnalyzerButton_Click"  LargeImageSource="{StaticResource @Stethoscope_32x32.png}" SmallImageSource="{StaticResource @Stethoscope_16x16}">
                         <RibbonButton.ToolTip>

@@ -349,7 +349,7 @@ namespace GingerCore.ALM.QCRestAPI
             //set item fields
             foreach (ExternalItemFieldBase field in testCaseFields)
             {
-                if (field.ToUpdate || field.Mandatory)
+                if ((field.ToUpdate || field.Mandatory) && !test.ElementsField.ContainsKey(field.ExternalID))
                 {
                     if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
                         test.ElementsField.Add(field.ExternalID, field.SelectedValue);
@@ -405,7 +405,7 @@ namespace GingerCore.ALM.QCRestAPI
             {
                 if (ex.Message.Contains("The Test Set already exists"))
                 {
-                    string result = "Cannot export Business Flow - The Test Set already exists in the selected folder. ";
+                    string result = "Cannot export " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " - The Test Set already exists in the selected folder. ";
                     Reporter.ToLog(eLogLevel.ERROR, result, ex);
                     return null;
                 }

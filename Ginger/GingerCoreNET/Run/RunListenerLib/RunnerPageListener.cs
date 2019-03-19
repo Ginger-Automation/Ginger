@@ -27,6 +27,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
     public class RunnerPageListener : RunListenerBase
     {
         public EventHandler UpdateStat;
+
+        public EventHandler UpdateBusinessflowActivities;
+
         public override void GiveUserFeedback(uint eventTime)
         {          
             UpdateStat.Invoke(this, null);
@@ -50,6 +53,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             UpdateStat.Invoke(this, null);
         }
 
+        public override void BusinessflowWasReset(uint eventTime, BusinessFlow businessFlow)
+        {
+            UpdateBusinessflowActivities.Invoke(businessFlow, null);
+        }
+
         public override void ActivityStart(uint eventTime, Activity activity, bool continuerun=false)
         {
             UpdateStat.Invoke(this, null);
@@ -71,10 +79,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
 
         public override void DynamicActivityWasAddedToBusinessflow(uint eventTime, BusinessFlow businessFlow)
-        {
-            UpdateStat.Invoke(this, null);
+        {            
+            UpdateBusinessflowActivities.Invoke(businessFlow, null);
         }
-
        
     }
 }

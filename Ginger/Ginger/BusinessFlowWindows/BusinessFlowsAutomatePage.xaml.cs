@@ -64,14 +64,17 @@ namespace Ginger.BusinessFlowWindows
                 {
                     if (mAutomatePage == null)
                     {
-                        mAutomatePage = new AutomatePage((BusinessFlow)args.Object);
-                        mAutomatePage.GoToBusFlowsListHandler(GoToBusinessFlowsList);
+                        mAutomatePage = new AutomatePage((BusinessFlow)args.Object);                       
                     }
                     xContentFrame.Content = mAutomatePage;
-                }
-
+                }                
             }
-        }
+            else if (args.EventType == AutomateEventArgs.eEventType.ShowBusinessFlowsList)
+            {
+                ShiftToBusinessFlowView((BusinessFlow)args.Object);
+            }
+        }    
+         
 
         private void UserProfile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -84,10 +87,10 @@ namespace Ginger.BusinessFlowWindows
         private void Reset()
         {
             mBusFlowsPage = null;                      
-            ShiftToBusinessFlowView();
+            ShiftToBusinessFlowView(null);
         }
 
-        private void ShiftToBusinessFlowView()
+        private void ShiftToBusinessFlowView(BusinessFlow bf)
         {
             if(mBusFlowsPage == null &&  WorkSpace.UserProfile.Solution != null)
             {
@@ -95,11 +98,6 @@ namespace Ginger.BusinessFlowWindows
                 mBusFlowsPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.BusinessFlows), eImageType.BusinessFlow, busFlowsRootFolder, busFlowsRootFolder.SaveAllTreeFolderItemsHandler, busFlowsRootFolder.AddItemHandler, treeItemDoubleClickHandler: BusinessFlowsTree_ItemDoubleClick);
             }
             xContentFrame.Content = mBusFlowsPage;
-        }
-
-        private void GoToBusinessFlowsList(object sender, RoutedEventArgs e)
-        {
-            ShiftToBusinessFlowView();
         }
 
         private void BusinessFlowsTree_ItemDoubleClick(object sender, EventArgs e)

@@ -48,8 +48,7 @@ namespace Ginger.Run
     /// Interaction logic for GingerRunnerPage.xaml
     /// </summary>
     public partial class RunnerPage : Page
-    {
-        RunnerPageListener mRunnerPageListener;
+    {        
         DispatcherTimer mDispatcherTimer;
 
         public event RunnerPageEventHandler RunnerPageEvent;
@@ -68,6 +67,16 @@ namespace Ginger.Run
         {            
             return xBusinessflowsStatistics;                                       
         }
+
+        RunnerPageListener mRunnerPageListener;
+        public RunnerPageListener RunnerPageListener
+        {
+            get
+            {
+                return mRunnerPageListener;
+            }
+        }
+
         GingerRunner mRunner;
         public GingerRunner Runner
         {
@@ -556,7 +565,7 @@ namespace Ginger.Run
         {
             if (mRunner.BusinessFlows.Count <= 0)
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one Business Flow to '" + mRunner.Name + "' to start run.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '" + mRunner.Name + "' to start run.");
                 return;
             }
             RunRunner();

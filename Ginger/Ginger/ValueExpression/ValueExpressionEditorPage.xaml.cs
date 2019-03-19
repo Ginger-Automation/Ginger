@@ -192,6 +192,7 @@ namespace Ginger
             SetItemView(tvi, vb.PlaceHolder, GlobalParam, "@Variable_16x16.png");
             parentTvi.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
+            tvi.Selected += HideHelp;
         }
 
         private void AddFlowControlConditions()
@@ -391,6 +392,7 @@ namespace Ginger
         {
             TreeViewItem tviSecuritySettings = new TreeViewItem();
             SetItemView(tviSecuritySettings, "General Functions", "", "@Config_16x16.png");
+            tviSecuritySettings.Selected += HideHelp;
             xObjectsTreeView.Items.Add(tviSecuritySettings);
             try
             {
@@ -454,7 +456,7 @@ namespace Ginger
             SetItemView(tviSecuritySettings, Desc, VarExpression, "@Config_16x16.png");
             tviSecSets.Items.Add(tviSecuritySettings);
             tviSecuritySettings.MouseDoubleClick += tvi_MouseDoubleClick;
-        
+            tviSecuritySettings.Selected += HideHelp;
         }
 
         private void AddVBSIfEval(TreeViewItem tviVars, string Desc, string Eval)
@@ -471,6 +473,7 @@ namespace Ginger
         private void AddEnvParams()
         {
             TreeViewItem tviEnvs = new TreeViewItem();
+            tviEnvs.Selected += HideHelp;
             SetItemView(tviEnvs, "Environments", "", "@Environment_16x16.png");
             xObjectsTreeView.Items.Add(tviEnvs);
 
@@ -480,6 +483,7 @@ namespace Ginger
             {                
                 TreeViewItem tviEnv = new TreeViewItem();
                 SetItemView(tviEnv, env.Name, "", "@Environment_16x16.png");
+                tviEnv.Selected += HideHelp;
                 tviEnvs.Items.Add(tviEnv);
 
                 TreeViewItem tviEnvApps = new TreeViewItem();
@@ -491,7 +495,7 @@ namespace Ginger
                     TreeViewItem tviEnvApp = new TreeViewItem();
                     SetItemView(tviEnvApp, a.Name, "", "@Window_16x16.png");
                     tviEnvApps.Items.Add(tviEnvApp);
-
+                    tviEnvApp.Selected += HideHelp;
                     //Add Env URL
                     TreeViewItem tviEnvAppURL = new TreeViewItem();
                     string URLval = "{EnvURL App=" + a.Name + "}";
@@ -508,14 +512,21 @@ namespace Ginger
                     // Add all App General Params
                     foreach (GeneralParam gp in a.GeneralParams)
                     {
+                     
                         TreeViewItem tviEnvAppParam = new TreeViewItem();
                         string Paramval = "{EnvParam App=" + a.Name + " Param=" + gp.Name + "}";
                         SetItemView(tviEnvAppParam, gp.Name + " =" + gp.Value, Paramval, "GlobalParam16x16.png");
                         tviEnvAppGlobalParam.Items.Add(tviEnvAppParam);
                         tviEnvAppParam.MouseDoubleClick += tvi_MouseDoubleClick;
+                        tviEnvAppParam.Selected += HideHelp;
                     }
                 }
             }
+        }
+
+        private void HideHelp(object sender, RoutedEventArgs e)
+        {
+            xHelpPanel.Visibility = Visibility.Collapsed;
         }
 
         private void AddVariables()
@@ -584,7 +595,9 @@ namespace Ginger
             TreeViewItem tviDataSources = new TreeViewItem();
             SetItemView(tviDataSources, "Data Sources", "", "@DataSource_16x16.png");
             xObjectsTreeView.Items.Add(tviDataSources);
-            
+            tviDataSources.Selected+=HideHelp;
+
+
             ObservableList<DataSourceBase> DataSources = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
 
             foreach (DataSourceBase ds in DataSources)
@@ -612,7 +625,7 @@ namespace Ginger
                         TreeViewItem tviDSTable = new TreeViewItem();
                         SetItemView(tviDSTable, dsTable.Name, dsTable.DSTableType.ToString(), "@DataTable_16x16.png");
                         tviDataSource.Items.Add(tviDSTable);
-
+                        tviDataSource.Selected += HideHelp;
                         tviDSTable.DataContext = dsTable;
                         tviDSTable.MouseDoubleClick += tviDSTable_MouseDoubleClick;
                     }
@@ -647,7 +660,7 @@ namespace Ginger
             else if (typeof(VariableBase).IsInstanceOfType(tvi.Tag))
             {
 
-                AddExpToValue("{Var Name=" + tvi.Tag + "} ");
+                AddExpToValue("{Var Name=" + tvi.Tag + "}");
             }
             else
             {
@@ -806,7 +819,7 @@ namespace Ginger
             TreeViewItem TVI = sender as TreeViewItem;
             VariableBase Var = TVI.Tag as VariableBase;
 
-            UpdateHelp(true,"Variable: " +Var.Name, "Variable " + Var.VariableType(), "Current Value", Var.Value);
+            UpdateHelp(true, GingerDicser.GetTermResValue(eTermResKey.Variable) + ": " + Var.Name, GingerDicser.GetTermResValue(eTermResKey.Variable) + " " + Var.VariableType(), "Current Value", Var.Value);
         }
 
         private void UpdateHelpForCSFunction(object sender, RoutedEventArgs e)
@@ -832,7 +845,7 @@ namespace Ginger
 
         private void UpdateHelp(bool ShowHelpCategory, string Title, string Category, string HelpContentName, string HelpContent, string HelpExtraInfo = null)
         {
-
+           
             xWarningPanel.Visibility = Visibility.Collapsed;
             xHelpPanel.Visibility = Visibility.Visible;
 
@@ -852,6 +865,8 @@ namespace Ginger
             XHelpContent.Text = HelpContent;
             XHelpExtra.Text = HelpExtraInfo == null ? string.Empty : HelpExtraInfo;
         }
+
+    
 
         private async void ValueUCTextEditor_LostFocus(object sender, RoutedEventArgs e)
         {

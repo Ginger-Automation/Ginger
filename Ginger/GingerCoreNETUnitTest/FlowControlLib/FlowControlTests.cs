@@ -26,10 +26,10 @@ namespace GingerCore.FlowControlLib.Tests
             ActDummy act = new ActDummy();
 
             act.Status = eRunStatus.Passed;
-            bool FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, FC.Operator, "");
+            bool FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity,null, FC.Operator, "");
             Assert.AreEqual(true, FcStatus);
             act.Status = eRunStatus.Failed;
-            FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, FC.Operator, "");
+            FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, null, FC.Operator, "");
             Assert.AreEqual(false, FcStatus);
 
 
@@ -38,11 +38,11 @@ namespace GingerCore.FlowControlLib.Tests
             FC.Operator = eFCOperator.ActionFailed;
 
             act.Status = eRunStatus.Failed;
-            FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, FC.Operator, "");
+            FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, null, FC.Operator, "");
             Assert.AreEqual(true, FcStatus);
 
             act.Status = eRunStatus.Passed;
-            FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, FC.Operator, "");
+            FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, null, FC.Operator, "");
             Assert.AreEqual(false, FcStatus);
 
 
@@ -52,10 +52,10 @@ namespace GingerCore.FlowControlLib.Tests
             FC.Operator = eFCOperator.LastActivityPassed;
             LastActivity.Status = eRunStatus.Passed;
 
-            FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, FC.Operator, "");
+            FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, null, FC.Operator, "");
             Assert.AreEqual(true, FcStatus);
             LastActivity.Status = eRunStatus.Failed;
-            FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, FC.Operator, "");
+            FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, null, FC.Operator, "");
             Assert.AreEqual(false, FcStatus);
 
 
@@ -64,11 +64,11 @@ namespace GingerCore.FlowControlLib.Tests
             FC.Operator = eFCOperator.LastActivityFailed;
             LastActivity.Status = eRunStatus.Failed;
 
-            FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, FC.Operator, "");
+            FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, null, FC.Operator, "");
             Assert.AreEqual(true, FcStatus);
             LastActivity.Status = eRunStatus.Passed;
 
-            FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, FC.Operator, "");
+            FcStatus = GingerRunner.CalculateFlowControlStatus(act, LastActivity, null, FC.Operator, "");
             Assert.AreEqual(false, FcStatus);
 
 

@@ -319,7 +319,7 @@ namespace Ginger.Run
 
         private void UpdateRunButtonIcon()
         {
-            if (RunSetConfig.GingerRunners.Where(x => x.IsRunning == true).FirstOrDefault() != null)
+            if (RunSetConfig.GingerRunners.Where(x => x.Status == eRunStatus.Running).FirstOrDefault() != null)
             {
                 xRunRunsetBtn.ButtonText = "Running";
                 xRunRunsetBtn.ToolTip = "Execution of at least one Runner is in progress";
@@ -498,7 +498,7 @@ namespace Ginger.Run
             {
                 mFlowDiagram.Height = 240;
                 mFlowDiagram.CanvasHeight = 240;
-                mFlowDiagram.CanvasWidth = mRunSetConfig.GingerRunners.Count() * 600;
+                mFlowDiagram.CanvasWidth = mRunSetConfig.GingerRunners.Count() * 620;
             }
 
         }
@@ -695,12 +695,13 @@ namespace Ginger.Run
                 GRP.xRunnerNameTxtBlock.Foreground = FindResource("$SelectionColor_Pink") as Brush;
             }                
             mCurrentSelectedRunner = GRP;
-            
+
             mCurrentSelectedRunner.RunnerPageEvent -= RunnerPageEvent;
             mCurrentSelectedRunner.RunnerPageEvent += RunnerPageEvent;
-            UpdateRunnerTime();
 
-            // mCurrentSelectedRunner.Runner.GingerRunnerEvent += Runner_GingerRunnerEvent;
+            mCurrentSelectedRunner.RunnerPageListener.UpdateBusinessflowActivities -= UpdateBusinessflowActivities;
+            mCurrentSelectedRunner.RunnerPageListener.UpdateBusinessflowActivities += UpdateBusinessflowActivities;
+            UpdateRunnerTime();            
 
             //set it as flow diagram current item
             List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
@@ -719,26 +720,20 @@ namespace Ginger.Run
         }
 
         
-        private void Runner_GingerRunnerEvent(GingerRunnerEventArgs EventArgs)
+        private void UpdateBusinessflowActivities(object sender, EventArgs e)
         {
-            switch (EventArgs.EventType)
+            this.Dispatcher.Invoke(() =>
             {
-                case GingerRunnerEventArgs.eEventType.BusinessflowWasReset:
-                case GingerRunnerEventArgs.eEventType.DynamicActivityWasAddedToBusinessflow:
-                    this.Dispatcher.Invoke(() =>
+                if (sender is BusinessFlow)
+                {
+                    BusinessFlow changedBusinessflow = (BusinessFlow)sender;
+                    if (mCurrentBusinessFlowRunnerItem.ItemObject == changedBusinessflow)
                     {
-                        if (EventArgs.Object is BusinessFlow)
-                        {
-                            BusinessFlow changedBusinessflow = (BusinessFlow)EventArgs.Object;
-                            if (mCurrentBusinessFlowRunnerItem.ItemObject == changedBusinessflow)
-                            {
-                                mCurrentBusinessFlowRunnerItem.LoadChildRunnerItems();//reloading activities to make sure include dynamically added/removed activities.
-                                xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ItemChilds;
-                            }
-                        }
-                    });
-                    break;
-            }
+                        mCurrentBusinessFlowRunnerItem.LoadChildRunnerItems();//reloading activities to make sure include dynamically added/removed activities.
+                        xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ItemChilds;
+                    }
+                }
+            });             
         }
 
         private void InitRunnerExecutionDebugSection()
@@ -915,6 +910,8 @@ namespace Ginger.Run
                     
                     runnerPage.RunnerPageEvent -= RunnerPageEvent;
                     runnerPage.RunnerPageEvent += RunnerPageEvent;
+                    runnerPage.RunnerPageListener.UpdateBusinessflowActivities -= UpdateBusinessflowActivities;
+                    runnerPage.RunnerPageListener.UpdateBusinessflowActivities += UpdateBusinessflowActivities;
                 });
             }
 
@@ -997,7 +994,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking Run Set Business Flow files change", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking Run Set " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " files change", ex);
             }
         }
 
@@ -1309,7 +1306,7 @@ namespace Ginger.Run
             //check runner is not empty
             if (mCurrentSelectedRunner.Runner.BusinessFlows.Count <= 0)
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one Business Flow to '"+mCurrentSelectedRunner.Name+"' to start run.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '"+mCurrentSelectedRunner.Name+"' to start run.");
                 return;
             }
             //run analyzer
