@@ -74,8 +74,6 @@ namespace Ginger.SolutionWindows
 
                 //TODO: check AppName and platform validity - not empty + app exist in list of apps
 
-                //validate solution
-                if (!mSolution.Folder.EndsWith(@"\")) mSolution.Folder += @"\"; 
 
                 //make sure main folder exist
                 if (!System.IO.Directory.Exists(mSolution.Folder))
