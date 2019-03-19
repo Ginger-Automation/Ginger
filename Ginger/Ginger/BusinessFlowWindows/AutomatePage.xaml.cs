@@ -159,7 +159,7 @@ namespace Ginger
 
         private void XToBusinessFlowsListBtn_Click(object sender, RoutedEventArgs e)
         {
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ShowBusinessFlowsList, App.BusinessFlow);
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ShowBusinessFlowsList, mBusinessFlow);
         }
 
             

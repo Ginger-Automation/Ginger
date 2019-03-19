@@ -34,7 +34,12 @@ namespace Ginger.Actions
         private string AttrName;
         private string fileType;
         eBrowserType mBrowserType;
-        Context mContext;
+
+        //public static readonly DependencyProperty mContextProperty = DependencyProperty.Register("mContext", typeof(Context), typeof(UCValueExpression), new PropertyMetadata(false));
+        public Context mContext
+        {
+            get; set;
+        }
 
         public enum eBrowserType { File, Folder }
 
