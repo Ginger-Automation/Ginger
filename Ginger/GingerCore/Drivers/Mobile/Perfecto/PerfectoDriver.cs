@@ -76,6 +76,11 @@ namespace GingerCore.Drivers.Mobile.Perfecto
         [UserConfiguredDescription("Driver Implicit Wait")]
         public int ImplicitWait { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Proxy Settings,if set, Proxy will be considered otherwiseit will go to system proxy e.g 'genproxy.amdocs.com:8080'")]
+        public string ProxySettings { get; set; }
+
         public bool ConnectedToDevice = false;
         private RemoteWebDriver mDriver;
         private SeleniumDriver mSeleniumDriver;//selenium base
@@ -177,6 +182,19 @@ namespace GingerCore.Drivers.Mobile.Perfecto
 
             capabilities.SetCapability("deviceName", Perfecto_Device_ID);
             capabilities.SetPerfectoLabExecutionId(Perfecto_Host_URL);
+
+            if (!string.IsNullOrEmpty(ProxySettings))
+            {
+                Proxy p = new Proxy();
+                p.Kind = ProxyKind.Manual;
+                p.HttpProxy = ProxySettings;
+                p.FtpProxy = ProxySettings;
+                p.SocksProxy = ProxySettings;
+                p.SslProxy = ProxySettings;
+                capabilities.SetCapability("Proxy",p);
+            }
+
+
             return capabilities;
         }
 
@@ -210,6 +228,19 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                 driverOptions.AddAdditionalCapability("user", Perfecto_User_Name);
                 driverOptions.AddAdditionalCapability("password", Perfecto_Password);
             }
+
+            if (!string.IsNullOrEmpty(ProxySettings))
+            {
+                Proxy p = new Proxy();
+                p.Kind = ProxyKind.Manual;
+                p.HttpProxy = ProxySettings;
+                p.FtpProxy = ProxySettings;
+                p.SocksProxy = ProxySettings;
+                p.SslProxy = ProxySettings;
+                driverOptions.Proxy = p;
+            }
+
+
 
             driverOptions.AddAdditionalCapability("deviceName", Perfecto_Device_ID);
 
