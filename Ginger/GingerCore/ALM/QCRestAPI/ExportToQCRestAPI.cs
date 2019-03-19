@@ -349,7 +349,7 @@ namespace GingerCore.ALM.QCRestAPI
             //set item fields
             foreach (ExternalItemFieldBase field in testCaseFields)
             {
-                if (field.ToUpdate || field.Mandatory)
+                if ((field.ToUpdate || field.Mandatory) && !test.ElementsField.ContainsKey(field.ExternalID))
                 {
                     if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
                         test.ElementsField.Add(field.ExternalID, field.SelectedValue);
