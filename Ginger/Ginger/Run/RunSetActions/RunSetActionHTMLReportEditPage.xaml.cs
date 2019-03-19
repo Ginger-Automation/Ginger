@@ -21,6 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.Actions;
 using Ginger.Reports;
 
 namespace Ginger.Run.RunSetActions
@@ -38,7 +39,9 @@ namespace Ginger.Run.RunSetActions
 
             this.runSetActionHTMLReport = RunSetActionHTMLReport;
 
-            App.ObjFieldBinding(HTMLReportFolderTextBox, TextBox.TextProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.HTMLReportFolderName);
+            HTMLReportFolderTextBox.Init(null, runSetActionHTMLReport, nameof(RunSetActionHTMLReport.HTMLReportFolderName), true, true, UCValueExpression.eBrowserType.Folder, "*.*", null);
+
+            //App.ObjFieldBinding(HTMLReportFolderTextBox, TextBox.TextProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.HTMLReportFolderName);
             App.ObjFieldBinding(UseAlternativeHTMLReportFolderCbx, CheckBox.IsCheckedProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.isHTMLReportFolderNameUsed);
             App.ObjFieldBinding(UsePermanentHTMLReportFolderCbx, CheckBox.IsCheckedProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.isHTMLReportPermanentFolderNameUsed);
             CurrentTemplatePickerCbx_Binding();
@@ -78,7 +81,7 @@ namespace Ginger.Run.RunSetActions
             string s = General.OpenSelectFolderDialog("Create HTML Report at Folder");
             if (s != null)
             {
-                HTMLReportFolderTextBox.Text = s;
+                HTMLReportFolderTextBox.ValueTextBox.Text = s;
             }
         }
 

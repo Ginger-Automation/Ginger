@@ -25,7 +25,8 @@ using Ginger.Reports;
 using Amdocs.Ginger;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
-
+using GingerCore;
+using GingerCore.DataSource;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -51,9 +52,32 @@ namespace Ginger.Run.RunSetActions
             get { return true; }
         }
 
+        private string mHTMLReportFolderName;
         [IsSerializedForLocalRepository]
-        public string HTMLReportFolderName { get; set; }
-
+        public string HTMLReportFolderName
+        {
+            get
+            {
+                return mHTMLReportFolderName;
+            }
+            set
+            {
+                mHTMLReportFolderName = value;
+                OnPropertyChanged(nameof(HTMLReportFolderName));
+            }
+        }
+        ValueExpression mValueExpression = null;
+        ValueExpression mVE
+        {
+            get
+            {
+                if (mValueExpression == null)
+                {
+                    mValueExpression = new ValueExpression(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+                }
+                return mValueExpression;
+            }
+        }
         [IsSerializedForLocalRepository]
         public int selectedHTMLReportTemplateID { get; set; }
 
@@ -85,14 +109,16 @@ namespace Ginger.Run.RunSetActions
                     ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
                     if ((isHTMLReportFolderNameUsed) && (HTMLReportFolderName != null) && (HTMLReportFolderName != string.Empty))
                     {
+                        mVE.Value = HTMLReportFolderName;
+                        string mHTMLReportFolderName = mVE.ValueCalculated;
                         string currentHTMLFolderName = string.Empty;
                         if (!isHTMLReportPermanentFolderNameUsed)
                         {
-                            currentHTMLFolderName = HTMLReportFolderName + "\\" + System.IO.Path.GetFileName(runSetFolder);
+                            currentHTMLFolderName = mHTMLReportFolderName + "\\" + System.IO.Path.GetFileName(runSetFolder);
                         }
                         else
                         {
-                            currentHTMLFolderName = HTMLReportFolderName;
+                            currentHTMLFolderName = mHTMLReportFolderName;
                         }
                         reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                                 false,
