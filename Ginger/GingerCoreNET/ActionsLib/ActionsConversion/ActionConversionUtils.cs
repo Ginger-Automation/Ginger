@@ -129,7 +129,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else
                         {
-                            currentActivity.TargetApplication = string.Empty;
+                            currentActivity.TargetApplication = activity.TargetApplication;
                         }
                     }
                 }

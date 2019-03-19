@@ -45,7 +45,13 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         private CancellationTokenSource mCancellationTokenSource = null;
         private string mSearchString;
 
-        public UCTreeView Tree => xTreeViewTree;
+        public UCTreeView Tree
+        {
+            get
+            {
+                return xTreeViewTree;
+            }
+        }
 
         public Grid TreeGrid
         {
