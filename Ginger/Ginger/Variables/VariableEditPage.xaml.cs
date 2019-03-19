@@ -337,17 +337,17 @@ namespace Ginger.Variables
 
                     if (string.IsNullOrEmpty(setValueAct.Error) == false)
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked variable.." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + setValueAct.Error);
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ".." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + setValueAct.Error);
                     }
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked variable." + System.Environment.NewLine + System.Environment.NewLine+ "Error: " + ex.Message );
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked " + GingerDicser.GetTermResValue(eTermResKey.Variable) + "." + System.Environment.NewLine + System.Environment.NewLine+ "Error: " + ex.Message );
                 }
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Missing linked variable, please configure.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Missing linked " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ", please configure.");
             }
         }
 

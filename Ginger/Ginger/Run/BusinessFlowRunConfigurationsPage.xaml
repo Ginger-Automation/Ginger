@@ -22,7 +22,11 @@
                 <BussinesFlow:UCValueExpression x:Name="RunDescritpion" ToolTip="Subject" HorizontalAlignment="Stretch" Height="50" Margin="0,-13,0,13"/>                
             </DockPanel>
             <DockPanel DockPanel.Dock="Top" Background="{StaticResource $BackgroundColor_LightGray}" >
-                <CheckBox x:Name="MandatoryBusinessFlowCB" ToolTip="If this business flow fails, the following will be blocked" Height="20" FontWeight="Bold" Style="{StaticResource @InputCheckBoxStyle}" HorizontalAlignment="Left" Margin="10,0,10,0" Content="Mandatory"/>
+                <CheckBox x:Name="MandatoryBusinessFlowCB" Height="20" FontWeight="Bold" Style="{StaticResource @InputCheckBoxStyle}" HorizontalAlignment="Left" Margin="10,0,10,0" Content="Mandatory">
+                    <CheckBox.ToolTip>
+                        <GingerCore:ucTextDicResource Text="If this [BusinessFlow] fails, the following will be blocked"/>
+                    </CheckBox.ToolTip>
+                </CheckBox>
             </DockPanel>
             <!--Tabs Area-->
             <TabControl x:Name="BusinessFlowTab" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="BusinessFlowTab_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}">

@@ -52,7 +52,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="10,0,10,5" DockPanel.Dock="Right"  HorizontalAlignment="Right" VerticalAlignment="Bottom">
                         <Label Style="{StaticResource $LabelStyle}" Content="Created By:" VerticalAlignment="Bottom"/>
-                        <TextBox x:Name="CreatedByTextBox" Style="{StaticResource $TextBoxStyle}" Width="125" Margin="5,0,0,0"/>
+                        <TextBox x:Name="CreatedByTextBox" Style="{StaticResource $TextBoxStyle}" Width="125" Margin="5,0,0,0" IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="10,0,10,5" DockPanel.Dock="Right"  HorizontalAlignment="Right" VerticalAlignment="Bottom">
                         <Label Style="{StaticResource $LabelStyle}" Content="Automation %:" VerticalAlignment="Bottom"/>

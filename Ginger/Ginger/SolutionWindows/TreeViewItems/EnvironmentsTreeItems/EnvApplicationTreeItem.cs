@@ -70,6 +70,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         Page ITreeViewItem.EditPage()
         {
             ProjEnvironment.SaveBackup();//to mark the env as changed
+            ProjEnvironment.StartDirtyTracking();
             if (mApplicationPage == null)
             {
                 mApplicationPage = new ApplicationPage(EnvApplication);
@@ -96,7 +97,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void Delete(object sender, RoutedEventArgs e)
         {
             ProjEnvironment.Applications.Remove(EnvApplication);
-            mTreeView.Tree.RefreshSelectedTreeNodeParent();
             ProjEnvironment.SaveBackup();//to mark the env as changed
         }
 
@@ -106,7 +106,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             copy.Name = copy.Name + "_copy";
             ProjEnvironment.Applications.Add(copy);
             ProjEnvironment.SaveBackup();//to mark the env as changed
-            mTreeView.Tree.RefreshSelectedTreeNodeParent();
         }
 
         private void Share(object sender, System.Windows.RoutedEventArgs e)

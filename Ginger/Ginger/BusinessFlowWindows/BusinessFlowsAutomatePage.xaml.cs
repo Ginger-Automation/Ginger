@@ -68,10 +68,15 @@ namespace Ginger.BusinessFlowWindows
                         mAutomatePage.GoToBusFlowsListHandler(GoToBusinessFlowsList);
                     }
                     xContentFrame.Content = mAutomatePage;
-                }
-
+                }                
+            }
+            else if (args.EventType == AutomateEventArgs.eEventType.ShowBusinessFlowsList)
+            {
+                ShiftToBusinessFlowView((BusinessFlow)args.Object);
             }
         }
+    }
+         
 
         private void UserProfile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -84,10 +89,10 @@ namespace Ginger.BusinessFlowWindows
         private void Reset()
         {
             mBusFlowsPage = null;                      
-            ShiftToBusinessFlowView();
+            ShiftToBusinessFlowView(null);
         }
 
-        private void ShiftToBusinessFlowView()
+        private void ShiftToBusinessFlowView(BusinessFlow bf)
         {
             if(mBusFlowsPage == null &&  WorkSpace.UserProfile.Solution != null)
             {
@@ -95,6 +100,11 @@ namespace Ginger.BusinessFlowWindows
                 mBusFlowsPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.BusinessFlows), eImageType.BusinessFlow, busFlowsRootFolder, busFlowsRootFolder.SaveAllTreeFolderItemsHandler, busFlowsRootFolder.AddItemHandler, treeItemDoubleClickHandler: BusinessFlowsTree_ItemDoubleClick);
             }
             xContentFrame.Content = mBusFlowsPage;
+
+            //if (bf != null && mBusFlowsPage.TreeView.Tree.GetSelectedTreeNodeObject() != bf)
+            //{
+            //    mBusFlowsPage.TreeView.Tree.SelectItem((ITreeViewItem)mBusFlowsPage.TreeView.Tree.FindMatchingTreeItemByObject(bf, null));
+            //}
         }
 
         private void GoToBusinessFlowsList(object sender, RoutedEventArgs e)

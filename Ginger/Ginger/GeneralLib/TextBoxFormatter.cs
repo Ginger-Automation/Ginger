@@ -84,10 +84,18 @@ namespace Ginger.GeneralLib
         public string GetText()
         {
             string text = "";
-            foreach (System.Windows.Documents.Run run in mTextBlock.Inlines)
-                text = text + run.Text;
-            return text;
-            return null;
+            foreach (object run in mTextBlock.Inlines)
+            {
+                if (run is System.Windows.Documents.Run)
+                {
+                    text = text + ((System.Windows.Documents.Run)run).Text;
+                }
+                else if (run is System.Windows.Documents.LineBreak)
+                {
+                    text = text + Environment.NewLine;
+                }
+            }
+            return text;            
         }
         public void AddImage(string image, int width, int height)
         {

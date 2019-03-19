@@ -71,6 +71,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         Page ITreeViewItem.EditPage()
         {
             DSDetails.SaveBackup();//to mark the Data Source as changed
+            DSDetails.StartDirtyTracking();
             if (mDataSourceTablePage == null)
             {
                 mDataSourceTablePage = new DataSourceTablePage(DSTableDetails);                

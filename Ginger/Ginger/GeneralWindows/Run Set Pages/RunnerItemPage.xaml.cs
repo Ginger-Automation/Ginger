@@ -121,6 +121,18 @@ namespace Ginger.Run
             }
         }
 
+        public string ItemTitleTooltip
+        {
+            get
+            {
+                return xItemName.ToolTip.ToString();
+            }
+            set
+            {
+                xItemName.ToolTip = value;
+            }
+        }
+
         public static void SetRunnerItemEvent(RunnerItemEventHandler runnerItemEvent)
         {
             if(RunnerItemEvent == null)

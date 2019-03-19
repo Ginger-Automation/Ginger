@@ -132,9 +132,13 @@ namespace Ginger
             mlastBFVariablesRowHeight = new GridLength(200, GridUnitType.Star);
             mlastActivityVariablesRowHeight = new GridLength(200, GridUnitType.Star);
             SetFramesContent();
+            App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEvent;
+            App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
             SetGridsView(eAutomatePageViewStyles.Design.ToString());
             SetGherkinOptions();
             BindEnvsCombo();
+
+            GoToBusFlowsListHandler();
 
             if (mBusinessFlow == null)
             {
@@ -142,6 +146,23 @@ namespace Ginger
                 return;
             }
         }
+
+        public void GoToBusFlowsListHandler()
+        {
+            xToBusinessFlowsListBtn.Visibility = Visibility.Visible;
+            xToBusinessFlowsListBtn.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 32);
+            xToBusinessFlowsListBtn.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 16);
+            xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
+            xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
+            xToBusinessFlowsListBtn.Click += XToBusinessFlowsListBtn_Click; ;
+        }
+
+        private void XToBusinessFlowsListBtn_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ShowBusinessFlowsList, App.BusinessFlow);
+        }
+
+            
 
         public void GoToBusFlowsListHandler(RoutedEventHandler clickHandler)
         {

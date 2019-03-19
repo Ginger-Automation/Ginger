@@ -69,7 +69,7 @@ namespace GingerWPF.UserControlsLib
                 DetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
                 if(tvItem is NewTreeViewItemBase)
                 {
-                    ((NewTreeViewItemBase)tvItem).PrepareItemForEdit();
+                    ((NewTreeViewItemBase)tvItem).PrepareItemForEdit();                    
                 }                
             }
             else
@@ -77,5 +77,6 @@ namespace GingerWPF.UserControlsLib
                 DetailsFrame.Content = "View/Edit page is not available yet for the tree item '" + tvItem.GetType().Name + "'";
             }
         }
+       
     }
 }

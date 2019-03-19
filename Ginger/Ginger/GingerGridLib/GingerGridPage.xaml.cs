@@ -39,12 +39,20 @@ namespace Ginger.GingerGridLib
             StatusLabel.BindControl(GingerGrid, nameof(GingerGrid.Status));
             mGingerGrid.NodeList.CollectionChanged += NodeList_CollectionChanged;
             ShowNodes();
+            WorkSpace.Instance.PlugInsManager.PluginProcesses.CollectionChanged += PluginProcesses_CollectionChanged;
             ShowProcesses();
+        }
+
+        private void PluginProcesses_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            this.Dispatcher.Invoke(() => {
+                ShowProcesses();
+            });
         }
 
         private void ShowProcesses()
         {
-            xProcessesDataGrid.ItemsSource = WorkSpace.Instance.PlugInsManager.PluginProcesses;
+            xProcessesDataGrid.ItemsSource = WorkSpace.Instance.PlugInsManager.PluginProcesses.ToList();
         }
 
         private void NodeList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

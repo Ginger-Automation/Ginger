@@ -310,7 +310,7 @@ namespace Amdocs.Ginger.Repository
 
         string PluginPackageServicesInfoFileName()
         {
-            return Path.Combine(mFolder, "Ginger.PluginPackage.Services.json");
+            return Path.Combine(Folder, "Ginger.PluginPackage.Services.json");
         }
 
         public void CreateServicesInfo()

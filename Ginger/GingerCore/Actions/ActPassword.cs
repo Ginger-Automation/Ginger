@@ -65,7 +65,7 @@ namespace GingerCore.Actions
 
         public enum ePasswordAction
         {
-            SetValue = 1,
+            SetValue = 0,
             SetFocus = 2,
             Clear = 3,
             GetSize=4,
@@ -145,7 +145,8 @@ namespace GingerCore.Actions
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
-            newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            if (!string.IsNullOrEmpty(this.LocateValue))
+                newAct.ElementLocateValue = String.Copy(this.LocateValue);
             if (!uIElementTypeAssigned)
                 newAct.ElementType = eElementType.TextBox;
             newAct.Active = true;
