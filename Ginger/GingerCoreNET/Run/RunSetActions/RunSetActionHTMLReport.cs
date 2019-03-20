@@ -110,15 +110,15 @@ namespace Ginger.Run.RunSetActions
                     if ((isHTMLReportFolderNameUsed) && (HTMLReportFolderName != null) && (HTMLReportFolderName != string.Empty))
                     {
                         mVE.Value = HTMLReportFolderName;
-                        string mHTMLReportFolderName = mVE.ValueCalculated;
+                        string selectedHTMLReportFolderName = mVE.ValueCalculated;
                         string currentHTMLFolderName = string.Empty;
                         if (!isHTMLReportPermanentFolderNameUsed)
                         {
-                            currentHTMLFolderName = mHTMLReportFolderName + "\\" + System.IO.Path.GetFileName(runSetFolder);
+                            currentHTMLFolderName = selectedHTMLReportFolderName + "\\" + System.IO.Path.GetFileName(runSetFolder);
                         }
                         else
                         {
-                            currentHTMLFolderName = mHTMLReportFolderName;
+                            currentHTMLFolderName = selectedHTMLReportFolderName;
                         }
                         reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                                 false,
