@@ -96,6 +96,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public POMEditPage(ApplicationPOMModel POM, RepositoryItemPageViewMode editMode = RepositoryItemPageViewMode.View)
         {
             InitializeComponent();
+            xBusinessFlow.TargetApplication = POM.TargetApplicationKey.ItemName;
             mPOM = POM;
             mEditMode = editMode;
 
