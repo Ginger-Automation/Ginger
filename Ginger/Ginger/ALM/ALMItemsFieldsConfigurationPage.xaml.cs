@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ namespace Ginger.ALM
             saveButton.Content = "Save";
             saveButton.ToolTip = "Save 'To Update' fields";
             saveButton.Click += new RoutedEventHandler(Save);
-
+            grdQCFields.DataSourceList = WorkSpace.UserProfile.Solution.ExternalItemsFields;
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { saveButton });
         }
 
@@ -91,9 +91,9 @@ namespace Ginger.ALM
         {
             // TODO Rearrange save function to keep old fields value.
             ObservableList<ExternalItemFieldBase> tempItemList = new ObservableList<ExternalItemFieldBase>();
-             WorkSpace.UserProfile.Solution.ExternalItemsFields = ALMIntegration.Instance.GetUpdatedFields(mItemsFields, false);
-             WorkSpace.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
-             WorkSpace.UserProfile.Solution.ExternalItemsFields = mItemsFields;
+            WorkSpace.UserProfile.Solution.ExternalItemsFields = ALMIntegration.Instance.GetUpdatedFields(mItemsFields, false);
+            WorkSpace.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
+            WorkSpace.UserProfile.Solution.ExternalItemsFields = mItemsFields;
             genWin.Close();
 
         }

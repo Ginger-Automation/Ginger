@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
@@ -76,7 +77,7 @@ namespace Ginger.GingerCoreNETTestLib
             Actions.Add(new MyAction() { Name = "Get All BFs and Save", Action = () => GetAllBFsandSave() });
             Actions.Add(new MyAction() { Name = "Get All BFs and Copy", Action = () => GetBFsAndCopy() });
             Actions.Add(new MyAction() { Name = "Create 100 Big BFs", Action = () => Create100BigBFs() });
-            Actions.Add(new MyAction() { Name = "Clear Business Flows Cache", Action = () => ClearBusinessFlowsCache() });
+            Actions.Add(new MyAction() { Name = "Clear " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Cache", Action = () => ClearBusinessFlowsCache() });
             Actions.Add(new MyAction() { Name = "GetEnvironments", Action = () => GetEnvironments() });
             Actions.Add(new MyAction() { Name = "Start Ginger Grid", Action = () => StartGingerGrid() });
             Actions.Add(new MyAction() { Name = "List Ginger Grid Nodes", Action = () => ListGingerGridNodes() });
@@ -90,6 +91,8 @@ namespace Ginger.GingerCoreNETTestLib
             Actions.Add(new MyAction() { Name = "Open BF With Old Actions", Action = () => OpenBFWithOldActions() });
             Actions.Add(new MyAction() { Name = "Run Action", Action = () => RunAction() });
             Actions.Add(new MyAction() { Name = "Repository Item Base Report", Action = () => RepositoryItemBaseReport() });
+            Actions.Add(new MyAction() { Name = "Test crash on non UI thread", Action = () => TestCrash() });
+            Actions.Add(new MyAction() { Name = "LongPath Test", Action = () => LongPathTest() });
             ActionsListBox.ItemsSource = Actions;
             MainDataGrid.MouseDoubleClick += MainDataGrid_MouseDoubleClick;
         }
@@ -377,6 +380,21 @@ namespace Ginger.GingerCoreNETTestLib
                 throw ex;
             }
         }
+        private void TestCrash()
+        {
+            ThreadStart newThreadStart = new ThreadStart(newThread_Execute);
+            Thread newThread = new Thread(newThreadStart);
+            newThread.Start();
+        }
+        void newThread_Execute()
+        {
+            throw new Exception("Thread crash");
+        }
+        private void LongPathTest()
+        {
+            io.testPath();
+        }
+
 
         bool RunCrazy = false;
         private void CrazyRandomRun_Click(object sender, RoutedEventArgs e)

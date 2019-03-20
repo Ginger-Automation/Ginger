@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -175,6 +175,14 @@ namespace Ginger.SourceControl
       
         private async void CheckInButton_Click(object sender, RoutedEventArgs e)
         {
+            if (WorkSpace.UserProfile.Solution.SourceControl.Name == SourceControlBase.eSourceControlType.GIT.ToString())
+            {
+                if (String.IsNullOrEmpty(WorkSpace.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorName) || String.IsNullOrEmpty(WorkSpace.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorEmail))
+                {
+                    Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, "Please provide Author Name and Email in source control connection details page.");
+                    return;
+                }
+            }
             try
             {
                 xProcessingIcon.Visibility = Visibility.Visible;

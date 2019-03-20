@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ namespace Ginger.Actions.JSON
             InitializeComponent();
             this.mAct = (ActJSONTagValidation)act;
             //Binding 
-            JSONPath.Init(mAct.GetOrCreateInputParam(ActJSONTagValidation.Fields.JsonInput), true, false, UCValueExpression.eBrowserType.Folder);
+            JSONPath.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActJSONTagValidation.Fields.JsonInput), true, false, UCValueExpression.eBrowserType.Folder);
             SetGridView();
             DynamicParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPlaceHolder));
         }
@@ -63,7 +63,7 @@ namespace Ginger.Actions.JSON
         private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)DynamicParametersGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mAct.Context));
             VEEW.ShowAsWindow();
         }
     }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -74,8 +74,6 @@ namespace Ginger.SolutionWindows
 
                 //TODO: check AppName and platform validity - not empty + app exist in list of apps
 
-                //validate solution
-                if (!mSolution.Folder.EndsWith(@"\")) mSolution.Folder += @"\"; 
 
                 //make sure main folder exist
                 if (!System.IO.Directory.Exists(mSolution.Folder))
@@ -84,7 +82,7 @@ namespace Ginger.SolutionWindows
                 }
 
                 //create new folder with solution name
-                mSolution.Folder += mSolution.Name + @"\";
+                mSolution.Folder += mSolution.Name;
                 if (!System.IO.Directory.Exists(mSolution.Folder))
                 {
                     System.IO.Directory.CreateDirectory(mSolution.Folder);
@@ -108,7 +106,7 @@ namespace Ginger.SolutionWindows
 
                 //Create default items                
                 AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);                
-                App.UpdateApplicationsAgentsMapping();
+                App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
                 AddDefaultDataSource();
                 AddDeafultReportTemplate();
                 AutomatePage.CreateDefaultEnvironment();
@@ -128,11 +126,7 @@ namespace Ginger.SolutionWindows
 
         private void AddDeafultReportTemplate()
         {
-            HTMLReportConfiguration r = HTMLReportConfiguration.SetHTMLReportConfigurationWithDefaultValues("Default");
-            r.Name = "Default";
-            r.IsDefault = true;
-                        
-
+            HTMLReportConfiguration r = new HTMLReportConfiguration("Default",true);
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(r);
         }
 

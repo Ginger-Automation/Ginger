@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,14 +27,14 @@ namespace GingerCore.Actions
     public class ActClearAllVariables : ActWithoutDriver
     {
         public override string ActionDescription { get { return "Clear All " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Action"; } }
-        public override string ActionUserDescription { get { return "Resets all variables value"; } }
+        public override string ActionUserDescription { get { return "Resets all " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " value"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action in case you want to reset all Business Flow variables values.");
+            TBH.AddText("Use this action in case you want to reset all Business Flow " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " values.");
             TBH.AddLineBreak();
             TBH.AddLineBreak();
-            TBH.AddText("To reset variables values click on run action button.");
+            TBH.AddText("To reset " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " values click on run action button.");
         }        
 
         public override string ActionEditPage { get { return "ActClearAllVariablesEditPage"; } }

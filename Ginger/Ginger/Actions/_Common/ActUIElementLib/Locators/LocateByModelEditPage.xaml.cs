@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using GingerCore.Actions.Common;
 using System.Windows.Controls;
 
@@ -35,7 +36,7 @@ namespace Ginger.Actions._Common.ActUIElementLib.Locators
 
             // Bind LocateValue and init VE
             App.ObjFieldBinding(txtLocateValue, TextBox.TextProperty, mAction, ActUIElement.Fields.ElementLocateValue);
-            txtLocateValue.Init(mAction, ActUIElement.Fields.ElementLocateValue);
+            txtLocateValue.Init(Context.GetAsContext(mAction.Context), mAction, ActUIElement.Fields.ElementLocateValue);
         }
     }
 }

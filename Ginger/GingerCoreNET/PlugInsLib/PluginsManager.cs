@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -46,6 +47,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public bool BackgroudDownloadInprogress { get;  set; }
 
         public PluginsManager(SolutionRepository solutionRepository)
         {
@@ -56,7 +58,6 @@ namespace Amdocs.Ginger.Repository
         private void GetPackages()
         {
             mPluginPackages = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
-
         }
 
         public class DriverInfo
@@ -229,9 +230,10 @@ namespace Amdocs.Ginger.Repository
 
         public void CloseAllRunningPluginProcesses()
         {
+            WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();//??? do proper Reset()
             foreach (PluginProcessWrapper process in mProcesses)
             {
-                process.Close();                
+                process.Close();
             }
             mProcesses.Clear();
         }
@@ -266,18 +268,66 @@ namespace Amdocs.Ginger.Repository
         
 
         public bool IsSessionService(string pluginId, string serviceId)
-        {
-            // TODO: Cache
+        {            
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
-            pluginPackage.LoadServicesFromJSON();
-            PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
+            PluginServiceInfo pluginServiceInfo = pluginPackage.GetService(serviceId);
             return pluginServiceInfo.IsSession;
         }
 
         public void SolutionChanged(SolutionRepository solutionRepository)
-        {        
+        {
             mSolutionRepository = solutionRepository;
+
+            //download missing plugins
             GetPackages();
-         }
+            if (mPluginPackages != null && mPluginPackages.Count > 0)
+            {                
+                if (WorkSpace.RunningInExecutionMode)
+                {                    
+                    DownloadMissingPlugins(); //need to download it before execution starts
+                }
+                else
+                {
+                    Task.Run(() =>
+                    {
+                        DownloadMissingPlugins(); //downloading the plugins async
+                    });
+                }
+            }
+        }
+
+        private void DownloadMissingPlugins()
+        {
+            Reporter.ToStatus(eStatusMsgKey.DownloadingMissingPluginPackages);
+            WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = true;
+            try
+            {
+                ObservableList<OnlinePluginPackage> OnlinePlugins = null;
+                foreach (PluginPackage SolutionPlugin in mPluginPackages)
+                {
+                    //TODO: Make it work for linux environments 
+                    if (SolutionPlugin.Folder.Contains("AppData\\Roaming") && !System.IO.File.Exists(Path.Combine(SolutionPlugin.Folder, @"Ginger.PluginPackage.Services.json")))
+                    {
+                        if (OnlinePlugins == null)
+                        {
+                            OnlinePlugins = WorkSpace.Instance.PlugInsManager.GetOnlinePluginsIndex();
+                        }
+
+                        OnlinePluginPackage OnlinePlugin = OnlinePlugins.Where(x => x.Id == SolutionPlugin.PluginId).FirstOrDefault();
+
+                        OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
+
+                        OnlinePlugin.InstallPluginPackage(OPR);
+
+                        //WorkSpace.Instance.PlugInsManager.InstallPluginPackage(OnlinePlugin, OPR);
+                    }
+                }
+            }
+            finally
+            {
+                WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = false;
+                Reporter.HideStatusMessage();
+            }
+        }
     }
 }

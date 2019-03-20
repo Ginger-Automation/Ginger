@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -405,18 +405,22 @@ namespace GingerCore.Environments
                         bool isConnection;
                         isConnection= CassandraDriver.Connect();
                         if (isConnection == true)
+                        {
                             LastConnectionUsedTime = DateTime.Now;
-                        return true;
+                            return true;
+                        }
+                        else { return false; }
                         break;
                     case eDBTypes.Couchbase:
                         GingerCouchbase CouchbaseDriver = new GingerCouchbase(this);
                         bool isConnectionCB;
                         isConnectionCB = CouchbaseDriver.Connect();
                         if (isConnectionCB == true)
-                        { 
+                        {
                             LastConnectionUsedTime = DateTime.Now;
+                            return true;
                         }
-                        return true;
+                        else { return false; }
                         break;
 
                     case eDBTypes.MySQL:

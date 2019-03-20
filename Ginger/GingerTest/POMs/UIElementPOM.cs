@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -78,6 +78,17 @@ namespace GingerWPFUnitTest.POMs
         {
             Execute(() => {                
                 ((ComboBox)dependencyObject).SelectedValue = obj;
+            });
+        }
+
+        /// <summary>
+        /// Set the Checked Value of check box 
+        /// </summary>
+        /// <param name="obj"></param>
+        public void SetCheckedValue(bool value)
+        {
+            Execute(() => {
+                ((CheckBox)dependencyObject).IsChecked = value;
             });
         }
 

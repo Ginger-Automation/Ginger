@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.GeneralWindows;
-using Ginger.GingerGridLib;
-using Ginger.PluginsLibNew;
 using Ginger.PlugInsWindows;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
@@ -34,16 +33,11 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Variables;
 using GingerWPF.ApplicationModelsLib.ModelParams_Pages;
-using GingerWPF.PluginsLib;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems;
 using GingerWPF.UserControlsLib;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.MenusLib
@@ -108,27 +102,17 @@ namespace Ginger.MenusLib
             twoLevelMenu.Add(DocumentsMenu);
 
             TopMenuItem PluginsMenu = new TopMenuItem(eImageType.PluginPackage, "Plugins", ConsoleKey.P, "Plugins AID", "Ginger extension Add-ons");
-            PluginsMenu.Add(eImageType.PluginPackage, "Installed", PluginsList, ConsoleKey.P, "Plugin which are installed in the solution", "AID");
-            PluginsMenu.Add(eImageType.PluginPackage, "Online", OnlinePlugins, ConsoleKey.O, "Online plugins which can be downloaded", "Online Plugins");
-            PluginsMenu.Add(eImageType.PluginPackage, "Local", LocalPlugins, ConsoleKey.L, "Local plugins which are already downloaded on the user machine", "Online Plugins");
+            PluginsMenu.Add(eImageType.PluginPackage, "Installed", PluginsList, ConsoleKey.P, "Plugins which are installed in the solution", "AID");
+            PluginsMenu.Add(eImageType.Download, "Download Plugins", OnlinePlugins, ConsoleKey.O, "Online plugins which can be downloaded", "Online Plugins");
+            //PluginsMenu.Add(eImageType.PluginPackage, "Local", LocalPlugins, ConsoleKey.L, "Local plugins which are already downloaded on the user machine", "Online Plugins");
             twoLevelMenu.Add(PluginsMenu);
 
             return twoLevelMenu;
         }
 
-        private static Page LocalPlugins()
-        {
-            return new LocalPluginsPage();
-        }
-
-        private static Page OnlinePlugins()
-        {
-            return new PluginsIndexPage();
-        }
-
         private static Page GetGlobalVariabelsPage()
         {
-            return (new VariablesPage(eVariablesLevel.Solution));
+            return (new VariablesPage(eVariablesLevel.Solution, WorkSpace.UserProfile.Solution));
         }
 
         private static Page SharedActivitiesGroups()
@@ -207,9 +191,43 @@ namespace Ginger.MenusLib
 
         private static Page PluginsList()
         {
+            if (IsPluginsBeenDownloaded())
+            {
+                return null;
+            }
+
             PlugInsFolderTreeItem pluginsRoot = new PlugInsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<PluginPackage>());          
             SingleItemTreeViewExplorerPage PluginsRootPage = new SingleItemTreeViewExplorerPage("Plugins", eImageType.PluginPackage, pluginsRoot, saveAllHandler: pluginsRoot.SaveAllTreeFolderItemsHandler, addHandler: pluginsRoot.AddPlugIn);
             return PluginsRootPage;
+        }
+
+        //private static Page LocalPlugins()
+        //{
+        //    return new LocalPluginsPage();
+        //}
+
+        private static Page OnlinePlugins()
+        {
+            if (IsPluginsBeenDownloaded())
+            {
+                return null;
+            }
+
+            return new PluginsIndexPage();
+        }
+
+        private static bool IsPluginsBeenDownloaded()
+        {
+            if (WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress)
+            {
+                Reporter.ToUser(eUserMsgKey.PluginDownloadInProgress);
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
 

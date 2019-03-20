@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -302,7 +302,6 @@ namespace GingerWPF.TreeViewItemsLib
                 {
                     //delete root and refresh tree                    
                     WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)((ITreeViewItem)this).NodeObject());
-                    mTreeView.Tree.RefreshSelectedTreeNodeParent();
                 }
             }
             finally
@@ -445,8 +444,7 @@ namespace GingerWPF.TreeViewItemsLib
             if (Reporter.ToUser(eUserMsgKey.SureWantToDoRevert) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 Reporter.ToStatus(eStatusMsgKey.RevertChangesFromSourceControl);
-                SourceControlIntegration.Revert( WorkSpace.UserProfile.Solution.SourceControl, this.NodePath());                
-                mTreeView.Tree.RefreshSelectedTreeNodeParent();
+                SourceControlIntegration.Revert( WorkSpace.UserProfile.Solution.SourceControl, this.NodePath()); 
                 Reporter.HideStatusMessage();
             }
         }
@@ -460,8 +458,6 @@ namespace GingerWPF.TreeViewItemsLib
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
                 SourceControlIntegration.GetLatest(this.NodePath(),  WorkSpace.UserProfile.Solution.SourceControl);
-            
-            mTreeView.Tree.RefreshSelectedTreeNodeParent();
             Reporter.HideStatusMessage();
         }
 
@@ -521,10 +517,7 @@ namespace GingerWPF.TreeViewItemsLib
         /// <param name="NameProperty">The field of the item which holds the item name or static name in case the repository item is null</param>
         /// <returns></returns>
         protected StackPanel NewTVItemHeaderStyle(RepositoryItemBase repoItem, eImageType imageType = eImageType.Null, string NameProperty = "")
-        {
-            //TODO: Move to biz flow page?
-            repoItem.StartDirtyTracking();
-
+        {            
             //The new item style with Source control
             StackPanel stack = new StackPanel();
             stack.Orientation = Orientation.Horizontal;

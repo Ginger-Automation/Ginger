@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -48,8 +48,7 @@ namespace Ginger.Run
     /// Interaction logic for GingerRunnerPage.xaml
     /// </summary>
     public partial class RunnerPage : Page
-    {
-        RunnerPageListener mRunnerPageListener;
+    {        
         DispatcherTimer mDispatcherTimer;
 
         public event RunnerPageEventHandler RunnerPageEvent;
@@ -68,6 +67,16 @@ namespace Ginger.Run
         {            
             return xBusinessflowsStatistics;                                       
         }
+
+        RunnerPageListener mRunnerPageListener;
+        public RunnerPageListener RunnerPageListener
+        {
+            get
+            {
+                return mRunnerPageListener;
+            }
+        }
+
         GingerRunner mRunner;
         public GingerRunner Runner
         {
@@ -181,6 +190,7 @@ namespace Ginger.Run
         {
             RunnerItemPage ri = new RunnerItemPage(bf, ViewMode1);           
             ri.ItemName = bf.Name;
+            ri.ItemTitleTooltip = System.IO.Path.Combine(bf.ContainingFolder, bf.Name);
             if (string.IsNullOrEmpty(bf.Description))
             {
                 ri.xItemSeparator.Visibility = Visibility.Collapsed;              
@@ -261,7 +271,11 @@ namespace Ginger.Run
         {
             mBusinessflowRunnerItems = new ObservableList<RunnerItemPage>();
             foreach (BusinessFlow bff in mRunner.BusinessFlows)
-                mBusinessflowRunnerItems.Add(CreateBusinessFlowRunnerItem(bff, ViewMode));
+            {
+                RunnerItemPage bfItem = CreateBusinessFlowRunnerItem(bff, ViewMode);
+                bfItem.Context = new Context() { BusinessFlow = bff, Runner = mRunner };
+                mBusinessflowRunnerItems.Add(bfItem);
+            }
         }
         private void Businessflow_ClickGenerateReport(object sender, RoutedEventArgs e)
         {
@@ -551,7 +565,7 @@ namespace Ginger.Run
         {
             if (mRunner.BusinessFlows.Count <= 0)
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one Business Flow to '" + mRunner.Name + "' to start run.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '" + mRunner.Name + "' to start run.");
                 return;
             }
             RunRunner();

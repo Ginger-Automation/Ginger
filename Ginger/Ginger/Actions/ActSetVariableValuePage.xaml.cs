@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using System.Windows.Controls;
 using GingerCore.Actions;
 using GingerCore.Variables;
 using Amdocs.Ginger.Common;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Actions
 {
@@ -41,8 +42,15 @@ namespace Ginger.Actions
         }
 
         private void SetComboListsValues()
-        {            
-            mVars = App.BusinessFlow.GetAllHierarchyVariables();
+        {
+            if (mAct.Context != null && (Context.GetAsContext(mAct.Context)).BusinessFlow != null)
+            {
+                mVars = (Context.GetAsContext(mAct.Context)).BusinessFlow.GetAllHierarchyVariables();
+            }
+            else
+            {
+                mVars = WorkSpace.UserProfile.Solution.Variables;
+            }
          
             foreach (VariableBase v in mVars.OrderBy(nameof(VariableBase.Name)))
             {

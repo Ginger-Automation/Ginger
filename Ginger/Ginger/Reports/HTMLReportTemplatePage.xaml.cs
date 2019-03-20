@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -73,9 +73,8 @@ namespace Ginger.Reports
 
         public HTMLReportTemplatePage()
         {
+            _HTMLReportConfiguration = new HTMLReportConfiguration("");
             InitializeComponent();
-
-            _HTMLReportConfiguration = HTMLReportConfiguration.SetHTMLReportConfigurationWithDefaultValues();
             SetControlsNewTemplate();
             SetDefaultLogoImage();
             SetHTMLReportsConfigFieldsGridsView();
@@ -279,8 +278,6 @@ namespace Ginger.Reports
             _HTMLReportConfiguration.Description = TemplateDescriptionTextBox.Text.ToString();
             _newHTMLReportConfiguration = _HTMLReportConfiguration;
             _pageGenericWin.Hide();
-
-             WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
              WorkSpace.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
 
             if (_existingTemplatePage)

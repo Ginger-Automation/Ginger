@@ -5,23 +5,12 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:GingerWPF"
       mc:Ignorable="d" 
-      d:DesignHeight="600" d:DesignWidth="800"
-      Title="DebugConsole" Unloaded="Page_Unloaded">
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="DebugConsole" >
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="7*"/>
-            <RowDefinition Height="93*"/>
-        </Grid.RowDefinitions>
+    <Grid>     
 
-        <StackPanel Orientation="Horizontal">
-            <Button x:Name="ClearButton" Click="ClearButton_Click">Clear</Button>
-            <Button x:Name="OnTopButton" Click="OnTopButton_Click">On Top</Button>
-            <Button x:Name="CrashButton" Click="CrashButton_Click">Crash</Button>
-            <Button x:Name="LongPathButton" Click="LongPathButton_Click" >LongPath</Button>
-        </StackPanel>
-
-        <ScrollViewer x:Name="ConsoleScrollViewer" Grid.Row="1">
+        <ScrollViewer x:Name="ConsoleScrollViewer" >
             <TextBlock x:Name="ConsoleTextBlock" Foreground="White" Background="Black" IsEnabled="True" />
         </ScrollViewer>
 

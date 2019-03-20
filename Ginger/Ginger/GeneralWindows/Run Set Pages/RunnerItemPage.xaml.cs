@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -59,6 +59,8 @@ namespace Ginger.Run
                 handler(new RunnerItemEventArgs(eventType, runnerItemPage, runnerItemType, runnerItemObject));
             }
         }
+
+        public Context Context { get; set; }
 
         ////TODO: why 2 events handler?
         //public delegate void SyncRunnerEventHandler(SyncRunnerItemEventArgs EventArgs);
@@ -119,6 +121,18 @@ namespace Ginger.Run
             }
         }
 
+        public string ItemTitleTooltip
+        {
+            get
+            {
+                return xItemName.ToolTip.ToString();
+            }
+            set
+            {
+                xItemName.ToolTip = value;
+            }
+        }
+
         public static void SetRunnerItemEvent(RunnerItemEventHandler runnerItemEvent)
         {
             if(RunnerItemEvent == null)
@@ -146,14 +160,15 @@ namespace Ginger.Run
         public void LoadChildRunnerItems()
         {
             mItemChilds = new ObservableList<RunnerItemPage>();
+            
             if (ItemObject.GetType() == typeof(BusinessFlow))
-            {
+            {               
                 foreach (Activity ac in ((BusinessFlow)ItemObject).Activities)
                 {
                     if (ac.GetType() == typeof(ErrorHandler)) continue;//do not show Error Handler for now
 
                     RunnerItemPage ri = new RunnerItemPage(ac);
-
+                    ri.Context = this.Context;
                     ri.ItemName = ac.ActivityName;
                     if (string.IsNullOrEmpty(ac.Description))
                     {
@@ -171,10 +186,12 @@ namespace Ginger.Run
                 }
             }
             else if (ItemObject.GetType() == typeof(Activity))
-            {
+            {                
                 foreach (GingerCore.Actions.Act act in ((Activity)ItemObject).Acts)
                 {
                     RunnerItemPage ri = new RunnerItemPage(act);
+                    ri.Context = this.Context;
+                    act.Context = this.Context;
                     ri.xItemSeparator.Visibility = Visibility.Collapsed;
                     ri.ItemName = act.Description;
                     ri.ItemGuid = act.Guid;

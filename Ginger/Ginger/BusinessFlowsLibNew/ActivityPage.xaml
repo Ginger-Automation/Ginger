@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:local="clr-namespace:GingerWPF.BusinessFlowsLib"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="800"
       Title="ActivityPage">
@@ -42,7 +43,9 @@
             <Button x:Name="VariablesButton" Click="VariablesButton_Click" BorderThickness="0" Background="Transparent" Opacity="100" Width="100">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
-                        <Label>Variables</Label>
+                        <Label>
+                            <GingerCore:ucTextDicResource Text="[Variables]"></GingerCore:ucTextDicResource>
+                        </Label>
                         <Label x:Name="VariablesCountLabel">(99)</Label>
                     </StackPanel>
                 </Button.Content>

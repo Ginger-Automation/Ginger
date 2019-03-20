@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -99,6 +99,10 @@ namespace Ginger.ALM
             WorkSpace.UserProfile.Solution.ALMDomain = ALMCore.AlmConfig.ALMDomain;
             WorkSpace.UserProfile.Solution.ALMProject = ALMCore.AlmConfig.ALMProjectName;
             WorkSpace.UserProfile.Solution.ALMProjectKey = ALMCore.AlmConfig.ALMProjectKey;
+            if ((eALMType)WorkSpace.UserProfile.Solution.AlmType == eALMType.Jira)
+            {
+                WorkSpace.UserProfile.Solution.ConfigPackageFolderPath = ALMCore.AlmConfig.ALMConfigPackageFolderPath;
+            }
         }
 
         public ALMConfig AlmConfigurations

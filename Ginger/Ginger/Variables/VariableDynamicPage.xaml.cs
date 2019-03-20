@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ namespace Ginger.Variables
             InitializeComponent();
             mVariableDynamic = var;
             App.ObjFieldBinding(ValueExpressionTextBox, TextBox.TextProperty, var, nameof(VariableDynamic.ValueExpression));
-            ValueExpressionTextBox.Init(mVariableDynamic, nameof(VariableDynamic.ValueExpression));
+            ValueExpressionTextBox.Init(null, mVariableDynamic, nameof(VariableDynamic.ValueExpression));
             mVariableDynamic.PropertyChanged +=mVariableDynamic_PropertyChanged; 
         }
 
@@ -41,7 +41,7 @@ namespace Ginger.Variables
         {
             if (e.PropertyName == nameof(VariableBase.Formula))
             {
-                ValueExpressionTextBox.Init(mVariableDynamic, nameof(VariableDynamic.ValueExpression));
+                ValueExpressionTextBox.Init(null, mVariableDynamic, nameof(VariableDynamic.ValueExpression));
             }
         }
     }

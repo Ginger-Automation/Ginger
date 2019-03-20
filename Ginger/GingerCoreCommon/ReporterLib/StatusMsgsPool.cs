@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -51,7 +51,8 @@ namespace Amdocs.Ginger.Common
         LoadingSolution,
         ExportItem,
         StartAgentFailed,
-        BusinessFlowConversion
+        BusinessFlowConversion,
+        Search, DownloadingMissingPluginPackages,
     }
 
     public static class StatusMsgsPool
@@ -141,6 +142,11 @@ namespace Amdocs.Ginger.Common
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ShowBetaFeatures, new StatusMsg(eStatusMsgType.INFO, "Show beta Features is: ", "{0}"));
 
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.GingerHelpLibrary, new StatusMsg(eStatusMsgType.INFO, "Ginger Help Library is Ready!", "Press [F1] from anywhere and view User Guides & Videos related to the topic you working on!"));
+
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.Search, new StatusMsg(eStatusMsgType.PROCESS, "Searching...", "Searching {0}..."));
+
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.DownloadingMissingPluginPackages, new StatusMsg(eStatusMsgType.PROCESS, "Restoring Missing Plugin Packages", "Restoring Missing Plugin Packages..."));
+            
         }
     }
 }

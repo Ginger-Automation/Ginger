@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -83,20 +83,20 @@ namespace Ginger.WindowExplorer
         Page mControlFrameContentPage = null;
         WindowExplorerPOMPage mWindowExplorerPOMPage;
 
-        public enum eWindowExplorerPageContext
-        {
-            WindowExplorerPage,
-        }
-
-        private eWindowExplorerPageContext mContext;
+        Context mContext;
 
         // We can open it from agents grid, or from Action Edit page with Action 
         // If we open from ActionEdit Page then we update the act with Locator
-        public WindowExplorerPage(ApplicationAgent ApplicationAgent,  Act Act = null, eWindowExplorerPageContext Context = eWindowExplorerPageContext.WindowExplorerPage)
+        public WindowExplorerPage(ApplicationAgent ApplicationAgent, Context context, Act Act = null)
         {           
             InitializeComponent();
+            WindowControlsTreeView.TreeGrid.RowDefinitions[0].Height = new GridLength(0);
 
-            mContext = Context;
+            WindowControlsTreeView.SearchStarted += WindowControlsTreeView_SearchStarted;
+            WindowControlsTreeView.SearchCancelled += WindowControlsTreeView_SearchCancelled;
+            WindowControlsTreeView.SearchCompleted += WindowControlsTreeView_SearchCompleted;
+
+            mContext = context;
             
             mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
 
@@ -209,7 +209,7 @@ namespace Ginger.WindowExplorer
             GingerCore.General.LoadGenericWindow(ref _GenWin, null, windowStyle, Title, this, closeEventHandler: CloseWindow);            
         }
 
-        private void CloseWindow(object sender, EventArgs e)
+        private async void CloseWindow(object sender, EventArgs e)
         {
             //stop Live Spy
             if (LiveSpyButton.IsChecked == true)
@@ -219,6 +219,11 @@ namespace Ginger.WindowExplorer
             //stop Recording
             if (RecordingButton.IsChecked == true)
                 StopRecording();
+
+            if(WindowControlsTreeView.IsSearchRunning())
+            {
+                await WindowControlsTreeView.CancelSearchAsync();
+            }
 
             _GenWin.Close();
         }
@@ -437,9 +442,9 @@ namespace Ginger.WindowExplorer
                 StatusTextBlock.Text = "Spying Element, Please Wait...";
                 GingerCore.General.DoEvents();
                 mSpyElement = mWindowExplorerDriver.GetControlFromMousePosition();
-                mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
                 if (mSpyElement != null)
                 {
+                    mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
                     StatusTextBlock.Text = mSpyElement.XPath;
                     if (mSyncControlsViewWithLiveSpy)
                     {
@@ -573,6 +578,20 @@ namespace Ginger.WindowExplorer
 
             }
         }
+        private void WindowControlsTreeView_SearchStarted(object sender, EventArgs e)
+        {
+            StatusTextBlock.Text = "Searching...";
+        }
+
+        private void WindowControlsTreeView_SearchCancelled(object sender, EventArgs e)
+        {
+            StatusTextBlock.Text = "Ready";
+        }
+
+        private void WindowControlsTreeView_SearchCompleted(object sender, EventArgs e)
+        {
+            StatusTextBlock.Text = "Ready";
+        }
 
         private void ShowCurrentControlInfo()
         {
@@ -649,7 +668,7 @@ namespace Ginger.WindowExplorer
                         {
                             Page DataPage = mCurrentControlTreeViewItem.EditPage();
                             actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
-                            CAP = new ControlActionsPage(mWindowExplorerDriver, EI, list, DataPage, actInputValuelist);
+                            CAP = new ControlActionsPage(mWindowExplorerDriver, EI, list, DataPage, actInputValuelist, mContext);
                         }
                     }
                     ControlActionsFrame.Content = CAP;
@@ -816,8 +835,8 @@ namespace Ginger.WindowExplorer
             WindowControlsGridView.ShowUpDown = Visibility.Collapsed;
             WindowControlsGridView.ShowRefresh = Visibility.Collapsed;
 
-            if (mContext == eWindowExplorerPageContext.WindowExplorerPage)
-                WindowControlsGridView.AddToolbarTool("@Filter16x16.png", "Filter Elements to show", new RoutedEventHandler(FilterElementButtonClicked));
+            
+             WindowControlsGridView.AddToolbarTool("@Filter16x16.png", "Filter Elements to show", new RoutedEventHandler(FilterElementButtonClicked));
             //TODO: enable refresh to do refresh
 
             WindowControlsGridView.ShowEdit = System.Windows.Visibility.Collapsed;
@@ -839,20 +858,22 @@ namespace Ginger.WindowExplorer
             WindowControlsGridView.InitViewItems();
         }
 
-        private void RefreshControlsGrid()
+        private async void RefreshControlsGrid()
         {
             if (WindowsComboBox.SelectedValue != null && mWindowExplorerDriver != null)
             {
-                List<ElementInfo> list = mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList());
-                                
+                List<ElementInfo> list = await Task.Run(() => mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList()));
+
+                StatusTextBlock.Text = "Ready";
                 // Convert to obserable for the grid
                 VisibleElementsInfoList.Clear();
                 foreach (ElementInfo EI in list)
-                {                
+                {
                     VisibleElementsInfoList.Add(EI);
                 }
-               
+
                 WindowControlsGridView.DataSourceList = VisibleElementsInfoList;
+
             }
         }
 
@@ -1034,7 +1055,7 @@ namespace Ginger.WindowExplorer
 
         private void ControlsRefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            StatusTextBlock.Text = "Searching Elements";
+            StatusTextBlock.Text = "Loading Elements...";
             GingerCore.General.DoEvents();
 
             if (WindowControlsTreeView.Visibility == System.Windows.Visibility.Visible)
@@ -1142,10 +1163,13 @@ namespace Ginger.WindowExplorer
                         CheckedFilteringCreteriaList.Add(filter);
                 }
 
-            StatusTextBlock.Text = "Searching Elements";
+            StatusTextBlock.Text = "Searching Elements...";
             GingerCore.General.DoEvents();
+            
             isSearched = RefreshFilteredElements();
-            StatusTextBlock.Text = "Ready";
+
+            
+
             return isSearched;
         }
 

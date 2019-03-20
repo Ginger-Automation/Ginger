@@ -7,6 +7,7 @@
     xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
     xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
     x:Class="Ginger.WindowExplorer.WindowExplorerPage" 
+    xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
       Height="700" Width="450"
       MinHeight="100" MinWidth="450"
@@ -35,7 +36,10 @@
            <ComboBox Grid.Column="1" x:Name="WindowsComboBox" SelectionChanged="WindowsComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
             <Button Grid.Column="2" x:Name="RefreshWindowsButton" Click="RefreshWindowsButton_Click" usercontrols:ImageMaker.Content="Refresh" Width="18" ToolTip="Refresh Windows List" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">                
             </Button>
-            <Button Grid.Column="3" x:Name="AddSwitchWindowActionButton" Click="AddSwitchWindowActionButton_Click" ToolTip="Add Switch Window Action to Business Flow" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <Button Grid.Column="3" x:Name="AddSwitchWindowActionButton" Click="AddSwitchWindowActionButton_Click" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Button.ToolTip>
+                    <GingerCore:ucTextDicResource Text="Add Switch Window Action to [BusinessFlow]"/>
+                </Button.ToolTip>
                 <Image Source="{StaticResource @AddToList_16x16}" Height="16" Width="16"/>
             </Button>
         </Grid>       
@@ -63,7 +67,7 @@
             </Expander.Header>
             <Expander.Content>
                     <Grid Background="{StaticResource $BackgroundColor_LightGray}">                      
-                        <UCTreeView:TreeView2 x:Name="WindowControlsTreeView" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                        <UCTreeView:TreeView1 x:Name="WindowControlsTreeView" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                         <Ginger:ucGrid x:Name="WindowControlsGridView" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"/>
                     </Grid>
             </Expander.Content>

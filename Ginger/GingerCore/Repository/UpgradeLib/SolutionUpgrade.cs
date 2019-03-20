@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -132,26 +132,33 @@ namespace GingerCore.Repository.UpgradeLib
         public static string GetSolutonFileGingerVersion(string xmlFilePath, string xml = "")
         {
             string fileVersion;
-
             //get the XML if needed
             if (string.IsNullOrEmpty(xml))
-            {                
-                using (StreamReader reader = new StreamReader(xmlFilePath))
+            {
+                try
                 {
-                    //get XML 
-                    reader.ReadLine();//no need first line
-                    xml = reader.ReadLine();
-                    if (xml != null)
+                    using (StreamReader reader = new StreamReader(xmlFilePath))
                     {
-                        if (xml.ToLower().Contains("version") == false)//to handle new line gap in some old xml's
+                        //get XML 
+                        reader.ReadLine();//no need first line
+                        xml = reader.ReadLine();
+                        if (xml != null)
                         {
-                            xml = reader.ReadLine();
+                            if (xml.ToLower().Contains("version") == false)//to handle new line gap in some old xml's
+                            {
+                                xml = reader.ReadLine();
+                            }
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the Ginger Version of the file: '{0}'", xmlFilePath));
                         }
                     }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the Ginger Version of the file: '{0}'", xmlFilePath));
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the Ginger Version of the file: '{0}'", xmlFilePath), ex);
+                    return null;
                 }
             }
 

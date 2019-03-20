@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -105,7 +105,7 @@ namespace Ginger.VisualAutomate
                 ActUIElement AUIE = (ActUIElement)act;
                 if (AUIE.ElementAction == ActUIElement.eElementAction.SetValue)
                 {
-                    ValueExpressionEditorPage pa = new ValueExpressionEditorPage(act, ActUIElement.Fields.Value);
+                    ValueExpressionEditorPage pa = new ValueExpressionEditorPage(act, ActUIElement.Fields.Value, Context.GetAsContext(act.Context));
                     pa.ShowAsWindow(eWindowShowStyle.Dialog);
                     bOpenActionEditPage = false;
                 }

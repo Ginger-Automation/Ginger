@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -52,12 +52,16 @@ namespace GingerCore.NoSqlBase
                     Servers = new List<Uri> { new Uri(Db.TNSCalculated.ToString()) },                    
                 });
                 bool res = false;
+                //TODO: need to decrypt the password in the Database->PassCalculated
                 String deCryptValue = EncryptionHandler.DecryptString(Db.PassCalculated.ToString(), ref res, false);
                 if (res == true)
                 {
-                    Db.Pass = deCryptValue;                    
+                    clusterCB.Authenticate(Db.UserCalculated.ToString(), deCryptValue);
                 }
-                clusterCB.Authenticate(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());
+                else
+                {
+                    clusterCB.Authenticate(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());
+                }
                 return true;
             }
             catch (Exception e)

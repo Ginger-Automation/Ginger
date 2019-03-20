@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -50,13 +50,12 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mLocateValue = value; OnPropertyChanged(nameof(LocateValue)); } }
 
         private string mHelp { get; set; }
+
+        [IsSerializedForLocalRepository]
         public string Help { get { return mHelp; } set { mHelp = value; OnPropertyChanged(nameof(Help)); } }
 
         private int? mCount { get; set; }
-        public int? Count { get { return mCount; } set { mCount = value; OnPropertyChanged(nameof(Count)); } }
-
-
-        
+        public int? Count { get { return mCount; } set { mCount = value; OnPropertyChanged(nameof(Count)); } }        
 
         private string mItemName;
 

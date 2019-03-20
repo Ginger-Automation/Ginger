@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
 
         private void closeEventHandler(object sender, EventArgs e)
         {
-            App.AppSolutionRecover.CleanUp();            
+            //App.AppSolutionRecover.CleanUp();     //??why cleanup?       
         }
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {

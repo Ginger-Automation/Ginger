@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -265,11 +265,11 @@ namespace Ginger
         // UCValue Expression
         // ------------------------------------------------------------
 
-        public static void BindControl(this UCValueExpression UCValueExpression, Object obj, string Field)
-            {
-                GingerCore.General.ObjFieldBinding(UCValueExpression, TextBox.TextProperty, obj, "Value");
-                UCValueExpression.Init(obj, Field);                
-            }
+        public static void BindControl(this UCValueExpression UCValueExpression, Context context, Object obj, string Field)
+        {
+            GingerCore.General.ObjFieldBinding(UCValueExpression, TextBox.TextProperty, obj, "Value");
+            UCValueExpression.Init(context, obj, Field);
+        }
 
         // ------------------------------------------------------------
         // check box

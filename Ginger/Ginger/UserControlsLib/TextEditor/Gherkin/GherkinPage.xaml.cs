@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -554,11 +554,11 @@ namespace Ginger.GherkinLib
 
             GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(GherkinTextEditor.FileName) + " , Target Business Flow: " + mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, (Style)TryFindResource("@ucGridTitleLightStyle"));
 
-            if(App.BusinessFlow == mBizFlow)
-            {
-                App.BusinessFlow = mBizFlow;
-                App.BusinessFlow.SaveBackup();                
-            }            
+            //if(App.BusinessFlow == mBizFlow)
+            //{
+            //    App.BusinessFlow = mBizFlow;
+            //    App.BusinessFlow.SaveBackup();                
+            //}            
         }
 
 
@@ -826,7 +826,7 @@ namespace Ginger.GherkinLib
 
         void SetOptimizedGridView()
         {
-            if (isBFexists) { UpdateBFButton.Content = "Create Business Flow"; } else { UpdateBFButton.Content = "Update Business Flow"; }
+            if (isBFexists) { UpdateBFButton.Content = "Create " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow); } else { UpdateBFButton.Content = "Update " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow); }
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;

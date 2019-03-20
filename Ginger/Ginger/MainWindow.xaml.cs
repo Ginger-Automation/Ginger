@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -312,7 +312,7 @@ namespace Ginger
                 else
                 {
                     xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
-                    App.LastBusinessFlow = null;
+                   
                     GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
                     GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
                     xSolutionTabsListView.SelectedItem = null;
@@ -328,6 +328,51 @@ namespace Ginger
         }
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {            
+            if (mAskUserIfToClose == false || Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            {
+                AppCleanUp();
+            }
+            else
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void AppCleanUp()
+        {
+            ClosingWindow CW = new ClosingWindow();
+            CW.Show();
+            GingerCore.General.DoEvents();
+
+            App.AutomateTabGingerRunner.CloseAgents();
+            if (WorkSpace.Instance.SolutionRepository != null)
+            {
+                App.CloseAllRunningAgents();
+                WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
+            }
+            GingerCore.General.CleanDirectory(GingerCore.Actions.Act.ScreenshotTempFolder, true);
+
+            if (!WorkSpace.RunningInExecutionMode)
+            {
+                WorkSpace.UserProfile.GingerStatus = eGingerStatus.Closed;
+                WorkSpace.UserProfile.SaveUserProfile();
+                CleanAutoSaveFolders();
+                App.AppSolutionAutoSave.SolutionAutoSaveEnd();
+                try
+                {
+                    //TODO: no need to to log if running from comamnd line
+                    AutoLogProxy.LogAppClosed();
+                }
+                catch
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
+                }
+            }
+            CW.Close();
+        }
+
+        private void CleanAutoSaveFolders()
         {
             //To Clear the AutoSave Directory Folder
             if (Directory.Exists(App.AppSolutionAutoSave.AutoSaveFolderPath))
@@ -352,40 +397,6 @@ namespace Ginger
                     Reporter.ToLog(eLogLevel.WARN, "Failed to delete Recover folder", ex);
                 }
             }
-            if (mAskUserIfToClose == false || Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-            {
-                AppCleanUp();
-            }
-            else
-            {
-                e.Cancel = true;
-            }
-        }
-
-        private void AppCleanUp()
-        {
-            ClosingWindow CW = new ClosingWindow();
-            CW.Show();
-            GingerCore.General.DoEvents();
-            App.AutomateTabGingerRunner.CloseAgents();
-            GingerCore.General.CleanDirectory(GingerCore.Actions.Act.ScreenshotTempFolder, true);
-            
-            if (!WorkSpace.RunningInExecutionMode)
-            {
-                 WorkSpace.UserProfile.GingerStatus = eGingerStatus.Closed;
-                 WorkSpace.UserProfile.SaveUserProfile();
-                App.AppSolutionAutoSave.SolutionAutoSaveEnd();
-                try
-                {
-                    //TODO: no need to to log if running from comamnd line
-                    AutoLogProxy.LogAppClosed();
-                }
-                catch
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
-                }
-            }
-            CW.Close();
         }
 
         private void xSolutionTopNavigationListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -587,7 +598,7 @@ namespace Ginger
             else
                 SourceControlIntegration.GetLatest( WorkSpace.UserProfile.Solution.Folder,  WorkSpace.UserProfile.Solution.SourceControl);
 
-            App.UpdateApplicationsAgentsMapping(false);
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping,null);
             Reporter.HideStatusMessage();
 
             AutoLogProxy.UserOperationEnd();
@@ -661,7 +672,7 @@ namespace Ginger
 
         private void btnViewLogDetails_Click(object sender, RoutedEventArgs e)
         {
-            LogDetailsPage log = new LogDetailsPage();
+            LogDetailsPage log = new LogDetailsPage(LogDetailsPage.eLogShowLevel.ALL);
             log.ShowAsWindow();
         }
 
@@ -702,7 +713,8 @@ namespace Ginger
 
         private void btnLaunchConsole_Click(object sender, RoutedEventArgs e)
         {
-            DebugConsoleWindow.Show();
+            DebugConsoleWindow debugConsole = new DebugConsoleWindow();
+            debugConsole.ShowAsWindow();
         }
 
         private void xBetaFeaturesIcon_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -714,7 +726,7 @@ namespace Ginger
 
         private void xLogErrors_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {            
-            LogDetailsPage logDetailsPage = new LogDetailsPage();
+            LogDetailsPage logDetailsPage = new LogDetailsPage(LogDetailsPage.eLogShowLevel.ERROR);
             logDetailsPage.ShowAsWindow();
 
             xLogErrorsPnl.Visibility = Visibility.Collapsed;            
@@ -742,8 +754,8 @@ namespace Ginger
             {
                 //TODO: load Business Flows tab
                 xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
-                App.BusinessFlow = (BusinessFlow)args.Object;
-                App.BusinessFlow.SaveBackup();
+                //App.BusinessFlow = (BusinessFlow)args.Object;
+                //App.BusinessFlow.SaveBackup();
             }
         }
 
