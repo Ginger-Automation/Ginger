@@ -185,12 +185,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
 
             if (!string.IsNullOrEmpty(ProxySettings))
             {
-                Proxy p = new Proxy();
-                p.Kind = ProxyKind.Manual;
-                p.HttpProxy = ProxySettings;
-                p.FtpProxy = ProxySettings;
-                p.SocksProxy = ProxySettings;
-                p.SslProxy = ProxySettings;
+                Proxy p = GetProxy();
                 capabilities.SetCapability("Proxy",p);
             }
 
@@ -231,13 +226,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto
 
             if (!string.IsNullOrEmpty(ProxySettings))
             {
-                Proxy p = new Proxy();
-                p.Kind = ProxyKind.Manual;
-                p.HttpProxy = ProxySettings;
-                p.FtpProxy = ProxySettings;
-                p.SocksProxy = ProxySettings;
-                p.SslProxy = ProxySettings;
-                driverOptions.Proxy = p;
+
+                driverOptions.Proxy = GetProxy();
             }
 
 
@@ -247,6 +237,16 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             return driverOptions;
         }
 
+        private Proxy GetProxy()
+        {
+            Proxy p = new Proxy();
+            p.Kind = ProxyKind.Manual;
+            p.HttpProxy = ProxySettings;
+            p.FtpProxy = ProxySettings;
+            p.SocksProxy = ProxySettings;
+            p.SslProxy = ProxySettings;
+            return p;
+        }
 
         public override void CloseDriver()
         {
