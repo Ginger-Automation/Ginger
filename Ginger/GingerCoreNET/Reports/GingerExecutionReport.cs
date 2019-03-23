@@ -598,7 +598,7 @@ namespace Ginger.Reports.GingerExecutionReport
                                             {
                                                 if (firstIteration)
                                                 {
-                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#1B3651' style='color:#fff;padding:10px;border-right:1px solid #fff'>Business Flow Sequence</td>");
+                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#1B3651' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Sequence</td>");
                                                 }
                                                 fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) + "</td>");
                                             }
@@ -1182,7 +1182,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     ReportHTML = ReportHTML.Replace("{item_next}", NextItemImage);
                     ReportHTML = ReportHTML.Replace("{Next_BusinessFlowFolder_Link}", ExtensionMethods.folderNameNormalazing(nextPrevBFName.Item2.Item1.ToString() + " " + nextPrevBFName.Item2.Item2.ToString()));
-                    ReportHTML = ReportHTML.Replace("{ItemNextToolTip}", "Next BusinessFlow - " + ExtensionMethods.OverrideHTMLRelatedCharacters(nextPrevBFName.Item2.Item2.ToString()));
+                    ReportHTML = ReportHTML.Replace("{ItemNextToolTip}", "Next " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " - " + ExtensionMethods.OverrideHTMLRelatedCharacters(nextPrevBFName.Item2.Item2.ToString()));
                 }
                 else
                 {
@@ -1194,7 +1194,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     ReportHTML = ReportHTML.Replace("{item_prev}", PrevItemImage);
                     ReportHTML = ReportHTML.Replace("{Prev_BusinessFlowFolder_Link}", ExtensionMethods.folderNameNormalazing(nextPrevBFName.Item1.Item1.ToString() + " " + nextPrevBFName.Item1.Item2.ToString()));
-                    ReportHTML = ReportHTML.Replace("{ItemPrevToolTip}", "Previous Business Flow - " + ExtensionMethods.OverrideHTMLRelatedCharacters(nextPrevBFName.Item1.Item2.ToString()));
+                    ReportHTML = ReportHTML.Replace("{ItemPrevToolTip}", "Previous " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "- " + ExtensionMethods.OverrideHTMLRelatedCharacters(nextPrevBFName.Item1.Item2.ToString()));
                 }
                 else
                 {
@@ -1228,17 +1228,17 @@ namespace Ginger.Reports.GingerExecutionReport
                 if ((selectedField.FieldKey == BusinessFlowReport.Fields.SolutionVariablesDetails) && (selectedField.IsSelected == true))
                 {
                     ReportHTML = ReportHTML.Replace("<!--Section_PlaceHolder_SolutionVariablesDetails-->",
-                                                     ConvertingDatatableToHTML((DataTable)BusinessFlowReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(BusinessFlowReport), "Solution Variables Details", "table table-striped table-bordered table-hover", selectedField.IsSectionCollapsed));
+                                                     ConvertingDatatableToHTML((DataTable)BusinessFlowReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(BusinessFlowReport), "Solution " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Details", "table table-striped table-bordered table-hover", selectedField.IsSectionCollapsed));
                 }
                 else if ((selectedField.FieldKey == BusinessFlowReport.Fields.VariablesDetails) && (selectedField.IsSelected == true))
                 {
                     ReportHTML = ReportHTML.Replace("<!--Section_PlaceHolder_VariablesDetails-->",
-                                                     ConvertingDatatableToHTML((DataTable)BusinessFlowReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(BusinessFlowReport), "Business Flow Variables Details", "table table-striped table-bordered table-hover", selectedField.IsSectionCollapsed));
+                                                     ConvertingDatatableToHTML((DataTable)BusinessFlowReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(BusinessFlowReport), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Details", "table table-striped table-bordered table-hover", selectedField.IsSectionCollapsed));
                 }
                 else if ((selectedField.FieldKey == BusinessFlowReport.Fields.BFFlowControlDT) && (selectedField.IsSelected == true))
                 {
                     ReportHTML = ReportHTML.Replace("<!--Section_PlaceHolder_FlowControl-->",
-                                                     ConvertingDatatableToHTML((DataTable)BusinessFlowReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(BusinessFlowReport), "Business Flow Control", "table table-striped table-bordered table-hover", selectedField.IsSectionCollapsed));
+                                                     ConvertingDatatableToHTML((DataTable)BusinessFlowReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(BusinessFlowReport), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Control", "table table-striped table-bordered table-hover", selectedField.IsSectionCollapsed));
                 }
                 else if (selectedField.FieldKey == BusinessFlowReport.Fields.ActivityDetails)
                 {
@@ -1641,7 +1641,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     ReportHTML = ReportHTML.Replace("{item_next}", NextItemImage);
                     ReportHTML = ReportHTML.Replace("{Next_ActivitiesGroupFolder_Link}", ExtensionMethods.folderNameNormalazing(nextPrevActivitiesGroupName.Item2.Item1.ToString() + " " + nextPrevActivitiesGroupName.Item2.Item2.ToString()));
-                    ReportHTML = ReportHTML.Replace("{ItemNextToolTip}", "Next ActivitiesGroup - " + ExtensionMethods.OverrideHTMLRelatedCharacters(nextPrevActivitiesGroupName.Item2.Item2.ToString()));
+                    ReportHTML = ReportHTML.Replace("{ItemNextToolTip}", "Next " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + "- " + ExtensionMethods.OverrideHTMLRelatedCharacters(nextPrevActivitiesGroupName.Item2.Item2.ToString()));
                 }
                 else
                 {
@@ -1653,7 +1653,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     ReportHTML = ReportHTML.Replace("{item_prev}", PrevItemImage);
                     ReportHTML = ReportHTML.Replace("{Prev_ActivitiesGroupFolder_Link}", ExtensionMethods.folderNameNormalazing(nextPrevActivitiesGroupName.Item1.Item1.ToString() + " " + nextPrevActivitiesGroupName.Item1.Item2.ToString()));
-                    ReportHTML = ReportHTML.Replace("{ItemPrevToolTip}", "Previous Activities Group - " + ExtensionMethods.OverrideHTMLRelatedCharacters(nextPrevActivitiesGroupName.Item1.Item2.ToString()));
+                    ReportHTML = ReportHTML.Replace("{ItemPrevToolTip}", "Previous " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + "- " + ExtensionMethods.OverrideHTMLRelatedCharacters(nextPrevActivitiesGroupName.Item1.Item2.ToString()));
                 }
                 else
                 {
@@ -2052,7 +2052,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 if ((selectedField.FieldKey == ActivityReport.Fields.VariablesDetails) && (selectedField.IsSelected == true))
                 {
                     ReportHTML = ReportHTML.Replace("<!--Section_PlaceHolder_VariablesDetails-->",
-                                                     ConvertingDatatableToHTML((DataTable)ActivityReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityReport), "Activity Variables Details", "table table-striped table-bordered table-hover", selectedField.IsSectionCollapsed));
+                                                     ConvertingDatatableToHTML((DataTable)ActivityReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityReport), "Activity " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Details", "table table-striped table-bordered table-hover", selectedField.IsSectionCollapsed));
                 }
                 else if (selectedField.FieldKey == ActivityReport.Fields.ActionsDetails)
                 {

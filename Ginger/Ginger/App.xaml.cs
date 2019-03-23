@@ -654,10 +654,37 @@ namespace Ginger
 
             WorkSpace.UserProfile.Solution = null;
             App.AutomateTabGingerRunner.ClearAgents();
+            CloseAllRunningAgents();
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ClearAutomate, null);
             AutoLogProxy.SetAccount("");
             WorkSpace.Instance.SolutionRepository = null;
             WorkSpace.Instance.SourceControl = null;
+        }
+
+        public static void CloseAllRunningAgents()
+        {
+            if (WorkSpace.Instance.SolutionRepository != null)
+            {
+                List<Agent> runningAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Status == Agent.eStatus.Running).ToList();
+                if (runningAgents != null && runningAgents.Count > 0)
+                {
+                    foreach (Agent agent in runningAgents)
+                    {
+                        try
+                        {
+                            agent.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            if (agent.Name != null)
+                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Close the '{0}' Agent", agent.Name), ex);
+                            else
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
+                        }
+                        agent.IsFailedToStart = false;
+                    }
+                }
+            }
         }
 
         public static bool SetSolution(string SolutionFolder)

@@ -2167,7 +2167,7 @@ namespace Ginger.Run
                 {
                     p.AddValue(AP.ValueForDriver.ToString());
                 }
-                if (AP.ParamType == typeof(int))
+                else if (AP.ParamType == typeof(int))
                 {
                     p.AddValue(AP.IntValue);
                 }
@@ -2245,7 +2245,7 @@ namespace Ginger.Run
 
                 
 
-                    bool IsConditionTrue= CalculateFlowControlStatus(act, mLastExecutedActivity,FC.Operator,FC.ConditionCalculated);
+                    bool IsConditionTrue= CalculateFlowControlStatus(act, mLastExecutedActivity,CurrentBusinessFlow, FC.Operator,FC.ConditionCalculated);
                  
                     if (IsConditionTrue)
                     {
@@ -2395,21 +2395,15 @@ namespace Ginger.Run
             }
         }
 
-        public static bool CalculateFlowControlStatus(Act mAct,Activity mLastActivity,eFCOperator FCoperator,string Expression)
+        public static bool CalculateFlowControlStatus(Act mAct,Activity mLastActivity,BusinessFlow CurrentBF,eFCOperator FCoperator,string Expression)
         {
             bool FCStatus;
-
-
-
-
-
             switch (FCoperator)
             {
                 case eFCOperator.Legacy:
                     string rc = VBS.ExecuteVBSEval(Expression.Trim());
                     if (rc == "-1")
                     {
-
                         FCStatus = true;
                     }
                     else
@@ -2417,8 +2411,8 @@ namespace Ginger.Run
 
                         FCStatus = false;
                     }
-
                     break;
+
                 case eFCOperator.ActionPassed:
                     FCStatus = mAct.Status.Value == eRunStatus.Passed ? true : false;
                     break;
@@ -2426,6 +2420,7 @@ namespace Ginger.Run
                 case eFCOperator.ActionFailed:
                     FCStatus = mAct.Status.Value == eRunStatus.Failed ? true : false;
                     break;
+
                 case eFCOperator.LastActivityPassed:
                     if (mLastActivity != null)
                     {
@@ -2435,8 +2430,8 @@ namespace Ginger.Run
                     {
                         FCStatus = false;
                     }
-
                     break;
+
                 case eFCOperator.LastActivityFailed:
                     if (mLastActivity != null)
                     {
@@ -2447,8 +2442,16 @@ namespace Ginger.Run
                         FCStatus = false;
                     }
                     break;
-                case eFCOperator.CSharp:
 
+                case eFCOperator.BusinessFlowPassed:
+                    FCStatus = CurrentBF.RunStatus == eRunStatus.Passed ? true : false;
+                    break;
+
+                case eFCOperator.BusinessFlowFailed:
+                    FCStatus = CurrentBF.RunStatus == eRunStatus.Failed ? true : false;
+                    break;
+
+                case eFCOperator.CSharp:
                     FCStatus = CodeProcessor.EvalCondition(Expression);
                     break;
 
@@ -2456,10 +2459,6 @@ namespace Ginger.Run
                     FCStatus = false;
                     break;
             }
-
-
-
-
 
             return FCStatus;
         }
@@ -3944,10 +3943,8 @@ namespace Ginger.Run
             {
                 foreach (BusinessFlow businessFlow in BusinessFlows)
                 {
-                    businessFlow.Reset();
-
-                   
-                    NotifyBusinessflowWasReset(CurrentBusinessFlow);
+                    businessFlow.Reset();                   
+                    NotifyBusinessflowWasReset(businessFlow);
                 }
             }
         }
@@ -4039,9 +4036,9 @@ namespace Ginger.Run
             }
             else if (CurrentBusinessFlow != null) // Automate Tab
             {
-                foreach (TargetApplication TA in CurrentBusinessFlow.TargetApplications)
+                foreach (TargetBase TA in CurrentBusinessFlow.TargetApplications)
                 {
-                    if (bfsTargetApplications.Where(x => x.Name == TA.AppName).FirstOrDefault() == null)
+                    if (bfsTargetApplications.Where(x => x.Name == TA.Name).FirstOrDefault() == null)
                         bfsTargetApplications.Add(TA);
                 }
             }
@@ -4243,26 +4240,26 @@ namespace Ginger.Run
 
                 FC.CalcualtedValue(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, this.DSList);
 
-                string rc = VBS.ExecuteVBSEval(FC.ConditionCalculated.Trim());
+                //string rc = VBS.ExecuteVBSEval(FC.ConditionCalculated.Trim());
 
-                bool IsConditionTrue;
-                if (rc == "-1")
-                {
-                    FC.ConditionCalculated += " is True";
-                    IsConditionTrue = true;
-                }
-                else
-                {
-                    FC.ConditionCalculated += " is False";
-                    IsConditionTrue = false;
-                }
+                //bool IsConditionTrue;
+                //if (rc == "-1")
+                //{
+                //    FC.ConditionCalculated += " is True";
+                //    IsConditionTrue = true;
+                //}
+                //else
+                //{
+                //    FC.ConditionCalculated += " is False";
+                //    IsConditionTrue = false;
+                //}
+                bool IsConditionTrue = CalculateFlowControlStatus(null, mLastExecutedActivity, CurrentBusinessFlow, FC.Operator, FC.ConditionCalculated);
 
                 if (IsConditionTrue)
                 {
                     //Perform the action as condition is true
                     switch (FC.BusinessFlowControlAction)
                     {
-
                         case eBusinessFlowControlAction.GoToBusinessFlow:
                             if (GotoBusinessFlow(FC, bf, ref fcReturnIndex))
                             {

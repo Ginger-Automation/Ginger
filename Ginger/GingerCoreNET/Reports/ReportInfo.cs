@@ -208,7 +208,7 @@ namespace Ginger.Reports
             }
             catch (Exception EC)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Deserialize reportjson filetype", EC);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Deserialize report Json file type", EC);
             }
         }
 
