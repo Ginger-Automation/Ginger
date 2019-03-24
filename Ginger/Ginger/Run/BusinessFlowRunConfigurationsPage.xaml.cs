@@ -181,7 +181,7 @@ namespace Ginger.Run
                     int countMatchingBfs = 0;
                     
                     List<VariableBase> selectedVars = grdVariables.Grid.SelectedItems.Cast<VariableBase>().ToList();
-                    foreach (GingerRunner runner in App.RunsetExecutor.Runners)
+                    foreach (GingerRunner runner in WorkSpace.RunsetExecutor.Runners)
                     {
                         List<BusinessFlow> matchingBfs = runner.BusinessFlows.Where(x => x.Guid == mBusinessFlow.Guid).ToList();
                         countMatchingBfs += matchingBfs.Count;
