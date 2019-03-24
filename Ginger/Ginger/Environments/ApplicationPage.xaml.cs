@@ -34,11 +34,14 @@ namespace Ginger.Environments
     public partial class ApplicationPage : Page
     {
         EnvApplication mEnvApplication;
-        public ApplicationPage(EnvApplication app)
+
+        Context mContext;
+
+        public ApplicationPage(EnvApplication app, Context context)
         {
             InitializeComponent();
             mEnvApplication = app;
-
+            mContext = context;
             App.ObjFieldBinding(ApplicationNameTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Name));
             App.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Description));
 
@@ -98,7 +101,7 @@ namespace Ginger.Environments
             {
                 if (DBsFrame.Content == null)
                 {                    
-                    DBsFrame.Content = new AppDataBasesPage(mEnvApplication);
+                    DBsFrame.Content = new AppDataBasesPage(mEnvApplication, mContext);
                     return;
                 }
             }

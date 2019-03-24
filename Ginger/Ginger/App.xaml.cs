@@ -21,7 +21,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
@@ -46,7 +45,6 @@ using GingerCore.SourceControl;
 using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Concurrent;
@@ -170,39 +168,6 @@ namespace Ginger
         public new static MainWindow MainWindow { get; set; }
         
         private Dictionary<string, Int32> mExceptionsDic = new Dictionary<string, int>();
-                   
-
-        
-        
-
-        // Business Flow Objects        
-        private static ProjEnvironment mAutomateTabEnvironment //???
-        {
-            get
-            {
-                return (ProjEnvironment)WorkSpace.AutomateTabEnvironment;
-
-            }
-            set{
-
-                WorkSpace.AutomateTabEnvironment = value;
-            }
-        }
-        public static ProjEnvironment AutomateTabEnvironment //???
-        {
-            get
-            {
-                return mAutomateTabEnvironment;
-            }
-            set
-            {
-                mAutomateTabEnvironment = value;
-                App.AutomateTabGingerRunner.ProjEnvironment = mAutomateTabEnvironment;
-                WorkSpace.UserProfile.RecentEnvironment = mAutomateTabEnvironment.Guid;
-
-            }
-        }
-
 
         public static GingerRunner AutomateTabGingerRunner///???
         {
@@ -923,14 +888,6 @@ namespace Ginger
         {
             CheckInPage CIW = new CheckInPage(Path);
             CIW.ShowAsWindow();
-        }
-
-        internal static string GetProjEnvironmentName()
-        {
-            if (AutomateTabEnvironment != null)
-                return App.AutomateTabEnvironment.Name;
-            else
-                return null;
         }
         
 

@@ -199,7 +199,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         public static bool RunningInExecutionMode = false;
 
-        public static ProjEnvironment AutomateTabEnvironment;
+        
 
         public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
