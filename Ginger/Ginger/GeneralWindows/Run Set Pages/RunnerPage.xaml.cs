@@ -284,7 +284,7 @@ namespace Ginger.Run
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
             ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            if (App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder!=null)
+            if (WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder!=null)
             {
                 string reportpath = ((BusinessFlow)((RunnerItemPage)sender).ItemObject).ExecutionFullLogFolder;
                 string reportsResultFolder = string.Empty;
@@ -318,7 +318,7 @@ namespace Ginger.Run
             }
             else
             {
-                ExecutionLogger.GenerateBusinessFlowOfflineReport(mRunner.ProjEnvironment, currentConf.HTMLReportsFolder + bf.Name, bf, App.RunsetExecutor.RunSetConfig.Name);
+                ExecutionLogger.GenerateBusinessFlowOfflineReport(mRunner.ProjEnvironment, currentConf.HTMLReportsFolder + bf.Name, bf, WorkSpace.RunsetExecutor.RunSetConfig.Name);
             }
         }
         private void Businessflow_ClickActive(object sender, RoutedEventArgs e)
@@ -577,9 +577,9 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Runner is already running.");
                 return;
             }
-            App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
+            WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
             mRunner.ResetRunnerExecutionDetails();
-            App.RunsetExecutor.ConfigureRunnerForExecution(mRunner);
+            WorkSpace.RunsetExecutor.ConfigureRunnerForExecution(mRunner);
             await mRunner.RunRunnerAsync();
             GingerCore.General.DoEvents();   //needed?                 
         }
@@ -649,7 +649,7 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Runner was not stopped.");
                 return;
             }
-            App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
+            WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
             await mRunner.ContinueRunAsync(eContinueLevel.Runner,eContinueFrom.LastStoppedAction);
         }
         private void ViewReportBtn_Click(object sender, RoutedEventArgs e)
@@ -683,12 +683,12 @@ namespace Ginger.Run
 
         private void GenerateIndividualReport(object sender, RoutedEventArgs e)
         {
-            ReportTemplate.GenerateIndividualReport(mRunner,  WorkSpace.UserProfile.GetDefaultReport(), (ProjEnvironment)App.RunsetExecutor.RunsetExecutionEnvironment, true);
+            ReportTemplate.GenerateIndividualReport(mRunner,  WorkSpace.UserProfile.GetDefaultReport(), (ProjEnvironment)WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, true);
         }
 
         private void GenerateConsolidatedReport(object sender, RoutedEventArgs e)
         {
-            var RI = new ReportInfo(App.RunsetExecutor.RunsetExecutionEnvironment, mRunner, true);
+            var RI = new ReportInfo(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, mRunner, true);
             var repFileName = ReportTemplate.GenerateReport( WorkSpace.UserProfile.GetDefaultReport(), RI);
             Process.Start(repFileName);
         }

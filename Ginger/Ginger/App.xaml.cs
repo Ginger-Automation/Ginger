@@ -74,7 +74,6 @@ namespace Ginger
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger
                                        (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-
         public static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//?????
 
         public static System.Diagnostics.FileVersionInfo ApplicationInfo
@@ -85,7 +84,7 @@ namespace Ginger
             }
         }
         public static string AppName = ApplicationInfo.FileDescription;//"Ginger"
-        public static string AppFullProductName = ApplicationInfo.ProductName;//"Amdocs Ginger Automation"
+        public static string AppFullProductName = ApplicationInfo.ProductName;//"Ginger by Amdocs"
 
         private static string mAppVersion = String.Empty;
         public static string AppVersion
@@ -139,12 +138,12 @@ namespace Ginger
             }
         }
 
-        public static Ginger.Functionalties.SolutionAutoSave AppSolutionAutoSave = new Ginger.Functionalties.SolutionAutoSave();
+        public static Ginger.Functionalties.SolutionAutoSave AppSolutionAutoSave = new Ginger.Functionalties.SolutionAutoSave();//To move it workspace
+        public static Ginger.Functionalties.SolutionRecover AppSolutionRecover = new Ginger.Functionalties.SolutionRecover();//To move it workspace
+        public static string RecoverFolderPath = null; //???
 
-        public static Ginger.Functionalties.SolutionRecover AppSolutionRecover = new Ginger.Functionalties.SolutionRecover();
-
-        static bool mIsReady = false;
-        public bool IsReady { get { return mIsReady; } }
+        static bool mIsReady = false;//???
+        public bool IsReady { get { return mIsReady; } }//???
 
         private static bool mAppBuildTimeCalculated = false;
         private static DateTime mAppBuildTime;
@@ -164,32 +163,16 @@ namespace Ginger
             }
         }
 
-        public static TextBlock RunsetBFTextbox = null;//???
-        public static TextBlock RunsetActivityTextbox = null;//???
-        public static TextBlock RunsetActionTextbox = null;//???
+        //public static TextBlock RunsetBFTextbox = null;//???
+        //public static TextBlock RunsetActivityTextbox = null;//???
+        //public static TextBlock RunsetActionTextbox = null;//???
 
         public new static MainWindow MainWindow { get; set; }
         
-        private Dictionary<string, Int32> _exceptionsDic = new Dictionary<string, int>();
+        private Dictionary<string, Int32> mExceptionsDic = new Dictionary<string, int>();
+                   
 
-       
-        /// <summary>
-        /// Hold all Run Set execution data + execution methods
-        /// </summary>        
-        public static RunsetExecutor RunsetExecutor
-        {
-            get
-            {
-                return WorkSpace.RunsetExecutor;
-            }
-
-            set
-            {
-                WorkSpace.RunsetExecutor = value;
-            }
-        }
-
-        public static string RecoverFolderPath = null; //???
+        
         
 
         // Business Flow Objects        
@@ -532,7 +515,7 @@ namespace Ginger
             AutoLogProxy.LogAppOpened();
             AppSplashWindow.LoadingInfo(phase);
 
-            var result = await App.RunsetExecutor.RunRunSetFromCommandLine();
+            var result = await WorkSpace.RunsetExecutor.RunRunSetFromCommandLine();
 
             Reporter.ToLog(eLogLevel.INFO, "Closing Ginger automatically...");
             App.MainWindow.CloseWithoutAsking();
@@ -900,12 +883,12 @@ namespace Ginger
             Reporter.ToLog(eLogLevel.ERROR, ex.ToString(), ex);
 
             //add to dictionary to make sure same exception won't show more than 3 times
-            if (_exceptionsDic.ContainsKey(ex.Message))
-                _exceptionsDic[ex.Message]++;
+            if (mExceptionsDic.ContainsKey(ex.Message))
+                mExceptionsDic[ex.Message]++;
             else
-                _exceptionsDic.Add(ex.Message, 1);
+                mExceptionsDic.Add(ex.Message, 1);
 
-            if (_exceptionsDic[ex.Message] <= 3)
+            if (mExceptionsDic[ex.Message] <= 3)
             {
                 Ginger.GeneralLib.ExceptionDetailsPage.ShowError(ex);
             }

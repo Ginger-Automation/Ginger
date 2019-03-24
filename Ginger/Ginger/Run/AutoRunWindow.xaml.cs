@@ -38,7 +38,7 @@ namespace Ginger.Run
 
             this.Show();
 
-            NewRunSetPage runSetPage = new NewRunSetPage(App.RunsetExecutor.RunSetConfig);
+            NewRunSetPage runSetPage = new NewRunSetPage(WorkSpace.RunsetExecutor.RunSetConfig);
             this.Content = runSetPage;
         }
 
@@ -61,11 +61,11 @@ namespace Ginger.Run
             
             try
             {
-                App.RunsetExecutor.RunSetConfig = runSetConfig;
+                WorkSpace.RunsetExecutor.RunSetConfig = runSetConfig;
 
                 //TODO: create initialize run inside the RunSet executer
-                App.RunsetExecutor.RunsetExecutionEnvironment = env;
-                App.RunsetExecutor.SetRunnersEnv(env, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());                
+                WorkSpace.RunsetExecutor.RunsetExecutionEnvironment = env;
+                WorkSpace.RunsetExecutor.SetRunnersEnv(env, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());                
             }
             catch (Exception ex)
             {
@@ -79,7 +79,7 @@ namespace Ginger.Run
 
         protected override void OnClosed(EventArgs e)
         {
-            App.RunsetExecutor.StopRun();
+            WorkSpace.RunsetExecutor.StopRun();
 
             base.OnClosed(e);            
             App.MainWindow.Close();
