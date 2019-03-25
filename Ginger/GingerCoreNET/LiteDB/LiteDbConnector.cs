@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace Amdocs.Ginger.CoreNET.LiteDB
 {
@@ -14,57 +16,110 @@ namespace Amdocs.Ginger.CoreNET.LiteDB
             this.ConnectionString = connectionString;
         }
 
-        public LiteCollection<T> GetCollection<T, K>(string collectionName, Dictionary<string, Func<T, K>> refDict = null)
+        public EntityBuilder<T> GetMapper<T>()
+        {
+            return BsonMapper.Global.Entity<T>();
+        }
+        public LiteCollection<T> GetCollection<T>(string collectionName)
         {
             LiteCollection<T> collection = null;
-            if (refDict != null)
+            try
             {
-                var mapper = BsonMapper.Global;
-                foreach (var item in refDict)
-                    mapper.Entity<T>()
-                    .DbRef(x => item.Value, item.Key);
+                using (var db = new LiteDatabase(this.ConnectionString))
+                {
+                    collection = db.GetCollection<T>(collectionName);
+                }
             }
-            using (var db = new LiteDatabase(this.ConnectionString))
+            catch(Exception)
             {
-                collection = db.GetCollection<T>(collectionName);
+
             }
             return collection;
         }
 
+        public bool DeleteCollectionItems<T>(LiteCollection<T> baseColl, Query query)
+        {
+            bool result = false;
+            try
+            {
+                using (var db = new LiteDatabase(this.ConnectionString))
+                {
+                    result = baseColl.Delete(query) > 0;
+                }
+            }
+            catch(Exception ex)
+            {
+
+            }
+            return result;
+        }
+
+        public List<T> FilterCollection<T>(LiteCollection<T> baseColl, Query query)
+        {
+            return baseColl.Find(query).ToList();
+        }
+
         public void SetCollection<T>(LiteCollection<T> baseColl, List<T> updateData)
         {
-            using (var db = new LiteDatabase(this.ConnectionString))
+            try
             {
-                baseColl.Upsert(updateData);
+                using (var db = new LiteDatabase(this.ConnectionString))
+                {
+                    baseColl.Upsert(updateData);
+                }
+            }
+            catch(Exception ex)
+            {
+
             }
         }
 
         public void DeleteCollection<T>(LiteCollection<T> baseColl, Query query)
         {
-            using (var db = new LiteDatabase(this.ConnectionString))
+            try
             {
-                baseColl.Delete(query);
+                using (var db = new LiteDatabase(this.ConnectionString))
+                {
+                    baseColl.Delete(query);
+                }
+            }
+            catch(Exception ex)
+            {
+
             }
         }
 
         public void SaveImage(string imagePath, string imageName)
         {
-            using (var db = new LiteDatabase(this.ConnectionString))
+            try
             {
-                db.FileStorage.Upload(imageName, imagePath);
+                using (var db = new LiteDatabase(this.ConnectionString))
+                {
+                    db.FileStorage.Upload(imageName, imagePath);
+                }
+            }
+            catch(Exception ex)
+            {
+
             }
         }
 
         public void GetImage(string imagePath)
         {
-            using (var db = new LiteDatabase(this.ConnectionString))
+            try
             {
-                using (FileStream fs = File.Create(this.ConnectionString))
+                using (var db = new LiteDatabase(this.ConnectionString))
                 {
-                    var file = db.FileStorage.Download(imagePath, fs);
+                    using (FileStream fs = File.Create(this.ConnectionString))
+                    {
+                        var file = db.FileStorage.Download(imagePath, fs);
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+
             }
         }
     }
-
 }
