@@ -34,7 +34,6 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
-using GingerCoreNET.RunLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using IWshRuntimeLibrary;
 using System;
@@ -73,6 +72,7 @@ namespace Ginger.Run
         private FileSystemWatcher mBusinessFlowsXmlsChangeWatcher = null;
         private bool mRunSetBusinessFlowWasChanged = false;
         private bool mSolutionWasChanged = false;
+        Context mContext = new Context();
         public enum eObjectType
         {
             BusinessFlow,
@@ -717,6 +717,15 @@ namespace Ginger.Run
 
             //set the runner items section
             InitRunnerExecutionDebugSection();
+
+            if (mCurrentSelectedRunner != null)
+            {
+                mContext.Runner = mCurrentSelectedRunner.Runner;
+            }
+            else
+            {
+                mContext.Runner = null;
+            }
         }
 
         
@@ -835,7 +844,7 @@ namespace Ginger.Run
         }
         internal RunnerPage InitRunnerFlowElement(GingerRunner runner, int index = -1, bool ViewMode=false)
         {
-            RunnerPage GRP = new RunnerPage(runner, ViewMode);
+            RunnerPage GRP = new RunnerPage(runner, mContext, ViewMode);
             GRP.Tag = runner.Guid;
             GRP.MouseLeftButtonDown += GRP_MouseLeftButtonDown;
             
@@ -1030,6 +1039,8 @@ namespace Ginger.Run
                 }
             }
         }
+
+
 
         private void SetRunnersCombo()
         {
@@ -1598,11 +1609,14 @@ namespace Ginger.Run
                 {
                     mCurrentBusinessFlowRunnerItem.xItemName.Foreground = FindResource("$SelectionColor_Pink") as Brush;
                 }
+
+                mContext.BusinessFlow = (BusinessFlow)mCurrentBusinessFlowRunnerItem.ItemObject;
             }
             else
             {
                 xActivitiesRunnerItemsListView.ItemsSource = null;
-            }
+                mContext.BusinessFlow = null;
+            }            
         }
 
         private void xActivitiesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1634,10 +1648,13 @@ namespace Ginger.Run
                 }
 
                 mCurrentActivityRunnerItem.xItemName.Foreground = FindResource("$SelectionColor_Pink") as Brush;
+
+                mContext.Activity = (Activity)mCurrentActivityRunnerItem.ItemObject;
             }
             else
             {
                 xActionsRunnerItemsListView.ItemsSource = null;
+                mContext.Activity = null;
             }
             xActionsName.Content = "Actions (" + xActionsRunnerItemsListView.Items.Count + ")";
             SetHeighlightActionRunnerItem();
@@ -2224,6 +2241,11 @@ namespace Ginger.Run
 
             }
             mfindAndReplacePageRunSet.ShowAsWindow();
+        }
+
+        private void XRunsetEnvironmentCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            mContext.Environment = (ProjEnvironment)xRunsetEnvironmentCombo.SelectedItem;
         }
     }
 }

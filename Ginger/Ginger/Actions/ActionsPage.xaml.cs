@@ -253,7 +253,7 @@ namespace Ginger.Actions
         {  
             if (e.PropertyName == "CurrentItem")
             {
-                App.AutomateTabGingerRunner.HighlightActElement((Act)grdActions.CurrentItem);
+                mContext.Runner.HighlightActElement((Act)grdActions.CurrentItem);
             }            
         }
 

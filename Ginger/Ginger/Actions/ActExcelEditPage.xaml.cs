@@ -102,7 +102,7 @@ namespace Ginger.Actions
 
         private void FillSheetCombo()
         {
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
             //Move code to ExcelFunction no in Act...
             List<string> SheetsList = mAct.GetSheets();
             GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
@@ -111,7 +111,7 @@ namespace Ginger.Actions
 
         private void ViewDataButton_Click(object sender, RoutedEventArgs e)
         {
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
 
             DataTable dt = mAct.GetExcelSheetData(null);
             if (dt != null)
@@ -120,7 +120,7 @@ namespace Ginger.Actions
 
         private void ViewWhereButton_Click(object sender, RoutedEventArgs e)
         {
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
 
             DataTable dt = mAct.GetExcelSheetDataWithWhere();
             if(dt!=null)
@@ -129,7 +129,7 @@ namespace Ginger.Actions
 
         private void ExcelActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
 
             if (ExcelActionComboBox.SelectedValue.ToString() == "ReadData")
             {
@@ -148,7 +148,7 @@ namespace Ginger.Actions
         private void SheetNamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mAct.SheetName = SheetNamComboBox.Text;
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
         }
 
         private void SheetNamComboBox_DropDownOpened(object sender, EventArgs e)

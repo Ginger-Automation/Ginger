@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using System.Collections.Generic;
 using System.Windows;
@@ -69,9 +70,9 @@ namespace Ginger.Actions
 
             if (result == System.Windows.Forms.DialogResult.OK)
             {
-                if (MakePathsRelative &&dlg.FileName.StartsWith(App.AutomateTabGingerRunner.CurrentSolution.Folder))
+                if (MakePathsRelative &&dlg.FileName.StartsWith(WorkSpace.UserProfile.Solution.Folder))
                 {
-                    FilePathTextBox.Text= dlg.FileName.Replace(App.AutomateTabGingerRunner.CurrentSolution.Folder, @"~\");
+                    FilePathTextBox.Text= dlg.FileName.Replace(WorkSpace.UserProfile.Solution.Folder, @"~\");
                 }
                 else
                 {

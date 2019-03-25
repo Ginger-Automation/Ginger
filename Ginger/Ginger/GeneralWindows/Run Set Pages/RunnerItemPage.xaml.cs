@@ -16,24 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerCoreNET.RunLib;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.UserControls;
+using Ginger.MoveToGingerWPF.Run_Set_Pages;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.DataSource;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using GingerCore;
-using GingerCore.Actions;
-using Ginger.Actions;
-using Ginger.BusinessFlowFolder;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.UserControls;
-using Ginger.MoveToGingerWPF.Run_Set_Pages;
-using Amdocs.Ginger.CoreNET.RunLib;
-using Amdocs.Ginger.Common.Enums;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.DataSource;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Run
 {
@@ -168,6 +163,7 @@ namespace Ginger.Run
                     if (ac.GetType() == typeof(ErrorHandler)) continue;//do not show Error Handler for now
 
                     RunnerItemPage ri = new RunnerItemPage(ac);
+                    this.Context.Activity = ac;
                     ri.Context = this.Context;
                     ri.ItemName = ac.ActivityName;
                     if (string.IsNullOrEmpty(ac.Description))

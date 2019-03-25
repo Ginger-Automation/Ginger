@@ -326,7 +326,7 @@ namespace Ginger.Actions
                             mBusinessFlow.TargetApplications.Add(new TargetPlugin() {PluginId = p.PluginId,  ServiceId = p.ServiceId });
 
                             //Search for default agent which match 
-                            App.AutomateTabGingerRunner.UpdateApplicationAgents();
+                            mContext.Runner.UpdateApplicationAgents();
                             // TODO: update automate page target/agent
 
                             // if agent not found auto add or ask user 

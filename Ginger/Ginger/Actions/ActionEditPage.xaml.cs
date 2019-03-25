@@ -20,11 +20,9 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Expressions;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
-using Ginger.BusinessFlowFolder;
 using Ginger.BusinessFlowWindows;
 using Ginger.Help;
 using Ginger.Reports;
@@ -33,7 +31,6 @@ using Ginger.UserControls;
 using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using GingerCore.Actions.Java;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
@@ -83,6 +80,8 @@ namespace Ginger.Actions
         ComboBox dsOutputParamMapType = new ComboBox();
         private bool saveWasDone = false;
 
+        Context mContext;
+
         public General.RepositoryItemPageViewMode EditMode { get; set; }
 
         public ActionEditPage(Act act, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation, BusinessFlow actParentBusinessFlow = null, Activity actParentActivity = null)
@@ -94,24 +93,24 @@ namespace Ginger.Actions
             {
                 mAction.SaveBackup();
             }
-
-            RunDescritpion.Init(Context.GetAsContext(mAction.Context), act, Act.Fields.RunDescription);
+            mContext = Context.GetAsContext(mAction.Context);
+            RunDescritpion.Init(mContext, act, Act.Fields.RunDescription);
 
             if (actParentBusinessFlow != null)
             {
                 mActParentBusinessFlow = actParentBusinessFlow;
             }
-            else if (mAction.Context != null && Context.GetAsContext(mAction.Context).BusinessFlow != null)
+            else if (mAction.Context != null && mContext.BusinessFlow != null)
             {
-                mActParentBusinessFlow = Context.GetAsContext(mAction.Context).BusinessFlow;
+                mActParentBusinessFlow = mContext.BusinessFlow;
             }
             else if (actParentActivity != null)
             {
                 mActParentActivity = actParentActivity;
             }
-            else if (mAction.Context != null && Context.GetAsContext(mAction.Context).Activity != null)
+            else if (mAction.Context != null && mContext.Activity != null)
             {
-                mActParentActivity = (Activity)Context.GetAsContext(mAction.Context).Activity;
+                mActParentActivity = (Activity)mContext.Activity;
             }
 
             EditMode = editMode;
@@ -140,7 +139,7 @@ namespace Ginger.Actions
             txtDescription.BindControl(mAction, Act.Fields.Description);
             cboLocateBy.BindControl(mAction, Act.Fields.LocateBy, act.AvailableLocateBy());
             comboWindowsToCapture.BindControl(mAction, Act.Fields.WindowsToCapture);
-            txtLocateValue.BindControl(Context.GetAsContext(mAction.Context), mAction, Act.Fields.LocateValue);
+            txtLocateValue.BindControl(mContext, mAction, Act.Fields.LocateValue);
 
             //Run Details binding
             App.ObjFieldBinding(RTStatusLabel, Label.ContentProperty, mAction, Act.Fields.Status, BindingMode.OneWay);
@@ -156,7 +155,7 @@ namespace Ginger.Actions
             App.ObjFieldBinding(FailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.FailIgnored);
 
             comboFinalStatus.BindControl(mAction, Act.Fields.StatusConverter);
-            xWaittxtWait.BindControl(Context.GetAsContext(mAction.Context), mAction, nameof(Act.WaitVE));
+            xWaittxtWait.BindControl(mContext, mAction, nameof(Act.WaitVE));
             App.ObjFieldBinding(txtTimeout, TextBox.TextProperty, mAction, Act.Fields.Timeout);
             App.ObjFieldBinding(StatusLabel, Label.ContentProperty, mAction, Act.Fields.Status);
             GingerCore.General.ObjFieldBinding(ErrorTextBlock, TextBlock.TextProperty, mAction, Act.Fields.Error);
@@ -172,7 +171,7 @@ namespace Ginger.Actions
             App.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);
             App.ObjFieldBinding(EnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
 
-            txtLocateValue.BindControl(Context.GetAsContext(mAction.Context), mAction, Act.Fields.LocateValue);
+            txtLocateValue.BindControl(mContext, mAction, Act.Fields.LocateValue);
             txtLocateValue.ValueTextBox.Text = mAction.LocateValue;  // Why ?
 
             SwitchingInputValueBoxAndGrid(mAction);
@@ -235,7 +234,7 @@ namespace Ginger.Actions
                 xRunStatusExpander.IsExpanded = false;
 
             InitActionLog();
-            App.AutomateTabGingerRunner.PrepActionValueExpression(mAction, actParentBusinessFlow);
+            mContext.Runner.PrepActionValueExpression(mAction, actParentBusinessFlow);
         }
 
         private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -310,7 +309,7 @@ namespace Ginger.Actions
                 }
                 else if (a.InputValues.Count == 1)
                 {
-                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mContext, mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
@@ -337,7 +336,7 @@ namespace Ginger.Actions
                 {
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mContext, mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
                 }
             }
             else if (a.GetType() == typeof(ActLaunchJavaWSApplication) || a.GetType() == typeof(ActJavaEXE))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
@@ -366,14 +365,14 @@ namespace Ginger.Actions
                 {
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mContext, mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
                 }
             }
             else if (a.GetType() == typeof(ActDBValidation))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
                 if (a.InputValues.Count == 1)
                 {
-                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mContext, mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;
                     ValueUC.ValueTextBox.Text = mAction.InputValues.FirstOrDefault().Value;
@@ -383,7 +382,7 @@ namespace Ginger.Actions
                 {
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;
-                    ValueUC.Init(Context.GetAsContext(mAction.Context), a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mContext, a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                 }
             }
             else if (a.GetType() == typeof(ActScript))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
@@ -395,7 +394,7 @@ namespace Ginger.Actions
                 }
                 else if (a.InputValues.Count == 1)
                 {
-                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mContext, mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
@@ -408,7 +407,7 @@ namespace Ginger.Actions
                 {   
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mContext, mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
                     ValueLabel.Content = a.InputValues.FirstOrDefault().Param;
                 }
@@ -560,9 +559,9 @@ namespace Ginger.Actions
                     // For no driver actions we give the BF and env - used for example in set var value.
                     if (typeof(ActWithoutDriver).IsAssignableFrom(a.GetType()))
                     {
-                        ((ActWithoutDriver)a).RunOnBusinessFlow = (BusinessFlow)App.AutomateTabGingerRunner.CurrentBusinessFlow;
-                        ((ActWithoutDriver)a).RunOnEnvironment =(ProjEnvironment) App.AutomateTabGingerRunner.ProjEnvironment;
-                        ((ActWithoutDriver)a).DSList = App.AutomateTabGingerRunner.DSList;
+                        ((ActWithoutDriver)a).RunOnBusinessFlow = (BusinessFlow)mContext.Runner.CurrentBusinessFlow;
+                        ((ActWithoutDriver)a).RunOnEnvironment =(ProjEnvironment)mContext.Runner.ProjEnvironment;
+                        ((ActWithoutDriver)a).DSList = mContext.Runner.DSList;
                     }
 
                     // Load the page
@@ -636,22 +635,22 @@ namespace Ginger.Actions
 
         private async void RunActionInSimulationButton_Click(object sender, RoutedEventArgs e)
         {
-            bool originalSimulationFlagValue = App.AutomateTabGingerRunner.RunInSimulationMode;
-            App.AutomateTabGingerRunner.RunInSimulationMode = true;
+            bool originalSimulationFlagValue = mContext.Runner.RunInSimulationMode;
+            mContext.Runner.RunInSimulationMode = true;
 
             int res = await RunAction().ConfigureAwait(false);
 
-            App.AutomateTabGingerRunner.RunInSimulationMode = originalSimulationFlagValue;
+            mContext.Runner.RunInSimulationMode = originalSimulationFlagValue;
         }
 
         private async void RunActionButton_Click(object sender, RoutedEventArgs e)
         {
-            bool originalSimulationFlagValue = App.AutomateTabGingerRunner.RunInSimulationMode;
-            App.AutomateTabGingerRunner.RunInSimulationMode = false;
+            bool originalSimulationFlagValue = mContext.Runner.RunInSimulationMode;
+            mContext.Runner.RunInSimulationMode = false;
 
             int res = await RunAction().ConfigureAwait(false);
 
-            App.AutomateTabGingerRunner.RunInSimulationMode = originalSimulationFlagValue;
+            mContext.Runner.RunInSimulationMode = originalSimulationFlagValue;
         }
 
         private void StopRunBtn_Click(object sender, RoutedEventArgs e)
@@ -690,13 +689,13 @@ namespace Ginger.Actions
                 //No need for agent for some actions like DB and read for excel. For other need agent   
                 if (!(typeof(ActWithoutDriver).IsAssignableFrom(mAction.GetType())))
                 {
-                    App.AutomateTabGingerRunner.SetCurrentActivityAgent();
+                    mContext.Runner.SetCurrentActivityAgent();
                 }
 
-                App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+                mContext.Runner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
             });
             
-            var result = await App.AutomateTabGingerRunner.RunActionAsync(mAction, false, true).ConfigureAwait(false);
+            var result = await mContext.Runner.RunActionAsync(mAction, false, true).ConfigureAwait(false);
 
             this.Dispatcher.Invoke(() =>
             {
@@ -736,13 +735,13 @@ namespace Ginger.Actions
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Expected, Context.GetAsContext(mAction.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Expected, mContext);
             VEEW.ShowAsWindow();
         }
         private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)InputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mAction.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, mContext);
             VEEW.ShowAsWindow();
         }
         private void GridAddActualToExpectButton_Click(object sender, RoutedEventArgs e)
@@ -760,7 +759,7 @@ namespace Ginger.Actions
         private void SimulatedOutputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.SimulatedActual, Context.GetAsContext(mAction.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.SimulatedActual, mContext);
             VEEW.ShowAsWindow();
         }
 
@@ -983,13 +982,13 @@ namespace Ginger.Actions
         private void GridParamVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Param, Context.GetAsContext(mAction.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Param, mContext);
             VEEW.ShowAsWindow();
         }
         private void GridPathVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Path, Context.GetAsContext(mAction.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Path, mContext);
             VEEW.ShowAsWindow();
         }
 
@@ -1125,11 +1124,11 @@ namespace Ginger.Actions
         private void HighLightElementButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: fixme - Currently working with first agent
-            ApplicationAgent aa =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents[0];
+            ApplicationAgent aa =(ApplicationAgent)mContext.Runner.ApplicationAgents[0];
             if (aa != null)
             {
                 DriverBase driver =((Agent) aa.Agent).Driver;
-                App.AutomateTabGingerRunner.PrepActionValueExpression(mAction);
+                mContext.Runner.PrepActionValueExpression(mAction);
                 if (driver != null)
                 {
                     driver.HighlightActElement(mAction);
@@ -1143,7 +1142,7 @@ namespace Ginger.Actions
 
         private void ControlSelectorButton_Click(object sender, RoutedEventArgs e)
         {
-            ApplicationAgent aa =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent aa =(ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
             if (aa != null)
             {
                 if (((Agent)aa.Agent).Driver == null)
@@ -1155,7 +1154,7 @@ namespace Ginger.Actions
                 //Instead of check make it disabled ?
                 if (driver is IWindowExplorer)
                 {
-                    WindowExplorerPage WEP = new WindowExplorerPage(aa, Context.GetAsContext(mAction.Context),  mAction);
+                    WindowExplorerPage WEP = new WindowExplorerPage(aa, mContext,  mAction);
                     WEP.ShowAsWindow();
                 }
                 else

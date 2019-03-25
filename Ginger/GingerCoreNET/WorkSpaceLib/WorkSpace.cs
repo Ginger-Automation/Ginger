@@ -102,10 +102,6 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        // Here we will have knwon GingerGrids - !!!!!!!!!!!!!!!!!!! Design, think..........
-        // public IObservable<GingerGrid> GingerGrids;
-        public static GingerRunner AutomateTabGingerRunner { get; set; }
-
         public void OpenSolution(string SolutionFolder)
         {
             mPluginsManager = null;

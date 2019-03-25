@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -26,6 +27,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using Open3270.TN3270;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Ginger.WindowExplorer.Mainframe
 {
@@ -50,15 +52,20 @@ namespace Ginger.WindowExplorer.Mainframe
         public List<ITreeViewItem> Childrens()
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-            MFDriver = (MainFrameDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
-            XMLScreen XMLS = MFDriver.GetRenderedScreen();
-            foreach (XMLScreenField xf in XMLS.Fields)
+            //TODO: improve below to use really automate page used mainfram driver
+            Agent agent = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.DriverType == Agent.eDriverType.MainFrame3270 && x.Status == Agent.eStatus.Running).FirstOrDefault();
+            if (agent != null)
             {
-                MainframeControlTreeItem MFTI = new MainframeControlTreeItem();
-                MFTI.Name = xf.Text;
-                MFTI.XSF = xf;
-                MFTI.Path = xf.Location.left + "/" + xf.Location.top;
-                Childrens.Add(MFTI);
+                MFDriver = (MainFrameDriver)agent.Driver;
+                XMLScreen XMLS = MFDriver.GetRenderedScreen();
+                foreach (XMLScreenField xf in XMLS.Fields)
+                {
+                    MainframeControlTreeItem MFTI = new MainframeControlTreeItem();
+                    MFTI.Name = xf.Text;
+                    MFTI.XSF = xf;
+                    MFTI.Path = xf.Location.left + "/" + xf.Location.top;
+                    Childrens.Add(MFTI);
+                }
             }
             return Childrens;
         }

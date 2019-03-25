@@ -163,7 +163,7 @@ namespace Ginger.Reports
         }
 
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
-        {            
+        {
             if (HTMLReportFolderTextBox.Text.Length > 100)
             {
                 Reporter.ToUser(eUserMsgKey.FolderNamesAreTooLong);
@@ -175,8 +175,8 @@ namespace Ginger.Reports
                 return;
             }
 
-            App.AutomateTabGingerRunner.ExecutionLogger.Configuration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-             WorkSpace.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+            //App.AutomateTabGingerRunner.ExecutionLogger.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            WorkSpace.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
         }
 
         private void DefaultTemplatePickerCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)

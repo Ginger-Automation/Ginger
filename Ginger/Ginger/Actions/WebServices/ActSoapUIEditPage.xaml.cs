@@ -40,13 +40,15 @@ namespace Ginger.Actions.WebServices
     {
         public ActionEditPage actp;
         private ActSoapUI mAct;
+        Context mContext;
 
         public static string ReportPath { get; set; }
 
-        public ActSoapUIEditPage(GingerCore.Actions.ActSoapUI Act)
+        public ActSoapUIEditPage(GingerCore.Actions.ActSoapUI act)
         {
             InitializeComponent();
-            mAct = Act;
+            mAct = act;
+            mContext = Context.GetAsContext(act.Context);
 
             Bind();
             mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
@@ -184,7 +186,7 @@ namespace Ginger.Actions.WebServices
 
         private void RefreshAllPropertiesGrid()
         {
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            mContext.Runner.ProcessInputValueForDriver(mAct);
             PopulateProjectPropertiesList();
             PopulateTestCasePropertiesList();
             PopulateTestSuitePropertiesList();
@@ -193,7 +195,7 @@ namespace Ginger.Actions.WebServices
 
         private void ResetProjectButton_Click(object sender, RoutedEventArgs e)
         {
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            mContext.Runner.ProcessInputValueForDriver(mAct);
             mAct.AllProperties.Clear();
             mAct.TempProperties.Clear();
             PopulateProjectPropertiesList();
@@ -258,8 +260,8 @@ namespace Ginger.Actions.WebServices
 
             if (XMLFilePathTextBox.ValueTextBox.Text.Substring(0, 1) == "~")
                 return;
-         
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+
+            mContext.Runner.ProcessInputValueForDriver(mAct);
             if (!Boolean.Parse((mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.ImportFile))))
             {
                 FillSuiteComboBox();
@@ -301,7 +303,7 @@ namespace Ginger.Actions.WebServices
             TestSuiteComboBox.Items.Add(string.Empty);
             XmlDocument doc = new XmlDocument();
 
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            mContext.Runner.ProcessInputValueForDriver(mAct);
             string XMLFiledValue = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.XMLFile);
 
             if (!XMLFiledValue.Equals(string.Empty))
@@ -342,7 +344,7 @@ namespace Ginger.Actions.WebServices
 
             XmlDocument doc = new XmlDocument();
 
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            mContext.Runner.ProcessInputValueForDriver(mAct);
             string XMLFiledValue = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.XMLFile);
 
             if (XMLFiledValue.ToUpper().Substring(XMLFiledValue.Length - 4).Equals(".XML"))
@@ -398,20 +400,20 @@ namespace Ginger.Actions.WebServices
 
         private void PasswordWSSComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            mContext.Runner.ProcessInputValueForDriver(mAct);
         }
 
         private void TestSuiteComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            mContext.Runner.ProcessInputValueForDriver(mAct);
             FillCaseComboBox();
             RefreshAllPropertiesGrid();
         }
 
         private void TestCaseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            mContext.Runner.ProcessInputValueForDriver(mAct);
+            mContext.Runner.ProcessInputValueForDriver(mAct);
 
             if (!(TestCaseComboBox.SelectedItem == null) && TestCasePropertiesRequieredCheckBox.IsChecked == true)
             {
@@ -443,7 +445,7 @@ namespace Ginger.Actions.WebServices
         {
             SuitePropertiesExpander.Visibility = Visibility.Visible;
             SuitePlaceHoldderExpander.Visibility = Visibility.Visible;
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            mContext.Runner.ProcessInputValueForDriver(mAct);
 
             if (!string.IsNullOrEmpty(XMLFilePathTextBox.ValueTextBox.Text) && TestCaseComboBox.SelectedValue != null)
             {

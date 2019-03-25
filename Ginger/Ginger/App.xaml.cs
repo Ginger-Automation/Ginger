@@ -169,19 +169,6 @@ namespace Ginger
         
         private Dictionary<string, Int32> mExceptionsDic = new Dictionary<string, int>();
 
-        public static GingerRunner AutomateTabGingerRunner///???
-        {
-            get
-            {
-               return WorkSpace.AutomateTabGingerRunner;
-            }
-
-            set
-            {
-                WorkSpace.AutomateTabGingerRunner = value;
-            }
-        }
-
         public static event PropertyChangedEventHandler PropertyChanged;
         protected static void OnPropertyChanged(string name)
         {
@@ -263,10 +250,6 @@ namespace Ginger
             string phase = string.Empty;
 
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
-
-            //Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
-
-            AutomateTabGingerRunner = new GingerRunner(eExecutedFrom.Automation);
 
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
@@ -601,7 +584,7 @@ namespace Ginger
             }
 
             WorkSpace.UserProfile.Solution = null;
-            App.AutomateTabGingerRunner.ClearAgents();
+            
             CloseAllRunningAgents();
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ClearAutomate, null);
             AutoLogProxy.SetAccount("");
@@ -688,8 +671,7 @@ namespace Ginger
 
                         WorkSpace.Instance.PlugInsManager.SolutionChanged(WorkSpace.Instance.SolutionRepository);
 
-                        HandleSolutionLoadSourceControl(sol);
-                        HandleAutomateRunner(sol);
+                        HandleSolutionLoadSourceControl(sol);                        
 
                         ValueExpression.SolutionFolder = SolutionFolder;
                         BusinessFlow.SolutionVariables = sol.Variables;
@@ -808,18 +790,6 @@ namespace Ginger
             }
         }
 
-        private static void HandleAutomateRunner(Solution solution)
-        {
-            App.AutomateTabGingerRunner.SolutionFolder = solution.Folder;
-            List<IAgent> IAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x);
-            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<Agent>();
-            App.AutomateTabGingerRunner.SolutionApplications = solution.ApplicationPlatforms;
-            List<DataSourceBase> DataSourceBases = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().ToList();
-            App.AutomateTabGingerRunner.DSList= new ObservableList<DataSourceBase>(DataSourceBases);
-
-            App.AutomateTabGingerRunner.CurrentSolution = solution;
-        }
-
         private static void DoSolutionAutoSaveAndRecover()
         {
             //Init
@@ -929,8 +899,6 @@ namespace Ginger
             {
                 handler(new AutomateEventArgs(eventType, obj));
             }
-        }
-
-        //public BusinessFlow BusinessFlow;
+        }        
     }
 }

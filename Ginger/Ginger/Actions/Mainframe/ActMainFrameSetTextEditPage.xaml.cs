@@ -67,7 +67,7 @@ namespace Ginger.Actions.Mainframe
 
         private void LoadFields_Click(object sender, RoutedEventArgs e)
         {
-            App.AutomateTabGingerRunner.PrepActionValueExpression(mAct);
+            Context.GetAsContext(mAct.Context).Runner.PrepActionValueExpression(mAct);
             mAct.LoadCaretValueList ();
             CaretValueGrid.DataSourceList = mAct.CaretValueList;
         }

@@ -344,8 +344,7 @@ namespace Ginger
             ClosingWindow CW = new ClosingWindow();
             CW.Show();
             GingerCore.General.DoEvents();
-
-            App.AutomateTabGingerRunner.CloseAgents();
+            
             if (WorkSpace.Instance.SolutionRepository != null)
             {
                 App.CloseAllRunningAgents();

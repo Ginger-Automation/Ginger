@@ -613,8 +613,8 @@ namespace Ginger.Actions
 
         private void RowSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mAct.LocateRowValue = RowSelectorValue.Text;      
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            mAct.LocateRowValue = RowSelectorValue.Text;
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
             SetDescriptionDetails();
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
             {
@@ -658,7 +658,7 @@ namespace Ginger.Actions
         private void RowSelectorValue_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             mAct.LocateRowValue = RowSelectorValue.Text;
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
             SetDescriptionDetails();
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
             {
@@ -679,7 +679,7 @@ namespace Ginger.Actions
         {
 
             mAct.WhereColumnValue = WhereColumnValue.ValueTextBox.Text;
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
             
             SetDescriptionDetails();
 

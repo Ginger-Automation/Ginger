@@ -155,10 +155,14 @@ namespace Ginger.Run
         HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         ChartType SelectedChartType { get; set; }
         public bool ViewMode1 = false;
-        public RunnerPage(GingerRunner runner, bool Viewmode=false)
+
+        Context mContext = null;
+
+        public RunnerPage(GingerRunner runner, Context context, bool Viewmode=false)
         {
             InitializeComponent();
             mRunner = runner;
+            mContext = context;
             ViewMode1 = Viewmode;            
             GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xBusinessflowsTotalCount, Label.ContentProperty, mRunner, nameof(GingerRunner.TotalBusinessflow));
             GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mRunner, nameof(GingerRunner.Status), BindingMode.OneWay);
@@ -218,6 +222,7 @@ namespace Ginger.Run
             ri.xRunnerItemButtons.Visibility = Visibility.Visible;
             ri.xDetailView.ButtonImageType = eImageType.Collapse;
             ri.xDetailView.ToolTip = "Expand / Collapse " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+            ri.Context = new Context() { BusinessFlow = bf, Runner = mRunner, Environment = GetEnvForContext() };
             return ri;
         }
 
@@ -272,11 +277,23 @@ namespace Ginger.Run
             mBusinessflowRunnerItems = new ObservableList<RunnerItemPage>();
             foreach (BusinessFlow bff in mRunner.BusinessFlows)
             {
-                RunnerItemPage bfItem = CreateBusinessFlowRunnerItem(bff, ViewMode);
-                bfItem.Context = new Context() { BusinessFlow = bff, Runner = mRunner };
+                RunnerItemPage bfItem = CreateBusinessFlowRunnerItem(bff, ViewMode);                                             
                 mBusinessflowRunnerItems.Add(bfItem);
             }
         }
+
+        private ProjEnvironment GetEnvForContext()
+        {
+            if (mRunner.UseSpecificEnvironment)
+            {
+                return mRunner.ProjEnvironment;
+            }
+            else
+            {
+                return mContext.Environment;
+            }
+        }
+
         private void Businessflow_ClickGenerateReport(object sender, RoutedEventArgs e)
         {
             if (CheckCurrentRunnerIsNotRuning()) return;

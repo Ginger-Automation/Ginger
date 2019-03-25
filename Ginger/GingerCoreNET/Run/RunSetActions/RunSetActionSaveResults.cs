@@ -72,8 +72,10 @@ namespace Ginger.Run.RunSetActions
         [IsSerializedForLocalRepository]
         public bool SaveindividualBFReport { get; set; }
 
+        ReportInfo mRI;
         public override void Execute(ReportInfo RI)
         {
+            mRI = RI;
             try
             {
                 if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
@@ -118,7 +120,7 @@ namespace Ginger.Run.RunSetActions
                                     if (bf.RunStatus.ToString() == nameof(eRunStatus.Passed) || bf.RunStatus.ToString() == nameof(eRunStatus.Failed) || bf.RunStatus.ToString() == nameof(eRunStatus.Stopped))
                                     {
                                         // !!!!!!!!!!!!!!!!!!!
-                                        ReportInfo BFRI = new ReportInfo(WorkSpace.AutomateTabGingerRunner.ProjEnvironment, bf);
+                                        ReportInfo BFRI = new ReportInfo(mRI.Environment.ProjEnvironment, bf);
 
                                         string TempRepFileName = RepositoryItemHelper.RepositoryItemFactory.GenerateTemplate(TemplateName, BFRI);
                                         String RepFileName = DateTime.Now.ToString("dMMMyyyy_HHmmss_fff") + "_" + WorkSpace.RunsetExecutor.RunSetConfig.Name + "_" + GR.Name + "_" + bf.Name + "_" + WorkSpace.RunsetExecutor.RunsetExecutionEnvironment.Name;
