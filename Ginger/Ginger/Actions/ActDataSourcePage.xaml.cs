@@ -1257,7 +1257,7 @@ namespace Ginger.Actions
                     //if (ds.FilePath.StartsWith("~"))
                     //{
                     //    ds.FileFullPath = ds.FilePath.Replace(@"~\","").Replace("~", "");
-                    //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, ds.FileFullPath);
+                    //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.Instance.UserProfile.Solution.Folder, ds.FileFullPath);
                     //}
                     ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
 

@@ -43,7 +43,7 @@ namespace Ginger.BusinessFlowWindows
             InitializeComponent();
 
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
-            WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+            WorkSpace.Instance.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
 
             Reset();
         }
@@ -92,7 +92,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void ShiftToBusinessFlowView(BusinessFlow bf)
         {
-            if(mBusFlowsPage == null &&  WorkSpace.UserProfile.Solution != null)
+            if(mBusFlowsPage == null &&  WorkSpace.Instance.UserProfile.Solution != null)
             {
                 BusinessFlowsFolderTreeItem busFlowsRootFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
                 mBusFlowsPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.BusinessFlows), eImageType.BusinessFlow, busFlowsRootFolder, busFlowsRootFolder.SaveAllTreeFolderItemsHandler, busFlowsRootFolder.AddItemHandler, treeItemDoubleClickHandler: BusinessFlowsTree_ItemDoubleClick);

@@ -46,7 +46,7 @@ namespace Ginger.SolutionWindows
         {
             InitializeComponent();
             
-             WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+             WorkSpace.Instance.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
             Init();
         }
 
@@ -60,9 +60,9 @@ namespace Ginger.SolutionWindows
 
         private void Init()
         {
-            if ( WorkSpace.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.UserProfile.Solution != null)
             {
-                mSolution =  WorkSpace.UserProfile.Solution;
+                mSolution =  WorkSpace.Instance.UserProfile.Solution;
             }
             else
             {

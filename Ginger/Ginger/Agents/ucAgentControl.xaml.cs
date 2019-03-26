@@ -223,7 +223,7 @@ namespace Ginger.Agents
                 case Agent.eStatus.NotStarted:
                     Reporter.ToStatus(eStatusMsgKey.StartAgent, null, SelectedAgent.Name, "");
                     if (SelectedAgent.Status == Agent.eStatus.Running) SelectedAgent.Close();
-                    SelectedAgent.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
+                    SelectedAgent.SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder;
                     SelectedAgent.ProjEnvironment = null;// App.AutomateTabEnvironment;
                     SelectedAgent.BusinessFlow = null; //App.BusinessFlow; ;                    
                     SelectedAgent.DSList = null; //WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();

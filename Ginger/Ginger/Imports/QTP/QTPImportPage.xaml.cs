@@ -87,9 +87,9 @@ namespace Ginger.Imports.QTP
             InitCommonFunctionMappingUCGrid();
 
             TargetApplication sTarget = new TargetApplication();
-            if ( WorkSpace.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.UserProfile.Solution != null)
             {
-                sTarget.AppName =  WorkSpace.UserProfile.Solution.MainApplication.ToString();
+                sTarget.AppName =  WorkSpace.Instance.UserProfile.Solution.MainApplication.ToString();
                 sTarget.Selected = true;
                 TargetApplicationsList.Add(sTarget);
                 mBusinessFlow.TargetApplications = TargetApplicationsList;
@@ -398,7 +398,7 @@ namespace Ginger.Imports.QTP
             at.ActivityName = "Activity1";
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
-            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
+            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.Instance.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
             //App.BusinessFlow = mBusinessFlow;
            
             //AddActionPage addAction = new AddActionPage();

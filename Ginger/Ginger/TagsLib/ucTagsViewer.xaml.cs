@@ -62,13 +62,13 @@ namespace Ginger
 
         private void BaseInit(ObservableList<RepositoryItemTag> fullTagsList = null)
         {
-            if ( WorkSpace.UserProfile.Solution == null)
+            if ( WorkSpace.Instance.UserProfile.Solution == null)
                 return;
 
             if (fullTagsList == null)
             {
                 mUseSolutionTags = true;
-                mFullTagsList =  WorkSpace.UserProfile.Solution.Tags;
+                mFullTagsList =  WorkSpace.Instance.UserProfile.Solution.Tags;
 
                 if(mAddTags == true)
                 {
@@ -262,7 +262,7 @@ namespace Ginger
         private void TagsComboBox_DropDownOpened(object sender, EventArgs e)
         {
             if(mUseSolutionTags)
-                mFullTagsList =  WorkSpace.UserProfile.Solution.Tags;
+                mFullTagsList =  WorkSpace.Instance.UserProfile.Solution.Tags;
 
             RefreshComboSelectionTagsList();
             if (ComboTagsList.Count == 0)

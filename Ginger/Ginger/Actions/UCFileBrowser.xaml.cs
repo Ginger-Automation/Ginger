@@ -70,9 +70,9 @@ namespace Ginger.Actions
 
             if (result == System.Windows.Forms.DialogResult.OK)
             {
-                if (MakePathsRelative &&dlg.FileName.StartsWith(WorkSpace.UserProfile.Solution.Folder))
+                if (MakePathsRelative &&dlg.FileName.StartsWith(WorkSpace.Instance.UserProfile.Solution.Folder))
                 {
-                    FilePathTextBox.Text= dlg.FileName.Replace(WorkSpace.UserProfile.Solution.Folder, @"~\");
+                    FilePathTextBox.Text= dlg.FileName.Replace(WorkSpace.Instance.UserProfile.Solution.Folder, @"~\");
                 }
                 else
                 {

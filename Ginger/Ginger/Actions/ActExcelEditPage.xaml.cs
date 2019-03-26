@@ -42,7 +42,7 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
             Bind();
-            mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            mAct.SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper();
         }
         
         public void Bind()
@@ -84,7 +84,7 @@ namespace Ginger.Actions
 
             dlg.DefaultExt = "*.xlsx or .xls or .xlsm";
             dlg.Filter = "Excel Files (*.xlsx, *.xls, *.xlsm)|*.xlsx;*.xls;*.xlsm";
-            string SolutionFolder = WorkSpace.UserProfile.Solution.Folder.ToUpper(); 
+            string SolutionFolder = WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper(); 
             
             if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

@@ -75,8 +75,8 @@ namespace Ginger.ALM.RQM
             testPlanId = txtTestPlanId.Text;
             if (testPlanId != "")
             {
-                RQMTestPlan testPlan = RQMConnect.Instance.GetRQMTestPlanByIdByProject( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,
-                     WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject, testPlanId);
+                RQMTestPlan testPlan = RQMConnect.Instance.GetRQMTestPlanByIdByProject( WorkSpace.Instance.UserProfile.Solution.ALMServerURL,  WorkSpace.Instance.UserProfile.ALMUserName,
+                     WorkSpace.Instance.UserProfile.ALMPassword,  WorkSpace.Instance.UserProfile.Solution.ALMProject, testPlanId);
                 ImportTestPlan(testPlan);
             }
             else

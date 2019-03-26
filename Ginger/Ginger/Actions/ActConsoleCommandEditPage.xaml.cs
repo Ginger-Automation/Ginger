@@ -35,7 +35,7 @@ namespace Ginger.Actions
     {
         private ActConsoleCommand mActConsoleCommand;
 
-        string SHFilesPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\sh\");        
+        string SHFilesPath = System.IO.Path.Combine( WorkSpace.Instance.UserProfile.Solution.Folder, @"Documents\sh\");        
 
         public ActConsoleCommandEditPage(ActConsoleCommand actConsoleCommand)
         {
@@ -55,7 +55,7 @@ namespace Ginger.Actions
         {
             List<object> actionList = new List<object>();
             string targetapp = Context.GetAsContext(mActConsoleCommand.Context).BusinessFlow.CurrentActivity.TargetApplication;
-            ePlatformType platform = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            ePlatformType platform = (from x in  WorkSpace.Instance.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             actionList.Add(ActConsoleCommand.eConsoleCommand.FreeCommand);
 
             if (platform == ePlatformType.Unix)

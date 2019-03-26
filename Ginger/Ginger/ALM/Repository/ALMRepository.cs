@@ -34,18 +34,18 @@ namespace Ginger.ALM.Repository
 
         public string ALMPassword()
         {
-            return  WorkSpace.UserProfile.ALMPassword;
+            return  WorkSpace.Instance.UserProfile.ALMPassword;
         }
 
         public void SetALMPassword(string newPassword)
         {
-             WorkSpace.UserProfile.ALMPassword = newPassword;
+             WorkSpace.Instance.UserProfile.ALMPassword = newPassword;
         }
 
         public void SetALMProject(KeyValuePair<string, string> project)
         {
-            WorkSpace.UserProfile.Solution.ALMProject = project.Value;
-            WorkSpace.UserProfile.Solution.ALMProjectKey = project.Key;
+            WorkSpace.Instance.UserProfile.Solution.ALMProject = project.Value;
+            WorkSpace.Instance.UserProfile.Solution.ALMProjectKey = project.Key;
         }
 
         public abstract bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle);

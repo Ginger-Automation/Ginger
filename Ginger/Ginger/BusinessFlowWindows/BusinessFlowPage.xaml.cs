@@ -122,7 +122,7 @@ namespace Ginger.BusinessFlowFolder
                 xAutomateBtn.Visibility = Visibility.Collapsed;
             }
 
-            if (! WorkSpace.UserProfile.UserTypeHelper.IsSupportAutomate)
+            if (! WorkSpace.Instance.UserProfile.UserTypeHelper.IsSupportAutomate)
             {
                 xAutomateBtn.Visibility = Visibility.Collapsed;
             }

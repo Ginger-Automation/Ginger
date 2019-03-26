@@ -72,7 +72,7 @@ namespace Ginger.Run.RunSetActions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.ConfigureCredential));
             if (string.IsNullOrEmpty(runSetActionHTMLReportSendEmail.MailTo))
             {
-                runSetActionHTMLReportSendEmail.MailFrom =  WorkSpace.UserProfile.UserEmail;
+                runSetActionHTMLReportSendEmail.MailFrom =  WorkSpace.Instance.UserProfile.UserEmail;
             }
             InitAttachmentsGrid();
             RadioButtonInit();
@@ -208,7 +208,7 @@ namespace Ginger.Run.RunSetActions
             DefaultTemplatePickerCbx.ItemsSource = null;
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            if (( WorkSpace.UserProfile.Solution != null) &&  (HTMLReportConfigurations.Count > 0))
+            if (( WorkSpace.Instance.UserProfile.Solution != null) &&  (HTMLReportConfigurations.Count > 0))
             {
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;

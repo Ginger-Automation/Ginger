@@ -54,7 +54,7 @@ namespace Ginger.MenusLib
                 if (mMenusPage == null)
                 {
                     mMenusPage = new TwoLevelMenuPage(GetMenu());
-                     WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+                     WorkSpace.Instance.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
                 }
                 return mMenusPage;
             }
@@ -112,7 +112,7 @@ namespace Ginger.MenusLib
 
         private static Page GetGlobalVariabelsPage()
         {
-            return (new VariablesPage(eVariablesLevel.Solution, WorkSpace.UserProfile.Solution));
+            return (new VariablesPage(eVariablesLevel.Solution, WorkSpace.Instance.UserProfile.Solution));
         }
 
         private static Page SharedActivitiesGroups()

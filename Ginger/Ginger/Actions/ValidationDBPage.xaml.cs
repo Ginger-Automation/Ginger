@@ -101,7 +101,7 @@ namespace Ginger.Actions
                 
         private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper();
             bool ImportFileFlag = false;
             string FileName = QueryFile.ValueTextBox.Text;
             Boolean.TryParse(mAct.GetInputParamValue(ActDBValidation.Fields.ImportFile), out ImportFileFlag);
@@ -507,7 +507,7 @@ namespace Ginger.Actions
 
         public void BrowseQueryFile_Click(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper();
             if (!String.IsNullOrEmpty(QueryFile.ValueTextBox.Text))
             {
                 if(!System.IO.File.Exists(QueryFile.ValueTextBox.Text))

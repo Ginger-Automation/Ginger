@@ -177,7 +177,7 @@ namespace Ginger.UserControlsLib.TextEditor
             }
 
             //TODO: put it in general func
-            string SolutionPath = FileName.Replace( WorkSpace.UserProfile.Solution.Folder, "~");
+            string SolutionPath = FileName.Replace( WorkSpace.Instance.UserProfile.Solution.Folder, "~");
             lblTitle.Content = SolutionPath;
 
             if (EnableWrite)

@@ -183,7 +183,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     }
 
                 }                
-                foreach (RepositoryItemTag tag in  WorkSpace.UserProfile.Solution.Tags )
+                foreach (RepositoryItemTag tag in  WorkSpace.Instance.UserProfile.Solution.Tags )
                 {
                     string tagname = "@" + tag.Name;
                     if (!CurrentLine.ToUpper().Contains(tagname.ToUpper()))

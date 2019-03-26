@@ -52,7 +52,7 @@ namespace Ginger.Run.RunSetActions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, nameof(Email.ConfigureCredential));
             if (string.IsNullOrEmpty(runSetActionSendFreeEmail.MailTo))
             {
-                runSetActionSendFreeEmail.MailFrom =  WorkSpace.UserProfile.UserEmail;
+                runSetActionSendFreeEmail.MailFrom =  WorkSpace.Instance.UserProfile.UserEmail;
             }
         }
 
