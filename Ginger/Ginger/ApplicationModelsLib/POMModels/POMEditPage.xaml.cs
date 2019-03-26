@@ -96,19 +96,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public POMEditPage(ApplicationPOMModel POM, RepositoryItemPageViewMode editMode = RepositoryItemPageViewMode.View)
         {
             InitializeComponent();
-            xBusinessFlow.TargetApplication = POM.TargetApplicationKey.ItemName;
             mPOM = POM;
             mEditMode = editMode;
 
             ControlsBinding.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             ControlsBinding.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
             ControlsBinding.ObjFieldBinding(xPageURLTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.PageURL));
+            ControlsBinding.ObjFieldBinding(xBusinessFlow.xBFTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.MappedBusinessFlow));
+            ControlsBinding.ObjFieldBinding(xRDBPageURL, RadioButton.IsCheckedProperty, mPOM, nameof(mPOM.IsPageLoadBusinessFlow));
 
-            xTargetApplicationComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             FillTargetAppsComboBox();
-            xTargetApplicationComboBox.Init(mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
-            xTagsViewer.Init(mPOM.TagsKeys);            
-
+            ControlsBinding.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
+            xTagsViewer.Init(mPOM.TagsKeys);
+            
             BitmapSource source = null;
             if (mPOM.ScreenShotImage != null)
             {
@@ -117,6 +117,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
             xScreenShotFrame.Content = mScreenShotViewPage;
+            if (mPOM.PageLoadFlow == ApplicationPOMModel.ePageLoadFlow.PageURL)
+            {
+                xRDBPageURL.IsChecked = true; 
+            }
+            else
+            {
+                xRDBBF.IsChecked = true;
+            }
 
             mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
             xUIElementsFrame.Content = mPomAllElementsPage;
@@ -126,7 +134,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             ePlatformType mAppPlatform = WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
             ObservableList<Agent> optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
             App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
-            xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);         
+            xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
         }
 
         private void FillTargetAppsComboBox()
@@ -145,16 +153,23 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                 }
             }
-            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x=> ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
-            xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
-            xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
-
-             WorkSpace.UserProfile.Solution.ApplicationPlatforms.CollectionChanged += ApplicationPlatforms_CollectionChanged;
+            xTargetApplicationComboBox.ItemsSource =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x=> ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
+            xTargetApplicationComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
+            xTargetApplicationComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
+            WorkSpace.UserProfile.Solution.ApplicationPlatforms.CollectionChanged += ApplicationPlatforms_CollectionChanged;
         }
 
         private void ApplicationPlatforms_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
+            xTargetApplicationComboBox.ItemsSource =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
+        }
+
+        private void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xTargetApplicationComboBox.SelectedValue != null)
+            {                
+                xBusinessFlow.TargetApplication = Convert.ToString(((Amdocs.Ginger.Repository.RepositoryItemKey)xTargetApplicationComboBox.SelectedValue).ItemName); 
+            }
         }
 
         public static Bitmap BitmapFromSource(BitmapSource bitmapsource)
@@ -343,6 +358,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 Mouse.OverrideCursor = null;
             }
-        }
+        }        
     }
 }

@@ -31,14 +31,14 @@ using Amdocs.Ginger.Common;
 namespace Ginger.BusinessFlowWindows
 {
     /// <summary>
-    /// Interaction logic for UCBusinessFlowPage.xaml
+    /// Interaction logic for xUcBusinessFlowMap.xaml
     /// </summary>
-    public partial class ucBusinessFlowPage : UserControl
+    public partial class xUcBusinessFlowMap : UserControl
     {
         public BusinessFlow mBusinessFlow;
         public string TargetApplication { get; set; }
 
-        public ucBusinessFlowPage()
+        public xUcBusinessFlowMap()
         {
             InitializeComponent(); 
         }
@@ -48,7 +48,7 @@ namespace Ginger.BusinessFlowWindows
             RepositoryFolder<BusinessFlow> mBFFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>();
             BusinessFlowsFolderTreeItem bFsRoot = new BusinessFlowsFolderTreeItem(mBFFolder);
 
-            SingleItemTreeViewSelectionPage selectPage = new SingleItemTreeViewSelectionPage("Business Flow Elements", eImageType.BusinessFlow, bFsRoot,
+            SingleItemTreeViewSelectionPage selectPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Elements", eImageType.BusinessFlow, bFsRoot,
                                                                                 SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,
                                                                                 new Tuple<string, string>(nameof(BusinessFlow.Applications), TargetApplication));
           

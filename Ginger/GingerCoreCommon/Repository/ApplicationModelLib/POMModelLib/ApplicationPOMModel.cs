@@ -41,6 +41,36 @@ namespace Amdocs.Ginger.Repository
 
         private string mPageURL = string.Empty;
 
+        bool mIsPageLoadBusinessFlow;
+        public bool IsPageLoadBusinessFlow 
+        {
+            get
+            {
+                return mIsPageLoadBusinessFlow;
+            }
+            set
+            {
+                mIsPageLoadBusinessFlow = value;
+                PageLoadFlow = value ? ePageLoadFlow.PageURL : ePageLoadFlow.BusinessFlow;
+                OnPropertyChanged(nameof(this.IsPageLoadBusinessFlow));
+            }
+        }
+
+        ePageLoadFlow mPageLoadFlow;
+        [IsSerializedForLocalRepository]
+        public ePageLoadFlow PageLoadFlow
+        {
+            get
+            {
+                return mPageLoadFlow;
+            }
+            set
+            {
+                mPageLoadFlow = value;
+                OnPropertyChanged(nameof(this.PageLoadFlow));
+            }
+        }
+
         [IsSerializedForLocalRepository]
         public string PageURL //OperationName 
         {
@@ -52,6 +82,21 @@ namespace Amdocs.Ginger.Repository
             {
                 mPageURL = value;
                 OnPropertyChanged(nameof(this.PageURL));
+            }
+        }
+
+        string mMappedBusinessFlow;
+        [IsSerializedForLocalRepository]
+        public string MappedBusinessFlow 
+        {
+            get
+            {
+                return mMappedBusinessFlow;
+            }
+            set
+            {
+                mMappedBusinessFlow = value;
+                OnPropertyChanged(nameof(this.MappedBusinessFlow));
             }
         }
 
@@ -81,6 +126,12 @@ namespace Amdocs.Ginger.Repository
         {
             Mapped,
             Unmapped
+        }
+
+        public enum ePageLoadFlow
+        {
+            PageURL,
+            BusinessFlow
         }
 
         string mScreenShotImage;
