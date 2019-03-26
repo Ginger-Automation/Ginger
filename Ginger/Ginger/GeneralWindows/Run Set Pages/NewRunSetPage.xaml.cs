@@ -1504,7 +1504,7 @@ namespace Ginger.Run
                 }
             }
             else
-                ExecutionLogger.GenerateRunSetOfflineReport();
+                ExecutionLoggerManager.GenerateRunSetOfflineReport();
 
         }
         private void HideAllborders()

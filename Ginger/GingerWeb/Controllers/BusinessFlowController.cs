@@ -158,8 +158,8 @@ namespace GingerWeb.Controllers
         //ExecutionLogger executionLogger;
         void RunFlow(BusinessFlow businessFlow)
         {
-            GingerRunner gingerRunner = new GingerRunner();            
-            ExecutionLogger ex = (ExecutionLogger)gingerRunner.RunListeners[0];  // temp until we remove it from GR constructor and add manually
+            GingerRunner gingerRunner = new GingerRunner();
+            ExecutionLoggerManager ex = (ExecutionLoggerManager)gingerRunner.RunListeners[0];  // temp until we remove it from GR constructor and add manually
             ex.ExecutionLogfolder = jsonDumpFolder;
             ex.Configuration.ExecutionLoggerConfigurationIsEnabled = true;
             //ex.exec

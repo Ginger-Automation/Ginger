@@ -106,7 +106,7 @@ namespace Ginger.Run
             await Task.Run(() => {
                 if ( WorkSpace.UserProfile.Solution != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
                 {                   
-                    mRunSetExecsRootFolder = ExecutionLogger.GetLoggerDirectory( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
+                    mRunSetExecsRootFolder = ExecutionLoggerManager.GetLoggerDirectory( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
 
                     //pull all RunSets JSON files from it
                     string[] runSetsfiles = Directory.GetFiles(mRunSetExecsRootFolder, "RunSet.txt", SearchOption.AllDirectories);
@@ -114,7 +114,7 @@ namespace Ginger.Run
                     {
                         try
                         {
-                            RunSetReport runSetReport = (RunSetReport)ExecutionLogger.LoadObjFromJSonFile(runSetFile, typeof(RunSetReport));
+                            RunSetReport runSetReport = (RunSetReport)ExecutionLoggerManager.LoadObjFromJSonFile(runSetFile, typeof(RunSetReport));
                             runSetReport.LogFolder = System.IO.Path.GetDirectoryName(runSetFile);
                             if (mExecutionHistoryLevel == eExecutionHistoryLevel.SpecificRunSet)
                             {
@@ -154,7 +154,7 @@ namespace Ginger.Run
             {
                 foreach (RunSetReport runSetReport in grdExecutionsHistory.Grid.SelectedItems)
                 {
-                    string runSetFolder = ExecutionLogger.GetLoggerDirectory(runSetReport.LogFolder);
+                    string runSetFolder = ExecutionLoggerManager.GetLoggerDirectory(runSetReport.LogFolder);
 
                     var fi = new DirectoryInfo(runSetFolder);
                     CleanDirectory(fi.FullName);
@@ -173,7 +173,7 @@ namespace Ginger.Run
             {
                 foreach (RunSetReport runSetReport in grdExecutionsHistory.Grid.Items)
                 {
-                    string runSetFolder = ExecutionLogger.GetLoggerDirectory(runSetReport.LogFolder);
+                    string runSetFolder = ExecutionLoggerManager.GetLoggerDirectory(runSetReport.LogFolder);
 
                     var fi = new DirectoryInfo(runSetFolder);
                     CleanDirectory(fi.FullName);
@@ -213,7 +213,7 @@ namespace Ginger.Run
         {
             if ( WorkSpace.UserProfile.Solution != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
             {
-                Process.Start(Ginger.Run.ExecutionLogger.GetLoggerDirectory( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder));
+                Process.Start(Ginger.Run.ExecutionLoggerManager.GetLoggerDirectory( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder));
             }
             else
                 return;
@@ -259,7 +259,7 @@ namespace Ginger.Run
                 return;
             }
 
-            string runSetFolder = ExecutionLogger.GetLoggerDirectory(((RunSetReport)grdExecutionsHistory.CurrentItem).LogFolder);
+            string runSetFolder = ExecutionLoggerManager.GetLoggerDirectory(((RunSetReport)grdExecutionsHistory.CurrentItem).LogFolder);
 
             string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder), false, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
 

@@ -316,8 +316,7 @@ namespace Ginger.Run
 
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
-
-            RunListeners.Add(new ExecutionLogger(this.ProjEnvironment, ExecutedFrom));
+            RunListeners.Add(new ExecutionLoggerManager(this.ProjEnvironment, ExecutedFrom));
         }
 
         public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
@@ -326,7 +325,7 @@ namespace Ginger.Run
 
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
-            RunListeners.Add(new ExecutionLogger(this.ProjEnvironment, ExecutedFrom));
+            RunListeners.Add(new ExecutionLoggerManager(this.ProjEnvironment, ExecutedFrom));
         }
 
 
@@ -1396,7 +1395,7 @@ namespace Ginger.Run
             if (mStopRun)
             {
                 UpdateActionStatus(action, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped, st);
-                ExecutionLogger.SetActionFolder(action);
+                ExecutionLoggerManager.SetActionFolder(action);
                 //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
                 SetDriverPreviousRunStoppedFlag(true);
                 return;
@@ -4155,7 +4154,7 @@ namespace Ginger.Run
                         BFES.ExecutionBFFlowControls = BF.BFFlowControls;
                         BFES.BusinessFlow = BF;
                         BFES.Selected = true;                        
-                        BFES.BusinessFlowExecLoggerFolder = this.ExecutionLogger.ExecutionLogfolder + BF.ExecutionLogFolder;
+                        BFES.BusinessFlowExecLoggerFolder = this.ExecutionLoggerManager.ExecutionLogfolder + BF.ExecutionLogFolder;
 
                         BFESs.Add(BFES);
                     }
@@ -4166,15 +4165,14 @@ namespace Ginger.Run
 
         // !!!!!!!!!!!!! cache use something else pr not here
         // keep in workspace !?
-        public ExecutionLogger ExecutionLogger
+        public ExecutionLoggerManager ExecutionLoggerManager
         {
             get
             {
-                ExecutionLogger executionLogger = (ExecutionLogger)(from x in mRunListeners where x.GetType() == typeof(ExecutionLogger) select x).SingleOrDefault();
-                return executionLogger;
+                ExecutionLoggerManager executionLoggerManager = (ExecutionLoggerManager)(from x in mRunListeners where x.GetType() == typeof(ExecutionLoggerManager) select x).SingleOrDefault();
+                return executionLoggerManager;
             }
         }
-
         public override string ItemName
         {
             get
