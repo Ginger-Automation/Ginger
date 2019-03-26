@@ -285,6 +285,7 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 RepositoryFolderBase repoFolder = (RepositoryFolderBase)((ITreeViewItem)this).NodeObject();
                 repoFolder.RenameFolder(newFolderName);
+                RefreshParentTreeItemsSourceControlStatus(repoFolder);
             }
             catch (Exception ex)
             {
@@ -300,8 +301,13 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 if (Reporter.ToUser(eUserMsgKey.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
-                    //delete root and refresh tree                    
-                    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)((ITreeViewItem)this).NodeObject());
+                    //delete root and refresh tree    
+                    RepositoryFolderBase repoFolder = (RepositoryFolderBase)((ITreeViewItem)this).NodeObject();
+                    SolutionRepositoryItemInfoBase parentFolder = WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder(repoFolder);
+
+                    //string[] folders = repoFolder.FolderFullPath.Split('\\');
+                    //WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder(repoFolder);
+                    RefreshParentTreeItemsSourceControlStatus(parentFolder);
                 }
             }
             finally
