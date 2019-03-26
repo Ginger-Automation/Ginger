@@ -74,21 +74,6 @@ namespace Amdocs.Ginger.CoreNET.LiteDB
             }
         }
 
-        public void DeleteCollection<T>(LiteCollection<T> baseColl, Query query)
-        {
-            try
-            {
-                using (var db = new LiteDatabase(this.ConnectionString))
-                {
-                    baseColl.Delete(query);
-                }
-            }
-            catch(Exception ex)
-            {
-
-            }
-        }
-
         public void SaveImage(string imagePath, string imageName)
         {
             try
