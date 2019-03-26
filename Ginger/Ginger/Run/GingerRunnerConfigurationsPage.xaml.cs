@@ -74,7 +74,7 @@ namespace Ginger.Run
 
                 App.ObjFieldBinding(useSpecificEnvChkbox, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.UseSpecificEnvironment);
                 App.ObjFieldBinding(ExecutionTagsChkbox, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.FilterExecutionByTags);
-                App.ObjFieldBinding(specificEnvComboBox, ComboBox.SelectedValueProperty, mGingerRunner, GingerRunner.Fields.SpecificEnvironmentName);
+                //App.ObjFieldBinding(specificEnvComboBox, ComboBox.DisplayMemberPathProperty, mGingerRunner, GingerRunner.Fields.SpecificEnvironmentName);
                 App.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.RunInSimulationMode);
             }
             else
@@ -146,11 +146,15 @@ namespace Ginger.Run
 
         private void SetEnvironments()
         {
-            List<string> envs = new List<string>();
-            foreach (ProjEnvironment env in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
-                envs.Add(env.Name);
+            specificEnvComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+            specificEnvComboBox.DisplayMemberPath = nameof(ProjEnvironment.Name);
+            specificEnvComboBox.SelectedValuePath = nameof(ProjEnvironment.Guid);
 
-            specificEnvComboBox.ItemsSource = envs;
+            ProjEnvironment selectedEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name == mGingerRunner.SpecificEnvironmentName).FirstOrDefault();
+            if (selectedEnv != null)
+            {
+                specificEnvComboBox.SelectedItem = selectedEnv;
+            }
         }
 
         private void ExecutionTagsChkbox_Checked(object sender, RoutedEventArgs e)
@@ -165,6 +169,20 @@ namespace Ginger.Run
         private void ExecutionTagsChkbox_Unchecked(object sender, RoutedEventArgs e)
         {
             ExecutionTags.Visibility = Visibility.Collapsed;
+        }
+
+        private void SpecificEnvComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (specificEnvComboBox.SelectedItem != null)
+            {
+                mGingerRunner.ProjEnvironment = (ProjEnvironment)specificEnvComboBox.SelectedItem;
+                mGingerRunner.SpecificEnvironmentName = ((ProjEnvironment)specificEnvComboBox.SelectedItem).Name;
+            }
+            else
+            {
+                mGingerRunner.ProjEnvironment = null;
+                mGingerRunner.SpecificEnvironmentName = string.Empty;
+            }
         }
     }
 }

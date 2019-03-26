@@ -894,6 +894,9 @@ namespace Ginger.Run
         {
             this.Dispatcher.Invoke(() =>
             {
+                // to check run mode of already created runset
+                SetExecutionModeIcon();
+                SetEnvironmentsCombo();
                 xRunnersCanvasFrame.Refresh();
                 xRunnersCanvasFrame.NavigationService.Refresh();
                 //Init Runner FlowDiagram            
@@ -904,15 +907,21 @@ namespace Ginger.Run
             foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
             {
                 if (runAsync)
+                {
                     await Task.Run(() => WorkSpace.RunsetExecutor.InitRunner(GR));
+                }
                 else
+                {
                     WorkSpace.RunsetExecutor.InitRunner(GR);
+                }
 
                 this.Dispatcher.Invoke(() =>
                 {
                     RunnerPage runnerPage= InitRunnerFlowElement(GR, mRunSetConfig.GingerRunners.IndexOf(GR), ViewMode);
                     if (firstRunnerPage == null)
+                    {
                         firstRunnerPage = runnerPage;
+                    }
 
                     GR.PropertyChanged -= Runner_PropertyChanged;
                     GR.PropertyChanged += Runner_PropertyChanged;
@@ -932,15 +941,13 @@ namespace Ginger.Run
                 //highlight first Runner
                 if (firstRunnerPage != null)
                     GingerRunnerHighlight(firstRunnerPage);
-
-                // to check run mode of already created runset
-                SetExecutionModeIcon();
-                SetEnvironmentsCombo();
+               
                 SetRunnersCombo();
                 UpdateRunnersTabHeader();
                 UpdateRunnersCanvasSize();
                 xZoomPanel.ZoomSliderContainer.ValueChanged += ZoomSliderContainer_ValueChanged;
             });
+
             return 1;
         }
 
