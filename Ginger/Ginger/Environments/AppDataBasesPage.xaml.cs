@@ -36,10 +36,14 @@ namespace Ginger.Environments
     public partial class AppDataBasesPage : Page
     {
         public EnvApplication AppOwner { get; set; }
-        public AppDataBasesPage(EnvApplication applicationOwner)
+
+        Context mContext;
+
+        public AppDataBasesPage(EnvApplication applicationOwner, Context context)
         {
             InitializeComponent();
             AppOwner = applicationOwner;
+            mContext = context;
             //Set grid look and data
             SetGridView();
             SetGridData();
@@ -83,7 +87,7 @@ namespace Ginger.Environments
                     return;
                 }
                 db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-                db.ProjEnvironment = App.AutomateTabEnvironment;
+                db.ProjEnvironment = mContext.Environment;
                 db.BusinessFlow =  null;
                 if (string.IsNullOrEmpty(db.ConnectionString) && !string.IsNullOrEmpty(db.TNS) && db.TNS.ToLower().Contains("data source=") && db.TNS.ToLower().Contains("password=") && db.TNS.ToLower().Contains("user id="))
                 {

@@ -47,21 +47,34 @@ namespace Ginger.BusinessFlowWindows
         public bool OKButtonClicked = false;
         private bool saveWasDone = false;
         private BusinessFlow mActivityParentBusinessFlow = null;
+        Context mContext;
 
         public General.RepositoryItemPageViewMode editMode { get; set; }
 
-        public ActivityEditPage(Activity activity, General.RepositoryItemPageViewMode mode = General.RepositoryItemPageViewMode.Automation, BusinessFlow activityParentBusinessFlow = null)
+        public ActivityEditPage(Activity activity, General.RepositoryItemPageViewMode mode = General.RepositoryItemPageViewMode.Automation, BusinessFlow activityParentBusinessFlow = null, Context context=null)
         {
             InitializeComponent();
 
             this.Title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Activity);
 
             mActivity = activity;
+
+            if (context != null)
+            {
+                mContext = context;
+            }
+            else
+            {
+                mContext = new Context();
+                mContext.BusinessFlow = activityParentBusinessFlow;
+                mContext.Activity = mActivity;
+            }
+
             if (editMode != General.RepositoryItemPageViewMode.View)
                 mActivity.SaveBackup();
             editMode = mode;
 
-            RunDescritpion.Init(new Context() { BusinessFlow = activityParentBusinessFlow },  activity, Activity.Fields.RunDescription);
+            RunDescritpion.Init(mContext, activity, Activity.Fields.RunDescription);
             
             mActivityParentBusinessFlow = activityParentBusinessFlow;            
 
@@ -102,13 +115,13 @@ namespace Ginger.BusinessFlowWindows
             if (editMode == General.RepositoryItemPageViewMode.View)
             {
                 varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity, General.RepositoryItemPageViewMode.View);
-                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.View);
+                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.View, mContext);
                 SetViewMode();
             }
             else
             {
                 varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity, General.RepositoryItemPageViewMode.Child);
-                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.Child);
+                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.Child, mContext);
             }
 
             varbsPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;

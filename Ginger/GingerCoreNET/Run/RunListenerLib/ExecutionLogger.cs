@@ -73,19 +73,6 @@ namespace Ginger.Run
         {
             get
             {
-                // !!!!!!!!!!!!! called many time ??
-                if (mExecutionEnvironment == null)//not supposed to be null but in case it is
-                {
-                    // !!!!!!!!!!!!!!!!! remove logger should get the env from GR
-                    if (this.ExecutedFrom == eExecutedFrom.Automation)
-                    {
-                        mExecutionEnvironment = WorkSpace.AutomateTabEnvironment;
-                    }
-                    else
-                    {
-                        mExecutionEnvironment = WorkSpace.RunsetExecutor.RunsetExecutionEnvironment;
-                    }
-                }
                 return mExecutionEnvironment;
             }
             set
@@ -714,18 +701,6 @@ namespace Ginger.Run
                 {
                     if (System.IO.Directory.Exists(executionLogFolder + action.ExecutionLogFolder))
                     {
-
-                        ProjEnvironment environment = null;
-
-                        if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
-                        {
-                            environment = WorkSpace.AutomateTabEnvironment;
-                        }
-                        else
-                        {
-                            environment = WorkSpace.RunsetExecutor.RunsetExecutionEnvironment;
-                        }
-
                         AR.Seq = mCurrentActivity.ExecutionLogActionCounter;
                         if ((action.RunDescription != null) && (action.RunDescription != string.Empty))
                         {

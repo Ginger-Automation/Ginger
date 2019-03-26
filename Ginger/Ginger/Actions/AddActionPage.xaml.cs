@@ -282,6 +282,7 @@ namespace Ginger.Actions
                 {
                     Act aNew = null;
                     aNew = (Act)selectedAction.CreateCopy();
+                    aNew.Context = mContext;
                     // copy param ex info
                     for (int i = 0; i < selectedAction.InputValues.Count; i++)
                     {

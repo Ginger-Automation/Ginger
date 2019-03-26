@@ -70,7 +70,7 @@ namespace Ginger.Run
 
             grdDefectSuggestions.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
 
-            grdDefectSuggestions.DataSourceList = App.RunsetExecutor.DefectSuggestionsList;
+            grdDefectSuggestions.DataSourceList = WorkSpace.RunsetExecutor.DefectSuggestionsList;
             grdDefectSuggestions.Visibility = Visibility.Visible;
 
             DefectProfilesCombo_Binding();
@@ -91,12 +91,12 @@ namespace Ginger.Run
 
         public void ReloadData()
         {
-            grdDefectSuggestions.DataSourceList = App.RunsetExecutor.DefectSuggestionsList;
+            grdDefectSuggestions.DataSourceList = WorkSpace.RunsetExecutor.DefectSuggestionsList;
         }
 
         private void RefreshGrid(object sender, RoutedEventArgs e)
         {
-            grdDefectSuggestions.DataSourceList = App.RunsetExecutor.DefectSuggestionsList;
+            grdDefectSuggestions.DataSourceList = WorkSpace.RunsetExecutor.DefectSuggestionsList;
         }
 
         private void ScreenShotClicked(object sender, RoutedEventArgs e)
@@ -121,14 +121,14 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
                 return;
             }
-            if ((App.RunsetExecutor.DefectSuggestionsList != null) && (App.RunsetExecutor.DefectSuggestionsList.Count > 0) &&
-                (App.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && (x.ALMDefectID == null || x.ALMDefectID == string.Empty)).ToList().Count > 0))
+            if ((WorkSpace.RunsetExecutor.DefectSuggestionsList != null) && (WorkSpace.RunsetExecutor.DefectSuggestionsList.Count > 0) &&
+                (WorkSpace.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && (x.ALMDefectID == null || x.ALMDefectID == string.Empty)).ToList().Count > 0))
             {
-                if (Reporter.ToUser(eUserMsgKey.AskALMDefectsOpening, App.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && (x.ALMDefectID == null || x.ALMDefectID == string.Empty)).ToList().Count) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                if (Reporter.ToUser(eUserMsgKey.AskALMDefectsOpening, WorkSpace.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && (x.ALMDefectID == null || x.ALMDefectID == string.Empty)).ToList().Count) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     Mouse.OverrideCursor = Cursors.Wait;
                     Dictionary<Guid, Dictionary<string, string>> defectsForOpening = new Dictionary<Guid, Dictionary<string, string>>();
-                    foreach (DefectSuggestion defectSuggestion in App.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && (x.ALMDefectID == null || x.ALMDefectID == string.Empty)).ToList())
+                    foreach (DefectSuggestion defectSuggestion in WorkSpace.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && (x.ALMDefectID == null || x.ALMDefectID == string.Empty)).ToList())
                     {
                         Dictionary<string, string> currentALMDefectFieldsValues = new Dictionary<string, string>();
                         try
@@ -155,10 +155,10 @@ namespace Ginger.Run
                         {
                             if ((defectOpeningResult.Value != null) && (defectOpeningResult.Value != "0"))
                             {
-                                App.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; z.ToOpenDefectFlag = false; });
+                                WorkSpace.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; z.ToOpenDefectFlag = false; });
                             }
                         }
-                        grdDefectSuggestions.DataSourceList = App.RunsetExecutor.DefectSuggestionsList;
+                        grdDefectSuggestions.DataSourceList = WorkSpace.RunsetExecutor.DefectSuggestionsList;
                         Mouse.OverrideCursor = null;
                         Reporter.ToUser(eUserMsgKey.ALMDefectsWereOpened, defectsOpeningResults.Where(x => x.Value != null && x.Value != string.Empty && x.Value != "0").ToList().Count);
                     }
