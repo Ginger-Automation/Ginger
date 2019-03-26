@@ -59,8 +59,8 @@ namespace amdocs.ginger.GingerCoreNET
         public RunsetExecutor RunsetExecutor = new RunsetExecutor();
 
         public static string AppVersion="0.0.0.0.0";
-        
-        public Solution mSolution { get; set; }
+
+        private Solution mSolution;
         public Solution Solution
         {
             get

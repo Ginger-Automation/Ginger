@@ -56,7 +56,7 @@ namespace Ginger.Reports
 
         private void Init()
         {
-            _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             _selectedExecutionLoggerConfiguration.StartDirtyTracking();
             SetControls();
         }
@@ -156,13 +156,13 @@ namespace Ginger.Reports
                 return;
             }
 
-             WorkSpace.Instance.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
+             WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
 
             // validate the paths of inserted folders
-            Ginger.Run.ExecutionLogger.GetLoggerDirectory( WorkSpace.Instance.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
-            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory( WorkSpace.Instance.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder);
+            Ginger.Run.ExecutionLogger.GetLoggerDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
+            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder);
 
-            //App.AutomateTabGingerRunner.ExecutionLogger.Configuration =  WorkSpace.Instance.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            //App.AutomateTabGingerRunner.ExecutionLogger.Configuration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
     }
 }

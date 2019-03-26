@@ -57,8 +57,8 @@ namespace Ginger.ALM
             if (!WorkSpace.Instance.BetaFeatures.Rally)
             {
                 RallyRadioButton.Visibility = Visibility.Hidden;
-                if ((ALMIntegration.eALMType) WorkSpace.Instance.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RALLY)
-                     WorkSpace.Instance.UserProfile.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
+                if ((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.RALLY)
+                     WorkSpace.Instance.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
             }
 
             if (almConnectStyle != ALMIntegration.eALMConnectType.Silence)
@@ -100,7 +100,7 @@ namespace Ginger.ALM
                 PasswordTextBox.IsEnabled = false;
                 LoginServerButton.Content = "Change Server Details";
                 ALMProjectDetailsPanel.Visibility = Visibility.Visible;
-                if ((ALMIntegration.eALMType) WorkSpace.Instance.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RQM)
+                if ((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.RQM)
                     ALMDomainSelectionPanel.Visibility = Visibility.Collapsed;
                 else ALMDomainSelectionPanel.Visibility = Visibility.Visible;
             }
@@ -112,7 +112,7 @@ namespace Ginger.ALM
                 RallyRadioButton.IsEnabled = true;
                 JiraRadioButton.IsEnabled = true;
                 RQMLoadConfigPackageButton.IsEnabled = true;
-                if ((ALMIntegration.eALMType) WorkSpace.Instance.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RQM)
+                if ((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.RQM)
                     ServerURLTextBox.IsEnabled = false;
                 else
                 {
@@ -145,21 +145,21 @@ namespace Ginger.ALM
 
         public void RefreshALMSolutionSettings()
         {
-            if ((ALMIntegration.eALMType) WorkSpace.Instance.UserProfile.Solution.AlmType == ALMIntegration.eALMType.QC && QCRadioButton.IsChecked == false)
+            if ((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.QC && QCRadioButton.IsChecked == false)
             {
                 QCRadioButton.IsChecked = true;
                 PasswordTextBox.Password = "";
                 UserNameTextBox.Text = "";
                 StyleRadioButtons();
             }
-            else if ((ALMIntegration.eALMType) WorkSpace.Instance.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RQM && RQMRadioButton.IsChecked == false)
+            else if ((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.RQM && RQMRadioButton.IsChecked == false)
             {
                 RQMRadioButton.IsChecked = true;
                 PasswordTextBox.Password = "";
                 UserNameTextBox.Text = "";
                 StyleRadioButtons();
             }
-            else if ((ALMIntegration.eALMType) WorkSpace.Instance.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RALLY && RallyRadioButton.IsChecked == false)
+            else if ((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.RALLY && RallyRadioButton.IsChecked == false)
             {
                 RallyRadioButton.IsChecked = true;
                 PasswordTextBox.Password = "";
@@ -188,7 +188,7 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
             bool almConn = false;
-            ALMIntegration.Instance.UpdateALMType((ALMIntegration.eALMType) WorkSpace.Instance.UserProfile.Solution.AlmType);
+            ALMIntegration.Instance.UpdateALMType((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType);
 
             if (LoginServerButton.Content.ToString() == "Get Projects Details" || LoginServerButton.Content.ToString() == "Connect ALM Server")
             {
@@ -220,7 +220,7 @@ namespace Ginger.ALM
         {
             List<string> Domains = ALMIntegration.Instance.GetALMDomains(userMsgStyle);
 
-            string currDomain =  WorkSpace.Instance.UserProfile.Solution.ALMDomain;
+            string currDomain =  WorkSpace.Instance.Solution.ALMDomain;
             DomainComboBox.Items.Clear();
             foreach (string domain in Domains)
                 DomainComboBox.Items.Add(domain);
@@ -231,8 +231,8 @@ namespace Ginger.ALM
                 {
                     if (DomainComboBox.Items.Contains(currDomain))
                     {
-                         WorkSpace.Instance.UserProfile.Solution.ALMDomain = currDomain;
-                        DomainComboBox.SelectedIndex = DomainComboBox.Items.IndexOf( WorkSpace.Instance.UserProfile.Solution.ALMDomain);
+                         WorkSpace.Instance.Solution.ALMDomain = currDomain;
+                        DomainComboBox.SelectedIndex = DomainComboBox.Items.IndexOf( WorkSpace.Instance.Solution.ALMDomain);
                     }
                 }
                 if (DomainComboBox.SelectedIndex == -1)
@@ -255,16 +255,16 @@ namespace Ginger.ALM
                 string currSelectedDomain = (string)DomainComboBox.SelectedItem;
                 if (string.IsNullOrEmpty(currSelectedDomain))
                 {
-                    if (string.IsNullOrEmpty( WorkSpace.Instance.UserProfile.Solution.ALMDomain))
+                    if (string.IsNullOrEmpty( WorkSpace.Instance.Solution.ALMDomain))
                         return;
 
-                    currSelectedDomain =  WorkSpace.Instance.UserProfile.Solution.ALMDomain;
+                    currSelectedDomain =  WorkSpace.Instance.Solution.ALMDomain;
                     DomainComboBox.SelectedItem = currSelectedDomain;
                 }
 
                 Dictionary<string,string> lstProjects = ALMIntegration.Instance.GetALMDomainProjects(currSelectedDomain, almConectStyle);
 
-                KeyValuePair<string, string> currSavedProj = new KeyValuePair<string, string>(WorkSpace.Instance.UserProfile.Solution.ALMProjectKey, WorkSpace.Instance.UserProfile.Solution.ALMProject);
+                KeyValuePair<string, string> currSavedProj = new KeyValuePair<string, string>(WorkSpace.Instance.Solution.ALMProjectKey, WorkSpace.Instance.Solution.ALMProject);
                 ProjectComboBox.Items.Clear();
                 foreach (KeyValuePair<string,string> project in lstProjects)
                 {
@@ -278,15 +278,15 @@ namespace Ginger.ALM
                         if (ProjectComboBox.Items.Contains(currSavedProj))
                         {
                             ProjectComboBox.SelectedIndex = ProjectComboBox.Items.IndexOf(currSavedProj);
-                            WorkSpace.Instance.UserProfile.Solution.ALMProject = currSavedProj.Value;
-                            WorkSpace.Instance.UserProfile.Solution.ALMProjectKey = currSavedProj.Key;
+                            WorkSpace.Instance.Solution.ALMProject = currSavedProj.Value;
+                            WorkSpace.Instance.Solution.ALMProjectKey = currSavedProj.Key;
                         }
                     }
                     if (ProjectComboBox.SelectedIndex == -1)
                     {
                         ProjectComboBox.SelectedIndex = 0;
-                        WorkSpace.Instance.UserProfile.Solution.ALMProject = ProjectComboBox.Text;
-                        WorkSpace.Instance.UserProfile.Solution.ALMProjectKey = ProjectComboBox.SelectedValuePath;
+                        WorkSpace.Instance.Solution.ALMProject = ProjectComboBox.Text;
+                        WorkSpace.Instance.Solution.ALMProjectKey = ProjectComboBox.SelectedValuePath;
                     }
 
                 }
@@ -350,7 +350,7 @@ namespace Ginger.ALM
 
         private void StyleRadioButtons()
         {
-            switch ((ALMIntegration.eALMType) WorkSpace.Instance.UserProfile.Solution.AlmType)
+            switch ((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType)
             {
                 case ALMIntegration.eALMType.QC:
                     QCRadioButton.IsChecked = true;
@@ -487,7 +487,7 @@ namespace Ginger.ALM
         {
             ALMIntegration.Instance.SyncConfigurations();
              WorkSpace.Instance.UserProfile.SaveUserProfile();
-             WorkSpace.Instance.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
+             WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
         }
 
         private void ALMRadioButton_Checked_Changed(object sender, RoutedEventArgs e)
@@ -501,16 +501,16 @@ namespace Ginger.ALM
                 switch (rBtn.Name)
                 {
                     case "QCRadioButton":
-                        if ((ALMIntegration.eALMType) WorkSpace.Instance.UserProfile.Solution.AlmType != ALMIntegration.eALMType.QC)
+                        if ((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType != ALMIntegration.eALMType.QC)
                         {
-                             WorkSpace.Instance.UserProfile.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
+                             WorkSpace.Instance.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
                             ClearALMConfigs();
                         }
                         break;
                     case "RQMRadioButton":
-                        if ((ALMIntegration.eALMType) WorkSpace.Instance.UserProfile.Solution.AlmType != ALMIntegration.eALMType.RQM)
+                        if ((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType != ALMIntegration.eALMType.RQM)
                         {
-                            WorkSpace.Instance.UserProfile.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM;
+                            WorkSpace.Instance.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM;
                             ClearALMConfigs();
                             //ALMIntegration.Instance.UpdateALMType(ALMIntegration.eALMType.RQM);
                             ALMIntegration.Instance.SetALMCoreConfigurations(); //Because RQM need to update the server field from existing package
@@ -518,21 +518,21 @@ namespace Ginger.ALM
                         }
                         break;
                     case "RallyRadioButton":
-                        if ((ALMIntegration.eALMType)WorkSpace.Instance.UserProfile.Solution.AlmType != ALMIntegration.eALMType.RALLY)
+                        if ((ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType != ALMIntegration.eALMType.RALLY)
                         {
-                            WorkSpace.Instance.UserProfile.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY;
+                            WorkSpace.Instance.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY;
                             ClearALMConfigs();
                         }
                         break;
                     case "JiraRadioButton":
-                        if ((ALMIntegration.eALMType)WorkSpace.Instance.UserProfile.Solution.AlmType != ALMIntegration.eALMType.Jira)
+                        if ((ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType != ALMIntegration.eALMType.Jira)
                         {
-                            WorkSpace.Instance.UserProfile.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira;
+                            WorkSpace.Instance.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira;
                             ClearALMConfigs();
                         }
                         break;
                 }
-                ALMIntegration.Instance.UpdateALMType((Ginger.ALM.ALMIntegration.eALMType) WorkSpace.Instance.UserProfile.Solution.AlmType);
+                ALMIntegration.Instance.UpdateALMType((Ginger.ALM.ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType);
                 StyleRadioButtons();
                 SetControls();
             }
@@ -619,13 +619,13 @@ namespace Ginger.ALM
 
         private void RestAPICheckBox_Checked(object sender, RoutedEventArgs e)
         {
-             WorkSpace.Instance.UserProfile.Solution.UseRest = true;
+             WorkSpace.Instance.Solution.UseRest = true;
             ExampleURLHint.Content = "Example: http://server:8080/";
         }
 
         private void RestAPICheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-             WorkSpace.Instance.UserProfile.Solution.UseRest = false;
+             WorkSpace.Instance.Solution.UseRest = false;
             ExampleURLHint.Content = "Example: http://server:8080/almbin";
         }
     }

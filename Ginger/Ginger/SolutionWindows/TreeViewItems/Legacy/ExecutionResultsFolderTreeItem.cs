@@ -107,8 +107,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private string GetExecutionResultsFolder()
         {
-            if ( WorkSpace.Instance.UserProfile.Solution != null &&  WorkSpace.Instance.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null &&  WorkSpace.Instance.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
-                return Ginger.Run.ExecutionLogger.GetLoggerDirectory( WorkSpace.Instance.UserProfile.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder);
+            if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList != null &&  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
+                return Ginger.Run.ExecutionLogger.GetLoggerDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder);
             else
                 return string.Empty;
         }

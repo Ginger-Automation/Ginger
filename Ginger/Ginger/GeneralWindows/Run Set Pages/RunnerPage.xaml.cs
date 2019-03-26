@@ -152,7 +152,7 @@ namespace Ginger.Run
         }
         public string totalCount { get; set; }
         bool mGiveUserFeedback { get; set; }
-        HTMLReportsConfiguration currentConf =  WorkSpace.Instance.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+        HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         ChartType SelectedChartType { get; set; }
         public bool ViewMode1 = false;
 
@@ -299,8 +299,8 @@ namespace Ginger.Run
             if (CheckCurrentRunnerIsNotRuning()) return;
 
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            HTMLReportsConfiguration currentConf =  WorkSpace.Instance.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder!=null)
             {
                 string reportpath = ((BusinessFlow)((RunnerItemPage)sender).ItemObject).ExecutionFullLogFolder;
@@ -611,7 +611,7 @@ namespace Ginger.Run
             TextBlockHelper TBH = new TextBlockHelper(xRunnerInfoTextBlock);
             foreach (ApplicationAgent appAgent in mRunner.ApplicationAgents)
             {
-                if ( WorkSpace.Instance.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == appAgent.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() != null)
+                if ( WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == appAgent.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() != null)
                     continue;
                 TBH.AddText(LimitstringLength(appAgent.AppName, 10));
                 TBH.AddText(" > ");
@@ -671,7 +671,7 @@ namespace Ginger.Run
         }
         private void ViewReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             string reportsResultFolder = "";
 
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)

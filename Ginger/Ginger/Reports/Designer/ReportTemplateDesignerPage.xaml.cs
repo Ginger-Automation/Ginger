@@ -133,7 +133,7 @@ namespace Ginger.Reports.Designer
             GingerRunner GR = new GingerRunner();
             GR.BusinessFlows.Add(BF1);
             GR.BusinessFlows.Add(BF2);
-            GR.CurrentSolution =  WorkSpace.Instance.UserProfile.Solution;
+            GR.CurrentSolution =  WorkSpace.Instance.Solution;
             GMR.Runners.Add(GR);
             ReportInfo RI = new ReportInfo(env, GMR);
             ReportPage RP = new ReportPage(RI, Xaml);

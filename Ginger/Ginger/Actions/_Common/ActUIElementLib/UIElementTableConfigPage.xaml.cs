@@ -73,7 +73,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mAct = new ActUIElement();
             mAct.Description = "UI Element Table";
             string targetApp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
-            mPlatform = PlatformInfoBase.GetPlatformImpl((from x in  WorkSpace.Instance.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetApp select x.Platform).FirstOrDefault());
+            mPlatform = PlatformInfoBase.GetPlatformImpl((from x in  WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetApp select x.Platform).FirstOrDefault());
 
             if (ElementInfo.ElementType.Contains("JEditor"))
             {

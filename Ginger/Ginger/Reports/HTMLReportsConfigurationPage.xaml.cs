@@ -42,7 +42,7 @@ namespace Ginger.Reports
 
         private void Init()
         {
-            mHTMLReportConfiguration =  WorkSpace.Instance.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            mHTMLReportConfiguration =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             mHTMLReportConfiguration.StartDirtyTracking();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LimitReportFolder, CheckBox.IsCheckedProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.LimitReportFolderSize));
           
@@ -121,7 +121,7 @@ namespace Ginger.Reports
         {
             DefaultTemplatePickerCbx.ItemsSource = null;
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            if ( WorkSpace.Instance.UserProfile.Solution != null && HTMLReportConfigurations.Count > 0)
+            if ( WorkSpace.Instance.Solution != null && HTMLReportConfigurations.Count > 0)
             {
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;
@@ -175,8 +175,8 @@ namespace Ginger.Reports
                 return;
             }
 
-            //App.AutomateTabGingerRunner.ExecutionLogger.Configuration = WorkSpace.Instance.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            WorkSpace.Instance.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+            //App.AutomateTabGingerRunner.ExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
         }
 
         private void DefaultTemplatePickerCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)

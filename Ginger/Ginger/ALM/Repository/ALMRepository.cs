@@ -44,8 +44,8 @@ namespace Ginger.ALM.Repository
 
         public void SetALMProject(KeyValuePair<string, string> project)
         {
-            WorkSpace.Instance.UserProfile.Solution.ALMProject = project.Value;
-            WorkSpace.Instance.UserProfile.Solution.ALMProjectKey = project.Key;
+            WorkSpace.Instance.Solution.ALMProject = project.Value;
+            WorkSpace.Instance.Solution.ALMProjectKey = project.Key;
         }
 
         public abstract bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle);

@@ -304,7 +304,7 @@ namespace Ginger.Actions
             if (grdActions.CurrentItem != null)
             {
                 Act a = (Act)grdActions.CurrentItem;
-                a.SolutionFolder = WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper();
+                a.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
                 a.Context = mContext;
                 ActionEditPage actedit = new ActionEditPage(a, EditMode);
                 actedit.ap = this;

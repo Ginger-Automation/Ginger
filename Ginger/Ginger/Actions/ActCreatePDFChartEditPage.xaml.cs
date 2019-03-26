@@ -42,7 +42,7 @@ namespace Ginger.Actions
                 InitializeComponent();
                 mAct = act;
                 Bind();
-                mAct.SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper();                   
+                mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();                   
         }
                 
         public void Bind()
@@ -65,7 +65,7 @@ namespace Ginger.Actions
 
             dlg.DefaultExt = "*.csv";
             dlg.Filter = "csv Files (*.csv)|*.csv";
-            string SolutionFolder = WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper(); 
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper(); 
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

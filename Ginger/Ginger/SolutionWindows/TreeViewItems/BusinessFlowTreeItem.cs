@@ -138,7 +138,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void GoToGherkinFeatureFile(object sender, RoutedEventArgs e)
         {
-            DocumentEditorPage documentEditorPage = new DocumentEditorPage(mBusinessFlow.ExternalID.Replace("~",  WorkSpace.Instance.UserProfile.Solution.Folder), true);
+            DocumentEditorPage documentEditorPage = new DocumentEditorPage(mBusinessFlow.ExternalID.Replace("~",  WorkSpace.Instance.Solution.Folder), true);
             documentEditorPage.Title = "Gherkin Page";
             documentEditorPage.Height = 700;
             documentEditorPage.Width = 1000;

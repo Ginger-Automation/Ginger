@@ -37,7 +37,7 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = Act;
             Bind();
-            mAct.SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper();
+            mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
         }
 
         public void Bind()

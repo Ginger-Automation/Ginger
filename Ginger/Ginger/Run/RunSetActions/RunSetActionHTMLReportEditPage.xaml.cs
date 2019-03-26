@@ -53,7 +53,7 @@ namespace Ginger.Run.RunSetActions
             CurrentTemplatePickerCbx.ItemsSource = null;
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            if (( WorkSpace.Instance.UserProfile.Solution != null) && (HTMLReportConfigurations.Count > 0))
+            if (( WorkSpace.Instance.Solution != null) && (HTMLReportConfigurations.Count > 0))
             {
                 CurrentTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 CurrentTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;

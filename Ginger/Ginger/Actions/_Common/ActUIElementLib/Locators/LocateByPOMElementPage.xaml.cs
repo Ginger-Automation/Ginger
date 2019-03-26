@@ -92,7 +92,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
             else
             {
-                mTargetApplication = WorkSpace.Instance.UserProfile.Solution.MainApplication;
+                mTargetApplication = WorkSpace.Instance.Solution.MainApplication;
             }
             DataContext = this;
 

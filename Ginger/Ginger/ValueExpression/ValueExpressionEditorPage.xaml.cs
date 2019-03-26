@@ -531,14 +531,14 @@ namespace Ginger
 
         private void AddVariables()
         {
-            if (WorkSpace.Instance.UserProfile.Solution != null)
+            if (WorkSpace.Instance.Solution != null)
             {
                 TreeViewItem solutionVars = new TreeViewItem();
                 solutionVars.Items.IsLiveSorting = true;
                 SetItemView(solutionVars, "Global " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
                 xObjectsTreeView.Items.Add(solutionVars);
 
-                foreach (VariableBase v in WorkSpace.Instance.UserProfile.Solution.Variables.OrderBy("Name"))
+                foreach (VariableBase v in WorkSpace.Instance.Solution.Variables.OrderBy("Name"))
                     InsertNewVarTreeItem(solutionVars, v);
                 InsertAddNewVarTreeItem(solutionVars, eVariablesLevel.Solution);
             }
@@ -605,7 +605,7 @@ namespace Ginger
                 //if (ds.FilePath.StartsWith("~"))
                 //{
                 //    ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
-                //    ds.FileFullPath = Path.Combine( WorkSpace.Instance.UserProfile.Solution.Folder , ds.FileFullPath);
+                //    ds.FileFullPath = Path.Combine( WorkSpace.Instance.Solution.Folder , ds.FileFullPath);
                 //}
                 ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
 
@@ -677,7 +677,7 @@ namespace Ginger
             switch (varLevel)
             {
                 case eVariablesLevel.Solution:
-                    ((Solution) WorkSpace.Instance.UserProfile.Solution).AddVariable(newStringVar);
+                    ((Solution) WorkSpace.Instance.Solution).AddVariable(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
                     ((BusinessFlow)mContext.BusinessFlow).AddVariable(newStringVar);
@@ -694,7 +694,7 @@ namespace Ginger
             switch (varLevel)
             {
                 case eVariablesLevel.Solution:
-                    ((Solution) WorkSpace.Instance.UserProfile.Solution).SetUniqueVariableName(newStringVar);
+                    ((Solution) WorkSpace.Instance.Solution).SetUniqueVariableName(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
                     ((BusinessFlow)mContext.BusinessFlow).SetUniqueVariableName(newStringVar);

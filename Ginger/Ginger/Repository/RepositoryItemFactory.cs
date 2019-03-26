@@ -354,7 +354,7 @@ namespace Ginger.Repository
                 Dispatcher.CurrentDispatcher.Invoke(() => 
                 {
                     RunSetConfig runSetConfig = (RunSetConfig)a;
-                    analyzerPage.Init( WorkSpace.Instance.UserProfile.mSolution, runSetConfig);
+                    analyzerPage.Init( WorkSpace.Instance.Solution, runSetConfig);
                 });
                 await analyzerPage.AnalyzeWithoutUI();
 

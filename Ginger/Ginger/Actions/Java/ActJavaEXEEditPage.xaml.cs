@@ -32,7 +32,7 @@ namespace Ginger.Actions.Java
     {
         private ActJavaEXE mAct;
 
-        string JarFilesPath = System.IO.Path.Combine( WorkSpace.Instance.UserProfile.Solution.Folder, @"Documents\Java\");
+        string JarFilesPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\Java\");
 
         public ActJavaEXEEditPage(ActJavaEXE act)
         {

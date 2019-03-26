@@ -51,7 +51,7 @@ namespace Ginger.Actions.WebServices
             mContext = Context.GetAsContext(act.Context);
 
             Bind();
-            mAct.SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper();
+            mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
         }
 
         public void Bind()
@@ -268,7 +268,7 @@ namespace Ginger.Actions.WebServices
                 return;
             }
 
-            string SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder;
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder;
             string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\WebServices\SoapUI\ProjectXMLs");
             if (!System.IO.Directory.Exists(targetPath))
             {
@@ -312,7 +312,7 @@ namespace Ginger.Actions.WebServices
                 {
                     if (XMLFiledValue.Substring(0, 1).Equals("~"))
                     {
-                        string SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder;
+                        string SolutionFolder =  WorkSpace.Instance.Solution.Folder;
                         XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue.Substring(2));
                     }
                     if (!System.IO.File.Exists(XMLFiledValue))
@@ -351,7 +351,7 @@ namespace Ginger.Actions.WebServices
             {
                 if (XMLFiledValue.Substring(0, 1).Equals("~"))
                 {
-                    string SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder;
+                    string SolutionFolder =  WorkSpace.Instance.Solution.Folder;
                     XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue.Substring(2));
                 }
                 if (!System.IO.File.Exists(XMLFiledValue))

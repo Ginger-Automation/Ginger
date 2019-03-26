@@ -34,7 +34,7 @@ namespace Ginger.Actions
         public ActionEditPage actp;
         private GingerCore.Actions.ActScript f;
 
-        string SHFilesPath = System.IO.Path.Combine( WorkSpace.Instance.UserProfile.Solution.Folder, @"Documents\Scripts\");
+        string SHFilesPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\Scripts\");
 
 
         public ActScriptEditPage(GingerCore.Actions.ActScript Act)

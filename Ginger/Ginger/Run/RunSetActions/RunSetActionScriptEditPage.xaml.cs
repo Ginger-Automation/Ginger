@@ -42,7 +42,7 @@ namespace Ginger.Run.RunSetActions
 
             dlg.DefaultExt = "*.VBS";
             dlg.Filter = "Script File (*.VBS)|*.VBS";
-            string SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             
             if(dlg.ShowDialog()==System.Windows.Forms.DialogResult.OK)
             {

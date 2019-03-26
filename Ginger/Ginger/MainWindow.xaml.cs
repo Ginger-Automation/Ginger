@@ -78,7 +78,7 @@ namespace Ginger
 
                 //User Profile
                 App.PropertyChanged += App_PropertyChanged;
-                 WorkSpace.Instance.UserProfile.PropertyChanged += UserProfilePropertyChanged;
+                 WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
                 if ( WorkSpace.Instance.UserProfile.GingerStatus == eGingerStatus.Active)
                 {
                     Reporter.ToStatus(eStatusMsgKey.ExitMode);
@@ -297,14 +297,14 @@ namespace Ginger
             }
         }
 
-        public void UserProfilePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             // Handle Solution change
             //TODO: cleanup close current biz flow etc...
-            if (e.PropertyName == nameof(UserProfile.Solution))
+            if (e.PropertyName == nameof(WorkSpace.Solution))
             {
                 SetSolutionDependedUIElements();
-                if ( WorkSpace.Instance.UserProfile.Solution == null)
+                if ( WorkSpace.Instance.Solution == null)
                 {
                     xSolutionTabsListView.SelectedItem = null;
                     xSolutionNameTextBlock.Text = "Please Load Solution";                    
@@ -313,8 +313,8 @@ namespace Ginger
                 {
                     xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
 
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty,  WorkSpace.Instance.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty,  WorkSpace.Instance.UserProfile.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty,  WorkSpace.Instance.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty,  WorkSpace.Instance.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
                     xSolutionTabsListView.SelectedItem = null;
                     xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
                 }
@@ -478,7 +478,7 @@ namespace Ginger
 
         public void SetSolutionDependedUIElements()
         {
-            if ( WorkSpace.Instance.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.Solution != null)
             {
                 xLoadedSolutionMenusPnl.Visibility = Visibility.Visible;
                 if ( WorkSpace.Instance.UserProfile.UserTypeHelper.IsSupportAutomate)
@@ -489,7 +489,7 @@ namespace Ginger
                 {
                     xRunListItem.Visibility = Visibility.Collapsed;
                 }
-                if ( WorkSpace.Instance.UserProfile.Solution.SourceControl != null)
+                if ( WorkSpace.Instance.Solution.SourceControl != null)
                 {
                     xSolutionSourceControlMenu.Visibility = Visibility.Visible;
                 }
@@ -558,8 +558,8 @@ namespace Ginger
         private void ViewSolutionFiles_Click(object sender, RoutedEventArgs e)
         {
             //show solution folder files
-            if ( WorkSpace.Instance.UserProfile.Solution != null)
-                Process.Start( WorkSpace.Instance.UserProfile.Solution.Folder);
+            if ( WorkSpace.Instance.Solution != null)
+                Process.Start( WorkSpace.Instance.Solution.Folder);
         }
 
         private void btnSourceControlConnectionDetails_Click(object sender, RoutedEventArgs e)
@@ -580,7 +580,7 @@ namespace Ginger
 
             AutoLogProxy.UserOperationStart("btnSourceControlCheckIn_Click");
 
-            App.CheckIn( WorkSpace.Instance.UserProfile.Solution.Folder);
+            App.CheckIn( WorkSpace.Instance.Solution.Folder);
 
             AutoLogProxy.UserOperationEnd();
         }
@@ -592,10 +592,10 @@ namespace Ginger
             AutoLogProxy.UserOperationStart("btnSourceControlGetLatest_Click");
 
             Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
-            if (string.IsNullOrEmpty( WorkSpace.Instance.UserProfile.Solution.Folder))
+            if (string.IsNullOrEmpty( WorkSpace.Instance.Solution.Folder))
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
-                SourceControlIntegration.GetLatest( WorkSpace.Instance.UserProfile.Solution.Folder,  WorkSpace.Instance.UserProfile.Solution.SourceControl);
+                SourceControlIntegration.GetLatest( WorkSpace.Instance.Solution.Folder,  WorkSpace.Instance.Solution.SourceControl);
 
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping,null);
             Reporter.HideStatusMessage();
@@ -607,7 +607,7 @@ namespace Ginger
         {
             AutoLogProxy.UserOperationStart("MainWindow.AnalyzerButton_Click");
             AnalyzerPage AP = new AnalyzerPage();
-            AP.Init( WorkSpace.Instance.UserProfile.Solution);
+            AP.Init( WorkSpace.Instance.Solution);
             AP.ShowAsWindow();
             AutoLogProxy.UserOperationEnd();
         }
@@ -617,7 +617,7 @@ namespace Ginger
             AutoLogProxy.UserOperationStart("ResolveConflictsBtn_Click");
 
             Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
-            SourceControlIntegration.ResolveConflicts( WorkSpace.Instance.UserProfile.Solution.SourceControl,  WorkSpace.Instance.UserProfile.Solution.Folder, side);
+            SourceControlIntegration.ResolveConflicts( WorkSpace.Instance.Solution.SourceControl,  WorkSpace.Instance.Solution.Folder, side);
             Reporter.HideStatusMessage();
 
             AutoLogProxy.UserOperationEnd();
@@ -640,9 +640,9 @@ namespace Ginger
 
         private void btnUpgrade_Click(object sender, RoutedEventArgs e)
         {
-            if ( WorkSpace.Instance.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.Solution != null)
             {
-                Solution sol =  WorkSpace.Instance.UserProfile.Solution;
+                Solution sol =  WorkSpace.Instance.Solution;
                 ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(SolutionUpgrade.GetSolutionFilesWithVersion(Solution.SolutionFiles(sol.Folder)), SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
                 if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
                 {
@@ -658,7 +658,7 @@ namespace Ginger
 
         private void btnRecover_Click(object sender, RoutedEventArgs e)
         {
-            if ( WorkSpace.Instance.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.Solution != null)
             {
                 App.AppSolutionRecover.SolutionRecoverStart(true);
             }
@@ -691,7 +691,7 @@ namespace Ginger
         private void btnSourceControlRepositoryDetails_Click(object sender, RoutedEventArgs e)
         {
 
-            SourceControlItemInfoDetails SCIInfoDetails = SourceControlIntegration.GetRepositoryInfo( WorkSpace.Instance.UserProfile.Solution.SourceControl);
+            SourceControlItemInfoDetails SCIInfoDetails = SourceControlIntegration.GetRepositoryInfo( WorkSpace.Instance.Solution.SourceControl);
             SourceControlItemInfoPage SCIIP = new SourceControlItemInfoPage(SCIInfoDetails);
             SCIIP.ShowAsWindow();
         }
@@ -766,10 +766,10 @@ namespace Ginger
 
         private void xSolutionEditBtn_Click(object sender, RoutedEventArgs e)
         {
-            string newName =  WorkSpace.Instance.UserProfile.Solution.Name;
+            string newName =  WorkSpace.Instance.Solution.Name;
             if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Solution Rename", "New Solution Name:", ref newName, System.IO.Path.GetInvalidPathChars()))
             {
-                 WorkSpace.Instance.UserProfile.Solution.Name = newName;
+                 WorkSpace.Instance.Solution.Name = newName;
             }
         }
 

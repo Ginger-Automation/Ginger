@@ -97,7 +97,7 @@ namespace Ginger.Imports.UFT
             InitCommonFunctionMappingUCGrid();
 
             TargetApplication sTarget = new TargetApplication();
-            sTarget.AppName =  WorkSpace.Instance.UserProfile.Solution.MainApplication.ToString();
+            sTarget.AppName =  WorkSpace.Instance.Solution.MainApplication.ToString();
             sTarget.Selected = true;
             TargetApplicationsList.Add(sTarget);
             mBusinessFlow.TargetApplications = TargetApplicationsList;
@@ -183,7 +183,7 @@ namespace Ginger.Imports.UFT
             at.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + "1";
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
-            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.Instance.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
+            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.Instance.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
             //App.BusinessFlow = mBusinessFlow;
            
             //AddActionPage addAction = new AddActionPage();

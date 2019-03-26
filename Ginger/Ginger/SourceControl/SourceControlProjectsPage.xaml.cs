@@ -253,13 +253,13 @@ namespace Ginger.SourceControl
                 {
                     OpenSolution(sol.LocalFolder, ProjectURI);
 
-                    if ( WorkSpace.Instance.UserProfile.Solution != null &&  WorkSpace.Instance.UserProfile.Solution.SourceControl != null)
+                    if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.SourceControl != null)
                     {
-                        if ( WorkSpace.Instance.UserProfile.Solution.SourceControl.SourceControlUser !=  WorkSpace.Instance.UserProfile.SourceControlUser ||  WorkSpace.Instance.UserProfile.Solution.SourceControl.SourceControlPass !=  WorkSpace.Instance.UserProfile.SourceControlPass)
+                        if ( WorkSpace.Instance.Solution.SourceControl.SourceControlUser !=  WorkSpace.Instance.UserProfile.SourceControlUser ||  WorkSpace.Instance.Solution.SourceControl.SourceControlPass !=  WorkSpace.Instance.UserProfile.SourceControlPass)
                         {
-                             WorkSpace.Instance.UserProfile.Solution.SourceControl.SourceControlUser =  WorkSpace.Instance.UserProfile.SourceControlUser;
-                             WorkSpace.Instance.UserProfile.Solution.SourceControl.SourceControlPass =  WorkSpace.Instance.UserProfile.SourceControlPass;
-                             WorkSpace.Instance.UserProfile.Solution.SourceControl.Disconnect();
+                             WorkSpace.Instance.Solution.SourceControl.SourceControlUser =  WorkSpace.Instance.UserProfile.SourceControlUser;
+                             WorkSpace.Instance.Solution.SourceControl.SourceControlPass =  WorkSpace.Instance.UserProfile.SourceControlPass;
+                             WorkSpace.Instance.Solution.SourceControl.Disconnect();
                         }
                     }
                     genWin.Close();

@@ -271,7 +271,7 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseTemplateFileButton_Click(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             if (TemplateFileNameFileBrowser.ValueTextBox.Text != null)
             {
                 // replace Absolute file name with relative to solution
@@ -341,7 +341,7 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseSSLCertificate(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             if (CertificatePath.ValueTextBox.Text != null)
             {
                 // replace Absolute file name with relative to solution
@@ -543,7 +543,7 @@ namespace Ginger.Actions.WebServices
 
                 dlg.DefaultExt = "*.*";
                 dlg.Filter = "All files (All Files)|*.*";
-                string SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper();
+                string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

@@ -80,7 +80,7 @@ namespace Ginger.Run
         {
             DefectProfiles_cbx.ItemsSource = null;
 
-            if (WorkSpace.Instance.UserProfile.Solution != null)
+            if (WorkSpace.Instance.Solution != null)
             {
                 DefectProfiles_cbx.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
                 DefectProfiles_cbx.DisplayMemberPath = nameof(ALMDefectProfile.Name).ToString();
@@ -116,7 +116,7 @@ namespace Ginger.Run
 
         private void OpenDefectForSelectedSuggestions_Click(object sender, RoutedEventArgs e)
         {
-            if (!ALMIntegration.Instance.AlmConfigurations.UseRest && WorkSpace.Instance.UserProfile.Solution.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
+            if (!ALMIntegration.Instance.AlmConfigurations.UseRest && WorkSpace.Instance.Solution.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
             {
                 Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
                 return;

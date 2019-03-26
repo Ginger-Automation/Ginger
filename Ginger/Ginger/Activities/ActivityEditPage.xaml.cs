@@ -155,7 +155,7 @@ namespace Ginger.BusinessFlowWindows
             }
             else
             {
-                TargetApplicationComboBox.ItemsSource = WorkSpace.Instance.UserProfile.Solution.GetSolutionTargetApplications();
+                TargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
             }
             TargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             TargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);

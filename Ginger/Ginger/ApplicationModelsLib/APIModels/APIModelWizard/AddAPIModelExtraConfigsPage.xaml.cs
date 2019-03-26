@@ -44,7 +44,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             //get key object 
             if (AddAPIModelWizard.TargetApplicationKey != null)
             {
-                RepositoryItemKey key =  WorkSpace.Instance.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == AddAPIModelWizard.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
+                RepositoryItemKey key =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Guid == AddAPIModelWizard.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
                 if (key != null)
                 {
                     AddAPIModelWizard.TargetApplicationKey = key;
@@ -54,7 +54,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + AddAPIModelWizard.TargetApplicationKey.Key + " Target Application was not found, please select new Target Application");
                 }
             }
-            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.Instance.UserProfile.Solution.ApplicationPlatforms.AsCollectionViewOrderBy(nameof(ApplicationPlatform.AppName));
+            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.Instance.Solution.ApplicationPlatforms.AsCollectionViewOrderBy(nameof(ApplicationPlatform.AppName));
             xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
         }

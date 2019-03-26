@@ -223,10 +223,10 @@ namespace Ginger.Functionalities
                 xReplaceRadioButton.Visibility = Visibility.Hidden;
             }
 
-             WorkSpace.Instance.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
 
 
-            FoundItem.SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder;
+            FoundItem.SolutionFolder =  WorkSpace.Instance.Solution.Folder;
             mSearchConfig = new SearchConfig() { MatchCase = false, MatchAllWord = false };
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xMatchCaseCheckBox, CheckBox.IsCheckedProperty, mSearchConfig, nameof(SearchConfig.MatchCase));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xMatchWholeWordCheckBox, CheckBox.IsCheckedProperty, mSearchConfig, nameof(SearchConfig.MatchAllWord));
@@ -256,11 +256,12 @@ namespace Ginger.Functionalities
                 Find();
         }
 
-        private void UserProfile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(UserProfile.Solution))
+            if (e.PropertyName == nameof(WorkSpace.Solution))
+            {
                 ClearUI();
-
+            }
         }
 
         private void RunsetExecutor_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -618,12 +619,12 @@ namespace Ginger.Functionalities
             {
                 case eContext.SolutionPage:
                     //Pull variables from solution global variables
-                    foreach (VariableBase VB in  WorkSpace.Instance.UserProfile.Solution.Variables)
+                    foreach (VariableBase VB in  WorkSpace.Instance.Solution.Variables)
                     {
                         if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
-                        string VariablePath =  WorkSpace.Instance.UserProfile.Solution.Name+"\\Global Variables";
+                        string VariablePath =  WorkSpace.Instance.Solution.Name+"\\Global Variables";
                         if (mSubItemType == null || VB.GetType() == mSubItemType)
-                            mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB,  WorkSpace.Instance.UserProfile.Solution, VariablePath, string.Empty));
+                            mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB,  WorkSpace.Instance.Solution, VariablePath, string.Empty));
                     }
 
                     //pull variables from all repository BF's

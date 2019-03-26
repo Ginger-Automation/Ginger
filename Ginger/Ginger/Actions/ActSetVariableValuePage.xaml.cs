@@ -49,7 +49,7 @@ namespace Ginger.Actions
             }
             else
             {
-                mVars = WorkSpace.Instance.UserProfile.Solution.Variables;
+                mVars = WorkSpace.Instance.Solution.Variables;
             }
          
             foreach (VariableBase v in mVars.OrderBy(nameof(VariableBase.Name)))

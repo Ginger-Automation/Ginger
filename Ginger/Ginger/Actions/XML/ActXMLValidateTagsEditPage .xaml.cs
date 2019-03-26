@@ -94,7 +94,7 @@ namespace Ginger.Actions.XML
                 dlg.Filter = "JSON Template File (*.json)|*.json|All Files (*.*)|*.*";
             }
 
-            string SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

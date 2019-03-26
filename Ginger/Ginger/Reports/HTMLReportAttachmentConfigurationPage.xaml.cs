@@ -60,7 +60,7 @@ namespace Ginger.Reports
             DefaultTemplatePickerCbx.ItemsSource = null;
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            if ( WorkSpace.Instance.UserProfile.Solution != null  && HTMLReportConfigurations.Count > 0)
+            if ( WorkSpace.Instance.Solution != null  && HTMLReportConfigurations.Count > 0)
             {
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;

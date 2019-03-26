@@ -304,7 +304,7 @@ namespace Ginger
 
             AutoLogProxy.LogAppOpened();
 
-            if ((WorkSpace.Instance.UserProfile.Solution != null) && (WorkSpace.Instance.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null))
+            if ((WorkSpace.Instance.Solution != null) && (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList != null))
             {
             }
 
@@ -562,7 +562,7 @@ namespace Ginger
                 AppSolutionAutoSave.SolutionAutoSaveEnd();
             }
 
-            WorkSpace.Instance.UserProfile.Solution = null;
+            WorkSpace.Instance.Solution = null;
             
             CloseAllRunningAgents();
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ClearAutomate, null);
@@ -655,9 +655,9 @@ namespace Ginger
                         ValueExpression.SolutionFolder = SolutionFolder;
                         BusinessFlow.SolutionVariables = sol.Variables;
 
-                        WorkSpace.Instance.UserProfile.Solution = sol;
+                        WorkSpace.Instance.Solution = sol;
 
-                        WorkSpace.Instance.UserProfile.Solution.SetReportsConfigurations();
+                        WorkSpace.Instance.Solution.SetReportsConfigurations();
                         WorkSpace.Instance.UserProfile.LoadRecentAppAgentMapping();
                         AutoLogProxy.SetAccount(sol.Account);
 
@@ -772,8 +772,8 @@ namespace Ginger
         private static void DoSolutionAutoSaveAndRecover()
         {
             //Init
-            AppSolutionAutoSave.SolutionInit( WorkSpace.Instance.UserProfile.Solution.Folder);
-            AppSolutionRecover.SolutionInit( WorkSpace.Instance.UserProfile.Solution.Folder);
+            AppSolutionAutoSave.SolutionInit( WorkSpace.Instance.Solution.Folder);
+            AppSolutionRecover.SolutionInit( WorkSpace.Instance.Solution.Folder);
 
             //start Auto Save
             AppSolutionAutoSave.SolutionAutoSaveStart();
@@ -824,9 +824,9 @@ namespace Ginger
             biz.Activities.CurrentItem = a;
             biz.CurrentActivity = a;
 
-            if (setTargetApp == true && WorkSpace.Instance.UserProfile.Solution.ApplicationPlatforms.Count > 0)
+            if (setTargetApp == true && WorkSpace.Instance.Solution.ApplicationPlatforms.Count > 0)
             {
-                biz.TargetApplications.Add(new TargetApplication() {AppName = WorkSpace.Instance.UserProfile.Solution.MainApplication});
+                biz.TargetApplications.Add(new TargetApplication() {AppName = WorkSpace.Instance.Solution.MainApplication});
                 biz.CurrentActivity.TargetApplication = biz.TargetApplications[0].Name;
             }
 
@@ -865,7 +865,7 @@ namespace Ginger
 
         public static void CloseSolution()///????
         {
-             WorkSpace.Instance.UserProfile.Solution = null;
+             WorkSpace.Instance.Solution = null;
         }
 
 

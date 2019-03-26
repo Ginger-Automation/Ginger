@@ -186,7 +186,7 @@ namespace Ginger.Run
         {
             InitializeComponent();
 
-            if ( WorkSpace.Instance.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.Solution != null)
             {
                 //Init
                 Init();
@@ -239,8 +239,8 @@ namespace Ginger.Run
 
         private void SetNonSpecificRunSetEventsTracking()
         {
-             WorkSpace.Instance.UserProfile.PropertyChanged -= UserProfilePropertyChanged;
-             WorkSpace.Instance.UserProfile.PropertyChanged += UserProfilePropertyChanged;
+             WorkSpace.Instance.PropertyChanged -= WorkSpacePropertyChanged;
+             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
 
             WorkSpace.Instance.RunsetExecutor.PropertyChanged -= RunsetExecutor_PropertyChanged;
             WorkSpace.Instance.RunsetExecutor.PropertyChanged += RunsetExecutor_PropertyChanged;
@@ -553,7 +553,7 @@ namespace Ginger.Run
         {
             try
             {
-                if ( WorkSpace.Instance.UserProfile.Solution == null) return null;
+                if ( WorkSpace.Instance.Solution == null) return null;
 
                 ObservableList<RunSetConfig> allRunsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
 
@@ -621,12 +621,12 @@ namespace Ginger.Run
             }
         }
 
-        private void UserProfilePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             // Handle Solution change
-            if (e.PropertyName == nameof(UserProfile.Solution))
+            if (e.PropertyName == nameof(WorkSpace.Solution))
             {
-                if ( WorkSpace.Instance.UserProfile.Solution == null)
+                if ( WorkSpace.Instance.Solution == null)
                 {                    
                     mSolutionWasChanged = true;
                     //ToDO: Clear Run Set page
@@ -964,10 +964,10 @@ namespace Ginger.Run
         }
         private void SetBusinessFlowsChangesLisener()
         {
-            if ( WorkSpace.Instance.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.Solution != null)
             {
                 mBusinessFlowsXmlsChangeWatcher = new FileSystemWatcher();
-                mBusinessFlowsXmlsChangeWatcher.Path =  WorkSpace.Instance.UserProfile.Solution.BusinessFlowsMainFolder;
+                mBusinessFlowsXmlsChangeWatcher.Path =  WorkSpace.Instance.Solution.BusinessFlowsMainFolder;
                 mBusinessFlowsXmlsChangeWatcher.Filter = "*.xml";
                 mBusinessFlowsXmlsChangeWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
                 mBusinessFlowsXmlsChangeWatcher.IncludeSubdirectories = true;
@@ -1018,7 +1018,7 @@ namespace Ginger.Run
         {
             xRunsetEnvironmentCombo.ItemsSource = null;
 
-            if ( WorkSpace.Instance.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.Solution != null)
             {
                 xRunsetEnvironmentCombo.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
                 xRunsetEnvironmentCombo.DisplayMemberPath = nameof(ProjEnvironment.Name);
@@ -1053,7 +1053,7 @@ namespace Ginger.Run
         {
             xRunnersCombo.ItemsSource = null;
 
-            if ( WorkSpace.Instance.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.Solution != null)
             {
                 xRunnersCombo.ItemsSource = mRunSetConfig.GingerRunners;
                 xRunnersCombo.DisplayMemberPath = nameof(GingerRunner.Name);
@@ -1258,9 +1258,9 @@ namespace Ginger.Run
             WshShell shell = new WshShell();
             string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\Ginger " + RunSet + " " + Env + ".lnk";
             IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
-            shortcut.Description = "Ginger Solution=" +  WorkSpace.Instance.UserProfile.Solution.Name + ", RunSet=" + RunSet + ", Env=" + Env;
+            shortcut.Description = "Ginger Solution=" +  WorkSpace.Instance.Solution.Name + ", RunSet=" + RunSet + ", Env=" + Env;
             string GingerPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            string SolFolder =  WorkSpace.Instance.UserProfile.Solution.Folder;
+            string SolFolder =  WorkSpace.Instance.Solution.Folder;
             if (SolFolder.EndsWith(@"\"))
             {
                 SolFolder = SolFolder.Substring(0, SolFolder.Length - 1);
@@ -1311,7 +1311,7 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.AnalyzerSaveRunSet);
                 return;
             }
-            AP.Init( WorkSpace.Instance.UserProfile.Solution, RSC);
+            AP.Init( WorkSpace.Instance.Solution, RSC);
             AP.ShowAsWindow();
 
             AutoLogProxy.UserOperationEnd();
@@ -1484,8 +1484,8 @@ namespace Ginger.Run
         {
             if(WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
             {
-                ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-                HTMLReportsConfiguration currentConf =  WorkSpace.Instance.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
                 
                 string reportsResultFolder = string.Empty;
                 if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)

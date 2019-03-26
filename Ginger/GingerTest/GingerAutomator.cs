@@ -271,7 +271,7 @@ namespace GingerTest
 
         internal void ReloadSolution()
         {
-            string path =  WorkSpace.Instance.UserProfile.Solution.ContainingFolderFullPath;
+            string path =  WorkSpace.Instance.Solution.ContainingFolderFullPath;
             CloseSolution();
             OpenSolution(path);
         }

@@ -126,7 +126,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
         void AddVars(List<ICompletionData> list)
         {            
-            foreach (VariableBase v in  WorkSpace.Instance.UserProfile.Solution.Variables)
+            foreach (VariableBase v in  WorkSpace.Instance.Solution.Variables)
             {
                 list.Add(GETVariableTCD(v));
             }

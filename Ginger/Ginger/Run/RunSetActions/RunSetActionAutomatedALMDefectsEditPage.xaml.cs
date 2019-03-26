@@ -51,7 +51,7 @@ namespace Ginger.Run.RunSetActions
         {
             CurrentProfilePickerCbx.ItemsSource = null;
 
-            if ( WorkSpace.Instance.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.Solution != null)
             {
                 CurrentProfilePickerCbx.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
                 CurrentProfilePickerCbx.DisplayMemberPath = nameof(ALMDefectProfile.Name).ToString();

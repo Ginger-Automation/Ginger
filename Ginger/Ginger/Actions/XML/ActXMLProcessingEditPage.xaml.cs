@@ -82,7 +82,7 @@ namespace Ginger.Actions.XML
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
             dlg.DefaultExt = "*.xml";
             dlg.Filter = "XML Template File (*.xml)|*.xml";
-            string SolutionFolder =  WorkSpace.Instance.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
             if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
