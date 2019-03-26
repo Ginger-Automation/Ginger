@@ -721,7 +721,7 @@ namespace Ginger.Repository
                         ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
                         if (env != null)
                         {
-                           App.RunsetExecutor.RunsetExecutionEnvironment = env;
+                           WorkSpace.RunsetExecutor.RunsetExecutionEnvironment = env;
                         }
                         else
                         {

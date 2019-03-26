@@ -59,7 +59,12 @@ namespace amdocs.ginger.GingerCoreNET
         // public ProjEnvironment CurrentEnvironment;
 
         public SourceControlBase SourceControl;
+
+        /// <summary>
+        /// Hold all Run Set execution data + execution methods
+        /// </summary>    
         public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
+
         public static string AppVersion="0.0.0.0.0";
 
         // move from App to here
@@ -194,7 +199,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         public static bool RunningInExecutionMode = false;
 
-        public static ProjEnvironment AutomateTabEnvironment;
+        
 
         public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 

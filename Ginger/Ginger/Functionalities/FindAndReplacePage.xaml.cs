@@ -219,7 +219,7 @@ namespace Ginger.Functionalities
             //else 
             if (mContext == eContext.RunsetPage)
             {
-                App.RunsetExecutor.PropertyChanged += RunsetExecutor_PropertyChanged;
+                WorkSpace.RunsetExecutor.PropertyChanged += RunsetExecutor_PropertyChanged;
                 xReplaceRadioButton.Visibility = Visibility.Hidden;
             }
 
@@ -325,7 +325,7 @@ namespace Ginger.Functionalities
                     title = string.Format("Find & Replace in '{0}' {1}", ((BusinessFlow)mItemToSearchOn).Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     break;
                 case eContext.RunsetPage:
-                    title = string.Format("Find in '{0}' {1}", App.RunsetExecutor.RunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                    title = string.Format("Find in '{0}' {1}", WorkSpace.RunsetExecutor.RunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
                     break;
                 default:
                     title = "Find & Replace";
@@ -471,9 +471,9 @@ namespace Ginger.Functionalities
                     mItemsToSearchIn.Add(new ItemToSearchIn(((BusinessFlow)mItemToSearchOn), ((BusinessFlow)mItemToSearchOn), ((BusinessFlow)mItemToSearchOn), string.Empty, string.Empty));
                     break;
                 case eContext.RunsetPage:
-                    foreach (GingerRunner runner in App.RunsetExecutor.RunSetConfig.GingerRunners)
+                    foreach (GingerRunner runner in WorkSpace.RunsetExecutor.RunSetConfig.GingerRunners)
                         foreach (BusinessFlow bf in runner.BusinessFlows)
-                            mItemsToSearchIn.Add(new ItemToSearchIn(bf, bf, App.RunsetExecutor.RunSetConfig, App.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\"+ bf.Name, string.Empty));
+                            mItemsToSearchIn.Add(new ItemToSearchIn(bf, bf, WorkSpace.RunsetExecutor.RunSetConfig, WorkSpace.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\"+ bf.Name, string.Empty));
                     break;
             }
         }
@@ -513,13 +513,13 @@ namespace Ginger.Functionalities
 
                 case eContext.RunsetPage:
                     //Pull Activities from runsets businessflows
-                    foreach (GingerRunner runner in App.RunsetExecutor.RunSetConfig.GingerRunners)
+                    foreach (GingerRunner runner in WorkSpace.RunsetExecutor.RunSetConfig.GingerRunners)
                         foreach (BusinessFlow BF in runner.BusinessFlows)
                         {
                             foreach (Activity activity in BF.Activities)
                             {
                                 if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
-                                mItemsToSearchIn.Add(new ItemToSearchIn(activity, activity, App.RunsetExecutor.RunSetConfig, App.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\" + BF.Name, string.Empty));
+                                mItemsToSearchIn.Add(new ItemToSearchIn(activity, activity, WorkSpace.RunsetExecutor.RunSetConfig, WorkSpace.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\" + BF.Name, string.Empty));
                             }
                         }
                     break;
@@ -591,7 +591,7 @@ namespace Ginger.Functionalities
 
                 case eContext.RunsetPage:
                     //Pull Activities from businessflows inside runsets
-                    foreach (GingerRunner runner in App.RunsetExecutor.RunSetConfig.GingerRunners)
+                    foreach (GingerRunner runner in WorkSpace.RunsetExecutor.RunSetConfig.GingerRunners)
                         foreach (BusinessFlow bf in runner.BusinessFlows)
                         {
                             foreach (Activity activity in bf.Activities)
@@ -602,7 +602,7 @@ namespace Ginger.Functionalities
                                     if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
                                     if (mSubItemType == null || action.GetType() == mSubItemType)
                                     {
-                                        mItemsToSearchIn.Add(new ItemToSearchIn(action, action, App.RunsetExecutor.RunSetConfig, App.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\" + itemParent, string.Empty));
+                                        mItemsToSearchIn.Add(new ItemToSearchIn(action, action, WorkSpace.RunsetExecutor.RunSetConfig, WorkSpace.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\" + itemParent, string.Empty));
                                     }
                                 }
                             }
@@ -654,8 +654,8 @@ namespace Ginger.Functionalities
                     break;
 
                 case eContext.RunsetPage:
-                    foreach (GingerRunner runner in App.RunsetExecutor.RunSetConfig.GingerRunners)
-                        AddVariableFromBusinessFlowList(runner.BusinessFlows, App.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\", App.RunsetExecutor.RunSetConfig);
+                    foreach (GingerRunner runner in WorkSpace.RunsetExecutor.RunSetConfig.GingerRunners)
+                        AddVariableFromBusinessFlowList(runner.BusinessFlows, WorkSpace.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\", WorkSpace.RunsetExecutor.RunSetConfig);
                     break;
             }
         }

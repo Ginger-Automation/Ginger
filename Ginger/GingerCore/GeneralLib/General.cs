@@ -934,7 +934,7 @@ namespace GingerCore
                     r.Add(status, myBrush);
                     break;
                 case "Pending":
-                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#ED5588"));
+                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#FF8C00"));
                     r.Add(status, myBrush);
                     break;
                 case "Running":

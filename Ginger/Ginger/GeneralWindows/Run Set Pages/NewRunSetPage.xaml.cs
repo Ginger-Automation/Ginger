@@ -242,8 +242,8 @@ namespace Ginger.Run
              WorkSpace.UserProfile.PropertyChanged -= UserProfilePropertyChanged;
              WorkSpace.UserProfile.PropertyChanged += UserProfilePropertyChanged;
 
-            App.RunsetExecutor.PropertyChanged -= RunsetExecutor_PropertyChanged;
-            App.RunsetExecutor.PropertyChanged += RunsetExecutor_PropertyChanged;
+            WorkSpace.RunsetExecutor.PropertyChanged -= RunsetExecutor_PropertyChanged;
+            WorkSpace.RunsetExecutor.PropertyChanged += RunsetExecutor_PropertyChanged;
 
             WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().CollectionChanged -= AgentsCache_CollectionChanged;
             WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().CollectionChanged += AgentsCache_CollectionChanged;
@@ -351,16 +351,16 @@ namespace Ginger.Run
 
         public void ResetALMDefectsSuggestions()
         {
-            App.RunsetExecutor.DefectSuggestionsList = new ObservableList<DefectSuggestion>();
+            WorkSpace.RunsetExecutor.DefectSuggestionsList = new ObservableList<DefectSuggestion>();
             xALMDefectsOpening.IsEnabled = false;
             UpdateRunsetALMDefectsOpeningTabHeader();
         }
 
         public void UpdateRunsetALMDefectsOpeningTabHeader()
         {
-            if (App.RunsetExecutor.DefectSuggestionsList.Count > 0)
+            if (WorkSpace.RunsetExecutor.DefectSuggestionsList.Count > 0)
             {
-                ALMDefects.Text = string.Format("ALM Defects Opening ({0})", App.RunsetExecutor.DefectSuggestionsList.Count);
+                ALMDefects.Text = string.Format("ALM Defects Opening ({0})", WorkSpace.RunsetExecutor.DefectSuggestionsList.Count);
                 //ALMDefects.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
             }
             else
@@ -382,7 +382,7 @@ namespace Ginger.Run
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Runner is already running, please stop it first.");
                         return;
                     }
-                    App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
+                    WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
                     AutoLogProxy.UserOperationStart("Continue Clicked");
                     switch (EventArgs.RunnerItemType)
                     {
@@ -613,10 +613,10 @@ namespace Ginger.Run
             // Handle Run Set change
             if (e.PropertyName == nameof(RunsetExecutor.RunSetConfig))
             {
-                if (App.RunsetExecutor.RunSetConfig == null || App.RunsetExecutor.RunSetConfig.Equals(RunSetConfig) == false)
+                if (WorkSpace.RunsetExecutor.RunSetConfig == null || WorkSpace.RunsetExecutor.RunSetConfig.Equals(RunSetConfig) == false)
                 {
                     if (!mSolutionWasChanged)//avoid the change if shifting solution
-                        ResetLoadedRunSet(App.RunsetExecutor.RunSetConfig);
+                        ResetLoadedRunSet(WorkSpace.RunsetExecutor.RunSetConfig);
                 }
             }
         }
@@ -895,9 +895,9 @@ namespace Ginger.Run
             foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
             {
                 if (runAsync)
-                    await Task.Run(() => App.RunsetExecutor.InitRunner(GR));
+                    await Task.Run(() => WorkSpace.RunsetExecutor.InitRunner(GR));
                 else
-                    App.RunsetExecutor.InitRunner(GR);
+                    WorkSpace.RunsetExecutor.InitRunner(GR);
 
                 this.Dispatcher.Invoke(() =>
                 {
@@ -1008,7 +1008,7 @@ namespace Ginger.Run
                 xRunsetEnvironmentCombo.DisplayMemberPath = nameof(ProjEnvironment.Name);
                 xRunsetEnvironmentCombo.SelectedValuePath = nameof(RepositoryItemBase.Guid);
 
-                GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xRunsetEnvironmentCombo, ComboBox.SelectedItemProperty, App.RunsetExecutor, nameof(RunsetExecutor.RunsetExecutionEnvironment));        
+                GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xRunsetEnvironmentCombo, ComboBox.SelectedItemProperty, WorkSpace.RunsetExecutor, nameof(RunsetExecutor.RunsetExecutionEnvironment));        
 
                 //select last used environment
                 if (xRunsetEnvironmentCombo.Items != null && xRunsetEnvironmentCombo.Items.Count > 0)
@@ -1057,7 +1057,7 @@ namespace Ginger.Run
                     runSetConfig.StartDirtyTracking();
 
                     mRunSetConfig = runSetConfig;
-                    App.RunsetExecutor.RunSetConfig = RunSetConfig;
+                    WorkSpace.RunsetExecutor.RunSetConfig = RunSetConfig;
                     
                     //Init Run Set Details Section
                     InitRunSetInfoSection();
@@ -1198,7 +1198,7 @@ namespace Ginger.Run
                 }
                 newRunner.PropertyChanged -= Runner_PropertyChanged;
                 newRunner.PropertyChanged += Runner_PropertyChanged;
-                App.RunsetExecutor.InitRunner(newRunner);
+                WorkSpace.RunsetExecutor.InitRunner(newRunner);
                 if(Count !=index && index > 0) //TODO : Check if need to add in between runner.
                 {
                     mRunSetConfig.GingerRunners.Insert(index, newRunner);
@@ -1310,15 +1310,15 @@ namespace Ginger.Run
                 return;
             }
             //run analyzer
-            int analyzeRes = await App.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
+            int analyzeRes = await WorkSpace.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
             if (analyzeRes == 1) return;//cancel run because issues found
 
             //run             
-            var result = await App.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
+            var result = await WorkSpace.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
 
             // handling ALM Defects Opening
             ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
-            if ((App.RunsetExecutor.DefectSuggestionsList != null) && (App.RunsetExecutor.DefectSuggestionsList.Count > 0) &&
+            if ((WorkSpace.RunsetExecutor.DefectSuggestionsList != null) && (WorkSpace.RunsetExecutor.DefectSuggestionsList.Count > 0) &&
                 (ALMDefectProfiles != null) && (ALMDefectProfiles.Count > 0))
             {
                 this.Dispatcher.Invoke(() =>
@@ -1365,7 +1365,7 @@ namespace Ginger.Run
                 return;
             }
 
-            App.RunsetExecutor.StopRun();//stops only running runners
+            WorkSpace.RunsetExecutor.StopRun();//stops only running runners
 
             AutoLogProxy.UserOperationEnd();
         }
@@ -1381,11 +1381,11 @@ namespace Ginger.Run
             }
 
             //run analyzer
-            int analyzeRes = await App.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
+            int analyzeRes = await WorkSpace.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
             if (analyzeRes == 1) return;//cancel run because issues found
 
             //continue run            
-            await App.RunsetExecutor.RunRunsetAsync(true);//doing continue run
+            await WorkSpace.RunsetExecutor.RunRunsetAsync(true);//doing continue run
             AutoLogProxy.UserOperationEnd();
         }
 
@@ -1477,7 +1477,7 @@ namespace Ginger.Run
                 }
                 if (WorkSpace.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                 {
-                    string runSetFolder = App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
+                    string runSetFolder = WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
                     reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder), false, null, null);
                 }
                 else
@@ -1977,7 +1977,7 @@ namespace Ginger.Run
                 GRCopy.ParentGuid = GR.Guid;
                 List<string> runnerNamesList = (from grs in RunSetConfig.GingerRunners select grs.Name).ToList<string>();
                 GRCopy.Name = General.GetItemUniqueName(GR.Name, runnerNamesList);
-                App.RunsetExecutor.InitRunner(GRCopy);
+                WorkSpace.RunsetExecutor.InitRunner(GRCopy);
                 AddRunner(GRCopy);
             }
             else
@@ -2194,13 +2194,13 @@ namespace Ginger.Run
         {            
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
             
-            foreach (GingerRunner GR in App.RunsetExecutor.Runners)
+            foreach (GingerRunner GR in WorkSpace.RunsetExecutor.Runners)
             {
                 bfs.Append(GR.BusinessFlows);                
             }
             if (!ExportResultsToALMConfigPage.Instance.IsProcessing)
             {
-                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
+                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
                 ExportResultsToALMConfigPage.Instance.ShowAsWindow();
             }
             else
