@@ -228,8 +228,8 @@ namespace Ginger.Functionalities
 
             FoundItem.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
             mSearchConfig = new SearchConfig() { MatchCase = false, MatchAllWord = false };
-            App.ObjFieldBinding(xMatchCaseCheckBox, CheckBox.IsCheckedProperty, mSearchConfig, nameof(SearchConfig.MatchCase));
-            App.ObjFieldBinding(xMatchWholeWordCheckBox, CheckBox.IsCheckedProperty, mSearchConfig, nameof(SearchConfig.MatchAllWord));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xMatchCaseCheckBox, CheckBox.IsCheckedProperty, mSearchConfig, nameof(SearchConfig.MatchCase));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xMatchWholeWordCheckBox, CheckBox.IsCheckedProperty, mSearchConfig, nameof(SearchConfig.MatchAllWord));
 
             xFindWhatTextBox.KeyDown += new KeyEventHandler(xFindWhatTextBox_KeyDown);
             xFoundItemsGrid.MouseDoubleClick += LineDoubleClicked;

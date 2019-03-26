@@ -43,7 +43,7 @@ namespace Ginger
             //TODO: load from external - so easier to update
             lblAppVersion.Content = "Version " + Ginger.App.AppVersion;
                                   
-            App.ObjFieldBinding(autoLoadLastSolCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(autoLoadLastSolCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
             SetRecentSolutions();
         }
 

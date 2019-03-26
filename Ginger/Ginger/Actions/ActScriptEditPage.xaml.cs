@@ -41,12 +41,12 @@ namespace Ginger.Actions
         {
             InitializeComponent();
             this.f = Act;
-            App.FillComboFromEnumVal(ScriptActComboBox, Act.ScriptCommand);
-            App.FillComboFromEnumVal(ScriptInterpreterComboBox, Act.ScriptInterpreterType);
+            GingerCore.General.FillComboFromEnumObj(ScriptActComboBox, Act.ScriptCommand);
+            GingerCore.General.FillComboFromEnumObj(ScriptInterpreterComboBox, Act.ScriptInterpreterType);
          
-            App.ObjFieldBinding(ScriptInterpreterComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptInterpreterType);
-            App.ObjFieldBinding(ScriptActComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptCommand);
-            App.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptInterpreterComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptInterpreterType);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptActComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptCommand);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptName);
            
             ScriptNameComboBox.SelectionChanged += ScriptNameComboBox_SelectionChanged;
            

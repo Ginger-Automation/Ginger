@@ -48,8 +48,8 @@ namespace Ginger.Reports.Designer
         {
             InitializeComponent();
             mReportTemplate = HReportTemplate;
-            App.ObjFieldBinding(NameTextBox, TextBox.TextProperty, mReportTemplate, HTMLReportTemplate.Fields.Name);
-            App.ObjFieldBinding(ReportHTMLTextBox, TextBox.TextProperty, mReportTemplate, HTMLReportTemplate.Fields.HTML);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NameTextBox, TextBox.TextProperty, mReportTemplate, HTMLReportTemplate.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ReportHTMLTextBox, TextBox.TextProperty, mReportTemplate, HTMLReportTemplate.Fields.HTML);
             LoadReportTemplatePage();
             LoadReportInfoTreeView();
         }

@@ -312,9 +312,9 @@ namespace Ginger
                 else
                 {
                     xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
-                   
-                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
-                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
+
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
                     xSolutionTabsListView.SelectedItem = null;
                     xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
                 }

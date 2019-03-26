@@ -43,9 +43,9 @@ namespace Ginger.Actions
             TemplatesFilesPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\Templates\");
             OutputFilesPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\OutputFiles\");
             this.mAct = (ActGenerateFileFromTemplate)act;
-            App.FillComboFromEnumVal(FileActionComboBox, mAct.FileAction);
-            App.ObjFieldBinding(FileActionComboBox, ComboBox.TextProperty, mAct, ActGenerateFileFromTemplate.Fields.FileAction);
-            App.ObjFieldBinding(DataFileNameTextBox, TextBox.TextProperty, mAct, ActGenerateFileFromTemplate.Fields.DataFileName);
+            GingerCore.General.FillComboFromEnumObj(FileActionComboBox, mAct.FileAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FileActionComboBox, ComboBox.TextProperty, mAct, ActGenerateFileFromTemplate.Fields.FileAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DataFileNameTextBox, TextBox.TextProperty, mAct, ActGenerateFileFromTemplate.Fields.DataFileName);
             TemplateFileNamComboBox.SelectedValue = System.IO.Path.GetFileName(mAct.TemplateFileName)!=null?System.IO.Path.GetFileName(mAct.TemplateFileName):null;
             OutputFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActGenerateFileFromTemplate.Fields.OutputFileName));
            

@@ -38,7 +38,7 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
             SetComboListsValues(); 
-            App.ObjFieldBinding(VariableNameComboBox, ComboBox.TextProperty, mAct, "VariableName");                  
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VariableNameComboBox, ComboBox.TextProperty, mAct, "VariableName");                  
         }
 
         private void SetComboListsValues()

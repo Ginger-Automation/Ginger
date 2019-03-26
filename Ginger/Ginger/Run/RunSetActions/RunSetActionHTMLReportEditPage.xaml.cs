@@ -38,9 +38,9 @@ namespace Ginger.Run.RunSetActions
 
             this.runSetActionHTMLReport = RunSetActionHTMLReport;
 
-            App.ObjFieldBinding(HTMLReportFolderTextBox, TextBox.TextProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.HTMLReportFolderName);
-            App.ObjFieldBinding(UseAlternativeHTMLReportFolderCbx, CheckBox.IsCheckedProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.isHTMLReportFolderNameUsed);
-            App.ObjFieldBinding(UsePermanentHTMLReportFolderCbx, CheckBox.IsCheckedProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.isHTMLReportPermanentFolderNameUsed);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(HTMLReportFolderTextBox, TextBox.TextProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.HTMLReportFolderName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseAlternativeHTMLReportFolderCbx, CheckBox.IsCheckedProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.isHTMLReportFolderNameUsed);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UsePermanentHTMLReportFolderCbx, CheckBox.IsCheckedProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.isHTMLReportPermanentFolderNameUsed);
             CurrentTemplatePickerCbx_Binding();
         }
 

@@ -123,7 +123,7 @@ namespace Ginger.Agents
             xAgentsComboBox.ItemsSource = mOptionalAgentsList;
             xAgentsComboBox.DisplayMemberPath = nameof(Agent.Name);
 
-            App.ObjFieldBinding(xAgentsComboBox, ComboBox.SelectedItemProperty, this, nameof(this.SelectedAgent));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentsComboBox, ComboBox.SelectedItemProperty, this, nameof(this.SelectedAgent));
 
             if (mOptionalAgentsList != null && mOptionalAgentsList.Count > 0)
             {

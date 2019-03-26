@@ -19,11 +19,8 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger;
 using Ginger.Extensions;
-using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.BindingLib;
 using GingerWPF.WizardLib;
 using System.Linq;
 using System.Windows;

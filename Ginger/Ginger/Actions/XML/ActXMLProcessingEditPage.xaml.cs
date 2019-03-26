@@ -41,7 +41,7 @@ namespace Ginger.Actions.XML
             this.mAct = (ActXMLProcessing)act;            
 
             //// Bind Controls
-            App.ObjFieldBinding(XMLTemplateFileTextBox , TextBox.TextProperty, mAct.TemplateFileName , ActInputValue.Fields.Value);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(XMLTemplateFileTextBox , TextBox.TextProperty, mAct.TemplateFileName , ActInputValue.Fields.Value);
             TargetFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.TargetFileName);
 
             SetGridView();

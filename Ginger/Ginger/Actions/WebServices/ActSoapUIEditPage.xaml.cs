@@ -58,13 +58,13 @@ namespace Ginger.Actions.WebServices
         {
             XMLFilePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActSoapUI.Fields.XMLFile),true, true, UCValueExpression.eBrowserType.File, "xml", new RoutedEventHandler(BrowseButtonXML_Click));
 
-            GingerCore.General.ActInputValueBinding(DoNotImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.ImportFile));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.ImportFile));
 
-            GingerCore.General.ActInputValueBinding(IgnoreReportXMLValidation, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.IgnoreValidation));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(IgnoreReportXMLValidation, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.IgnoreValidation));
 
-            GingerCore.General.ActInputValueBinding(TestSuiteComboBox, ComboBox.TextProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.TestSuite));
-            GingerCore.General.ActInputValueBinding(TestCaseComboBox, ComboBox.TextProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.TestCase));
-            GingerCore.General.ActInputValueBinding(UIrelatedCheckBox, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.UIrelated));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(TestSuiteComboBox, ComboBox.TextProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.TestSuite));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(TestCaseComboBox, ComboBox.TextProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.TestCase));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(UIrelatedCheckBox, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.UIrelated));
             PropertiesOrPlaceHoldersInit();
             MergeAndClearList();
             InitPropertiesGrid(mAct.AllProperties, "Properties", "Property Type", "Property Name", "Property Value", "Property Calculated Value");
@@ -93,8 +93,8 @@ namespace Ginger.Actions.WebServices
             GlobalPropertiesVEGrid.Init(Context.GetAsContext(mAct.Context), mAct.GlobalProperties, "Global Properties", "Property Name", "Property Value", "Property Calculated Value");
             ExpendPopulatedExpenders();
 
-            GingerCore.General.ActInputValueBinding(AddXMLTagsToOutput, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.AddXMLResponse));
-            GingerCore.General.ObjFieldBinding(OpenExecutionDirectoryButton, Button.IsEnabledProperty, mAct, ActSoapUI.Fields.isActionExecuted, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(AddXMLTagsToOutput, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.AddXMLResponse));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(OpenExecutionDirectoryButton, Button.IsEnabledProperty, mAct, ActSoapUI.Fields.isActionExecuted, BindingMode.OneWay);
             ProjectPropertiesGrid.VEGrid.AddToolbarTool("@Reset_16x16.png", "Reset Properties to default", new RoutedEventHandler(ResetProjectButton_Click));
             
         }

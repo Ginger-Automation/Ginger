@@ -40,8 +40,8 @@ namespace Ginger.Actions
 
             mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
-            App.FillComboFromEnumVal(FileActionMode, mAct.FileOperationMode);
-            App.ObjFieldBinding(FileActionMode, ComboBox.SelectedValueProperty, mAct, "FileOperationMode");
+            GingerCore.General.FillComboFromEnumObj(FileActionMode, mAct.FileOperationMode);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FileActionMode, ComboBox.SelectedValueProperty, mAct, "FileOperationMode");
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)

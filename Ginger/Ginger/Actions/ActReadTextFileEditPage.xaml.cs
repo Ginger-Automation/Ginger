@@ -40,14 +40,14 @@ namespace Ginger.Actions
 
             mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
-            App.FillComboFromEnumVal(FileActionMode, mAct.FileActionMode);
-            App.ObjFieldBinding(FileActionMode, ComboBox.SelectedValueProperty, mAct,"FileActionMode");
+            GingerCore.General.FillComboFromEnumObj(FileActionMode, mAct.FileActionMode);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FileActionMode, ComboBox.SelectedValueProperty, mAct,"FileActionMode");
 
-            App.FillComboFromEnumVal (TextFileEncoding, mAct.TextFileEncoding);
-            App.ObjFieldBinding (TextFileEncoding, ComboBox.SelectedValueProperty, mAct, "TextFileEncoding");
+            GingerCore.General.FillComboFromEnumObj(TextFileEncoding, mAct.TextFileEncoding);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TextFileEncoding, ComboBox.SelectedValueProperty, mAct, "TextFileEncoding");
 
-            App.FillComboFromEnumVal(TextFileAppendType, mAct.AppendAt);
-            App.ObjFieldBinding(TextFileAppendType, ComboBox.SelectedValueProperty, mAct, "AppendAt");
+            GingerCore.General.FillComboFromEnumObj(TextFileAppendType, mAct.AppendAt);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TextFileAppendType, ComboBox.SelectedValueProperty, mAct, "AppendAt");
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)

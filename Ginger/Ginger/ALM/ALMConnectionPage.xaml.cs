@@ -47,11 +47,11 @@ namespace Ginger.ALM
             this.isConnWin = isConnWin;
             this.almConectStyle = almConnectStyle;
 
-            App.ObjFieldBinding(ServerURLTextBox, TextBox.TextProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMServerURL));
-            App.ObjFieldBinding(RestAPICheckBox, CheckBox.IsCheckedProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.UseRest));
-            App.ObjFieldBinding(UserNameTextBox, TextBox.TextProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMUserName));
-            App.ObjFieldBinding(DomainComboBox, ComboBox.SelectedValueProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMDomain));
-            App.ObjFieldBinding(ProjectComboBox, ComboBox.SelectedValueProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMProjectKey));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ServerURLTextBox, TextBox.TextProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMServerURL));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RestAPICheckBox, CheckBox.IsCheckedProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.UseRest));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UserNameTextBox, TextBox.TextProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMUserName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DomainComboBox, ComboBox.SelectedValueProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMDomain));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProjectComboBox, ComboBox.SelectedValueProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMProjectKey));
             PasswordTextBox.Password = ALMIntegration.Instance.ALMPassword(); //can't do regular binding with PasswordTextBox control for security reasons
 
             if (!WorkSpace.Instance.BetaFeatures.Rally)

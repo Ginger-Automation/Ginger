@@ -51,16 +51,16 @@ namespace Ginger.Drivers
             if (mAgent.DriverConfiguration == null) mAgent.DriverConfiguration = new ObservableList<DriverConfigParam>();
 
             DriverConfigParam ModelDCP = mAgent.GetOrCreateParam("Model" , "");
-            App.ObjFieldBinding(DeviceModelTextBox, TextBox.TextProperty, ModelDCP, "Value");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceModelTextBox, TextBox.TextProperty, ModelDCP, "Value");
 
             DriverConfigParam SerialDCP = mAgent.GetOrCreateParam("Serial" , "");
-            App.ObjFieldBinding(DeviceSerialTextBox, TextBox.TextProperty, SerialDCP, "Value");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceSerialTextBox, TextBox.TextProperty, SerialDCP, "Value");
 
             DriverConfigParam LaunchEmulatorCommand = mAgent.GetOrCreateParam("LaunchEmulatorCommand", "");
-            App.ObjFieldBinding(LaunchEmulatorCommandTextBox, TextBox.TextProperty, LaunchEmulatorCommand, "Value");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LaunchEmulatorCommandTextBox, TextBox.TextProperty, LaunchEmulatorCommand, "Value");
 
             DriverConfigParam DeviceConfigFolder = mAgent.GetOrCreateParam("DeviceConfigFolder", "");
-            App.ObjFieldBinding(DeviceConfigFolderTextBox, TextBox.TextProperty, DeviceConfigFolder, "Value");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceConfigFolderTextBox, TextBox.TextProperty, DeviceConfigFolder, "Value");
 
             UpdateDeviceViewPage();
         }
@@ -73,10 +73,10 @@ namespace Ginger.Drivers
             //???
             //TODO: fix me , from some reason the bind above didn't work so after the window is closed we bind again.. temp solution
             DriverConfigParam ModelDCP = mAgent.GetOrCreateParam("Model", "");
-            App.ObjFieldBinding(DeviceModelTextBox, TextBox.TextProperty, ModelDCP, "Value");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceModelTextBox, TextBox.TextProperty, ModelDCP, "Value");
 
             DriverConfigParam SerialDCP = mAgent.GetOrCreateParam("Serial", "");
-            App.ObjFieldBinding(DeviceSerialTextBox, TextBox.TextProperty, SerialDCP, "Value");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceSerialTextBox, TextBox.TextProperty, SerialDCP, "Value");
         }
 
         private void StartEmulatorButton_Click(object sender, RoutedEventArgs e)

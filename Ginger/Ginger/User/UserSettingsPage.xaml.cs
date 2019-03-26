@@ -54,9 +54,9 @@ namespace Ginger.User
 
             xLoggingLevelComboBox.BindControl( WorkSpace.UserProfile, nameof(UserProfile.AppLogLevel));
 
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAutoLoadLastSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToUpgradeSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToRecoverSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoLoadLastSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAskToUpgradeSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAskToRecoverSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));            
         }
 
         private void xTerminologyTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

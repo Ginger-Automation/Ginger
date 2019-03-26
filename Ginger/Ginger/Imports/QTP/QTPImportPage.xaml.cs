@@ -82,7 +82,7 @@ namespace Ginger.Imports.QTP
             SetActivitiesGridView();
 
             eFilter mFilter = eFilter.AllLines;
-            App.FillComboFromEnumVal(FilterComboBox, mFilter);
+            GingerCore.General.FillComboFromEnumObj(FilterComboBox, mFilter);
             
             InitCommonFunctionMappingUCGrid();
 

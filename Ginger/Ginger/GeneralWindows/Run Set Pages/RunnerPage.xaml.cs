@@ -163,11 +163,11 @@ namespace Ginger.Run
             InitializeComponent();
             mRunner = runner;
             mContext = context;
-            ViewMode1 = Viewmode;            
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xBusinessflowsTotalCount, Label.ContentProperty, mRunner, nameof(GingerRunner.TotalBusinessflow));
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mRunner, nameof(GingerRunner.Status), BindingMode.OneWay);
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xStatusLabel, ImageMakerControl.ImageTypeProperty, mRunner, nameof(GingerRunner.Status), BindingMode.OneWay, bindingConvertor: new StatusIconConverter());
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xRunnerActive, ucButton.ButtonImageTypeProperty, mRunner, nameof(GingerRunner.Active), BindingMode.TwoWay, bindingConvertor: new ActiveIconConverter());
+            ViewMode1 = Viewmode;
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBusinessflowsTotalCount, Label.ContentProperty, mRunner, nameof(GingerRunner.TotalBusinessflow));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mRunner, nameof(GingerRunner.Status), BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusLabel, ImageMakerControl.ImageTypeProperty, mRunner, nameof(GingerRunner.Status),  bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunnerActive, ucButton.ButtonImageTypeProperty, mRunner, nameof(GingerRunner.Active),  bindingConvertor: new ActiveIconConverter(), BindingMode.TwoWay);
             UpdateRunnerInfo();
             if(Viewmode)
             {

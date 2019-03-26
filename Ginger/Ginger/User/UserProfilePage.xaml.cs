@@ -51,19 +51,19 @@ namespace Ginger.User
                 xProfileImageImgBrush.ImageSource = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage( WorkSpace.UserProfile.ProfileImage));
             }
 
-            App.ObjFieldBinding(xUserNameTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserName), BindingMode.OneWay);
-            App.ObjFieldBinding(xUserFirstNameTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserFirstName));
-            App.ObjFieldBinding(xUserMiddleNameTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserMiddleName));
-            App.ObjFieldBinding(xUserLastNameTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserLastName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserNameTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserName), BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserFirstNameTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserFirstName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserMiddleNameTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserMiddleName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserLastNameTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserLastName));
                       
             mOriginalUserType =  WorkSpace.UserProfile.UserType;
             xUserTypeComboBox.BindControl( WorkSpace.UserProfile, nameof(UserProfile.UserType));
             xUserTypeNoteLbl.Visibility = Visibility.Collapsed;
             xUserRoleComboBox.BindControl( WorkSpace.UserProfile, nameof(UserProfile.UserRole));
-            App.ObjFieldBinding(xUserDepartmentTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserDepartment));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserDepartmentTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserDepartment));
 
-            App.ObjFieldBinding(xUserEmailAddressTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserEmail));
-            App.ObjFieldBinding(xUserPhoneTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserPhone));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserEmailAddressTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserEmail));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserPhoneTxtBox, TextBox.TextProperty,  WorkSpace.UserProfile, nameof(UserProfile.UserPhone));
         }
 
         private void xProfileImageBrowseBtn_Click(object sender, RoutedEventArgs e)

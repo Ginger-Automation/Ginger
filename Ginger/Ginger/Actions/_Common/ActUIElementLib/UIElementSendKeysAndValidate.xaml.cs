@@ -69,7 +69,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             LocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocateBy), Platform.GetPlatformUIElementLocatorsList(), false, null);
             LocatorValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
             ValidationElementValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementValue), true, false, UCValueExpression.eBrowserType.Folder);
-            GingerCore.General.ActInputValueBinding(DefineHandleAction, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.DefineHandleAction, "False"));         
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DefineHandleAction, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.DefineHandleAction, "False"));         
         }        
         
         public Page GetPlatformEditPage()

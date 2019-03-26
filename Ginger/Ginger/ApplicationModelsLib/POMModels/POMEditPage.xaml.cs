@@ -25,10 +25,7 @@ using Ginger.Agents;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
-using GingerCore.Drivers;
-using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.BindingLib;
 using System;
 using System.Drawing;
 using System.IO;
@@ -99,9 +96,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPOM = POM;
             mEditMode = editMode;
 
-            ControlsBinding.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
-            ControlsBinding.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
-            ControlsBinding.ObjFieldBinding(xPageURLTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.PageURL));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPageURLTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.PageURL));
 
             xTargetApplicationComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             FillTargetAppsComboBox();
@@ -124,7 +121,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             ePlatformType mAppPlatform = WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
             ObservableList<Agent> optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
-            App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
             xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);         
         }
 

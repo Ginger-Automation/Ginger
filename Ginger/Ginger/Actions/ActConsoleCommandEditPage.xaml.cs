@@ -42,11 +42,11 @@ namespace Ginger.Actions
             InitializeComponent();
             this.mActConsoleCommand = actConsoleCommand;
             List<object> list = GetActionListPlatform();            
-            App.FillComboFromEnumVal(ConsoleActionComboBox, actConsoleCommand.ConsoleCommand, list);
-            App.ObjFieldBinding(ConsoleActionComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ConsoleCommand);
-            App.ObjFieldBinding(CommandTextBox, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.Command);
-            App.ObjFieldBinding(ScriptNameComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ScriptName);
-            App.ObjFieldBinding(txtWait, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.WaitTime);
+            GingerCore.General.FillComboFromEnumObj(ConsoleActionComboBox, actConsoleCommand.ConsoleCommand, list);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConsoleActionComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ConsoleCommand);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CommandTextBox, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.Command);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ScriptName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWait, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.WaitTime);
             xDelimiterVE.BindControl(Context.GetAsContext(actConsoleCommand.Context), actConsoleCommand, nameof(ActConsoleCommand.Delimiter));
             txtExpected.Init(Context.GetAsContext(mActConsoleCommand.Context), mActConsoleCommand, ActConsoleCommand.Fields.ExpString);           
         }

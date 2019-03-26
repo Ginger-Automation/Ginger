@@ -504,15 +504,15 @@ namespace Ginger.Run
         }
         void InitRunSetConfigurations()
         {
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xRunSetNameTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xRunSetDescriptionTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Description));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunSetNameTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunSetDescriptionTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Description));
             TagsViewer.Init(mRunSetConfig.Tags);
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xRunWithAnalyzercheckbox, CheckBox.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.RunWithAnalyzer));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunWithAnalyzercheckbox, CheckBox.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.RunWithAnalyzer));
         }
 
         void InitRunSetInfoSection()
         {
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xRunSetNameLbl, Label.ContentProperty, mRunSetConfig, nameof(RunSetConfig.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunSetNameLbl, Label.ContentProperty, mRunSetConfig, nameof(RunSetConfig.Name));
             mRunSetConfig.PropertyChanged += MRunSetConfig_PropertyChanged;
             SetRunSetDescription();
         }
@@ -749,7 +749,7 @@ namespace Ginger.Run
         {
             try
             {
-                GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xRunnerNamelbl, Label.ContentProperty, mCurrentSelectedRunner.Runner, nameof(GingerRunner.Name));
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunnerNamelbl, Label.ContentProperty, mCurrentSelectedRunner.Runner, nameof(GingerRunner.Name));
 
                 xBusinessflowsRunnerItemsLoadingIcon.Visibility = Visibility.Visible;
                 xBusinessflowsRunnerItemsListView.Visibility = Visibility.Collapsed;
@@ -778,7 +778,7 @@ namespace Ginger.Run
                 //mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick -= dispatcherTimerElapsedTick;
                 //mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick += dispatcherTimerElapsedTick;               
 
-                GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mCurrentSelectedRunner.Runner, nameof(GingerRunner.Status), BindingMode.OneWay);                
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mCurrentSelectedRunner.Runner, nameof(GingerRunner.Status), BindingMode.OneWay);                
             }
             finally
             {
@@ -863,7 +863,7 @@ namespace Ginger.Run
                 FL.DestinationPosition = FlowLink.eFlowElementPosition.Left;
                 FL.Margin = new Thickness(0, 0, mFlowX, 0);
 
-                GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(FL, FlowLink.VisibilityProperty, mRunSetConfig, nameof(RunSetConfig.RunModeParallel), System.Windows.Data.BindingMode.OneWay, bindingConvertor: new ReverseBooleanToVisibilityConverter());
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FL, FlowLink.VisibilityProperty, mRunSetConfig, nameof(RunSetConfig.RunModeParallel), bindingConvertor: new ReverseBooleanToVisibilityConverter(), System.Windows.Data.BindingMode.OneWay);
                 mFlowDiagram.AddConnector(FL);
             }
 
@@ -1024,7 +1024,7 @@ namespace Ginger.Run
                 xRunsetEnvironmentCombo.DisplayMemberPath = nameof(ProjEnvironment.Name);
                 xRunsetEnvironmentCombo.SelectedValuePath = nameof(RepositoryItemBase.Guid);
 
-                GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xRunsetEnvironmentCombo, ComboBox.SelectedItemProperty, WorkSpace.RunsetExecutor, nameof(RunsetExecutor.RunsetExecutionEnvironment));        
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunsetEnvironmentCombo, ComboBox.SelectedItemProperty, WorkSpace.RunsetExecutor, nameof(RunsetExecutor.RunsetExecutionEnvironment));        
 
                 //select last used environment
                 if (xRunsetEnvironmentCombo.Items != null && xRunsetEnvironmentCombo.Items.Count > 0)
@@ -1059,7 +1059,7 @@ namespace Ginger.Run
                 xRunnersCombo.DisplayMemberPath = nameof(GingerRunner.Name);
                 xRunnersCombo.SelectedValuePath = nameof(GingerRunner.Guid);
 
-                GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xRunnersCombo, ComboBox.SelectedItemProperty, mRunSetConfig.GingerRunners, nameof(GingerRunner.Guid));              
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunnersCombo, ComboBox.SelectedItemProperty, mRunSetConfig.GingerRunners, nameof(GingerRunner.Guid));              
             }
         }        
         public async void LoadRunSetConfig(RunSetConfig runSetConfig, bool runAsync = true, bool ViewMode=false)

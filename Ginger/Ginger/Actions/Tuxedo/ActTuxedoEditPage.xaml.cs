@@ -42,8 +42,8 @@ namespace Ginger.Actions.Tuxedo
             this.mAct = (ActTuxedo)act;            
 
             // Bind Controls
-            App.ObjFieldBinding(PCPath, TextBox.TextProperty, mAct.PCPath, ActInputValue.Fields.Value);
-            App.ObjFieldBinding(PreComamndTextBox, TextBox.TextProperty, mAct.PreCommand, ActInputValue.Fields.Value);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PCPath, TextBox.TextProperty, mAct.PCPath, ActInputValue.Fields.Value);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PreComamndTextBox, TextBox.TextProperty, mAct.PreCommand, ActInputValue.Fields.Value);            
              
             UnixPath.Init(Context.GetAsContext(mAct.Context), mAct.UnixPath);
             HostUCVE.Init(Context.GetAsContext(mAct.Context), mAct.Host);

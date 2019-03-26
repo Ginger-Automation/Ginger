@@ -120,15 +120,15 @@ namespace Ginger
             btnResetFromCurrentActivity.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 14);
             btnResetFromCurrentAction.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 14);
             cboSpeed.Text = "0";
-            App.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, mRunner, Ginger.Run.GingerRunner.Fields.RunInSimulationMode);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, mRunner, Ginger.Run.GingerRunner.Fields.RunInSimulationMode);
             AppAgentsMappingExpander2Frame.Content = new ApplicationAgentsMapPage(mContext);
             SetExpanders();
             //Bind between Menu expanders and actual grid expanders
-            App.ObjFieldBinding(BFVariablesExpander, Expander.IsExpandedProperty, BFVariablesExpander2, "IsExpanded");
-            App.ObjFieldBinding(BFActivitiesGroupsExpander, Expander.IsExpandedProperty, BFActivitiesGroupsExpander2, "IsExpanded");
-            App.ObjFieldBinding(BFActivitiesExpander, Expander.IsExpandedProperty, BFActivitiesExpander2, "IsExpanded");
-            App.ObjFieldBinding(ActivityVariablesExpander, Expander.IsExpandedProperty, ActivityVariablesExpander2, "IsExpanded");
-            App.ObjFieldBinding(ActivityActionsExpander, Expander.IsExpandedProperty, ActivityActionsExpander2, "IsExpanded");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BFVariablesExpander, Expander.IsExpandedProperty, BFVariablesExpander2, "IsExpanded");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BFActivitiesGroupsExpander, Expander.IsExpandedProperty, BFActivitiesGroupsExpander2, "IsExpanded");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BFActivitiesExpander, Expander.IsExpandedProperty, BFActivitiesExpander2, "IsExpanded");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActivityVariablesExpander, Expander.IsExpandedProperty, ActivityVariablesExpander2, "IsExpanded");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActivityActionsExpander, Expander.IsExpandedProperty, ActivityActionsExpander2, "IsExpanded");
             BFVariablesExpander.IsExpanded = false;
             BFActivitiesGroupsExpander.IsExpanded = false;
             ActivityVariablesExpander.IsExpanded = false;

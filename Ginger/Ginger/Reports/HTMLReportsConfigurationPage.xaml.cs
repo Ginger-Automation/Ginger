@@ -44,12 +44,12 @@ namespace Ginger.Reports
         {
             mHTMLReportConfiguration =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             mHTMLReportConfiguration.StartDirtyTracking();
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(LimitReportFolder, CheckBox.IsCheckedProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.LimitReportFolderSize));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LimitReportFolder, CheckBox.IsCheckedProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.LimitReportFolderSize));
           
             if (LimitReportFolder.IsChecked == true)
             {
                 FolderMaxSize.Visibility = Visibility.Visible;
-                GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(SizeTextBox, TextBox.TextProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.HTMLReportConfigurationMaximalFolderSize));
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SizeTextBox, TextBox.TextProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.HTMLReportConfigurationMaximalFolderSize));
             }
             else
                 FolderMaxSize.Visibility = Visibility.Collapsed;
@@ -60,7 +60,7 @@ namespace Ginger.Reports
         private void SetControls()
         {
             DefaultTemplatePickerCbx_Binding();
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(HTMLReportFolderTextBox, TextBox.TextProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.HTMLReportsFolder));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(HTMLReportFolderTextBox, TextBox.TextProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.HTMLReportsFolder));
             if (mHTMLReportConfiguration.HTMLReportsAutomaticProdIsEnabled)
             {
                 htmlReportAutoProdOnRadioBtn.IsChecked = true;

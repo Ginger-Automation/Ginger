@@ -35,8 +35,8 @@ namespace Ginger.Actions
 
             currentAct = Act;
 
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.UIATextBoxAction);
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "UIATextBoxAction");
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.UIATextBoxAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "UIATextBoxAction");
 
             //TODO add dynamic parent windows population
            // lstParentWindows = new ObservableCollection<string>();

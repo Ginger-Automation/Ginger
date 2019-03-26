@@ -151,7 +151,7 @@ namespace Ginger.UserControlsLib.TextEditor
 
         internal void Bind(object obj, string attrName)
         {
-            GingerCore.General.ObjFieldBinding(this, EditorTextProperty, obj, attrName);                        
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(this, EditorTextProperty, obj, attrName);                        
         }
 
         public void Save()

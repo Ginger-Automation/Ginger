@@ -30,14 +30,14 @@ namespace Ginger.Variables
         {
             InitializeComponent();
 
-            App.ObjFieldBinding(txtMinValue, TextBox.TextProperty, var, nameof(VariableRandomString.Min));
-            App.ObjFieldBinding(txtMaxValue, TextBox.TextProperty, var, nameof(VariableRandomString.Max));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtMinValue, TextBox.TextProperty, var, nameof(VariableRandomString.Min));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtMaxValue, TextBox.TextProperty, var, nameof(VariableRandomString.Max));
             
-            App.ObjFieldBinding(cbDigit, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsDigit));
-            App.ObjFieldBinding(cbLower, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsLowerCase));
-            App.ObjFieldBinding(cbUpper, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsUpperCase));
-            App.ObjFieldBinding(cbLowerCaseAndDigits, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsLowerCaseAndDigits));
-            App.ObjFieldBinding(cbUpperCaseAndDigits, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsUpperCaseAndDigits));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbDigit, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsDigit));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbLower, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsLowerCase));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbUpper, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsUpperCase));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbLowerCaseAndDigits, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsLowerCaseAndDigits));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbUpperCaseAndDigits, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsUpperCaseAndDigits));
         }
     }
 }

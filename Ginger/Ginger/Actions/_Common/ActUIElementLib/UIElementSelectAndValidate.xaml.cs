@@ -55,7 +55,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             SubElement.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementType), Platform.GetSubElementType(mAct.ElementType).ToList(), false, null);
             SubElementLocateBy.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementLocateBy), Platform.GetPlatformUIElementLocatorsList(), false, null);
             SubElementLocatorValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);            
-            GingerCore.General.ActInputValueBinding(DefineHandleAction, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.DefineHandleAction, "False"));         
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DefineHandleAction, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.DefineHandleAction, "False"));         
         }        
         
         public Page GetPlatformEditPage()

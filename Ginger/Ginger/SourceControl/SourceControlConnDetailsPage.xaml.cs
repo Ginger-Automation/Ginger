@@ -64,27 +64,27 @@ namespace Ginger.SourceControl
             SourceControlURLTextBox.IsReadOnly = true;
             SourceControlURLTextBox.IsEnabled = false;
 
-            App.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlUser));
-            App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlPass));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlUser));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlPass));
             if (SourceControlClassTextBox.Text == SourceControlBase.eSourceControlType.GIT.ToString())
             {
                 xTimeoutPanel.Visibility = Visibility.Hidden;
             }
             else
             {
-                App.ObjFieldBinding(xTextSourceControlConnectionTimeout, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlTimeout));
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTextSourceControlConnectionTimeout, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlTimeout));
                 xTimeoutPanel.Visibility = Visibility.Visible;
                
               
             }
-            App.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SolutionSourceControlAuthorName));
-            App.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SolutionSourceControlAuthorEmail));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SolutionSourceControlAuthorName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty,  WorkSpace.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SolutionSourceControlAuthorEmail));
 
             if ( WorkSpace.UserProfile.Solution.SourceControl.IsSupportingLocks)
             {
                 ShowIndicationkForLockedItems.Visibility = Visibility.Visible;
             }
-            App.ObjFieldBinding(ShowIndicationkForLockedItems, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.ShowIndicationkForLockedItems));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ShowIndicationkForLockedItems, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile.Solution, nameof(Solution.ShowIndicationkForLockedItems));
 
             SourceControlPassTextBox.Password =  WorkSpace.UserProfile.Solution.SourceControl.SourceControlPass;
 

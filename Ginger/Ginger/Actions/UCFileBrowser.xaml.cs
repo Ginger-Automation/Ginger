@@ -42,7 +42,7 @@ namespace Ginger.Actions
         {
             this.obj = obj;
             this.AttrName = AttrName;
-            App.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, obj, AttrName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, obj, AttrName);
            MakePathsRelative= mMakePathsRelative;
         }
 
@@ -52,7 +52,7 @@ namespace Ginger.Actions
             MakePathsRelative = mMakePathsRelative;
             this.obj = AIV;
             this.AttrName = ActInputValue.Fields.Value;
-            App.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, obj, AttrName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, obj, AttrName);
         }
 
         private void BrowseFileButton_Click(object sender, RoutedEventArgs e)

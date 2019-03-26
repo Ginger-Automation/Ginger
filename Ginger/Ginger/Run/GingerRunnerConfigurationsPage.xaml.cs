@@ -67,15 +67,15 @@ namespace Ginger.Run
             ExecutionTags.Init(mGingerRunner.FilterExecutionTags);
             if (mPageContext == ePageContext.RunTab)
             {
-                App.FillComboFromEnumVal(RunOptionComboBox, mGingerRunner.RunOption);
-                App.ObjFieldBinding(RunOptionComboBox, ComboBox.SelectedValueProperty, mGingerRunner, GingerRunner.Fields.RunOption);
+                GingerCore.General.FillComboFromEnumObj(RunOptionComboBox, mGingerRunner.RunOption);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RunOptionComboBox, ComboBox.SelectedValueProperty, mGingerRunner, GingerRunner.Fields.RunOption);
 
-                App.ObjFieldBinding(GingerNameTextBox, TextBox.TextProperty, mGingerRunner, GingerRunner.Fields.Name);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(GingerNameTextBox, TextBox.TextProperty, mGingerRunner, GingerRunner.Fields.Name);
 
-                App.ObjFieldBinding(useSpecificEnvChkbox, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.UseSpecificEnvironment);
-                App.ObjFieldBinding(ExecutionTagsChkbox, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.FilterExecutionByTags);
-                //App.ObjFieldBinding(specificEnvComboBox, ComboBox.DisplayMemberPathProperty, mGingerRunner, GingerRunner.Fields.SpecificEnvironmentName);
-                App.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.RunInSimulationMode);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(useSpecificEnvChkbox, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.UseSpecificEnvironment);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ExecutionTagsChkbox, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.FilterExecutionByTags);
+                //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(specificEnvComboBox, ComboBox.DisplayMemberPathProperty, mGingerRunner, GingerRunner.Fields.SpecificEnvironmentName);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.RunInSimulationMode);
             }
             else
             {

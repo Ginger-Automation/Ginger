@@ -68,7 +68,7 @@ namespace Ginger.Run
             
             mBusinessFlow.SaveBackup();
 
-			App.ObjFieldBinding(MandatoryBusinessFlowCB, CheckBox.IsCheckedProperty, businessFlow, BusinessFlow.Fields.Mandatory, BindingMode.TwoWay);
+			GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MandatoryBusinessFlowCB, CheckBox.IsCheckedProperty, businessFlow, BusinessFlow.Fields.Mandatory, BindingMode.TwoWay);
 
 			RunDescritpion.Init(mContext, businessFlow, BusinessFlow.Fields.RunDescription);
 

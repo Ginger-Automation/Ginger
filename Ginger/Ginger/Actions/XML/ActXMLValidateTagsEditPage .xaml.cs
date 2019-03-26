@@ -40,9 +40,9 @@ namespace Ginger.Actions.XML
             this.mAct = (ActXMLTagValidation)act;
 
             //// Bind Controls
-            App.ObjFieldBinding(XMLFileTextBox , TextBox.TextProperty, mAct.InputFile , ActInputValue.Fields.Value);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(XMLFileTextBox , TextBox.TextProperty, mAct.InputFile , ActInputValue.Fields.Value);
       
-            App.ObjFieldBinding(ReqisFromFile, CheckBox.IsCheckedProperty, mAct, "ReqisFromFile");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ReqisFromFile, CheckBox.IsCheckedProperty, mAct, "ReqisFromFile");
 
             xDocumentTypeComboBox.Init(mAct, ActXMLTagValidation.Fields.DocumentType, typeof(ActXMLTagValidation.eDocumentType));
      

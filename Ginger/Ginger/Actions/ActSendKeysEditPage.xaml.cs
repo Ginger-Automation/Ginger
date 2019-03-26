@@ -32,8 +32,8 @@ namespace Ginger.Actions
         {
             InitializeComponent();
             this.mAct = Act;
-             App.ObjFieldBinding(SendKeysSlowly, CheckBox.IsCheckedProperty, mAct, ActSendKeys.Fields.IsSendKeysSlowly);
-             App.ObjFieldBinding(WindowFocusRequiredCheckBox, CheckBox.IsCheckedProperty, mAct, ActSendKeys.Fields.ISWindowFocusRequired);
+             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SendKeysSlowly, CheckBox.IsCheckedProperty, mAct, ActSendKeys.Fields.IsSendKeysSlowly);
+             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WindowFocusRequiredCheckBox, CheckBox.IsCheckedProperty, mAct, ActSendKeys.Fields.ISWindowFocusRequired);
             List<GingerCore.General.ComboItem> comboBoxItemsList = GeneratecomboBoxItemsListSendkeys();
             Value.Init(mAct.GetOrCreateInputParam(ActSendKeys.Fields.Value), comboBoxItemsList, true);
         }

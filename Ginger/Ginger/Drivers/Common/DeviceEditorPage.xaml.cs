@@ -52,14 +52,14 @@ namespace Ginger.Drivers.Common
 
         private void DoBindings()
         {
-            App.ObjFieldBinding(NameTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.Name);
-            App.ObjFieldBinding(DeviceNameTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceName);
-            App.ObjFieldBinding(DeviceImageTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImage);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NameTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceNameTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceImageTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImage);
 
-            App.ObjFieldBinding(DeviceScreenLeftTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenLeft );
-            App.ObjFieldBinding(DeviceScreenTopTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenTop);
-            App.ObjFieldBinding(DeviceScreenRightTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenRight);
-            App.ObjFieldBinding(DeviceScreenBottomTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenBottom);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceScreenLeftTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenLeft );
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceScreenTopTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenTop);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceScreenRightTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenRight);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceScreenBottomTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenBottom);
             
         }
 

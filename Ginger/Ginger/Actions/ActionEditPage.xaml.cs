@@ -142,34 +142,34 @@ namespace Ginger.Actions
             txtLocateValue.BindControl(mContext, mAction, Act.Fields.LocateValue);
 
             //Run Details binding
-            App.ObjFieldBinding(RTStatusLabel, Label.ContentProperty, mAction, Act.Fields.Status, BindingMode.OneWay);
-            App.ObjFieldBinding(RTElapsedLabel, Label.ContentProperty, mAction, Act.Fields.ElapsedSecs, BindingMode.OneWay);
-            App.ObjFieldBinding(RTErrorLabel, TextBox.TextProperty, mAction, Act.Fields.Error, BindingMode.OneWay);
-            App.ObjFieldBinding(RTExInfoLabel, TextBox.TextProperty, mAction, Act.Fields.ExInfo, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RTStatusLabel, Label.ContentProperty, mAction, Act.Fields.Status, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RTElapsedLabel, Label.ContentProperty, mAction, Act.Fields.ElapsedSecs, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RTErrorLabel, TextBox.TextProperty, mAction, Act.Fields.Error, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RTExInfoLabel, TextBox.TextProperty, mAction, Act.Fields.ExInfo, BindingMode.OneWay);
 
             //TODO: add tooltip on class level 
             //TODO: Add BindToolTip or use BindControl and supply DependecyProperty
-            App.ObjFieldBinding(txtLocateValue, TextBox.ToolTipProperty, mAction, Act.Fields.LocateValue);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtLocateValue, TextBox.ToolTipProperty, mAction, Act.Fields.LocateValue);
             // TODO: create BindControl for 
-            App.ObjFieldBinding(TakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.TakeScreenShot);
-            App.ObjFieldBinding(FailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.FailIgnored);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.TakeScreenShot);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.FailIgnored);
 
             comboFinalStatus.BindControl(mAction, Act.Fields.StatusConverter);
             xWaittxtWait.BindControl(mContext, mAction, nameof(Act.WaitVE));
-            App.ObjFieldBinding(txtTimeout, TextBox.TextProperty, mAction, Act.Fields.Timeout);
-            App.ObjFieldBinding(StatusLabel, Label.ContentProperty, mAction, Act.Fields.Status);
-            GingerCore.General.ObjFieldBinding(ErrorTextBlock, TextBlock.TextProperty, mAction, Act.Fields.Error);
-            GingerCore.General.ObjFieldBinding(ExtraInfoTextBlock, TextBlock.TextProperty, mAction, Act.Fields.ExInfo);
-            App.ObjFieldBinding(EnableRetryMechanismCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.EnableRetryMechanism);
-            App.ObjFieldBinding(RetryMechanismIntervalTextBox, TextBox.TextProperty, mAction, Act.Fields.RetryMechanismInterval);
-            App.ObjFieldBinding(RetryMechanismMaxRetriesTextBox, TextBox.TextProperty, mAction, Act.Fields.MaxNumberOfRetries);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtTimeout, TextBox.TextProperty, mAction, Act.Fields.Timeout);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(StatusLabel, Label.ContentProperty, mAction, Act.Fields.Status);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ErrorTextBlock, TextBlock.TextProperty, mAction, Act.Fields.Error);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ExtraInfoTextBlock, TextBlock.TextProperty, mAction, Act.Fields.ExInfo);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EnableRetryMechanismCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.EnableRetryMechanism);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RetryMechanismIntervalTextBox, TextBox.TextProperty, mAction, Act.Fields.RetryMechanismInterval);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RetryMechanismMaxRetriesTextBox, TextBox.TextProperty, mAction, Act.Fields.MaxNumberOfRetries);
 
             dsOutputParamMapType = DataSourceConfigGrid.AddComboBox(typeof(Act.eOutputDSParamMapType), "Out Param Mapping", "", new RoutedEventHandler(OutDSParamType_SelectionChanged));
-            App.ObjFieldBinding(AddOutDS, CheckBox.IsCheckedProperty, mAction, Act.Fields.ConfigOutputDS);
-            App.ObjFieldBinding(cmbDataSourceName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceName);
-            App.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceTableName);
-            App.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);
-            App.ObjFieldBinding(EnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AddOutDS, CheckBox.IsCheckedProperty, mAction, Act.Fields.ConfigOutputDS);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbDataSourceName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceTableName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
 
             txtLocateValue.BindControl(mContext, mAction, Act.Fields.LocateValue);
             txtLocateValue.ValueTextBox.Text = mAction.LocateValue;  // Why ?
@@ -190,8 +190,8 @@ namespace Ginger.Actions
             //allowing return values automatically in Edit Action window
             if (mAction.AddNewReturnParams == null && mAction.ReturnValues.Count() == 0)
                 mAction.AddNewReturnParams = true;
-            App.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, Act.Fields.AddNewReturnParams);
-            App.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, Act.Fields.SupportSimulation);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, Act.Fields.AddNewReturnParams);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, Act.Fields.SupportSimulation);
             OutputValuesGrid.AddToolbarTool("@Reset_16x16.png", "Clear Un-used Parameters", new RoutedEventHandler(ClearUnusedParameter));
             OutputValuesGrid.AllowHorizentalScroll = true;
             SetActReturnValuesGrid();
@@ -234,7 +234,10 @@ namespace Ginger.Actions
                 xRunStatusExpander.IsExpanded = false;
 
             InitActionLog();
-            mContext.Runner.PrepActionValueExpression(mAction, actParentBusinessFlow);
+            if (mContext != null && mContext.Runner != null)
+            {
+                mContext.Runner.PrepActionValueExpression(mAction, actParentBusinessFlow);
+            }
         }
 
         private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -559,9 +562,12 @@ namespace Ginger.Actions
                     // For no driver actions we give the BF and env - used for example in set var value.
                     if (typeof(ActWithoutDriver).IsAssignableFrom(a.GetType()))
                     {
-                        ((ActWithoutDriver)a).RunOnBusinessFlow = (BusinessFlow)mContext.Runner.CurrentBusinessFlow;
-                        ((ActWithoutDriver)a).RunOnEnvironment =(ProjEnvironment)mContext.Runner.ProjEnvironment;
-                        ((ActWithoutDriver)a).DSList = mContext.Runner.DSList;
+                        if (mContext != null && mContext.Runner != null)
+                        {
+                            ((ActWithoutDriver)a).RunOnBusinessFlow = (BusinessFlow)mContext.Runner.CurrentBusinessFlow;
+                            ((ActWithoutDriver)a).RunOnEnvironment = (ProjEnvironment)mContext.Runner.ProjEnvironment;
+                            ((ActWithoutDriver)a).DSList = mContext.Runner.DSList;
+                        }
                     }
 
                     // Load the page

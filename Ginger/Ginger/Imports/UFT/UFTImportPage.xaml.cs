@@ -84,7 +84,7 @@ namespace Ginger.Imports.UFT
             SetActivitiesGridView();
 
             eFilter mFilter = eFilter.AllLines;
-            App.FillComboFromEnumVal(FilterComboBox, mFilter);
+            GingerCore.General.FillComboFromEnumObj(FilterComboBox, mFilter);
             
             //Pre Load all the Target Applications
             TargetApplication.Items.Add("Google");

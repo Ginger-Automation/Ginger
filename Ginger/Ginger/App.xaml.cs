@@ -35,8 +35,6 @@ using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.DataSource;
-using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Repository;
@@ -161,10 +159,6 @@ namespace Ginger
             }
         }
 
-        //public static TextBlock RunsetBFTextbox = null;//???
-        //public static TextBlock RunsetActivityTextbox = null;//???
-        //public static TextBlock RunsetActionTextbox = null;//???
-
         public new static MainWindow MainWindow { get; set; }
         
         private Dictionary<string, Int32> mExceptionsDic = new Dictionary<string, int>();
@@ -183,14 +177,6 @@ namespace Ginger
        
 
         public static bool RunningFromUnitTest = false;
-
-        internal static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
-        {
-            //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
-            //TODO: check perf impact + reuse existing binding on same obj.prop
-
-            GingerCore.General.ObjFieldBinding(control, dependencyProperty, obj, property, BindingMode);
-        }
 
         public static void LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType SkinDicType = Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType TerminologyType = GingerCore.eTerminologyType.Default)
         {
@@ -484,11 +470,6 @@ namespace Ginger
 
             AutoLogProxy.LogAppClosed();
             Environment.Exit(Environment.ExitCode);
-        }
-
-        public static void FillComboFromEnumVal(ComboBox comboBox, Object EnumValue, List<object> values = null, bool sortValues = true, ListCollectionView valuesCollView = null)
-        {
-            GingerCore.General.FillComboFromEnumObj(comboBox, EnumValue, values, sortValues, valuesCollView);
         }
 
         public static void DownloadSolution(string SolutionFolder)

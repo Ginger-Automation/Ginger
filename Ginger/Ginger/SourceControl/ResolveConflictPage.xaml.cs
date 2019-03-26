@@ -55,7 +55,7 @@ namespace Ginger.SourceControl
 
             SetMessageText();
 
-            App.FillComboFromEnumVal(ConflictResolveOperationCombo, mResolveOperation);
+            GingerCore.General.FillComboFromEnumObj(ConflictResolveOperationCombo, mResolveOperation);
             ConflictResolveOperationCombo.Text = ConflictResolveOperationCombo.Items[0].ToString();
             ConflictResolveOperationCombo.SelectionChanged += ConflictResolveOperationCombo_SelectionChanged;
         }

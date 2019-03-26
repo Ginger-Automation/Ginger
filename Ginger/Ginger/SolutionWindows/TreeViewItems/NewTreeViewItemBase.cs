@@ -560,7 +560,7 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 nameFieldProperty = NameProperty;
             }
-            BindingLib.ControlsBinding.ObjFieldBinding(itemHeaderLabel, Label.ContentProperty, repoItem, nameFieldProperty, BindingMode: System.Windows.Data.BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(itemHeaderLabel, Label.ContentProperty, repoItem, nameFieldProperty, BindingMode: System.Windows.Data.BindingMode.OneWay);
 
 
             stack.Children.Add(itemHeaderLabel);
@@ -605,7 +605,7 @@ namespace GingerWPF.TreeViewItemsLib
             ImageMakerControl NodeImageType = new ImageMakerControl();
             if(imageType == eImageType.Null)
             {
-                BindingLib.ControlsBinding.ObjFieldBinding(NodeImageType, ImageMakerControl.ImageTypeProperty, repoItemFolder, nameof(RepositoryFolderBase.FolderImageType), BindingMode: System.Windows.Data.BindingMode.OneWay);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NodeImageType, ImageMakerControl.ImageTypeProperty, repoItemFolder, nameof(RepositoryFolderBase.FolderImageType), BindingMode: System.Windows.Data.BindingMode.OneWay);
             }          
             else
             {
