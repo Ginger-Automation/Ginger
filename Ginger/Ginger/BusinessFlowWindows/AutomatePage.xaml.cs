@@ -74,7 +74,7 @@ namespace Ginger
     /// </summary>
     public partial class AutomatePage : Page 
     {
-        GingerRunner mRunner = null;
+        GingerRunner mRunner = new GingerRunner(eExecutedFrom.Automation);
         AutomatePageRunnerListener mAutomatePageRunnerListener;
         ExecutionLogger mExecutionLogger;
         BusinessFlow mBusinessFlow = null;
@@ -495,8 +495,7 @@ namespace Ginger
         }
 
         private void ConfigAutomateRunnerAndLogger()
-        {
-            mRunner = new GingerRunner(eExecutedFrom.Automation);
+        {            
             mRunner.CurrentSolution = WorkSpace.Instance.Solution;
             mRunner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
             mRunner.SolutionAgents = new ObservableList<Agent>();
