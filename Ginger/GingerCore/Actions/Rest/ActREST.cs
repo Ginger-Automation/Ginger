@@ -256,7 +256,7 @@ namespace GingerCore.Actions.REST
             {
                 if (mPlatforms.Count == 0)
                 {
-                    AddAllPlatforms();
+                    mPlatforms.Add(ePlatformType.WebServices);
                 }
                 return mPlatforms;
             }
@@ -311,7 +311,7 @@ namespace GingerCore.Actions.REST
             try
             {
                 string strURL = EndPointURL.ValueForDriver;
-
+      
                 HttpWebRequest WebReq = (HttpWebRequest)WebRequest.Create(strURL);
                 SetHTTPHeaders(WebReq);
                 //Nathan added customizable Network Credentials
@@ -402,7 +402,7 @@ namespace GingerCore.Actions.REST
                 if (RequestType != eRequestType.GET)
                 {
 
-                    if(ContentType==eContentType.JSon)
+                    if (ContentType == eContentType.JSon)
                     {
                         WebReq.ContentType = "application/json";
                     }
@@ -425,9 +425,10 @@ namespace GingerCore.Actions.REST
                         WebReq.ProtocolVersion = HttpVersion.Version11;
                     }
                     WebReq.ContentLength = dataByte.Length;
-
+              
                     Stream Webstream = WebReq.GetRequestStream();
                     Webstream.Write(dataByte, 0, dataByte.Length);
+                    Webstream.Close();
                 }
                 // Write the data bytes in the request stream
 
@@ -502,9 +503,26 @@ namespace GingerCore.Actions.REST
                                         Uri domainName = new Uri("http://"+ cks.Path.Substring(1));
                                         cks.Domain = domainName.Host;
                                     }
-                                    else {
-                                        Uri domainName = new Uri(cks.Path);
-                                        cks.Domain = domainName.Host;}
+                                    else
+                                    {
+                                        Uri domainName = null;
+
+                                        if (cks.Path.StartsWith("http://") || cks.Path.StartsWith("https://"))
+                                        {
+                                            domainName = new Uri(cks.Path);
+
+                                        }
+
+                                        else
+                                        {
+                                            domainName = new Uri("http://"+ cks.Path);
+                                        }
+
+
+
+
+                                        cks.Domain = domainName.Host;
+                                    }
                                 }
                                 else
                                 {
@@ -536,11 +554,12 @@ namespace GingerCore.Actions.REST
                 if (ResponseContentType != eContentType.PDF)
                 {
                     //TODO: check if UTF8 is good for all
-                    StreamReader reader = new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);
-                    Reporter.ToLog(eLogLevel.DEBUG, "Response");
+                 StreamReader reader = new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);                                  
+                 Reporter.ToLog(eLogLevel.DEBUG, "Response");
 
                     resp = reader.ReadToEnd();
                     Reporter.ToLog(eLogLevel.DEBUG, resp);
+                    reader.Close();
                 }
                 else
                 {
@@ -550,6 +569,7 @@ namespace GingerCore.Actions.REST
                     webResponse.GetResponseStream().CopyTo(memoryStream);
 
                     data = memoryStream.ToArray();
+                    memoryStream.Close();
                 }
 
 

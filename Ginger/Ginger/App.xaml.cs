@@ -21,7 +21,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
@@ -46,7 +45,6 @@ using GingerCore.SourceControl;
 using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Concurrent;
@@ -74,7 +72,6 @@ namespace Ginger
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger
                                        (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-
         public static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//?????
 
         public static System.Diagnostics.FileVersionInfo ApplicationInfo
@@ -85,7 +82,7 @@ namespace Ginger
             }
         }
         public static string AppName = ApplicationInfo.FileDescription;//"Ginger"
-        public static string AppFullProductName = ApplicationInfo.ProductName;//"Amdocs Ginger Automation"
+        public static string AppFullProductName = ApplicationInfo.ProductName;//"Ginger by Amdocs"
 
         private static string mAppVersion = String.Empty;
         public static string AppVersion
@@ -139,12 +136,12 @@ namespace Ginger
             }
         }
 
-        public static Ginger.Functionalties.SolutionAutoSave AppSolutionAutoSave = new Ginger.Functionalties.SolutionAutoSave();
+        public static Ginger.Functionalties.SolutionAutoSave AppSolutionAutoSave = new Ginger.Functionalties.SolutionAutoSave();//To move it workspace
+        public static Ginger.Functionalties.SolutionRecover AppSolutionRecover = new Ginger.Functionalties.SolutionRecover();//To move it workspace
+        public static string RecoverFolderPath = null; //???
 
-        public static Ginger.Functionalties.SolutionRecover AppSolutionRecover = new Ginger.Functionalties.SolutionRecover();
-
-        static bool mIsReady = false;
-        public bool IsReady { get { return mIsReady; } }
+        static bool mIsReady = false;//???
+        public bool IsReady { get { return mIsReady; } }//???
 
         private static bool mAppBuildTimeCalculated = false;
         private static DateTime mAppBuildTime;
@@ -164,62 +161,13 @@ namespace Ginger
             }
         }
 
-        public static TextBlock RunsetBFTextbox = null;//???
-        public static TextBlock RunsetActivityTextbox = null;//???
-        public static TextBlock RunsetActionTextbox = null;//???
+        //public static TextBlock RunsetBFTextbox = null;//???
+        //public static TextBlock RunsetActivityTextbox = null;//???
+        //public static TextBlock RunsetActionTextbox = null;//???
 
         public new static MainWindow MainWindow { get; set; }
         
-        private Dictionary<string, Int32> _exceptionsDic = new Dictionary<string, int>();
-
-       
-        /// <summary>
-        /// Hold all Run Set execution data + execution methods
-        /// </summary>        
-        public static RunsetExecutor RunsetExecutor
-        {
-            get
-            {
-                return WorkSpace.RunsetExecutor;
-            }
-
-            set
-            {
-                WorkSpace.RunsetExecutor = value;
-            }
-        }
-
-        public static string RecoverFolderPath = null; //???
-        
-
-        // Business Flow Objects        
-        private static ProjEnvironment mAutomateTabEnvironment //???
-        {
-            get
-            {
-                return (ProjEnvironment)WorkSpace.AutomateTabEnvironment;
-
-            }
-            set{
-
-                WorkSpace.AutomateTabEnvironment = value;
-            }
-        }
-        public static ProjEnvironment AutomateTabEnvironment //???
-        {
-            get
-            {
-                return mAutomateTabEnvironment;
-            }
-            set
-            {
-                mAutomateTabEnvironment = value;
-                App.AutomateTabGingerRunner.ProjEnvironment = mAutomateTabEnvironment;
-                WorkSpace.UserProfile.RecentEnvironment = mAutomateTabEnvironment.Guid;
-
-            }
-        }
-
+        private Dictionary<string, Int32> mExceptionsDic = new Dictionary<string, int>();
 
         public static GingerRunner AutomateTabGingerRunner///???
         {
@@ -328,7 +276,8 @@ namespace Ginger
 
             if (WorkSpace.Instance.BetaFeatures.ShowDebugConsole)
             {
-                DebugConsoleWindow.Show();
+                DebugConsoleWindow debugConsole = new DebugConsoleWindow();
+                debugConsole.ShowAsWindow();
                 WorkSpace.Instance.BetaFeatures.DisplayStatus();
             }
 
@@ -531,7 +480,7 @@ namespace Ginger
             AutoLogProxy.LogAppOpened();
             AppSplashWindow.LoadingInfo(phase);
 
-            var result = await App.RunsetExecutor.RunRunSetFromCommandLine();
+            var result = await WorkSpace.RunsetExecutor.RunRunSetFromCommandLine();
 
             Reporter.ToLog(eLogLevel.INFO, "Closing Ginger automatically...");
             App.MainWindow.CloseWithoutAsking();
@@ -653,10 +602,37 @@ namespace Ginger
 
             WorkSpace.UserProfile.Solution = null;
             App.AutomateTabGingerRunner.ClearAgents();
+            CloseAllRunningAgents();
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ClearAutomate, null);
             AutoLogProxy.SetAccount("");
             WorkSpace.Instance.SolutionRepository = null;
             WorkSpace.Instance.SourceControl = null;
+        }
+
+        public static void CloseAllRunningAgents()
+        {
+            if (WorkSpace.Instance.SolutionRepository != null)
+            {
+                List<Agent> runningAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Status == Agent.eStatus.Running).ToList();
+                if (runningAgents != null && runningAgents.Count > 0)
+                {
+                    foreach (Agent agent in runningAgents)
+                    {
+                        try
+                        {
+                            agent.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            if (agent.Name != null)
+                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Close the '{0}' Agent", agent.Name), ex);
+                            else
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
+                        }
+                        agent.IsFailedToStart = false;
+                    }
+                }
+            }
         }
 
         public static bool SetSolution(string SolutionFolder)
@@ -872,12 +848,12 @@ namespace Ginger
             Reporter.ToLog(eLogLevel.ERROR, ex.ToString(), ex);
 
             //add to dictionary to make sure same exception won't show more than 3 times
-            if (_exceptionsDic.ContainsKey(ex.Message))
-                _exceptionsDic[ex.Message]++;
+            if (mExceptionsDic.ContainsKey(ex.Message))
+                mExceptionsDic[ex.Message]++;
             else
-                _exceptionsDic.Add(ex.Message, 1);
+                mExceptionsDic.Add(ex.Message, 1);
 
-            if (_exceptionsDic[ex.Message] <= 3)
+            if (mExceptionsDic[ex.Message] <= 3)
             {
                 Ginger.GeneralLib.ExceptionDetailsPage.ShowError(ex);
             }
@@ -912,14 +888,6 @@ namespace Ginger
         {
             CheckInPage CIW = new CheckInPage(Path);
             CIW.ShowAsWindow();
-        }
-
-        internal static string GetProjEnvironmentName()
-        {
-            if (AutomateTabEnvironment != null)
-                return App.AutomateTabEnvironment.Name;
-            else
-                return null;
         }
         
 

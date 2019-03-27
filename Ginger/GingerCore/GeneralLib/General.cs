@@ -654,7 +654,24 @@ namespace GingerCore
             }
             return list;
         }
-        
+
+
+        public static List<GingerCore.General.ComboEnumItem> GetEnumValuesForComboFromList(Type Etype,List<Object> Items)
+        {
+            List<GingerCore.General.ComboEnumItem> list = new List<GingerCore.General.ComboEnumItem>();
+            foreach (object item in Items)
+            {
+                GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
+                CEI.text = GingerCore.General.GetEnumValueDescription(Etype, item);
+                CEI.Value = item;
+
+                list.Add(CEI);
+            }
+            return list;
+        }
+
+
+
         public static void SelectComboValue(ComboBox comboBox, string Value)
         {
             string itemVal = "";
@@ -917,7 +934,7 @@ namespace GingerCore
                     r.Add(status, myBrush);
                     break;
                 case "Pending":
-                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#ED5588"));
+                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#FF8C00"));
                     r.Add(status, myBrush);
                     break;
                 case "Running":

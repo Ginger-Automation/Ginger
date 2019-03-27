@@ -82,7 +82,7 @@ namespace Ginger.BusinessFlowFolder
 
             if (!showMiniView)
             {
-                mActivitiesPage = new ActivitiesPage(mBusinessFlow, mEditMode);
+                mActivitiesPage = new ActivitiesPage(mBusinessFlow, mEditMode, mContext);
                 if(mEditMode!= General.RepositoryItemPageViewMode.View)
                 {
                     mActivitiesPage.grdActivities.ChangeGridView(eAutomatePageViewStyles.Design.ToString());

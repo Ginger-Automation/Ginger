@@ -129,7 +129,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else
                         {
-                            currentActivity.TargetApplication = string.Empty;
+                            currentActivity.TargetApplication = activity.TargetApplication;
                         }
                     }
                 }
@@ -257,19 +257,22 @@ namespace Amdocs.Ginger.CoreNET
             {
                 foreach (Activity convertibleActivity in businessFlow.Activities)
                 {
-                    bool isPresent = false;
-                    foreach (Act act in convertibleActivity.Acts)
+                    if (convertibleActivity.Active)
                     {
-                        if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
-                            (act.Active))
+                        bool isPresent = false;
+                        foreach (Act act in convertibleActivity.Acts)
                         {
-                            isPresent = true;
-                            break;
+                            if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
+                                (act.Active))
+                            {
+                                isPresent = true;
+                                break;
+                            }
                         }
-                    }
-                    if(isPresent)
-                    {
-                        lst.Add(convertibleActivity);
+                        if (isPresent)
+                        {
+                            lst.Add(convertibleActivity);
+                        } 
                     }
                 }
             }

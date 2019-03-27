@@ -48,8 +48,7 @@ namespace Ginger.Run
     /// Interaction logic for GingerRunnerPage.xaml
     /// </summary>
     public partial class RunnerPage : Page
-    {
-        RunnerPageListener mRunnerPageListener;
+    {        
         DispatcherTimer mDispatcherTimer;
 
         public event RunnerPageEventHandler RunnerPageEvent;
@@ -68,6 +67,16 @@ namespace Ginger.Run
         {            
             return xBusinessflowsStatistics;                                       
         }
+
+        RunnerPageListener mRunnerPageListener;
+        public RunnerPageListener RunnerPageListener
+        {
+            get
+            {
+                return mRunnerPageListener;
+            }
+        }
+
         GingerRunner mRunner;
         public GingerRunner Runner
         {
@@ -180,7 +189,8 @@ namespace Ginger.Run
         private RunnerItemPage CreateBusinessFlowRunnerItem(BusinessFlow bf, bool ViewMode=false)
         {
             RunnerItemPage ri = new RunnerItemPage(bf, ViewMode1);           
-            ri.ItemName = bf.Name;            
+            ri.ItemName = bf.Name;
+            ri.ItemTitleTooltip = System.IO.Path.Combine(bf.ContainingFolder, bf.Name);
             if (string.IsNullOrEmpty(bf.Description))
             {
                 ri.xItemSeparator.Visibility = Visibility.Collapsed;              
@@ -274,7 +284,7 @@ namespace Ginger.Run
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
             ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            if (App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder!=null)
+            if (WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder!=null)
             {
                 string reportpath = ((BusinessFlow)((RunnerItemPage)sender).ItemObject).ExecutionFullLogFolder;
                 string reportsResultFolder = string.Empty;
@@ -308,7 +318,7 @@ namespace Ginger.Run
             }
             else
             {
-                ExecutionLogger.GenerateBusinessFlowOfflineReport(mRunner.ProjEnvironment, currentConf.HTMLReportsFolder + bf.Name, bf, App.RunsetExecutor.RunSetConfig.Name);
+                ExecutionLogger.GenerateBusinessFlowOfflineReport(mRunner.ProjEnvironment, currentConf.HTMLReportsFolder + bf.Name, bf, WorkSpace.RunsetExecutor.RunSetConfig.Name);
             }
         }
         private void Businessflow_ClickActive(object sender, RoutedEventArgs e)
@@ -555,7 +565,7 @@ namespace Ginger.Run
         {
             if (mRunner.BusinessFlows.Count <= 0)
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one Business Flow to '" + mRunner.Name + "' to start run.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '" + mRunner.Name + "' to start run.");
                 return;
             }
             RunRunner();
@@ -567,9 +577,9 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Runner is already running.");
                 return;
             }
-            App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
+            WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
             mRunner.ResetRunnerExecutionDetails();
-            App.RunsetExecutor.ConfigureRunnerForExecution(mRunner);
+            WorkSpace.RunsetExecutor.ConfigureRunnerForExecution(mRunner);
             await mRunner.RunRunnerAsync();
             GingerCore.General.DoEvents();   //needed?                 
         }
@@ -639,7 +649,7 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Runner was not stopped.");
                 return;
             }
-            App.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
+            WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
             await mRunner.ContinueRunAsync(eContinueLevel.Runner,eContinueFrom.LastStoppedAction);
         }
         private void ViewReportBtn_Click(object sender, RoutedEventArgs e)
@@ -673,12 +683,12 @@ namespace Ginger.Run
 
         private void GenerateIndividualReport(object sender, RoutedEventArgs e)
         {
-            ReportTemplate.GenerateIndividualReport(mRunner,  WorkSpace.UserProfile.GetDefaultReport(), (ProjEnvironment)App.RunsetExecutor.RunsetExecutionEnvironment, true);
+            ReportTemplate.GenerateIndividualReport(mRunner,  WorkSpace.UserProfile.GetDefaultReport(), (ProjEnvironment)WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, true);
         }
 
         private void GenerateConsolidatedReport(object sender, RoutedEventArgs e)
         {
-            var RI = new ReportInfo(App.RunsetExecutor.RunsetExecutionEnvironment, mRunner, true);
+            var RI = new ReportInfo(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, mRunner, true);
             var repFileName = ReportTemplate.GenerateReport( WorkSpace.UserProfile.GetDefaultReport(), RI);
             Process.Start(repFileName);
         }

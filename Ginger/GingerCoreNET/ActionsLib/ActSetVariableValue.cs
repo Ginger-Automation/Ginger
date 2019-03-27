@@ -67,7 +67,7 @@ namespace GingerCore.Actions
 
         public override string ActionType
         {
-            get { return "Set Variable"; }
+            get { return "Set " + GingerDicser.GetTermResValue(eTermResKey.Variable); }
         }
 
         [IsSerializedForLocalRepository]
@@ -158,7 +158,7 @@ namespace GingerCore.Actions
                 else
                 {
                     Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                    Error = "Operation type " + SetVariableValueOption + " is not supported for variable of type " + Var.GetType();
+                    Error = "Operation type " + SetVariableValueOption + " is not supported for " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " of type " + Var.GetType();
                     return;
                 }
             }
@@ -172,7 +172,7 @@ namespace GingerCore.Actions
                 else
                 {
                     Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                    Error = "Operation type " + SetVariableValueOption + " is not supported for variable of type " + Var.GetType();
+                    Error = "Operation type " + SetVariableValueOption + " is not supported for " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " of type " + Var.GetType();
 
                     return;
                 }

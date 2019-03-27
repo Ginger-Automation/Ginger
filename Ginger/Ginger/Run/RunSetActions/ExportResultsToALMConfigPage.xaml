@@ -22,7 +22,11 @@
                     <GingerCore:ucTextDicResource Text="Attach [ActivitiesGroups] Report To The TC's Run Iteration"/>
                 </CheckBox.Content>
             </CheckBox>
-            <CheckBox x:Name="UseVariableInTCRunNameCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5" Content="Use User Variable In TC Run Instance Name" Checked="UseVariableInTCRunNameCbx_Checked" Unchecked="UseVariableInTCRunNameCbx_Unchecked"></CheckBox>
+            <CheckBox x:Name="UseVariableInTCRunNameCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5" Checked="UseVariableInTCRunNameCbx_Checked" Unchecked="UseVariableInTCRunNameCbx_Unchecked">
+                <CheckBox.Content>
+                    <GingerCore:ucTextDicResource Text="Use User [Variable] In TC Run Instance Name"/>
+                </CheckBox.Content>
+            </CheckBox>
             <StackPanel Margin="5,0,0,15" x:Name="VariableForTCRunNamePanel" Orientation="Vertical" IsEnabled="False">
                 <Actions:UCValueExpression x:Name="VariableForTCRunName" ToolTip="From" />
             </StackPanel>

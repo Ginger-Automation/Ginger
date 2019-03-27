@@ -73,19 +73,6 @@ namespace Ginger.Run
         {
             get
             {
-                // !!!!!!!!!!!!! called many time ??
-                if (mExecutionEnvironment == null)//not supposed to be null but in case it is
-                {
-                    // !!!!!!!!!!!!!!!!! remove logger should get the env from GR
-                    if (this.ExecutedFrom == eExecutedFrom.Automation)
-                    {
-                        mExecutionEnvironment = WorkSpace.AutomateTabEnvironment;
-                    }
-                    else
-                    {
-                        mExecutionEnvironment = WorkSpace.RunsetExecutor.RunsetExecutionEnvironment;
-                    }
-                }
                 return mExecutionEnvironment;
             }
             set
@@ -109,16 +96,7 @@ namespace Ginger.Run
                 if (value != null)
                 {
                     mConfiguration = value;
-                    if (mConfiguration.ExecutionLoggerConfigurationExecResultsFolder.StartsWith(@"~\"))
-                    {
-                        mConfiguration.ExecutionLoggerConfigurationExecResultsFolder=mConfiguration.ExecutionLoggerConfigurationExecResultsFolder.Replace(@"~\",WorkSpace.Instance.Solution.Folder);
-                    }
-                    if (!CheckOrCreateDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder))
-                    {
-                        mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
-                    }
-
-
+                    mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = GetLoggerDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder);
                     switch (this.ExecutedFrom)
                     {
                         case Amdocs.Ginger.Common.eExecutedFrom.Automation:
@@ -660,6 +638,12 @@ namespace Ginger.Run
 
         public override void ActionStart(uint eventTime, Act action)
         {
+            SetActionFolder(action);
+            ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Action", action.Description, null);
+        }
+
+        public void SetActionFolder(Act action)
+        {
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
                 string ActionFolder = string.Empty;
@@ -690,8 +674,6 @@ namespace Ginger.Run
                 System.IO.Directory.CreateDirectory(ExecutionLogfolder + ActionFolder);
 
             }
-
-            ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Action", action.Description, null);
         }
 
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode=false)
@@ -719,18 +701,6 @@ namespace Ginger.Run
                 {
                     if (System.IO.Directory.Exists(executionLogFolder + action.ExecutionLogFolder))
                     {
-
-                        ProjEnvironment environment = null;
-
-                        if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
-                        {
-                            environment = WorkSpace.AutomateTabEnvironment;
-                        }
-                        else
-                        {
-                            environment = WorkSpace.RunsetExecutor.RunsetExecutionEnvironment;
-                        }
-
                         AR.Seq = mCurrentActivity.ExecutionLogActionCounter;
                         if ((action.RunDescription != null) && (action.RunDescription != string.Empty))
                         {

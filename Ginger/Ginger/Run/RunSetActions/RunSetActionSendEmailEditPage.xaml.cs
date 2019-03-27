@@ -140,7 +140,7 @@ namespace Ginger.Run.RunSetActions
                 BodyWebBrowser.Visibility = System.Windows.Visibility.Visible;
                 BodyTextBox.Visibility = System.Windows.Visibility.Collapsed;
 
-                ReportInfo RI = new ReportInfo(App.RunsetExecutor.RunsetExecutionEnvironment, App.RunsetExecutor);
+                ReportInfo RI = new ReportInfo(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, WorkSpace.RunsetExecutor);
                 runSetActionEmailReport.SetBodyFromHTMLReport(RI);
 
                 BodyWebBrowser.NavigateToString(runSetActionEmailReport.Email.Body);
@@ -152,7 +152,7 @@ namespace Ginger.Run.RunSetActions
         {  
             
             BodyWebBrowser.Visibility = System.Windows.Visibility.Visible;
-            ReportInfo RI = new ReportInfo(App.RunsetExecutor.RunsetExecutionEnvironment, App.RunsetExecutor);
+            ReportInfo RI = new ReportInfo(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, WorkSpace.RunsetExecutor);
             string html = String.Empty;
             
             if (CustomHTMLReportComboBox.SelectedItem == null)

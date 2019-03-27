@@ -39,7 +39,7 @@ namespace GingerCore.Actions
             TBH.AddText("Use this action in case you need to automate a check/Un-check an object from type Checkbox." + Environment.NewLine + Environment.NewLine + "For Mobile use this action only in case running the flow on the native browser.");
         }        
 
-        public override string ActionEditPage { get { return null; } }
+        public override string ActionEditPage { get { return "ActCheckboxEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 
@@ -67,7 +67,7 @@ namespace GingerCore.Actions
         
         public enum eCheckboxAction
         {
-            Check = 1,
+            Check = 0,
             Uncheck = 2,
             SetFocus = 3,
             GetValue=4,
@@ -134,7 +134,6 @@ namespace GingerCore.Actions
             AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
             ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
 
-
             Type currentType = GetActionTypeByElementActionName(this.CheckboxAction);
             if (currentType == typeof(ActUIElement))
             {
@@ -155,7 +154,8 @@ namespace GingerCore.Actions
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
-            newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            if(!string.IsNullOrEmpty(this.LocateValue))
+                newAct.ElementLocateValue = String.Copy(this.LocateValue);
             if (!uIElementTypeAssigned)
                 newAct.ElementType = eElementType.CheckBox;
             newAct.Active = true;

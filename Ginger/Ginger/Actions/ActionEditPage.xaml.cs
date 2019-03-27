@@ -101,17 +101,17 @@ namespace Ginger.Actions
             {
                 mActParentBusinessFlow = actParentBusinessFlow;
             }
-            else if (mAction.Context != null)
+            else if (mAction.Context != null && Context.GetAsContext(mAction.Context).BusinessFlow != null)
             {
                 mActParentBusinessFlow = Context.GetAsContext(mAction.Context).BusinessFlow;
             }
-            if (actParentActivity != null)
+            else if (actParentActivity != null)
             {
                 mActParentActivity = actParentActivity;
             }
-            else if (mAction.Context != null)
+            else if (mAction.Context != null && Context.GetAsContext(mAction.Context).Activity != null)
             {
-                mActParentActivity = (Activity)Context.GetAsContext(mAction.Context).BusinessFlow.CurrentActivity;
+                mActParentActivity = (Activity)Context.GetAsContext(mAction.Context).Activity;
             }
 
             EditMode = editMode;

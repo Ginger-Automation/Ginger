@@ -121,6 +121,18 @@ namespace Ginger.Run
             }
         }
 
+        public string ItemTitleTooltip
+        {
+            get
+            {
+                return xItemName.ToolTip.ToString();
+            }
+            set
+            {
+                xItemName.ToolTip = value;
+            }
+        }
+
         public static void SetRunnerItemEvent(RunnerItemEventHandler runnerItemEvent)
         {
             if(RunnerItemEvent == null)
@@ -365,7 +377,7 @@ namespace Ginger.Run
                
                 if (!ExportResultsToALMConfigPage.Instance.IsProcessing)
                 {
-                    ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
+                    ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
                     ExportResultsToALMConfigPage.Instance.ShowAsWindow();
                 }
                 else

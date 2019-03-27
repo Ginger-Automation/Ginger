@@ -34,7 +34,12 @@ namespace Ginger.Actions
         private string AttrName;
         private string fileType;
         eBrowserType mBrowserType;
-        Context mContext;
+
+        //public static readonly DependencyProperty mContextProperty = DependencyProperty.Register("mContext", typeof(Context), typeof(UCValueExpression), new PropertyMetadata(false));
+        public Context mContext
+        {
+            get; set;
+        }
 
         public enum eBrowserType { File, Folder }
 
@@ -146,7 +151,7 @@ namespace Ginger.Actions
                     dlg.FilterIndex = 1;
                     System.Windows.Forms.DialogResult result = dlg.ShowDialog();
                     if (result == System.Windows.Forms.DialogResult.OK)
-                    {                        
+                    {
                         string FileName = General.ConvertSolutionRelativePath(dlg.FileName);
                         ValueTextBox.Text = FileName;
                     }
@@ -170,10 +175,11 @@ namespace Ginger.Actions
             Row.Height = new GridLength(hight);
         }
 
-        public bool IsReadOnly 
+        public bool IsReadOnly
         {
             get { return ValueTextBox.IsReadOnly; }
             set { ValueTextBox.IsReadOnly = value; }
         }
+
     }
 }
