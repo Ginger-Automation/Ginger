@@ -214,6 +214,9 @@ namespace Ginger
 
             Reporter.WorkSpaceReporter = new GingerWorkSpaceReporter();
 
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH);
+
             if (Environment.GetCommandLineArgs().Count() > 1)
             {
                 // When running from unit test there are args, so we set a flag in GingerAutomator to make sure Ginger will Launch
@@ -234,9 +237,6 @@ namespace Ginger
             string phase = string.Empty;
 
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
-
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
 
             WorkSpace.Instance.BetaFeatures = BetaFeatures.LoadUserPref();
             WorkSpace.Instance.BetaFeatures.PropertyChanged += BetaFeatureChanged;            
