@@ -140,7 +140,7 @@ namespace Ginger.Actions.ActionConversion
         private bool DoExistingPlatformCheck(ObservableList<ConvertableActionDetails> lstActionToBeConverted)
         {
             // fetch list of existing platforms in the business flow
-            List<ePlatformType> lstExistingPlatform = WorkSpace.UserProfile.Solution.ApplicationPlatforms
+            List<ePlatformType> lstExistingPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms
                                                       .Where(x => Context.BusinessFlow.TargetApplications
                                                       .Any(a => a.Name == x.AppName))
                                                       .Select(x => x.Platform).ToList();

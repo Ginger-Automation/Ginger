@@ -34,7 +34,7 @@ namespace Ginger.Reports
         {
 
             base.RI = RI;
-            string runSetName = WorkSpace.RunsetExecutor.RunSetConfig.ItemName;
+            string runSetName = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ItemName;
             string runGroupName = "GingerRunGroup";
             string executionTime = RI.DateCreated;
             string environment = RI.ExecutionEnv;

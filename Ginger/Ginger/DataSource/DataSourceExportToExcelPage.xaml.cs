@@ -60,7 +60,7 @@ namespace Ginger.DataSource
 
             okClicked = true;
 
-            // WorkSpace.UserProfile.Solution.Agents.Add(mNewAgent);
+            // WorkSpace.Instance.Solution.Agents.Add(mNewAgent);
 
             _pageGenericWin.Close();
         }

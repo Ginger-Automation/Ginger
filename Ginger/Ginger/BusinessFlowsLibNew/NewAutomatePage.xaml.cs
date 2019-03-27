@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Ginger;
 using Ginger.BusinessFlowLib;
 using Ginger.Run;
@@ -38,14 +39,18 @@ namespace GingerWPF.BusinessFlowsLib
     public partial class NewAutomatePage : Page
     {
         BusinessFlow mBusinessFlow;
-        GingerRunner mGingerRunner;
+        GingerRunner mRunner;
+        Context mContext = new Context();
+
         public NewAutomatePage(BusinessFlow businessFlow)
         {
             InitializeComponent();
 
-            mGingerRunner = App.AutomateTabGingerRunner;
-
+            mRunner = new GingerRunner(eExecutedFrom.Automation);
+            mContext.Runner = mRunner;
             mBusinessFlow = businessFlow;
+            mContext.BusinessFlow = mBusinessFlow;
+
             //Binding
             BusinessFlowNameLabel.BindControl(mBusinessFlow, nameof(BusinessFlow.Name));
             // TODO: break it down to each folder and show parts with hyperlink
@@ -72,7 +77,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             App.PropertyChanged += App_PropertyChanged;
 
-            CurrentActivityFrame.Content = new ActivityPage((Activity)mBusinessFlow.Activities[0]);  // TODO: use binding? or keep each activity page
+            CurrentActivityFrame.Content = new ActivityPage((Activity)mBusinessFlow.Activities[0], mContext);  // TODO: use binding? or keep each activity page
 
             InitGingerRunnerControls();
         }
@@ -88,7 +93,7 @@ namespace GingerWPF.BusinessFlowsLib
             // TODO: if this page is going to be used as standalone pass the controls page as input
             if (mGingerRunnerControlsPage == null)
             {
-                mGingerRunnerControlsPage = new GingerRunnerControlsPage(mGingerRunner);
+                mGingerRunnerControlsPage = new GingerRunnerControlsPage(mRunner);
             }
             GingerRunnerControlsFrame.Content = mGingerRunnerControlsPage;
         }
@@ -154,13 +159,13 @@ namespace GingerWPF.BusinessFlowsLib
         {
             Activity SelectedActivity = (Activity)ActivitiesList.SelectedItem;
             
-            mGingerRunner.CurrentBusinessFlow.CurrentActivity = SelectedActivity;
-            App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity = SelectedActivity;
+            mRunner.CurrentBusinessFlow.CurrentActivity = SelectedActivity;
+            mRunner.CurrentBusinessFlow.CurrentActivity = SelectedActivity;
             if (SelectedActivity.Acts.CurrentItem == null && SelectedActivity.Acts.Count > 0)
             {
                 SelectedActivity.Acts.CurrentItem = SelectedActivity.Acts[0];
             }
-            CurrentActivityFrame.Content = new ActivityPage(SelectedActivity);
+            CurrentActivityFrame.Content = new ActivityPage(SelectedActivity, mContext);
         }
 
         private void BusinessFlowsHyperlink_Click(object sender, RoutedEventArgs e)

@@ -42,8 +42,8 @@ namespace Ginger.Environments
             InitializeComponent();
             mEnvApplication = app;
             mContext = context;
-            App.ObjFieldBinding(ApplicationNameTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Name));
-            App.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Description));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ApplicationNameTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Description));
 
             UpdateParametersTabHeader();
             app.GeneralParams.CollectionChanged += GeneralParams_CollectionChanged;

@@ -120,7 +120,7 @@ namespace Ginger.ALM.Repository
             Reporter.ToLog(eLogLevel.DEBUG, "Start importing from QC");
             //set path to import to               
             if (importDestinationFolderPath == "")
-                importDestinationFolderPath =  WorkSpace.UserProfile.Solution.BusinessFlowsMainFolder;
+                importDestinationFolderPath =  WorkSpace.Instance.Solution.BusinessFlowsMainFolder;
 
             //show Test Lab browser for selecting the Test Set/s to import
             QCTestLabExplorerPage win = new QCTestLabExplorerPage(QCTestLabExplorerPage.eExplorerTestLabPageUsageType.Import, importDestinationFolderPath);
@@ -174,20 +174,20 @@ namespace Ginger.ALM.Repository
                         //convert test set into BF
                         BusinessFlow tsBusFlow = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ConvertQCTestSetToBF(TS);
 
-                        if ( WorkSpace.UserProfile.Solution.MainApplication != null)
+                        if ( WorkSpace.Instance.Solution.MainApplication != null)
                         {
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
                                 if (string.IsNullOrEmpty(activ.TargetApplication) == false)
                                     if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                                     {
-                                        ApplicationPlatform appAgent =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                        ApplicationPlatform appAgent =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                                         if (appAgent != null)
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
                                     }
                             //handle non mapped Activities
                             if (tsBusFlow.TargetApplications.Count == 0)
-                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.UserProfile.Solution.MainApplication });
+                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.Instance.Solution.MainApplication });
                             foreach (Activity activ in tsBusFlow.Activities)
                                 if (string.IsNullOrEmpty(activ.TargetApplication))
                                     activ.TargetApplication = tsBusFlow.MainApplication;
@@ -269,7 +269,7 @@ namespace Ginger.ALM.Repository
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);
             string res = string.Empty;
 
-            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>( WorkSpace.UserProfile.Solution.ExternalItemsFields);
+            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>( WorkSpace.Instance.Solution.ExternalItemsFields);
             ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
 
             ObservableList<ExternalItemFieldBase> testCaseFields = CleanUnrelvantFields(allFields, ResourceType.TEST_CASE);
@@ -363,7 +363,7 @@ namespace Ginger.ALM.Repository
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
             string res = string.Empty;
 
-            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>( WorkSpace.UserProfile.Solution.ExternalItemsFields);
+            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>( WorkSpace.Instance.Solution.ExternalItemsFields);
             ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
 
             ObservableList<ExternalItemFieldBase> testSetFieldsFields = CleanUnrelvantFields(allFields, ResourceType.TEST_SET);

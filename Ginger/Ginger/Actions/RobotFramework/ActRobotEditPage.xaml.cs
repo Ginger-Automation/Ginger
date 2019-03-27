@@ -44,8 +44,8 @@ namespace Ginger.Actions.RobotFramework
 
         public void Bind()
         {
-            App.ObjFieldBinding(RobotLibsTextBox, TextBox.TextProperty, mAct.RobotLibraries, nameof(ActInputValue.Value));
-            App.ObjFieldBinding(RobotFileTextBox, TextBox.TextProperty, mAct.RobotFileName, nameof(ActInputValue.Value));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RobotLibsTextBox, TextBox.TextProperty, mAct.RobotLibraries, nameof(ActInputValue.Value));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RobotFileTextBox, TextBox.TextProperty, mAct.RobotFileName, nameof(ActInputValue.Value));
         }
         
         private void DisplayFileContents(string fileName)
