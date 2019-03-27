@@ -94,7 +94,7 @@ namespace GingerTest
                 Ginger.App.RunningFromUnitTest = true;
                 splash = new Ginger.SplashWindow();
                 splash.Show();                
-                //Ginger. WorkSpace.UserProfile.AutoLoadLastSolution = false;                
+                //Ginger. WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;                
 
                 while (!app.IsReady && splash.IsVisible)
                 {
@@ -271,7 +271,7 @@ namespace GingerTest
 
         internal void ReloadSolution()
         {
-            string path =  WorkSpace.UserProfile.Solution.ContainingFolderFullPath;
+            string path =  WorkSpace.Instance.Solution.ContainingFolderFullPath;
             CloseSolution();
             OpenSolution(path);
         }

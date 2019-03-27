@@ -43,7 +43,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             List<string> lst = new List<string>();
 
             // Add the variables from solution, current BF and current activity
-            foreach (VariableBase v in  WorkSpace.UserProfile.Solution.Variables)
+            foreach (VariableBase v in  WorkSpace.Instance.Solution.Variables)
             {
                 lst.Add(v.Name);
             }

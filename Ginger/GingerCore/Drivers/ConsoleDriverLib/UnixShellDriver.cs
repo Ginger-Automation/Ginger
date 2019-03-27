@@ -329,7 +329,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     {
                         prefix = "~";
                     }
-                    calcValue = AIV.ValueForDriver.Replace(WorkSpace.UserProfile.Solution.Folder.TrimEnd(new char[] { '/', '\\' }) + Path.DirectorySeparatorChar, prefix);
+                    calcValue = AIV.ValueForDriver.Replace(WorkSpace.Instance.Solution.Folder.TrimEnd(new char[] { '/', '\\' }) + Path.DirectorySeparatorChar, prefix);
                 }
                 else
                 {

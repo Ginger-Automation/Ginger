@@ -96,8 +96,8 @@ namespace Ginger.Actions.UserControls
 
             if (mBfParentRunner != null)
             {
-                App.FillComboFromEnumVal(ActionComboBox, FC.BusinessFlowControlAction);
-                App.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.BusinessFlowControlAction);
+                GingerCore.General.FillComboFromEnumObj(ActionComboBox, FC.BusinessFlowControlAction);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.BusinessFlowControlAction);
             }
             else
             {
@@ -105,17 +105,17 @@ namespace Ginger.Actions.UserControls
                 {
                     List<eFlowControlAction> ErrorFlowControlActions = FC.GetFlowControlActionsForErrorAndPopupHandler();
 
-                    App.FillComboFromEnumVal(ActionComboBox, FC.FlowControlAction, ErrorFlowControlActions.Cast<object>().ToList());
-                    App.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
+                    GingerCore.General.FillComboFromEnumObj(ActionComboBox, FC.FlowControlAction, ErrorFlowControlActions.Cast<object>().ToList());
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
                 }
                 else
                 {
-                    App.FillComboFromEnumVal(ActionComboBox, FC.FlowControlAction);
-                    App.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
+                    GingerCore.General.FillComboFromEnumObj(ActionComboBox, FC.FlowControlAction);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
                 }
             }                               
 
-            App.ObjFieldBinding(ActionValueTextBox, TextBox.TextProperty, FC, FlowControl.Fields.Value);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionValueTextBox, TextBox.TextProperty, FC, FlowControl.Fields.Value);
             ActionValueTextBox.Init(new Context() { BusinessFlow = mActParentBusinessFlow }, FC, FlowControl.Fields.Value);
             ActionValueTextBox.ValueTextBox.Text = FC.Value;
 

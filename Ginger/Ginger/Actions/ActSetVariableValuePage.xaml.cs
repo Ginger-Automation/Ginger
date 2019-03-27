@@ -38,7 +38,7 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
             SetComboListsValues(); 
-            App.ObjFieldBinding(VariableNameComboBox, ComboBox.TextProperty, mAct, "VariableName");                  
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VariableNameComboBox, ComboBox.TextProperty, mAct, "VariableName");                  
         }
 
         private void SetComboListsValues()
@@ -49,7 +49,7 @@ namespace Ginger.Actions
             }
             else
             {
-                mVars = WorkSpace.UserProfile.Solution.Variables;
+                mVars = WorkSpace.Instance.Solution.Variables;
             }
          
             foreach (VariableBase v in mVars.OrderBy(nameof(VariableBase.Name)))

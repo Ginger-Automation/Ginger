@@ -119,7 +119,7 @@ namespace Ginger.Actions
                 IEnumerable<Act> OrderedActions = allActions.OrderBy(x => x.Description);
                 foreach (Act cA in OrderedActions)
                 {
-                    if (cA.LegacyActionPlatformsList.Intersect( WorkSpace.UserProfile.Solution.ApplicationPlatforms
+                    if (cA.LegacyActionPlatformsList.Intersect( WorkSpace.Instance.Solution.ApplicationPlatforms
                                                                     .Where(x => mContext.Activity.TargetApplication == x.AppName)
                                                                     .Select(x => x.Platform).ToList()).Any())
                     {
@@ -163,7 +163,7 @@ namespace Ginger.Actions
             }
             else
             {
-                targetApplications = WorkSpace.UserProfile.Solution.GetSolutionTargetApplications();
+                targetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
             }
             TargetApplication targetApp = (TargetApplication)(from x in targetApplications where x.Name == mContext.Activity.TargetApplication select x).FirstOrDefault();
             if (targetApp == null)
@@ -179,7 +179,7 @@ namespace Ginger.Actions
                     return null;
                 }
             }
-            ApplicationPlatform appPlatform = (from x in WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetApp.AppName select x).FirstOrDefault();
+            ApplicationPlatform appPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetApp.AppName select x).FirstOrDefault();
 
             foreach (Type t in ActTypes)
             {
@@ -289,7 +289,7 @@ namespace Ginger.Actions
                         aNew.InputValues[i].ParamTypeEX = selectedAction.InputValues[i].ParamTypeEX;
                     }
 
-                    aNew.SolutionFolder = WorkSpace.UserProfile.Solution.Folder.ToUpper();
+                    aNew.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
                     //adding the new act after the selected action in the grid  
                     //TODO: Add should be after the last, Insert should be in the middle...
@@ -326,7 +326,7 @@ namespace Ginger.Actions
                             mBusinessFlow.TargetApplications.Add(new TargetPlugin() {PluginId = p.PluginId,  ServiceId = p.ServiceId });
 
                             //Search for default agent which match 
-                            App.AutomateTabGingerRunner.UpdateApplicationAgents();
+                            mContext.Runner.UpdateApplicationAgents();
                             // TODO: update automate page target/agent
 
                             // if agent not found auto add or ask user 

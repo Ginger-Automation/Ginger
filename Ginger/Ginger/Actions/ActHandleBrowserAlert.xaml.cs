@@ -28,8 +28,8 @@ namespace Ginger.Actions
         public ActHandleBrowserAlert(GingerCore.Actions.ActHandleBrowserAlert Act)
         {
             InitializeComponent();
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.GenElementAction);
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "GenElementAction"); 
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.GenElementAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "GenElementAction"); 
         }
     }
 }

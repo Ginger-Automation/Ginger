@@ -796,8 +796,6 @@
     <Compile Include="BetaFeaturesLib\BetaFeaturesPage.xaml.cs">
       <DependentUpon>BetaFeaturesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BindingLib\ComboEnumItem.cs" />
-    <Compile Include="BindingLib\ControlsBinding.cs" />
     <Compile Include="BusinessFlowsLibNew\ActivityActionsPage.xaml.cs">
       <DependentUpon>ActivityActionsPage.xaml</DependentUpon>
     </Compile>

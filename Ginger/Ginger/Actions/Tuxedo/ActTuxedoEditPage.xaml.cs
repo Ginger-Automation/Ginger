@@ -42,8 +42,8 @@ namespace Ginger.Actions.Tuxedo
             this.mAct = (ActTuxedo)act;            
 
             // Bind Controls
-            App.ObjFieldBinding(PCPath, TextBox.TextProperty, mAct.PCPath, ActInputValue.Fields.Value);
-            App.ObjFieldBinding(PreComamndTextBox, TextBox.TextProperty, mAct.PreCommand, ActInputValue.Fields.Value);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PCPath, TextBox.TextProperty, mAct.PCPath, ActInputValue.Fields.Value);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PreComamndTextBox, TextBox.TextProperty, mAct.PreCommand, ActInputValue.Fields.Value);            
              
             UnixPath.Init(Context.GetAsContext(mAct.Context), mAct.UnixPath);
             HostUCVE.Init(Context.GetAsContext(mAct.Context), mAct.Host);
@@ -85,7 +85,7 @@ namespace Ginger.Actions.Tuxedo
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
             dlg.DefaultExt = "*.UD";
             dlg.Filter = "UD Input Data Files (*.UD)|*.UD";
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -106,7 +106,7 @@ namespace Ginger.Actions.Tuxedo
             string FileName = PCPath.Text;
             //if (FileName.Contains("~\\"))
             //{
-            //    FileName = FileName.Replace("~",  WorkSpace.UserProfile.Solution.ContainingFolderFullPath);
+            //    FileName = FileName.Replace("~",  WorkSpace.Instance.Solution.ContainingFolderFullPath);
             //}
             FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName);
 
