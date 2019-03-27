@@ -72,7 +72,7 @@ namespace Ginger.ALM.Repository
             return isConnectSucc;
         }
 
-        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false)
+        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null)
         {
             bool result = false;
             string responseStr=string.Empty;

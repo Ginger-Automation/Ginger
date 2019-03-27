@@ -37,11 +37,13 @@ using ALM_Common.DataContracts;
 using GingerCore.ALM;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
+using ALMRestClient;
 
 namespace Ginger.ALM.Repository
 {
     class QCRestAPIRepository : ALMRepository
     {
+        QCTestCase matchingTC = null;
         public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
         {
             try
@@ -234,37 +236,10 @@ namespace Ginger.ALM.Repository
         #endregion Import From QC
 
         #region Export To QC
-        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false)
+        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null)
         {
             if (activtiesGroup == null) return false;
-            QCTestCase matchingTC = null;
-
-            //check if the ActivitiesGroup already mapped to QC Test Case
-            if (String.IsNullOrEmpty(activtiesGroup.ExternalID) == false)
-            {
-                matchingTC = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).GetQCTest(activtiesGroup.ExternalID);
-                if (matchingTC != null)
-                {
-                    //ask user if want to continute
-                    Amdocs.Ginger.Common.eUserMsgSelection userSelec = Reporter.ToUser(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, activtiesGroup.Name, matchingTC.Name);
-                    if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
-                        return false;
-                    else if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.No)
-                        matchingTC = null;
-                }
-            }
-
-            if (matchingTC == null && String.IsNullOrEmpty(uploadPath))
-            {
-                //get the QC Test Plan path to upload the activities group to
-                uploadPath = SelectALMTestPlanPath();
-                if (String.IsNullOrEmpty(uploadPath))
-                {
-                    //no path to upload to
-                    return false;
-                }
-            }
-
+            
             //upload the Activities Group
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);
             string res = string.Empty;
@@ -329,20 +304,65 @@ namespace Ginger.ALM.Repository
                 }
             }
 
+            
             //check if all of the business flow activities groups already exported to QC and export the ones which not
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
             {
-                if (string.IsNullOrEmpty(ag.ExternalID) == true || ((QCRestAPICore)ALMIntegration.Instance.AlmCore).GetQCTest(ag.ExternalID) == null)
+                //
+                matchingTC = null;
+                //check if the ActivitiesGroup already mapped to QC Test Case
+                if (String.IsNullOrEmpty(ag.ExternalID) == false)
                 {
-                    if (testPlanUploadPath == null)
-                        testPlanUploadPath = SelectALMTestPlanPath();
-                    if (string.IsNullOrEmpty(testPlanUploadPath) == false)
-                        ExportActivitiesGroupToALM(ag, testPlanUploadPath);
-                    else
-                        return false;
+                    matchingTC = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).GetQCTest(ag.ExternalID);
+                    if (matchingTC != null)
+                    {
+                        //ask user if want to continute
+                        Amdocs.Ginger.Common.eUserMsgSelection userSelect = Reporter.ToUser(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, ag.Name, matchingTC.Name);
+                        if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
+                            return false;
+                        else if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                            matchingTC = null;
+                    }
                 }
-                else
-                    ExportActivitiesGroupToALM(ag, testPlanUploadPath);
+                if (matchingTC == null && String.IsNullOrEmpty(testPlanUploadPath))
+                {
+                    //get the QC Test Plan path to upload the activities group to
+                    testPlanUploadPath = SelectALMTestPlanPath();
+                    if (String.IsNullOrEmpty(testPlanUploadPath))
+                    {
+                        //no path to upload to
+                        return false;
+                    }
+                    //create upload path if checked to create separete folder
+                    if (QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder)
+                    {
+                        if (testPlanUploadPath == null)
+                            testPlanUploadPath = SelectALMTestPlanPath();
+                        bool flag = false;
+                        try
+                        {
+                            string isFolderId = QCRestAPIConnect.GetLastTestPlanIdFromPath(testPlanUploadPath + "\\" + businessFlow.Name).ToString();
+                            testPlanUploadPath = testPlanUploadPath + "\\" + businessFlow.Name;
+                            flag = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            flag = false;
+                        }
+                        if (flag == false)
+                        {
+                            string newFolderId = QCRestAPIConnect.GetLastTestPlanIdFromPath(testPlanUploadPath).ToString();
+                            QCItem newFolder = new QCItem();
+                            newFolder.Fields.Add("name", businessFlow.Name);
+                            newFolder.Fields.Add("parent-id", QCRestAPIConnect.GetLastTestPlanIdFromPath(testPlanUploadPath).ToString());
+                            ALMResponseData responseData = QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_FOLDERS, newFolder);
+                            newFolderId = responseData.IdCreated;
+                            testPlanUploadPath = testPlanUploadPath + "\\" + businessFlow.Name;
+                        }
+                    }
+                }
+
+                ExportActivitiesGroupToALM(ag, testPlanUploadPath, false, businessFlow);
             }
 
             if (matchingTS == null && string.IsNullOrEmpty(testLabUploadPath))

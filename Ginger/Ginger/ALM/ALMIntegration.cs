@@ -418,7 +418,7 @@ namespace Ginger.ALM
 
             Reporter.ToLog(eLogLevel.DEBUG, ("Exporting business flow: " + businessFlow.Name + " to ALM"));
             //Passing Solution Folder path to GingerCore
-            ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+             ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
 
             bool isExportSucc = false;
             if (AutoALMProjectConnect(eALMConnectType.Auto))
