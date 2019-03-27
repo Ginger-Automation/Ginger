@@ -68,7 +68,9 @@ namespace Ginger.UserControlsLib
             AppWindow AW = (AppWindow)WindowsComboBox.SelectedItem;
             if (AW == null)
                 return;
-            mWindowExplorerDriver.SwitchWindow(AW.Title);
+
+            //Reporter.ToUser(eUserMsgKey.)
+            //mWindowExplorerDriver.SwitchWindow(AW.Title);
             //RecordingButton.IsEnabled = true;
 
             switch (AW.WindowType)

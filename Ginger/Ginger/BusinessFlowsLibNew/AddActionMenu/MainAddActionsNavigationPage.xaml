@@ -15,8 +15,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Name="navigationBar" Grid.Row="0" Background="LightSlateGray" >
-            <UserControls:ucButton ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="GoBack" Click="UcButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Margin="0,0,0,0" />
+        <Grid Name="navigationBar" Grid.Row="0" >
+            <UserControls:ucButton ButtonType="ImageButton" ButtonFontImageSize="16" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="GoBack" Click="UcButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Margin="0,0,0,0" />
         </Grid>
 
         <Grid Grid.Row="1">

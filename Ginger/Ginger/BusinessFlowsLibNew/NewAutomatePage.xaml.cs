@@ -100,6 +100,11 @@ namespace GingerWPF.BusinessFlowsLib
             InitGingerRunnerControls();
         }
 
+        internal void GoToBusFlowsListHandler(object v)
+        {
+            throw new NotImplementedException();
+        }
+
         private void App_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             throw new System.NotImplementedException();
@@ -113,7 +118,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mGingerRunnerControlsPage = new GingerRunnerControlsPage(mGingerRunner);
             }
-            GingerRunnerControlsFrame.Content = mGingerRunnerControlsPage;
+            //GingerRunnerControlsFrame.Content = mGingerRunnerControlsPage;
         }
 
         private void GingerRunner_GingerRunnerEvent(GingerRunnerEventArgs EventArgs)
@@ -125,7 +130,7 @@ namespace GingerWPF.BusinessFlowsLib
                     // Just to show we can display progress
                     this.Dispatcher.Invoke(() =>
                     {
-                        StatusLabel.Content = "Running " + a.ActivityName;                        
+                        //StatusLabel.Content = "Running " + a.ActivityName;
                     });
 
                     break;
@@ -134,8 +139,8 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         // just quick code to show activity progress..
                         int c = (from x in mBusinessFlow.Activities where x.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending select x).Count();
-                        ProgressBar.Maximum = mBusinessFlow.Activities.Count;
-                        ProgressBar.Value = c;
+                        //ProgressBar.Maximum = mBusinessFlow.Activities.Count;
+                        //ProgressBar.Value = c;
                     });
                     break;
             }
@@ -145,16 +150,17 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))
             {
-                ActivitiesList.Dispatcher.Invoke(() => {
+                ActivitiesList.Dispatcher.Invoke(() =>
+                {
                     ActivitiesList.SelectedItem = mBusinessFlow.CurrentActivity;
                 });
-                
+
             }
         }
 
         private void AddActivityButton_Click(object sender, RoutedEventArgs e)
         {
-            List<ActionSelectorItem> actions = new List<ActionSelectorItem>();            
+            List<ActionSelectorItem> actions = new List<ActionSelectorItem>();
             actions.Add(new ActionSelectorItem() { Name = "Add Activity using recording", Action = AddActivity });
             actions.Add(new ActionSelectorItem() { Name = "Add Empty Activity", Action = AddActivity });
             actions.Add(new ActionSelectorItem() { Name = "Add Activity from shared repository", Action = AddActivity });
@@ -166,17 +172,17 @@ namespace GingerWPF.BusinessFlowsLib
         private void AddActivity()
         {
             Activity activity = new Activity();
-            bool b = InputBoxWindow.OpenDialog("Add new Activity", "Activity Name", activity, nameof(Activity.ActivityName));            
+            bool b = InputBoxWindow.OpenDialog("Add new Activity", "Activity Name", activity, nameof(Activity.ActivityName));
             if (b)
             {
                 mBusinessFlow.Activities.Add(activity);
             }
         }
-      
+
         private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Activity SelectedActivity = (Activity)ActivitiesList.SelectedItem;
-            
+
             mGingerRunner.CurrentBusinessFlow.CurrentActivity = SelectedActivity;
             App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity = SelectedActivity;
             if (SelectedActivity.Acts.CurrentItem == null && SelectedActivity.Acts.Count > 0)
@@ -189,8 +195,8 @@ namespace GingerWPF.BusinessFlowsLib
         }
 
         private void BusinessFlowsHyperlink_Click(object sender, RoutedEventArgs e)
-        {            
-             WorkSpace.Instance.EventHandler.ShowBusinessFlows();             
+        {
+            WorkSpace.Instance.EventHandler.ShowBusinessFlows();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -207,13 +213,15 @@ namespace GingerWPF.BusinessFlowsLib
             if (AddActionMenuFrame.Visibility == Visibility.Collapsed)
             {
                 AddActionMenuFrame.Visibility = Visibility.Visible;
-                xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(300, GridUnitType.Star);
+                //xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(300, GridUnitType.Star);
+                //xActionActivitiesGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
                 SHAddActionPanel.Content = "-";
             }
             else
             {
                 AddActionMenuFrame.Visibility = Visibility.Collapsed;
-                xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(0, GridUnitType.Pixel);
+                //xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(0, GridUnitType.Pixel);
+                //xActionActivitiesGrid.ColumnDefinitions[2].Width = new GridLength(0, GridUnitType.Auto);
                 SHAddActionPanel.Content = "+";
             }
             xPanelResizer.IsEnabled = !xPanelResizer.IsEnabled;

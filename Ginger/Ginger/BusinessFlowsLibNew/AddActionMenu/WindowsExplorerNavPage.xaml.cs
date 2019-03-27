@@ -3,7 +3,11 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Drivers.Common;
 using Ginger.WindowExplorer;
+using Ginger.WindowExplorer.Common;
+using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -213,12 +217,53 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void SyncWithLiveSpyButton_Click(object sender, RoutedEventArgs e)
         {
+            System.Windows.Controls.Image image = new System.Windows.Controls.Image();
 
+            if (((Button)sender).ToolTip.ToString().Contains("Cancel") == true)
+            {
+                image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@WithoutSpyWhite_24x24.png"));
+                SyncWithLiveSpyButton.Content = image;
+                SyncWithLiveSpyButton.ToolTip = "Click to Locate Live Spy Found Element";
+
+                //mSyncControlsViewWithLiveSpy = false;
+            }
+            else
+            {
+                image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@WithSpyWhite_24x24.png"));
+                SyncWithLiveSpyButton.Content = image;
+                SyncWithLiveSpyButton.ToolTip = "Click to Cancel Locate Live Spy Found Element";
+
+                //mSyncControlsViewWithLiveSpy = true;
+                //FocusSpyItemOnControlTree();//try to locate last find element by live spy
+            }
         }
 
         private void GridTreeViewButton_Click(object sender, RoutedEventArgs e)
         {
+            System.Windows.Controls.Image image = new System.Windows.Controls.Image();
 
+            if (((Button)sender).ToolTip.ToString().Contains("Tree") == true)
+            {
+                //switch to tree view
+                WindowControlsTreeView.Visibility = System.Windows.Visibility.Visible;
+                WindowControlsGridView.Visibility = System.Windows.Visibility.Collapsed;
+
+                image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Grid_24x24.png"));
+                GridTreeViewButton.Content = image;
+                GridTreeViewButton.ToolTip = "Switch to Grid View";
+            }
+            else
+            {
+                //switch to grid view
+                WindowControlsTreeView.Visibility = System.Windows.Visibility.Collapsed;
+                WindowControlsGridView.Visibility = System.Windows.Visibility.Visible;
+                if (WindowControlsGridView.DataSourceList == null || WindowControlsGridView.DataSourceList.Count == 0)
+                    ShowFilterElementsPage();
+
+                image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@TreeView_24x24.png"));
+                GridTreeViewButton.Content = image;
+                GridTreeViewButton.ToolTip = "Switch to Tree View";
+            }
         }
 
         private void SelectedControlDetailsExpander_Expanded(object sender, RoutedEventArgs e)
@@ -229,6 +274,46 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void SelectedControlDetailsExpander_Collapsed(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        ObservableList<UIElementFilter> CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
+        ObservableList<UIElementFilter> FilteringCreteriaList = new ObservableList<UIElementFilter>();
+
+        private void ShowFilterElementsPage()
+        {
+            //if (FilteringCreteriaList.Count == 0)
+            //    SetAutoMapElementTypes();
+            //if (FilteringCreteriaList.Count != 0)
+            //{
+            //    CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
+            //    FilterElementsPage FEW = new FilterElementsPage(FilteringCreteriaList, CheckedFilteringCreteriaList, /*ControlsSearchButton_Click,*/ this);
+            //    FEW.ShowAsWindow(eWindowShowStyle.Dialog);
+
+            //    foreach (UIElementFilter filter in FilteringCreteriaList)
+            //        if (filter.Selected)
+            //        {
+            //            if (!CheckedFilteringCreteriaList.Contains(filter))
+            //                CheckedFilteringCreteriaList.Add(filter);
+            //        }
+            //}
+        }
+        private void SetAutoMapElementTypes()
+        {
+            List<eElementType> UIElementsTypeList = null;
+            //switch (((Agent)mApplicationAgent.Agent).Platform)
+            //{
+            //    case ePlatformType.Web:
+            //        WebPlatform webPlatformInfo = new WebPlatform();
+            //        UIElementsTypeList = webPlatformInfo.GetPlatformUIElementsType();
+            //        break;
+            //}
+            //if (UIElementsTypeList != null)
+            //{
+            //    foreach (eElementType eET in UIElementsTypeList)
+            //    {
+            //        FilteringCreteriaList.Add(new UIElementFilter(eET, string.Empty));
+            //    }
+            //}
         }
     }
 }
