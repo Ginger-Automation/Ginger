@@ -654,10 +654,10 @@ namespace Ginger
 
                         ValueExpression.SolutionFolder = SolutionFolder;
                         BusinessFlow.SolutionVariables = sol.Variables;
+                        sol.SetReportsConfigurations();
 
                         WorkSpace.Instance.Solution = sol;
-
-                        WorkSpace.Instance.Solution.SetReportsConfigurations();
+                                                
                         WorkSpace.Instance.UserProfile.LoadRecentAppAgentMapping();
                         AutoLogProxy.SetAccount(sol.Account);
 
