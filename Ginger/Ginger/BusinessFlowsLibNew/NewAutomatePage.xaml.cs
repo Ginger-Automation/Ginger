@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Ginger;
 using Ginger.BusinessFlowLib;
 using Ginger.BusinessFlowsLibNew.AddActionMenu;
+using Ginger.BusinessFlowWindows;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
@@ -58,11 +59,10 @@ namespace GingerWPF.BusinessFlowsLib
         BusinessFlow mBusinessFlow;
         GingerRunner mGingerRunner;
         Context mContext = new Context();
+        GridLength mlastActionMenuFrameColWidth = new GridLength(300);
         public NewAutomatePage(BusinessFlow businessFlow)
         {
             InitializeComponent();
-            App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-            App.AutomateTabGingerRunner.UpdateApplicationAgents();
 
             mGingerRunner = App.AutomateTabGingerRunner;
             mContext = new Context() { BusinessFlow = businessFlow, Activity = businessFlow.Activities[0], Runner = mGingerRunner };
@@ -207,7 +207,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (AddActionMenuFrame.Visibility == Visibility.Collapsed)
             {
                 AddActionMenuFrame.Visibility = Visibility.Visible;
-                xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Auto);
+                xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(300, GridUnitType.Star);
                 SHAddActionPanel.Content = "-";
             }
             else
@@ -216,11 +216,32 @@ namespace GingerWPF.BusinessFlowsLib
                 xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(0, GridUnitType.Pixel);
                 SHAddActionPanel.Content = "+";
             }
+            xPanelResizer.IsEnabled = !xPanelResizer.IsEnabled;
         }
 
         public void GoToBusFlowsListHandler(RoutedEventHandler clickHandler)
         {
             xStepBack.Click += clickHandler;
+        }
+
+        private void XAddActionPanel_Expanded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void XAddActionPanel_Collapsed(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void XAddActionPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+
+        }
+
+        private void AddActionMenuFrame_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            AddActionMenuFrame.Width = xAddActionMenuGrid.ColumnDefinitions[2].Width.Value;
         }
     }
 }

@@ -153,17 +153,19 @@
 
             <Frame x:Name="CurrentActivityFrame" Background="White" Grid.Column="1" Grid.ColumnSpan="2" Content="Frame" Margin="5,0,0,0" />
 
-            <Grid Name="xAddActionMenuGrid" Grid.Column="2" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="15"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Button Content="+" Name="SHAddActionPanel" Grid.Column="0" VerticalAlignment="Center" Click="SHAddActionPanel_Click" Width="50" Height="50" Style="{StaticResource @InputButtonStyleRoundCorner}" FontSize="25" />
-                <GridSplitter Grid.Column="1" Width="15" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="DeepSkyBlue" IsEnabled="True"/>
-                <Frame Name="AddActionMenuFrame" NavigationUIVisibility="Automatic" Visibility="Collapsed" Grid.Column="2" />
+            <!--<GridSplitter Grid.Column="2" Width="15" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="DeepSkyBlue" IsEnabled="True" />-->
+            <!--<Expander x:Name="xActionMenuFrameExpander" Grid.Column="2" Grid.ColumnSpan="3" ExpandDirection="Left" IsExpanded="False" Expanded="XAddActionPanel_Expanded" Collapsed="XAddActionPanel_Collapsed" SizeChanged="XAddActionPanel_SizeChanged" >-->
+                <Grid Name="xAddActionMenuGrid" Grid.Column="2" Grid.ColumnSpan="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Content="+" Name="SHAddActionPanel" Grid.Column="0" VerticalAlignment="Center" Click="SHAddActionPanel_Click" Width="50" Height="50" Style="{StaticResource @InputButtonStyleRoundCorner}" FontSize="25" />
+                    <GridSplitter x:Name="xPanelResizer" ResizeDirection="Columns" Grid.Column="1" Width="15" HorizontalAlignment="Center" VerticalAlignment="Stretch" Height="Auto" Background="DeepSkyBlue" IsEnabled="False" />
+                    <Frame Name="AddActionMenuFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </Grid>
-
+            <!--</Expander>-->
         </Grid>
 
         <GridSplitter ResizeDirection="Columns" Grid.Row="0" Grid.Column="1" Width="5" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True"/>

@@ -186,8 +186,17 @@ namespace Ginger.UserControlsLib
             if (mContext == null)
                 return;
 
+            @AppAgentAct:
             Activity mActParentActivity = mContext.BusinessFlow.CurrentActivity;
             ApplicationAgent appAgent = (ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
+
+            if(appAgent == null)
+            {
+                App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+                App.AutomateTabGingerRunner.UpdateApplicationAgents();
+                goto AppAgentAct;
+            }
+
             mPlatform = PlatformInfoBase.GetPlatformImpl(appAgent.Agent.Platform);
 
             mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
@@ -248,7 +257,7 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        void InitTree(ITreeViewItem RootItem)
+        public void InitTree(ITreeViewItem RootItem)
         {
             if(WindowControlsTreeView != null)
                 WindowControlsTreeView.Tree.ClearTreeItems();

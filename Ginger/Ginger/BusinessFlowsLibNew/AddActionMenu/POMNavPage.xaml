@@ -6,7 +6,7 @@
       xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
       xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
       mc:Ignorable="d" 
-      d:DesignHeight="500" d:DesignWidth="300"
+      d:DesignHeight="500" d:DesignWidth="600"
       Title="POMNavAction">
 
     <Grid>
@@ -18,11 +18,7 @@
         <UCTreeView:TreeView1 x:Name="xTreeView" TreeTitle="Title" Grid.Row="0">
         </UCTreeView:TreeView1>
 
-        <GridSplitter ResizeDirection="Rows" Grid.Row="1" Width="5" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="Black" IsEnabled="True" />
+        <GridSplitter ResizeDirection="Rows" Grid.Row="1" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="Black" IsEnabled="True" />
         <Frame x:Name="xPOMLDetailsFrame" Grid.Row="1" Margin="0,5,0,0" />
-
-        <!--<GridSplitter ResizeDirection="Columns" Grid.Column="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True"/>-->
-
-        <!--<Frame x:Name="DetailsFrame" Grid.Column="1" Margin="5,0,0,0"/>-->
     </Grid>
 </Page>

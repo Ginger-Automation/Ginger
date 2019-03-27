@@ -605,6 +605,7 @@
     <Compile Include="BusinessFlowsLibNew\AddActionMenu\SharedRepositoryNavPage.xaml.cs">
       <DependentUpon>SharedRepositoryNavPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowsLibNew\AddActionMenu\WindowExplorerCommon.cs" />
     <Compile Include="BusinessFlowsLibNew\AddActionMenu\WindowsExplorerNavPage.xaml.cs">
       <DependentUpon>WindowsExplorerNavPage.xaml</DependentUpon>
     </Compile>

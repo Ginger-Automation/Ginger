@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
       xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
+      Height="Auto" Width="Auto"
       Title="MainAddActionsNavigationPage" Background="White">
 
     <Grid>
@@ -14,14 +15,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Name="navigationBar" Background="DeepSkyBlue" Grid.Row="0" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="20" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
+        <Grid Name="navigationBar" Grid.Row="0" Background="LightSlateGray" >
             <UserControls:ucButton ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="GoBack" Click="UcButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Margin="0,0,0,0" />
-            <Label Name="navBarTitle" Content="Title" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="ExtraBold" Foreground="White" FontSize="15" Grid.Column="1"/>
         </Grid>
 
         <Grid Grid.Row="1">
@@ -35,7 +30,7 @@
                     <UserControls:ucButton ButtonText="Windows Explorer"   ButtonType="PanelButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Search"               Click="XNavWinExp_Click"       HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10" />
                 </StackPanel>
             </WrapPanel>
-            <Frame Name="navPnlActionFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" />
+            <Frame Name="navPnlActionFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Grid>
 
         <!--<Grid Name="requestedView" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Visible">

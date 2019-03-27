@@ -57,7 +57,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 (sender as Frame).Visibility = Visibility.Visible;
                 navigationBar.Visibility = Visibility.Visible;
                 navHomeStackPnl.Visibility = Visibility.Collapsed;
-                navBarTitle.Content = (navPnlActionFrame.Content as Page).Title;
+                //navBarTitle.Content = (navPnlActionFrame.Content as Page).Title;
             }
         }
 
