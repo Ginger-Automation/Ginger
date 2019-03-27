@@ -45,9 +45,9 @@ namespace Ginger.SolutionWindows
         {
             InitializeComponent();
             mSolution = s;
-            App.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, s, nameof(Solution.Name));
-            App.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
-            App.FillComboFromEnumVal(MainPlatformComboBox, s.MainPlatform);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, s, nameof(Solution.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
+            GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform);
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)

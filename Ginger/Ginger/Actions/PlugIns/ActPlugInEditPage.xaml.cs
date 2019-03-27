@@ -91,7 +91,7 @@ namespace Ginger.Actions.PlugIns
         //            ActInputValue v = mAct.GetOrCreateInputParam(name);
 
         //            //Bind a text box
-        //            App.ObjFieldBinding((Control)e, TextBox.TextProperty, v, "Value");
+        //            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding((Control)e, TextBox.TextProperty, v, "Value");
 
         //            //TODO: check control type and bind per type
         //        }

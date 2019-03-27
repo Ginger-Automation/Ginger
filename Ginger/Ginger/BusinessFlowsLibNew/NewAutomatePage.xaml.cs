@@ -36,38 +36,24 @@ using System.Windows;
 using System.Windows.Controls;
 namespace GingerWPF.BusinessFlowsLib
 {
-    //public delegate void ToggelPanelEventHandler(object sender, object e);
-
     /// <summary>
     /// Interaction logic for BusinessFlowPage.xaml
     /// </summary>
     public partial class NewAutomatePage : Page
     {
-        //Activity currentActivity = null;
-        //public event EventHandler ToggelPanelEvent;
-
-        //protected virtual void OnToggelPanelEvent(EventArgs e)
-        //{
-        //    EventHandler handler = ToggelPanelEvent;
-        //    if (handler != null)
-        //    {
-        //        handler(this, e);
-        //    }
-        //}
-
-
         BusinessFlow mBusinessFlow;
-        GingerRunner mGingerRunner;
+        GingerRunner mRunner;
         Context mContext = new Context();
-        GridLength mlastActionMenuFrameColWidth = new GridLength(300);
+
         public NewAutomatePage(BusinessFlow businessFlow)
         {
             InitializeComponent();
 
-            mGingerRunner = App.AutomateTabGingerRunner;
-            mContext = new Context() { BusinessFlow = businessFlow, Activity = businessFlow.Activities[0], Runner = mGingerRunner };
-
+            mRunner = new GingerRunner(eExecutedFrom.Automation);
+            mContext.Runner = mRunner;
             mBusinessFlow = businessFlow;
+            mContext.BusinessFlow = mBusinessFlow;
+
             //Binding
             BusinessFlowNameLabel.BindControl(mBusinessFlow, nameof(BusinessFlow.Name));
             // TODO: break it down to each folder and show parts with hyperlink
@@ -94,8 +80,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             App.PropertyChanged += App_PropertyChanged;
 
-            //CurrentActivityFrame.Content = new ActivityPage((Activity)mBusinessFlow.Activities[0]);  // TODO: use binding? or keep each activity page
-            CurrentActivityFrame.Content = new ActivityPage(mContext);  // TODO: use binding? or keep each activity page
+            CurrentActivityFrame.Content = new ActivityPage((Activity)mBusinessFlow.Activities[0], mContext);  // TODO: use binding? or keep each activity page
 
             InitGingerRunnerControls();
         }
@@ -116,7 +101,7 @@ namespace GingerWPF.BusinessFlowsLib
             // TODO: if this page is going to be used as standalone pass the controls page as input
             if (mGingerRunnerControlsPage == null)
             {
-                mGingerRunnerControlsPage = new GingerRunnerControlsPage(mGingerRunner);
+                mGingerRunnerControlsPage = new GingerRunnerControlsPage(mRunner);
             }
             //GingerRunnerControlsFrame.Content = mGingerRunnerControlsPage;
         }
@@ -182,16 +167,14 @@ namespace GingerWPF.BusinessFlowsLib
         private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Activity SelectedActivity = (Activity)ActivitiesList.SelectedItem;
-
-            mGingerRunner.CurrentBusinessFlow.CurrentActivity = SelectedActivity;
-            App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity = SelectedActivity;
+            
+            mRunner.CurrentBusinessFlow.CurrentActivity = SelectedActivity;
+            mRunner.CurrentBusinessFlow.CurrentActivity = SelectedActivity;
             if (SelectedActivity.Acts.CurrentItem == null && SelectedActivity.Acts.Count > 0)
             {
                 SelectedActivity.Acts.CurrentItem = SelectedActivity.Acts[0];
             }
-            mContext.Activity = SelectedActivity;
-            //CurrentActivityFrame.Content = new ActivityPage(SelectedActivity);
-            CurrentActivityFrame.Content = new ActivityPage(mContext);
+            CurrentActivityFrame.Content = new ActivityPage(SelectedActivity, mContext);
         }
 
         private void BusinessFlowsHyperlink_Click(object sender, RoutedEventArgs e)

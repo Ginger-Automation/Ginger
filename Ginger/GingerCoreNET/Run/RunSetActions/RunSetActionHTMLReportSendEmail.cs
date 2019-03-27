@@ -80,7 +80,7 @@ namespace Ginger.Run.RunSetActions
             {
                 if (mValueExpression == null)
                 {
-                    mValueExpression = new ValueExpression(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+                    mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
                 }
                 return mValueExpression;
             }
@@ -175,14 +175,14 @@ namespace Ginger.Run.RunSetActions
             //Make sure we clear in case use open the edit page twice
             Email.Attachments.Clear();
             Email.alternateView = null;
-            if (!System.IO.Directory.Exists(WorkSpace.TempFolder))
-                System.IO.Directory.CreateDirectory(WorkSpace.TempFolder);
-            tempFolder = WorkSpace.TempFolder;
+            if (!System.IO.Directory.Exists(WorkSpace.EmailReportTempFolder))
+                System.IO.Directory.CreateDirectory(WorkSpace.EmailReportTempFolder);
+            tempFolder = WorkSpace.EmailReportTempFolder;
             TemplatesFolder = (Ginger.Reports.GingerExecutionReport.ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
             string runSetFolder = string.Empty;
-            if (WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
             {
-                runSetFolder = WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
+                runSetFolder = WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
                 AutoLogProxy.UserOperationStart("Online Report");
             }
             else
@@ -195,7 +195,7 @@ namespace Ginger.Run.RunSetActions
 
             if (HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.FreeText)
             {
-                if (ReportItem != null && !WorkSpace.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
+                if (ReportItem != null && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                 {
                     Errors = "In order to get HTML report, please, perform executions before";
                     Reporter.HideStatusMessage();
@@ -208,7 +208,7 @@ namespace Ginger.Run.RunSetActions
             }
             else
             {
-                if (WorkSpace.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                 {
                     if (selectedHTMLReportTemplateID > 0)
                     {

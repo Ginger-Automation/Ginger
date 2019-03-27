@@ -19,10 +19,8 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Ginger.UserControls;
-using GingerCore;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard;
-using GingerWPF.BindingLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Specialized;
@@ -43,7 +41,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
         public AddAPIModelSelectTypePage()
         {
             InitializeComponent();
-            ControlsBinding.FillComboFromEnumType(APITypeComboBox, typeof(eAPIType), null);
+            GingerCore.General.FillComboFromEnumType(APITypeComboBox, typeof(eAPIType), null);
             APITypeComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             APITypeComboBox.Text = eAPIType.WSDL.ToString();
             XMLTemplatesGrid.SetTitleLightStyle = true;
@@ -89,10 +87,10 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             if (WizardEventArgs.EventType == EventType.Init)
             {
                 AddAPIModelWizard = ((AddAPIModelWizard)WizardEventArgs.Wizard);
-                App.ObjFieldBinding(XMLTemplatesGrid.AddCheckBox("Avoid Duplicates Nodes", null), CheckBox.IsCheckedProperty, AddAPIModelWizard, nameof(AddAPIModelWizard.AvoidDuplicatesNodes));
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(XMLTemplatesGrid.AddCheckBox("Avoid Duplicates Nodes", null), CheckBox.IsCheckedProperty, AddAPIModelWizard, nameof(AddAPIModelWizard.AvoidDuplicatesNodes));
                 mWSDLParser = new WSDLParser();
                 AddAPIModelWizard.mWSDLParser = mWSDLParser;
-                GingerCore.General.ObjFieldBinding(xURLTextBox, TextBox.TextProperty, AddAPIModelWizard, nameof(AddAPIModelWizard.URL));
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xURLTextBox, TextBox.TextProperty, AddAPIModelWizard, nameof(AddAPIModelWizard.URL));
                 xURLTextBox.AddValidationRule(eValidationRule.CannotBeEmpty);
             }
             else if (WizardEventArgs.EventType == EventType.LeavingForNextPage)
