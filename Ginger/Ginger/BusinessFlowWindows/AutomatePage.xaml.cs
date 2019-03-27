@@ -74,9 +74,7 @@ namespace Ginger
     /// </summary>
     public partial class AutomatePage : Page 
     {
-        GingerRunner mRunner = new GingerRunner(eExecutedFrom.Automation);
-        AutomatePageRunnerListener mAutomatePageRunnerListener;
-        ExecutionLogger mExecutionLogger;
+        GingerRunner mRunner;
         BusinessFlow mBusinessFlow = null;
         Activity mCurrentActivity = null;
         ProjEnvironment mEnvironment = null;
@@ -108,7 +106,8 @@ namespace Ginger
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
 
-            ConfigAutomateRunnerAndLogger();
+            SetAutomateRunner();
+            UpdateAutomateRunner();
             LoadBusinessFlowToAutomate(businessFlow);           
 
             //UI Updates
@@ -494,21 +493,26 @@ namespace Ginger
             }
         }
 
-        private void ConfigAutomateRunnerAndLogger()
+        private void SetAutomateRunner()
+        {
+            mRunner = new GingerRunner(eExecutedFrom.Automation);
+            mRunner.ExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+
+            // Add Listener so we can do GiveUserFeedback            
+            AutomatePageRunnerListener automatePageRunnerListener = new AutomatePageRunnerListener();
+            automatePageRunnerListener.AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback;
+            mRunner.RunListeners.Add(automatePageRunnerListener);
+
+            mContext.Runner = mRunner;
+        }
+
+        private void UpdateAutomateRunner()
         {            
             mRunner.CurrentSolution = WorkSpace.Instance.Solution;
             mRunner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
             mRunner.SolutionAgents = new ObservableList<Agent>();
             mRunner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
-            mRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            mExecutionLogger = new ExecutionLogger(mEnvironment, eExecutedFrom.Automation);
-            mExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();                       
-            // Add Listener so we can do GiveUserFeedback            
-            mAutomatePageRunnerListener = new AutomatePageRunnerListener();
-            mAutomatePageRunnerListener.AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback;
-            mRunner.RunListeners.Add(mAutomatePageRunnerListener);
-
-            mContext.Runner = mRunner;
+            mRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();            
         }
 
         private void DoCleanUp()
@@ -524,7 +528,7 @@ namespace Ginger
             }
 
             BindEnvsCombo();
-            ConfigAutomateRunnerAndLogger();
+            UpdateAutomateRunner();
         }
         public void UpdateApplicationsAgentsMapping(bool useAgentsCache = true)
         {
@@ -1138,7 +1142,7 @@ namespace Ginger
 
                 SetAutomateTabRunnerForExecution();
 
-                mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
+                mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
                 
                 RunActivity();
                 AutoLogProxy.UserOperationEnd();
@@ -1284,7 +1288,7 @@ namespace Ginger
             //execute preparations
             SetAutomateTabRunnerForExecution();
             mRunner.ResetRunnerExecutionDetails();
-            mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
+            mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
             
         }
 
@@ -1367,7 +1371,7 @@ namespace Ginger
                 mRunner.SetCurrentActivityAgent(); 
             }
 
-            mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+            mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
             var result = await mRunner.RunActionAsync((Act)mBusinessFlow.CurrentActivity.Acts.CurrentItem, checkIfActionAllowedToRun, true).ConfigureAwait(false);
 
             if (mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
@@ -1622,7 +1626,7 @@ namespace Ginger
             mEnvironment = env;
             mContext.Environment = mEnvironment;
             mRunner.ProjEnvironment = mEnvironment;
-            mExecutionLogger.ExecutionEnvironment = mEnvironment;
+            mRunner.ExecutionLogger.ExecutionEnvironment = mEnvironment;
             if (mEnvironment != null)
             {
                 WorkSpace.Instance.UserProfile.RecentEnvironment = mEnvironment.Guid;
