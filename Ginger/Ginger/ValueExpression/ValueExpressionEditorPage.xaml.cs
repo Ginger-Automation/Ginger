@@ -766,7 +766,7 @@ namespace Ginger
         {
             if (mVE == null)
             {
-                mVE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+                mVE = new ValueExpression(mContext?.Environment, mContext?.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
             }
             mVE.Value = this.ValueUCTextEditor.textEditor.Text;
             ValueCalculatedTextBox.Text = mVE.ValueCalculated;

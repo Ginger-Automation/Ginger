@@ -41,8 +41,8 @@ namespace Ginger.Run.RunSetActions
 
             HTMLReportFolderTextBox.Init(null, runSetActionHTMLReport, nameof(RunSetActionHTMLReport.HTMLReportFolderName), true, true, UCValueExpression.eBrowserType.Folder, "*.*", null);
 
-            App.ObjFieldBinding(UseAlternativeHTMLReportFolderCbx, CheckBox.IsCheckedProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.isHTMLReportFolderNameUsed);
-            App.ObjFieldBinding(UsePermanentHTMLReportFolderCbx, CheckBox.IsCheckedProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.isHTMLReportPermanentFolderNameUsed);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseAlternativeHTMLReportFolderCbx, CheckBox.IsCheckedProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.isHTMLReportFolderNameUsed);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UsePermanentHTMLReportFolderCbx, CheckBox.IsCheckedProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.isHTMLReportPermanentFolderNameUsed);
             CurrentTemplatePickerCbx_Binding();
         }
 
@@ -55,7 +55,7 @@ namespace Ginger.Run.RunSetActions
             CurrentTemplatePickerCbx.ItemsSource = null;
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            if (( WorkSpace.UserProfile.Solution != null) && (HTMLReportConfigurations.Count > 0))
+            if (( WorkSpace.Instance.Solution != null) && (HTMLReportConfigurations.Count > 0))
             {
                 CurrentTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 CurrentTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;
