@@ -17,22 +17,20 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
+using Ginger.Actions;
+using Ginger.Reports;
+using Ginger.UserControls;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.Platforms;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.Actions;
-using Ginger.UserControls;
-using GingerCore.Actions;
-using GingerCore.Drivers;
-using GingerCore.Drivers.Common;
-using GingerCore.Platforms;
-using Ginger.Reports;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCore;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.WindowExplorer
 {
@@ -235,11 +233,11 @@ namespace Ginger.WindowExplorer
             }
 
             SetActionDetails(act);
-            App.AutomateTabGingerRunner.PrepActionValueExpression(act);
-            ApplicationAgent ag =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
+            mContext.Runner.PrepActionValueExpression(act);
+            ApplicationAgent ag =(ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
             if (ag != null)
             {
-                App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+                mContext.Runner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
                ((Agent) ag.Agent).RunAction(act);
             }
             

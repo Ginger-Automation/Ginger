@@ -138,7 +138,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Ginger.DataSource.DataSourceExportToExcel DSEE = new Ginger.DataSource.DataSourceExportToExcel(DSTableDetails.Name);
             DSEE.ShowAsWindow();
 
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             string sExcelPath = DSEE.ExcelPath;
             string sSheetName = DSEE.SheetName;
             

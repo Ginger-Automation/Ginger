@@ -716,7 +716,7 @@ namespace GingerCore
             }
             else
             {
-                vb = (from v1 in WorkSpace.UserProfile.Solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
+                vb = (from v1 in WorkSpace.Instance.Solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
             }
                 
             if (vb != null)
@@ -1046,7 +1046,7 @@ namespace GingerCore
             }
             else
             {
-                vb = (from v1 in WorkSpace.UserProfile.Solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
+                vb = (from v1 in WorkSpace.Instance.Solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
             }
 
             if (vb != null)

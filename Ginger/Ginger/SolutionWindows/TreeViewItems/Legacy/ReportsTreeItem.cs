@@ -32,7 +32,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         private ReportTemplatesPage mReportTemplatesPage;
 
-        string Path =  WorkSpace.UserProfile.Solution.Folder;
+        string Path =  WorkSpace.Instance.Solution.Folder;
 
         Object ITreeViewItem.NodeObject()
         {

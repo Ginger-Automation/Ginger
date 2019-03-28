@@ -41,18 +41,18 @@ namespace Ginger.SolutionWindows
         {
             InitializeComponent();
 
-            mSolution =  WorkSpace.UserProfile.Solution;
-             WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+            mSolution =  WorkSpace.Instance.Solution;
+             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
 
             LoadGridData();
             SetAppsGrid();
         }
 
-        private void UserProfile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(UserProfile.Solution))
+            if(e.PropertyName == nameof(WorkSpace.Solution))
             {
-                mSolution =  WorkSpace.UserProfile.Solution;
+                mSolution =  WorkSpace.Instance.Solution;
                 LoadGridData();
             }
         }
@@ -98,7 +98,7 @@ namespace Ginger.SolutionWindows
 
         private void AddApplication(object sender, RoutedEventArgs e)
         {
-            AddApplicationPage AAP = new AddApplicationPage( WorkSpace.UserProfile.Solution);
+            AddApplicationPage AAP = new AddApplicationPage( WorkSpace.Instance.Solution);
             AAP.ShowAsWindow();
         }
 

@@ -34,11 +34,11 @@ namespace Ginger.Actions.Java
 
             mAct = act;
 
-            App.FillComboFromEnumVal(ControlActionComboBox, mAct.ControlAction);
-            App.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActJavaElement.Fields.ControlAction);
+            GingerCore.General.FillComboFromEnumObj(ControlActionComboBox, mAct.ControlAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActJavaElement.Fields.ControlAction);
 
-            App.FillComboFromEnumVal(WaitforIdleComboBox, mAct.WaitforIdle);
-            App.ObjFieldBinding(WaitforIdleComboBox, ComboBox.SelectedValueProperty, mAct, ActJavaElement.Fields.WaitforIdle);
+            GingerCore.General.FillComboFromEnumObj(WaitforIdleComboBox, mAct.WaitforIdle);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WaitforIdleComboBox, ComboBox.SelectedValueProperty, mAct, ActJavaElement.Fields.WaitforIdle);
         }
 
         private void ControlActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
