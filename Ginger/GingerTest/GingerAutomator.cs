@@ -76,8 +76,7 @@ namespace GingerTest
       
 
         private void StartGinger()
-        {            
-            Ginger.SplashWindow splash = null;
+        {                        
             // We start Ginger on STA thread
             mGingerThread = new Thread(() =>
             {
@@ -91,12 +90,10 @@ namespace GingerTest
                 Application.ResourceAssembly = asm1;
 
                 app = new Ginger.App();
-                Ginger.App.RunningFromUnitTest = true;
-                splash = new Ginger.SplashWindow();
-                splash.Show();                
+                Ginger.App.RunningFromUnitTest = true;                
                 //Ginger. WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;                
 
-                while (!app.IsReady && splash.IsVisible)
+                while (!app.IsReady)
                 {
                     Thread.Sleep(100);
                 }
@@ -122,15 +119,11 @@ namespace GingerTest
             int i = 0;
             while (MainWindowPOM == null && i <600)
             {
-                    Thread.Sleep(100);
+                Thread.Sleep(100);
                 i++;
             }
 
-
-            while (splash.IsVisible)
-            {
-                Thread.Sleep(100);
-            }            
+            
             // Here Ginger is live and visible
             isReady = true;
         }
