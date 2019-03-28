@@ -512,7 +512,9 @@ namespace Ginger
             mRunner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
             mRunner.SolutionAgents = new ObservableList<Agent>();
             mRunner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
-            mRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();            
+            mRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            mRunner.ExecutionLogger.ExecutionLogfolder = string.Empty;
+            mRunner.ExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();            
         }
 
         private void DoCleanUp()
@@ -932,6 +934,7 @@ namespace Ginger
                 RemoveCurrentBusinessFlow();
                 mBusinessFlow = businessFlowToLoad;
                 mContext.BusinessFlow = mBusinessFlow;
+                mContext.Activity = mBusinessFlow.CurrentActivity;
                 if (businessFlowToLoad != null)
                 {                    
                     mBusinessFlow.SaveBackup();

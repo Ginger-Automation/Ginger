@@ -82,7 +82,7 @@ namespace Ginger.SolutionWindows
                 }
 
                 //create new folder with solution name
-                mSolution.Folder += mSolution.Name;
+                mSolution.Folder = Path.Combine(mSolution.Folder, mSolution.Name);
                 if (!System.IO.Directory.Exists(mSolution.Folder))
                 {
                     System.IO.Directory.CreateDirectory(mSolution.Folder);
