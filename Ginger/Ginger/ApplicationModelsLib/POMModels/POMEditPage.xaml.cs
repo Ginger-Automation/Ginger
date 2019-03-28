@@ -85,8 +85,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
             }
         }
-
-
+        
         ScreenShotViewPage pd;
 
         readonly PomAllElementsPage mPomAllElementsPage;
@@ -99,9 +98,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPageURLTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.PageURL));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBusinessFlow.xBFTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.MappedBusinessFlow));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRDBPageURL, RadioButton.IsCheckedProperty, mPOM, nameof(mPOM.IsPageLoadBusinessFlow));
-
+            
             FillTargetAppsComboBox();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
             xTagsViewer.Init(mPOM.TagsKeys);
@@ -114,15 +111,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
             xScreenShotFrame.Content = mScreenShotViewPage;
-            if (mPOM.PageLoadFlow == ApplicationPOMModel.ePageLoadFlow.PageURL)
-            {
-                xRDBPageURL.IsChecked = true; 
-            }
-            else
-            {
-                xRDBBF.IsChecked = true;
-            }
-
+            
             mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
             xUIElementsFrame.Content = mPomAllElementsPage;
 
@@ -131,7 +120,20 @@ namespace Ginger.ApplicationModelsLib.POMModels
             ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
             ObservableList<Agent> optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
-            xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);         
+            xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
+            SetDefaultPage();
+        }
+
+        private void SetDefaultPage()
+        {
+            if (mPOM.PageLoadFlow == ApplicationPOMModel.PageLoadFlowType.PageURL)
+            {
+                xRDBPageURL.IsChecked = true;
+            }
+            else if (mPOM.PageLoadFlow == ApplicationPOMModel.PageLoadFlowType.BusinessFlow)
+            {
+                xRDBBF.IsChecked = true;
+            }
         }
 
         private void FillTargetAppsComboBox()
@@ -166,7 +168,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if (xTargetApplicationComboBox.SelectedValue != null)
             {                
-                xBusinessFlow.TargetApplication = Convert.ToString(((Amdocs.Ginger.Repository.RepositoryItemKey)xTargetApplicationComboBox.SelectedValue).ItemName); 
+                xBusinessFlowControl.TargetApplication = Convert.ToString(((Amdocs.Ginger.Repository.RepositoryItemKey)xTargetApplicationComboBox.SelectedValue).ItemName); 
             }
         }
 
@@ -331,19 +333,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mWin.Close();
         }
 
-        //private void CloseButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (!IsPageSaved)
-        //    {
-        //        if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-        //        {
-        //            UndoChangesAndClose();
-        //        }
-        //    }
-        //    else
-        //        mWin.Close();
-        //}
-
         private void UndoChangesAndClose()
         {
             try
@@ -356,6 +345,31 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 Mouse.OverrideCursor = null;
             }
-        }        
+        }
+
+        private void XRDBPageURL_Checked(object sender, RoutedEventArgs e)
+        {
+            if (xPageUrlStackPanel != null && xBusinessFlowControl != null)
+            {
+                mPOM.PageLoadFlow = ApplicationPOMModel.PageLoadFlowType.PageURL;
+                xPageUrlStackPanel.Visibility = Visibility.Visible;
+                xBusinessFlowControl.Visibility = Visibility.Hidden; 
+            }
+        }
+
+        private void XRDBBF_Checked(object sender, RoutedEventArgs e)
+        {
+            if (xPageUrlStackPanel != null && xBusinessFlowControl != null)
+            {
+                mPOM.PageLoadFlow = ApplicationPOMModel.PageLoadFlowType.BusinessFlow;
+                xPageUrlStackPanel.Visibility = Visibility.Hidden;
+                xBusinessFlowControl.Visibility = Visibility.Visible; 
+            }
+        }
+
+        private void XBusinessFlowControl_ElementChangedPageEvent()
+        {
+
+        }
     }
 }

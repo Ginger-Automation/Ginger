@@ -40,11 +40,6 @@
                         <ColumnDefinition Width="50*"></ColumnDefinition>
                         <ColumnDefinition Width="50*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="35" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
 
                     <StackPanel Grid.Column="0" Grid.Row="0" Margin="5,0,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
                         <Label Style="{StaticResource $LabelStyle}" Content="Target Application:"/>
@@ -53,21 +48,21 @@
 
                     <agents:ucAgentControl x:Name="xAgentControlUC" Grid.Column="1" Grid.Row="0" AgentStartedUCEvent="AgentStartedHandler" HorizontalAlignment="Right" Width="350" VerticalAlignment="Top" Margin="0,-5,0,0" ></agents:ucAgentControl>
 
-                    <StackPanel Grid.Column="0" Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Left" >
+                    <StackPanel Grid.Column="0" Margin="0,30,0,0" HorizontalAlignment="Left" >
                         <Label Margin="5,0,0,0" Style="{StaticResource $LabelStyle}" Content="Page Load Flow:" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <RadioButton x:Name="xRDBPageURL" Height="20" Content="Page URL" IsChecked="True" Grid.Column="0" Grid.Row="1" Tag="radPageURL" HorizontalAlignment="Left" Margin="10,5,0,0" />
-                        <RadioButton x:Name="xRDBBF" Height="20"  Grid.Column="0" Grid.Row="1" Tag="radPageURL" HorizontalAlignment="Left" Margin="10,5,0,0" >
+                        <RadioButton x:Name="xRDBPageURL" Height="20" Content="Page URL" IsChecked="True" Grid.Column="0" Grid.Row="1" Tag="radPageURL" Checked="XRDBPageURL_Checked" HorizontalAlignment="Left" Margin="10,5,0,0" />
+                        <RadioButton x:Name="xRDBBF" Height="20"  Grid.Column="0" Grid.Row="1" Tag="radPageURL" HorizontalAlignment="Left" Margin="10,5,0,0" Checked="XRDBBF_Checked" >
                             <RadioButton.Content>
                                 <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
                             </RadioButton.Content>
                         </RadioButton>           
                     </StackPanel>
 
-                    <StackPanel Grid.Column="0" Grid.Row="1" VerticalAlignment="Top"  Margin="150,17,0,0" Orientation="Horizontal" Visibility="{Binding ElementName=xRDBPageURL, Path=IsChecked, Converter={StaticResource visibilityConverter}}" >
+                    <StackPanel x:Name="xPageUrlStackPanel" Grid.Column="0" VerticalAlignment="Top"  Margin="150,47,0,0" Orientation="Horizontal" >
                         <TextBox x:Name="xPageURLTextBox" Style="{StaticResource $TextBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" TextWrapping="NoWrap" Width="250" Margin="10,0,0,0"/>
                         <UserControls:ucButton x:Name="xPageURLBtn" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoNext" Click="xPageURLBtn_Click" ToolTip="Go to Page"/>
                     </StackPanel>
-                    <UserControl:xUcBusinessFlowMap Grid.Column="0" Grid.Row="1" VerticalAlignment="Top" Margin="150,24,0,0" x:Name="xBusinessFlow" Visibility="{Binding ElementName=xRDBBF, Path=IsChecked, Converter={StaticResource visibilityConverter}}"  HorizontalAlignment="Left" />
+                    <UserControl:xUcBusinessFlowMap Grid.Column="0" VerticalAlignment="Top" Margin="150,54,0,0" x:Name="xBusinessFlowControl" ElementChangedPageEvent="XBusinessFlowControl_ElementChangedPageEvent" HorizontalAlignment="Left" />
                    
                 </Grid>
             </StackPanel>

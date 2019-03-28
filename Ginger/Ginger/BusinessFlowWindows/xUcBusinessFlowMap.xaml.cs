@@ -38,6 +38,18 @@ namespace Ginger.BusinessFlowWindows
         public BusinessFlow mBusinessFlow;
         public string TargetApplication { get; set; }
 
+        public delegate void ElementChangedEventHandler();
+
+        public event ElementChangedEventHandler ElementChangedPageEvent;
+
+        public void ElementChangedEvent()
+        {
+            if (ElementChangedPageEvent != null)
+            {
+                ElementChangedPageEvent();
+            }
+        }
+
         public xUcBusinessFlowMap()
         {
             InitializeComponent(); 
@@ -58,6 +70,7 @@ namespace Ginger.BusinessFlowWindows
                 mBusinessFlow = (BusinessFlow)selectedBF[0];
                 string pathToShow = mBusinessFlow.FilePath.Substring(0, mBusinessFlow.FilePath.LastIndexOf("\\")).Substring(mBusinessFlow.ContainingFolderFullPath.Length) + @"\" + mBusinessFlow.ItemName;
                 xBFTextBox.Text = pathToShow;
+                xBFTextBox.Tag = mBusinessFlow;
                 xGoToAutomateBtn.Visibility = Visibility.Visible;
             }
             else
@@ -67,6 +80,11 @@ namespace Ginger.BusinessFlowWindows
                     xGoToAutomateBtn.Visibility = Visibility.Hidden; 
                 }
             }
+        }
+
+        public void SetSelectedBusinessFlow(BusinessFlow businessFlow)
+        {
+
         }
 
         private void xGoToAutomateBtn_Click(object sender, RoutedEventArgs e)
