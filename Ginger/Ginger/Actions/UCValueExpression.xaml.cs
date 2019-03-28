@@ -34,7 +34,12 @@ namespace Ginger.Actions
         private string AttrName;
         private string fileType;
         eBrowserType mBrowserType;
-        Context mContext;
+
+        //public static readonly DependencyProperty mContextProperty = DependencyProperty.Register("mContext", typeof(Context), typeof(UCValueExpression), new PropertyMetadata(false));
+        public Context mContext
+        {
+            get; set;
+        }
 
         public enum eBrowserType { File, Folder }
 
@@ -61,7 +66,7 @@ namespace Ginger.Actions
             this.obj = obj;
             this.AttrName = AttrName;
             mContext = context;
-            GingerCore.General.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);       
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);       
         }
 
         public void Init(Context context, object obj, string AttrName, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler = null)
@@ -69,7 +74,7 @@ namespace Ginger.Actions
             this.obj = obj;
             this.AttrName = AttrName;
             mContext = context;
-            GingerCore.General.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
 
             if (isBrowseNeeded)
             {
@@ -106,7 +111,7 @@ namespace Ginger.Actions
             this.obj = AIV;
             this.AttrName = ActInputValue.Fields.Value;
             mContext = context;
-            GingerCore.General.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
 
             if (isBrowseNeeded)
             {
@@ -146,7 +151,7 @@ namespace Ginger.Actions
                     dlg.FilterIndex = 1;
                     System.Windows.Forms.DialogResult result = dlg.ShowDialog();
                     if (result == System.Windows.Forms.DialogResult.OK)
-                    {                        
+                    {
                         string FileName = General.ConvertSolutionRelativePath(dlg.FileName);
                         ValueTextBox.Text = FileName;
                     }
@@ -170,10 +175,11 @@ namespace Ginger.Actions
             Row.Height = new GridLength(hight);
         }
 
-        public bool IsReadOnly 
+        public bool IsReadOnly
         {
             get { return ValueTextBox.IsReadOnly; }
             set { ValueTextBox.IsReadOnly = value; }
         }
+
     }
 }

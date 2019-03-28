@@ -109,18 +109,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public void AddGherkinOptions(ContextMenu CM)
         {
-            if (System.IO.Path.GetExtension(FileName) == ".feature" &&  WorkSpace.UserProfile.UserTypeHelper.IsSupportAutomate)
+            if (System.IO.Path.GetExtension(FileName) == ".feature" &&  WorkSpace.Instance.UserProfile.UserTypeHelper.IsSupportAutomate)
             {
                 MenuItem GherkinMenu = TreeViewUtils.CreateSubMenu(CM, "Gherkin");
                 //TOD Change Icon
-                TreeViewUtils.AddSubMenuItem(GherkinMenu, "Automate mapped Business Flow", GoToGherkinBusinessFlow, null, eImageType.File);
+                TreeViewUtils.AddSubMenuItem(GherkinMenu, "Automate mapped " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GoToGherkinBusinessFlow, null, eImageType.File);
             }
         }
 
         private void GoToGherkinBusinessFlow(object sender, RoutedEventArgs e)
         {
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            BusinessFlow BF = businessFlows.Where(x => x.ExternalID != null ? System.IO.Path.GetFullPath(x.ExternalID.Replace("~",  WorkSpace.UserProfile.Solution.Folder)) == System.IO.Path.GetFullPath(Path) : false).FirstOrDefault();
+            BusinessFlow BF = businessFlows.Where(x => x.ExternalID != null ? System.IO.Path.GetFullPath(x.ExternalID.Replace("~",  WorkSpace.Instance.Solution.Folder)) == System.IO.Path.GetFullPath(Path) : false).FirstOrDefault();
             if (BF == null)
                 Reporter.ToUser(eUserMsgKey.GherkinNotifyBFIsNotExistForThisFeatureFile, FileName);
             else

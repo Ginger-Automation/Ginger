@@ -53,7 +53,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.Init:
                     mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
 
-                    ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList( WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
+                    ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList( WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
                     xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
                     xTargetApplicationComboBox.AddValidationRule(new POMTAValidationRule());
 
@@ -64,23 +64,24 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                     if (mWizard.mPomLearnUtils.POM.TargetApplicationKey != null)
                     {
-                        mAppPlatform = WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(mWizard.mPomLearnUtils.POM.TargetApplicationKey);
+                        mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mWizard.mPomLearnUtils.POM.TargetApplicationKey);
                     }
                     mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
                     foreach (Agent agent in mWizard.OptionalAgentsList)
                     {
                         agent.Tag = string.Empty;
                     }
-                    App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard.mPomLearnUtils, nameof(mWizard.mPomLearnUtils.Agent));
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard.mPomLearnUtils, nameof(mWizard.mPomLearnUtils.Agent));
                     xAgentControlUC.Init(mWizard.OptionalAgentsList);                   
                     xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
 
                     AddValidations();
-                    ClearAutoMapElementTypesSection();
 
+                    ClearAutoMapElementTypesSection();
                     SetAutoMapElementTypesGridView();
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
                     SetElementLocatorsSettingsGridView();
+                    UpdateConfigsBasedOnAgentStatus();
                     break;
             }
         }
@@ -159,21 +160,26 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (e.PropertyName == nameof(ucAgentControl.AgentIsRunning))
             {
-                if (xAgentControlUC.AgentIsRunning)
-                {
-                    SetAutoMapElementTypesSection();                    
-                    SetElementLocatorsSettingsSection();
-                }
-                else
-                {
-                    ClearAutoMapElementTypesSection();
-                }
-                xLearnOnlyMappedElements.IsEnabled = xAgentControlUC.AgentIsRunning;
-                xAutoMapElementTypesExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
-                xAutoMapElementTypesExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
-                xElementLocatorsSettingsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
-                xElementLocatorsSettingsExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
+                UpdateConfigsBasedOnAgentStatus();
             }
+        }
+
+        private void UpdateConfigsBasedOnAgentStatus()
+        {
+            if (xAgentControlUC.AgentIsRunning)
+            {
+                SetAutoMapElementTypesSection();
+                SetElementLocatorsSettingsSection();
+            }
+            else
+            {
+                ClearAutoMapElementTypesSection();
+            }
+            xLearnOnlyMappedElements.IsEnabled = xAgentControlUC.AgentIsRunning;
+            xAutoMapElementTypesExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
+            xAutoMapElementTypesExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
+            xElementLocatorsSettingsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
+            xElementLocatorsSettingsExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
         }
 
         private void ClearAutoMapElementTypesSection()

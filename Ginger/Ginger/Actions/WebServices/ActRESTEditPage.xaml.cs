@@ -48,36 +48,36 @@ namespace Ginger.Actions.WebServices
             RequestRespondXmlSaveTextBox.Init(Context.GetAsContext(mActREST.Context), mActREST.SaveRequestResponseFolderPath);
 
             TemplateFileNameFileBrowser.Init(Context.GetAsContext(mActREST.Context), mActREST.TemplateFile); 
-            App.FillComboFromEnumVal(RequestTypeComboBox, mActREST.RequestType);
-            App.ObjFieldBinding(RequestTypeComboBox, ComboBox.TextProperty, mActREST,  ActREST.Fields.RequestType);
+            GingerCore.General.FillComboFromEnumObj(RequestTypeComboBox, mActREST.RequestType);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RequestTypeComboBox, ComboBox.TextProperty, mActREST,  ActREST.Fields.RequestType);
 
             //httpversion content type
-            App.FillComboFromEnumVal(HttpVersioncombobox, mActREST.ReqHttpVersion);
-            App.ObjFieldBinding(HttpVersioncombobox, ComboBox.SelectedValueProperty, mActREST, ActREST.Fields.ReqHttpVersion);
+            GingerCore.General.FillComboFromEnumObj(HttpVersioncombobox, mActREST.ReqHttpVersion);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(HttpVersioncombobox, ComboBox.SelectedValueProperty, mActREST, ActREST.Fields.ReqHttpVersion);
 
             //Request content type
-            App.FillComboFromEnumVal(ContentTypeComboBox, mActREST.ContentType);
-            App.ObjFieldBinding(ContentTypeComboBox, ComboBox.SelectedValueProperty, mActREST, ActREST.Fields.ContentType);
+            GingerCore.General.FillComboFromEnumObj(ContentTypeComboBox, mActREST.ContentType);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ContentTypeComboBox, ComboBox.SelectedValueProperty, mActREST, ActREST.Fields.ContentType);
             
             //Response Content Type
-            App.FillComboFromEnumVal(ResponseTypeComboBox, mActREST.ResponseContentType);
-            App.ObjFieldBinding(ResponseTypeComboBox, ComboBox.SelectedValueProperty, mActREST, ActREST.Fields.ResponseContentType);
+            GingerCore.General.FillComboFromEnumObj(ResponseTypeComboBox, mActREST.ResponseContentType);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ResponseTypeComboBox, ComboBox.SelectedValueProperty, mActREST, ActREST.Fields.ResponseContentType);
             //Security Type
-            App.FillComboFromEnumVal(SecurityTypeComboBox, mActREST.SecurityType);
-            App.ObjFieldBinding(SecurityTypeComboBox, ComboBox.SelectedValueProperty, mActREST, ActREST.Fields.SecurityType);
+            GingerCore.General.FillComboFromEnumObj(SecurityTypeComboBox, mActREST.SecurityType);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SecurityTypeComboBox, ComboBox.SelectedValueProperty, mActREST, ActREST.Fields.SecurityType);
 
             //Cookie Mode 
-            App.FillComboFromEnumVal(CookieMode, mActREST.CookieMode);
-            App.ObjFieldBinding(CookieMode, ComboBox.SelectedValueProperty, mActREST, ActREST.Fields.CookieMode);
+            GingerCore.General.FillComboFromEnumObj(CookieMode, mActREST.CookieMode);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CookieMode, ComboBox.SelectedValueProperty, mActREST, ActREST.Fields.CookieMode);
 
-            App.ObjFieldBinding(restRequest, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.RestRequestSave);
-            App.ObjFieldBinding(restResponse, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.RestResponseSave);            
-            App.ObjFieldBinding(templateFileRadioBtn, RadioButton.IsCheckedProperty, mActREST,ActREST.Fields.UseRequestBody);
-            App.ObjFieldBinding(freeBodyRadioBtn, RadioButton.IsCheckedProperty, mActREST, ActREST.Fields.UseTemplateFile);
-            App.ObjFieldBinding(RestFailActionOnBadRespose, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.DoNotFailActionOnBadRespose);
-            App.ObjFieldBinding(AcceptAllSSLCertificate, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.AcceptAllSSLCertificate);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(restRequest, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.RestRequestSave);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(restResponse, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.RestResponseSave);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(templateFileRadioBtn, RadioButton.IsCheckedProperty, mActREST,ActREST.Fields.UseRequestBody);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(freeBodyRadioBtn, RadioButton.IsCheckedProperty, mActREST, ActREST.Fields.UseTemplateFile);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RestFailActionOnBadRespose, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.DoNotFailActionOnBadRespose);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AcceptAllSSLCertificate, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.AcceptAllSSLCertificate);
 
-            GingerCore.General.ObjFieldBinding(xUseLegacyJSONParsingCheckBox, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.UseLegacyJSONParsing);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUseLegacyJSONParsingCheckBox, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.UseLegacyJSONParsing);
 
             SetDynamicGrid();
 
@@ -234,7 +234,7 @@ namespace Ginger.Actions.WebServices
         private void BrowseTemplateFileButton_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
             if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

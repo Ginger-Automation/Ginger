@@ -122,21 +122,23 @@ namespace Ginger.Functionalties
         }
         public void CleanUp()
         {
-            foreach (var directory in new DirectoryInfo(mRecoverFolderPath).GetDirectories())
+            if (Directory.Exists(mRecoverFolderPath))
             {
-                long size = directory.GetFiles("*", SearchOption.AllDirectories).Sum(t => t.Length);
-                if (size==0)
+                foreach (var directory in new DirectoryInfo(mRecoverFolderPath).GetDirectories())
                 {
-                    try
+                    long size = directory.GetFiles("*", SearchOption.AllDirectories).Sum(t => t.Length);
+                    if (size == 0)
                     {
-                        directory.Delete(true);
-                    }
-                    catch
-                    {
+                        try
+                        {
+                            directory.Delete(true);
+                        }
+                        catch
+                        {
 
+                        }
                     }
                 }
-
             }
         }
 

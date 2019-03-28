@@ -318,7 +318,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             foreach (ActInputValue AIV in act.InputValues)
             {
                 string calcValue;
-                if (AIV.Value.StartsWith("~"))//workaround for keeping the ~ to work on linux
+                if (string.IsNullOrEmpty(AIV.Value)==false && AIV.Value.StartsWith("~"))//workaround for keeping the ~ to work on linux
                 {
                     string prefix;
                     if (AIV.Value.StartsWith("~/") || AIV.Value.StartsWith("~\\"))
@@ -329,7 +329,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     {
                         prefix = "~";
                     }
-                    calcValue = AIV.ValueForDriver.Replace(WorkSpace.UserProfile.Solution.Folder.TrimEnd(new char[] { '/', '\\' }) + Path.DirectorySeparatorChar, prefix);
+                    calcValue = AIV.ValueForDriver.Replace(WorkSpace.Instance.Solution.Folder.TrimEnd(new char[] { '/', '\\' }) + Path.DirectorySeparatorChar, prefix);
                 }
                 else
                 {

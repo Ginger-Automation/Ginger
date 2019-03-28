@@ -20,11 +20,9 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Expressions;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
-using Ginger.BusinessFlowFolder;
 using Ginger.BusinessFlowWindows;
 using Ginger.Help;
 using Ginger.Reports;
@@ -33,7 +31,6 @@ using Ginger.UserControls;
 using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using GingerCore.Actions.Java;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
@@ -83,6 +80,8 @@ namespace Ginger.Actions
         ComboBox dsOutputParamMapType = new ComboBox();
         private bool saveWasDone = false;
 
+        Context mContext;
+
         public General.RepositoryItemPageViewMode EditMode { get; set; }
 
         public ActionEditPage(Act act, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation, BusinessFlow actParentBusinessFlow = null, Activity actParentActivity = null)
@@ -94,24 +93,24 @@ namespace Ginger.Actions
             {
                 mAction.SaveBackup();
             }
-
-            RunDescritpion.Init(Context.GetAsContext(mAction.Context), act, Act.Fields.RunDescription);
+            mContext = Context.GetAsContext(mAction.Context);
+            RunDescritpion.Init(mContext, act, Act.Fields.RunDescription);
 
             if (actParentBusinessFlow != null)
             {
                 mActParentBusinessFlow = actParentBusinessFlow;
             }
-            else if (mAction.Context != null)
+            else if (mAction.Context != null && mContext.BusinessFlow != null)
             {
-                mActParentBusinessFlow = Context.GetAsContext(mAction.Context).BusinessFlow;
+                mActParentBusinessFlow = mContext.BusinessFlow;
             }
-            if (actParentActivity != null)
+            else if (actParentActivity != null)
             {
                 mActParentActivity = actParentActivity;
             }
-            else if (mAction.Context != null)
+            else if (mAction.Context != null && mContext.Activity != null)
             {
-                mActParentActivity = (Activity)Context.GetAsContext(mAction.Context).BusinessFlow.CurrentActivity;
+                mActParentActivity = (Activity)mContext.Activity;
             }
 
             EditMode = editMode;
@@ -140,39 +139,39 @@ namespace Ginger.Actions
             txtDescription.BindControl(mAction, Act.Fields.Description);
             cboLocateBy.BindControl(mAction, Act.Fields.LocateBy, act.AvailableLocateBy());
             comboWindowsToCapture.BindControl(mAction, Act.Fields.WindowsToCapture);
-            txtLocateValue.BindControl(Context.GetAsContext(mAction.Context), mAction, Act.Fields.LocateValue);
+            txtLocateValue.BindControl(mContext, mAction, Act.Fields.LocateValue);
 
             //Run Details binding
-            App.ObjFieldBinding(RTStatusLabel, Label.ContentProperty, mAction, Act.Fields.Status, BindingMode.OneWay);
-            App.ObjFieldBinding(RTElapsedLabel, Label.ContentProperty, mAction, Act.Fields.ElapsedSecs, BindingMode.OneWay);
-            App.ObjFieldBinding(RTErrorLabel, TextBox.TextProperty, mAction, Act.Fields.Error, BindingMode.OneWay);
-            App.ObjFieldBinding(RTExInfoLabel, TextBox.TextProperty, mAction, Act.Fields.ExInfo, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RTStatusLabel, Label.ContentProperty, mAction, Act.Fields.Status, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RTElapsedLabel, Label.ContentProperty, mAction, Act.Fields.ElapsedSecs, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RTErrorLabel, TextBox.TextProperty, mAction, Act.Fields.Error, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RTExInfoLabel, TextBox.TextProperty, mAction, Act.Fields.ExInfo, BindingMode.OneWay);
 
             //TODO: add tooltip on class level 
             //TODO: Add BindToolTip or use BindControl and supply DependecyProperty
-            App.ObjFieldBinding(txtLocateValue, TextBox.ToolTipProperty, mAction, Act.Fields.LocateValue);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtLocateValue, TextBox.ToolTipProperty, mAction, Act.Fields.LocateValue);
             // TODO: create BindControl for 
-            App.ObjFieldBinding(TakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.TakeScreenShot);
-            App.ObjFieldBinding(FailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.FailIgnored);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.TakeScreenShot);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.FailIgnored);
 
             comboFinalStatus.BindControl(mAction, Act.Fields.StatusConverter);
-            xWaittxtWait.BindControl(Context.GetAsContext(mAction.Context), mAction, nameof(Act.WaitVE));
-            App.ObjFieldBinding(txtTimeout, TextBox.TextProperty, mAction, Act.Fields.Timeout);
-            App.ObjFieldBinding(StatusLabel, Label.ContentProperty, mAction, Act.Fields.Status);
-            GingerCore.General.ObjFieldBinding(ErrorTextBlock, TextBlock.TextProperty, mAction, Act.Fields.Error);
-            GingerCore.General.ObjFieldBinding(ExtraInfoTextBlock, TextBlock.TextProperty, mAction, Act.Fields.ExInfo);
-            App.ObjFieldBinding(EnableRetryMechanismCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.EnableRetryMechanism);
-            App.ObjFieldBinding(RetryMechanismIntervalTextBox, TextBox.TextProperty, mAction, Act.Fields.RetryMechanismInterval);
-            App.ObjFieldBinding(RetryMechanismMaxRetriesTextBox, TextBox.TextProperty, mAction, Act.Fields.MaxNumberOfRetries);
+            xWaittxtWait.BindControl(mContext, mAction, nameof(Act.WaitVE));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtTimeout, TextBox.TextProperty, mAction, Act.Fields.Timeout);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(StatusLabel, Label.ContentProperty, mAction, Act.Fields.Status);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ErrorTextBlock, TextBlock.TextProperty, mAction, Act.Fields.Error);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ExtraInfoTextBlock, TextBlock.TextProperty, mAction, Act.Fields.ExInfo);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EnableRetryMechanismCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.EnableRetryMechanism);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RetryMechanismIntervalTextBox, TextBox.TextProperty, mAction, Act.Fields.RetryMechanismInterval);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RetryMechanismMaxRetriesTextBox, TextBox.TextProperty, mAction, Act.Fields.MaxNumberOfRetries);
 
             dsOutputParamMapType = DataSourceConfigGrid.AddComboBox(typeof(Act.eOutputDSParamMapType), "Out Param Mapping", "", new RoutedEventHandler(OutDSParamType_SelectionChanged));
-            App.ObjFieldBinding(AddOutDS, CheckBox.IsCheckedProperty, mAction, Act.Fields.ConfigOutputDS);
-            App.ObjFieldBinding(cmbDataSourceName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceName);
-            App.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceTableName);
-            App.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);
-            App.ObjFieldBinding(EnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AddOutDS, CheckBox.IsCheckedProperty, mAction, Act.Fields.ConfigOutputDS);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbDataSourceName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceTableName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
 
-            txtLocateValue.BindControl(Context.GetAsContext(mAction.Context), mAction, Act.Fields.LocateValue);
+            txtLocateValue.BindControl(mContext, mAction, Act.Fields.LocateValue);
             txtLocateValue.ValueTextBox.Text = mAction.LocateValue;  // Why ?
 
             SwitchingInputValueBoxAndGrid(mAction);
@@ -191,8 +190,8 @@ namespace Ginger.Actions
             //allowing return values automatically in Edit Action window
             if (mAction.AddNewReturnParams == null && mAction.ReturnValues.Count() == 0)
                 mAction.AddNewReturnParams = true;
-            App.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, Act.Fields.AddNewReturnParams);
-            App.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, Act.Fields.SupportSimulation);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, Act.Fields.AddNewReturnParams);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, Act.Fields.SupportSimulation);
             OutputValuesGrid.AddToolbarTool("@Reset_16x16.png", "Clear Un-used Parameters", new RoutedEventHandler(ClearUnusedParameter));
             OutputValuesGrid.AllowHorizentalScroll = true;
             SetActReturnValuesGrid();
@@ -235,7 +234,10 @@ namespace Ginger.Actions
                 xRunStatusExpander.IsExpanded = false;
 
             InitActionLog();
-            App.AutomateTabGingerRunner.PrepActionValueExpression(mAction, actParentBusinessFlow);
+            if (mContext != null && mContext.Runner != null)
+            {
+                mContext.Runner.PrepActionValueExpression(mAction, actParentBusinessFlow);
+            }
         }
 
         private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -310,7 +312,7 @@ namespace Ginger.Actions
                 }
                 else if (a.InputValues.Count == 1)
                 {
-                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mContext, mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
@@ -337,7 +339,7 @@ namespace Ginger.Actions
                 {
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mContext, mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
                 }
             }
             else if (a.GetType() == typeof(ActLaunchJavaWSApplication) || a.GetType() == typeof(ActJavaEXE))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
@@ -366,14 +368,14 @@ namespace Ginger.Actions
                 {
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mContext, mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
                 }
             }
             else if (a.GetType() == typeof(ActDBValidation))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
                 if (a.InputValues.Count == 1)
                 {
-                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mContext, mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;
                     ValueUC.ValueTextBox.Text = mAction.InputValues.FirstOrDefault().Value;
@@ -383,7 +385,7 @@ namespace Ginger.Actions
                 {
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;
-                    ValueUC.Init(Context.GetAsContext(mAction.Context), a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mContext, a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                 }
             }
             else if (a.GetType() == typeof(ActScript))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
@@ -395,7 +397,7 @@ namespace Ginger.Actions
                 }
                 else if (a.InputValues.Count == 1)
                 {
-                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mContext, mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
@@ -408,7 +410,7 @@ namespace Ginger.Actions
                 {   
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(Context.GetAsContext(mAction.Context), mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.Init(mContext, mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
                     ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
                     ValueLabel.Content = a.InputValues.FirstOrDefault().Param;
                 }
@@ -489,7 +491,7 @@ namespace Ginger.Actions
             }
             else
             {
-                varsCollc = WorkSpace.UserProfile.Solution.Variables.Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
+                varsCollc = WorkSpace.Instance.Solution.Variables.Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
             }
             varsCollc.Sort();
             if (varsCollc.Count > 0)
@@ -560,9 +562,12 @@ namespace Ginger.Actions
                     // For no driver actions we give the BF and env - used for example in set var value.
                     if (typeof(ActWithoutDriver).IsAssignableFrom(a.GetType()))
                     {
-                        ((ActWithoutDriver)a).RunOnBusinessFlow = (BusinessFlow)App.AutomateTabGingerRunner.CurrentBusinessFlow;
-                        ((ActWithoutDriver)a).RunOnEnvironment =(ProjEnvironment) App.AutomateTabGingerRunner.ProjEnvironment;
-                        ((ActWithoutDriver)a).DSList = App.AutomateTabGingerRunner.DSList;
+                        if (mContext != null && mContext.Runner != null)
+                        {
+                            ((ActWithoutDriver)a).RunOnBusinessFlow = (BusinessFlow)mContext.Runner.CurrentBusinessFlow;
+                            ((ActWithoutDriver)a).RunOnEnvironment = (ProjEnvironment)mContext.Runner.ProjEnvironment;
+                            ((ActWithoutDriver)a).DSList = mContext.Runner.DSList;
+                        }
                     }
 
                     // Load the page
@@ -636,22 +641,22 @@ namespace Ginger.Actions
 
         private async void RunActionInSimulationButton_Click(object sender, RoutedEventArgs e)
         {
-            bool originalSimulationFlagValue = App.AutomateTabGingerRunner.RunInSimulationMode;
-            App.AutomateTabGingerRunner.RunInSimulationMode = true;
+            bool originalSimulationFlagValue = mContext.Runner.RunInSimulationMode;
+            mContext.Runner.RunInSimulationMode = true;
 
             int res = await RunAction().ConfigureAwait(false);
 
-            App.AutomateTabGingerRunner.RunInSimulationMode = originalSimulationFlagValue;
+            mContext.Runner.RunInSimulationMode = originalSimulationFlagValue;
         }
 
         private async void RunActionButton_Click(object sender, RoutedEventArgs e)
         {
-            bool originalSimulationFlagValue = App.AutomateTabGingerRunner.RunInSimulationMode;
-            App.AutomateTabGingerRunner.RunInSimulationMode = false;
+            bool originalSimulationFlagValue = mContext.Runner.RunInSimulationMode;
+            mContext.Runner.RunInSimulationMode = false;
 
             int res = await RunAction().ConfigureAwait(false);
 
-            App.AutomateTabGingerRunner.RunInSimulationMode = originalSimulationFlagValue;
+            mContext.Runner.RunInSimulationMode = originalSimulationFlagValue;
         }
 
         private void StopRunBtn_Click(object sender, RoutedEventArgs e)
@@ -690,13 +695,13 @@ namespace Ginger.Actions
                 //No need for agent for some actions like DB and read for excel. For other need agent   
                 if (!(typeof(ActWithoutDriver).IsAssignableFrom(mAction.GetType())))
                 {
-                    App.AutomateTabGingerRunner.SetCurrentActivityAgent();
+                    mContext.Runner.SetCurrentActivityAgent();
                 }
 
-                App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+                mContext.Runner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
             });
             
-            var result = await App.AutomateTabGingerRunner.RunActionAsync(mAction, false, true).ConfigureAwait(false);
+            var result = await mContext.Runner.RunActionAsync(mAction, false, true).ConfigureAwait(false);
 
             this.Dispatcher.Invoke(() =>
             {
@@ -736,13 +741,13 @@ namespace Ginger.Actions
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Expected, Context.GetAsContext(mAction.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Expected, mContext);
             VEEW.ShowAsWindow();
         }
         private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)InputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mAction.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, mContext);
             VEEW.ShowAsWindow();
         }
         private void GridAddActualToExpectButton_Click(object sender, RoutedEventArgs e)
@@ -760,7 +765,7 @@ namespace Ginger.Actions
         private void SimulatedOutputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.SimulatedActual, Context.GetAsContext(mAction.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.SimulatedActual, mContext);
             VEEW.ShowAsWindow();
         }
 
@@ -983,13 +988,13 @@ namespace Ginger.Actions
         private void GridParamVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Param, Context.GetAsContext(mAction.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Param, mContext);
             VEEW.ShowAsWindow();
         }
         private void GridPathVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Path, Context.GetAsContext(mAction.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Path, mContext);
             VEEW.ShowAsWindow();
         }
 
@@ -1125,11 +1130,11 @@ namespace Ginger.Actions
         private void HighLightElementButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: fixme - Currently working with first agent
-            ApplicationAgent aa =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents[0];
+            ApplicationAgent aa =(ApplicationAgent)mContext.Runner.ApplicationAgents[0];
             if (aa != null)
             {
                 DriverBase driver =((Agent) aa.Agent).Driver;
-                App.AutomateTabGingerRunner.PrepActionValueExpression(mAction);
+                mContext.Runner.PrepActionValueExpression(mAction);
                 if (driver != null)
                 {
                     driver.HighlightActElement(mAction);
@@ -1143,7 +1148,7 @@ namespace Ginger.Actions
 
         private void ControlSelectorButton_Click(object sender, RoutedEventArgs e)
         {
-            ApplicationAgent aa =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent aa =(ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
             if (aa != null)
             {
                 if (((Agent)aa.Agent).Driver == null)
@@ -1155,7 +1160,7 @@ namespace Ginger.Actions
                 //Instead of check make it disabled ?
                 if (driver is IWindowExplorer)
                 {
-                    WindowExplorerPage WEP = new WindowExplorerPage(aa, Context.GetAsContext(mAction.Context),  mAction);
+                    WindowExplorerPage WEP = new WindowExplorerPage(aa, mContext,  mAction);
                     WEP.ShowAsWindow();
                 }
                 else
@@ -1526,7 +1531,7 @@ namespace Ginger.Actions
                     //if (ds.FilePath.StartsWith("~"))
                     //{
                     //    ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
-                    //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, ds.FileFullPath);
+                    //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, ds.FileFullPath);
                     //}
                     ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
 

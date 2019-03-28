@@ -58,7 +58,6 @@ namespace Amdocs.Ginger.Repository
         private void GetPackages()
         {
             mPluginPackages = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
-
         }
 
         public class DriverInfo
@@ -231,9 +230,10 @@ namespace Amdocs.Ginger.Repository
 
         public void CloseAllRunningPluginProcesses()
         {
+            WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();//??? do proper Reset()
             foreach (PluginProcessWrapper process in mProcesses)
             {
-                process.Close();                
+                process.Close();
             }
             mProcesses.Clear();
         }
@@ -275,43 +275,59 @@ namespace Amdocs.Ginger.Repository
         }
 
         public void SolutionChanged(SolutionRepository solutionRepository)
-        {        
+        {
             mSolutionRepository = solutionRepository;
+
+            //download missing plugins
             GetPackages();
-
-            Task.Run(() =>{
-                WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = true;
-                try
+            if (mPluginPackages != null && mPluginPackages.Count > 0)
+            {                
+                if ( WorkSpace.Instance.RunningInExecutionMode)
+                {                    
+                    DownloadMissingPlugins(); //need to download it before execution starts
+                }
+                else
                 {
-                    ObservableList<OnlinePluginPackage> OnlinePlugins = null;
-                    foreach (PluginPackage SolutionPlugin in mPluginPackages)
+                    Task.Run(() =>
                     {
-                        if (SolutionPlugin.Folder.Contains("AppData\\Roaming") && !System.IO.File.Exists(Path.Combine(SolutionPlugin.Folder, @"Ginger.PluginPackage.Services.json")))
+                        DownloadMissingPlugins(); //downloading the plugins async
+                    });
+                }
+            }
+        }
+
+        private void DownloadMissingPlugins()
+        {
+            Reporter.ToStatus(eStatusMsgKey.DownloadingMissingPluginPackages);
+            WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = true;
+            try
+            {
+                ObservableList<OnlinePluginPackage> OnlinePlugins = null;
+                foreach (PluginPackage SolutionPlugin in mPluginPackages)
+                {
+                    //TODO: Make it work for linux environments 
+                    if (SolutionPlugin.Folder.Contains("AppData\\Roaming") && !System.IO.File.Exists(Path.Combine(SolutionPlugin.Folder, @"Ginger.PluginPackage.Services.json")))
+                    {
+                        if (OnlinePlugins == null)
                         {
-                            if (OnlinePlugins == null)
-                            {
-                                OnlinePlugins = WorkSpace.Instance.PlugInsManager.GetOnlinePluginsIndex();
-                            }
-
-                            OnlinePluginPackage OnlinePlugin = OnlinePlugins.Where(x => x.Id == SolutionPlugin.PluginId).FirstOrDefault();
-
-
-                            OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
-
-                            OnlinePlugin.InstallPluginPackage(OPR);
-                            //WorkSpace.Instance.PlugInsManager.InstallPluginPackage(OnlinePlugin, OPR);
+                            OnlinePlugins = WorkSpace.Instance.PlugInsManager.GetOnlinePluginsIndex();
                         }
 
+                        OnlinePluginPackage OnlinePlugin = OnlinePlugins.Where(x => x.Id == SolutionPlugin.PluginId).FirstOrDefault();
 
+                        OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
+
+                        OnlinePlugin.InstallPluginPackage(OPR);
+
+                        //WorkSpace.Instance.PlugInsManager.InstallPluginPackage(OnlinePlugin, OPR);
                     }
                 }
-
-                finally
-                {
-                    WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = false;
-                }
-            });
-
-         }
+            }
+            finally
+            {
+                WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = false;
+                Reporter.HideStatusMessage();
+            }
+        }
     }
 }

@@ -48,12 +48,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public Tuple<string, string> TreeNodesFilterByField { get; set; } 
 
         
-        private TreeViewItem mlastSelectedTVI;
+        
 
-        public TreeViewItem  MlastSelectedTVI
+        public TreeViewItem  LastSelectedTVI
         {
-            get { return mlastSelectedTVI; }
-            set { mlastSelectedTVI = value; }
+            get;set;
 
         }
 
@@ -135,8 +134,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             if (Tree.SelectedItem != null)
             {
-                if (mlastSelectedTVI != null)
-                    mlastSelectedTVI.Header = SetUnSelectedTreeNodeHeaderStyle((StackPanel)mlastSelectedTVI.Header);
+                if (LastSelectedTVI != null)
+                    LastSelectedTVI.Header = SetUnSelectedTreeNodeHeaderStyle((StackPanel)LastSelectedTVI.Header);
                 ((TreeViewItem)Tree.SelectedItem).Header= SetSelectedTreeNodeHeaderStyle((StackPanel)((TreeViewItem)Tree.SelectedItem).Header);
 
                 //Check if there is event hooked
@@ -153,7 +152,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     }
                 }
 
-                mlastSelectedTVI = (TreeViewItem)Tree.SelectedItem;
+                LastSelectedTVI = (TreeViewItem)Tree.SelectedItem;
             }
         }
         
@@ -436,6 +435,17 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return string.Empty;
         }
 
+        public object GetSelectedTreeNodeObject()
+        {
+            TreeViewItem TVI = (TreeViewItem)Tree.SelectedItem;
+            if (TVI != null && TVI.Tag != null)
+            {
+                return ((ITreeViewItem)TVI.Tag).NodeObject();
+            }
+
+            return null;
+        }
+
         private StackPanel SetSelectedTreeNodeHeaderStyle(StackPanel header)
         {
             if (header != null)
@@ -488,13 +498,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 if(cancellationToken.IsCancellationRequested)
                 {
                     List<TreeViewItem> pathNodes = new List<TreeViewItem>();
-                    if (MlastSelectedTVI != null)
+                    if (LastSelectedTVI != null)
                     {
-                        pathNodes = getSelecetdItemPathNodes(MlastSelectedTVI);
+                        pathNodes = getSelecetdItemPathNodes(LastSelectedTVI);
                     }
                     CollapseUnselectedTreeNodes(TreeItemsCollection, pathNodes);
 
-                    cancellationToken.ThrowIfCancellationRequested();
+                   
+                    return;
                 }            
                 
                 // Need to expand to get all lazy loading
@@ -551,7 +562,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             List<TreeViewItem> pathNodes = new List<TreeViewItem>();
             object ParentItem = getParentItem(SelectedItem);
-            while (ParentItem.GetType() == typeof(TreeViewItem))
+            while (ParentItem?.GetType() == typeof(TreeViewItem))
             {
                 pathNodes.Add((TreeViewItem)ParentItem);
                 ParentItem = getParentItem(ParentItem);
@@ -619,9 +630,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return TVI;
         }
 
-        public TreeViewItem FindMatchingTreeItemByObject(TreeViewItem root, Object searchItem)
+        public TreeViewItem FindMatchingTreeItemByObject(Object searchItem, TreeViewItem root = null)
         {
             Object currentItem = null;
+
+            if (root == null)
+            {
+                root = (TreeViewItem)Tree.Items[0];
+            }
 
             foreach (TreeViewItem TVI in root.Items)
             {
@@ -638,7 +654,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 if (TVI.Items.Count > 0)
                 {
                     TVI.IsExpanded = true;
-                    TreeViewItem vv = FindMatchingTreeItemByObject(TVI, searchItem);
+                    TreeViewItem vv = FindMatchingTreeItemByObject(searchItem, TVI);
                     if (vv != null) return vv;
                 }
             }

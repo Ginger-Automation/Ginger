@@ -45,7 +45,12 @@
                     <ColumnDefinition Width="270"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,10,0,0" >
-                    <Label x:Name="xRunSetNameLbl" HorizontalAlignment="Left" Style="{StaticResource $MainHeaderLabelStyle}" Content="Run Set Name" Height="40" Margin="-5,0,0,0"></Label>
+
+                    <Label x:Name="xRunSetNameLbl" HorizontalAlignment="Left" Style="{StaticResource $MainHeaderLabelStyle}" Height="40" Margin="-5,0,0,0">
+                        <Label.Content>
+                            <GingerCore:ucTextDicResource Text="[RunSet] Name"></GingerCore:ucTextDicResource>
+                        </Label.Content>
+                    </Label>
                 </StackPanel>
                 <TextBlock x:Name="xRunsetDescriptionTextBlock" Grid.Row="1" Grid.Column="0" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,10,200,0" Text="Description: this is my beautiful runset" VerticalAlignment="Stretch" HorizontalAlignment="Left" Style="{StaticResource $TextBlockStyle}" FontSize="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}"  ></TextBlock>
                 <StackPanel x:Name="xRunSetOperationsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 40 0">
@@ -195,7 +200,7 @@
                     </DockPanel>
                         <DockPanel x:Name="xRunnersExecutionControls" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,-3,0">                                                      
                             <Label Content="Environment :" x:Name="xEnvironmentCombolbl" Foreground="{StaticResource $BackgroundColor_DarkBlue}" ></Label>
-                            <ComboBox x:Name="xRunsetEnvironmentCombo" ToolTip="Environment"  HorizontalAlignment="Left" ContextMenu="{x:Null}" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,5,5,3"></ComboBox>
+                            <ComboBox x:Name="xRunsetEnvironmentCombo" ToolTip="Environment"  HorizontalAlignment="Left" ContextMenu="{x:Null}" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,5,5,3" SelectionChanged="XRunsetEnvironmentCombo_SelectionChanged"></ComboBox>
                             <usercontrols:ucButton x:Name="xExecutionModeBtn" ToolTip="Sequential Execution" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="SequentialExecution" Click="executionMode_Click"></usercontrols:ucButton> 
                             <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $SelectionColor_Pink}" Margin="10 0 10 0"/>
                             <usercontrols:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Runner Items Selection is Synced with Execution Progress, Click to Un-Sync it" ButtonType="ImageButton" ButtonFontImageSize="17" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"></usercontrols:ucButton>                                                                                   

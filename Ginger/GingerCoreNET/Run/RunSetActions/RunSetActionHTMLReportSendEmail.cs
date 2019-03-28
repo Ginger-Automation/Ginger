@@ -80,7 +80,7 @@ namespace Ginger.Run.RunSetActions
             {
                 if (mValueExpression == null)
                 {
-                    mValueExpression = new ValueExpression(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+                    mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
                 }
                 return mValueExpression;
             }
@@ -175,14 +175,14 @@ namespace Ginger.Run.RunSetActions
             //Make sure we clear in case use open the edit page twice
             Email.Attachments.Clear();
             Email.alternateView = null;
-            if (!System.IO.Directory.Exists(WorkSpace.TempFolder))
-                System.IO.Directory.CreateDirectory(WorkSpace.TempFolder);
-            tempFolder = WorkSpace.TempFolder;
+            if (!System.IO.Directory.Exists(WorkSpace.EmailReportTempFolder))
+                System.IO.Directory.CreateDirectory(WorkSpace.EmailReportTempFolder);
+            tempFolder = WorkSpace.EmailReportTempFolder;
             TemplatesFolder = (Ginger.Reports.GingerExecutionReport.ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
             string runSetFolder = string.Empty;
-            if (WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
             {
-                runSetFolder = WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
+                runSetFolder = WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
                 AutoLogProxy.UserOperationStart("Online Report");
             }
             else
@@ -195,7 +195,7 @@ namespace Ginger.Run.RunSetActions
 
             if (HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.FreeText)
             {
-                if (ReportItem != null && !WorkSpace.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
+                if (ReportItem != null && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                 {
                     Errors = "In order to get HTML report, please, perform executions before";
                     Reporter.HideStatusMessage();
@@ -208,7 +208,7 @@ namespace Ginger.Run.RunSetActions
             }
             else
             {
-                if (WorkSpace.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                 {
                     if (selectedHTMLReportTemplateID > 0)
                     {
@@ -509,7 +509,7 @@ namespace Ginger.Run.RunSetActions
                         chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsFailed).ToList().Sum(), 1));
                         chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsStopped).ToList().Sum(), 2));
                         chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsOther).ToList().Sum(), 3));
-                        CreateChart(chartData, "Businessflow" + reportTimeStamp + ".jpeg", "Business Flows");
+                        CreateChart(chartData, "Businessflow" + reportTimeStamp + ".jpeg", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows));
 
                         List<BusinessFlowReport> bfTotalList = new List<BusinessFlowReport>();
                         ((RunSetReport)RI.ReportInfoRootObject).GingerReports.ForEach(x => x.BusinessFlowReports.ForEach(y => bfTotalList.Add(y)));
@@ -519,7 +519,7 @@ namespace Ginger.Run.RunSetActions
                         chartData.Add(new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesFailed).ToList().Sum(), 1));
                         chartData.Add(new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesStopped).ToList().Sum(), 2));
                         chartData.Add(new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesOther).ToList().Sum(), 3));
-                        CreateChart(chartData, "Activity" + reportTimeStamp + ".jpeg", "Activities");
+                        CreateChart(chartData, "Activity" + reportTimeStamp + ".jpeg", GingerDicser.GetTermResValue(eTermResKey.Activities));
 
                         List<ActivityReport> activitiesTotalList = new List<ActivityReport>();
                         bfTotalList.ForEach(x => x.Activities.ForEach(y => activitiesTotalList.Add(y)));
@@ -733,7 +733,7 @@ namespace Ginger.Run.RunSetActions
                                             {
                                                 if (firstIteration)
                                                 {
-                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#1B3651' style='color:#fff;padding:10px;border-right:1px solid #fff'>Business Flow Sequence</td>");
+                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#1B3651' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Sequence</td>");
                                                 }
                                                 fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) + "</td>");
                                             }

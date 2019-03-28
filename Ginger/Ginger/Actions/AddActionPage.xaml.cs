@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
@@ -118,7 +119,7 @@ namespace Ginger.Actions
                 IEnumerable<Act> OrderedActions = allActions.OrderBy(x => x.Description);
                 foreach (Act cA in OrderedActions)
                 {
-                    if (cA.LegacyActionPlatformsList.Intersect( WorkSpace.UserProfile.Solution.ApplicationPlatforms
+                    if (cA.LegacyActionPlatformsList.Intersect( WorkSpace.Instance.Solution.ApplicationPlatforms
                                                                     .Where(x => mContext.Activity.TargetApplication == x.AppName)
                                                                     .Select(x => x.Platform).ToList()).Any())
                     {
@@ -162,7 +163,7 @@ namespace Ginger.Actions
             }
             else
             {
-                targetApplications = WorkSpace.UserProfile.Solution.GetSolutionTargetApplications();
+                targetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
             }
             TargetApplication targetApp = (TargetApplication)(from x in targetApplications where x.Name == mContext.Activity.TargetApplication select x).FirstOrDefault();
             if (targetApp == null)
@@ -178,7 +179,7 @@ namespace Ginger.Actions
                     return null;
                 }
             }
-            ApplicationPlatform appPlatform = (from x in WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetApp.AppName select x).FirstOrDefault();
+            ApplicationPlatform appPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetApp.AppName select x).FirstOrDefault();
 
             foreach (Type t in ActTypes)
             {
@@ -236,17 +237,43 @@ namespace Ginger.Actions
 
         private void AddAction()
         {
-            if(ActionsTabs.SelectedContent != null && ((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
+            if (ActionsTabs.SelectedContent != null && ((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
             {
-                if(((Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem)).AddActionWizardPage != null)
+                Act selectedAction = (Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem);
+
+                //warn regarding Leagacy Actions
+                if (LegacyActionsTab.IsSelected)
+                {
+                    if (selectedAction is IObsoleteAction)
+                    {
+                        eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyActionAndOfferNew, ((IObsoleteAction)selectedAction).TargetActionTypeName());
+                        if (userSelection == eUserMsgSelection.Yes)
+                        {
+                            selectedAction = ((IObsoleteAction)selectedAction).GetNewAction();
+                        }
+                        else if (userSelection == eUserMsgSelection.Cancel)
+                        {
+                            return;//do not add any action
+                        }
+                    }
+                    else
+                    {
+                        if (Reporter.ToUser(eUserMsgKey.WarnAddLegacyAction) == eUserMsgSelection.No)
+                        {
+                            return;//do not add any action
+                        }
+                    }
+                }
+
+                if (selectedAction.AddActionWizardPage != null)
                 {
                     _pageGenericWin.Close();
-                    string classname = ((Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem)).AddActionWizardPage;
+                    string classname = selectedAction.AddActionWizardPage;
                     Type t = Assembly.GetExecutingAssembly().GetType(classname);
                     if (t == null)
                     {
                         throw new Exception("Action edit page not found - " + classname);
-                    }                    
+                    }
 
                     WizardBase wizard = (GingerWPF.WizardLib.WizardBase)Activator.CreateInstance(t, mContext);
                     WizardWindow.ShowWizard(wizard);
@@ -254,30 +281,18 @@ namespace Ginger.Actions
                 else
                 {
                     Act aNew = null;
+                    aNew = (Act)selectedAction.CreateCopy();
+                    aNew.Context = mContext;
+                    // copy param ex info
+                    for (int i = 0; i < selectedAction.InputValues.Count; i++)
+                    {
+                        aNew.InputValues[i].ParamTypeEX = selectedAction.InputValues[i].ParamTypeEX;
+                    }
 
-                    if (ActionsTabs.SelectedContent != null && ((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
-                    {
-                        Act selectedAction = (Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem);
-                        aNew = (Act)selectedAction.CreateCopy();
-                        aNew.Context = mContext;
-                        // copy param ex info
-                        for (int i=0;i< selectedAction.InputValues.Count;i++)
-                        {
-                            aNew.InputValues[i].ParamTypeEX = selectedAction.InputValues[i].ParamTypeEX;
-                        }
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
-                        return;
-                    }
-                    aNew.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
-                    
+                    aNew.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+
                     //adding the new act after the selected action in the grid  
                     //TODO: Add should be after the last, Insert should be in the middle...
-
-                    
-
                     int selectedActIndex = -1;
                     if (mActionsList.CurrentItem != null)
                     {
@@ -311,15 +326,18 @@ namespace Ginger.Actions
                             mBusinessFlow.TargetApplications.Add(new TargetPlugin() {PluginId = p.PluginId,  ServiceId = p.ServiceId });
 
                             //Search for default agent which match 
-                            App.AutomateTabGingerRunner.UpdateApplicationAgents();
+                            mContext.Runner.UpdateApplicationAgents();
                             // TODO: update automate page target/agent
 
                             // if agent not found auto add or ask user 
                         }
-
                     }
-                    
                 }
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+                return;
             }
         }
 

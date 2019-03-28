@@ -41,7 +41,7 @@ namespace Ginger.Actions.XML
             this.mAct = (ActXMLProcessing)act;            
 
             //// Bind Controls
-            App.ObjFieldBinding(XMLTemplateFileTextBox , TextBox.TextProperty, mAct.TemplateFileName , ActInputValue.Fields.Value);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(XMLTemplateFileTextBox , TextBox.TextProperty, mAct.TemplateFileName , ActInputValue.Fields.Value);
             TargetFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.TargetFileName);
 
             SetGridView();
@@ -82,7 +82,7 @@ namespace Ginger.Actions.XML
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
             dlg.DefaultExt = "*.xml";
             dlg.Filter = "XML Template File (*.xml)|*.xml";
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
             if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

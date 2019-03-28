@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:Actions="clr-namespace:Ginger.Actions"
       mc:Ignorable="d" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       d:DesignHeight="150" d:DesignWidth="600"
 	Title="RunSetActionHTMLReportEditPage">
 
@@ -21,7 +22,11 @@
                     <Actions:UCValueExpression x:Name="HTMLReportFolderTextBox" ToolTip="HTML Report Folder Path" Width="500" Margin="5,0,0,0" />
                 </StackPanel>
             </StackPanel>
-            <CheckBox x:Name="UsePermanentHTMLReportFolderCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5,15" Content="Keep single report folder for all Run Set executions "></CheckBox>
+            <CheckBox x:Name="UsePermanentHTMLReportFolderCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5,15">
+                <CheckBox.Content>
+                    <GingerCore:ucTextDicResource Text="Keep single report folder for all [RunSet] executions "></GingerCore:ucTextDicResource>
+                </CheckBox.Content>
+            </CheckBox>
         </StackPanel>
     </Grid>
 </Page>

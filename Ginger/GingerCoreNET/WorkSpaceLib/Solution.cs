@@ -16,16 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Utils;
-
 using Ginger.Reports;
-using Ginger.Run;
 using GingerCore;
 using GingerCore.Platforms;
 using GingerCore.Variables;
@@ -308,6 +304,7 @@ namespace Ginger.SolutionGeneral
                     this.HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
                     HTMLReportsConfiguration HTMLReportsConfiguration = new HTMLReportsConfiguration();
                     HTMLReportsConfiguration.IsSelected = true;
+                    HTMLReportsConfiguration.HTMLReportTemplatesSeq = 1;
                     HTMLReportsConfiguration.HTMLReportsFolder = @"~\HTMLReports\";
                     HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
                     HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);

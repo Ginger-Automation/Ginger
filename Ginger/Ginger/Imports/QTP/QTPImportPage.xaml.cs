@@ -82,14 +82,14 @@ namespace Ginger.Imports.QTP
             SetActivitiesGridView();
 
             eFilter mFilter = eFilter.AllLines;
-            App.FillComboFromEnumVal(FilterComboBox, mFilter);
+            GingerCore.General.FillComboFromEnumObj(FilterComboBox, mFilter);
             
             InitCommonFunctionMappingUCGrid();
 
             TargetApplication sTarget = new TargetApplication();
-            if ( WorkSpace.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.Solution != null)
             {
-                sTarget.AppName =  WorkSpace.UserProfile.Solution.MainApplication.ToString();
+                sTarget.AppName =  WorkSpace.Instance.Solution.MainApplication.ToString();
                 sTarget.Selected = true;
                 TargetApplicationsList.Add(sTarget);
                 mBusinessFlow.TargetApplications = TargetApplicationsList;
@@ -133,7 +133,7 @@ namespace Ginger.Imports.QTP
 
             // for "Save To Business Flow" Button in dialog
             Button SaveBusinessFlowButton = new Button();
-            SaveBusinessFlowButton.Content = "Save to Business Flow";
+            SaveBusinessFlowButton.Content = "Save to " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
             SaveBusinessFlowButton.Click += new RoutedEventHandler(SaveBusinessFlowButton_Button_Click);
             
             // for "Clear" Button in dialog
@@ -398,7 +398,7 @@ namespace Ginger.Imports.QTP
             at.ActivityName = "Activity1";
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
-            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
+            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.Instance.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
             //App.BusinessFlow = mBusinessFlow;
            
             //AddActionPage addAction = new AddActionPage();

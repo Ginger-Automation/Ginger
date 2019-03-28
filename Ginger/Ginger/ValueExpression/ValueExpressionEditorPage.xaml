@@ -3,14 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:TextEditor="clr-namespace:Ginger.UserControlsLib.TextEditor"
       xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Value Expression"
-      Title="Value Expression Editor" Height="500" Width="700">
+      Title="Value Expression Editor" Height="600" Width="700">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="100*"/>
-            <RowDefinition Height="50*"/>
+            <RowDefinition Height="30*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200*"/>

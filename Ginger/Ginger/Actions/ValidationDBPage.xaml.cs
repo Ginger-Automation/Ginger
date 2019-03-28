@@ -39,61 +39,61 @@ namespace Ginger.Actions
     /// </summary>
     public partial class ValidationDBPage : Page
     {
-        private ActDBValidation mValidationDB;
+        private ActDBValidation mAct;
 
         ProjEnvironment pe;
         EnvApplication EA;
         Database db;
 
-        public ValidationDBPage(ActDBValidation validationDB)
+        public ValidationDBPage(ActDBValidation act)
         {
             InitializeComponent();
         
-            this.mValidationDB = validationDB;
+            this.mAct = act;
 
-            if (String.IsNullOrEmpty(mValidationDB.GetInputParamValue("SQL")))
+            if (String.IsNullOrEmpty(mAct.GetInputParamValue("SQL")))
             {
-                mValidationDB.AddOrUpdateInputParamValue("SQL", mValidationDB.GetInputParamValue("Value"));
+                mAct.AddOrUpdateInputParamValue("SQL", mAct.GetInputParamValue("Value"));
             }
 
             FillAppComboBox();
 
             //New UI Controls:
             //Query Type selection radio button :
-            QueryTypeRadioButton.Init(typeof(ActDBValidation.eQueryType), SqlSelection, mValidationDB.GetOrCreateInputParam(ActDBValidation.Fields.QueryTypeRadioButton, ActDBValidation.eQueryType.FreeSQL.ToString()), QueryType_SelectionChanged);
+            QueryTypeRadioButton.Init(typeof(ActDBValidation.eQueryType), SqlSelection, mAct.GetOrCreateInputParam(ActDBValidation.Fields.QueryTypeRadioButton, ActDBValidation.eQueryType.FreeSQL.ToString()), QueryType_SelectionChanged);
             checkQueryType();
 
             //Free SQL
             //needs to be unmarked when fixed VE issue
-            SQLUCValueExpression.Init(Context.GetAsContext(mValidationDB.Context), mValidationDB.GetOrCreateInputParam(ActDBValidation.Fields.SQL));
+            SQLUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDBValidation.Fields.SQL));
 
             //Read from sql file
-            QueryFile.Init(Context.GetAsContext(mValidationDB.Context), mValidationDB.GetOrCreateInputParam(ActDBValidation.Fields.QueryFile), true, true, UCValueExpression.eBrowserType.File, "sql", BrowseQueryFile_Click);
+            QueryFile.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDBValidation.Fields.QueryFile), true, true, UCValueExpression.eBrowserType.File, "sql", BrowseQueryFile_Click);
 
             QueryFile.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
 
             //Import SQL file in to solution folder
-            GingerCore.General.ActInputValueBinding(ImportFile, CheckBox.IsCheckedProperty, mValidationDB.GetOrCreateInputParam(ActDBValidation.Fields.ImportFile, "True"));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDBValidation.Fields.ImportFile, "True"));
 
             //OLD binding and UI 
-            App.FillComboFromEnumVal(ValidationCfgComboBox, validationDB.DBValidationType);
+            GingerCore.General.FillComboFromEnumObj(ValidationCfgComboBox, act.DBValidationType);
 
             //TODO: fix hard coded
-            App.ObjFieldBinding(ValidationCfgComboBox, ComboBox.SelectedValueProperty, validationDB,  "DBValidationType");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValidationCfgComboBox, ComboBox.SelectedValueProperty, act,  "DBValidationType");
 
-            App.ObjFieldBinding(AppNameComboBox, ComboBox.TextProperty, validationDB, ActDBValidation.Fields.AppName);
-            App.ObjFieldBinding(DBNameComboBox, ComboBox.TextProperty, validationDB, ActDBValidation.Fields.DBName);
-            App.ObjFieldBinding(TablesComboBox, ComboBox.TextProperty, validationDB, ActDBValidation.Fields.Table);
-            App.ObjFieldBinding(KeySpaceComboBox, ComboBox.TextProperty, validationDB, ActDBValidation.Fields.Keyspace);
-            App.ObjFieldBinding(ColumnComboBox, ComboBox.TextProperty, validationDB, ActDBValidation.Fields.Column);
-            App.ObjFieldBinding(txtWhere, TextBox.TextProperty, validationDB, ActDBValidation.Fields.Where);
-            GingerCore.General.ActInputValueBinding(CommitDB, CheckBox.IsCheckedProperty, mValidationDB.GetOrCreateInputParam(ActDBValidation.Fields.CommitDB));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AppNameComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.AppName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DBNameComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.DBName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TablesComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Table);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(KeySpaceComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Keyspace);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ColumnComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Column);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWhere, TextBox.TextProperty, act, ActDBValidation.Fields.Where);
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(CommitDB, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDBValidation.Fields.CommitDB));
 
-            KeySpaceComboBox.Items.Add(mValidationDB.Keyspace);
+            KeySpaceComboBox.Items.Add(mAct.Keyspace);
             ComboAutoSelectIfOneItemOnly(KeySpaceComboBox);
-            TablesComboBox.Items.Add(mValidationDB.Table);
+            TablesComboBox.Items.Add(mAct.Table);
             ComboAutoSelectIfOneItemOnly(TablesComboBox);
-            ColumnComboBox.Items.Add(mValidationDB.Column);
+            ColumnComboBox.Items.Add(mAct.Column);
             ComboAutoSelectIfOneItemOnly(ColumnComboBox);
             SetVisibleControlsForAction();
             SetQueryParamsGrid();
@@ -101,10 +101,10 @@ namespace Ginger.Actions
                 
         private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             bool ImportFileFlag = false;
             string FileName = QueryFile.ValueTextBox.Text;
-            Boolean.TryParse(mValidationDB.GetInputParamValue(ActDBValidation.Fields.ImportFile), out ImportFileFlag);
+            Boolean.TryParse(mAct.GetInputParamValue(ActDBValidation.Fields.ImportFile), out ImportFileFlag);
             if (ImportFileFlag && !FileName.StartsWith(@"~\"))
             {
                 //TODO import request File
@@ -131,16 +131,16 @@ namespace Ginger.Actions
             //if (FileName != "" && File.Exists(FileName.Replace(@"~\", SolutionFolder)))
             if (FileName != "" && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName)))
             {   
-                mValidationDB.QueryParams.Clear();
+                mAct.QueryParams.Clear();
                 //string[] script = File.ReadAllLines(FileName.Replace(@"~\",SolutionFolder));  
                 string[] script = File.ReadAllLines(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName));
 
                 parseScriptHeader(script);               
-                if (mValidationDB.QueryParams.Count > 0)
+                if (mAct.QueryParams.Count > 0)
                     QueryParamsPanel.Visibility = Visibility.Visible;
                 else
                     QueryParamsPanel.Visibility = Visibility.Collapsed;
-                QueryParamsGrid.DataSourceList = mValidationDB.QueryParams;
+                QueryParamsGrid.DataSourceList = mAct.QueryParams;
                
             }
         }
@@ -153,14 +153,14 @@ namespace Ginger.Actions
                 var matches = Regex.Matches(line, pattern);
                 foreach(Match match in matches)
                 {
-                    ActInputValue AIV = (from aiv in mValidationDB.QueryParams where aiv.Param == match.Groups[1].Value select aiv).FirstOrDefault();
+                    ActInputValue AIV = (from aiv in mAct.QueryParams where aiv.Param == match.Groups[1].Value select aiv).FirstOrDefault();
                     if (AIV == null)
                     {
                         AIV = new ActInputValue();
                         // AIV.Active = true;
 
                         AIV.Param = match.Groups[1].Value;
-                        mValidationDB.QueryParams.Add(AIV);
+                        mAct.QueryParams.Add(AIV);
                         AIV.Value = "";                        
                     }                    
                 }
@@ -204,9 +204,9 @@ namespace Ginger.Actions
         {            
             AppNameComboBox.Items.Clear();
 
-            if (App.AutomateTabEnvironment != null)
+            if (Context.GetAsContext(mAct.Context) != null && Context.GetAsContext(mAct.Context).Environment != null)
             {                
-                pe = (from e in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where e.Name == App.AutomateTabEnvironment.Name select e).FirstOrDefault();
+                pe = (from e in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where e.Name == Context.GetAsContext(mAct.Context).Environment.Name select e).FirstOrDefault();
 
                 if (pe == null)
                 {
@@ -360,7 +360,7 @@ namespace Ginger.Actions
                 case ActDBValidation.eDBValidationType.FreeSQL:
                     checkQueryType();
                     RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
-                    if (mValidationDB.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.FreeSQL.ToString())
+                    if (mAct.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.FreeSQL.ToString())
                     {
                         FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
                         SqlFile.Visibility = System.Windows.Visibility.Collapsed;
@@ -370,13 +370,13 @@ namespace Ginger.Actions
                         SqlFile.Visibility = System.Windows.Visibility.Visible;
                         FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
 
-                        if(mValidationDB.QueryParams != null)
+                        if(mAct.QueryParams != null)
                         {
-                            if (mValidationDB.QueryParams.Count > 0)
+                            if (mAct.QueryParams.Count > 0)
                                 QueryParamsPanel.Visibility = Visibility.Visible;
                             else
                                 QueryParamsPanel.Visibility = Visibility.Collapsed;
-                            QueryParamsGrid.DataSourceList = mValidationDB.QueryParams;
+                            QueryParamsGrid.DataSourceList = mAct.QueryParams;
                         }
                     }
                     DoCommit.Visibility = System.Windows.Visibility.Collapsed;
@@ -441,50 +441,50 @@ namespace Ginger.Actions
         
         private void DBNamVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.DBName, Context.GetAsContext(mValidationDB.Context));
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActDBValidation.Fields.DBName, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
-            DBNameComboBox.Text = mValidationDB.DBName;
+            DBNameComboBox.Text = mAct.DBName;
         }
         
         private void AppNamVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.AppName, Context.GetAsContext(mValidationDB.Context));
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActDBValidation.Fields.AppName, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
-            AppNameComboBox.Text = mValidationDB.AppName;
+            AppNameComboBox.Text = mAct.AppName;
         }
 
         private void TablesVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.Table, Context.GetAsContext(mValidationDB.Context));
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActDBValidation.Fields.Table, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
-            TablesComboBox.Text = mValidationDB.Table;
+            TablesComboBox.Text = mAct.Table;
         }
 
         private void ColumnsVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.Column, Context.GetAsContext(mValidationDB.Context));
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActDBValidation.Fields.Column, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
-            ColumnComboBox.Text = mValidationDB.Column;
+            ColumnComboBox.Text = mAct.Column;
         }
 
         private void KeySpaceVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mValidationDB, ActDBValidation.Fields.Keyspace, Context.GetAsContext(mValidationDB.Context));
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActDBValidation.Fields.Keyspace, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
-            KeySpaceComboBox.Text = mValidationDB.Keyspace;
+            KeySpaceComboBox.Text = mAct.Keyspace;
         }
 
         public void QueryType_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            mValidationDB.AddOrUpdateInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton, (((RadioButton)sender).Tag).ToString());
-            if (mValidationDB.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.FreeSQL.ToString())
+            mAct.AddOrUpdateInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton, (((RadioButton)sender).Tag).ToString());
+            if (mAct.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.FreeSQL.ToString())
             {
 
                 SqlFile.Visibility = System.Windows.Visibility.Collapsed;
                 FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
 
             }
-            else if (mValidationDB.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
+            else if (mAct.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
             {
                 SqlFile.Visibility = System.Windows.Visibility.Visible;
                 FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -493,7 +493,7 @@ namespace Ginger.Actions
 
         public void checkQueryType()
         {
-            if (mValidationDB.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.FreeSQL.ToString())
+            if (mAct.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.FreeSQL.ToString())
             {
                 FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
                 SqlFile.Visibility = System.Windows.Visibility.Collapsed;               
@@ -507,7 +507,7 @@ namespace Ginger.Actions
 
         public void BrowseQueryFile_Click(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             if (!String.IsNullOrEmpty(QueryFile.ValueTextBox.Text))
             {
                 if(!System.IO.File.Exists(QueryFile.ValueTextBox.Text))
@@ -527,7 +527,7 @@ namespace Ginger.Actions
         private void QueryParamGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)QueryParamsGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mValidationDB.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mAct.Context));
             VEEW.ShowAsWindow();
         }
     }

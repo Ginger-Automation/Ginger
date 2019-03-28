@@ -221,7 +221,7 @@ namespace Ginger.Variables
                 view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Formula), WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
                 view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.SetAsInputValue), Header = "Set as Input Value", WidthWeight = 10, MaxWidth = 200, StyleType = GridColView.eGridColStyleType.CheckBox });
                 view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.SetAsOutputValue), Header = "Set as Output Value", WidthWeight = 10, MaxWidth = 200, StyleType = GridColView.eGridColStyleType.CheckBox });
-                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.LinkedVariableName), Header = "Linked Variable", WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.LinkedVariableName), Header = "Linked " + GingerDicser.GetTermResValue(eTermResKey.Variable) , WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });
                 view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Value), Header = "Current Value", WidthWeight = 20, BindingMode = BindingMode.TwoWay, ReadOnly = true });
                 grdVariables.SetAllColumnsDefaultView(view);
             }
@@ -233,7 +233,7 @@ namespace Ginger.Variables
                 view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Name), WidthWeight = 20, AllowSorting = true });
                 view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Description), WidthWeight = 20 });
                 view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Formula), WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
-                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.LinkedVariableName), Header = "Linked Variable", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.LinkedVariableName), Header = "Linked " + GingerDicser.GetTermResValue(eTermResKey.Variable), WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
                 view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Value), Header = "Current Value", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
                 grdVariables.SetAllColumnsDefaultView(view);
 
@@ -278,7 +278,7 @@ namespace Ginger.Variables
         {
             if (e.PropertyName == nameof(Solution.Variables) && mVariablesLevel == eVariablesLevel.Solution)
             {
-                if ((Solution)mVariablesParentObj ==  WorkSpace.UserProfile.Solution)
+                if ((Solution)mVariablesParentObj ==  WorkSpace.Instance.Solution)
                 {
                     LoadGridData();
                 }

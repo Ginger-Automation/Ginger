@@ -38,21 +38,22 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Label Grid.Row="0" Grid.Column="0" Content="DB Type:" HorizontalAlignment="Left" Style="{StaticResource @InputFieldLabelStyle}"></Label>
                     <ComboBox x:Name="xDBTypeComboBox" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" ContextMenu="{x:Null}" Width="115" Style="{StaticResource @InputComboBoxStyle}"  VerticalAlignment="Center" SelectionChanged="xDBTypeComboBox_SelectionChanged"  HorizontalAlignment="Left"  Margin="0,0,5,0"></ComboBox>
-                    <Label Grid.Row="1" Grid.Column="0"  Content="TNS\Host\File Path:" HorizontalAlignment="Left" Style="{StaticResource @InputFieldLabelStyle}"></Label>
-                    <TextBox Grid.Row="1"  Grid.Column="1" Grid.ColumnSpan="3" Background="White" x:Name="xBDHostTextBox" Text="" VerticalAlignment="Center" IsEnabled="true"  Style="{StaticResource @MultiRowsTextBoxStyle}" Margin="0,0,5,0"  />
+                    <Label Grid.Row="1" Grid.Column="0"  Content="TNS\Host\File Path:" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}"></Label>
+                    <TextBox Grid.Row="1"  Grid.Column="1" Grid.ColumnSpan="2"  Background="White" x:Name="xBDHostTextBox" Text="" VerticalAlignment="Center" IsEnabled="true" HorizontalAlignment="Left"  Width="250" Style="{StaticResource @MultiRowsTextBoxStyle}" Margin="0,0,5,0"  />
+                    <usercontrols:ucButton Grid.Row="1" Grid.Column="4"  HorizontalAlignment="Left"   x:Name="xDBBrowseButton" VerticalAlignment="Top" ToolTip="Browse File" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="OpenFolder" Click="xDBBrowseButton_Click" Margin="0,0,0,0" />
                     <Label Grid.Row="2" Grid.Column="0" Content="User:" HorizontalAlignment="Left" Style="{StaticResource @InputFieldLabelStyle}"></Label>
-                    <TextBox Grid.Row="2"  Grid.Column="1" Grid.ColumnSpan="3" Background="White" x:Name="xDBUserTextBox"  Text="" VerticalAlignment="Center"  IsEnabled="true" Style="{StaticResource @TextBoxStyle}" Margin="0,0,5,0"  />
+                    <TextBox Grid.Row="2"  Grid.Column="1" Grid.ColumnSpan="3" Background="White" x:Name="xDBUserTextBox" HorizontalAlignment="Left" Width="250" Text="" VerticalAlignment="Center"  IsEnabled="true" Style="{StaticResource @TextBoxStyle}" Margin="0,0,5,0"  />
                     <Label Grid.Row="3" Grid.Column="0" Content="Password:" HorizontalAlignment="Left" Style="{StaticResource @InputFieldLabelStyle}"></Label>
-                    <TextBox Grid.Row="3"  Grid.Column="1" Grid.ColumnSpan="3" Background="White" x:Name="xDBPasswordTextBox"  Text="" VerticalAlignment="Center" IsEnabled="true" Style="{StaticResource @TextBoxStyle}" Margin="0,0,5,0"  />
-                    <Button Grid.Row="4" Grid.Column="3" x:Name="xConnectDBButton" Content="Connect" Click="xConnectDBButton_Click"  Visibility="Visible" Style="{StaticResource @InputButtonStyle}" Width="60" Margin="2,0,5,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                    <TextBox Grid.Row="3"  Grid.Column="1" Grid.ColumnSpan="3" Background="White" x:Name="xDBPasswordTextBox"  HorizontalAlignment="Left" Width="250" Text="" VerticalAlignment="Center" IsEnabled="true" Style="{StaticResource @TextBoxStyle}" Margin="0,0,5,0"  />
+                    <Button Grid.Row="4" Grid.Column="2" x:Name="xConnectDBButton" Content="Connect" Click="xConnectDBButton_Click"  Visibility="Visible" Style="{StaticResource @InputButtonStyle}" Width="60" Margin="2,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
                     <Label Grid.Row="5" Grid.Column="0" Name="xSQLLable" Visibility="Collapsed" Style="{StaticResource @InputFieldLabelStyle}"  Content="Free SQL:" VerticalAlignment="Top"  />
-                    <TextBox Grid.Row="5" Grid.Column="1" Background="White" x:Name="xSQLTextBox"  Visibility="Collapsed"  Text="" VerticalAlignment="Bottom" TextChanged="xSQLTextBox_TextChanged" IsEnabled="true"  Style="{StaticResource @MultiRowsTextBoxStyle}" Grid.ColumnSpan="3" Margin="0,0,5,0" />
+                    <TextBox Grid.Row="5" Grid.Column="1" Background="White" x:Name="xSQLTextBox"  Visibility="Collapsed"  Text="" VerticalAlignment="Bottom" TextChanged="xSQLTextBox_TextChanged" IsEnabled="true"  Style="{StaticResource @MultiRowsTextBoxStyle}" Grid.ColumnSpan="3" Margin="0,0,0,0" />
                 </Grid>
             </StackPanel>
 

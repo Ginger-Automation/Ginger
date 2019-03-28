@@ -71,6 +71,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         Page ITreeViewItem.EditPage()
         {
             DSDetails.SaveBackup();//to mark the Data Source as changed
+            DSDetails.StartDirtyTracking();
             if (mDataSourceTablePage == null)
             {
                 mDataSourceTablePage = new DataSourceTablePage(DSTableDetails);                
@@ -137,7 +138,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Ginger.DataSource.DataSourceExportToExcel DSEE = new Ginger.DataSource.DataSourceExportToExcel(DSTableDetails.Name);
             DSEE.ShowAsWindow();
 
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             string sExcelPath = DSEE.ExcelPath;
             string sSheetName = DSEE.SheetName;
             

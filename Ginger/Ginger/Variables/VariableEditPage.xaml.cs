@@ -70,12 +70,12 @@ namespace Ginger.Variables
             editMode = mode;
             mParent = parent;
             mContext = context;
-            App.ObjFieldBinding(txtVarName, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
-            App.ObjFieldBinding(txtVarDescritpion, TextBox.TextProperty, mVariable, nameof(VariableBase.Description));
-            App.ObjFieldBinding(txtFormula, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
-            App.ObjFieldBinding(txtCurrentValue, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
-            App.ObjFieldBinding(cbSetAsInputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsInputValue));
-            App.ObjFieldBinding(cbSetAsOutputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtVarName, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtVarDescritpion, TextBox.TextProperty, mVariable, nameof(VariableBase.Description));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtFormula, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtCurrentValue, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbSetAsInputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsInputValue));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbSetAsOutputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
 
             if (mode ==eEditMode.Global)
             {
@@ -288,7 +288,7 @@ namespace Ginger.Variables
 
         private void SetLinkedVarCombo()
         {
-            App.ObjFieldBinding(linkedvariableCombo, ComboBox.SelectedValueProperty, mVariable, nameof(VariableBase.LinkedVariableName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(linkedvariableCombo, ComboBox.SelectedValueProperty, mVariable, nameof(VariableBase.LinkedVariableName));
 
             List<string> varsList = new List<string>();
             linkedvariableCombo.ItemsSource = varsList;
@@ -337,17 +337,17 @@ namespace Ginger.Variables
 
                     if (string.IsNullOrEmpty(setValueAct.Error) == false)
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked variable.." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + setValueAct.Error);
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ".." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + setValueAct.Error);
                     }
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked variable." + System.Environment.NewLine + System.Environment.NewLine+ "Error: " + ex.Message );
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked " + GingerDicser.GetTermResValue(eTermResKey.Variable) + "." + System.Environment.NewLine + System.Environment.NewLine+ "Error: " + ex.Message );
                 }
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Missing linked variable, please configure.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Missing linked " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ", please configure.");
             }
         }
 

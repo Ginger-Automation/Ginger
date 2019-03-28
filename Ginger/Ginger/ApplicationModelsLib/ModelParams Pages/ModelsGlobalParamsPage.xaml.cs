@@ -265,7 +265,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                             List<string> ListObj = new List<string>() { PlaceholderBeforeEdit, NameAfterEdit };
                             UpdateModelGlobalParamVeWithNameChange(ListObj);
                         });                        
-                        Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Update finished successfully." + Environment.NewLine + "Please do not forget to save all modified Business Flows");
+                        Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Update finished successfully." + Environment.NewLine + "Please do not forget to save all modified " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows));
                     }
                 }
             }

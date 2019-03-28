@@ -45,9 +45,9 @@ namespace Ginger.SolutionWindows
         {
             InitializeComponent();
             mSolution = s;
-            App.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, s, nameof(Solution.Name));
-            App.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
-            App.FillComboFromEnumVal(MainPlatformComboBox, s.MainPlatform);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, s, nameof(Solution.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
+            GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform);
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
@@ -74,8 +74,6 @@ namespace Ginger.SolutionWindows
 
                 //TODO: check AppName and platform validity - not empty + app exist in list of apps
 
-                //validate solution
-                if (!mSolution.Folder.EndsWith(@"\")) mSolution.Folder += @"\"; 
 
                 //make sure main folder exist
                 if (!System.IO.Directory.Exists(mSolution.Folder))
@@ -84,7 +82,7 @@ namespace Ginger.SolutionWindows
                 }
 
                 //create new folder with solution name
-                mSolution.Folder += mSolution.Name + @"\";
+                mSolution.Folder = Path.Combine(mSolution.Folder, mSolution.Name);
                 if (!System.IO.Directory.Exists(mSolution.Folder))
                 {
                     System.IO.Directory.CreateDirectory(mSolution.Folder);
@@ -128,7 +126,7 @@ namespace Ginger.SolutionWindows
 
         private void AddDeafultReportTemplate()
         {
-            HTMLReportConfiguration r = new HTMLReportConfiguration("Default");
+            HTMLReportConfiguration r = new HTMLReportConfiguration("Default",true);
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(r);
         }
 

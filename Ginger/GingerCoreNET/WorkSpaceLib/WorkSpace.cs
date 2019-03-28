@@ -18,19 +18,16 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.Run;
-using GingerCore;
-using GingerCore.Environments;
+using Ginger.SolutionGeneral;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -38,8 +35,9 @@ using System.Reflection;
 namespace amdocs.ginger.GingerCoreNET
 {
     // WorkSpace is one object per user accessible from anywhere and hold the current status of the user selection
-    // For GingerWPF it is one per running app
+    // For Ginger.Exe it is one per running app
     // For Web it can be one per user connected
+    // DO NOT ADD STATIC FIELDS
     public class WorkSpace : RepositoryItemBase
     {
         private static WorkSpace mWorkSpace;
@@ -53,20 +51,22 @@ namespace amdocs.ginger.GingerCoreNET
 
         public SolutionRepository SolutionRepository;
 
-
-        // Will be back when we moved GR to GingerCoreNET
-        // public GingerRunner GingerRunner;
-        // public ProjEnvironment CurrentEnvironment;
-
         public SourceControlBase SourceControl;
-        public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
+
+        /// <summary>
+        /// Hold all Run Set execution data + execution methods
+        /// </summary>    
+        public RunsetExecutor RunsetExecutor = new RunsetExecutor();
+
         public static string AppVersion="0.0.0.0.0";
 
-        // move from App to here
-        public ISolution mSolution { get; set; }
-        public ISolution Solution
+        private Solution mSolution;
+        public Solution Solution
         {
-            get { return mSolution; }
+            get
+            {
+                return mSolution;
+            }
             set
             {
                 mSolution = value;
@@ -74,9 +74,9 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public static eRunStatus RunSetExecutionStatus = eRunStatus.Failed;
+        public eRunStatus RunSetExecutionStatus = eRunStatus.Failed;
         
-        public static string TempFolder
+        public static string EmailReportTempFolder
         {
             get
             {
@@ -97,10 +97,6 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        // Here we will have knwon GingerGrids - !!!!!!!!!!!!!!!!!!! Design, think..........
-        // public IObservable<GingerGrid> GingerGrids;
-        public static GingerRunner AutomateTabGingerRunner { get; set; }
-
         public void OpenSolution(string SolutionFolder)
         {
             mPluginsManager = null;
@@ -113,11 +109,9 @@ namespace amdocs.ginger.GingerCoreNET
             SolutionRepository = null;
             SourceControl = null;
             EventHandler.SolutionClosed();
-        }
+        }        
 
-        
-
-        public static UserProfile UserProfile { get; set; }
+        public UserProfile UserProfile { get; set; }
        
 
         public IWorkSpaceEventHandler EventHandler { get; set; }
@@ -146,7 +140,6 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-
         public string DefualtUserLocalWorkingFolder
         {
             get
@@ -172,8 +165,9 @@ namespace amdocs.ginger.GingerCoreNET
                 mBetaFeatures = value;
             }
         }
-        private static VEReferenceList mVERefrences;
-        public static VEReferenceList VERefrences
+
+        private VEReferenceList mVERefrences;
+        public VEReferenceList VERefrences
         {
             get
             {
@@ -192,10 +186,8 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }        
 
-        public static bool RunningInExecutionMode = false;
-
-        public static ProjEnvironment AutomateTabEnvironment;
-
+        public bool RunningInExecutionMode = false;
+        
         public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public void RefreshGlobalAppModelParams(ApplicationModelBase AppModel)

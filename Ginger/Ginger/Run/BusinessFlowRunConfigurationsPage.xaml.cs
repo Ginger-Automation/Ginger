@@ -68,13 +68,13 @@ namespace Ginger.Run
             
             mBusinessFlow.SaveBackup();
 
-			App.ObjFieldBinding(MandatoryBusinessFlowCB, CheckBox.IsCheckedProperty, businessFlow, BusinessFlow.Fields.Mandatory, BindingMode.TwoWay);
+			GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MandatoryBusinessFlowCB, CheckBox.IsCheckedProperty, businessFlow, BusinessFlow.Fields.Mandatory, BindingMode.TwoWay);
 
 			RunDescritpion.Init(mContext, businessFlow, BusinessFlow.Fields.RunDescription);
 
             grdVariables.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditVar));
             grdVariables.AddToolbarTool("@Undo_16x16.png", "Reset " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " to Original Configurations", new RoutedEventHandler(ResetBusFlowVariables));
-            grdVariables.AddToolbarTool("@Share_16x16.png", "Share Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Value to all Similar Variables in Run Set", new RoutedEventHandler(CopyBusFlowVariables));
+            grdVariables.AddToolbarTool("@Share_16x16.png", "Share Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Value to all Similar " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " in " + GingerDicser.GetTermResValue(eTermResKey.RunSet), new RoutedEventHandler(CopyBusFlowVariables));
             grdVariables.RowDoubleClick += VariablesGrid_grdMain_MouseDoubleClick;
 
             SetVariablesGridView();
@@ -181,7 +181,7 @@ namespace Ginger.Run
                     int countMatchingBfs = 0;
                     
                     List<VariableBase> selectedVars = grdVariables.Grid.SelectedItems.Cast<VariableBase>().ToList();
-                    foreach (GingerRunner runner in App.RunsetExecutor.Runners)
+                    foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.Runners)
                     {
                         List<BusinessFlow> matchingBfs = runner.BusinessFlows.Where(x => x.Guid == mBusinessFlow.Guid).ToList();
                         countMatchingBfs += matchingBfs.Count;

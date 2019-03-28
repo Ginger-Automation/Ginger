@@ -16,24 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerCoreNET.RunLib;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.UserControls;
+using Ginger.MoveToGingerWPF.Run_Set_Pages;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.DataSource;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using GingerCore;
-using GingerCore.Actions;
-using Ginger.Actions;
-using Ginger.BusinessFlowFolder;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.UserControls;
-using Ginger.MoveToGingerWPF.Run_Set_Pages;
-using Amdocs.Ginger.CoreNET.RunLib;
-using Amdocs.Ginger.Common.Enums;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.DataSource;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Run
 {
@@ -168,6 +163,7 @@ namespace Ginger.Run
                     if (ac.GetType() == typeof(ErrorHandler)) continue;//do not show Error Handler for now
 
                     RunnerItemPage ri = new RunnerItemPage(ac);
+                    this.Context.Activity = ac;
                     ri.Context = this.Context;
                     ri.ItemName = ac.ActivityName;
                     if (string.IsNullOrEmpty(ac.Description))
@@ -210,25 +206,25 @@ namespace Ginger.Run
             {
                 if (ItemObject.GetType() == typeof(GingerCore.BusinessFlow))
                 {
-                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(BusinessFlow.RunStatus), BindingMode.OneWay);
-                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(BusinessFlow.RunStatus), BindingMode.OneWay, bindingConvertor: new StatusIconConverter());
-                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xBusinessflowActive, ucButton.ButtonImageTypeProperty, ItemObject, nameof(BusinessFlow.Active), BindingMode.TwoWay, bindingConvertor: new ActiveIconConverter());
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(BusinessFlow.RunStatus), BindingMode.OneWay);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(BusinessFlow.RunStatus),  bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBusinessflowActive, ucButton.ButtonImageTypeProperty, ItemObject, nameof(BusinessFlow.Active),  bindingConvertor: new ActiveIconConverter(), BindingMode.TwoWay);
                     ((BusinessFlow)ItemObject).PropertyChanged += RunnerItem_BusinessflowPropertyChanged;
                     xRunnerItemContinue.ToolTip = "Resume Run from this " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                     xViewRunnerItem.ToolTip = "View " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                 }
                 else if (ItemObject.GetType() == typeof(GingerCore.Activity))
                 {
-                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(Activity.Status), BindingMode.OneWay);
-                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(Activity.Status), BindingMode.OneWay, bindingConvertor: new StatusIconConverter());
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(Activity.Status), BindingMode.OneWay);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(Activity.Status),  bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
                     ((Activity)ItemObject).PropertyChanged += RunnerItem_ActivityPropertyChanged;
                     xRunnerItemContinue.ToolTip = "Resume Run from this " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     xViewRunnerItem.ToolTip = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                 }
                 else
                 {
-                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(Act.Status), BindingMode.OneWay);
-                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(Act.Status), BindingMode.OneWay, bindingConvertor: new StatusIconConverter());
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(Act.Status), BindingMode.OneWay);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(Act.Status), bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
                     ((Act)ItemObject).PropertyChanged += RunnerItem_ActionPropertyChanged;
                     xRunnerItemContinue.ToolTip = "Resume Run from this Action";
                     xViewRunnerItem.ToolTip = "View Action";
@@ -377,7 +373,7 @@ namespace Ginger.Run
                
                 if (!ExportResultsToALMConfigPage.Instance.IsProcessing)
                 {
-                    ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
+                    ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
                     ExportResultsToALMConfigPage.Instance.ShowAsWindow();
                 }
                 else

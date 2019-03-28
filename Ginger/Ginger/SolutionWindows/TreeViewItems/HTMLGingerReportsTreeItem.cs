@@ -159,13 +159,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             else
             {
-                WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq - 1;
+                WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq - 1;
             }
         }
 
         private void OpenHTMLReportsFolder(object sender, RoutedEventArgs e)
         {
-            HTMLReportsConfiguration _selectedHTMLReportConfiguration =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration _selectedHTMLReportConfiguration =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (_selectedHTMLReportConfiguration != null)
             {
                 string path = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(_selectedHTMLReportConfiguration.HTMLReportsFolder);
