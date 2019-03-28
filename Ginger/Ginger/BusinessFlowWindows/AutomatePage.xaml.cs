@@ -44,6 +44,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
 using GingerCore.DataSource;
+using GingerCore.Drivers;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
@@ -959,6 +960,19 @@ namespace Ginger
                     SetBusinessFlowTargetAppIfNeeded();
                     UpdateApplicationsAgentsMapping();
                     mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
+
+                    UpdateRunnerAgentsUsedBusinessFlow();
+                }
+            }
+        }
+
+        public void UpdateRunnerAgentsUsedBusinessFlow()
+        {
+            foreach (ApplicationAgent appAgent in mRunner.ApplicationAgents)
+            {
+                if (appAgent.Agent != null && appAgent.Agent.Status == Agent.eStatus.Running)
+                {
+                    ((DriverBase)appAgent.Agent.Driver).UpdateContext(mContext);                   
                 }
             }
         }
