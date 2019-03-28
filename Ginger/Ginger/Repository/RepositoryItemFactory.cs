@@ -378,8 +378,7 @@ namespace Ginger.Repository
 
         public void RunRunSetFromCommandLine()
         {
-            App.MainWindow.Hide();
-            App.AppSplashWindow.Close();
+            App.MainWindow.Hide();            
             AutoRunWindow RP = new AutoRunWindow();
             RP.Show();
         }

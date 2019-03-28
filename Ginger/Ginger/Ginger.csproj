@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3EFCB931-48FC-45BF-9598-0F8138802411}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ginger</RootNamespace>
     <AssemblyName>Ginger</AssemblyName>
@@ -93,6 +93,10 @@
   <PropertyGroup />
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
@@ -1963,9 +1967,6 @@
     <Compile Include="SolutionWindows\TreeViewItems\TreeViewItemBase.cs" />
     <Compile Include="ALM\QC\UploadBusinessFlowsPage.xaml.cs">
       <DependentUpon>UploadBusinessFlowsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SplashWindow.xaml.cs">
-      <DependentUpon>SplashWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
@@ -4297,10 +4298,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ALM\QC\UploadBusinessFlowsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SplashWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
