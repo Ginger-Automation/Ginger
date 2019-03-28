@@ -114,7 +114,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 IEnumerable<Act> OrderedActions = allActions.OrderBy(x => x.Description);
                 foreach (Act cA in OrderedActions)
                 {
-                    if (cA.LegacyActionPlatformsList.Intersect(WorkSpace.UserProfile.Solution.ApplicationPlatforms
+                    if (cA.LegacyActionPlatformsList.Intersect(WorkSpace.Instance.Solution.ApplicationPlatforms
                                                                     .Where(x => mContext.BusinessFlow.CurrentActivity.TargetApplication == x.AppName)
                                                                     .Select(x => x.Platform).ToList()).Any())
                     {
@@ -178,7 +178,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                         return null;
                     }
                 }
-                ApplicationPlatform AP = (from x in WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == TA.AppName select x).FirstOrDefault();
+                ApplicationPlatform AP = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == TA.AppName select x).FirstOrDefault();
                 if (AP != null)
                 {
                     if (a.Platforms.Contains(AP.Platform))
@@ -262,7 +262,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                         Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                         return;
                     }
-                    aNew.SolutionFolder = WorkSpace.UserProfile.Solution.Folder.ToUpper();
+                    aNew.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
                     //adding the new act after the selected action in the grid  
                     //TODO: Add should be after the last, Insert should be in the middle...
@@ -302,7 +302,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                             mContext.BusinessFlow.TargetApplications.Add(new TargetPlugin() { PluginId = p.PluginId, ServiceId = p.ServiceId });
 
                             //Search for default agent which match 
-                            App.AutomateTabGingerRunner.UpdateApplicationAgents();
+                            mContext.Runner.UpdateApplicationAgents();
                             // TODO: update automate page target/agent
 
                             // if agent not found auto add or ask user 

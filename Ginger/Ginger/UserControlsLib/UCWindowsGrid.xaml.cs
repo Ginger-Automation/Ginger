@@ -194,8 +194,8 @@ namespace Ginger.UserControlsLib
 
             if(appAgent == null)
             {
-                App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-                App.AutomateTabGingerRunner.UpdateApplicationAgents();
+                mContext.Runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+                mContext.Runner.UpdateApplicationAgents();
                 goto AppAgentAct;
             }
 
