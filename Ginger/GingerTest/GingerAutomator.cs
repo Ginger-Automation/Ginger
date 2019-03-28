@@ -88,9 +88,11 @@ namespace GingerTest
                 Assembly asm1 = d.GetType().Assembly;                
                 // Set the app resources to Ginger so image an other will be locally to Ginger
                 Application.ResourceAssembly = asm1;
-
+                
                 app = new Ginger.App();
-                Ginger.App.RunningFromUnitTest = true;                
+                Ginger.App.RunningFromUnitTest = true;
+                app.StartGingerUI();
+                
                 //Ginger. WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;                
 
                 while (!app.IsReady)

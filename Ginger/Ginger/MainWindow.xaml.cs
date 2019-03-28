@@ -55,11 +55,8 @@ namespace Ginger
     {
         public enum eSolutionTabType { None, BusinessFlows, Run, Configurations, Resources };
         public eSolutionTabType SelectedSolutionTab;
-
         
-
         private bool mAskUserIfToClose = true;
-        private long _currentClickedTabIndex = -1;
 
         public MainWindow()
         {
@@ -71,10 +68,7 @@ namespace Ginger
         public void Init()
         {
             try
-            {
-                //General
-                this.WindowState = System.Windows.WindowState.Maximized;                
-
+            {                
                 //App
                 App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
 

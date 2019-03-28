@@ -6,7 +6,7 @@
         xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
         Title="Ginger by amdocs"        
         Icon="GingerIconNew.ico"
-        Height="600" Width="1000" WindowState="Normal" 
+        Height="600" Width="1000" WindowState="Maximized"         
         Closing="MainWindow_Closing" PreviewKeyDown="MainWindow_PreviewKeyDown">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">

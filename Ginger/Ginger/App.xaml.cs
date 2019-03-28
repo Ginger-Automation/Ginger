@@ -883,14 +883,7 @@ namespace Ginger
 
             if (e.Args.Length == 0)
             {
-                MainWindow = new MainWindow();
-                MainWindow.Show();
-
-                LoadApplicationDictionaries();
-                InitApp();
-
-                MainWindow.Init();
-                HideSplash();
+                StartGingerUI();                
             }
             else
             {
@@ -902,7 +895,20 @@ namespace Ginger
                 System.Windows.Application.Current.Shutdown();
             }
         }
-    
+
+        public void StartGingerUI()
+        {
+            LoadApplicationDictionaries();
+
+            MainWindow = new MainWindow();
+            MainWindow.Show();
+            GingerCore.General.DoEvents();
+
+            InitApp();
+
+            MainWindow.Init();
+            HideSplash();
+        }
 
         private void HideSplash()
         {
