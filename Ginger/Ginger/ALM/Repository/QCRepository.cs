@@ -255,7 +255,7 @@ namespace Ginger.ALM.Repository
                 }
         }
 
-        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false)
+        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null)
         {
             if (activtiesGroup == null) return false;
             Test matchingTC = null;
