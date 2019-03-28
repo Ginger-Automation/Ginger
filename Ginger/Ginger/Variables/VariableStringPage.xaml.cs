@@ -29,7 +29,7 @@ namespace Ginger.Variables
         public VariableStringPage(VariableString var)
         {            
             InitializeComponent();
-            App.ObjFieldBinding(txtStringValue, TextBox.TextProperty, var, nameof(VariableString.InitialStringValue));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtStringValue, TextBox.TextProperty, var, nameof(VariableString.InitialStringValue));
         }
     }
 }

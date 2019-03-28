@@ -32,8 +32,8 @@ namespace Ginger.Actions
         {
             InitializeComponent();
             currentAct = Act;
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.UIASwitchWindowAction);
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "UIASwitchWindowAction"); 
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.UIASwitchWindowAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "UIASwitchWindowAction"); 
         }
 
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

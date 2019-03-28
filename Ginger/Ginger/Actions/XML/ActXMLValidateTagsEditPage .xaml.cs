@@ -40,9 +40,9 @@ namespace Ginger.Actions.XML
             this.mAct = (ActXMLTagValidation)act;
 
             //// Bind Controls
-            App.ObjFieldBinding(XMLFileTextBox , TextBox.TextProperty, mAct.InputFile , ActInputValue.Fields.Value);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(XMLFileTextBox , TextBox.TextProperty, mAct.InputFile , ActInputValue.Fields.Value);
       
-            App.ObjFieldBinding(ReqisFromFile, CheckBox.IsCheckedProperty, mAct, "ReqisFromFile");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ReqisFromFile, CheckBox.IsCheckedProperty, mAct, "ReqisFromFile");
 
             xDocumentTypeComboBox.Init(mAct, ActXMLTagValidation.Fields.DocumentType, typeof(ActXMLTagValidation.eDocumentType));
      
@@ -94,7 +94,7 @@ namespace Ginger.Actions.XML
                 dlg.Filter = "JSON Template File (*.json)|*.json|All Files (*.*)|*.*";
             }
 
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

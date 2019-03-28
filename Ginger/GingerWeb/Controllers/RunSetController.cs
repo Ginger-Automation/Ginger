@@ -90,7 +90,7 @@ namespace GingerWeb.Controllers
         {
             RunsetExecutor runsetExecutor = new RunsetExecutor();
             runsetExecutor.RunSetConfig = runSetConfig;
-            WorkSpace.RunsetExecutor = runsetExecutor;
+            WorkSpace.Instance.RunsetExecutor = runsetExecutor;
             runsetExecutor.RunRunset();
         }
     }

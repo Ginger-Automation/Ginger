@@ -31,7 +31,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            if ( WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.Web).ToList().Count() == 0)
+            if ( WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.Web).ToList().Count() == 0)
             {
                 return new ValidationResult(false, "Web Platform Target Application is required");
             }

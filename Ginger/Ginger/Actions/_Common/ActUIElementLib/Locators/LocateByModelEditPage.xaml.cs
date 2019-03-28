@@ -35,7 +35,7 @@ namespace Ginger.Actions._Common.ActUIElementLib.Locators
             mAction = Action;
 
             // Bind LocateValue and init VE
-            App.ObjFieldBinding(txtLocateValue, TextBox.TextProperty, mAction, ActUIElement.Fields.ElementLocateValue);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtLocateValue, TextBox.TextProperty, mAction, ActUIElement.Fields.ElementLocateValue);
             txtLocateValue.Init(Context.GetAsContext(mAction.Context), mAction, ActUIElement.Fields.ElementLocateValue);
         }
     }

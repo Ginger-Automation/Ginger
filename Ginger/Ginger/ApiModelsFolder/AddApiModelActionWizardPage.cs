@@ -82,7 +82,7 @@ namespace Ginger.ApiModelsFolder
                 aNew.APIModelParamsValue = GetEnhancedUpdatedParams(aamb.MergedParamsList);
                 aNew.ReturnValues = ConvertTemplateReturnValues(aamb.ReturnValues);
                 aNew.AddNewReturnParams = true;
-                aNew.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+                aNew.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
 
                 mActions.Add(aNew);

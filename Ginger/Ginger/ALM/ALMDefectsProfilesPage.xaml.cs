@@ -292,7 +292,7 @@ namespace Ginger.ALM
                 Reporter.ToStatus(eStatusMsgKey.SaveItem, null, _ALMDefectProfile.GetNameForFileName(), "item");
                 if ((_ALMDefectProfile.ContainingFolder == null) || (_ALMDefectProfile.ContainingFolder == string.Empty))
                 {
-                    _ALMDefectProfile.ContainingFolder = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, _ALMDefectProfile.ObjFolderName);
+                    _ALMDefectProfile.ContainingFolder = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, _ALMDefectProfile.ObjFolderName);
                     _ALMDefectProfile.FilePath = _ALMDefectProfile.ContainingFolder + @"\" + _ALMDefectProfile.FilePath;
                 }
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(_ALMDefectProfile);

@@ -47,7 +47,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
                 case EventType.Init:
                     mWizard = (AddEnvironmentWizard)WizardEventArgs.Wizard;
 
-                    foreach (ApplicationPlatform appPlat in  WorkSpace.UserProfile.Solution.ApplicationPlatforms)
+                    foreach (ApplicationPlatform appPlat in  WorkSpace.Instance.Solution.ApplicationPlatforms)
                     {
                         EnvApplication envApp = new EnvApplication() { Name = appPlat.AppName };
                         envApp.Active = true;

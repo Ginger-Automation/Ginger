@@ -87,9 +87,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (base.DeleteTreeItem(mRunSetConfig, deleteWithoutAsking, refreshTreeAfterDelete))
             {
-                if (WorkSpace.RunsetExecutor.RunSetConfig.Equals(mRunSetConfig))//update Run tab in case the loaded run set was deleted
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.Equals(mRunSetConfig))//update Run tab in case the loaded run set was deleted
                 {
-                    WorkSpace.RunsetExecutor.RunSetConfig = null;
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig = null;
                 }
 
                 return true;
