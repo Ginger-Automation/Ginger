@@ -50,6 +50,7 @@ namespace GingerWPF.BusinessFlowsLib
             InitializeComponent();
 
             mRunner = new GingerRunner(eExecutedFrom.Automation);
+            mRunner.CurrentBusinessFlow = businessFlow;
             mContext.Runner = mRunner;
             mBusinessFlow = businessFlow;
             mContext.BusinessFlow = mBusinessFlow;
