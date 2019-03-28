@@ -687,7 +687,11 @@ namespace Ginger
                             Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution files should be Upgraded", ex);
                         }
 
-                        WorkSpace.Instance.UserProfile.AddSolutionToRecent(sol);
+                        // No need to add solution to recent if running from CLI
+                        if (!WorkSpace.Instance.RunningInExecutionMode)
+                        {
+                            WorkSpace.Instance.UserProfile.AddSolutionToRecent(sol);
+                        }
                     }
                     else
                     {
@@ -887,6 +891,16 @@ namespace Ginger
             }
             else
             {
+                if (e.Args[0].StartsWith("ConfigFile"))
+                {
+                    // Legacy config file 
+                    StartGingerUI();
+                }
+                else
+                {
+
+                }
+
                 InitClassTypesDictionary();
                 Reporter.WorkSpaceReporter = new GingerWorkSpaceReporter();
                 // MessageBox.Show("arg0 = " + e.Args[0]);
