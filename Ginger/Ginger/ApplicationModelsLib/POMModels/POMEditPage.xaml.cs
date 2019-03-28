@@ -96,14 +96,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPOM = POM;
             mEditMode = editMode;
 
-            ControlsBinding.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
-            ControlsBinding.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
-            ControlsBinding.ObjFieldBinding(xPageURLTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.PageURL));
-            ControlsBinding.ObjFieldBinding(xBusinessFlow.xBFTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.MappedBusinessFlow));
-            ControlsBinding.ObjFieldBinding(xRDBPageURL, RadioButton.IsCheckedProperty, mPOM, nameof(mPOM.IsPageLoadBusinessFlow));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPageURLTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.PageURL));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBusinessFlow.xBFTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.MappedBusinessFlow));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRDBPageURL, RadioButton.IsCheckedProperty, mPOM, nameof(mPOM.IsPageLoadBusinessFlow));
 
             FillTargetAppsComboBox();
-            ControlsBinding.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
             xTagsViewer.Init(mPOM.TagsKeys);
             
             BitmapSource source = null;
@@ -150,16 +150,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                 }
             }
-            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x=> ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
-            xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
-            xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
+            xTargetApplicationComboBox.ItemsSource =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x=> ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
+            xTargetApplicationComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
+            xTargetApplicationComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
 
              WorkSpace.Instance.Solution.ApplicationPlatforms.CollectionChanged += ApplicationPlatforms_CollectionChanged;
         }
 
         private void ApplicationPlatforms_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            xTargetApplicationComboBox.ItemsSource =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
+            xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
         }
 
         private void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
