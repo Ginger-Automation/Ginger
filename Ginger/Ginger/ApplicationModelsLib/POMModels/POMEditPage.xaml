@@ -50,7 +50,7 @@
 
                     <StackPanel Grid.Column="0" Margin="0,30,0,0" HorizontalAlignment="Left" >
                         <Label Margin="5,0,0,0" Style="{StaticResource $LabelStyle}" Content="Page Load Flow:" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <RadioButton x:Name="xRDBPageURL" Height="20" Content="Page URL" IsChecked="True" Grid.Column="0" Grid.Row="1" Tag="radPageURL" Checked="XRDBPageURL_Checked" HorizontalAlignment="Left" Margin="10,5,0,0" />
+                        <RadioButton x:Name="xRDBPageURL" Height="20" Content="Page URL"  Grid.Column="0" Grid.Row="1" Tag="radPageURL" Checked="XRDBPageURL_Checked" HorizontalAlignment="Left" Margin="10,5,0,0" />
                         <RadioButton x:Name="xRDBBF" Height="20"  Grid.Column="0" Grid.Row="1" Tag="radPageURL" HorizontalAlignment="Left" Margin="10,5,0,0" Checked="XRDBBF_Checked" >
                             <RadioButton.Content>
                                 <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>

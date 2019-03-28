@@ -46,6 +46,7 @@ namespace Ginger.BusinessFlowWindows
             {
                 mBusinessFlow = value;
                 xBFTextBox.Text = mBusinessFlow.FilePath.Substring(0, mBusinessFlow.FilePath.LastIndexOf("\\")).Substring(mBusinessFlow.ContainingFolderFullPath.Length) + @"\" + mBusinessFlow.ItemName;
+                xGoToAutomateBtn.Visibility = Visibility.Visible;
             }
         }
 
@@ -80,8 +81,7 @@ namespace Ginger.BusinessFlowWindows
             List<object> selectedBF = selectPage.ShowAsWindow();
             if (selectedBF != null && selectedBF.Count > 0)
             {
-                BusinessFlow = (BusinessFlow)selectedBF[0];                
-                xGoToAutomateBtn.Visibility = Visibility.Visible;                
+                BusinessFlow = (BusinessFlow)selectedBF[0];             
             }
             else
             {

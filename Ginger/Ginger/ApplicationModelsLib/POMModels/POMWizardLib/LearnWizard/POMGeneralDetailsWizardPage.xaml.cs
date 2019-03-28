@@ -57,7 +57,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xURLTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.PageURL));
 
                     xDescriptionTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.Description));
-                    xTagsViewer.Init(mWizard.mPomLearnUtils.POM.TagsKeys);
+                    xTagsViewer.Init(mWizard.mPomLearnUtils.POM.TagsKeys);                    
                     break;
                 case EventType.Active:
                     ShowScreenShot();
@@ -69,8 +69,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     {
                         xTakeScreenShotLoadButton.Visibility = Visibility.Visible;
                     }
+                    SetDefaultPage();                    
                     break;
             }
+        }
+
+        private void SetDefaultPage()
+        {
+            xRDBPageURL.IsChecked = true;
+            xBusinessFlowControl.TargetApplication = mWizard.mPomLearnUtils.POM.TargetApplicationKey.ItemName;
         }
 
         public void ShowScreenShot()
@@ -111,6 +118,37 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 {
                     Reporter.ToUser(eUserMsgKey.ImageSize, "500");
                 }
+            }
+        }
+
+        private void XBusinessFlowControl_ElementChangedPageEvent()
+        {            
+            if (xBusinessFlowControl != null && xBusinessFlowControl.BusinessFlow != null)
+            {
+                RepositoryItemKey repKey = new RepositoryItemKey();
+                repKey.Guid = xBusinessFlowControl.BusinessFlow.Guid;
+                repKey.ItemName = xBusinessFlowControl.BusinessFlow.Name;
+                mWizard.mPomLearnUtils.POM.MappedBusinessFlow = repKey;
+            }
+        }
+
+        private void XRDBPageURL_Checked(object sender, RoutedEventArgs e)
+        {
+            if (xPageUrlStackPanel != null && xBusinessFlowControl != null)
+            {
+                mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.PageLoadFlowType.PageURL;
+                xPageUrlStackPanel.Visibility = Visibility.Visible;
+                xBusinessFlowControl.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void XRDBBF_Checked(object sender, RoutedEventArgs e)
+        {
+            if (xPageUrlStackPanel != null && xBusinessFlowControl != null)
+            {
+                mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.PageLoadFlowType.BusinessFlow;
+                xPageUrlStackPanel.Visibility = Visibility.Hidden;
+                xBusinessFlowControl.Visibility = Visibility.Visible;
             }
         }
     }
