@@ -134,6 +134,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 xRDBBF.IsChecked = true;
             }
+            if (mPOM.MappedBusinessFlow != null)
+            {
+                xBusinessFlowControl.BusinessFlow = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(mPOM.MappedBusinessFlow.Guid); 
+            }
         }
 
         private void FillTargetAppsComboBox()
@@ -369,7 +373,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void XBusinessFlowControl_ElementChangedPageEvent()
         {
-
+            if(xBusinessFlowControl != null && xBusinessFlowControl.BusinessFlow != null)
+            {
+                RepositoryItemKey repKey = new RepositoryItemKey();
+                repKey.Guid = xBusinessFlowControl.BusinessFlow.Guid;
+                repKey.ItemName = xBusinessFlowControl.BusinessFlow.Name;
+                mPOM.MappedBusinessFlow = repKey;
+            }
         }
     }
 }

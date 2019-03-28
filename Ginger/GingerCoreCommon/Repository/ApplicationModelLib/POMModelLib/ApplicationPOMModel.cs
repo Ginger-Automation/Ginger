@@ -70,9 +70,9 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        string mMappedBusinessFlow;
+        RepositoryItemKey mMappedBusinessFlow;
         [IsSerializedForLocalRepository]
-        public string MappedBusinessFlow 
+        public RepositoryItemKey MappedBusinessFlow 
         {
             get
             {

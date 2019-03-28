@@ -35,7 +35,20 @@ namespace Ginger.BusinessFlowWindows
     /// </summary>
     public partial class xUcBusinessFlowMap : UserControl
     {
-        public BusinessFlow mBusinessFlow;
+        BusinessFlow mBusinessFlow;
+        public BusinessFlow BusinessFlow
+        {
+            get
+            {
+                return mBusinessFlow;
+            }
+            set
+            {
+                mBusinessFlow = value;
+                xBFTextBox.Text = mBusinessFlow.FilePath.Substring(0, mBusinessFlow.FilePath.LastIndexOf("\\")).Substring(mBusinessFlow.ContainingFolderFullPath.Length) + @"\" + mBusinessFlow.ItemName;
+            }
+        }
+
         public string TargetApplication { get; set; }
 
         public delegate void ElementChangedEventHandler();
@@ -67,11 +80,8 @@ namespace Ginger.BusinessFlowWindows
             List<object> selectedBF = selectPage.ShowAsWindow();
             if (selectedBF != null && selectedBF.Count > 0)
             {
-                mBusinessFlow = (BusinessFlow)selectedBF[0];
-                string pathToShow = mBusinessFlow.FilePath.Substring(0, mBusinessFlow.FilePath.LastIndexOf("\\")).Substring(mBusinessFlow.ContainingFolderFullPath.Length) + @"\" + mBusinessFlow.ItemName;
-                xBFTextBox.Text = pathToShow;
-                xBFTextBox.Tag = mBusinessFlow;
-                xGoToAutomateBtn.Visibility = Visibility.Visible;
+                BusinessFlow = (BusinessFlow)selectedBF[0];                
+                xGoToAutomateBtn.Visibility = Visibility.Visible;                
             }
             else
             {
@@ -80,11 +90,7 @@ namespace Ginger.BusinessFlowWindows
                     xGoToAutomateBtn.Visibility = Visibility.Hidden; 
                 }
             }
-        }
-
-        public void SetSelectedBusinessFlow(BusinessFlow businessFlow)
-        {
-
+            ElementChangedEvent();
         }
 
         private void xGoToAutomateBtn_Click(object sender, RoutedEventArgs e)
