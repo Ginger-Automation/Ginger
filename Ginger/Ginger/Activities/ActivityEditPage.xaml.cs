@@ -47,21 +47,34 @@ namespace Ginger.BusinessFlowWindows
         public bool OKButtonClicked = false;
         private bool saveWasDone = false;
         private BusinessFlow mActivityParentBusinessFlow = null;
+        Context mContext;
 
         public General.RepositoryItemPageViewMode editMode { get; set; }
 
-        public ActivityEditPage(Activity activity, General.RepositoryItemPageViewMode mode = General.RepositoryItemPageViewMode.Automation, BusinessFlow activityParentBusinessFlow = null)
+        public ActivityEditPage(Activity activity, General.RepositoryItemPageViewMode mode = General.RepositoryItemPageViewMode.Automation, BusinessFlow activityParentBusinessFlow = null, Context context=null)
         {
             InitializeComponent();
 
             this.Title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Activity);
 
             mActivity = activity;
+
+            if (context != null)
+            {
+                mContext = context;
+            }
+            else
+            {
+                mContext = new Context();
+                mContext.BusinessFlow = activityParentBusinessFlow;
+                mContext.Activity = mActivity;
+            }
+
             if (editMode != General.RepositoryItemPageViewMode.View)
                 mActivity.SaveBackup();
             editMode = mode;
 
-            RunDescritpion.Init(new Context() { BusinessFlow = activityParentBusinessFlow },  activity, Activity.Fields.RunDescription);
+            RunDescritpion.Init(mContext, activity, Activity.Fields.RunDescription);
             
             mActivityParentBusinessFlow = activityParentBusinessFlow;            
 
@@ -70,28 +83,28 @@ namespace Ginger.BusinessFlowWindows
             RunOptionCombo.BindControl(activity, Activity.Fields.ActionRunOption);            
             HandlerTypeCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eHandlerType));
 
-            App.FillComboFromEnumVal(cmbErrorHandlerMapping, mActivity.ErrorHandlerMappingType);
-            App.ObjFieldBinding(txtActivityName, TextBox.TextProperty, mActivity, Activity.Fields.ActivityName);
-            App.ObjFieldBinding(txtActivityDescription, TextBox.TextProperty, mActivity, Activity.Fields.Description);
-            App.ObjFieldBinding(txtExpected, TextBox.TextProperty, mActivity, Activity.Fields.Expected);
-            App.ObjFieldBinding(txtScreen, TextBox.TextProperty, mActivity, Activity.Fields.Screen);
-            App.ObjFieldBinding(txtGroup, TextBox.TextProperty, mActivity, Activity.Fields.ActivitiesGroupID);
-            App.ObjFieldBinding(AutomationStatusCombo, ComboBox.TextProperty, mActivity, Activity.Fields.AutomationStatus);            
-            App.ObjFieldBinding(MandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, Activity.Fields.Mandatory);
+            GingerCore.General.FillComboFromEnumObj(cmbErrorHandlerMapping, mActivity.ErrorHandlerMappingType);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtActivityName, TextBox.TextProperty, mActivity, Activity.Fields.ActivityName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtActivityDescription, TextBox.TextProperty, mActivity, Activity.Fields.Description);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtExpected, TextBox.TextProperty, mActivity, Activity.Fields.Expected);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtScreen, TextBox.TextProperty, mActivity, Activity.Fields.Screen);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroup, TextBox.TextProperty, mActivity, Activity.Fields.ActivitiesGroupID);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AutomationStatusCombo, ComboBox.TextProperty, mActivity, Activity.Fields.AutomationStatus);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, Activity.Fields.Mandatory);
 
             if (activity.GetType() == typeof(ErrorHandler))
             {
                 HandlerTypeStack.Visibility = Visibility.Visible;
-                App.ObjFieldBinding(HandlerTypeCombo, ComboBox.TextProperty, mActivity, ErrorHandler.Fields.HandlerType);                
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(HandlerTypeCombo, ComboBox.TextProperty, mActivity, ErrorHandler.Fields.HandlerType);                
             }
             else
             {
-                App.ObjFieldBinding(cmbErrorHandlerMapping, ComboBox.SelectedValueProperty, mActivity, Activity.Fields.ErrorHandlerMappingType);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbErrorHandlerMapping, ComboBox.SelectedValueProperty, mActivity, Activity.Fields.ErrorHandlerMappingType);
                 HandlerMappingStack.Visibility = Visibility.Visible;
                 Row1.Height = new GridLength(Row1.Height.Value - 38);
             }
 
-            App.ObjFieldBinding(TargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, Activity.Fields.TargetApplication);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, Activity.Fields.TargetApplication);
 
             FillTargetAppsComboBox();
 
@@ -102,13 +115,13 @@ namespace Ginger.BusinessFlowWindows
             if (editMode == General.RepositoryItemPageViewMode.View)
             {
                 varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity, General.RepositoryItemPageViewMode.View);
-                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.View);
+                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.View, mContext);
                 SetViewMode();
             }
             else
             {
                 varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity, General.RepositoryItemPageViewMode.Child);
-                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.Child);
+                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.Child, mContext);
             }
 
             varbsPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
@@ -142,7 +155,7 @@ namespace Ginger.BusinessFlowWindows
             }
             else
             {
-                TargetApplicationComboBox.ItemsSource = WorkSpace.UserProfile.Solution.GetSolutionTargetApplications();
+                TargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
             }
             TargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             TargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);

@@ -38,23 +38,23 @@ namespace Ginger.Actions
             TextToWrite.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActReadTextFile.Fields.TextToWrite));
             LineNumber.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActReadTextFile.Fields.AppendLineNumber));
 
-            mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
-            App.FillComboFromEnumVal(FileActionMode, mAct.FileActionMode);
-            App.ObjFieldBinding(FileActionMode, ComboBox.SelectedValueProperty, mAct,"FileActionMode");
+            GingerCore.General.FillComboFromEnumObj(FileActionMode, mAct.FileActionMode);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FileActionMode, ComboBox.SelectedValueProperty, mAct,"FileActionMode");
 
-            App.FillComboFromEnumVal (TextFileEncoding, mAct.TextFileEncoding);
-            App.ObjFieldBinding (TextFileEncoding, ComboBox.SelectedValueProperty, mAct, "TextFileEncoding");
+            GingerCore.General.FillComboFromEnumObj(TextFileEncoding, mAct.TextFileEncoding);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TextFileEncoding, ComboBox.SelectedValueProperty, mAct, "TextFileEncoding");
 
-            App.FillComboFromEnumVal(TextFileAppendType, mAct.AppendAt);
-            App.ObjFieldBinding(TextFileAppendType, ComboBox.SelectedValueProperty, mAct, "AppendAt");
+            GingerCore.General.FillComboFromEnumObj(TextFileAppendType, mAct.AppendAt);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TextFileAppendType, ComboBox.SelectedValueProperty, mAct, "AppendAt");
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
 
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 string FileName = dlg.FileName.ToUpper();

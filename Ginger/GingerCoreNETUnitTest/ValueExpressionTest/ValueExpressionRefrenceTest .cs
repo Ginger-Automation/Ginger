@@ -46,7 +46,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         [TestMethod]    
         public void LoadandTestFile()
         {
-           foreach(ValueExpressionReference ver in  WorkSpace.VERefrences.Refrences)
+           foreach(ValueExpressionReference ver in  WorkSpace.Instance.VERefrences.Refrences)
             {
                 if (ver.Expression.StartsWith("{CS") && ver.ExpressionResult != null)
                 {

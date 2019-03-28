@@ -31,8 +31,8 @@ namespace Ginger.Actions.Mainframe
         {
             mAct = Act;
             InitializeComponent();
-            App.FillComboFromEnumVal (KeyToSend, mAct.KeyToSend);
-            App.ObjFieldBinding(KeyToSend, ComboBox.SelectedValueProperty, mAct, "KeyToSend");
+            GingerCore.General.FillComboFromEnumObj(KeyToSend, mAct.KeyToSend);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(KeyToSend, ComboBox.SelectedValueProperty, mAct, "KeyToSend");
         }
     }
 }

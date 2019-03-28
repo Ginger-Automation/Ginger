@@ -78,7 +78,7 @@ namespace Ginger.ALM.Repository
             string responseStr=string.Empty;
             if (activtiesGroup != null)
             {
-            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.UserProfile.Solution.ExternalItemsFields);
+            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
                 var testCaseFields = allFields.Where(a => a.ItemType == ResourceType.TEST_CASE.ToString());
                 bool exportRes = ((JiraCore)this.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, testCaseFields, ref responseStr);
 
@@ -133,7 +133,7 @@ namespace Ginger.ALM.Repository
                 }
                 else
                 {
-                    ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.UserProfile.Solution.ExternalItemsFields);
+                    ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
                     ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
                     var testCaseFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_CASE.ToString())&&(a.ToUpdate || a.Mandatory));
                     var testSetFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_SET.ToString()) && (a.ToUpdate || a.Mandatory));
@@ -251,20 +251,20 @@ namespace Ginger.ALM.Repository
 
         private void SetBFPropertiesAfterImport(BusinessFlow tsBusFlow)
         {
-            if (WorkSpace.UserProfile.Solution.MainApplication != null)
+            if (WorkSpace.Instance.Solution.MainApplication != null)
             {
                 //add the applications mapped to the Activities
                 foreach (Activity activ in tsBusFlow.Activities)
                     if (string.IsNullOrEmpty(activ.TargetApplication) == false)
                         if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                         {
-                            ApplicationPlatform appAgent = WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                            ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                             if (appAgent != null)
                                 tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
                         }
                 //handle non mapped Activities
                 if (tsBusFlow.TargetApplications.Count == 0)
-                    tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.UserProfile.Solution.MainApplication });
+                    tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
                 foreach (Activity activ in tsBusFlow.Activities)
                 {
                     if (string.IsNullOrEmpty(activ.TargetApplication))
@@ -291,7 +291,7 @@ namespace Ginger.ALM.Repository
                 if (!((JiraCore)ALMIntegration.Instance.AlmCore).ValidateConfigurationFile(dlg.FileName))
                     return false;
 
-                string folderPath = Path.Combine(WorkSpace.UserProfile.Solution.Folder, "Configurations");
+                string folderPath = Path.Combine(WorkSpace.Instance.Solution.Folder, "Configurations");
                 DirectoryInfo di = Directory.CreateDirectory(folderPath);
 
                 folderPath = Path.Combine(folderPath, "JiraConfigurationsPackage");

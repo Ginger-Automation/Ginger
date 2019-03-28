@@ -287,6 +287,7 @@ namespace Ginger.Run
             set
             {
                 mProjEnvironment = (ProjEnvironment)value;
+                ExecutionLogger.ExecutionEnvironment = (ProjEnvironment)value;
                 NotifyEnvironmentChanged();                
             }
         }

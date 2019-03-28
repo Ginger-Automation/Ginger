@@ -54,8 +54,8 @@ namespace GingerCore.ALM
             AlmConfig.ALMDomain = ALMDomain;
             AlmConfig.ALMProjectName = ALMProject;
             AlmConfig.ALMProjectKey = ALMProjectKey;
-            if(!String.IsNullOrEmpty(amdocs.ginger.GingerCoreNET.WorkSpace.UserProfile.Solution.ConfigPackageFolderPath))
-                AlmConfig.ALMConfigPackageFolderPath = amdocs.ginger.GingerCoreNET.WorkSpace.UserProfile.Solution.ConfigPackageFolderPath;
+            if(!String.IsNullOrEmpty(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.ConfigPackageFolderPath))
+                AlmConfig.ALMConfigPackageFolderPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.ConfigPackageFolderPath;
         }
 
         public BusinessFlow ConvertRQMTestPlanToBF(RQMTestPlan testPlan)

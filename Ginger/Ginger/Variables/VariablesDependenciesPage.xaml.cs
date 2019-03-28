@@ -69,7 +69,7 @@ namespace Ginger.Variables
             {
                 mDepededItemType = eDependedItemsType.Actions;
                 chkBoxEnableDisableDepControl.Content = "Enable Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies Control";
-                App.ObjFieldBinding(chkBoxEnableDisableDepControl, CheckBox.IsCheckedProperty, (Activity)mParentObject, Activity.Fields.EnableActionsVariablesDependenciesControl);                
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(chkBoxEnableDisableDepControl, CheckBox.IsCheckedProperty, (Activity)mParentObject, Activity.Fields.EnableActionsVariablesDependenciesControl);                
                 infoImage.ToolTip = "In case the Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " dependencies control is enabled then a specific Action will be executed in run time only if it was mapped (checked) to a " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value which was selected in run time." + System.Environment.NewLine +
                                   "The mapping is been done between the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Actions and " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " from type Selection List.";
             }
@@ -77,7 +77,7 @@ namespace Ginger.Variables
             {
                 mDepededItemType = eDependedItemsType.Activities;
                 chkBoxEnableDisableDepControl.Content = "Enable " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies Control";
-                App.ObjFieldBinding(chkBoxEnableDisableDepControl, CheckBox.IsCheckedProperty, (BusinessFlow)mParentObject, BusinessFlow.Fields.EnableActivitiesVariablesDependenciesControl);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(chkBoxEnableDisableDepControl, CheckBox.IsCheckedProperty, (BusinessFlow)mParentObject, BusinessFlow.Fields.EnableActivitiesVariablesDependenciesControl);
                 infoImage.ToolTip = "In case the " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " dependencies control is enabled then a specific " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " will be executed in run time only if it was mapped (checked) to a " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value which was selected in run time." + System.Environment.NewLine +
                                              "The mapping is been done between the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " and " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " from type Selection List.";
             }
