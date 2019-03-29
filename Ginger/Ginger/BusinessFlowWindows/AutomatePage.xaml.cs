@@ -44,6 +44,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
 using GingerCore.DataSource;
+using GingerCore.Drivers;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
@@ -532,7 +533,8 @@ namespace Ginger
             BindEnvsCombo();
             UpdateAutomateRunner();
         }
-        public void UpdateApplicationsAgentsMapping(bool useAgentsCache = true)
+
+        private void SetBusinessFlowTargetAppIfNeeded()
         {
             if (WorkSpace.Instance.Solution != null && mBusinessFlow != null)
             {
@@ -548,13 +550,18 @@ namespace Ginger
                     {
                         // take it from solution main platform
                         if (mBusinessFlow.TargetApplications == null)
+                        {
                             mBusinessFlow.TargetApplications = new ObservableList<TargetBase>();
+                        }
 
                         mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
                     }
                 }
             }
+        }
 
+        public void UpdateApplicationsAgentsMapping(bool useAgentsCache = true)
+        {
             if (WorkSpace.Instance.Solution != null)
             {
                 mRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
@@ -939,21 +946,34 @@ namespace Ginger
                 {                    
                     mBusinessFlow.SaveBackup();
                     mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
-                    mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
-                    
+                                        
                     SetExpanders();
                     SetGherkinOptions();
                     if (mBusinessFlow.Activities.Count > 0)
                     {
                         mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
                     }
-                    //Set Business Flow on AutomateTabGingerRunner
 
                     mRunner.BusinessFlows.Add(mBusinessFlow);
                     mRunner.CurrentBusinessFlow = mBusinessFlow;
-                    UpdateApplicationsAgentsMapping();
-                }
 
+                    SetBusinessFlowTargetAppIfNeeded();
+                    UpdateApplicationsAgentsMapping();
+                    mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
+
+                    UpdateRunnerAgentsUsedBusinessFlow();
+                }
+            }
+        }
+
+        public void UpdateRunnerAgentsUsedBusinessFlow()
+        {
+            foreach (ApplicationAgent appAgent in mRunner.ApplicationAgents)
+            {
+                if (appAgent.Agent != null && appAgent.Agent.Status == Agent.eStatus.Running)
+                {
+                    ((DriverBase)appAgent.Agent.Driver).UpdateContext(mContext);                   
+                }
             }
         }
 
