@@ -87,6 +87,12 @@ namespace GingerCore.Drivers.PBDriver
             }
         }
 
+        public override void UpdateContext(Context context)
+        {
+            base.UpdateContext(context);
+            mUIAutomationHelper.BusinessFlow = context.BusinessFlow;
+        }
+
         public override void RunAction(Act act)
         {
             //TODO: add func to Act + Enum for switch
