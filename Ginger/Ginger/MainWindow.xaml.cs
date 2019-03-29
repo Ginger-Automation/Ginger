@@ -55,24 +55,20 @@ namespace Ginger
     {
         public enum eSolutionTabType { None, BusinessFlows, Run, Configurations, Resources };
         public eSolutionTabType SelectedSolutionTab;
-
         
-
         private bool mAskUserIfToClose = true;
-        private long _currentClickedTabIndex = -1;
 
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent();            
+            lblAppVersion.Content = "Version " + Ginger.App.AppShortVersion;
+            GingerCore.General.DoEvents();
         }
 
         public void Init()
         {
             try
-            {
-                //General
-                this.WindowState = System.Windows.WindowState.Maximized;                
-
+            {                
                 //App
                 App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
 
@@ -121,8 +117,7 @@ namespace Ginger
 
             }
             catch (Exception ex)
-            {
-                App.AppSplashWindow.Close();
+            {                
                 Reporter.ToUser(eUserMsgKey.ApplicationInitError, ex.Message);
                 Reporter.ToLog(eLogLevel.ERROR, "Error in Init Main Window", ex);                
             }
@@ -296,7 +291,7 @@ namespace Ginger
                 Reporter.ToUser(eUserMsgKey.SolutionLoadError, ex);
             }
         }
-
+        
         public void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             // Handle Solution change
@@ -1014,6 +1009,12 @@ namespace Ginger
         private void xLoadPublicSiteMenuItem_Click(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("https://ginger.amdocs.com/");
+        }
+
+        internal void LoadingInfo(string text)
+        {
+            ShowStatus(eStatusMsgType.PROCESS, text);
+            GingerCore.General.DoEvents();
         }
     }
 }
