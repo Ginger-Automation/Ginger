@@ -210,9 +210,16 @@ namespace Ginger.Run.RunSetActions
             {
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                 {
-                    if (selectedHTMLReportTemplateID > 0)
+                    if (selectedHTMLReportTemplateID > -1)
                     {
                         CreateSummaryViewReportForEmailAction(new ReportInfo(runSetFolder));
+                    }
+                    else
+                    {
+                        Errors = "Default Template is not available, add Report Template in Configuration.";
+                        Reporter.HideStatusMessage();
+                        Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
+                        return;
                     }
                 }
                 else

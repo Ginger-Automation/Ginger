@@ -61,7 +61,7 @@
                             <Label Style="{StaticResource @InputFieldLabelStyle}">Password:</Label>
                             <PasswordBox x:Name="PasswordTextBox" PasswordChar="*" Style="{StaticResource @PasswordBoxStyle}" Height="25" PasswordChanged="PasswordTextBox_PasswordChanged" ></PasswordBox>
                         </StackPanel>
-                        <CheckBox x:Name="RestAPICheckBox" Content="Use Rest API" Checked="RestAPICheckBox_Checked" Unchecked="RestAPICheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0"/>
+                        <CheckBox x:Name="RestAPICheckBox" Content="Use Rest API" Checked="RestAPICheckBox_Checked" Unchecked="RestAPICheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="RestApi should be Checked for QC12 and above"/>
                         <Button x:Name="LoginServerButton" Click="GetProjectsDetails_Clicked" Style="{StaticResource @WindowButtonStyle}" Margin="0,10,0,10" HorizontalAlignment="Center">Get Projects Details</Button>
                     </StackPanel>
 

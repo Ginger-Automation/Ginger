@@ -168,18 +168,9 @@ namespace Ginger.WindowExplorer
 
             Act act = (Act)((Act)(mActions.CurrentItem)).CreateCopy();
             SetActionDetails(act);
-            mContext.BusinessFlow.AddAct(act);
 
-            int selectedActIndex = -1;
-            ObservableList<IAct> actsList = mContext.BusinessFlow.CurrentActivity.Acts;
-            if (actsList.CurrentItem != null)
-            {
-                selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
-            }
-            if (selectedActIndex >= 0)
-            {
-                actsList.Move(actsList.Count - 1, selectedActIndex + 1);
-            }
+            mContext.BusinessFlow.AddAct(act, true);
+           
             ActionEditPage AEP = new ActionEditPage(act);
             AEP.ShowAsWindow();
         }
