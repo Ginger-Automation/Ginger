@@ -619,6 +619,41 @@ namespace UnitTests.UITests.JavaDriverTest
 
         [TestMethod]
         [Timeout(60000)]
+        public void ClickNotExistChildNodeValidationTest()
+        {
+            //Arrange
+            var actJavaElement = InitActJavaElementAction(eLocateBy.ByName, ActJavaElement.eControlAction.Click, "countriesTree", "Canada/Ontario",true);
+            var actJavaElement2 = InitActJavaElementAction(eLocateBy.ByName, ActJavaElement.eControlAction.Click, "countriesTree", "Root", true);
+            var actJavaElement3 = InitActJavaElementAction(eLocateBy.ByName, ActJavaElement.eControlAction.Click, "countriesTree", "US/Ontario", true);
+
+            mBF.CurrentActivity.Acts.Add(actJavaElement);
+            mBF.CurrentActivity.Acts.Add(actJavaElement2);
+            mBF.CurrentActivity.Acts.Add(actJavaElement3);
+
+            //Act
+            mGR.RunActivity(mBF.CurrentActivity, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+            Assert.AreEqual(eRunStatus.Passed, actJavaElement2.Status, "Action Status");
+            Assert.AreEqual(eRunStatus.Failed, actJavaElement3.Status, "Action Status");
+            Assert.AreEqual("Node: Ontario was not found under: [Root, US]", actJavaElement3.Error, "Node not found validation");
+        }
+
+        private ActJavaElement InitActJavaElementAction(eLocateBy eLocateBy, ActJavaElement.eControlAction eControlAction,string locatValueCalculated,string value,bool returnParam)
+        {
+            ActJavaElement actJavaElement = new ActJavaElement();
+            actJavaElement.LocateBy = eLocateBy.ByName;
+            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+            actJavaElement.LocateValueCalculated = locatValueCalculated;
+            actJavaElement.Value = value;
+            actJavaElement.Active = true;
+            actJavaElement.AddNewReturnParams = true;
+            return actJavaElement;
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
         public void ClickChildTreeNodeSingleNodeValueTest()
         {
             //Arrange
