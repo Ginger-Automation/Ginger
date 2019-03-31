@@ -219,23 +219,6 @@ namespace Ginger
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
 
-            if (Environment.GetCommandLineArgs().Count() > 1)
-            {
-                // When running from unit test there are args, so we set a flag in GingerAutomator to make sure Ginger will Launch
-                // and will not try to process the args for RunSet auto run
-                if (RunningFromUnitTest)
-                {
-                    // do nothing for now, but later on we might want to process and check auto run too
-                }
-                else
-                {
-                    // This Ginger is running with run set config will do the run and close Ginger
-                    WorkSpace.Instance.RunningInExecutionMode = true;
-                    Reporter.ReportAllAlsoToConsole = true; //needed so all reportering will be added to Consol
-                    //Reporter.AppLogLevel = eAppReporterLoggingLevel.Debug;//needed so all reportering will be added to Log file
-                }
-            }
-
             string phase = string.Empty;
 
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
@@ -252,7 +235,7 @@ namespace Ginger
 
             Reporter.ToLog(eLogLevel.INFO, "######################## Application version " + App.AppVersion + " Started ! ########################");
 
-            MainWindow.LoadingInfo("Init Application");
+            SetLoadingInfo("Init Application");
             WorkSpace.AppVersion = App.AppShortVersion;
             // We init the classes dictionary for the Repository Serializer only once
             InitClassTypesDictionary();
@@ -261,18 +244,18 @@ namespace Ginger
 
             phase = "Loading User Profile";
             Reporter.ToLog(eLogLevel.DEBUG, phase);
-            MainWindow.LoadingInfo(phase);
+            SetLoadingInfo(phase);
             WorkSpace.Instance.UserProfile = UserProfile.LoadUserProfile();
 
             phase = "Configuring User Type";
             Reporter.ToLog(eLogLevel.DEBUG, phase);
-            MainWindow.LoadingInfo(phase);
+            SetLoadingInfo(phase);
             WorkSpace.Instance.UserProfile.LoadUserTypeHelper();
 
 
             phase = "Loading User Selected Resource Dictionaries";
             Reporter.ToLog(eLogLevel.DEBUG, phase);
-            MainWindow.LoadingInfo(phase);
+            SetLoadingInfo(phase);
             if (WorkSpace.Instance.UserProfile != null)
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, WorkSpace.Instance.UserProfile.TerminologyDictionaryType);
             else
@@ -286,24 +269,15 @@ namespace Ginger
             AutoLogProxy.Init(App.AppVersion);
 
             Reporter.ToLog(eLogLevel.DEBUG, "Initializing the Source control");
-            MainWindow.LoadingInfo(phase);
+            SetLoadingInfo(phase);
 
             phase = "Loading the Main Window";
             Reporter.ToLog(eLogLevel.DEBUG, phase);
-            MainWindow.LoadingInfo(phase);            
-
-            // If we have command line params process them and do not load MainWindow
-            if ( WorkSpace.Instance.RunningInExecutionMode == true)
-            {
-                HandleAutoRunMode();
-            }
-
+            SetLoadingInfo(phase);            
+            
 
             AutoLogProxy.LogAppOpened();
-
-            if ((WorkSpace.Instance.Solution != null) && (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList != null))
-            {
-            }
+            
 
             // Register our own Ginger tool tip handler
             //--Canceling customize tooltip for now due to many issues and no real added value            
@@ -312,6 +286,16 @@ namespace Ginger
             Reporter.ToLog(eLogLevel.INFO, phase);
             mIsReady = true;
        
+        }
+
+        private static void SetLoadingInfo(string text)
+        {
+            if (MainWindow != null)
+            {
+                MainWindow.LoadingInfo(text);
+            }
+            
+            Console.WriteLine("Loading Info: " + text);            
         }
 
         private static void StandAloneThreadExceptionHandler(object sender, UnhandledExceptionEventArgs e)
@@ -442,14 +426,12 @@ namespace Ginger
             Reporter.ToLog(eLogLevel.INFO, phase);
             
             AutoLogProxy.LogAppOpened();
-            MainWindow.LoadingInfo(phase);
+            SetLoadingInfo(phase);
 
             var result = await WorkSpace.Instance.RunsetExecutor.RunRunSetFromCommandLine();
 
             Reporter.ToLog(eLogLevel.INFO, "Closing Ginger automatically...");
-            App.MainWindow.CloseWithoutAsking();
-            //TODO: find a way not to open Main window at all
-            Reporter.ToLog(eLogLevel.INFO, "Ginger UI Closed.");
+            
 
             //setting the exit code based on execution status
             if (result == 0)
@@ -688,7 +670,7 @@ namespace Ginger
                         }
 
                         // No need to add solution to recent if running from CLI
-                        if (!WorkSpace.Instance.RunningInExecutionMode)
+                        if (!WorkSpace.Instance.RunningInExecutionMode && !RunningFromUnitTest)
                         {
                             WorkSpace.Instance.UserProfile.AddSolutionToRecent(sol);
                         }
@@ -887,32 +869,42 @@ namespace Ginger
 
             if (e.Args.Length == 0)
             {
+                // start regular Ginger UI
                 StartGingerUI();                
             }
             else
             {
+                // handle CLI
                 if (e.Args[0].StartsWith("ConfigFile"))
                 {
-                    // Legacy config file 
-                    StartGingerUI();
+                    // This Ginger is running with run set config will do the run and close GingerInitApp();                                
+                    StartGingerExecutor();
                 }
                 else
                 {
-
+                    InitClassTypesDictionary();
+                    Reporter.WorkSpaceReporter = new GingerWorkSpaceReporter();                    
+                    CLIProcessor.ExecuteArgs(e.Args);
+                    // do proper close !!!         
+                    System.Windows.Application.Current.Shutdown();
                 }
-
-                InitClassTypesDictionary();
-                Reporter.WorkSpaceReporter = new GingerWorkSpaceReporter();
-                // MessageBox.Show("arg0 = " + e.Args[0]);
-                CLIProcessor.ExecuteArgs(e.Args);
-                // do proper close !!!         
-                System.Windows.Application.Current.Shutdown();
             }
         }
 
+        private void StartGingerExecutor()
+        {            
+            InitApp();
+            WorkSpace.Instance.RunningInExecutionMode = true;
+            Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
+            HandleAutoRunMode();
+        }
+
         public void StartGingerUI()
-        {
-            LoadApplicationDictionaries();
+        {            
+            if (RunningFromUnitTest)
+            {
+                LoadApplicationDictionaries();
+            }
 
             MainWindow = new MainWindow();
             MainWindow.Show();
