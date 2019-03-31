@@ -4585,7 +4585,7 @@
     <Content Include="CI\increasebuildNum.vbs" />
     <Resource Include="Reports\Designer\ScreenShot1.png" />
     <Content Include="Reports\GingerExecutionReport\ActionReport.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\ActivityReport.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
