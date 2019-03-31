@@ -249,18 +249,18 @@ namespace Ginger.Run
             {
                 DateTime currentExecutionDateTime = DateTime.Now;
 
-                ExecutionLogger.RunSetStart(mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder, mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, currentExecutionDateTime);
+                ExecutionLoggerManager.RunSetStart(mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder, mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, currentExecutionDateTime);
 
                 int gingerIndex = 0;
                 while (Runners.Count > gingerIndex)
                 {
-                    Runners[gingerIndex].ExecutionLogger.GingerData.Seq = gingerIndex + 1;
-                    Runners[gingerIndex].ExecutionLogger.GingerData.GingerName = Runners[gingerIndex].Name;
-                    Runners[gingerIndex].ExecutionLogger.GingerData.Ginger_GUID = Runners[gingerIndex].Guid;
-                    Runners[gingerIndex].ExecutionLogger.GingerData.GingerAggentMapping = Runners[gingerIndex].ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
-                    Runners[gingerIndex].ExecutionLogger.GingerData.GingerEnv = Runners[gingerIndex].ProjEnvironment.Name.ToString();
-                    Runners[gingerIndex].ExecutionLogger.CurrentExecutionDateTime = currentExecutionDateTime;
-                    Runners[gingerIndex].ExecutionLogger.Configuration = mSelectedExecutionLoggerConfiguration;
+                    Runners[gingerIndex].ExecutionLoggerManager.GingerData.Seq = gingerIndex + 1;
+                    Runners[gingerIndex].ExecutionLoggerManager.GingerData.GingerName = Runners[gingerIndex].Name;
+                    Runners[gingerIndex].ExecutionLoggerManager.GingerData.Ginger_GUID = Runners[gingerIndex].Guid;
+                    Runners[gingerIndex].ExecutionLoggerManager.GingerData.GingerAggentMapping = Runners[gingerIndex].ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
+                    Runners[gingerIndex].ExecutionLoggerManager.GingerData.GingerEnv = Runners[gingerIndex].ProjEnvironment.Name.ToString();
+                    Runners[gingerIndex].ExecutionLoggerManager.CurrentExecutionDateTime = currentExecutionDateTime;
+                    Runners[gingerIndex].ExecutionLoggerManager.Configuration = mSelectedExecutionLoggerConfiguration;
                     gingerIndex++;
                 }
             }
@@ -378,7 +378,7 @@ namespace Ginger.Run
 
             //Do post execution items
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## {0} Runners Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            ExecutionLogger.RunSetEnd();
+            ExecutionLoggerManager.RunSetEnd();
             if (mStopRun == false)
             {
                 // Process all post execution RunSet Operations
@@ -406,9 +406,9 @@ namespace Ginger.Run
                     }
                     else
                     {
-                        runSetReportName = ExecutionLogger.defaultRunTabLogName;
+                        runSetReportName = ExecutionLoggerManager.defaultRunTabLogName;
                     }
-                    string exec_folder = ExecutionLogger.GetLoggerDirectory(mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + runSetReportName + "_" + Runners[0].ExecutionLogger.CurrentExecutionDateTime.ToString("MMddyyyy_HHmmss"));                    
+                    string exec_folder = ExecutionLoggerManager.GetLoggerDirectory(mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + runSetReportName + "_" + Runners[0].ExecutionLoggerManager.CurrentExecutionDateTime.ToString("MMddyyyy_HHmmss"));                    
                 }
             }
         }

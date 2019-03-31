@@ -162,7 +162,7 @@ namespace Ginger.Reports
             Ginger.Run.ExecutionLoggerManager.GetLoggerDirectory( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
             Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder);
 
-            App.AutomateTabGingerRunner.ExecutionLogger.Configuration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            App.AutomateTabGingerRunner.ExecutionLoggerManager.Configuration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
     }
 }

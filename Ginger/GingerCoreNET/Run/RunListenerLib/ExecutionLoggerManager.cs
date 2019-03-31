@@ -65,7 +65,7 @@ namespace Ginger.Run
         public Activity mCurrentActivity;
         uint meventtime;
         IValueExpression mVE;
-        public ExecutionLogger executionLogger { get; set; }
+        public ExecutionLogger ExecutionLogger { get; set; }
         ProjEnvironment mExecutionEnvironment = null;
 
         int mBusinessFlowCounter { get; set; }
@@ -205,7 +205,6 @@ namespace Ginger.Run
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while creating temporary folder", ex);
             }
-
         }
         public static string GetLoggerDirectory(string logsFolder)
         {
@@ -232,7 +231,6 @@ namespace Ginger.Run
 
             return logsFolder;
         }
-
         private static Boolean CheckOrCreateDirectory(string directoryPath)
         {
             try
@@ -253,22 +251,6 @@ namespace Ginger.Run
             }
         }
 
-        private static void SaveObjToJSonFile(object obj, string FileName, bool toAppend = false)
-        {
-            //TODO: for speed we can do it async on another thread...
-            using (StreamWriter SW = new StreamWriter(FileName, toAppend))
-            using (JsonWriter writer = new JsonTextWriter(SW))
-            {
-                mJsonSerializer.Serialize(writer, obj);
-
-            }
-        }
-
-        public static object LoadObjFromJSonFile(string FileName, Type t)
-        {
-            return JsonLib.LoadObjFromJSonFile(FileName, t, mJsonSerializer);
-        }
-
         public static object LoadObjFromJSonString(string str, Type t)
         {
             return JsonLib.LoadObjFromJSonString(str, t, mJsonSerializer);
@@ -284,25 +266,24 @@ namespace Ginger.Run
         public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup)
         {
             bool offlineMode = true;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!
-
             ActivityGroupReport AGR = new ActivityGroupReport(activityGroup, mCurrentBusinessFlow);
             AGR.Seq = mCurrentBusinessFlow.ActivitiesGroups.IndexOf(activityGroup) + 1;
             AGR.ExecutionLogFolder = ExecutionLogfolder + mCurrentBusinessFlow.ExecutionLogFolder;
             if (offlineMode && activityGroup.ExecutionLogFolder != null)
             {
-                SaveObjToJSonFile(AGR, activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", true);
+                ExecutionLogger.SaveObjToJSonFile(AGR, activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", true);
                 File.AppendAllText(activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
             }
             else
             {
                 if (offlineMode)
                 {
-                    SaveObjToJSonFile(AGR, ExecutionLogfolder + mCurrentBusinessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", true);
+                    ExecutionLogger.SaveObjToJSonFile(AGR, ExecutionLogfolder + mCurrentBusinessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", true);
                     File.AppendAllText(ExecutionLogfolder + mCurrentBusinessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
                 }
                 else
                 {
-                    SaveObjToJSonFile(AGR, ExecutionLogfolder + mCurrentBusinessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", true);
+                    ExecutionLogger.SaveObjToJSonFile(AGR, ExecutionLogfolder + mCurrentBusinessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", true);
                     File.AppendAllText(ExecutionLogfolder + mCurrentBusinessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
                 }
             }
@@ -351,7 +332,7 @@ namespace Ginger.Run
                     gingerReport.ApplicationAgentsMappingList = this.GingerData.GingerAggentMapping;
                     gingerReport.EnvironmentName = ExecutionEnvironment != null ? ExecutionEnvironment.Name : string.Empty;
                     gingerReport.Elapsed = (double)gingerReport.Watch.ElapsedMilliseconds / 1000;
-                    SaveObjToJSonFile(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");
+                    ExecutionLogger.SaveObjToJSonFile(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");
                     this.ExecutionLogBusinessFlowsCounter = 0;
                     this.BFCounter = 0;
                 }
@@ -376,7 +357,7 @@ namespace Ginger.Run
                         gingerReport.LogFolder = filename;
                     }
 
-                    SaveObjToJSonFile(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");
+                    ExecutionLogger.SaveObjToJSonFile(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");
                     this.ExecutionLogBusinessFlowsCounter = 0;
                     this.BFCounter = 0;
                 }
@@ -415,7 +396,7 @@ namespace Ginger.Run
             ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.RunSet), WorkSpace.RunsetExecutor.RunSetConfig.Name, null);
         }
 
-        public static void RunSetEnd(string LogFolder = null)
+        public void RunSetEnd(string LogFolder = null)
         {
             if (RunSetReport != null)
             {
@@ -427,11 +408,11 @@ namespace Ginger.Run
 
                 if (LogFolder == null)
                 {
-                    SaveObjToJSonFile(RunSetReport, RunSetReport.LogFolder + @"\RunSet.txt");
+                    ExecutionLogger.SaveObjToJSonFile(RunSetReport, RunSetReport.LogFolder + @"\RunSet.txt");
                 }
                 else
                 {
-                    SaveObjToJSonFile(RunSetReport, LogFolder + @"\RunSet.txt");
+                    ExecutionLogger.SaveObjToJSonFile(RunSetReport, LogFolder + @"\RunSet.txt");
                 }
                 // AddExecutionDetailsToLog(eExecutionPhase.End, "Run Set", RunSetReport.Name, RunSetReport);
                 if (WorkSpace.RunningInExecutionMode)
@@ -518,13 +499,13 @@ namespace Ginger.Run
                     {
                         businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
                     }
-                    SaveObjToJSonFile(BFR, businessFlow.ExecutionFullLogFolder + @"\BusinessFlow.txt");
+                    ExecutionLogger.SaveObjToJSonFile(BFR, businessFlow.ExecutionFullLogFolder + @"\BusinessFlow.txt");
 
                 }
                 else
                 {
                     // use Path.cOmbine
-                    SaveObjToJSonFile(BFR, ExecutionLogfolder + businessFlow.ExecutionLogFolder + @"\BusinessFlow.txt");
+                    ExecutionLogger.SaveObjToJSonFile(BFR, ExecutionLogfolder + businessFlow.ExecutionLogFolder + @"\BusinessFlow.txt");
                     businessFlow.ExecutionFullLogFolder = ExecutionLogfolder + businessFlow.ExecutionLogFolder;
                 }
                 if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
@@ -550,6 +531,10 @@ namespace Ginger.Run
             {
                 return new BusinessFlowReport();
             }
+        }
+        public static object LoadObjFromJSonFile(string FileName, Type t)
+        {
+            return JsonLib.LoadObjFromJSonFile(FileName, t, mJsonSerializer);
         }
         // fix add to listener/loader class
         public override void ActivityStart(uint eventTime, Activity activity, bool continuerun = false)
@@ -624,10 +609,10 @@ namespace Ginger.Run
 
                 if (offlineMode)
                     // use Path.combine !!!!
-                    SaveObjToJSonFile(AR, activity.ExecutionLogFolder + @"\Activity.txt");
+                    ExecutionLogger.SaveObjToJSonFile(AR, activity.ExecutionLogFolder + @"\Activity.txt");
                 else
                     // use Path.combine !!!!
-                    SaveObjToJSonFile(AR, ExecutionLogfolder + activity.ExecutionLogFolder + @"\Activity.txt");
+                    ExecutionLogger.SaveObjToJSonFile(AR, ExecutionLogfolder + activity.ExecutionLogFolder + @"\Activity.txt");
             }
 
             if (!offlineMode)
@@ -738,7 +723,7 @@ namespace Ginger.Run
                             AR.RunDescription = mVE.ValueCalculated;
                         }
 
-                        SaveObjToJSonFile(AR, executionLogFolder + action.ExecutionLogFolder + @"\Action.txt");
+                        ExecutionLogger.SaveObjToJSonFile(AR, executionLogFolder + action.ExecutionLogFolder + @"\Action.txt");
 
                         // Save screenShots
                         int screenShotCountPerAction = 0;
@@ -962,7 +947,7 @@ namespace Ginger.Run
             return "Last Executed activity status is not available. Please ensure Execution logger is enabled";
         }
         //Move to GingerRunnerManager
-        public static string GetRunSetLastExecutionLogFolderOffline()
+        public string GetRunSetLastExecutionLogFolderOffline()
         {
 
             if (WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
@@ -1014,7 +999,7 @@ namespace Ginger.Run
         }
 
         // Move all report items from here !!!!!!!!!!!!!!!!
-        public static void GenerateRunSetOfflineReport()
+        public void GenerateRunSetOfflineReport()
         {
             try
             {

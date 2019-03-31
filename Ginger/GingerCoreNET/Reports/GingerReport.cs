@@ -336,5 +336,6 @@ namespace Ginger.Reports
                 return (TotalBusinessFlows - (TotalBusinessFlowsFailed + TotalBusinessFlowsPassed));
             }
         }
+
     }
 }

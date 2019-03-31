@@ -184,7 +184,7 @@ namespace Ginger
             mExecutionLogger = new ExecutionLoggerManager(App.AutomateTabEnvironment, eExecutedFrom.Automation);
             mExecutionLogger.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
 
-            WorkSpace.AutomateTabGingerRunner.ExecutionLogger.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            WorkSpace.AutomateTabGingerRunner.ExecutionLoggerManager.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
 
         private void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
@@ -1025,7 +1025,7 @@ namespace Ginger
             try
             {
                 AutoLogProxy.UserOperationStart("ResetStatusFrom" + resetFrom.ToString() + "_Click",  WorkSpace.UserProfile.Solution.Name, App.GetProjEnvironmentName());
-                App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.Reset;
+                App.AutomateTabGingerRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.Reset;
                 switch (resetFrom)
                 {
                     case Run.GingerRunner.eResetStatus.All:
@@ -1383,7 +1383,7 @@ namespace Ginger
                 EnableDisableAutomateTabGrids(false);
 
                 AutoLogProxy.UserOperationStart("ContinuteRunFrom" + continueFrom.ToString() + "_Click",  WorkSpace.UserProfile.Solution.Name, App.GetProjEnvironmentName());
-                App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
+                App.AutomateTabGingerRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
                 switch (continueFrom)
                 {
                     case eContinueFrom.LastStoppedAction:
