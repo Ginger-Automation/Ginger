@@ -19,9 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger;
-using Ginger.BusinessFlowLib;
 using Ginger.BusinessFlowsLibNew.AddActionMenu;
-using Ginger.BusinessFlowWindows;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
@@ -45,6 +43,8 @@ namespace GingerWPF.BusinessFlowsLib
         GingerRunner mRunner;
         Context mContext = new Context();
 
+        GridLength mLastAddActionsColumnWidth = new GridLength(270);
+
         public NewAutomatePage(BusinessFlow businessFlow)
         {
             InitializeComponent();
@@ -67,23 +67,17 @@ namespace GingerWPF.BusinessFlowsLib
                 mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
             }
 
-            FlowDiagramFrmae.Content = new BusinessFlowDiagramPage(mBusinessFlow);
+            
             ActivitiesList.ItemsSource = mBusinessFlow.Activities;
-
-            //TODO: Move these lines to GR to be one function call
-            //WorkSpace.Instance.GingerRunner.BusinessFlows.Clear();
-            //WorkSpace.Instance.GingerRunner.BusinessFlows.Add(BusinessFlow);
-            //WorkSpace.Instance.GingerRunner.CurrentBusinessFlow = BusinessFlow;
-
-            //WorkSpace.Instance.GingerRunner.CurrentBusinessFlow.PropertyChanged += CurrentBusinessFlow_PropertyChanged;
-            //WorkSpace.Instance.GingerRunner.GingerRunnerEvent += GingerRunner_GingerRunnerEvent;
 
 
             App.PropertyChanged += App_PropertyChanged;
 
-            CurrentActivityFrame.Content = new ActivityPage((Activity)mBusinessFlow.Activities[0], mContext);  // TODO: use binding? or keep each activity page
+            xCurrentActivityFrame.Content = new ActivityPage((Activity)mBusinessFlow.Activities[0], mContext);  // TODO: use binding? or keep each activity page
 
             InitGingerRunnerControls();
+
+            xAddActionMenuFrame.Content = new MainAddActionsNavigationPage(mContext);
         }
 
         internal void GoToBusFlowsListHandler(object v)
@@ -175,7 +169,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 SelectedActivity.Acts.CurrentItem = SelectedActivity.Acts[0];
             }
-            CurrentActivityFrame.Content = new ActivityPage(SelectedActivity, mContext);
+            xCurrentActivityFrame.Content = new ActivityPage(SelectedActivity, mContext);
         }
 
         private void BusinessFlowsHyperlink_Click(object sender, RoutedEventArgs e)
@@ -189,51 +183,32 @@ namespace GingerWPF.BusinessFlowsLib
             //TODO: show message item save or Ginger Helper
         }
 
-        private void SHAddActionPanel_Click(object sender, RoutedEventArgs e)
-        {
-            if (AddActionMenuFrame.Content == null)
-                AddActionMenuFrame.Content = new MainAddActionsNavigationPage(mContext);
-
-            if (AddActionMenuFrame.Visibility == Visibility.Collapsed)
-            {
-                AddActionMenuFrame.Visibility = Visibility.Visible;
-                //xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(300, GridUnitType.Star);
-                //xActionActivitiesGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
-                SHAddActionPanel.Content = "-";
-            }
-            else
-            {
-                AddActionMenuFrame.Visibility = Visibility.Collapsed;
-                //xAddActionMenuGrid.ColumnDefinitions[2].Width = new GridLength(0, GridUnitType.Pixel);
-                //xActionActivitiesGrid.ColumnDefinitions[2].Width = new GridLength(0, GridUnitType.Auto);
-                SHAddActionPanel.Content = "+";
-            }
-            xPanelResizer.IsEnabled = !xPanelResizer.IsEnabled;
-        }
-
         public void GoToBusFlowsListHandler(RoutedEventHandler clickHandler)
         {
             xStepBack.Click += clickHandler;
         }
 
-        private void XAddActionPanel_Expanded(object sender, RoutedEventArgs e)
+        private void XAddActionsBtn_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void XAddActionPanel_Collapsed(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void XAddActionPanel_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-
-        }
-
-        private void AddActionMenuFrame_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            AddActionMenuFrame.Width = xAddActionMenuGrid.ColumnDefinitions[2].Width.Value;
+            if (xAddActionsBtn.ButtonImageType == Amdocs.Ginger.Common.Enums.eImageType.Add)
+            {
+                //Expand
+                xAddActionsColumn.Width = mLastAddActionsColumnWidth;
+                xAddActionsBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.ArrowRight;
+                xAddActionsBtn.ToolTip = "Collapse Add Actions Section";
+                xAddActionsBtn.ButtonStyle = (Style)FindResource("$CircleImageButtonStyle_Execution");
+                xAddActionSectionSpliter.IsEnabled = true;
+            }
+            else
+            {
+                //Collapse
+                mLastAddActionsColumnWidth = xAddActionsColumn.Width;
+                xAddActionsColumn.Width = new GridLength(10);
+                xAddActionsBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+                xAddActionsBtn.ToolTip = "Add Actions";
+                xAddActionsBtn.ButtonStyle = (Style)FindResource("$CircleImageButtonStyle_Execution");
+                xAddActionSectionSpliter.IsEnabled = false;
+            }
         }
     }
 }

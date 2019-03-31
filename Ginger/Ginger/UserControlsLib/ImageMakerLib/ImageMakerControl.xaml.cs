@@ -619,6 +619,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.ArrowDown:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.AngleDown);
                     break;
+                case eImageType.ArrowRight:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowRight);
+                    break;
                 case eImageType.User:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.UserCircleOutline);
                     break;

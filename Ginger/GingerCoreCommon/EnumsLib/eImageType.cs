@@ -201,6 +201,7 @@ namespace Amdocs.Ginger.Common.Enums
         Wrench,
         Power,
         ArrowDown,
+        ArrowRight,
         ExcelFile,
         User,
         UserProfile,

@@ -591,26 +591,26 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
       <DependentUpon>POMModelsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\AddActionMenu\ActionsLibraryNavPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\ActionsLibraryNavPage.xaml.cs">
       <DependentUpon>ActionsLibraryNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\AddActionMenu\LiveSpyNavPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\LiveSpyNavPage.xaml.cs">
       <DependentUpon>LiveSpyNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\AddActionMenu\MainAddActionsNavigationPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\MainAddActionsNavigationPage.xaml.cs">
       <DependentUpon>MainAddActionsNavigationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\AddActionMenu\POMNavPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\POMNavPage.xaml.cs">
       <DependentUpon>POMNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\AddActionMenu\RecordNavPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\RecordNavPage.xaml.cs">
       <DependentUpon>RecordNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\AddActionMenu\SharedRepositoryNavPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\SharedRepositoryNavPage.xaml.cs">
       <DependentUpon>SharedRepositoryNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\AddActionMenu\WindowExplorerCommon.cs" />
-    <Compile Include="BusinessFlowsLibNew\AddActionMenu\WindowsExplorerNavPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\WindowExplorerCommon.cs" />
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml.cs">
       <DependentUpon>WindowsExplorerNavPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowWindows\AutomateEventArgs.cs" />
@@ -825,31 +825,31 @@
     <Compile Include="BetaFeaturesLib\BetaFeaturesPage.xaml.cs">
       <DependentUpon>BetaFeaturesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\ActivityActionsPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\ActivityActionsPage.xaml.cs">
       <DependentUpon>ActivityActionsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\ActivityPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\ActivityPage.xaml.cs">
       <DependentUpon>ActivityPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\ActivityVariablesPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\ActivityVariablesPage.xaml.cs">
       <DependentUpon>ActivityVariablesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\NewAutomatePage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\NewAutomatePage.xaml.cs">
       <DependentUpon>NewAutomatePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\BusinessFlowDiagramPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\BusinessFlowDiagramPage.xaml.cs">
       <DependentUpon>BusinessFlowDiagramPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\BusinessFlowInfoPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\BusinessFlowInfoPage.xaml.cs">
       <DependentUpon>BusinessFlowInfoPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\BusinessFlowsPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\BusinessFlowsPage.xaml.cs">
       <DependentUpon>BusinessFlowsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\BusinessFlowViewPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\BusinessFlowViewPage.xaml.cs">
       <DependentUpon>BusinessFlowViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\GingerActionEditPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\GingerActionEditPage.xaml.cs">
       <DependentUpon>GingerActionEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowWindows\UCValueExpression.xaml.cs">
@@ -2861,67 +2861,67 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\ActivityActionsPage.xaml">
+    <Page Include="BusinessFlowPages_New\ActivityActionsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\ActivityPage.xaml">
+    <Page Include="BusinessFlowPages_New\ActivityPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\ActivityVariablesPage.xaml">
+    <Page Include="BusinessFlowPages_New\ActivityVariablesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\AddActionMenu\ActionsLibraryNavPage.xaml">
+    <Page Include="BusinessFlowPages_New\AddActionMenu\ActionsLibraryNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowsLibNew\AddActionMenu\LiveSpyNavPage.xaml">
+    <Page Include="BusinessFlowPages_New\AddActionMenu\LiveSpyNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowsLibNew\AddActionMenu\MainAddActionsNavigationPage.xaml">
+    <Page Include="BusinessFlowPages_New\AddActionMenu\MainAddActionsNavigationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowsLibNew\AddActionMenu\POMNavPage.xaml">
+    <Page Include="BusinessFlowPages_New\AddActionMenu\POMNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowsLibNew\AddActionMenu\RecordNavPage.xaml">
+    <Page Include="BusinessFlowPages_New\AddActionMenu\RecordNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowsLibNew\AddActionMenu\SharedRepositoryNavPage.xaml">
+    <Page Include="BusinessFlowPages_New\AddActionMenu\SharedRepositoryNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowsLibNew\AddActionMenu\WindowsExplorerNavPage.xaml">
+    <Page Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowsLibNew\NewAutomatePage.xaml">
+    <Page Include="BusinessFlowPages_New\NewAutomatePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\BusinessFlowDiagramPage.xaml">
+    <Page Include="BusinessFlowPages_New\BusinessFlowDiagramPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\BusinessFlowInfoPage.xaml">
+    <Page Include="BusinessFlowPages_New\BusinessFlowInfoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\BusinessFlowsPage.xaml">
+    <Page Include="BusinessFlowPages_New\BusinessFlowsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\BusinessFlowViewPage.xaml">
+    <Page Include="BusinessFlowPages_New\BusinessFlowViewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\GingerActionEditPage.xaml">
+    <Page Include="BusinessFlowPages_New\GingerActionEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
