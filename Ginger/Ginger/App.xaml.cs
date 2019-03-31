@@ -670,7 +670,7 @@ namespace Ginger
                         }
 
                         // No need to add solution to recent if running from CLI
-                        if (!WorkSpace.Instance.RunningInExecutionMode)
+                        if (!WorkSpace.Instance.RunningInExecutionMode && !RunningFromUnitTest)
                         {
                             WorkSpace.Instance.UserProfile.AddSolutionToRecent(sol);
                         }
@@ -901,6 +901,11 @@ namespace Ginger
 
         public void StartGingerUI()
         {            
+            if (RunningFromUnitTest)
+            {
+                LoadApplicationDictionaries();
+            }
+
             MainWindow = new MainWindow();
             MainWindow.Show();
             GingerCore.General.DoEvents();
