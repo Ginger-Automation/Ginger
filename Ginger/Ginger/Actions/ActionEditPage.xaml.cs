@@ -104,7 +104,8 @@ namespace Ginger.Actions
             {
                 mActParentBusinessFlow = mContext.BusinessFlow;
             }
-            else if (actParentActivity != null)
+
+            if (actParentActivity != null)
             {
                 mActParentActivity = actParentActivity;
             }
@@ -494,6 +495,13 @@ namespace Ginger.Actions
             else
             {
                 varsCollc = WorkSpace.Instance.Solution.Variables.Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
+                if (mActParentActivity != null)
+                {
+                    foreach (GingerCore.Variables.VariableBase var in mActParentActivity.Variables)
+                    {
+                        varsCollc.Add(var.Name);
+                    }
+                }
             }
             varsCollc.Sort();
             if (varsCollc.Count > 0)
