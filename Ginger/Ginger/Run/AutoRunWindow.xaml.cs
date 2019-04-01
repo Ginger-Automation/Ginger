@@ -78,8 +78,7 @@ namespace Ginger.Run
         {
             WorkSpace.Instance.RunsetExecutor.StopRun();
 
-            base.OnClosed(e);            
-            App.MainWindow.Close();
+            base.OnClosed(e);                        
             Environment.Exit(0);
         }
     }
