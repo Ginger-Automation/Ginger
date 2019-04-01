@@ -196,7 +196,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xAddActionsColumn.Width = mLastAddActionsColumnWidth;
                 xAddActionsBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.ArrowRight;
                 xAddActionsBtn.ToolTip = "Collapse Add Actions Section";
-                xAddActionsBtn.ButtonStyle = (Style)FindResource("$CircleImageButtonStyle_Execution");
+                xAddActionsBtn.ButtonStyle = (Style)FindResource("$AddActionsMenuBtnStyle");
                 xAddActionSectionSpliter.IsEnabled = true;
             }
             else
@@ -206,7 +206,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xAddActionsColumn.Width = new GridLength(10);
                 xAddActionsBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
                 xAddActionsBtn.ToolTip = "Add Actions";
-                xAddActionsBtn.ButtonStyle = (Style)FindResource("$CircleImageButtonStyle_Execution");
+                xAddActionsBtn.ButtonStyle = (Style)FindResource("$AddActionsMenuBtnStyle");
                 xAddActionSectionSpliter.IsEnabled = false;
             }
         }
