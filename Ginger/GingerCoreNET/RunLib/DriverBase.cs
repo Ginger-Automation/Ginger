@@ -168,5 +168,10 @@ namespace GingerCore.Drivers
         {
             // Do nothing, can be implemented in sub class like: ConsoleDriverBase, WindowsDriver, PBDriver
         }
+
+        public virtual void UpdateContext(Context context)
+        {
+            BusinessFlow = context.BusinessFlow;
+        }
     }
 }
