@@ -51,7 +51,11 @@ namespace Ginger.ReporterLib
         public override void ToStatus(eStatusMsgType messageType, string statusText)
         {
             // TODO: Add icon, other info? tooltip seperate
-            App.MainWindow.ShowStatus(messageType, statusText);
+            if (!WorkSpace.Instance.RunningInExecutionMode)
+            {
+                App.MainWindow.ShowStatus(messageType, statusText);
+            }
+            // Check if we need to write to console or already done !!!!
         }
 
         public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
