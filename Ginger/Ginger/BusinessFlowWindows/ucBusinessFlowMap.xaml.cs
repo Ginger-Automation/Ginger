@@ -31,9 +31,9 @@ using Amdocs.Ginger.Common;
 namespace Ginger.BusinessFlowWindows
 {
     /// <summary>
-    /// Interaction logic for xUcBusinessFlowMap.xaml
+    /// Interaction logic for ucBusinessFlowMap.xaml
     /// </summary>
-    public partial class xUcBusinessFlowMap : UserControl
+    public partial class ucBusinessFlowMap : UserControl
     {
         BusinessFlow mBusinessFlow;
         public BusinessFlow BusinessFlow
@@ -47,6 +47,22 @@ namespace Ginger.BusinessFlowWindows
                 mBusinessFlow = value;
                 xBFTextBox.Text = mBusinessFlow.FilePath.Substring(0, mBusinessFlow.FilePath.LastIndexOf("\\")).Substring(mBusinessFlow.ContainingFolderFullPath.Length) + @"\" + mBusinessFlow.ItemName;
                 xGoToAutomateBtn.Visibility = Visibility.Visible;
+                mBusinessFlowRepositoryKey = new RepositoryItemKey();
+                mBusinessFlowRepositoryKey.Guid = mBusinessFlow.Guid;
+                mBusinessFlowRepositoryKey.ItemName = mBusinessFlow.Name;
+            }
+        }
+
+        RepositoryItemKey mBusinessFlowRepositoryKey;
+        public RepositoryItemKey BusinessFlowRepositoryKey
+        {
+            get
+            {
+                return mBusinessFlowRepositoryKey;
+            }
+            set
+            {
+                mBusinessFlowRepositoryKey = value;
             }
         }
 
@@ -64,7 +80,7 @@ namespace Ginger.BusinessFlowWindows
             }
         }
 
-        public xUcBusinessFlowMap()
+        public ucBusinessFlowMap()
         {
             InitializeComponent(); 
         }

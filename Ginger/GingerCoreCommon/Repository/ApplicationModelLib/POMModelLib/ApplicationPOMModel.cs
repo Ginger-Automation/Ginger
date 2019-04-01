@@ -41,9 +41,9 @@ namespace Amdocs.Ginger.Repository
 
         private string mPageURL = string.Empty;
 
-        PageLoadFlowType mPageLoadFlow;
+        ePageLoadFlowType mPageLoadFlow;
         [IsSerializedForLocalRepository]
-        public PageLoadFlowType PageLoadFlow
+        public ePageLoadFlowType PageLoadFlow
         {
             get
             {
@@ -113,7 +113,7 @@ namespace Amdocs.Ginger.Repository
             Unmapped
         }
 
-        public enum PageLoadFlowType
+        public enum ePageLoadFlowType
         {
             PageURL,
             BusinessFlow

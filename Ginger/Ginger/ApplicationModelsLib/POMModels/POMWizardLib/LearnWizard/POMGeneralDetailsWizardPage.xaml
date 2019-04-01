@@ -31,21 +31,22 @@
                     <TextBox x:Name="xDescriptionTextBox" TextWrapping="Wrap" AutomationProperties.AutomationId="Description POMID" Text="" Style="{StaticResource $TextBoxStyle}" Height="50"/>
                     <Ginger:ucTagsViewer x:Name="xTagsViewer" HorizontalAlignment="Left" Margin="-5,0,0,0"/>
                 </StackPanel>
-
-                <StackPanel Margin="0,0,0,0" HorizontalAlignment="Left" >
-                    <Label Margin="5,0,0,0" Style="{StaticResource $LabelStyle}" Content="Page Load Flow:" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <RadioButton x:Name="xRDBPageURL" Height="20" Content="Page URL"  Grid.Column="0" Grid.Row="1" Tag="radPageURL" Checked="XRDBPageURL_Checked" HorizontalAlignment="Left" Margin="10,5,0,0" />
-                    <RadioButton x:Name="xRDBBF" Height="20"  Grid.Column="0" Grid.Row="1" Tag="radPageURL" HorizontalAlignment="Left" Margin="10,5,0,0" Checked="XRDBBF_Checked" >
-                        <RadioButton.Content>
-                            <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
-                        </RadioButton.Content>
-                    </RadioButton>
-                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Margin="0,0,0,0" HorizontalAlignment="Left" >
+                        <Label Margin="5,0,0,0" Style="{StaticResource $LabelStyle}" Content="Page Load Flow:" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <RadioButton x:Name="xPageUrlRadioBtn" Height="20" Content="Page URL"  Grid.Column="0" Grid.Row="1" Tag="radPageURL" Checked="xPageUrlRadioBtn_Checked" HorizontalAlignment="Left" Margin="10,5,0,0" />
+                        <RadioButton x:Name="xBusinessFlowRadioBtn" Height="20"  Grid.Column="0" Grid.Row="1" Tag="radPageURL" HorizontalAlignment="Left" Margin="10,5,0,0" Checked="xBusinessFlowRadioBtn_Checked" >
+                            <RadioButton.Content>
+                                <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
+                            </RadioButton.Content>
+                        </RadioButton>
+                    </StackPanel>
                 
-                <StackPanel Margin="150,-43,0,0" x:Name="xPageUrlStackPanel" >
-                    <TextBox x:Name="xURLTextBox" AutomationProperties.AutomationId="PageURL POMID" Width="400" HorizontalAlignment="Left" Style="{StaticResource $TextBoxStyle}" FontWeight="Bold"  />
+                    <StackPanel Margin="10,25,0,0" x:Name="xPageUrlStackPanel" >
+                        <TextBox x:Name="xURLTextBox" AutomationProperties.AutomationId="PageURL POMID" Width="400" HorizontalAlignment="Left" Style="{StaticResource $TextBoxStyle}" FontWeight="Bold"  />
+                        <UserControl:ucBusinessFlowMap Margin="0,-18,0,0" VerticalAlignment="Top" x:Name="xBusinessFlowControl" ElementChangedPageEvent="XBusinessFlowControl_ElementChangedPageEvent"  HorizontalAlignment="Left" />
+                    </StackPanel>
                 </StackPanel>
-                <UserControl:xUcBusinessFlowMap Grid.Column="0" VerticalAlignment="Top" Margin="150,-43,0,0" x:Name="xBusinessFlowControl" ElementChangedPageEvent="XBusinessFlowControl_ElementChangedPageEvent"  HorizontalAlignment="Left" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal"  Grid.Row="1" HorizontalAlignment="Right">

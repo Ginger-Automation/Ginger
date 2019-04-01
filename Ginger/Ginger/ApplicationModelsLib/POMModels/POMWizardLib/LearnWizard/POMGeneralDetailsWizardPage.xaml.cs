@@ -76,7 +76,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void SetDefaultPage()
         {
-            xRDBPageURL.IsChecked = true;
+            xPageUrlRadioBtn.IsChecked = true;
             xBusinessFlowControl.TargetApplication = mWizard.mPomLearnUtils.POM.TargetApplicationKey.ItemName;
         }
 
@@ -125,30 +125,27 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {            
             if (xBusinessFlowControl != null && xBusinessFlowControl.BusinessFlow != null)
             {
-                RepositoryItemKey repKey = new RepositoryItemKey();
-                repKey.Guid = xBusinessFlowControl.BusinessFlow.Guid;
-                repKey.ItemName = xBusinessFlowControl.BusinessFlow.Name;
-                mWizard.mPomLearnUtils.POM.MappedBusinessFlow = repKey;
+                mWizard.mPomLearnUtils.POM.MappedBusinessFlow = xBusinessFlowControl.BusinessFlowRepositoryKey;
             }
         }
 
-        private void XRDBPageURL_Checked(object sender, RoutedEventArgs e)
+        private void xPageUrlRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            if (xPageUrlStackPanel != null && xBusinessFlowControl != null)
-            {
-                mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.PageLoadFlowType.PageURL;
-                xPageUrlStackPanel.Visibility = Visibility.Visible;
-                xBusinessFlowControl.Visibility = Visibility.Hidden;
-            }
+            SetControlsVisibility(false);
         }
 
-        private void XRDBBF_Checked(object sender, RoutedEventArgs e)
+        private void xBusinessFlowRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            SetControlsVisibility(true);
+        }
+
+        private void SetControlsVisibility(bool isBusinessFlow)
         {
             if (xPageUrlStackPanel != null && xBusinessFlowControl != null)
             {
-                mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.PageLoadFlowType.BusinessFlow;
-                xPageUrlStackPanel.Visibility = Visibility.Hidden;
-                xBusinessFlowControl.Visibility = Visibility.Visible;
+                mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.PageURL;
+                xPageUrlStackPanel.Visibility = isBusinessFlow ? Visibility.Hidden : Visibility.Visible;
+                xBusinessFlowControl.Visibility = isBusinessFlow ? Visibility.Visible : Visibility.Hidden;
             }
         }
     }

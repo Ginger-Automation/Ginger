@@ -126,13 +126,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void SetDefaultPage()
         {
-            if (mPOM.PageLoadFlow == ApplicationPOMModel.PageLoadFlowType.PageURL)
+            if (mPOM.PageLoadFlow == ApplicationPOMModel.ePageLoadFlowType.PageURL)
             {
-                xRDBPageURL.IsChecked = true;
+                xPageUrlRadioBtn.IsChecked = true;
             }
-            else if (mPOM.PageLoadFlow == ApplicationPOMModel.PageLoadFlowType.BusinessFlow)
+            else if (mPOM.PageLoadFlow == ApplicationPOMModel.ePageLoadFlowType.BusinessFlow)
             {
-                xRDBBF.IsChecked = true;
+                xBusinessFlowRadioBtn.IsChecked = true;
             }
             if (mPOM.MappedBusinessFlow != null)
             {
@@ -351,23 +351,23 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        private void XRDBPageURL_Checked(object sender, RoutedEventArgs e)
+        private void xPageUrlRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            if (xPageUrlStackPanel != null && xBusinessFlowControl != null)
-            {
-                mPOM.PageLoadFlow = ApplicationPOMModel.PageLoadFlowType.PageURL;
-                xPageUrlStackPanel.Visibility = Visibility.Visible;
-                xBusinessFlowControl.Visibility = Visibility.Hidden; 
-            }
+            SetControlsVisibility(false);
         }
 
-        private void XRDBBF_Checked(object sender, RoutedEventArgs e)
+        private void xBusinessFlowRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            SetControlsVisibility(true);
+        }
+
+        private void SetControlsVisibility(bool isBusinessFlow)
         {
             if (xPageUrlStackPanel != null && xBusinessFlowControl != null)
             {
-                mPOM.PageLoadFlow = ApplicationPOMModel.PageLoadFlowType.BusinessFlow;
-                xPageUrlStackPanel.Visibility = Visibility.Hidden;
-                xBusinessFlowControl.Visibility = Visibility.Visible; 
+                mPOM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.PageURL;
+                xPageUrlStackPanel.Visibility = isBusinessFlow ? Visibility.Collapsed : Visibility.Visible;
+                xBusinessFlowControl.Visibility = isBusinessFlow ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -375,10 +375,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if(xBusinessFlowControl != null && xBusinessFlowControl.BusinessFlow != null)
             {
-                RepositoryItemKey repKey = new RepositoryItemKey();
-                repKey.Guid = xBusinessFlowControl.BusinessFlow.Guid;
-                repKey.ItemName = xBusinessFlowControl.BusinessFlow.Name;
-                mPOM.MappedBusinessFlow = repKey;
+                mPOM.MappedBusinessFlow = xBusinessFlowControl.BusinessFlowRepositoryKey;
             }
         }
     }
