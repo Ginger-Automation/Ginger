@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ namespace Ginger.ALM.Rally
         {
             Mouse.OverrideCursor = Cursors.Wait;
             ObservableList<RallyTestPlan> mRallyTestPlansListSortedByDate = new ObservableList<RallyTestPlan>();
-            foreach (RallyTestPlan testPlan in RallyConnect.Instance.GetRallyTestPlansByProject( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,  WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject,  WorkSpace.UserProfile.Solution.Folder + @"Documents\ALM\RQM_Configs",  WorkSpace.UserProfile.Solution.ALMProject).OrderByDescending(item => item.CreationDate))
+            foreach (RallyTestPlan testPlan in RallyConnect.Instance.GetRallyTestPlansByProject( WorkSpace.Instance.Solution.ALMServerURL,  WorkSpace.Instance.UserProfile.ALMUserName,  WorkSpace.Instance.UserProfile.ALMPassword,  WorkSpace.Instance.Solution.ALMProject,  WorkSpace.Instance.Solution.Folder + @"Documents\ALM\RQM_Configs",  WorkSpace.Instance.Solution.ALMProject).OrderByDescending(item => item.CreationDate))
             {
                 mRallyTestPlansListSortedByDate.Add(testPlan);
             }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -237,7 +237,7 @@ namespace Ginger.AnalyzerLib
                 // Check all GRs BFS
                 foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
                 {
-                    issues = AnalyzeGingerRunner.Analyze(GR,  WorkSpace.UserProfile.Solution.ApplicationPlatforms);
+                    issues = AnalyzeGingerRunner.Analyze(GR,  WorkSpace.Instance.Solution.ApplicationPlatforms);
                     AddIssues(issues);
 
                     //Code to analyze Runner Unique Businessflow with Source BF
@@ -730,7 +730,7 @@ namespace Ginger.AnalyzerLib
             {
                 AnalyzeAction currentAnalyzeAction = (AnalyzeAction)AnalyzerItemsGrid.CurrentItem;
                 Act actionIssue = currentAnalyzeAction.mAction;
-                actionIssue.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+                actionIssue.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
                 ActionEditPage actedit = new ActionEditPage(actionIssue, General.RepositoryItemPageViewMode.ChildWithSave, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
                 //setting the BusinessFlow on the Action in Order to save 
                 //actedit.mActParentBusinessFlow = ((AnalyzeAction)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
@@ -742,7 +742,7 @@ namespace Ginger.AnalyzerLib
             {
                 AnalyzeActivity currentAnalyzeActivity = (AnalyzeActivity)AnalyzerItemsGrid.CurrentItem;
                 Activity ActivityIssue = currentAnalyzeActivity.mActivity;
-                //ActivityIssue.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+                //ActivityIssue.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
                 ActivityEditPage ActivityEdit = new ActivityEditPage(ActivityIssue, General.RepositoryItemPageViewMode.ChildWithSave, currentAnalyzeActivity.mBusinessFlow);
                 //setting the BusinessFlow on the Activity in Order to save
                 //ActivityEdit.mBusinessFlow = ((AnalyzeActivity)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -55,12 +55,12 @@ namespace Ginger.Actions.Locators.ASCF
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            //TODO: fix hard coded [0] ref
-            ASCFDriver = (ASCFDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
+            //TODO: fix if needed
+            //ASCFDriver = (ASCFDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
+            //string rc = ASCFDriver.Send("GetFormControls", " ", Path, " ", " ", false);
 
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-
-            string rc = ASCFDriver.Send("GetFormControls", " ", Path, " ", " ", false);
+            string rc = string.Empty;
+            List <ITreeViewItem> Childrens = new List<ITreeViewItem>();            
             string controls;
             if (rc.StartsWith("OK"))
             {

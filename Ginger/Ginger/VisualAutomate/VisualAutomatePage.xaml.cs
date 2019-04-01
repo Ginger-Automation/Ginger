@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ namespace Ginger.VisualAutomate
             InitializeComponent();
 
             // Bind the title label to the BF Name
-            App.ObjFieldBinding(lblTitle, ContentProperty, BF, BusinessFlow.Fields.Name, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTitle, ContentProperty, BF, BusinessFlow.Fields.Name, BindingMode.OneWay);
 
             //TODO: if big flow takes time to load then show loading message
             if (mBusinessFlow.CurrentActivity ==null && mBusinessFlow.Activities.Count>0)
@@ -105,7 +105,7 @@ namespace Ginger.VisualAutomate
                 ActUIElement AUIE = (ActUIElement)act;
                 if (AUIE.ElementAction == ActUIElement.eElementAction.SetValue)
                 {
-                    ValueExpressionEditorPage pa = new ValueExpressionEditorPage(act, ActUIElement.Fields.Value);
+                    ValueExpressionEditorPage pa = new ValueExpressionEditorPage(act, ActUIElement.Fields.Value, Context.GetAsContext(act.Context));
                     pa.ShowAsWindow(eWindowShowStyle.Dialog);
                     bOpenActionEditPage = false;
                 }

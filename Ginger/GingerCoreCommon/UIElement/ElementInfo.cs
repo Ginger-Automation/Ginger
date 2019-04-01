@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -373,7 +373,10 @@ namespace Amdocs.Ginger.Common.UIElement
         {
             get
             {
-                if (mXPath == null) mXPath = GetAbsoluteXpath();
+                if (mXPath == null)
+                {
+                    mXPath = GetAbsoluteXpath();
+                }
                 return mXPath;
             }
             set
@@ -566,6 +569,8 @@ namespace Amdocs.Ginger.Common.UIElement
             Tab,
             [EnumValueDescription("Editor Pane")]
             EditorPane,
+            [EnumValueDescription("Editor Table")]
+            EditorTable,
             //HTML Elements
             Div,
             Span,

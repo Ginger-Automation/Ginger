@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ namespace Ginger.Actions.Windows
 
             mAct = Act;
 
-            App.FillComboFromEnumVal(ActionNameComboBox, mAct.ControlAction);            
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, ActWindowsControl.Fields.ControlAction);
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, mAct.ControlAction);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, ActWindowsControl.Fields.ControlAction);
         }
 
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

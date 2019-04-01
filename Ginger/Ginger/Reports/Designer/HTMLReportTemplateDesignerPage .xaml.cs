@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -48,8 +48,8 @@ namespace Ginger.Reports.Designer
         {
             InitializeComponent();
             mReportTemplate = HReportTemplate;
-            App.ObjFieldBinding(NameTextBox, TextBox.TextProperty, mReportTemplate, HTMLReportTemplate.Fields.Name);
-            App.ObjFieldBinding(ReportHTMLTextBox, TextBox.TextProperty, mReportTemplate, HTMLReportTemplate.Fields.HTML);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NameTextBox, TextBox.TextProperty, mReportTemplate, HTMLReportTemplate.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ReportHTMLTextBox, TextBox.TextProperty, mReportTemplate, HTMLReportTemplate.Fields.HTML);
             LoadReportTemplatePage();
             LoadReportInfoTreeView();
         }
@@ -134,7 +134,7 @@ namespace Ginger.Reports.Designer
             GingerRunner GR = new GingerRunner();
             GR.BusinessFlows.Add(BF1);
             GR.BusinessFlows.Add(BF2);
-            GR.CurrentSolution =  WorkSpace.UserProfile.Solution;
+            GR.CurrentSolution =  WorkSpace.Instance.Solution;
             GMR.Runners.Add(GR);
 
             ReportInfo RI = new ReportInfo(env, GMR);

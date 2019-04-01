@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,14 +36,14 @@ namespace Ginger.Run.RunSetActions
 
             mRunSetAction = RunSetAction;
 
-            App.ObjFieldBinding(NameTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NameTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Name);
             RunAtComboBox.Init(mRunSetAction, mRunSetAction.GetRunOptions(), RunSetActionBase.Fields.RunAt);
 
-            App.FillComboFromEnumVal(ConditionComboBox, RunSetAction.Condition);
-            App.ObjFieldBinding(ConditionComboBox, ComboBox.SelectedValueProperty, RunSetAction, RunSetActionBase.Fields.Condition);
+            GingerCore.General.FillComboFromEnumObj(ConditionComboBox, RunSetAction.Condition);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConditionComboBox, ComboBox.SelectedValueProperty, RunSetAction, RunSetActionBase.Fields.Condition);
 
-            App.ObjFieldBinding(StatusTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Status);
-            App.ObjFieldBinding(ErrorsTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Errors);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(StatusTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Status);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ErrorsTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Errors);
 
             //Page p = mRunSetAction.GetEditPage();
             Page p = GetEditPage(mRunSetAction.GetEditPage());
@@ -79,7 +79,7 @@ namespace Ginger.Run.RunSetActions
 
         private void RunActionBtn_Click(object sender, RoutedEventArgs e)
         {
-            mRunSetAction.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
+            mRunSetAction.SolutionFolder =  WorkSpace.Instance.Solution.Folder;
             mRunSetAction.ExecuteWithRunPageBFES();
         }
     }

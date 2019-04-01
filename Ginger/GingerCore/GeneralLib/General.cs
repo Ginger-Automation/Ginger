@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -119,6 +119,8 @@ namespace GingerCore
             ((DispatcherFrame)f).Continue = false;
             return null;
         }
+
+
 
         #region ENUM
         /// <summary>
@@ -370,69 +372,6 @@ namespace GingerCore
         }
         #endregion ENUM
 
-        #region Binding
-        public static void ActInputValueBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, ActInputValue actInputValue, BindingMode BindingMode = BindingMode.TwoWay)
-        {
-            ObjFieldBinding(control, dependencyProperty, actInputValue, ActInputValue.Fields.Value, BindingMode);
-        }
-
-        public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
-        {
-            //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
-            //TODO: check perf impact + reuse exisitng binding on same obj.prop
-            try
-            {
-                Binding b = new Binding();
-                b.Source = obj;
-                b.Path = new PropertyPath(property);
-                b.Mode = BindingMode;
-                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                b.NotifyOnValidationError = true;
-                control.SetBinding(dependencyProperty, b);
-            }
-            catch (Exception ex)
-            {
-                //it is possible we load an old enum or something else which will cause the binding to fail
-                // Can happen also if the bind field name is incorrect
-                // mark the control in red, instead of not openning the Page
-                // Set a tool tip with the error
-                
-                control.Style = null; // remove style so red will show
-                control.Background = System.Windows.Media.Brushes.LightPink;
-                control.BorderThickness = new Thickness(2);
-                control.BorderBrush = System.Windows.Media.Brushes.Red;
-
-                control.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
-            }
-        }
-
-        public static void ObjFieldBinding(TextBlock textBlockControl, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
-        {
-            //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
-            //TODO: check perf impact + reuse exisitng binding on same obj.prop
-            try
-            {
-                Binding b = new Binding();
-                b.Source = obj;
-                b.Path = new PropertyPath(property);
-                b.Mode = BindingMode;
-                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                textBlockControl.SetBinding(dependencyProperty, b);
-            }
-            catch (Exception ex)
-            {
-                //it is possible we load an old enum or something else which will cause the binding to fail
-                // Can happen also if the bind field name is incorrect
-                // mark the control in red, instead of not openning the Page
-                // Set a tool tip with the error
-                
-                textBlockControl.Style = null; // remove style so red will show
-                textBlockControl.Background = System.Windows.Media.Brushes.LightPink;
-                textBlockControl.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
-            }
-        }
-        #endregion Binding
-
         public static string CorrectJSON(string WrongJson)
         {
             string CleanJson = WrongJson.Replace("\\", "");
@@ -654,7 +593,24 @@ namespace GingerCore
             }
             return list;
         }
-        
+
+
+        public static List<GingerCore.General.ComboEnumItem> GetEnumValuesForComboFromList(Type Etype,List<Object> Items)
+        {
+            List<GingerCore.General.ComboEnumItem> list = new List<GingerCore.General.ComboEnumItem>();
+            foreach (object item in Items)
+            {
+                GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
+                CEI.text = GingerCore.General.GetEnumValueDescription(Etype, item);
+                CEI.Value = item;
+
+                list.Add(CEI);
+            }
+            return list;
+        }
+
+
+
         public static void SelectComboValue(ComboBox comboBox, string Value)
         {
             string itemVal = "";
@@ -917,7 +873,7 @@ namespace GingerCore
                     r.Add(status, myBrush);
                     break;
                 case "Pending":
-                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#ED5588"));
+                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#FF8C00"));
                     r.Add(status, myBrush);
                     break;
                 case "Running":

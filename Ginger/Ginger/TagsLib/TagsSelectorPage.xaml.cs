@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ namespace Ginger.TagsLib
         {
             // We create a temp list for selection and mark the selected if exist already
             list = new ObservableList<SelectedTag>();
-            foreach(RepositoryItemTag t in  WorkSpace.UserProfile.Solution.Tags)
+            foreach(RepositoryItemTag t in  WorkSpace.Instance.Solution.Tags)
             {
                 SelectedTag st = new SelectedTag();
                 st.Name = t.Name;

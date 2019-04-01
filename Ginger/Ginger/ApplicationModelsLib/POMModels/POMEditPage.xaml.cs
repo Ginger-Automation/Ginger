@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,10 +25,7 @@ using Ginger.Agents;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
-using GingerCore.Drivers;
-using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.BindingLib;
 using System;
 using System.Drawing;
 using System.IO;
@@ -63,6 +60,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 mAgent = value;
                 mPomAllElementsPage.SetAgent(mAgent);
+                if (mAgent != null)
+                {
+                    mPOM.LastUsedAgent = mAgent.Guid;
+                }
             }
         }
 
@@ -95,19 +96,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPOM = POM;
             mEditMode = editMode;
 
-            ControlsBinding.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
-            ControlsBinding.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
-            ControlsBinding.ObjFieldBinding(xPageURLTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.PageURL));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPageURLTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.PageURL));
 
             xTargetApplicationComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             FillTargetAppsComboBox();
             xTargetApplicationComboBox.Init(mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
-            xTagsViewer.Init(mPOM.TagsKeys);
-
-            ePlatformType mAppPlatform =  WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
-            ObservableList<Agent>  optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
-            xAgentControlUC.Init(optionalAgentsList);
-            App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
+            xTagsViewer.Init(mPOM.TagsKeys);            
 
             BitmapSource source = null;
             if (mPOM.ScreenShotImage != null)
@@ -123,6 +119,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             UIElementTabTextBlockUpdate();
 
+            ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
+            ObservableList<Agent> optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
+            xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);         
         }
 
         private void FillTargetAppsComboBox()
@@ -130,7 +130,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             //get key object 
             if (mPOM.TargetApplicationKey != null)
             {
-                RepositoryItemKey key =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == mPOM.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
+                RepositoryItemKey key =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Guid == mPOM.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
                 if (key != null)
                 {
                     mPOM.TargetApplicationKey = key;
@@ -141,16 +141,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                 }
             }
-            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x=> ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
+            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x=> ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
             xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
 
-             WorkSpace.UserProfile.Solution.ApplicationPlatforms.CollectionChanged += ApplicationPlatforms_CollectionChanged;
+             WorkSpace.Instance.Solution.ApplicationPlatforms.CollectionChanged += ApplicationPlatforms_CollectionChanged;
         }
 
         private void ApplicationPlatforms_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
+            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
         }
 
         public static Bitmap BitmapFromSource(BitmapSource bitmapsource)

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -293,24 +293,13 @@ namespace GingerCore.ALM.QC
                 //set item fields
                 foreach (ExternalItemFieldBase field in testCaseFields)
                 {
-                    if (field.ToUpdate)
+                    if (field.ToUpdate || field.Mandatory)
                     {
                         if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
                             test[field.ID] = field.SelectedValue;
                         else
                             try { test[field.ID] = "NA"; }
                             catch { }
-                    }
-                    if(field.Mandatory)
-                    {
-                        string[] fieldNameTokens = field.ItemName.Split(':');
-                        if(fieldNameTokens.Count() > 1)
-                        {
-                            if(int.TryParse(fieldNameTokens[0],out int num))
-                            {
-                                field.ItemName = fieldNameTokens[1].Trim();
-                            }
-                        }
                     }
                 }
                 
@@ -443,7 +432,7 @@ namespace GingerCore.ALM.QC
                 //set item fields
                 foreach (ExternalItemFieldBase field in testSetFields)
                 {
-                    if (field.ToUpdate)
+                    if (field.ToUpdate || field.Mandatory)
                     {
                         if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
                             testSet[field.ID] = field.SelectedValue;
@@ -464,7 +453,7 @@ namespace GingerCore.ALM.QC
                 {
                     if (ex.Message.Contains("The Test Set already exists"))
                     {
-                        result = "Cannot export Business Flow - The Test Set already exists in the selected folder. ";
+                        result = "Cannot export " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "- The Test Set already exists in the selected folder. ";
                         Reporter.ToLog(eLogLevel.ERROR, result, ex);
                         return false;
                     }

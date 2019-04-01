@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
 using Ginger.Agents;
 using Ginger.UserControls;
@@ -52,7 +53,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.Init:
                     mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
 
-                    ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList( WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
+                    ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList( WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
                     xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
                     xTargetApplicationComboBox.AddValidationRule(new POMTAValidationRule());
 
@@ -63,22 +64,24 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                     if (mWizard.mPomLearnUtils.POM.TargetApplicationKey != null)
                     {
-                        mAppPlatform = WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(mWizard.mPomLearnUtils.POM.TargetApplicationKey);
+                        mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mWizard.mPomLearnUtils.POM.TargetApplicationKey);
                     }
                     mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
                     foreach (Agent agent in mWizard.OptionalAgentsList)
                     {
                         agent.Tag = string.Empty;
                     }
-                    xAgentControlUC.Init(mWizard.OptionalAgentsList);
-                    App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard.mPomLearnUtils, nameof(mWizard.mPomLearnUtils.Agent));
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard.mPomLearnUtils, nameof(mWizard.mPomLearnUtils.Agent));
+                    xAgentControlUC.Init(mWizard.OptionalAgentsList);                   
                     xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
 
                     AddValidations();
-                    ClearAutoMapElementTypesSection();
 
+                    ClearAutoMapElementTypesSection();
                     SetAutoMapElementTypesGridView();
-                    SetAutoMapElementLocatorsGridView();
+                    xLearnOnlyMappedElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
+                    SetElementLocatorsSettingsGridView();
+                    UpdateConfigsBasedOnAgentStatus();
                     break;
             }
         }
@@ -126,7 +129,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAutoMapElementTypesGrid.InitViewItems();
         }
 
-        private void SetAutoMapElementLocatorsGridView()
+        private void SetElementLocatorsSettingsGridView()
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
@@ -135,10 +138,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly=true });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25, ReadOnly = true });
 
-            xAutoMapElementLocatorsGrid.SetAllColumnsDefaultView(defView);
-            xAutoMapElementLocatorsGrid.InitViewItems();
+            xElementLocatorsSettingsGrid.SetAllColumnsDefaultView(defView);
+            xElementLocatorsSettingsGrid.InitViewItems();
 
-            xAutoMapElementLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
+            xElementLocatorsSettingsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
         }
 
         private void CheckUnCheckAllElements(object sender, RoutedEventArgs e)
@@ -157,20 +160,26 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (e.PropertyName == nameof(ucAgentControl.AgentIsRunning))
             {
-                if (xAgentControlUC.AgentIsRunning)
-                {
-                    SetAutoMapElementTypesSection();
-                    SetAutoMapElementLocatorssSection();
-                }
-                else
-                {
-                    ClearAutoMapElementTypesSection();
-                }
-                xAutoMapElementTypesExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
-                xAutoMapElementTypesExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
-                xAutoMapElementLocatorsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
-                xAutoMapElementLocatorsExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
+                UpdateConfigsBasedOnAgentStatus();
             }
+        }
+
+        private void UpdateConfigsBasedOnAgentStatus()
+        {
+            if (xAgentControlUC.AgentIsRunning)
+            {
+                SetAutoMapElementTypesSection();
+                SetElementLocatorsSettingsSection();
+            }
+            else
+            {
+                ClearAutoMapElementTypesSection();
+            }
+            xLearnOnlyMappedElements.IsEnabled = xAgentControlUC.AgentIsRunning;
+            xAutoMapElementTypesExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
+            xAutoMapElementTypesExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
+            xElementLocatorsSettingsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
+            xElementLocatorsSettingsExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
         }
 
         private void ClearAutoMapElementTypesSection()
@@ -187,18 +196,18 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAutoMapElementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapElementTypesList;
         }
 
-        private void SetAutoMapElementLocatorssSection()
+        private void SetElementLocatorsSettingsSection()
         {
-            if (mWizard.mPomLearnUtils.AutoMapElementLocatorsList.Count == 0)
+            if (mWizard.mPomLearnUtils.ElementLocatorsSettingsList.Count == 0)
             {
                 switch (mAppPlatform)
                 {
                     case ePlatformType.Web:
-                        mWizard.mPomLearnUtils.AutoMapElementLocatorsList = new WebPlatform().GetLearningLocators();
+                        mWizard.mPomLearnUtils.ElementLocatorsSettingsList = new WebPlatform().GetLearningLocators();
                         break;
                 }
             }
-            xAutoMapElementLocatorsGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapElementLocatorsList;
+            xElementLocatorsSettingsGrid.DataSourceList = mWizard.mPomLearnUtils.ElementLocatorsSettingsList;
         }
 
         private void xAutomaticElementConfigurationRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -209,17 +218,19 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 {
                     mWizard.ManualElementConfiguration = true;
                     RemoveValidations();
-                    xAgentControlUC.Visibility = Visibility.Hidden;
-                    xAutoMapElementTypesExpander.Visibility = Visibility.Hidden;
-                    xAutoMapElementLocatorsExpander.Visibility = Visibility.Collapsed;
+                    //xAgentControlUC.Visibility = Visibility.Hidden;
+                    //xAutoMapElementTypesExpander.Visibility = Visibility.Hidden;
+                    //xElementLocatorsSettingsExpander.Visibility = Visibility.Collapsed;
+                    xLearningConfigsPnl.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
                     mWizard.ManualElementConfiguration = false;
                     AddValidations();
-                    xAgentControlUC.Visibility = Visibility.Visible;
-                    xAutoMapElementTypesExpander.Visibility = Visibility.Visible;
-                    xAutoMapElementLocatorsExpander.Visibility = Visibility.Visible;
+                    //xAgentControlUC.Visibility = Visibility.Visible;
+                    //xAutoMapElementTypesExpander.Visibility = Visibility.Visible;
+                    //xElementLocatorsSettingsExpander.Visibility = Visibility.Visible;
+                    xLearningConfigsPnl.Visibility = Visibility.Visible;
                 }
             }
         }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ namespace GingerTest
             //Act                        
             GlobalVariablesPOM globalVariablesPOM = mGingerAutomator.MainWindowPOM.GotoGlobalVariables();
             globalVariablesPOM.AddStringVariable(name);
-            VariableBase v = (from x in WorkSpace.UserProfile.Solution.Variables where x.Name == name select x).SingleOrDefault();
+            VariableBase v = (from x in WorkSpace.Instance.Solution.Variables where x.Name == name select x).SingleOrDefault();
 
             //Assert
             Assert.AreEqual(name, v.Name, "Var Name");

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Label lbl2 = new Label();
             lbl2.FontWeight = FontWeights.ExtraBold;
             lbl2.Margin = new Thickness(-10, 0, 0, 0);
-            App.ObjFieldBinding(lbl2, Label.ContentProperty, Solution, nameof(Solution.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lbl2, Label.ContentProperty, Solution, nameof(Solution.Name));
 
             Label lbl3 = new Label();
             lbl3.Margin = new Thickness(-10, 0, 0, 0);

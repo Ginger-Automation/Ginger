@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -75,8 +75,8 @@ namespace Ginger.ALM.RQM
             testPlanId = txtTestPlanId.Text;
             if (testPlanId != "")
             {
-                RQMTestPlan testPlan = RQMConnect.Instance.GetRQMTestPlanByIdByProject( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,
-                     WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject, testPlanId);
+                RQMTestPlan testPlan = RQMConnect.Instance.GetRQMTestPlanByIdByProject( WorkSpace.Instance.Solution.ALMServerURL,  WorkSpace.Instance.UserProfile.ALMUserName,
+                     WorkSpace.Instance.UserProfile.ALMPassword,  WorkSpace.Instance.Solution.ALMProject, testPlanId);
                 ImportTestPlan(testPlan);
             }
             else

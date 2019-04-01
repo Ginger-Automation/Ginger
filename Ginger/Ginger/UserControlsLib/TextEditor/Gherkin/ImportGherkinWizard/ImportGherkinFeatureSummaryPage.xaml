@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.UserControlsLib.TextEditor.Gherkin"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="ImportGherkinFeatureSummaryPage">
@@ -13,7 +14,10 @@
         <Label Content="Feature File will be created under:" FontSize="15" HorizontalAlignment="Left" Margin="0,50,0,0"  VerticalAlignment="Top"/>
         <Label x:Name="TargetFeatureFolderLabel" Content ="Feature File Path" HorizontalAlignment="Left" Margin="0,80,0,0"  VerticalAlignment="Top" />
         <Label Content="Business Flow will be created under:" FontSize="15" HorizontalAlignment="Left" Margin="0,110,0,0" Height="45" VerticalAlignment="Top"/>
-        <Label x:Name="TargetBFFolderLabel" Content ="Business Flow Path" HorizontalAlignment="Left" Height="45" Margin="0,140,0,0" VerticalAlignment="Top"/>
-        
+        <Label x:Name="TargetBFFolderLabel" HorizontalAlignment="Left" Height="45" Margin="0,140,0,0" VerticalAlignment="Top">
+            <Label.Content>
+                <GingerCore:ucTextDicResource Text="[BusinessFlow] path"/>
+            </Label.Content>
+        </Label>
     </Grid>
 </Page>

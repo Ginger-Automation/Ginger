@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System.Windows.Controls;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 
@@ -34,8 +35,8 @@ namespace Ginger.Actions
 
             mAct = act;
 
-            App.ObjFieldBinding(CSVFileNameTextBox, TextBox.TextProperty, mAct, ActWebSitePerformanceTiming.Fields.CSVFileName);
-            DetailsUCValueExpression.Init(mAct.GetOrCreateInputParam(ActWebSitePerformanceTiming.Fields.Detail ), ActInputValue.Fields.Value);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CSVFileNameTextBox, TextBox.TextProperty, mAct, ActWebSitePerformanceTiming.Fields.CSVFileName);
+            DetailsUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebSitePerformanceTiming.Fields.Detail ), ActInputValue.Fields.Value);
         }
     }
 }

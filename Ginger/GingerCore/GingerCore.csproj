@@ -489,7 +489,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\ActionConversion\ActionConversionHandler.cs" />
     <Compile Include="Actions\RobotFramework\ActRobot.cs" />
     <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
     <Compile Include="Actions\VisualTesting\VisualCompareAnalyzerIntegration.cs" />
@@ -517,7 +516,6 @@
     <Compile Include="Actions\ActGetMsgboxText.cs" />
     <Compile Include="Actions\ActButton.cs" />
     <Compile Include="Actions\ActCheckbox.cs" />
-    <Compile Include="Actions\ActClearAllVariables.cs" />
     <Compile Include="Actions\ActFileTransfer.cs" />
     <Compile Include="Actions\ActConsoleCommand.cs" />
     <Compile Include="Actions\ActDBValidation.cs" />
@@ -558,7 +556,6 @@
     <Compile Include="Actions\Android\ActShell.cs" />
     <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
     <Compile Include="Actions\Common\ActUIElement.cs" />
-    <Compile Include="Actions\Common\IObsoleteAction.cs" />
     <Compile Include="Actions\Common\UIElementPropertyValueLocator.cs" />
     <Compile Include="Actions\Communication\ActeMail.cs" />
     <Compile Include="Actions\ActBrowserElement.cs" />
@@ -726,6 +723,7 @@
     <Compile Include="Drivers\WebServicesDriverLib\SoapUIUtils.cs" />
     <Compile Include="Drivers\WindowsLib\FlaUIHelper.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
+    <Compile Include="GeneralLib\BindingHandler.cs" />
     <Compile Include="GeneralLib\CommonLib.cs" />
     <Compile Include="GeneralLib\JSONHelper.cs" />
     <Compile Include="GeneralLib\StringCompressor.cs" />
@@ -805,7 +803,7 @@
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1040000_to_V1050000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1030000_to_V1040000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v10203_TO_v1020000.cs" />
-    <Compile Include="GeneralFunctions\RegistryFunctions.cs" />
+    <Compile Include="GeneralLib\RegistryFunctions.cs" />
     <Compile Include="GeneralLib\SMS.cs" />
     <Compile Include="GeneralLib\InputBoxWindow.xaml.cs">
       <DependentUpon>InputBoxWindow.xaml</DependentUpon>
@@ -968,6 +966,7 @@
     <None Include="Resources\Pin32x32.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Actions\ActionConversion\" />
     <Folder Include="Actions\PlugIns\" />
     <Folder Include="Actions\Simulators\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\CCM\fa1qm1\" />

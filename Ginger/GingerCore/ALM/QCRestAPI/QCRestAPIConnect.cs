@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -209,22 +209,27 @@ namespace GingerCore.ALM.QCRestAPI
         {
             string[] separatePath = PathNode.Split('\\');
             List<string> testlabPathList = new List<string>();
-
-            separatePath[0] = ExploredTestLabFolder.ContainsKey("Root") ? ExploredTestLabFolder["Root"] : QcRestClient.GetTestSetRootFolder().Id;
-
-            if (!ExploredTestLabFolder.ContainsKey("Root"))
-                ExploredTestLabFolder.Add("Root", separatePath[0]);
-
-            for (int i = 1; i < separatePath.Length; i++)
+            try
             {
-                separatePath[i] = GetTestLabFolderId(separatePath[i], separatePath[i - 1]);
+                separatePath[0] = ExploredTestLabFolder.ContainsKey("Root") ? ExploredTestLabFolder["Root"] : QcRestClient.GetTestSetRootFolder().Id;
+
+                if (!ExploredTestLabFolder.ContainsKey("Root"))
+                    ExploredTestLabFolder.Add("Root", separatePath[0]);
+
+                for (int i = 1; i < separatePath.Length; i++)
+                {
+                    separatePath[i] = GetTestLabFolderId(separatePath[i], separatePath[i - 1]);
+                }
+
+                QCTestSetFolderColl foldersToExplor = QcRestClient.GetTestSetTreeLayerByFilter(separatePath[separatePath.Length - 1], "");
+
+                foreach (QCTestSetFolder folders in foldersToExplor)
+                    testlabPathList.Add(folders.Name);
             }
-
-            QCTestSetFolderColl foldersToExplor = QcRestClient.GetTestSetTreeLayerByFilter(separatePath[separatePath.Length - 1], "");
-
-            foreach (QCTestSetFolder folders in foldersToExplor)
-                testlabPathList.Add(folders.Name);
-
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get Test Lab with REST API", ex);
+            }
             return testlabPathList;
         }
 
@@ -233,27 +238,32 @@ namespace GingerCore.ALM.QCRestAPI
         {
             List<QCTestSetSummary> testlabPathList = new List<QCTestSetSummary>();
             string[] separatePath = PathNode.Split('\\');
-
-            separatePath[0] = ExploredTestLabFolder.ContainsKey("Root") ? ExploredTestLabFolder["Root"] : QcRestClient.GetTestSetRootFolder().Id;
-
-            if (!ExploredTestLabFolder.ContainsKey("Root"))
-                ExploredTestLabFolder.Add("Root", separatePath[0]);
-
-            for (int i = 1; i < separatePath.Length; i++)
+            try
             {
-                separatePath[i] = GetTestLabFolderId(separatePath[i], separatePath[i - 1]);
+                separatePath[0] = ExploredTestLabFolder.ContainsKey("Root") ? ExploredTestLabFolder["Root"] : QcRestClient.GetTestSetRootFolder().Id;
+
+                if (!ExploredTestLabFolder.ContainsKey("Root"))
+                    ExploredTestLabFolder.Add("Root", separatePath[0]);
+
+                for (int i = 1; i < separatePath.Length; i++)
+                {
+                    separatePath[i] = GetTestLabFolderId(separatePath[i], separatePath[i - 1]);
+                }
+
+                QCTestSetColl testSets = QcRestClient.GetAllTestSetsUnderFolder(int.Parse(separatePath[separatePath.Length - 1]));
+
+                foreach (QCRestClient.QCTestSet testset in testSets)
+                {
+                    QCTestSetSummary QCTestSetTreeItem = new QCTestSetSummary();
+                    QCTestSetTreeItem.TestSetID = testset.Id;
+                    QCTestSetTreeItem.TestSetName = testset.Name;
+                    testlabPathList.Add(QCTestSetTreeItem);
+                }
             }
-
-            QCTestSetColl testSets = QcRestClient.GetAllTestSetsUnderFolder(int.Parse(separatePath[separatePath.Length - 1]));
-
-            foreach (QCRestClient.QCTestSet testset in testSets)
+            catch (Exception ex)
             {
-                QCTestSetSummary QCTestSetTreeItem = new QCTestSetSummary();
-                QCTestSetTreeItem.TestSetID = testset.Id;
-                QCTestSetTreeItem.TestSetName = testset.Name;
-                testlabPathList.Add(QCTestSetTreeItem);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get Test Set with REST API", ex);
             }
-
             return testlabPathList;
         }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -151,7 +151,7 @@ namespace Ginger.UserControlsLib.TextEditor
 
         internal void Bind(object obj, string attrName)
         {
-            GingerCore.General.ObjFieldBinding(this, EditorTextProperty, obj, attrName);                        
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(this, EditorTextProperty, obj, attrName);                        
         }
 
         public void Save()
@@ -177,7 +177,7 @@ namespace Ginger.UserControlsLib.TextEditor
             }
 
             //TODO: put it in general func
-            string SolutionPath = FileName.Replace( WorkSpace.UserProfile.Solution.Folder, "~");
+            string SolutionPath = FileName.Replace( WorkSpace.Instance.Solution.Folder, "~");
             lblTitle.Content = SolutionPath;
 
             if (EnableWrite)

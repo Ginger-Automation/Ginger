@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,11 +36,11 @@ namespace Ginger.Actions
 
         public void Bind()
         {
-            App.FillComboFromEnumVal(TextSpeechActionComboBox, mAct.TextSpeechAction);
-            App.ObjFieldBinding(TextSpeechActionComboBox, ComboBox.TextProperty, mAct, ActTextSpeech.Fields.TextSpeechAction);
-            App.ObjFieldBinding(IntervalTextBox, TextBox.TextProperty, mAct, ActTextSpeech.Fields.Interval);
-            App.ObjFieldBinding(WaveLocationTextBox, TextBox.TextProperty, mAct, ActTextSpeech.Fields.WaveLocation);
-            App.ObjFieldBinding(TextToSayLoudTextBox, TextBox.TextProperty, mAct, ActTextSpeech.Fields.TextToSayLoud);
+            GingerCore.General.FillComboFromEnumObj(TextSpeechActionComboBox, mAct.TextSpeechAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TextSpeechActionComboBox, ComboBox.TextProperty, mAct, ActTextSpeech.Fields.TextSpeechAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(IntervalTextBox, TextBox.TextProperty, mAct, ActTextSpeech.Fields.Interval);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WaveLocationTextBox, TextBox.TextProperty, mAct, ActTextSpeech.Fields.WaveLocation);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TextToSayLoudTextBox, TextBox.TextProperty, mAct, ActTextSpeech.Fields.TextToSayLoud);
         }
     }
 }

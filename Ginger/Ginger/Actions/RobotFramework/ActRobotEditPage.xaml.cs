@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,8 +44,8 @@ namespace Ginger.Actions.RobotFramework
 
         public void Bind()
         {
-            App.ObjFieldBinding(RobotLibsTextBox, TextBox.TextProperty, mAct.RobotLibraries, nameof(ActInputValue.Value));
-            App.ObjFieldBinding(RobotFileTextBox, TextBox.TextProperty, mAct.RobotFileName, nameof(ActInputValue.Value));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RobotLibsTextBox, TextBox.TextProperty, mAct.RobotLibraries, nameof(ActInputValue.Value));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RobotFileTextBox, TextBox.TextProperty, mAct.RobotFileName, nameof(ActInputValue.Value));
         }
         
         private void DisplayFileContents(string fileName)

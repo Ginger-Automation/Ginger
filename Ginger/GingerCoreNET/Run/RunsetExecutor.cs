@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -98,7 +98,7 @@ namespace Ginger.Run
                 mRunsetExecutionEnvironment = value;
                 if (mRunsetExecutionEnvironment != null)
                 {
-                    WorkSpace.UserProfile.RecentEnvironment = mRunsetExecutionEnvironment.Guid;
+                    WorkSpace.Instance.UserProfile.RecentEnvironment = mRunsetExecutionEnvironment.Guid;
                 }
                 OnPropertyChanged(nameof(this.RunsetExecutionEnvironment));
             }
@@ -164,6 +164,7 @@ namespace Ginger.Run
                 {
                     // Very slow
                     BusinessFlow BFCopy = (BusinessFlow)businessFlow.CreateCopy(false);
+                    BFCopy.ContainingFolder = businessFlow.ContainingFolder;
                     BFCopy.Reset();
                     BFCopy.Active = businessFlowRun.BusinessFlowIsActive;
                     BFCopy.Mandatory = businessFlowRun.BusinessFlowIsMandatory;
@@ -301,7 +302,7 @@ namespace Ginger.Run
             if (doContinueRun == false)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));                
-                WorkSpace.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });                
+                WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });                
             }
 
             //Start Run 
@@ -382,7 +383,7 @@ namespace Ginger.Run
             {
                 // Process all post execution RunSet Operations
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));                
-                WorkSpace.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });                
+                WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });                
             }
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             CreateGingerExecutionReportAutomaticly();
@@ -508,7 +509,7 @@ namespace Ginger.Run
                     return 1;
                 }
 
-                AutoLogProxy.UserOperationStart("AutoRunWindow", WorkSpace.RunsetExecutor.RunSetConfig.Name, WorkSpace.RunsetExecutor.RunsetExecutionEnvironment.Name);
+                AutoLogProxy.UserOperationStart("AutoRunWindow", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name);
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting {0} Automatic Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
 
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
@@ -527,7 +528,7 @@ namespace Ginger.Run
                 try
                 {
                     //run analyzer
-                    int analyzeRes = await WorkSpace.RunsetExecutor.RunRunsetAnalyzerBeforeRun(true).ConfigureAwait(false);
+                    int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun(true).ConfigureAwait(false);
                     if (analyzeRes == 1)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, string.Format("{0} Analyzer found critical issues with the {0} configurations, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
@@ -551,7 +552,7 @@ namespace Ginger.Run
                     return 1;
                 }
 
-                if (WorkSpace.RunSetExecutionStatus == eRunStatus.Passed)//TODO: improve
+                if (WorkSpace.Instance.RunSetExecutionStatus == eRunStatus.Passed)//TODO: improve
                     return 0;
                 else
                     return 1;

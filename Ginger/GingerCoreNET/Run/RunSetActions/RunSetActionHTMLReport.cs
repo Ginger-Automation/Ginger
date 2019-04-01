@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -67,12 +67,12 @@ namespace Ginger.Run.RunSetActions
         {
             string reportsResultFolder = string.Empty;
             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            if (WorkSpace.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
             {
                 string runSetFolder = string.Empty;
-                if (WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
                 { 
-                    runSetFolder = WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
+                    runSetFolder = WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
                     AutoLogProxy.UserOperationStart("Online Report");
                 }
                 else

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ namespace GingerTest.WizardLib
                     //xAgentTagsViewer.Init(mWizard.Agent.Tags);
 
                     //xPlatformTypeComboBox.SelectionChanged += xPlatformTypeComboBox_SelectionChanged;
-                    //App.FillComboFromEnumVal(xPlatformTypeComboBox, mWizard.Agent.Platform);
+                    //GingerCore.General.FillComboFromEnumObj(xPlatformTypeComboBox, mWizard.Agent.Platform);
                     //xPlatformTypeComboBox.SelectedIndex = 0;
 
                     //xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverType));
@@ -76,7 +76,7 @@ namespace GingerTest.WizardLib
             //xDriverTypeComboBox.Items.Clear();
 
             //List<object> driverTypeValues = mWizard.Agent.GetDriverTypesByPlatfrom(xPlatformTypeComboBox.SelectedItem.ToString());
-            //App.FillComboFromEnumVal(xDriverTypeComboBox, mWizard.Agent.DriverType, driverTypeValues, false);
+            //GingerCore.General.FillComboFromEnumObj(xDriverTypeComboBox, mWizard.Agent.DriverType, driverTypeValues, false);
             //if (xDriverTypeComboBox.Items.Count > 0)
             //    xDriverTypeComboBox.SelectedItem = xDriverTypeComboBox.Items[0];
 

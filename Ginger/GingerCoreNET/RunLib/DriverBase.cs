@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -167,6 +167,11 @@ namespace GingerCore.Drivers
         public virtual void ActionCompleted(Act act)
         {
             // Do nothing, can be implemented in sub class like: ConsoleDriverBase, WindowsDriver, PBDriver
+        }
+
+        public virtual void UpdateContext(Context context)
+        {
+            BusinessFlow = context.BusinessFlow;
         }
     }
 }

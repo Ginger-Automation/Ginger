@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ using Ginger.Variables;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.Platforms;
+using GingerCore.Variables;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -46,8 +47,9 @@ namespace Ginger.BusinessFlowFolder
         RepositoryPage mReposiotryPage;
         ActivitiesGroupsPage mActivitiesGroupsPage;
         VariablesPage mVariablesPage;
-        ActivitiesPage mActivitiesPage;    
-        
+        ActivitiesPage mActivitiesPage;
+        Context mContext;
+
         GridLength mlastRepositoryColWidth = new GridLength(150);
         GridLength mMinColsExpanderSize = new GridLength(35);
         GenericWindow _pageGenericWin = null;
@@ -61,7 +63,8 @@ namespace Ginger.BusinessFlowFolder
             InitializeComponent();
 
             mBusinessFlow = BizFlow;
-            RunDescritpion.Init(BizFlow, BusinessFlow.Fields.RunDescription);
+            mContext = new Context() { BusinessFlow = BizFlow };
+            RunDescritpion.Init(mContext, BizFlow, BusinessFlow.Fields.RunDescription);
             mEditMode = editMode;
             LoadBizFlowData();
             App.PropertyChanged += AppPropertychanged;
@@ -79,7 +82,7 @@ namespace Ginger.BusinessFlowFolder
 
             if (!showMiniView)
             {
-                mActivitiesPage = new ActivitiesPage(mBusinessFlow, mEditMode);
+                mActivitiesPage = new ActivitiesPage(mBusinessFlow, mEditMode, mContext);
                 if(mEditMode!= General.RepositoryItemPageViewMode.View)
                 {
                     mActivitiesPage.grdActivities.ChangeGridView(eAutomatePageViewStyles.Design.ToString());
@@ -93,7 +96,7 @@ namespace Ginger.BusinessFlowFolder
                 BfActivitiesGroupsFrame.Content = mActivitiesGroupsPage;
                 if (mBusinessFlow.ActivitiesGroups.Count == 0) ActivitiesGroupsExpander.IsExpanded = false;
 
-                mVariablesPage = new VariablesPage(GingerCore.Variables.eVariablesLevel.BusinessFlow, mBusinessFlow, mEditMode);
+                mVariablesPage = new VariablesPage(eVariablesLevel.BusinessFlow, mBusinessFlow, mEditMode);
                 mVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
                 BfVariablesFrame.Content = mVariablesPage;
                 if (mBusinessFlow.Variables.Count == 0) VariablesExpander.IsExpanded = false;
@@ -119,7 +122,7 @@ namespace Ginger.BusinessFlowFolder
                 xAutomateBtn.Visibility = Visibility.Collapsed;
             }
 
-            if (! WorkSpace.UserProfile.UserTypeHelper.IsSupportAutomate)
+            if (! WorkSpace.Instance.UserProfile.UserTypeHelper.IsSupportAutomate)
             {
                 xAutomateBtn.Visibility = Visibility.Collapsed;
             }
@@ -181,12 +184,12 @@ namespace Ginger.BusinessFlowFolder
        
         private void LoadBizFlowData()
         {
-            App.ObjFieldBinding(txtName, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Name);
-            App.ObjFieldBinding(txtDescription, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Description);
-            App.FillComboFromEnumVal(StatusComboBox, mBusinessFlow.Status);
-            App.ObjFieldBinding(StatusComboBox, ComboBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Status);                     
-            App.ObjFieldBinding(CreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader,  nameof(RepositoryItemHeader.CreatedBy));  
-            App.ObjFieldBinding(AutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.AutomationPrecentage, System.Windows.Data.BindingMode.OneWay);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtName, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDescription, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Description);
+            GingerCore.General.FillComboFromEnumObj(StatusComboBox, mBusinessFlow.Status);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(StatusComboBox, ComboBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Status);                     
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader,  nameof(RepositoryItemHeader.CreatedBy));  
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.AutomationPrecentage, System.Windows.Data.BindingMode.OneWay);            
             
             // Per source we can show specific source page info
             if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)

@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
@@ -54,8 +72,10 @@ namespace Ginger.Run.RunSetActions
         [IsSerializedForLocalRepository]
         public bool SaveindividualBFReport { get; set; }
 
+        ReportInfo mRI;
         public override void Execute(ReportInfo RI)
         {
+            mRI = RI;
             try
             {
                 if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
@@ -91,7 +111,7 @@ namespace Ginger.Run.RunSetActions
                     {
                         ObservableList<BusinessFlow> BFs = new ObservableList<BusinessFlow>();
 
-                        foreach (GingerRunner GR in WorkSpace.RunsetExecutor.Runners)
+                        foreach (GingerRunner GR in WorkSpace.Instance.RunsetExecutor.Runners)
                         {
                             foreach (BusinessFlow bf in GR.BusinessFlows)
                             {
@@ -100,10 +120,10 @@ namespace Ginger.Run.RunSetActions
                                     if (bf.RunStatus.ToString() == nameof(eRunStatus.Passed) || bf.RunStatus.ToString() == nameof(eRunStatus.Failed) || bf.RunStatus.ToString() == nameof(eRunStatus.Stopped))
                                     {
                                         // !!!!!!!!!!!!!!!!!!!
-                                        ReportInfo BFRI = new ReportInfo(WorkSpace.AutomateTabGingerRunner.ProjEnvironment, bf);
+                                        ReportInfo BFRI = new ReportInfo(mRI.Environment.ProjEnvironment, bf);
 
                                         string TempRepFileName = RepositoryItemHelper.RepositoryItemFactory.GenerateTemplate(TemplateName, BFRI);
-                                        String RepFileName = DateTime.Now.ToString("dMMMyyyy_HHmmss_fff") + "_" + WorkSpace.RunsetExecutor.RunSetConfig.Name + "_" + GR.Name + "_" + bf.Name + "_" + WorkSpace.RunsetExecutor.RunsetExecutionEnvironment.Name;
+                                        String RepFileName = DateTime.Now.ToString("dMMMyyyy_HHmmss_fff") + "_" + WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + GR.Name + "_" + bf.Name + "_" + WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name;
 
                                         while (RepFileName.Length > 250)
                                         {

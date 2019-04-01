@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -93,10 +93,10 @@ namespace Ginger.Actions.Locators.ASCF
 
         ObservableList<ControlProperty> IWindowExplorerTreeItem.GetElementProperties()
         {
-            //TODO: temp solution fix me hard coded [0[]
-            ASCFDriver d = (ASCFDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
-
-            string RC = d.Send("GetControlInfo", "ByName" + "", ASCFControlInfo.Path, " ", " ", false);
+            //TODO: fix if needed
+            //ASCFDriver d = (ASCFDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
+            //string RC = d.Send("GetControlInfo", "ByName" + "", ASCFControlInfo.Path, " ", " ", false);
+            string RC = string.Empty;
 
             if (RC.StartsWith("OK"))
             {

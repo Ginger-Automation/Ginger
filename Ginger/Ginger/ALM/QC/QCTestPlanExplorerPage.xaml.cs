@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,8 +39,7 @@ namespace Ginger.ALM.QC
             InitializeComponent();
 
             TestPlanExplorerTreeView.TreeTitle = "'" + ALMCore.AlmConfig.ALMDomain + " \\ " + ALMCore.AlmConfig.ALMProjectName + "' - Test Plan Explorer";
-            TestPlanExplorerTreeView.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
-
+            TestPlanExplorerTreeView.SetTitleSection(2, 30, 15, FontWeights.Bold);
             //set root item
             QCTestPlanFolderTreeItem tvi = new QCTestPlanFolderTreeItem();
             tvi.Folder = "Subject";
@@ -80,5 +79,17 @@ namespace Ginger.ALM.QC
             SelectedPath = null;
             genWin.Close();
         }
+        private void xCreateBusinessFlowFolder_Checked(object sender, RoutedEventArgs e)
+        {
+            if (xCreateBusinessFlowFolder.IsChecked == true)
+            {
+                QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder = true;
+            }
+            else
+            {
+                QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder = false;
+            }
+        }
+        
     }
 }

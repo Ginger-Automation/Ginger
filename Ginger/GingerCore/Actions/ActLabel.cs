@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
+
 namespace GingerCore.Actions
 {
     public class ActLabel : Act, IObsoleteAction
@@ -62,7 +64,7 @@ namespace GingerCore.Actions
 
         public enum eLabelAction
         {
-            IsVisible = 1,
+            IsVisible = 0,
             GetInnerText=2,
             GetWidth = 22,
             GetHeight = 23,
@@ -138,7 +140,8 @@ namespace GingerCore.Actions
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
-            newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            if (!string.IsNullOrEmpty(this.LocateValue))
+                newAct.ElementLocateValue = String.Copy(this.LocateValue);
             if (!uIElementTypeAssigned)
                 newAct.ElementType = eElementType.Label;
             newAct.Active = true;

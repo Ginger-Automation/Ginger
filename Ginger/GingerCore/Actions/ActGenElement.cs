@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
+
 namespace GingerCore.Actions
 {
     // This class is for UI link element
@@ -301,7 +303,7 @@ namespace GingerCore.Actions
 
         public enum eGenElementAction
         {
-            Click = 1,
+            Click = 0,
             Hover = 2, //This is needed for hovering to expand menus.
             [EnumValueDescription("Get Value")]
             GetValue = 3, //for validation

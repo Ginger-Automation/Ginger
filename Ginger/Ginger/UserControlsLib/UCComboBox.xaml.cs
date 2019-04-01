@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -85,11 +87,11 @@ namespace Ginger.UserControlsLib
                 Col.Width = new GridLength(22);
                 VEButton.Visibility = Visibility.Visible;
                 ComboBox.IsEditable = true;
-                GingerCore.General.ObjFieldBinding(ComboBox, ComboBox.TextProperty, bindedObject, bindedObjField);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.TextProperty, bindedObject, bindedObjField);
             }
             else
             {
-                GingerCore.General.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, bindedObject, bindedObjField);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, bindedObject, bindedObjField);
             }
         }
 
@@ -117,12 +119,12 @@ namespace Ginger.UserControlsLib
                 Col.Width = new GridLength(22);
                 VEButton.Visibility = Visibility.Visible;
                 ComboBox.IsEditable = true;
-                GingerCore.General.ObjFieldBinding(ComboBox, ComboBox.TextProperty, bindedObject, AttrName);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.TextProperty, bindedObject, AttrName);
             }
             else
             {
                 ComboBox.IsEditable = false;
-                GingerCore.General.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, bindedObject, AttrName);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, bindedObject, AttrName);
             }
         }
 
@@ -132,7 +134,7 @@ namespace Ginger.UserControlsLib
             // If the VE is on stand alone form:
             this.obj = obj;
             this.AttrName = AttrName;
-            GingerCore.General.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, AttrName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, AttrName);
         }
 
         public void Init(ActInputValue AIV, bool isVENeeded = false, SelectionChangedEventHandler UCselectionChange = null)
@@ -151,11 +153,11 @@ namespace Ginger.UserControlsLib
                 Col.Width = new GridLength(22);
                 VEButton.Visibility = Visibility.Visible;
                 ComboBox.IsEditable = true;
-                GingerCore.General.ActInputValueBinding(ComboBox, ComboBox.TextProperty, AIV);
+                GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ComboBox, ComboBox.TextProperty, AIV);
             }
             else
             {
-                GingerCore.General.ActInputValueBinding(ComboBox, ComboBox.SelectedValueProperty, AIV);
+                GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ComboBox, ComboBox.SelectedValueProperty, AIV);
             }
         }
 
@@ -181,11 +183,11 @@ namespace Ginger.UserControlsLib
                 Col.Width = new GridLength(22);
                 VEButton.Visibility = Visibility.Visible;
                 ComboBox.IsEditable = true;
-                GingerCore.General.ActInputValueBinding(ComboBox, ComboBox.TextProperty, AIV);
+                GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ComboBox, ComboBox.TextProperty, AIV);
             }
             else
             {
-                GingerCore.General.ActInputValueBinding(ComboBox, ComboBox.SelectedValueProperty, AIV);
+                GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ComboBox, ComboBox.SelectedValueProperty, AIV);
             }
         }
 
@@ -207,11 +209,11 @@ namespace Ginger.UserControlsLib
                 Col.Width = new GridLength(22);
                 VEButton.Visibility = Visibility.Visible;
                 ComboBox.IsEditable = true;
-                GingerCore.General.ActInputValueBinding(ComboBox, ComboBox.TextProperty, AIV);
+                GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ComboBox, ComboBox.TextProperty, AIV);
             }
             else
             {
-                GingerCore.General.ActInputValueBinding(ComboBox, ComboBox.SelectedValueProperty, AIV);
+                GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ComboBox, ComboBox.SelectedValueProperty, AIV);
             }
 
             if (ComboBox.Items.Count > 0 && DefaultIndexValue != -1)
@@ -259,17 +261,22 @@ namespace Ginger.UserControlsLib
                 Col.Width = new GridLength(22);
                 VEButton.Visibility = Visibility.Visible;
                 ComboBox.IsEditable = true;
-                GingerCore.General.ActInputValueBinding(ComboBox, ComboBox.TextProperty, AIV);
+                GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ComboBox, ComboBox.TextProperty, AIV);
             }
             else
             {
-                GingerCore.General.ActInputValueBinding(ComboBox, ComboBox.SelectedValueProperty, AIV);
+                GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ComboBox, ComboBox.SelectedValueProperty, AIV);
             }
         }
 
         public void VEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(obj, AttrName);
+            Context context = null;
+            if(obj is Act)
+            {
+                context = Context.GetAsContext(((Act)obj).Context);
+            }
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(obj, AttrName, context);
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             ComboBox.Text = w.ValueUCTextEditor.textEditor.Text;
         }

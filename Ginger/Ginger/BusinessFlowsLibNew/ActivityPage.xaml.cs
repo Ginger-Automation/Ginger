@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,20 +37,19 @@ namespace GingerWPF.BusinessFlowsLib
     public partial class ActivityPage : Page
     {
         Activity mActivity;
-        GingerRunner mGingerRunner;
+        Context mContext;
 
         // We keep a static page so even if we move between activities the Run controls and info stay the same
-        public ActivityPage(Activity Activity)
+        public ActivityPage(Activity Activity, Context context)
         {
             InitializeComponent();
 
             mActivity = Activity;
+            mContext = context;
 
             ActivityNameLabel.Content = mActivity.ActivityName; // TODO: use binding !!!!!!!!!!!!!!!!!!!!!!!
-
-            mGingerRunner = App.AutomateTabGingerRunner;
-            //WorkSpace.Instance.GingerRunner.CurrentBusinessFlow.Activities.PropertyChanged += CurrentBusinessFlow_PropertyChanged;
-            mGingerRunner.CurrentBusinessFlow.Activities.PropertyChanged += CurrentBusinessFlow_PropertyChanged;
+           
+            mContext.Runner.CurrentBusinessFlow.Activities.PropertyChanged += CurrentBusinessFlow_PropertyChanged;
 
             ShowActionsList();
 
@@ -63,7 +62,7 @@ namespace GingerWPF.BusinessFlowsLib
             MainFrame.Dispatcher.Invoke(() =>
             {
                 //Since we might get event from Ginger runner which is running on another thread we need dispatcher
-                MainFrame.Content = new ActivityActionsPage((Activity)mGingerRunner.CurrentBusinessFlow.CurrentActivity);
+                MainFrame.Content = new ActivityActionsPage((Activity)mContext.Runner.CurrentBusinessFlow.CurrentActivity);
             });
         }
 
@@ -87,7 +86,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             // MainFrame.Content = new BusinessFlowDiagramPage(WorkSpace.Instance.GingerRunner.CurrentBusinessFlow); // TODO: show only the current activity
 
-            MainFrame.Content = new BusinessFlowDiagramPage(App.AutomateTabGingerRunner.CurrentBusinessFlow); // TODO: show only the current activity
+            MainFrame.Content = new BusinessFlowDiagramPage(mContext.Runner.CurrentBusinessFlow); // TODO: show only the current activity
         }
 
         private void AddActionButton_Click(object sender, RoutedEventArgs e)
@@ -109,7 +108,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void AddEmptyAction()
         {
             NewAddActionPage p = new NewAddActionPage();
-            p.ShowAsWindow(mGingerRunner.CurrentBusinessFlow.CurrentActivity.Acts);
+            p.ShowAsWindow(mContext.Runner.CurrentBusinessFlow.CurrentActivity.Acts);
         }
 
         private void RecordAction()

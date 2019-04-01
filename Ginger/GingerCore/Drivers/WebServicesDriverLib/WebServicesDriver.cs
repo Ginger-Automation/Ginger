@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -649,10 +649,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     mActWebService.AddOrUpdateReturnParamActual("Saved Request File Name", createRequestOrResponseXML("Request", mRequest));
                 }
 
-                if (SaveResponseXML)
-                {
-                    mActWebService.AddOrUpdateReturnParamActual("Saved Response File Name", createRequestOrResponseXML("Response", resp));
-                }
 
                 if (mIsDriverWindowLaunched)
                 {
@@ -670,7 +666,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 }
 
                 if (SaveResponseXML)
-                    createRequestOrResponseXML("response", resp);
+                {
+                    mActWebService.AddOrUpdateReturnParamActual("Saved Response File Name", createRequestOrResponseXML("Response", resp));
+                }
                 try
                 {
                     List<GingerCore.General.XmlNodeItem> outputList = new List<GingerCore.General.XmlNodeItem>();

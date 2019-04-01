@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -3659,42 +3659,44 @@ namespace GingerCore.Drivers
                 foundElementsList = new ObservableList<ElementInfo>();
 
             string documentContents = Driver.PageSource;
-            HtmlDocument HAPDocument = new HtmlDocument();
-            HAPDocument.LoadHtml(documentContents);
-            IEnumerable<HtmlNode> tocChildren = HAPDocument.DocumentNode.Descendants().Where(x=>!x.Name.StartsWith("#"));
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(documentContents);
+            IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode.Descendants().Where(x=>!x.Name.StartsWith("#"));
 
-            if (tocChildren.Count() != 0)
+            if (htmlElements.Count() != 0)
             {
-                foreach (HtmlNode htmlNode in tocChildren)
+                foreach (HtmlNode htmlElemNode in htmlElements)
                 {
                     try
                     {
-
-
                         if (mStopProcess)
                         {
                             return foundElementsList;
                         }
 
-                        IWebElement el = Driver.FindElement(By.XPath(htmlNode.XPath));
-                        if (el == null)
-                            continue;
-
-                        // grab only visible elements
-                        if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0)
-                        {
-                            continue;
-                        }
+                        //get Element Type
+                        Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(htmlNode: htmlElemNode);
 
                         //filter element if needed                        
-                        Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(el);
                         if (filteredElementType != null && filteredElementType.Count > 0)
                         {
                             if (!filteredElementType.Contains(elementTypeEnum.Item2))
                             {
                                 continue;
                             }
-                        }//ElementInfo.ElementType
+                        }
+
+                        IWebElement el = Driver.FindElement(By.XPath(htmlElemNode.XPath));
+                        if (el == null)
+                        {
+                            continue;
+                        }
+
+                        //filter none visible elements
+                        if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0)
+                        {
+                            continue;
+                        }
 
                         HTMLElementInfo foundElemntInfo;
 
@@ -3705,13 +3707,13 @@ namespace GingerCore.Drivers
                             foundElemntInfo.ElementTypeEnum = elementTypeEnum.Item2;
                             foundElemntInfo.ElementObject = el;
                             foundElemntInfo.Path = path;
-                            foundElemntInfo.XPath = htmlNode.XPath;
-                            foundElemntInfo.HTMLElementObject = htmlNode;
+                            foundElemntInfo.XPath = htmlElemNode.XPath;
+                            foundElemntInfo.HTMLElementObject = htmlElemNode;
                             ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
                         }
                         else
                         {
-                            foundElemntInfo = GetElementInfoWithIWebElement(el, htmlNode, path, learnPartialElementInfoDetails);
+                            foundElemntInfo = GetElementInfoWithIWebElement(el, htmlElemNode, path, learnPartialElementInfoDetails);
                         }
                             
                         foundElemntInfo.IsAutoLearned = true;
@@ -3719,7 +3721,7 @@ namespace GingerCore.Drivers
                         allReadElem.Add(foundElemntInfo);
                         if (el.TagName == "iframe" || el.TagName == "frame")
                         {
-                            string xpath = htmlNode.XPath;
+                            string xpath = htmlElemNode.XPath;
                             Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(xpath)));
                             string newPath = string.Empty;
                             if (path == string.Empty)
@@ -3737,7 +3739,7 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Falied to learn the Web Element '{0}'", htmlNode.Name), ex);
+                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Falied to learn the Web Element '{0}'", htmlElemNode.Name), ex);
                     }
                 }
             }
@@ -3745,122 +3747,130 @@ namespace GingerCore.Drivers
             return foundElementsList;
         }
 
-        public static Tuple<string, eElementType> GetElementTypeEnum(IWebElement EL = null, string JSType = null)
+        public static Tuple<string, eElementType> GetElementTypeEnum(IWebElement el = null, string jsType = null, HtmlNode htmlNode = null)
         {
             Tuple<string, eElementType> returnTuple;
             eElementType elementType = eElementType.Unknown;
-            string tagName;
-            string type = string.Empty;
+            string elementTagName = string.Empty;
+            string elementTypeAtt = string.Empty;
 
-            if ((EL == null) && (JSType != null))
+            if ((el == null) && (jsType != null))
             {
-                tagName = JSType;
-                type = string.Empty;
+                elementTagName = jsType;
+                elementTypeAtt = string.Empty;
             }
-            else if ((EL != null) && (JSType == null))
+            else if ((el != null) && (jsType == null))
             {
-                if ((EL.TagName != null) && (EL.TagName != string.Empty))
-                    tagName = EL.TagName.ToUpper();
+                if ((el.TagName != null) && (el.TagName != string.Empty))
+                    elementTagName = el.TagName.ToUpper();
                 else
-                    tagName = "INPUT";
-                type = EL.GetAttribute("type");
+                    elementTagName = "INPUT";
+                elementTypeAtt = el.GetAttribute("type");
+            }
+            else if (htmlNode != null)
+            {
+                elementTagName = htmlNode.Name;
+                if (htmlNode.Attributes.Where(x => x.Name == "type").FirstOrDefault() != null)
+                {
+                    elementTypeAtt = htmlNode.Attributes["type"].Value;
+                }
             }
             else
             {
-                returnTuple = new Tuple<string, eElementType>( type, elementType );
+                returnTuple = new Tuple<string, eElementType>(elementTagName, elementType);
                 return returnTuple;
             }
 
-            if ((tagName.ToUpper() == "INPUT" && (type.ToUpper() == "UNDEFINED" || type.ToUpper() == "TEXT" || type.ToUpper() == "PASSWORD" || type.ToUpper() == "EMAIL")) ||
-                 tagName.ToUpper() == "TEXTAREA" || tagName.ToUpper() == "TEXT")
+            if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "UNDEFINED" || elementTypeAtt.ToUpper() == "TEXT" || elementTypeAtt.ToUpper() == "PASSWORD" || elementTypeAtt.ToUpper() == "EMAIL")) ||
+                 elementTagName.ToUpper() == "TEXTAREA" || elementTagName.ToUpper() == "TEXT")
             {
                 elementType = eElementType.TextBox;
             }
-            else if ((tagName.ToUpper() == "INPUT" && (type.ToUpper() == "IMAGE" || type.ToUpper() == "SUBMIT")) ||
-                    tagName.ToUpper() == "BUTTON" || tagName.ToUpper() == "SUBMIT")
+            else if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "IMAGE" || elementTypeAtt.ToUpper() == "SUBMIT")) ||
+                    elementTagName.ToUpper() == "BUTTON" || elementTagName.ToUpper() == "SUBMIT")
             {
                 elementType = eElementType.Button;
             }
-            else if (tagName.ToUpper() == "TD" || tagName.ToUpper() == "TH" || tagName.ToUpper() == "TR")
+            else if (elementTagName.ToUpper() == "TD" || elementTagName.ToUpper() == "TH" || elementTagName.ToUpper() == "TR")
             {
                 elementType = eElementType.TableItem;
             }
-            else if (tagName.ToUpper() == "LINK" || tagName.ToUpper() == "A" || tagName.ToUpper() == "LI")
+            else if (elementTagName.ToUpper() == "LINK" || elementTagName.ToUpper() == "A" || elementTagName.ToUpper() == "LI")
             {
                 elementType = eElementType.HyperLink;
             }
-            else if (tagName.ToUpper() == "LABEL" || tagName.ToUpper() == "TITLE")
+            else if (elementTagName.ToUpper() == "LABEL" || elementTagName.ToUpper() == "TITLE")
             {
                 elementType = eElementType.Label;
             }
-            else if (tagName.ToUpper() == "SELECT" || tagName.ToUpper() == "SELECT-ONE")
+            else if (elementTagName.ToUpper() == "SELECT" || elementTagName.ToUpper() == "SELECT-ONE")
             {
                 elementType = eElementType.ComboBox;
             }
-            else if (tagName.ToUpper() == "TABLE" || tagName.ToUpper() == "CAPTION")
+            else if (elementTagName.ToUpper() == "TABLE" || elementTagName.ToUpper() == "CAPTION")
             {
                 elementType = eElementType.Table;
             }
-            else if (tagName.ToUpper() == "JEDITOR.TABLE")
+            else if (elementTagName.ToUpper() == "JEDITOR.TABLE")
             {
                 elementType = eElementType.EditorPane;
             }
-            else if (tagName.ToUpper() == "DIV")
+            else if (elementTagName.ToUpper() == "DIV")
             {
                 elementType = eElementType.Div;
             }
-            else if (tagName.ToUpper() == "SPAN")
+            else if (elementTagName.ToUpper() == "SPAN")
             {
                 elementType = eElementType.Span;
             }
-            else if (tagName.ToUpper() == "IMG" || tagName.ToUpper() == "MAP")
+            else if (elementTagName.ToUpper() == "IMG" || elementTagName.ToUpper() == "MAP")
             {
                 elementType = eElementType.Image;
             }
-            else if ((tagName.ToUpper() == "INPUT" && type.ToUpper() == "CHECKBOX") || (tagName.ToUpper() == "CHECKBOX"))
+            else if ((elementTagName.ToUpper() == "INPUT" && elementTypeAtt.ToUpper() == "CHECKBOX") || (elementTagName.ToUpper() == "CHECKBOX"))
             {
                 elementType = eElementType.CheckBox;
             }
-            else if (tagName.ToUpper() == "OPTGROUP" || tagName.ToUpper() == "OPTION")
+            else if (elementTagName.ToUpper() == "OPTGROUP" || elementTagName.ToUpper() == "OPTION")
             {
 
                 elementType = eElementType.ComboBoxOption;
             }
-            else if ((tagName.ToUpper() == "INPUT" && type.ToUpper() == "RADIO") || (tagName.ToUpper() == "RADIO"))
+            else if ((elementTagName.ToUpper() == "INPUT" && elementTypeAtt.ToUpper() == "RADIO") || (elementTagName.ToUpper() == "RADIO"))
             {
                 elementType = eElementType.RadioButton;
             }
-            else if (tagName.ToUpper() == "IFRAME")
+            else if (elementTagName.ToUpper() == "IFRAME")
             {
                 elementType = eElementType.Iframe;
             }
-            else if (tagName.ToUpper() == "CANVAS")
+            else if (elementTagName.ToUpper() == "CANVAS")
             {
                 elementType = eElementType.Canvas;
             }
-            else if (tagName.ToUpper() == "FORM")
+            else if (elementTagName.ToUpper() == "FORM")
             {
                 elementType = eElementType.Form;
             }
-            else if (tagName.ToUpper() == "UL" || tagName.ToUpper() == "OL" || tagName.ToUpper() == "DL")
+            else if (elementTagName.ToUpper() == "UL" || elementTagName.ToUpper() == "OL" || elementTagName.ToUpper() == "DL")
             {
                 elementType = eElementType.List;
             }
-            else if (tagName.ToUpper() == "LI" || tagName.ToUpper() == "DT" || tagName.ToUpper() == "DD")
+            else if (elementTagName.ToUpper() == "LI" || elementTagName.ToUpper() == "DT" || elementTagName.ToUpper() == "DD")
             {
                 elementType = eElementType.ListItem;
             }
-            else if (tagName.ToUpper() == "MENU")
+            else if (elementTagName.ToUpper() == "MENU")
             {
                 elementType = eElementType.MenuBar;
             }
-            else if (tagName.ToUpper() == "H1" || tagName.ToUpper() == "H2" || tagName.ToUpper() == "H3" || tagName.ToUpper() == "H4" || tagName.ToUpper() == "H5" || tagName.ToUpper() == "H6" || tagName.ToUpper() == "P")
+            else if (elementTagName.ToUpper() == "H1" || elementTagName.ToUpper() == "H2" || elementTagName.ToUpper() == "H3" || elementTagName.ToUpper() == "H4" || elementTagName.ToUpper() == "H5" || elementTagName.ToUpper() == "H6" || elementTagName.ToUpper() == "P")
             {
                 elementType = eElementType.Text;
             }
             else
                 elementType = eElementType.Unknown;
-            returnTuple = new Tuple<string, eElementType>(tagName, elementType);
+            returnTuple = new Tuple<string, eElementType>(elementTagName, elementType);
 
             return returnTuple;
         }
@@ -3878,7 +3888,6 @@ namespace GingerCore.Drivers
             if (string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/")
             {
                 EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
-
             }
 
             EI.ElementName = GetElementName(EI as HTMLElementInfo);
@@ -4720,7 +4729,15 @@ namespace GingerCore.Drivers
                         string id = string.Empty;
                         if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null && !string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).ID))
                         {
-                            id = ((HTMLElementInfo)ElementInfo).ID;
+                            HtmlAttribute idAttribute = ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes.Where(x => x.Name == "id").FirstOrDefault();
+                            if (idAttribute != null)
+                            {
+                                id = idAttribute.Value;
+                            }
+                            else
+                            {
+                                id = ((HTMLElementInfo)ElementInfo).ID;
+                            }
                         }
                         else
                         {
@@ -4738,7 +4755,15 @@ namespace GingerCore.Drivers
                         string name = string.Empty;
                         if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null && !string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).Name))
                         {
-                            name = ((HTMLElementInfo)ElementInfo).Name;
+                            HtmlAttribute nameAttribute = ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes.Where(x => x.Name == "name").FirstOrDefault();
+                            if (nameAttribute != null)
+                            {
+                                name = nameAttribute.Value;
+                            }
+                            else
+                            {
+                                name = ((HTMLElementInfo)ElementInfo).Name;
+                            }
                         }
                         else
                         {
@@ -6775,7 +6800,10 @@ namespace GingerCore.Drivers
             EI.ElementType = GenerateElementType(webElement);
             EI.ElementTypeEnum = GetElementTypeEnum(webElement).Item2;
             EI.Path = ChildElementInfo.Path;
-            EI.XPath = ChildElementInfo.XPath.Substring(0, ChildElementInfo.XPath.LastIndexOf("/"));
+            if (!string.IsNullOrEmpty(ChildElementInfo.XPath))
+            {
+                EI.XPath = ChildElementInfo.XPath.Substring(0, ChildElementInfo.XPath.LastIndexOf("/"));
+            }
             EI.ElementObject = el;
             EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
             return EI;
@@ -6783,9 +6811,17 @@ namespace GingerCore.Drivers
 
         string IXPath.GetElementProperty(ElementInfo ElementInfo, string PropertyName)
         {
+            string elementProperty = null;
+            
+            if (ElementInfo.ElementObject == null)
+            {
+                ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+            }
 
-            IWebElement el = Driver.FindElement(By.XPath(ElementInfo.XPath));
-            string elementProperty = el.GetAttribute(PropertyName);
+            if (ElementInfo.ElementObject != null)
+            {
+                elementProperty = ((IWebElement)ElementInfo.ElementObject).GetAttribute(PropertyName);
+            }
             return elementProperty;
         }
 
@@ -7007,7 +7043,9 @@ namespace GingerCore.Drivers
                 mIsDriverBusy = true;
                 SwitchFrame(EI);
                 foreach (ElementLocator el in EI.Locators)
+                {
                     el.LocateStatus = ElementLocator.eLocateStatus.Pending;
+                }
 
                 List<ElementLocator> activesElementLocators = EI.Locators.Where(x => x.Active == true).ToList();
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
@@ -7042,6 +7080,10 @@ namespace GingerCore.Drivers
             }
             finally
             {
+                foreach (ElementLocator el in EI.Locators.Where(x=>x.LocateStatus == ElementLocator.eLocateStatus.Pending).ToList())
+                {
+                    el.LocateStatus = ElementLocator.eLocateStatus.Unknown;
+                }
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
                 mIsDriverBusy = false;
             }
@@ -7110,6 +7152,11 @@ namespace GingerCore.Drivers
         {
             Driver.SwitchTo().DefaultContent();
             InjectSpyIfNotIngected();
+        }
+
+        public string GetElementXpath(ElementInfo EI)
+        {
+            return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
         }
     }
 }

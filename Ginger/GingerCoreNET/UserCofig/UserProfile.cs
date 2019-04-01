@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -94,30 +94,7 @@ namespace Ginger
         {
             public string Name { get; set; }
             public int Width { get; set; }
-        }
-
-        public string LocalWorkingFolder { get; set; }
-
-        public Solution mSolution {
-            get
-            {
-                return (Solution)WorkSpace.Instance.Solution;
-            }
-            set
-            {
-                WorkSpace.Instance.Solution = value;
-            }
-        }
-
-        public Solution Solution
-        {
-            get { return mSolution; }
-            set
-            {
-                mSolution = value;
-                OnPropertyChanged(nameof(Solution));
-            }
-        }
+        }             
 
         public List<UserProfileGrid> Grids = new List<UserProfileGrid>();
 
@@ -430,18 +407,18 @@ namespace Ginger
 
         public void SaveRecentAppAgentsMapping()
         {
-            if (mSolution != null)
+            if (WorkSpace.Instance.Solution != null)
             {
                 //remove last saved mapping for this solution
-                string existingSolMapping = RecentAppAgentsMapping.Where(x => x.Contains(mSolution.Name + "***") == true).FirstOrDefault();
+                string existingSolMapping = RecentAppAgentsMapping.Where(x => x.Contains(WorkSpace.Instance.Solution.Name + "***") == true).FirstOrDefault();
                 if (string.IsNullOrEmpty(existingSolMapping) == false)
                 {
                     RecentAppAgentsMapping.Remove(existingSolMapping);
                 }
 
                 //create new save to this solution
-                existingSolMapping = mSolution.Name + "***";
-                foreach (ApplicationPlatform ap in mSolution.ApplicationPlatforms)
+                existingSolMapping = WorkSpace.Instance.Solution.Name + "***";
+                foreach (ApplicationPlatform ap in WorkSpace.Instance.Solution.ApplicationPlatforms)
                 {
                     if (string.IsNullOrEmpty(ap.LastMappedAgentName) == false)
                     {
@@ -454,17 +431,17 @@ namespace Ginger
 
         public void LoadRecentAppAgentMapping()
         {
-            if (mSolution != null)
+            if (WorkSpace.Instance.Solution != null)
             {
                 //unserialize the current solution mapping saving
-                string existingSolMapping = RecentAppAgentsMapping.Where(x => x.Contains(mSolution.Name + "***") == true).FirstOrDefault();
+                string existingSolMapping = RecentAppAgentsMapping.Where(x => x.Contains(WorkSpace.Instance.Solution.Name + "***") == true).FirstOrDefault();
                 if (string.IsNullOrEmpty(existingSolMapping))
                 {
                     return;//no saved mapping
                 }
                 else
                 {
-                    string solName = mSolution.Name + "***";
+                    string solName = WorkSpace.Instance.Solution.Name + "***";
                     existingSolMapping = existingSolMapping.Replace(solName, string.Empty);
                     List<string> appAgentMapping = existingSolMapping.Split(new char[] { '#' }, StringSplitOptions.RemoveEmptyEntries).ToList();
                     Dictionary<string, string> mappingDic = new Dictionary<string, string>();
@@ -480,7 +457,7 @@ namespace Ginger
                     //update the solution apps with the saved mapping
                     if (mappingDic.Count > 0)
                     {
-                        foreach (ApplicationPlatform ap in mSolution.ApplicationPlatforms)
+                        foreach (ApplicationPlatform ap in WorkSpace.Instance.Solution.ApplicationPlatforms)
                         {
                             if (mappingDic.Keys.Contains(ap.AppName))
                             {

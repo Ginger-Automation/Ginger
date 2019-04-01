@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return "Dummy/PlaceHolder";
+                return "Data Source Manipulation";
             }
         }
 
@@ -111,6 +111,17 @@ namespace GingerCore.Actions
                     }
                     else
                         outVal = ETERC.ValueCalculated;
+                    break;
+                case eControlAction.DeleteRow:
+                    ValueExpression veDel = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
+                    veDel.Value = ValueExp;
+                    outVal = veDel.ValueCalculated;
+                    int rowCount = 0;
+                    if(!string.IsNullOrEmpty(outVal) && !int.TryParse(outVal, out rowCount))
+                    {
+                        this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        Error = outVal;
+                    }
                     break;
                 default:
                     ValueExpression VEDR = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,13 +34,16 @@ namespace Ginger.Environments
     public partial class ApplicationPage : Page
     {
         EnvApplication mEnvApplication;
-        public ApplicationPage(EnvApplication app)
+
+        Context mContext;
+
+        public ApplicationPage(EnvApplication app, Context context)
         {
             InitializeComponent();
             mEnvApplication = app;
-
-            App.ObjFieldBinding(ApplicationNameTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Name));
-            App.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Description));
+            mContext = context;
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ApplicationNameTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Description));
 
             UpdateParametersTabHeader();
             app.GeneralParams.CollectionChanged += GeneralParams_CollectionChanged;
@@ -98,7 +101,7 @@ namespace Ginger.Environments
             {
                 if (DBsFrame.Content == null)
                 {                    
-                    DBsFrame.Content = new AppDataBasesPage(mEnvApplication);
+                    DBsFrame.Content = new AppDataBasesPage(mEnvApplication, mContext);
                     return;
                 }
             }

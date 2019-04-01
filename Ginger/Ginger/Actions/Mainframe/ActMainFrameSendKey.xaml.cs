@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ namespace Ginger.Actions.Mainframe
         {
             mAct = Act;
             InitializeComponent();
-            App.FillComboFromEnumVal (KeyToSend, mAct.KeyToSend);
-            App.ObjFieldBinding(KeyToSend, ComboBox.SelectedValueProperty, mAct, "KeyToSend");
+            GingerCore.General.FillComboFromEnumObj(KeyToSend, mAct.KeyToSend);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(KeyToSend, ComboBox.SelectedValueProperty, mAct, "KeyToSend");
         }
     }
 }

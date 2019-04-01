@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions.Java;
 using GingerCore.GeneralLib;
 using System;
@@ -31,7 +32,7 @@ namespace Ginger.Actions.Java
     {
         private ActJavaEXE mAct;
 
-        string JarFilesPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\Java\");
+        string JarFilesPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\Java\");
 
         public ActJavaEXEEditPage(ActJavaEXE act)
         {
@@ -51,9 +52,9 @@ namespace Ginger.Actions.Java
 
         private void DoBinding()
         {
-            JavaPathTextBox.Init(mAct, ActJavaEXE.Fields.JavaWSEXEPath);
-            GingerCore.General.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, mAct, ActJavaEXE.Fields.ScriptName);
-            GingerCore.General.ObjFieldBinding(ScriptDescriptionLabel, Label.ContentProperty, mAct, ActJavaEXE.Fields.ScriptDecription);
+            JavaPathTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActJavaEXE.Fields.JavaWSEXEPath);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, mAct, ActJavaEXE.Fields.ScriptName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptDescriptionLabel, Label.ContentProperty, mAct, ActJavaEXE.Fields.ScriptDecription);
 
             ScriptNameComboBox.SelectionChanged += ScriptNameComboBox_SelectionChanged;//here so won't be triggered after binding but only on user change
         }

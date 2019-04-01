@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,14 +20,9 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
-using Ginger.ApplicationModelsLib.APIModels;
-using Ginger.Extensions;
 using Ginger.UserControls;
-using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
-using GingerWPF.BindingLib;
-using GingerWPF.UserControlsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,7 +31,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using static GingerWPF.ApplicationModelsLib.APIModelWizard.ModelParamsPage;
 
 namespace GingerWPF.ApplicationModelsLib.APIModels
 {
@@ -72,8 +66,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void InitializeUIByActionType()
         {
-            ControlsBinding.ObjFieldBinding(txtName, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.Name));
-            ControlsBinding.ObjFieldBinding(txtDescription, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.Description));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtName, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDescription, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.Description));
 
             FillTargetAppsComboBox();
             xTargetApplicationComboBox.Init(mApplicationAPIModel, nameof(ApplicationAPIModel.TargetApplicationKey));
@@ -88,7 +82,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             ContentTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.ContentType), typeof(ApplicationAPIUtils.eContentType), false, ContentTypeChange);
             ResponseTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.ResponseContentType), typeof(ApplicationAPIUtils.eContentType));
             //Check maybe the binding of TemplateFileNameFileBrowser need to be different between soap and rest
-            ControlsBinding.ObjFieldBinding(TemplateFileNameFileBrowser, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.TemplateFileNameFileBrowser));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TemplateFileNameFileBrowser, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.TemplateFileNameFileBrowser));
 
             xTargetApplicationComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             xAPITypeComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
@@ -100,8 +94,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
 
             ApplicationAPIModel AAMS = mApplicationAPIModel as ApplicationAPIModel;
-            ControlsBinding.ObjFieldBinding(SoapActionTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(AAMS.SOAPAction));
-            ControlsBinding.ObjFieldBinding(TemplateFileNameFileBrowser, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.TemplateFileNameFileBrowser));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SoapActionTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(AAMS.SOAPAction));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TemplateFileNameFileBrowser, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.TemplateFileNameFileBrowser));
 
             SetViewByAPIType(mApplicationAPIModel.APIType);
         }
@@ -131,7 +125,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             //get key object 
             if (mApplicationAPIModel.TargetApplicationKey != null)
             {
-                RepositoryItemKey key =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == mApplicationAPIModel.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
+                RepositoryItemKey key =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Guid == mApplicationAPIModel.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
                 if (key != null)
                 {
                     mApplicationAPIModel.TargetApplicationKey = key;
@@ -141,7 +135,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
                 }
             }
-            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.UserProfile.Solution.ApplicationPlatforms;
+            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.Instance.Solution.ApplicationPlatforms;
             xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
         }
@@ -173,10 +167,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         public void BindUiControls()
         {
             //URL fields:
-            ControlsBinding.ObjFieldBinding(EndPointURLTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.EndpointURL));
-            ControlsBinding.ObjFieldBinding(URLUserTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLUser));
-            ControlsBinding.ObjFieldBinding(URLDomainTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLDomain));
-            ControlsBinding.ObjFieldBinding(URLPasswordTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLPass));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EndPointURLTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.EndpointURL));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLUserTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLUser));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLDomainTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLDomain));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLPasswordTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLPass));
 
             //Network Credential selection radio button:
             switch (mApplicationAPIModel.NetworkCredentials)
@@ -213,21 +207,21 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             }
 
             //Do Not Fail Action On Bad Response
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(DoNotFailActionOnBadRespose, CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.DoNotFailActionOnBadRespose));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DoNotFailActionOnBadRespose, CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.DoNotFailActionOnBadRespose));
 
             //Request Body fields:
-            ControlsBinding.ObjFieldBinding(RequestBodyTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.RequestBody));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RequestBodyTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.RequestBody));
             RequestBodyTextBox.Height = 200;
 
             //Import Request File
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(DoNotImportRequestFile, CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.ImportRequestFile));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DoNotImportRequestFile, CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.ImportRequestFile));
 
             //SSL Certificates:
-            ControlsBinding.ObjFieldBinding(CertificatePath, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.CertificatePath));
-            ControlsBinding.ObjFieldBinding(CertificatePasswordUCValueExpression, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.CertificatePassword));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CertificatePath, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.CertificatePath));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CertificatePasswordUCValueExpression, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.CertificatePassword));
 
             //Import Certificate
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(DoNotCertificateImportFile, CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.ImportCetificateFile));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DoNotCertificateImportFile, CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.ImportCetificateFile));
 
             //Security:
             SecurityTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.SecurityType), typeof(ApplicationAPIUtils.eSercurityType));
@@ -236,8 +230,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             //Authorization:
             AuthTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.AuthorizationType), typeof(ApplicationAPIUtils.eAuthType), false, AuthorizationBox);
             AuthTypeComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
-            ControlsBinding.ObjFieldBinding(AuthUserTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.AuthUsername));
-            ControlsBinding.ObjFieldBinding(AuthPasswordTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.AuthPassword));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AuthUserTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.AuthUsername));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AuthPasswordTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.AuthPassword));
 
             SetHTTPHeadersGrid();
             SetKeyValuesGrid();

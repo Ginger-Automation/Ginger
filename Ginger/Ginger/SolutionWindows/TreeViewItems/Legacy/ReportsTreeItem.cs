@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         private ReportTemplatesPage mReportTemplatesPage;
 
-        string Path =  WorkSpace.UserProfile.Solution.Folder;
+        string Path =  WorkSpace.Instance.Solution.Folder;
 
         Object ITreeViewItem.NodeObject()
         {

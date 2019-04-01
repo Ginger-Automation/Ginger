@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -866,7 +866,7 @@ namespace GingerCore
 
             //ProjEnvironment = App.AutomateTabEnvironment;
             //BusinessFlow = App.BusinessFlow; ;
-            //SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
+            //SolutionFolder =  WorkSpace.Instance.Solution.Folder;
             //DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             SolutionFolder =WorkSpace.Instance.SolutionRepository.SolutionFolder;
             try

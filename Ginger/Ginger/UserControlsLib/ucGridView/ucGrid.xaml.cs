@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -133,10 +133,10 @@ namespace Ginger
                             grdMain.SelectedIndex = 0;
                             grdMain.CurrentItem = value[0];
                             // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
-                            mObjList.CurrentItem = value[0];
+                            mObjList.CurrentItem = value[0];                          
                         }
                     });
-                    UpdateFloatingButtons();                   
+                    UpdateFloatingButtons();
                 }
                 catch (InvalidOperationException ioe)
                 {
@@ -1051,7 +1051,6 @@ namespace Ginger
                         grdMain.SelectedIndex = index;
                     }
                 });
-
                 UpdateFloatingButtons();
             }
         }
@@ -1063,7 +1062,7 @@ namespace Ginger
                 this.Dispatcher.Invoke(() =>
                 {
                     o = grdMain.SelectedItem;
-                });
+            });
                 return o;
             }
         }
@@ -1536,15 +1535,18 @@ public void RemoveCustomView(string viewName)
             return template;
         }
 
-        public static DataTemplate getDataColValueExpressionTemplate(string Path)
+        public static DataTemplate getDataColValueExpressionTemplate(string Path,Context context)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory factory = new FrameworkElementFactory(typeof(UCValueExpression));
             factory.SetBinding(UCDataColGrid.DataContextProperty, new Binding(Path));
+            //factory.SetValue(UCValueExpression.mContextProperty, context); //TODO: need to be fixed
             template.VisualTree = factory;
+          
 
             return template;
         }
+ 
 
         public static DataTemplate getDataColActionDetailsTemplate(string Path)
         {
@@ -2177,6 +2179,20 @@ public void RemoveCustomView(string viewName)
                 ClearFloatingButtons();
         }
 
+        private int GetCheckedRowCount()
+        {
+            int count = 0;
+            for(int i = 0; i < Grid.Items.Count; i++)
+            {
+                var cItem = grdMain.Items[i];
+                var mycheckbox = grdMain.Columns[0].GetCellContent(cItem) as CheckBox;
+                if (mycheckbox != null && (bool)mycheckbox.IsChecked)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
 
         public static readonly DependencyProperty RowsCountProperty = DependencyProperty.Register(
                     "RowsCount", typeof(int), typeof(ucGrid), new PropertyMetadata(0));        
@@ -2191,6 +2207,7 @@ public void RemoveCustomView(string viewName)
         {
             CantBeEmpty,
             OnlyOneItem,
+            CheckedRowCount
         }
 
         public List<eUcGridValidationRules> ValidationRules = new List<eUcGridValidationRules>();
@@ -2209,6 +2226,16 @@ public void RemoveCustomView(string viewName)
 
                     case eUcGridValidationRules.OnlyOneItem:
                         if (Grid.Items.Count != 1) validationRes= true;
+                        break;
+
+                    case eUcGridValidationRules.CheckedRowCount:
+                        {
+                            int count = GetCheckedRowCount();
+                            if (count <= 0)
+                            {
+                                validationRes = true; 
+                            }
+                        }
                         break;
                 }
             }
