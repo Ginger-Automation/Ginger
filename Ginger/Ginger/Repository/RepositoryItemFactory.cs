@@ -377,11 +377,9 @@ namespace Ginger.Repository
         }
 
         public void RunRunSetFromCommandLine()
-        {
-            App.MainWindow.Hide();
-            App.AppSplashWindow.Close();
+        {                     
             AutoRunWindow RP = new AutoRunWindow();
-            RP.Show();
+            RP.Show();            
         }
 
         bool IRepositoryItemFactory.Send_Outlook(bool actualSend, string MailTo, string Event, string Subject, string Body, string MailCC, List<string> Attachments, List<KeyValuePair<string, string>> EmbededAttachment)
