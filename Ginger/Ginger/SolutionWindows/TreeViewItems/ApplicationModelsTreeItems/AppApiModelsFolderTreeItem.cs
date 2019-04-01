@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
 
 namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 {
@@ -170,6 +171,39 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         public void AddAPIModelFromDocument(object sender, RoutedEventArgs e)
         {            
             WizardWindow.ShowWizard(new AddAPIModelWizard(mAPIModelFolder), 1000);
+        }
+
+        public override bool PasteCopiedTreeItem(object nodeItemToCopy, TreeViewItemGenericBase targetFolderNode, bool toRefreshFolder = true)
+        {
+            if (nodeItemToCopy is RepositoryItemBase)
+            {
+                RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)nodeItemToCopy);
+                if (copiedItem != null)
+                {
+                    HandleGlobalModelParameters(nodeItemToCopy, copiedItem);
+                    ((RepositoryFolderBase)(((ITreeViewItem)targetFolderNode).NodeObject())).AddRepositoryItem(copiedItem);
+                    return true;
+                }
+                return false;
+            }
+            else
+            {
+                //implement for other item types
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The " + mCurrentFolderNodePastOperations.ToString() + " operation for this item type was not implemented yet.");
+                return false;
+            }
+        }
+
+        // avoid generating new GUIDs for Global Model Parameters associated to API Model being copied
+        private void HandleGlobalModelParameters(object item, RepositoryItemBase copiedItem)
+        {
+            if (item.GetType() == typeof(ApplicationAPIModel))
+            {
+                foreach (GlobalAppModelParameter gAMPara in (copiedItem as ApplicationAPIModel).GlobalAppModelParameters)
+                {
+                    gAMPara.Guid = (item as ApplicationAPIModel).GlobalAppModelParameters.Where(m => m.ElementName == gAMPara.ElementName).FirstOrDefault().Guid;
+                }
+            }
         }
     }
 }
