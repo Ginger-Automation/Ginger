@@ -35,9 +35,6 @@ namespace Ginger.Run
         public AutoRunWindow()
         {
             InitializeComponent();
-
-            this.Show();
-
             NewRunSetPage runSetPage = new NewRunSetPage(WorkSpace.Instance.RunsetExecutor.RunSetConfig);
             this.Content = runSetPage;
         }

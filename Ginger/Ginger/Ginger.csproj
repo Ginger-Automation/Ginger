@@ -2599,7 +2599,7 @@
     <Resource Include="Images\Workflow32x32.png" />
     <Resource Include="Images\X16x16.png" />
     <Content Include="Reports\GingerExecutionReport\ActivityGroupReport.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\assets\img\%40item_next.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -4592,7 +4592,7 @@
     <Content Include="CI\increasebuildNum.vbs" />
     <Resource Include="Reports\Designer\ScreenShot1.png" />
     <Content Include="Reports\GingerExecutionReport\ActionReport.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\ActivityReport.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
