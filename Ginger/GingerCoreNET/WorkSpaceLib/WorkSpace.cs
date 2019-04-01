@@ -186,6 +186,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }        
 
+        // Running from CLI
         public bool RunningInExecutionMode = false;
         
         public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
