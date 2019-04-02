@@ -398,7 +398,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Replacing relative path with solution path", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to replace relative path sign '~' with Solution path for the path: '" + relativePath + "'", ex);
             }
 
             return relativePath;
