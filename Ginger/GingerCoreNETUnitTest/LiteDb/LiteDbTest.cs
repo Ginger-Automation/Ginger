@@ -35,7 +35,7 @@ namespace GingerCoreNETUnitTest.LiteDb
             dbConector.SetCollection(bfLiteColl, filterData);
         }
 
-        [TestInitialize]
+        [ClassInitialize]
         public void InitTest()
         {
             dbConector = new LiteDbConnector("LiteDbData.db");
