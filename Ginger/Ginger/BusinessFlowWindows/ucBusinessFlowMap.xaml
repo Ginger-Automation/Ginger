@@ -18,7 +18,11 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TextBox x:Name="xBFTextBox" Grid.Column="0" Style="{StaticResource $TextBoxStyle}" Height="25" Width="310" HorizontalAlignment="Left" IsReadOnly="True" VerticalAlignment="Top" Margin="2,0,2,3"></TextBox>
-        <usercontrols:ucButton Grid.Column="1" x:Name="xSelectBF" HorizontalAlignment="Left" ToolTip="Select Business Flow" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Edit" Click="xSelectBF_Click" VerticalAlignment="Top" Margin="-5,-8,0,0"  />
+        <usercontrols:ucButton Grid.Column="1" x:Name="xSelectBF" HorizontalAlignment="Left" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Edit" Click="xSelectBF_Click" VerticalAlignment="Top" Margin="-5,-8,0,0"  >
+            <usercontrols:ucButton.ToolTip>
+                <GingerCore:ucTextDicResource Text="Select [BusinessFlow]"/>
+            </usercontrols:ucButton.ToolTip>
+        </usercontrols:ucButton>
         <usercontrols:ucButton Grid.Column="2" x:Name="xGoToAutomateBtn" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoNext" Click="xGoToAutomateBtn_Click" ToolTip="Go To Automate Tab" Visibility="Hidden" Margin="-5,-5,0,0" />
     </Grid>
 </UserControl>

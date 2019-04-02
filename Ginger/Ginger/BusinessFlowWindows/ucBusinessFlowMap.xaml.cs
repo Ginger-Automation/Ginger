@@ -35,6 +35,9 @@ namespace Ginger.BusinessFlowWindows
     /// </summary>
     public partial class ucBusinessFlowMap : UserControl
     {
+        Object mObjectElementType;
+        string mElementTypeFieldName;
+
         BusinessFlow mBusinessFlow;
         public BusinessFlow BusinessFlow
         {
@@ -50,6 +53,10 @@ namespace Ginger.BusinessFlowWindows
                 mBusinessFlowRepositoryKey = new RepositoryItemKey();
                 mBusinessFlowRepositoryKey.Guid = mBusinessFlow.Guid;
                 mBusinessFlowRepositoryKey.ItemName = mBusinessFlow.Name;
+                if (mObjectElementType != null)
+                {
+                    mObjectElementType.GetType().GetProperty(mElementTypeFieldName).SetValue(mObjectElementType, mBusinessFlowRepositoryKey); 
+                }
             }
         }
 
@@ -80,9 +87,12 @@ namespace Ginger.BusinessFlowWindows
             }
         }
 
-        public ucBusinessFlowMap()
+        public ucBusinessFlowMap(Object objectElementType, string elementTypeFieldName)
         {
-            InitializeComponent(); 
+            InitializeComponent();
+
+            mObjectElementType = objectElementType;
+            mElementTypeFieldName = elementTypeFieldName;
         }
 
         private void xSelectBF_Click(object sender, RoutedEventArgs e)

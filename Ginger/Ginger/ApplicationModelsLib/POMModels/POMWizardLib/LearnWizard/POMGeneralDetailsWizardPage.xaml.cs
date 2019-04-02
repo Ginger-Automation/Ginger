@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.Actions.UserControls;
+using Ginger.BusinessFlowWindows;
 using GingerCore.Actions.VisualTesting;
 using GingerWPF.WizardLib;
 using System;
@@ -38,6 +39,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     {
         AddPOMWizard mWizard;
         ScreenShotViewPage mScreenshotPage;
+        ucBusinessFlowMap mBusinessFlowControl;
 
         public POMGeneralDetailsWizardPage()
         {
@@ -57,7 +59,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xURLTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.PageURL));
 
                     xDescriptionTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.Description));
-                    xTagsViewer.Init(mWizard.mPomLearnUtils.POM.TagsKeys);                    
+                    xTagsViewer.Init(mWizard.mPomLearnUtils.POM.TagsKeys);
+
+                    mBusinessFlowControl = new ucBusinessFlowMap(mWizard.mPomLearnUtils.POM, nameof(mWizard.mPomLearnUtils.POM.MappedBusinessFlow));
+                    xFrameBusinessFlowControl.Content = mBusinessFlowControl;
+                    SetDefaultPage();
                     break;
                 case EventType.Active:
                     ShowScreenShot();
@@ -68,8 +74,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     else
                     {
                         xTakeScreenShotLoadButton.Visibility = Visibility.Visible;
-                    }
-                    SetDefaultPage();                    
+                    }                                   
                     break;
             }
         }
@@ -77,7 +82,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private void SetDefaultPage()
         {
             xPageUrlRadioBtn.IsChecked = true;
-            xBusinessFlowControl.TargetApplication = mWizard.mPomLearnUtils.POM.TargetApplicationKey.ItemName;
+            mBusinessFlowControl.TargetApplication = mWizard.mPomLearnUtils.POM.TargetApplicationKey.ItemName;
         }
 
         public void ShowScreenShot()
@@ -120,32 +125,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 }
             }
         }
-
-        private void XBusinessFlowControl_ElementChangedPageEvent()
-        {            
-            if (xBusinessFlowControl != null && xBusinessFlowControl.BusinessFlow != null)
-            {
-                mWizard.mPomLearnUtils.POM.MappedBusinessFlow = xBusinessFlowControl.BusinessFlowRepositoryKey;
-            }
-        }
-
-        private void xPageUrlRadioBtn_Checked(object sender, RoutedEventArgs e)
+        
+        private void xRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            SetControlsVisibility(false);
-        }
-
-        private void xBusinessFlowRadioBtn_Checked(object sender, RoutedEventArgs e)
-        {
-            SetControlsVisibility(true);
-        }
-
-        private void SetControlsVisibility(bool isBusinessFlow)
-        {
-            if (xPageUrlStackPanel != null && xBusinessFlowControl != null)
+            if (Convert.ToBoolean(xPageUrlRadioBtn.IsChecked))
             {
                 mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.PageURL;
-                xPageUrlStackPanel.Visibility = isBusinessFlow ? Visibility.Hidden : Visibility.Visible;
-                xBusinessFlowControl.Visibility = isBusinessFlow ? Visibility.Visible : Visibility.Hidden;
+                xURLTextBox.Visibility = Visibility.Visible;
+                xFrameBusinessFlowControl.Visibility = Visibility.Hidden; 
+            }
+            else
+            {
+                mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.BusinessFlow;
+                xFrameBusinessFlowControl.Visibility = Visibility.Visible;
+                xURLTextBox.Visibility = Visibility.Hidden;
             }
         }
     }

@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.Agents;
+using Ginger.BusinessFlowWindows;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
@@ -67,6 +68,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
+        ucBusinessFlowMap mBusinessFlowControl;
+
         public IWindowExplorer mWinExplorer
         {
             get
@@ -94,6 +97,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
             InitializeComponent();
             mPOM = POM;
             mEditMode = editMode;
+            
+            mBusinessFlowControl = new ucBusinessFlowMap(mPOM, nameof(mPOM.MappedBusinessFlow));
+            xFrameBusinessFlowControl.Content = mBusinessFlowControl;
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
@@ -121,6 +127,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             ObservableList<Agent> optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
             xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
+
             SetDefaultPage();
         }
 
@@ -136,7 +143,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             if (mPOM.MappedBusinessFlow != null)
             {
-                xBusinessFlowControl.BusinessFlow = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(mPOM.MappedBusinessFlow.Guid); 
+                mBusinessFlowControl.BusinessFlow = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(mPOM.MappedBusinessFlow.Guid); 
             }
         }
 
@@ -171,8 +178,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (xTargetApplicationComboBox.SelectedValue != null)
-            {                
-                xBusinessFlowControl.TargetApplication = Convert.ToString(((Amdocs.Ginger.Repository.RepositoryItemKey)xTargetApplicationComboBox.SelectedValue).ItemName); 
+            {
+                mBusinessFlowControl.TargetApplication = Convert.ToString(((Amdocs.Ginger.Repository.RepositoryItemKey)xTargetApplicationComboBox.SelectedValue).ItemName); 
             }
         }
 
@@ -350,32 +357,20 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 Mouse.OverrideCursor = null;
             }
         }
-
-        private void xPageUrlRadioBtn_Checked(object sender, RoutedEventArgs e)
+        
+        private void xRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            SetControlsVisibility(false);
-        }
-
-        private void xBusinessFlowRadioBtn_Checked(object sender, RoutedEventArgs e)
-        {
-            SetControlsVisibility(true);
-        }
-
-        private void SetControlsVisibility(bool isBusinessFlow)
-        {
-            if (xPageUrlStackPanel != null && xBusinessFlowControl != null)
+            if (Convert.ToBoolean(xPageUrlRadioBtn.IsChecked))
             {
                 mPOM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.PageURL;
-                xPageUrlStackPanel.Visibility = isBusinessFlow ? Visibility.Collapsed : Visibility.Visible;
-                xBusinessFlowControl.Visibility = isBusinessFlow ? Visibility.Visible : Visibility.Collapsed;
+                xPageUrlStackPanel.Visibility = Visibility.Visible;
+                xFrameBusinessFlowControl.Visibility = Visibility.Collapsed;
             }
-        }
-
-        private void XBusinessFlowControl_ElementChangedPageEvent()
-        {
-            if(xBusinessFlowControl != null && xBusinessFlowControl.BusinessFlow != null)
+            else
             {
-                mPOM.MappedBusinessFlow = xBusinessFlowControl.BusinessFlowRepositoryKey;
+                mPOM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.BusinessFlow;
+                xPageUrlStackPanel.Visibility = Visibility.Collapsed;
+                xFrameBusinessFlowControl.Visibility = Visibility.Visible;
             }
         }
     }
