@@ -608,6 +608,7 @@ namespace Ginger
                         {
                             if ( WorkSpace.Instance.RunningInExecutionMode == false && RunningFromUnitTest == false)
                             {
+                                MainWindow.HideSplash();
                                 UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, SolutionFolder, string.Empty, higherVersionFiles.ToList());
                                 gingerUpgradePage.ShowAsWindow();
                             }
@@ -892,9 +893,7 @@ namespace Ginger
             InitApp();
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
-
-            // !!!! temp
-            SetSolution(@"C:\Yaron\GingerSolutions\Ginger Demo");
+            
             CLIProcessor.ExecuteArgs(args);
             // do proper close !!!         
             System.Windows.Application.Current.Shutdown();
@@ -922,18 +921,9 @@ namespace Ginger
             InitApp();
 
             MainWindow.Init();
-            HideSplash();
+            MainWindow.HideSplash();
         }
 
-        private void HideSplash()
-        {
-            // Hide the splash after one second
-            Task.Factory.StartNew(() => {
-                this.Dispatcher.Invoke(() => {
-                    Thread.Sleep(1000);
-                    MainWindow.xSplashGrid.Visibility = Visibility.Collapsed;                    
-                });
-            });
-        }
+
     }
 }

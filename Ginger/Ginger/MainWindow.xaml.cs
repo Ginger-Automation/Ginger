@@ -43,6 +43,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -1015,6 +1016,21 @@ namespace Ginger
         {
             ShowStatus(eStatusMsgType.PROCESS, text);
             GingerCore.General.DoEvents();
+        }
+
+        internal void HideSplash()
+        {
+            if (xSplashGrid.Visibility == Visibility.Collapsed)
+            {
+                return;
+            }
+            // Hide the splash after one second
+            Task.Factory.StartNew(() => {
+                this.Dispatcher.Invoke(() => {
+                    Thread.Sleep(1000);
+                    xSplashGrid.Visibility = Visibility.Collapsed;
+                });
+            });            
         }
     }
 }
