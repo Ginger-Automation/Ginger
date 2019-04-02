@@ -98,7 +98,11 @@ namespace Ginger.Run
                 mRunsetExecutionEnvironment = value;
                 if (mRunsetExecutionEnvironment != null)
                 {
-                    WorkSpace.Instance.UserProfile.RecentEnvironment = mRunsetExecutionEnvironment.Guid;
+                    // TODO: remove from here, do it were we change the env
+                    if (WorkSpace.Instance.UserProfile != null)
+                    {
+                        WorkSpace.Instance.UserProfile.RecentEnvironment = mRunsetExecutionEnvironment.Guid;
+                    }
                 }
                 OnPropertyChanged(nameof(this.RunsetExecutionEnvironment));
             }
@@ -126,6 +130,14 @@ namespace Ginger.Run
             runner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             runner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             runner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
+        }
+
+        public void InitRunners()
+        {
+            foreach (GingerRunner gingerRunner in Runners)
+            {
+                InitRunner(gingerRunner);
+            }
         }
 
         public void InitRunner(GingerRunner runner)
@@ -251,6 +263,7 @@ namespace Ginger.Run
 
                 ExecutionLogger.RunSetStart(mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder, mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, currentExecutionDateTime);
 
+                // TODO: Change to foreach !!!
                 int gingerIndex = 0;
                 while (Runners.Count > gingerIndex)
                 {
@@ -590,7 +603,7 @@ namespace Ginger.Run
 
                 Reporter.ToLog(eLogLevel.DEBUG, "Reading all arguments from the Config file placed at: '" + AutoRunFileName + "'");
                 string[] lines = System.IO.File.ReadAllLines(AutoRunFileName);
-
+                //TODO:  Move to CLIProcc !!!!
                 RepositoryItemHelper.RepositoryItemFactory.ProcessCommandLineArgs(lines);
 
                 
@@ -624,6 +637,9 @@ namespace Ginger.Run
             }
             return x;
         }
+
+         
+
     }
 }
 

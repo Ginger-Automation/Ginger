@@ -876,19 +876,28 @@ namespace Ginger
             {
                 // handle CLI
                 if (e.Args[0].StartsWith("ConfigFile"))
-                {
+                {                    
                     // This Ginger is running with run set config will do the run and close GingerInitApp();                                
                     StartGingerExecutor();
                 }
                 else
                 {
-                    InitClassTypesDictionary();
-                    Reporter.WorkSpaceReporter = new GingerWorkSpaceReporter();                    
-                    CLIProcessor.ExecuteArgs(e.Args);
-                    // do proper close !!!         
-                    System.Windows.Application.Current.Shutdown();
+                    RunNewCLI(e.Args);                    
                 }
             }
+        }
+
+        private void RunNewCLI(string[] args)
+        {
+            InitApp();
+            WorkSpace.Instance.RunningInExecutionMode = true;
+            Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
+
+            // !!!! temp
+            SetSolution(@"C:\Yaron\GingerSolutions\Ginger Demo");
+            CLIProcessor.ExecuteArgs(args);
+            // do proper close !!!         
+            System.Windows.Application.Current.Shutdown();
         }
 
         private void StartGingerExecutor()

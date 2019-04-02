@@ -1,7 +1,9 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Environments;
 using System;
@@ -16,46 +18,59 @@ namespace Amdocs.Ginger.CoreNET.RunLib
     {
         public static void ExecuteArgs(string[] args)
         {
-            //if (Environment.GetCommandLineArgs().Count() > 1)
-            //{
-            //    // When running from unit test there are args, so we set a flag in GingerAutomator to make sure Ginger will Launch
-            //    // and will not try to process the args for RunSet auto run
-            //    if (RunningFromUnitTest)
-            //    {
-            //        // do nothing for now, but later on we might want to process and check auto run too
-            //    }
-            //    else
-            //    {
-            //        // This Ginger is running with run set config will do the run and close Ginger
-            //        WorkSpace.RunningInExecutionMode = true;
-            //        Reporter.ReportAllAlsoToConsole = true; //needed so all reportering will be added to Consol
-            //        //Reporter.AppLogLevel = eAppReporterLoggingLevel.Debug;//needed so all reportering will be added to Log file
-            //        //RunRunSet();
-            //        CLI.ExecuteArgs(Environment.GetCommandLineArgs());
-            //    }
-            //}
+            WorkSpace.Instance.RunningInExecutionMode = true;
+            Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
 
+            ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
+            
+            // OpenSolution(@"C:\yaron\GingerSolution\Plugins\Plugins");
 
+            // Temp !!!!!
+            //string solutionFolder = @"C:\temp\CLI\CLI";
+            string solutionFolder = @"C:\Yaron\GingerSolutions\Ginger Demo";
+            OpenSolution(solutionFolder);
+            string SolFile = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");            
+            WorkSpace.Instance.Solution = WorkSpace.Instance.Solution = Solution.LoadSolution(SolFile);
+            WorkSpace.Instance.Solution.SetReportsConfigurations();
             RunRunSet();
         }
 
-
-        public static SolutionRepository SR;
         private static void RunRunSet()
         {
+            // !!!!!!!! cleanup
+            //var zz = SR.GetAllRepositoryItems<RunSetConfig>();
+            var envs = SR.GetAllRepositoryItems<ProjEnvironment>();
 
-            ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
+            // ProjEnvironment projEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == "Default" select x).SingleOrDefault();
+            ProjEnvironment projEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == "CMI IIS test server - DEV" select x).SingleOrDefault();
+            // 
+            RunSetConfig runSetConfig = (from x in SR.GetAllRepositoryItems<RunSetConfig>() where x.Name == "Default Run Set" select x).SingleOrDefault();
+            RunsetExecutor runsetExecutor = new RunsetExecutor();
+            WorkSpace.Instance.RunsetExecutor = runsetExecutor;
+            runsetExecutor.RunSetConfig = runSetConfig;
+            runsetExecutor.RunsetExecutionEnvironment = projEnvironment;
+            //runsetExecutor.ConfigureAllRunnersForExecution();
+            // runsetExecutor.LoadRunSetConfig(runSetConfig);
+            // runsetExecutor.SetRunnersExecutionLoggerConfigs();
 
-            WorkSpace.Init(consoleWorkspaceEventHandler);   // is needed !!!
-            OpenSolution(@"C:\yaron\GingerSolution\Plugins\Plugins");
+            runsetExecutor.InitRunners();
+            BusinessFlow bf  = runsetExecutor.Runners[0].BusinessFlows[0];
+            runsetExecutor.RunRunset();
+        }
+
+        public static SolutionRepository SR;
+        private static void RunBF()
+        {
+
+            
             var x1 = SR.GetAllRepositoryItems<BusinessFlow>();
-            BusinessFlow BF = (from x in SR.GetAllRepositoryItems<BusinessFlow>() where x.Name == "Dummy" select x).SingleOrDefault();
+            BusinessFlow BF = (from x in SR.GetAllRepositoryItems<BusinessFlow>() where x.Name == "SCM - Create Customer 1" select x).SingleOrDefault();
             if (BF == null)
             {
                 // !!! Err
             }
 
-            RunFlow(BF);
+            RunFlow(BF);            
         }
 
 
