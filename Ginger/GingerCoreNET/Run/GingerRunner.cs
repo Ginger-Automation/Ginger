@@ -2889,7 +2889,7 @@ namespace Ginger.Run
                 ARC.Status = ActReturnValue.eStatus.Passed;
                 return;
             }
-            
+
             //TODO: document in help, maybe remove this compare takes time and not sure if needed/use case!?
             if (ARC.ExpectedCalculated.StartsWith("{Regex="))
             {
@@ -2912,8 +2912,14 @@ namespace Ginger.Run
                     return;
                 }
             }
-            
-            if (ARC.ExpectedCalculated.ToUpper().Trim() == "TRUE" && ARC.Actual.ToUpper().Trim() != "TRUE")
+
+            if (ARC.ExpectedCalculated.ToUpper().Trim() == "TRUE" && string.IsNullOrEmpty(ARC.Actual))
+            {
+                ARC.Status = ActReturnValue.eStatus.Failed;
+                return;
+            }
+
+            else if (ARC.ExpectedCalculated.ToUpper().Trim() == "TRUE" && ARC.Actual.ToUpper().Trim() != "TRUE")
             {
                 ARC.Status = ActReturnValue.eStatus.Failed;
                 return;
