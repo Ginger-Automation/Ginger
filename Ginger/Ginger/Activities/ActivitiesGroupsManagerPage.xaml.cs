@@ -243,6 +243,7 @@ namespace Ginger.Activities
                 instance.Active = true;
                 mBusinessFlow.SetActivityTargetApplication(instance);
                 mBusinessFlow.AddActivity(instance);
+                mBusinessFlow.Activities.CurrentItem = instance;
             }
             else if (droppedItem.GetType() == typeof(ActivitiesGroup))
             {
