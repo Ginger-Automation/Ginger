@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,10 +30,10 @@ namespace Ginger.Variables
         {
             InitializeComponent();
 
-            App.ObjFieldBinding(txtMinValue, TextBox.TextProperty, var, nameof(VariableRandomNumber.Min));
-            App.ObjFieldBinding(txtMaxValue, TextBox.TextProperty, var, nameof(VariableRandomNumber.Max));
-            App.ObjFieldBinding(txtInterval, TextBox.TextProperty, var, nameof(VariableRandomNumber.Interval));
-            App.ObjFieldBinding(cbInteger, CheckBox.IsCheckedProperty, var, nameof(VariableRandomNumber.IsInteger));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtMinValue, TextBox.TextProperty, var, nameof(VariableRandomNumber.Min));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtMaxValue, TextBox.TextProperty, var, nameof(VariableRandomNumber.Max));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtInterval, TextBox.TextProperty, var, nameof(VariableRandomNumber.Interval));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbInteger, CheckBox.IsCheckedProperty, var, nameof(VariableRandomNumber.IsInteger));
         }
     }
 }

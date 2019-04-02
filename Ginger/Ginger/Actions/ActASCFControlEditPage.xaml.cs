@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,11 +33,11 @@ namespace Ginger.Actions
             mAct = act;
 
             //TODO: use .Fields
-            App.FillComboFromEnumVal(ActionTypeComboBox, mAct.ControlAction);
-            App.ObjFieldBinding(ActionTypeComboBox, ComboBox.SelectedValueProperty, mAct, "ControlAction");
+            GingerCore.General.FillComboFromEnumObj(ActionTypeComboBox, mAct.ControlAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionTypeComboBox, ComboBox.SelectedValueProperty, mAct, "ControlAction");
 
-            App.FillComboFromEnumVal(ControlPropertyComboBox, mAct.ControlProperty);
-            App.ObjFieldBinding(ControlPropertyComboBox, ComboBox.TextProperty, mAct, "ControlProperty");
+            GingerCore.General.FillComboFromEnumObj(ControlPropertyComboBox, mAct.ControlProperty);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ControlPropertyComboBox, ComboBox.TextProperty, mAct, "ControlProperty");
         }
     }
 }

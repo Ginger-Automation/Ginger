@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -123,13 +123,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public override void DuplicateTreeItem(object item)
         {
             HTMLReportConfiguration copiedItem = (HTMLReportConfiguration)CopyTreeItemWithNewName((RepositoryItemBase)item);
-            
-            //TODO: why below is needed??
-            copiedItem.ID =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
-             WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
-            copiedItem.IsDefault = false;
+
             if (copiedItem != null)
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(copiedItem);
+            {
+                //TODO: why below is needed??
+                copiedItem.ID = copiedItem.SetReportTemplateSequence(true);
+                copiedItem.IsDefault = false;
+                if (copiedItem != null)
+                {
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(copiedItem);
+                    WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+                }
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -59,10 +59,10 @@ namespace Ginger.ALM.Repository
         public override bool ShowImportReviewPage(string importDestinationFolderPath, object selectedTestPlan = null)
         {
             if (importDestinationFolderPath == "")
-                importDestinationFolderPath =  WorkSpace.UserProfile.Solution.BusinessFlowsMainFolder;
+                importDestinationFolderPath =  WorkSpace.Instance.Solution.BusinessFlowsMainFolder;
 
             // get activities groups
-            RQMImportReviewPage win = new RQMImportReviewPage(RQMConnect.Instance.GetRQMTestPlanFullData(WorkSpace.UserProfile.Solution.ALMServerURL, WorkSpace.UserProfile.ALMUserName, WorkSpace.UserProfile.ALMPassword, WorkSpace.UserProfile.Solution.ALMProjectKey, (RQMTestPlan)selectedTestPlan), importDestinationFolderPath);
+            RQMImportReviewPage win = new RQMImportReviewPage(RQMConnect.Instance.GetRQMTestPlanFullData(WorkSpace.Instance.Solution.ALMServerURL, WorkSpace.Instance.UserProfile.ALMUserName, WorkSpace.Instance.UserProfile.ALMPassword, WorkSpace.Instance.Solution.ALMProjectKey, (RQMTestPlan)selectedTestPlan), importDestinationFolderPath);
             win.ShowAsWindow();
 
             return true;
@@ -121,20 +121,20 @@ namespace Ginger.ALM.Repository
                         // convert test set into BF
                         BusinessFlow tsBusFlow = ALMIntegration.Instance.AlmCore.ConvertRQMTestPlanToBF(testPlan);
 
-                        if ( WorkSpace.UserProfile.Solution.MainApplication != null)
+                        if ( WorkSpace.Instance.Solution.MainApplication != null)
                         {
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
                                 if (string.IsNullOrEmpty(activ.TargetApplication) == false)
                                     if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                                     {
-                                        ApplicationPlatform appAgent =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                        ApplicationPlatform appAgent =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                                         if (appAgent != null)
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
                                     }
                             //handle non mapped Activities
                             if (tsBusFlow.TargetApplications.Count == 0)
-                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.UserProfile.Solution.MainApplication });
+                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.Instance.Solution.MainApplication });
                             foreach (Activity activ in tsBusFlow.Activities)
                                 if (string.IsNullOrEmpty(activ.TargetApplication))
                                     activ.TargetApplication = tsBusFlow.MainApplication;
@@ -162,11 +162,11 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs)
         {
-            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,  WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject, System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
+            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject( WorkSpace.Instance.Solution.ALMServerURL,  WorkSpace.Instance.UserProfile.ALMUserName,  WorkSpace.Instance.UserProfile.ALMPassword,  WorkSpace.Instance.Solution.ALMProject, System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 if (testPlan.RQMID == ExportToRQM.GetExportedIDString(businessFlow.ExternalID, "RQMID"))
                 {
-                    RQMTestPlan currentRQMTestPlan = RQMConnect.Instance.GetRQMTestPlanFullData( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,  WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject, (RQMTestPlan)testPlan);
+                    RQMTestPlan currentRQMTestPlan = RQMConnect.Instance.GetRQMTestPlanFullData( WorkSpace.Instance.Solution.ALMServerURL,  WorkSpace.Instance.UserProfile.ALMUserName,  WorkSpace.Instance.UserProfile.ALMPassword,  WorkSpace.Instance.Solution.ALMProject, (RQMTestPlan)testPlan);
                     ((RQMCore)ALMIntegration.Instance.AlmCore).UpdatedRQMTestInBF(ref businessFlow, currentRQMTestPlan, TCsIDs.Select(x => x.Item1.ToString()).ToList());
                 }
             }
@@ -174,11 +174,11 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateBusinessFlow(ref BusinessFlow businessFlow)
         {
-            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,  WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject, System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
+            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject( WorkSpace.Instance.Solution.ALMServerURL,  WorkSpace.Instance.UserProfile.ALMUserName,  WorkSpace.Instance.UserProfile.ALMPassword,  WorkSpace.Instance.Solution.ALMProject, System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 if (testPlan.RQMID == ExportToRQM.GetExportedIDString(businessFlow.ExternalID, "RQMID"))
                 {
-                    RQMTestPlan currentRQMTestPlan = RQMConnect.Instance.GetRQMTestPlanFullData( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,  WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject, (RQMTestPlan)testPlan);
+                    RQMTestPlan currentRQMTestPlan = RQMConnect.Instance.GetRQMTestPlanFullData( WorkSpace.Instance.Solution.ALMServerURL,  WorkSpace.Instance.UserProfile.ALMUserName,  WorkSpace.Instance.UserProfile.ALMPassword,  WorkSpace.Instance.Solution.ALMProject, (RQMTestPlan)testPlan);
                     ((RQMCore)ALMIntegration.Instance.AlmCore).UpdateBusinessFlow(ref businessFlow, currentRQMTestPlan);
                 }
             }
@@ -217,7 +217,7 @@ namespace Ginger.ALM.Repository
         {
             if (businessFlow == null) return false;
 
-            if ( WorkSpace.UserProfile.Solution.ExternalItemsFields.Where(x => x.ItemType == "TestCase").ToList().Count == 0)
+            if ( WorkSpace.Instance.Solution.ExternalItemsFields.Where(x => x.ItemType == "TestCase").ToList().Count == 0)
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Current solution have no pre-difined values for RQM's mandatory fieds. Please configure before doing export. ('ALM'-'ALM Items Fields Configuration')");
                 return false;
@@ -233,7 +233,7 @@ namespace Ginger.ALM.Repository
             string res = string.Empty;
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
 
-            exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRQM(businessFlow,  WorkSpace.UserProfile.Solution.ExternalItemsFields, ref res);
+            exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRQM(businessFlow,  WorkSpace.Instance.Solution.ExternalItemsFields, ref res);
 
             if (exportRes)
             {
@@ -276,7 +276,7 @@ namespace Ginger.ALM.Repository
                 if(!((RQMCore)ALMIntegration.Instance.AlmCore).ValidateConfigurationFile(dlg.FileName))
                     return false;
 
-                string folderPath = Path.Combine( WorkSpace.UserProfile.Solution.Folder, "Configurations");
+                string folderPath = Path.Combine( WorkSpace.Instance.Solution.Folder, "Configurations");
                 DirectoryInfo di = Directory.CreateDirectory(folderPath);
 
                 folderPath = Path.Combine(folderPath, "RQMServerConfigurationsPackage");
@@ -312,7 +312,7 @@ namespace Ginger.ALM.Repository
             throw new NotImplementedException();
         }
 
-        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false)
+        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null)
         {
             throw new NotImplementedException();
         }

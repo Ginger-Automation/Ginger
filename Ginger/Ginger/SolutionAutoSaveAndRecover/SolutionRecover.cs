@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -122,21 +122,23 @@ namespace Ginger.Functionalties
         }
         public void CleanUp()
         {
-            foreach (var directory in new DirectoryInfo(mRecoverFolderPath).GetDirectories())
+            if (Directory.Exists(mRecoverFolderPath))
             {
-                long size = directory.GetFiles("*", SearchOption.AllDirectories).Sum(t => t.Length);
-                if (size==0)
+                foreach (var directory in new DirectoryInfo(mRecoverFolderPath).GetDirectories())
                 {
-                    try
+                    long size = directory.GetFiles("*", SearchOption.AllDirectories).Sum(t => t.Length);
+                    if (size == 0)
                     {
-                        directory.Delete(true);
-                    }
-                    catch
-                    {
+                        try
+                        {
+                            directory.Delete(true);
+                        }
+                        catch
+                        {
 
+                        }
                     }
                 }
-
             }
         }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,15 +39,15 @@ namespace Ginger.MenusLib
                 if (mMenusPage == null)
                 {
                     mMenusPage = new TwoLevelMenuPage(GetMenu());
-                     WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+                     WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
                 }
                 return mMenusPage;
             }
         }
 
-        private static void UserProfile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private static void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(UserProfile.Solution))
+            if (e.PropertyName == nameof(WorkSpace.Solution))
             {
                 MenusPage.Reset();
             }
@@ -61,7 +61,7 @@ namespace Ginger.MenusLib
             runSetMenu.Add(eImageType.RunSet, "", GetRunSetPage, ConsoleKey.R, "", "AID");
             twoLevelMenuGet.Add(runSetMenu);
 
-            TopMenuItem gingerGridMenu = new TopMenuItem(eImageType.Table, "Gingers Grid", ConsoleKey.G, "Ginger Grid AID", "Grid showing all connected Ginger Nodes");
+            TopMenuItem gingerGridMenu = new TopMenuItem(eImageType.Table, "Services Grid", ConsoleKey.G, "Ginger Grid AID", "Grid showing all connected plugins services nodes");
             gingerGridMenu.Add(eImageType.List, "", GetGingerGridPage, ConsoleKey.G, "", "AID");
             twoLevelMenuGet.Add(gingerGridMenu);
             

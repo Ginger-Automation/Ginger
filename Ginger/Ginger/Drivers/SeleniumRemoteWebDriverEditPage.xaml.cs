@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -42,16 +42,16 @@ namespace Ginger.Drivers
             if (mAgent.DriverConfiguration == null) mAgent.DriverConfiguration = new ObservableList<DriverConfigParam>();
 
             DriverConfigParam GridHostDCP = mAgent.GetOrCreateParam(SeleniumDriver.RemoteGridHubParam, "http://127.0.0.1:4444");            
-            App.ObjFieldBinding(GridHostTextBox, TextBox.TextProperty, GridHostDCP, "Value");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(GridHostTextBox, TextBox.TextProperty, GridHostDCP, "Value");
 
             DriverConfigParam BrowserNameDCP = mAgent.GetOrCreateParam(SeleniumDriver.RemoteBrowserNameParam , "firefox");
-            App.ObjFieldBinding(BrowserNameComboBox, ComboBox.SelectedValueProperty, BrowserNameDCP, "Value");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BrowserNameComboBox, ComboBox.SelectedValueProperty, BrowserNameDCP, "Value");
 
             DriverConfigParam PlatformDCP = mAgent.GetOrCreateParam(SeleniumDriver.RemotePlatformParam);
-            App.ObjFieldBinding(PlatformComboBox, ComboBox.SelectedValueProperty, PlatformDCP, "Value");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PlatformComboBox, ComboBox.SelectedValueProperty, PlatformDCP, "Value");
 
             DriverConfigParam VersionDCP = mAgent.GetOrCreateParam(SeleniumDriver.RemoteVersionParam);
-            App.ObjFieldBinding(VersionTextBox, TextBox.TextProperty, VersionDCP, "Value");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VersionTextBox, TextBox.TextProperty, VersionDCP, "Value");
         }
 
         //Loading Browser Combobox Data

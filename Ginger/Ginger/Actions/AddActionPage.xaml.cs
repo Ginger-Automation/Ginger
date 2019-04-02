@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,8 +19,10 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
@@ -45,13 +47,19 @@ namespace Ginger.Actions
     /// </summary>
     public partial class AddActionPage : Page
     {
+        BusinessFlow mBusinessFlow;
         GenericWindow _pageGenericWin = null;
         ObservableList<IAct> mActionsList;
         // bool IsPlugInAvailable = false;
-
-        public AddActionPage()
+        Context mContext;
+        
+        public AddActionPage(Context context)
         {
             InitializeComponent();
+
+            mContext = context;
+            mBusinessFlow = context.BusinessFlow;
+
             SetActionsGridsView();
             LoadGridData();
             LoadPluginsActions();
@@ -111,8 +119,8 @@ namespace Ginger.Actions
                 IEnumerable<Act> OrderedActions = allActions.OrderBy(x => x.Description);
                 foreach (Act cA in OrderedActions)
                 {
-                    if (cA.LegacyActionPlatformsList.Intersect( WorkSpace.UserProfile.Solution.ApplicationPlatforms
-                                                                    .Where(x => App.BusinessFlow.CurrentActivity.TargetApplication == x.AppName)
+                    if (cA.LegacyActionPlatformsList.Intersect( WorkSpace.Instance.Solution.ApplicationPlatforms
+                                                                    .Where(x => mContext.Activity.TargetApplication == x.AppName)
                                                                     .Select(x => x.Platform).ToList()).Any())
                     {
                         LegacyActions.Add(cA);
@@ -141,51 +149,55 @@ namespace Ginger.Actions
             AppDomain.CurrentDomain.Load("GingerCoreCommon");
             AppDomain.CurrentDomain.Load("GingerCoreNET");
             
-
             var ActTypes = new List<Type>();
-            foreach (Assembly GC in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name.Contains("GingerCore")))
-               
+            foreach (Assembly GC in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name.Contains("GingerCore")))               
             {
-
                 var types = from type in GC.GetTypes() where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) select type;
                 ActTypes.AddRange(types);
             }
- 
-                  
 
+            ObservableList<TargetBase> targetApplications;
+            if (mBusinessFlow != null)
+            {
+                targetApplications = mBusinessFlow.TargetApplications;
+            }
+            else
+            {
+                targetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+            }
+            TargetApplication targetApp = (TargetApplication)(from x in targetApplications where x.Name == mContext.Activity.TargetApplication select x).FirstOrDefault();
+            if (targetApp == null)
+            {
+                if (targetApplications.Count == 1)
+                {
+                    targetApp = (TargetApplication)targetApplications.FirstOrDefault();
+                    mContext.Activity.TargetApplication = targetApp.AppName;
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.MissingActivityAppMapping);
+                    return null;
+                }
+            }
+            ApplicationPlatform appPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetApp.AppName select x).FirstOrDefault();
 
             foreach (Type t in ActTypes)
             {
-                Act a = (Act)Activator.CreateInstance(t);
+                Act action = (Act)Activator.CreateInstance(t);
 
-                if (a.IsSelectableAction == false) 
+                if (action.IsSelectableAction == false) 
                     continue;
 
-                TargetApplication TA = (TargetApplication)(from x in App.BusinessFlow.TargetApplications where x.Name == App.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
-                if (TA == null)
+                if (appPlatform != null)
                 {
-                    if (App.BusinessFlow.TargetApplications.Count == 1)
-                    {
-                        TA = (TargetApplication)App.BusinessFlow.TargetApplications.FirstOrDefault();
-                        App.BusinessFlow.CurrentActivity.TargetApplication = TA.AppName;
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.MissingActivityAppMapping);
-                        return null;
-                    }
-                }
-                ApplicationPlatform AP = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == TA.AppName select x).FirstOrDefault();
-                if (AP != null)
-                {
-                    if (a.Platforms.Contains(AP.Platform))
+                    if (action.Platforms.Contains(appPlatform.Platform))
                     {
                         //DO Act.GetSampleAct in base
-                        if ((Acts.Where(c => c.GetType() == a.GetType()).FirstOrDefault()) == null)
+                        if ((Acts.Where(c => c.GetType() == action.GetType()).FirstOrDefault()) == null)
                         {
-                            a.Description = a.ActionDescription;
-                            a.Active = true;
-                            Acts.Add(a);
+                            action.Description = action.ActionDescription;
+                            action.Active = true;
+                            Acts.Add(action);
                         }
                     }
                 }
@@ -225,47 +237,62 @@ namespace Ginger.Actions
 
         private void AddAction()
         {
-            if(ActionsTabs.SelectedContent != null && ((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
+            if (ActionsTabs.SelectedContent != null && ((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
             {
-                if(((Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem)).AddActionWizardPage != null)
+                Act selectedAction = (Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem);
+
+                //warn regarding Leagacy Actions
+                if (LegacyActionsTab.IsSelected)
+                {
+                    if (selectedAction is IObsoleteAction)
+                    {
+                        eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyActionAndOfferNew, ((IObsoleteAction)selectedAction).TargetActionTypeName());
+                        if (userSelection == eUserMsgSelection.Yes)
+                        {
+                            selectedAction = ((IObsoleteAction)selectedAction).GetNewAction();
+                        }
+                        else if (userSelection == eUserMsgSelection.Cancel)
+                        {
+                            return;//do not add any action
+                        }
+                    }
+                    else
+                    {
+                        if (Reporter.ToUser(eUserMsgKey.WarnAddLegacyAction) == eUserMsgSelection.No)
+                        {
+                            return;//do not add any action
+                        }
+                    }
+                }
+
+                if (selectedAction.AddActionWizardPage != null)
                 {
                     _pageGenericWin.Close();
-                    string classname = ((Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem)).AddActionWizardPage;
+                    string classname = selectedAction.AddActionWizardPage;
                     Type t = Assembly.GetExecutingAssembly().GetType(classname);
                     if (t == null)
                     {
                         throw new Exception("Action edit page not found - " + classname);
-                    }                    
+                    }
 
-                    WizardBase wizard = (GingerWPF.WizardLib.WizardBase)Activator.CreateInstance(t);
+                    WizardBase wizard = (GingerWPF.WizardLib.WizardBase)Activator.CreateInstance(t, mContext);
                     WizardWindow.ShowWizard(wizard);
                 }
                 else
                 {
                     Act aNew = null;
+                    aNew = (Act)selectedAction.CreateCopy();
+                    aNew.Context = mContext;
+                    // copy param ex info
+                    for (int i = 0; i < selectedAction.InputValues.Count; i++)
+                    {
+                        aNew.InputValues[i].ParamTypeEX = selectedAction.InputValues[i].ParamTypeEX;
+                    }
 
-                    if (ActionsTabs.SelectedContent != null && ((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
-                    {
-                        Act selectedAction = (Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem);
-                        aNew = (Act)selectedAction.CreateCopy();
-                        // copy param ex info
-                        for (int i=0;i< selectedAction.InputValues.Count;i++)
-                        {
-                            aNew.InputValues[i].ParamTypeEX = selectedAction.InputValues[i].ParamTypeEX;
-                        }
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
-                        return;
-                    }
-                    aNew.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
-                    
+                    aNew.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+
                     //adding the new act after the selected action in the grid  
                     //TODO: Add should be after the last, Insert should be in the middle...
-
-                    
-
                     int selectedActIndex = -1;
                     if (mActionsList.CurrentItem != null)
                     {
@@ -290,24 +317,27 @@ namespace Ginger.Actions
 
                         //Check if target already exist else add it
                         // TODO: search only in targetplugin type
-                        TargetPlugin targetPlugin = (TargetPlugin)(from x in App.BusinessFlow.TargetApplications where x.Name == p.ServiceId select x).SingleOrDefault();
+                        TargetPlugin targetPlugin = (TargetPlugin)(from x in mBusinessFlow.TargetApplications where x.Name == p.ServiceId select x).SingleOrDefault();
                         if (targetPlugin == null)
                         {
                             // check if interface add it
                             // App.BusinessFlow.TargetApplications.Add(new TargetPlugin() { AppName = p.ServiceId });
 
-                            App.BusinessFlow.TargetApplications.Add(new TargetPlugin() {PluginId = p.PluginId,  ServiceId = p.ServiceId });
+                            mBusinessFlow.TargetApplications.Add(new TargetPlugin() {PluginId = p.PluginId,  ServiceId = p.ServiceId });
 
                             //Search for default agent which match 
-                            App.AutomateTabGingerRunner.UpdateApplicationAgents();
+                            mContext.Runner.UpdateApplicationAgents();
                             // TODO: update automate page target/agent
 
                             // if agent not found auto add or ask user 
                         }
-
                     }
-                    
                 }
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+                return;
             }
         }
 

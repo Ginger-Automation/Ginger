@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,10 +35,7 @@ namespace Ginger.Run
         public AutoRunWindow()
         {
             InitializeComponent();
-
-            this.Show();
-
-            NewRunSetPage runSetPage = new NewRunSetPage(App.RunsetExecutor.RunSetConfig);
+            NewRunSetPage runSetPage = new NewRunSetPage(WorkSpace.Instance.RunsetExecutor.RunSetConfig);
             this.Content = runSetPage;
         }
 
@@ -61,11 +58,11 @@ namespace Ginger.Run
             
             try
             {
-                App.RunsetExecutor.RunSetConfig = runSetConfig;
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig;
 
                 //TODO: create initialize run inside the RunSet executer
-                App.RunsetExecutor.RunsetExecutionEnvironment = env;
-                App.RunsetExecutor.SetRunnersEnv(env, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());                
+                WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment = env;
+                WorkSpace.Instance.RunsetExecutor.SetRunnersEnv(env, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());                
             }
             catch (Exception ex)
             {
@@ -79,7 +76,7 @@ namespace Ginger.Run
 
         protected override void OnClosed(EventArgs e)
         {
-            App.RunsetExecutor.StopRun();
+            WorkSpace.Instance.RunsetExecutor.StopRun();
 
             base.OnClosed(e);            
             App.MainWindow.Close();

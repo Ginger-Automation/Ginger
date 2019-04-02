@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -117,16 +117,27 @@ namespace Ginger.Agents
             }
         }
 
-        public void Init(ObservableList<Agent> optionalAgentsList)
+        public void Init(ObservableList<Agent> optionalAgentsList, Guid defualtAgent = default(Guid))
         {
             mOptionalAgentsList = optionalAgentsList;
             xAgentsComboBox.ItemsSource = mOptionalAgentsList;
             xAgentsComboBox.DisplayMemberPath = nameof(Agent.Name);
 
-            if (mOptionalAgentsList != null && mOptionalAgentsList.Count > 0)
-                xAgentsComboBox.SelectedItem = mOptionalAgentsList[0];
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentsComboBox, ComboBox.SelectedItemProperty, this, nameof(this.SelectedAgent));
 
-            App.ObjFieldBinding(xAgentsComboBox, ComboBox.SelectedItemProperty, this, nameof(this.SelectedAgent));
+            if (mOptionalAgentsList != null && mOptionalAgentsList.Count > 0)
+            {
+                Agent defAgent = mOptionalAgentsList.Where(x => x.Guid == defualtAgent).FirstOrDefault();
+                if (defAgent != null)
+                {
+                    SelectedAgent = defAgent;
+                }
+                else
+                {
+                    SelectedAgent = mOptionalAgentsList[0];
+                }
+            }
+            
             SetAgentStatusView();
         }       
 
@@ -212,7 +223,7 @@ namespace Ginger.Agents
                 case Agent.eStatus.NotStarted:
                     Reporter.ToStatus(eStatusMsgKey.StartAgent, null, SelectedAgent.Name, "");
                     if (SelectedAgent.Status == Agent.eStatus.Running) SelectedAgent.Close();
-                    SelectedAgent.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
+                    SelectedAgent.SolutionFolder =  WorkSpace.Instance.Solution.Folder;
                     SelectedAgent.ProjEnvironment = null;// App.AutomateTabEnvironment;
                     SelectedAgent.BusinessFlow = null; //App.BusinessFlow; ;                    
                     SelectedAgent.DSList = null; //WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();

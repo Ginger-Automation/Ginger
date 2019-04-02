@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 // This class is for Button actions
 namespace GingerCore.Actions
 {
@@ -40,7 +41,7 @@ namespace GingerCore.Actions
                                            "For Mobile use this action only in case running the flow on the native browser.");
         }        
         
-        public override string ActionEditPage { get { return null; } }
+        public override string ActionEditPage { get { return "ActButtonEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 
@@ -62,7 +63,7 @@ namespace GingerCore.Actions
 
         public enum eButtonAction
         {
-            Click = 1,
+            Click = 0,
             GetValue = 2,
             IsDisabled = 3,
             GetFont = 4,
@@ -126,7 +127,6 @@ namespace GingerCore.Actions
             AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
             ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
 
-
             Type currentType = GetActionTypeByElementActionName(this.ButtonAction);
             if (currentType == typeof(ActUIElement))
             {
@@ -143,7 +143,10 @@ namespace GingerCore.Actions
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
-            newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            if (!string.IsNullOrEmpty(this.LocateValue))
+            {
+                newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            }
             if (!uIElementTypeAssigned)
                 newAct.ElementType = eElementType.Button;
             newAct.Active = true;
@@ -156,6 +159,7 @@ namespace GingerCore.Actions
             Type currentType = null;
             switch (dropDownElementAction)
             {
+                case eButtonAction.Click:
                 case eButtonAction.GetValue:
                 case eButtonAction.IsDisabled:
                 case eButtonAction.GetFont:
@@ -165,8 +169,6 @@ namespace GingerCore.Actions
                 case eButtonAction.GetStyle:
                     currentType = typeof(ActUIElement);
                     break;
-                    //default:
-                    //    throw new Exception("Converter error, missing Action translator for - " + dropDownElementAction);
             }
             return currentType;
         }

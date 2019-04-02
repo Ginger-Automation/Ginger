@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ namespace Ginger.DataSource
         {
             InitializeComponent();
 
-            App.ObjFieldBinding(DSColumnName, TextBox.TextProperty, mDSTableCol, DataSourceTableColumn.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSColumnName, TextBox.TextProperty, mDSTableCol, DataSourceTableColumn.Fields.Name);
         }
 
         private void DSTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

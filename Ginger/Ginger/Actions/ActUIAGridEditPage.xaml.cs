@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ namespace Ginger.Actions
             InitializeComponent();
 
             currentAct = Act;
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.GridAction);
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "GridAction"); 
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.GridAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "GridAction"); 
         }
 
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

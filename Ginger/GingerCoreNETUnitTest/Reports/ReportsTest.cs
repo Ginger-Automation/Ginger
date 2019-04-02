@@ -63,7 +63,7 @@ namespace Ginger.Reports.Tests
             //Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(RI);
 
             string templatesFolder = (ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
-            HTMLReportConfiguration selectedHTMLReportConfiguration = HTMLReportConfiguration.SetHTMLReportConfigurationWithDefaultValues("DefaultTemplate", true);
+            HTMLReportConfiguration selectedHTMLReportConfiguration = new HTMLReportConfiguration("DefaultTemplate", true);
 
             HTMLReportsConfiguration hTMLReportsConfiguration = new HTMLReportsConfiguration();
 

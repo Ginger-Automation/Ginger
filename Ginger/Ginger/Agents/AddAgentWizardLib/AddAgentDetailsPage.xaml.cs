@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ namespace Ginger.Agents.AddAgentWizardLib
             xDriverTypeComboBox.Items.Clear();
 
             List<object> driverTypeValues = mWizard.Agent.GetDriverTypesByPlatfrom(xPlatformTypeComboBox.SelectedValue.ToString());
-            App.FillComboFromEnumVal(xDriverTypeComboBox, mWizard.Agent.DriverType, driverTypeValues, false);
+            GingerCore.General.FillComboFromEnumObj(xDriverTypeComboBox, mWizard.Agent.DriverType, driverTypeValues, false);
             if (xDriverTypeComboBox.Items.Count > 0)
                 xDriverTypeComboBox.SelectedItem = xDriverTypeComboBox.Items[0];
 

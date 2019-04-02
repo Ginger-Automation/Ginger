@@ -1,4 +1,22 @@
-﻿using System;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +33,7 @@ using GingerCore.ALM.JIRA;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Platforms;
 using System.IO;
+using System.IO.Compression;
 
 
 namespace Ginger.ALM.Repository
@@ -53,13 +72,13 @@ namespace Ginger.ALM.Repository
             return isConnectSucc;
         }
 
-        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false)
+        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null)
         {
             bool result = false;
             string responseStr=string.Empty;
             if (activtiesGroup != null)
             {
-            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.UserProfile.Solution.ExternalItemsFields);
+            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
                 var testCaseFields = allFields.Where(a => a.ItemType == ResourceType.TEST_CASE.ToString());
                 bool exportRes = ((JiraCore)this.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, testCaseFields, ref responseStr);
 
@@ -114,7 +133,7 @@ namespace Ginger.ALM.Repository
                 }
                 else
                 {
-                    ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.UserProfile.Solution.ExternalItemsFields);
+                    ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
                     ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
                     var testCaseFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_CASE.ToString())&&(a.ToUpdate || a.Mandatory));
                     var testSetFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_SET.ToString()) && (a.ToUpdate || a.Mandatory));
@@ -232,20 +251,20 @@ namespace Ginger.ALM.Repository
 
         private void SetBFPropertiesAfterImport(BusinessFlow tsBusFlow)
         {
-            if (WorkSpace.UserProfile.Solution.MainApplication != null)
+            if (WorkSpace.Instance.Solution.MainApplication != null)
             {
                 //add the applications mapped to the Activities
                 foreach (Activity activ in tsBusFlow.Activities)
                     if (string.IsNullOrEmpty(activ.TargetApplication) == false)
                         if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                         {
-                            ApplicationPlatform appAgent = WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                            ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                             if (appAgent != null)
                                 tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
                         }
                 //handle non mapped Activities
                 if (tsBusFlow.TargetApplications.Count == 0)
-                    tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.UserProfile.Solution.MainApplication });
+                    tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
                 foreach (Activity activ in tsBusFlow.Activities)
                 {
                     if (string.IsNullOrEmpty(activ.TargetApplication))
@@ -262,7 +281,30 @@ namespace Ginger.ALM.Repository
 
         public override bool LoadALMConfigurations()
         {
-            throw new NotImplementedException();
+            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
+            dlg.DefaultExt = "*.zip";
+            dlg.Filter = "zip Files (*.zip)|*.zip";
+            dlg.Title = "Select Jira Configuration Zip File";
+
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                if (!((JiraCore)ALMIntegration.Instance.AlmCore).ValidateConfigurationFile(dlg.FileName))
+                    return false;
+
+                string folderPath = Path.Combine(WorkSpace.Instance.Solution.Folder, "Configurations");
+                DirectoryInfo di = Directory.CreateDirectory(folderPath);
+
+                folderPath = Path.Combine(folderPath, "JiraConfigurationsPackage");
+                if (Directory.Exists(folderPath))
+                    Amdocs.Ginger.Common.GeneralLib.General.ClearDirectoryContent(folderPath);
+
+                ZipFile.ExtractToDirectory(dlg.FileName, folderPath);
+                if (!((JiraCore)ALMIntegration.Instance.AlmCore).IsConfigPackageExists())
+                    return false;
+
+                ALMIntegration.Instance.SetALMCoreConfigurations();
+            }
+            return true; //Browse Dialog Canceled
         }
 
         public override string SelectALMTestLabPath()

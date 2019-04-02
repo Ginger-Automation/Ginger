@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ namespace Ginger.Run.RunSetActions
             InitializeComponent();
             this.runSetActionAutomatedALMDefects = runSetActionAutomatedALMDefects;
 
-            App.ObjFieldBinding(RadioDefectsOpeningModeForAll, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, RunSetActionAutomatedALMDefects.Fields.DefectsOpeningModeForAll);
-            App.ObjFieldBinding(RadioDefectsOpeningModeForMarked, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, RunSetActionAutomatedALMDefects.Fields.DefectsOpeningModeForMarked);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RadioDefectsOpeningModeForAll, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, RunSetActionAutomatedALMDefects.Fields.DefectsOpeningModeForAll);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RadioDefectsOpeningModeForMarked, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, RunSetActionAutomatedALMDefects.Fields.DefectsOpeningModeForMarked);
 
             if ((!(bool)RadioDefectsOpeningModeForAll.IsChecked) && (!(bool)RadioDefectsOpeningModeForMarked.IsChecked))
             {
@@ -51,7 +51,7 @@ namespace Ginger.Run.RunSetActions
         {
             CurrentProfilePickerCbx.ItemsSource = null;
 
-            if ( WorkSpace.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.Solution != null)
             {
                 CurrentProfilePickerCbx.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
                 CurrentProfilePickerCbx.DisplayMemberPath = nameof(ALMDefectProfile.Name).ToString();

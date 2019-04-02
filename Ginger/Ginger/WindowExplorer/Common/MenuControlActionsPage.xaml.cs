@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ namespace Ginger.WindowExplorer.Common
         {
             Act act = (Act)((Act)(mActions.CurrentItem)).CreateCopy();
             act.Active = true;
-            App.BusinessFlow.AddAct(act);
+            //App.BusinessFlow.AddAct(act);
             ActionEditPage AEP = new ActionEditPage(act);
             AEP.ShowAsWindow();
         }
@@ -127,7 +127,7 @@ namespace Ginger.WindowExplorer.Common
             act.ValueForDriver = act.Value;
             act.Active = true;
             //TODO: remove hard coded selecting first agent
-            ((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).RunAction(act);
+            //((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).RunAction(act);
         }
 
         private void MenuItemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

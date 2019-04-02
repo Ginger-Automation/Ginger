@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,11 +37,13 @@ using ALM_Common.DataContracts;
 using GingerCore.ALM;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
+using ALMRestClient;
 
 namespace Ginger.ALM.Repository
 {
     class QCRestAPIRepository : ALMRepository
     {
+        QCTestCase matchingTC = null;
         public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
         {
             try
@@ -120,7 +122,7 @@ namespace Ginger.ALM.Repository
             Reporter.ToLog(eLogLevel.DEBUG, "Start importing from QC");
             //set path to import to               
             if (importDestinationFolderPath == "")
-                importDestinationFolderPath =  WorkSpace.UserProfile.Solution.BusinessFlowsMainFolder;
+                importDestinationFolderPath =  WorkSpace.Instance.Solution.BusinessFlowsMainFolder;
 
             //show Test Lab browser for selecting the Test Set/s to import
             QCTestLabExplorerPage win = new QCTestLabExplorerPage(QCTestLabExplorerPage.eExplorerTestLabPageUsageType.Import, importDestinationFolderPath);
@@ -174,20 +176,20 @@ namespace Ginger.ALM.Repository
                         //convert test set into BF
                         BusinessFlow tsBusFlow = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ConvertQCTestSetToBF(TS);
 
-                        if ( WorkSpace.UserProfile.Solution.MainApplication != null)
+                        if ( WorkSpace.Instance.Solution.MainApplication != null)
                         {
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
                                 if (string.IsNullOrEmpty(activ.TargetApplication) == false)
                                     if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                                     {
-                                        ApplicationPlatform appAgent =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                        ApplicationPlatform appAgent =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                                         if (appAgent != null)
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
                                     }
                             //handle non mapped Activities
                             if (tsBusFlow.TargetApplications.Count == 0)
-                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.UserProfile.Solution.MainApplication });
+                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.Instance.Solution.MainApplication });
                             foreach (Activity activ in tsBusFlow.Activities)
                                 if (string.IsNullOrEmpty(activ.TargetApplication))
                                     activ.TargetApplication = tsBusFlow.MainApplication;
@@ -234,42 +236,15 @@ namespace Ginger.ALM.Repository
         #endregion Import From QC
 
         #region Export To QC
-        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false)
+        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null)
         {
             if (activtiesGroup == null) return false;
-            QCTestCase matchingTC = null;
-
-            //check if the ActivitiesGroup already mapped to QC Test Case
-            if (String.IsNullOrEmpty(activtiesGroup.ExternalID) == false)
-            {
-                matchingTC = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).GetQCTest(activtiesGroup.ExternalID);
-                if (matchingTC != null)
-                {
-                    //ask user if want to continute
-                    Amdocs.Ginger.Common.eUserMsgSelection userSelec = Reporter.ToUser(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, activtiesGroup.Name, matchingTC.Name);
-                    if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
-                        return false;
-                    else if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.No)
-                        matchingTC = null;
-                }
-            }
-
-            if (matchingTC == null && String.IsNullOrEmpty(uploadPath))
-            {
-                //get the QC Test Plan path to upload the activities group to
-                uploadPath = SelectALMTestPlanPath();
-                if (String.IsNullOrEmpty(uploadPath))
-                {
-                    //no path to upload to
-                    return false;
-                }
-            }
-
+            
             //upload the Activities Group
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);
             string res = string.Empty;
 
-            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>( WorkSpace.UserProfile.Solution.ExternalItemsFields);
+            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>( WorkSpace.Instance.Solution.ExternalItemsFields);
             ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
 
             ObservableList<ExternalItemFieldBase> testCaseFields = CleanUnrelvantFields(allFields, ResourceType.TEST_CASE);
@@ -329,20 +304,63 @@ namespace Ginger.ALM.Repository
                 }
             }
 
+            
             //check if all of the business flow activities groups already exported to QC and export the ones which not
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
             {
-                if (string.IsNullOrEmpty(ag.ExternalID) == true || ((QCRestAPICore)ALMIntegration.Instance.AlmCore).GetQCTest(ag.ExternalID) == null)
+                //
+                matchingTC = null;
+                //check if the ActivitiesGroup already mapped to QC Test Case
+                if (String.IsNullOrEmpty(ag.ExternalID) == false)
                 {
-                    if (testPlanUploadPath == null)
-                        testPlanUploadPath = SelectALMTestPlanPath();
-                    if (string.IsNullOrEmpty(testPlanUploadPath) == false)
-                        ExportActivitiesGroupToALM(ag, testPlanUploadPath);
-                    else
-                        return false;
+                    matchingTC = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).GetQCTest(ag.ExternalID);
+                    if (matchingTC != null)
+                    {
+                        //ask user if want to continute
+                        Amdocs.Ginger.Common.eUserMsgSelection userSelect = Reporter.ToUser(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, ag.Name, matchingTC.Name);
+                        if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
+                            return false;
+                        else if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                            matchingTC = null;
+                    }
                 }
-                else
-                    ExportActivitiesGroupToALM(ag, testPlanUploadPath);
+                if (matchingTC == null && String.IsNullOrEmpty(testPlanUploadPath))
+                {
+                    //get the QC Test Plan path to upload the activities group to
+                    testPlanUploadPath = SelectALMTestPlanPath();
+                    if (String.IsNullOrEmpty(testPlanUploadPath))
+                    {
+                        //no path to upload to
+                        return false;
+                    }
+                    //create upload path if checked to create separete folder
+                    if (QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder)
+                    {
+                        bool flag = false;
+                        try
+                        {
+                            string isFolderId = QCRestAPIConnect.GetLastTestPlanIdFromPath(testPlanUploadPath + "\\" + businessFlow.Name).ToString();
+                            testPlanUploadPath = testPlanUploadPath + "\\" + businessFlow.Name;
+                            flag = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            flag = false;
+                        }
+                        if (flag == false)
+                        {
+                            string newFolderId = QCRestAPIConnect.GetLastTestPlanIdFromPath(testPlanUploadPath).ToString();
+                            QCItem newFolder = new QCItem();
+                            newFolder.Fields.Add("name", businessFlow.Name);
+                            newFolder.Fields.Add("parent-id", QCRestAPIConnect.GetLastTestPlanIdFromPath(testPlanUploadPath).ToString());
+                            ALMResponseData responseData = QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_FOLDERS, newFolder);
+                            newFolderId = responseData.IdCreated;
+                            testPlanUploadPath = testPlanUploadPath + "\\" + businessFlow.Name;
+                        }
+                    }
+                }
+
+                ExportActivitiesGroupToALM(ag, testPlanUploadPath, false, businessFlow);
             }
 
             if (matchingTS == null && string.IsNullOrEmpty(testLabUploadPath))
@@ -363,7 +381,7 @@ namespace Ginger.ALM.Repository
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
             string res = string.Empty;
 
-            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>( WorkSpace.UserProfile.Solution.ExternalItemsFields);
+            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>( WorkSpace.Instance.Solution.ExternalItemsFields);
             ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
 
             ObservableList<ExternalItemFieldBase> testSetFieldsFields = CleanUnrelvantFields(allFields, ResourceType.TEST_SET);

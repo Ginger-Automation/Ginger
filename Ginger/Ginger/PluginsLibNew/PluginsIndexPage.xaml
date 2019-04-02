@@ -9,36 +9,43 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PluginsIndexPage">
 
-    <Grid>
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="593*"/>
-            <ColumnDefinition Width="207*"/>
+            <ColumnDefinition Width="500*"/>
+            <ColumnDefinition Width="250*"/>
         </Grid.ColumnDefinitions>
-        
 
-        <Ginger:ucGrid x:Name="xPluginsGrid" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowCopy="Collapsed" ShowCut="Collapsed" ShowDelete="Collapsed" ShowDuplicate="Collapsed" ShowEdit="Collapsed" />
+        <Ginger:ucGrid x:Name="xPluginsGrid" Title="Available Plugins on GitHub" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowCopy="Collapsed" ShowCut="Collapsed" ShowDelete="Collapsed" ShowDuplicate="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" />
 
-        <StackPanel Grid.Column="1" Margin=" 10">
-            <TextBlock x:Name="xNameTextBlock" FontSize="14" FontWeight="Bold"><Run Text="{}{Plugin Name}"/></TextBlock>
-            <StackPanel Orientation="Horizontal">
-                <Label Content="Version"/>
-                <ComboBox x:Name="xVersionComboBox" Width="100"/>
+        <DockPanel Grid.Column="1">
+            <TextBlock x:Name="xNameTextBlock" DockPanel.Dock="Top" Margin="10" FontSize="16" FontWeight="Bold" Style="{StaticResource $TextBlockStyle}"><Run Text="{}{Plugin Name}"/></TextBlock>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top"  Margin="10">
+                <Label Content="Version:" Style="{StaticResource $LabelStyle}"/>
+                <ComboBox x:Name="xVersionComboBox" Width="100" Style="{StaticResource $FlatEditInputComboBoxStyle}" VerticalAlignment="Center"/>
             </StackPanel>
-            <Label HorizontalAlignment="Left" Content="Release Name"/>
-            <TextBlock x:Name="xReleaseNameTextBlock" FontSize="14" FontWeight="Bold"><Run Text="{}{Release Name}"/></TextBlock>
-            <Label  HorizontalAlignment="Left" Content="Published"/>
-            <TextBlock x:Name="xPublishedTextBlock" FontSize="14" FontWeight="Bold"><Run Text="{}{Published}"/></TextBlock>
-            <Label HorizontalAlignment="Left" Content="Size"/>
-            <TextBlock x:Name="xSizeTextBlock" FontSize="14" FontWeight="Bold"><Run Text="{}{Size}"/></TextBlock>
-            <Label HorizontalAlignment="Left" Content="Downloads"/>
-            <TextBlock x:Name="xDownloads" FontSize="14" FontWeight="Bold"><Run Text="{}{Downloads}"/></TextBlock>
-            <Button x:Name="xInstallButonn" Click="xInstallButonn_Click" Width="150" Height="35" Content="Install"/>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top"  Margin="10">
+                <Label HorizontalAlignment="Left" Content="Release Name:" Style="{StaticResource $LabelStyle}"/>
+                <TextBlock x:Name="xReleaseNameTextBlock" FontWeight="Bold" Style="{StaticResource $TextBlockStyle}" VerticalAlignment="Center"><Run Text="{}{Release Name}"/></TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top"  Margin="10">
+                <Label  HorizontalAlignment="Left" Content="Date Published:" Style="{StaticResource $LabelStyle}"/>
+                <TextBlock x:Name="xPublishedTextBlock" Style="{StaticResource $TextBlockStyle}" VerticalAlignment="Center" FontWeight="Bold"><Run Text="{}{Published}"/></TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top"  Margin="10">
+                <Label HorizontalAlignment="Left" Content="Package Size:" Style="{StaticResource $LabelStyle}"/>
+                <TextBlock x:Name="xSizeTextBlock" Style="{StaticResource $TextBlockStyle}" VerticalAlignment="Center" FontWeight="Bold"><Run Text="{}{Size}"/></TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top"  Margin="10">
+                <Label HorizontalAlignment="Left" Content="Downloads:" Style="{StaticResource $LabelStyle}"/>
+                <TextBlock x:Name="xDownloads" Style="{StaticResource $TextBlockStyle}" VerticalAlignment="Center" FontWeight="Bold"><Run Text="{}{Downloads}"/></TextBlock>
+            </StackPanel>
 
-            
-            <UserControls:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Height="30" Width="30" Visibility="Collapsed"/>
-
-
-        </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                <UserControls:ucButton x:Name="xInstallButonn" ButtonType="RoundTextAndImageButton"  ButtonText="Install" ButtonImageType="Download" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xInstallButonn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5"/>
+                <UserControls:ImageMakerControl x:Name="xProcessingImage"  ImageType="Processing" Height="30" Width="30" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20,10,0,0"/>
+            </StackPanel>
+           
+        </DockPanel>
 
     </Grid>
 </Page>

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -75,6 +75,11 @@ namespace GingerCore.Drivers.Mobile.Perfecto
         [UserConfiguredDefault("30")]
         [UserConfiguredDescription("Driver Implicit Wait")]
         public int ImplicitWait { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Proxy Settings, if set, Proxy will be considered otherwise it will go to system proxy e.g 'genproxy.amdocs.com:8080'")]
+        public string ProxySettings { get; set; }
 
         public bool ConnectedToDevice = false;
         private RemoteWebDriver mDriver;
@@ -177,6 +182,14 @@ namespace GingerCore.Drivers.Mobile.Perfecto
 
             capabilities.SetCapability("deviceName", Perfecto_Device_ID);
             capabilities.SetPerfectoLabExecutionId(Perfecto_Host_URL);
+
+            if (!string.IsNullOrEmpty(ProxySettings))
+            {
+                Proxy p = GetProxy();
+                capabilities.SetCapability("Proxy",p);
+            }
+
+
             return capabilities;
         }
 
@@ -211,11 +224,29 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                 driverOptions.AddAdditionalCapability("password", Perfecto_Password);
             }
 
+            if (!string.IsNullOrEmpty(ProxySettings))
+            {
+
+                driverOptions.Proxy = GetProxy();
+            }
+
+
+
             driverOptions.AddAdditionalCapability("deviceName", Perfecto_Device_ID);
 
             return driverOptions;
         }
 
+        private Proxy GetProxy()
+        {
+            Proxy p = new Proxy();
+            p.Kind = ProxyKind.Manual;
+            p.HttpProxy = ProxySettings;
+            p.FtpProxy = ProxySettings;
+            p.SocksProxy = ProxySettings;
+            p.SslProxy = ProxySettings;
+            return p;
+        }
 
         public override void CloseDriver()
         {

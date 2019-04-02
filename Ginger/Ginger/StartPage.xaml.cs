@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ namespace Ginger
             //TODO: load from external - so easier to update
             lblAppVersion.Content = "Version " + Ginger.App.AppVersion;
                                   
-            App.ObjFieldBinding(autoLoadLastSolCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(autoLoadLastSolCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
             SetRecentSolutions();
         }
 
@@ -52,7 +52,7 @@ namespace Ginger
             try
             {
                 ObservableList<Hyperlink> recentSolutionsLinksList = new ObservableList<Hyperlink>();
-                foreach (Solution sol in  WorkSpace.UserProfile.RecentSolutionsAsObjects)
+                foreach (Solution sol in  WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects)
                 {
                     Hyperlink solLink = new Hyperlink();
                     solLink.Tag = sol.Name;
@@ -81,7 +81,7 @@ namespace Ginger
             try
             {
                 string selectedSolFolder = ((Hyperlink)sender).ToolTip.ToString().ToUpper();
-                Solution selectedSol =  WorkSpace.UserProfile.RecentSolutionsAsObjects.Where(x=>x.Folder.ToUpper() == selectedSolFolder).FirstOrDefault();
+                Solution selectedSol =  WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects.Where(x=>x.Folder.ToUpper() == selectedSolFolder).FirstOrDefault();
 
                 if (selectedSol != null)
                 {

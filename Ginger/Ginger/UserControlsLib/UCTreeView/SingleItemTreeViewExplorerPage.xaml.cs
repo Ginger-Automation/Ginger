@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.Enums;
 using Ginger.Help;
+using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Windows;
@@ -65,12 +66,17 @@ namespace GingerWPF.UserControlsLib
 
             if (tvItem is ITreeViewItem)
             {
-                DetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();            
+                DetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
+                if(tvItem is NewTreeViewItemBase)
+                {
+                    ((NewTreeViewItemBase)tvItem).PrepareItemForEdit();                    
+                }                
             }
             else
             {
                 DetailsFrame.Content = "View/Edit page is not available yet for the tree item '" + tvItem.GetType().Name + "'";
             }
         }
+       
     }
 }

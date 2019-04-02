@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ namespace Ginger.Variables
         {
             InitializeComponent();
             mVar = var;
-            App.ObjFieldBinding(txtPasswordValue, TextBox.TextProperty, var, nameof(VariablePasswordString.Password));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtPasswordValue, TextBox.TextProperty, var, nameof(VariablePasswordString.Password));
         }
 
 

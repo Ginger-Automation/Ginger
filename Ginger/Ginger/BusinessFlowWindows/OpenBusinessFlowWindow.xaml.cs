@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -58,9 +58,9 @@ namespace Ginger.BusinessFlowWindows
 
         private void btnOpen_Click(object sender, RoutedEventArgs e)
         {
-            App.BusinessFlow = (BusinessFlow)grdBusinessFlows.CurrentItem;
-            App.BusinessFlow.CurrentActivity = App.BusinessFlow.Activities.FirstOrDefault();
-            this.Close();
+            //App.BusinessFlow = (BusinessFlow)grdBusinessFlows.CurrentItem;
+            //App.BusinessFlow.CurrentActivity = App.BusinessFlow.Activities.FirstOrDefault();
+            //this.Close();
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)

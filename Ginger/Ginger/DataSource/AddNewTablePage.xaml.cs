@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,10 +36,10 @@ namespace Ginger.DataSource
         public AddNewTablePage()
         {
             InitializeComponent();
-            App.ObjFieldBinding(TableName, TextBox.TextProperty, mDSTableDetails, DataSourceTable.Fields.Name);
-            App.ObjFieldBinding(DSTableTypeComboBox, ComboBox.SelectedValueProperty, mDSTableDetails, DataSourceTable.Fields.DSTableType);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TableName, TextBox.TextProperty, mDSTableDetails, DataSourceTable.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSTableTypeComboBox, ComboBox.SelectedValueProperty, mDSTableDetails, DataSourceTable.Fields.DSTableType);
             DSTableTypeComboBox.SelectionChanged += DSTypeComboBox_SelectionChanged;
-            App.FillComboFromEnumVal(DSTableTypeComboBox, mDSTableDetails.DSTableType);
+            GingerCore.General.FillComboFromEnumObj(DSTableTypeComboBox, mDSTableDetails.DSTableType);
             DSTableTypeComboBox.SelectedIndex = 1;
         }       
 

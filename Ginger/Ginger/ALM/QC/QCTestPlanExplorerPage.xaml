@@ -11,7 +11,8 @@
     <Grid x:Name="ExplorerTreeGrid">
         
 
-        <UCTreeView:TreeView2 x:Name="TestPlanExplorerTreeView" TreeTitle="Test Plan Explorer"/>
+        <UCTreeView:TreeView1 x:Name="TestPlanExplorerTreeView" TreeTitle="Test Plan Explorer"/>
+        <CheckBox x:Name="xCreateBusinessFlowFolder" Content="Create Business Flow Folder and Export the Activity Groups to this folder" Style="{StaticResource @CheckBoxStyle}"  VerticalAlignment="Bottom" Checked="xCreateBusinessFlowFolder_Checked" Unchecked="xCreateBusinessFlowFolder_Checked"/>
     </Grid>
 
 </Page>

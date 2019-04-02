@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,9 +27,9 @@ namespace Ginger.Actions
         {
             InitializeComponent();
 
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.SmartSyncAction);            
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "SmartSyncAction");
-            App.ObjFieldBinding(WaitTimeTextbox, TextBox.TextProperty, Act, ActSmartSync.Fields.WaitTime);
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.SmartSyncAction);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "SmartSyncAction");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WaitTimeTextbox, TextBox.TextProperty, Act, ActSmartSync.Fields.WaitTime);
         }
     }
 }

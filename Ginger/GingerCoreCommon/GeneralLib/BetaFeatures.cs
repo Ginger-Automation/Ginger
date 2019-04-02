@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.GeneralLib;
+using GingerCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -83,8 +84,8 @@ namespace Amdocs.Ginger.Common
             
             //BFs
             
-            mFeatures.Add(new BetaFeature() { Group = "Business Flows", Description = "Export BF to Java menu item", ID = nameof(BFExportToJava)});
-            mFeatures.Add(new BetaFeature() { Group = "Business Flows", Description = "BF Activities page hook only new activities - speed", ID = nameof(BFPageActivitiesHookOnlyNewActivities) });
+            mFeatures.Add(new BetaFeature() { Group = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), Description = "Export BF to Java menu item", ID = nameof(BFExportToJava)});
+            mFeatures.Add(new BetaFeature() { Group = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), Description = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "page hook only new " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "- speed", ID = nameof(BFPageActivitiesHookOnlyNewActivities) });
 
             // POM
             mFeatures.Add(new BetaFeature() { Group = "POM", Description = "Show POM in Window Explorer", ID = nameof(ShowPOMInWindowExplorer)});           

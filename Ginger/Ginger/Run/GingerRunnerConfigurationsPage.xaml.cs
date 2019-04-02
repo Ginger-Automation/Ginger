@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -67,15 +67,15 @@ namespace Ginger.Run
             ExecutionTags.Init(mGingerRunner.FilterExecutionTags);
             if (mPageContext == ePageContext.RunTab)
             {
-                App.FillComboFromEnumVal(RunOptionComboBox, mGingerRunner.RunOption);
-                App.ObjFieldBinding(RunOptionComboBox, ComboBox.SelectedValueProperty, mGingerRunner, GingerRunner.Fields.RunOption);
+                GingerCore.General.FillComboFromEnumObj(RunOptionComboBox, mGingerRunner.RunOption);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RunOptionComboBox, ComboBox.SelectedValueProperty, mGingerRunner, GingerRunner.Fields.RunOption);
 
-                App.ObjFieldBinding(GingerNameTextBox, TextBox.TextProperty, mGingerRunner, GingerRunner.Fields.Name);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(GingerNameTextBox, TextBox.TextProperty, mGingerRunner, GingerRunner.Fields.Name);
 
-                App.ObjFieldBinding(useSpecificEnvChkbox, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.UseSpecificEnvironment);
-                App.ObjFieldBinding(ExecutionTagsChkbox, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.FilterExecutionByTags);
-                App.ObjFieldBinding(specificEnvComboBox, ComboBox.SelectedValueProperty, mGingerRunner, GingerRunner.Fields.SpecificEnvironmentName);
-                App.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.RunInSimulationMode);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(useSpecificEnvChkbox, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.UseSpecificEnvironment);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ExecutionTagsChkbox, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.FilterExecutionByTags);
+                //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(specificEnvComboBox, ComboBox.DisplayMemberPathProperty, mGingerRunner, GingerRunner.Fields.SpecificEnvironmentName);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.RunInSimulationMode);
             }
             else
             {
@@ -146,11 +146,15 @@ namespace Ginger.Run
 
         private void SetEnvironments()
         {
-            List<string> envs = new List<string>();
-            foreach (ProjEnvironment env in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
-                envs.Add(env.Name);
+            specificEnvComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+            specificEnvComboBox.DisplayMemberPath = nameof(ProjEnvironment.Name);
+            specificEnvComboBox.SelectedValuePath = nameof(ProjEnvironment.Guid);
 
-            specificEnvComboBox.ItemsSource = envs;
+            ProjEnvironment selectedEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name == mGingerRunner.SpecificEnvironmentName).FirstOrDefault();
+            if (selectedEnv != null)
+            {
+                specificEnvComboBox.SelectedItem = selectedEnv;
+            }
         }
 
         private void ExecutionTagsChkbox_Checked(object sender, RoutedEventArgs e)
@@ -165,6 +169,20 @@ namespace Ginger.Run
         private void ExecutionTagsChkbox_Unchecked(object sender, RoutedEventArgs e)
         {
             ExecutionTags.Visibility = Visibility.Collapsed;
+        }
+
+        private void SpecificEnvComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (specificEnvComboBox.SelectedItem != null)
+            {
+                mGingerRunner.ProjEnvironment = (ProjEnvironment)specificEnvComboBox.SelectedItem;
+                mGingerRunner.SpecificEnvironmentName = ((ProjEnvironment)specificEnvComboBox.SelectedItem).Name;
+            }
+            else
+            {
+                mGingerRunner.ProjEnvironment = null;
+                mGingerRunner.SpecificEnvironmentName = string.Empty;
+            }
         }
     }
 }

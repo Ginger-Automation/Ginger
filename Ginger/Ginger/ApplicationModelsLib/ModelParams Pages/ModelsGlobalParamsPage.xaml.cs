@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -243,6 +243,21 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 string NameAfterEdit = selectedGlobalAppModelParameter.PlaceHolder;
                 if (PlaceholderBeforeEdit != NameAfterEdit)
                 {
+                    char[] invalidChars = System.IO.Path.GetInvalidPathChars().Where(c => c != '<' && c != '>').ToArray<char>();
+                    if (NameAfterEdit.IndexOfAny(invalidChars) > 0)
+                    {
+
+                        System.Text.StringBuilder builder = new System.Text.StringBuilder();
+                        foreach (char value in invalidChars)
+                        {
+                            builder.Append(value);
+                            builder.Append(" ");
+                        }
+                        Reporter.ToUser(eUserMsgKey.ValueIssue, "Value cannot contain characters like: " + builder);
+                        selectedGlobalAppModelParameter.PlaceHolder = PlaceholderBeforeEdit;
+                        return;
+                    }
+
                     if (Reporter.ToUser(eUserMsgKey.ParameterUpdate, "The Global Parameter name may be used in Solution items Value Expression, Do you want to automatically update all those Value Expression instances with the parameter name change?") == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
                         await Task.Run(() =>
@@ -250,7 +265,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                             List<string> ListObj = new List<string>() { PlaceholderBeforeEdit, NameAfterEdit };
                             UpdateModelGlobalParamVeWithNameChange(ListObj);
                         });                        
-                        Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Update finished successfully." + Environment.NewLine + "Please do not forget to save all modified Business Flows");
+                        Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Update finished successfully." + Environment.NewLine + "Please do not forget to save all modified " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows));
                     }
                 }
             }
@@ -374,7 +389,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
             string newParamPlaceholder = newModelGlobalParam.PlaceHolder;
 
-            while(InputBoxWindow.GetInputWithValidation("Add Model Global Parameter", "Parameter Name:", ref newParamPlaceholder, System.IO.Path.GetInvalidPathChars()))
+            while(InputBoxWindow.GetInputWithValidation("Add Model Global Parameter", "Parameter Name:", ref newParamPlaceholder, System.IO.Path.GetInvalidPathChars().Where(c => c != '<' && c != '>').ToArray<char>()))
             {
                 newModelGlobalParam.PlaceHolder = newParamPlaceholder;
                 if (!IsParamPlaceholderNameConflict(newModelGlobalParam))

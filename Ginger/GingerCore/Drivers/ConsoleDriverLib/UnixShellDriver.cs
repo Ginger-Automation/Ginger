@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -313,15 +314,34 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         private string GetParameterizedCommand(ActConsoleCommand act)
         {
-            string s = act.Command;
+            string command = act.Command;
             foreach (ActInputValue AIV in act.InputValues)
             {
-                if (s != null)
-                    s = s + " " + AIV.ValueForDriver;
+                string calcValue;
+                if (string.IsNullOrEmpty(AIV.Value)==false && AIV.Value.StartsWith("~"))//workaround for keeping the ~ to work on linux
+                {
+                    string prefix;
+                    if (AIV.Value.StartsWith("~/") || AIV.Value.StartsWith("~\\"))
+                    {
+                        prefix = AIV.Value.Substring(0, 2);
+                    }
+                    else
+                    {
+                        prefix = "~";
+                    }
+                    calcValue = AIV.ValueForDriver.Replace(WorkSpace.Instance.Solution.Folder.TrimEnd(new char[] { '/', '\\' }) + Path.DirectorySeparatorChar, prefix);
+                }
                 else
-                    s = AIV.ValueForDriver;
+                {
+                    calcValue = AIV.ValueForDriver;
+                }
+
+                if (command != null)
+                    command = command + " " + calcValue;
+                else
+                    command = calcValue;
             }
-            return s;
+            return command;
         }
 
         private void VerifyFTPConnected()

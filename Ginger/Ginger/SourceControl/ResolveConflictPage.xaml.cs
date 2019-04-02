@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ namespace Ginger.SourceControl
 
             SetMessageText();
 
-            App.FillComboFromEnumVal(ConflictResolveOperationCombo, mResolveOperation);
+            GingerCore.General.FillComboFromEnumObj(ConflictResolveOperationCombo, mResolveOperation);
             ConflictResolveOperationCombo.Text = ConflictResolveOperationCombo.Items[0].ToString();
             ConflictResolveOperationCombo.SelectionChanged += ConflictResolveOperationCombo_SelectionChanged;
         }
@@ -101,10 +101,10 @@ namespace Ginger.SourceControl
             switch (mResolveOperation)
             {
                 case eResolveOperations.AcceptServer:
-                    SourceControlIntegration.ResolveConflicts( WorkSpace.UserProfile.Solution.SourceControl,mConflictPath, eResolveConflictsSide.Server );
+                    SourceControlIntegration.ResolveConflicts( WorkSpace.Instance.Solution.SourceControl,mConflictPath, eResolveConflictsSide.Server );
                     break;
                 case eResolveOperations.KeepLocal:
-                    SourceControlIntegration.ResolveConflicts( WorkSpace.UserProfile.Solution.SourceControl, mConflictPath, eResolveConflictsSide.Local);
+                    SourceControlIntegration.ResolveConflicts( WorkSpace.Instance.Solution.SourceControl, mConflictPath, eResolveConflictsSide.Local);
                     break;
             }
             Reporter.HideStatusMessage();

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -354,7 +354,7 @@ namespace Ginger.Repository
                 Dispatcher.CurrentDispatcher.Invoke(() => 
                 {
                     RunSetConfig runSetConfig = (RunSetConfig)a;
-                    analyzerPage.Init( WorkSpace.UserProfile.mSolution, runSetConfig);
+                    analyzerPage.Init( WorkSpace.Instance.Solution, runSetConfig);
                 });
                 await analyzerPage.AnalyzeWithoutUI();
 
@@ -377,11 +377,9 @@ namespace Ginger.Repository
         }
 
         public void RunRunSetFromCommandLine()
-        {
-            App.MainWindow.Hide();
-            App.AppSplashWindow.Close();
+        {                     
             AutoRunWindow RP = new AutoRunWindow();
-            RP.Show();
+            RP.Show();            
         }
 
         bool IRepositoryItemFactory.Send_Outlook(bool actualSend, string MailTo, string Event, string Subject, string Body, string MailCC, List<string> Attachments, List<KeyValuePair<string, string>> EmbededAttachment)
@@ -626,68 +624,68 @@ namespace Ginger.Repository
                     case "SourceControlType":
                         Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlType: '" + value + "'");
                         if (value.Equals("GIT"))
-                             WorkSpace.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
+                             WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
                         else if (value.Equals("SVN"))
-                             WorkSpace.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
+                             WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
                         else
-                             WorkSpace.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
+                             WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
                         break;
 
                     case "SourceControlUrl":
                         Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUrl: '" + value + "'");
-                        if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+                        if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                         {
                             if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
                                 value = value + "svn/";
                             if (!value.ToUpper().EndsWith("/"))
                                 value = value + "/";
                         }
-                         WorkSpace.UserProfile.SourceControlURL = value;
+                         WorkSpace.Instance.UserProfile.SourceControlURL = value;
                         scURL = value;
                         break;
 
                     case "SourceControlUser":
                         Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUser: '" + value + "'");
-                        if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
+                        if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
                             value = "Test";
-                         WorkSpace.UserProfile.SourceControlUser = value;
+                         WorkSpace.Instance.UserProfile.SourceControlUser = value;
                         scUser = value;
                         break;
 
                     case "SourceControlPassword":
                         Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");
-                         WorkSpace.UserProfile.SourceControlPass = value;
+                         WorkSpace.Instance.UserProfile.SourceControlPass = value;
                         scPswd = value;
                         break;
 
                     case "PasswordEncrypted":
                         Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
-                        string pswd =  WorkSpace.UserProfile.SourceControlPass;
+                        string pswd =  WorkSpace.Instance.UserProfile.SourceControlPass;
                         if (value == "Y")
-                            pswd = EncryptionHandler.DecryptwithKey( WorkSpace.UserProfile.SourceControlPass, App.ENCRYPTION_KEY);
-                        if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
+                            pswd = EncryptionHandler.DecryptwithKey( WorkSpace.Instance.UserProfile.SourceControlPass, App.ENCRYPTION_KEY);
+                        if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
                             pswd = "Test";
-                         WorkSpace.UserProfile.SourceControlPass = pswd;
+                         WorkSpace.Instance.UserProfile.SourceControlPass = pswd;
                         break;
 
                     case "SourceControlProxyServer":
                         Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyServer: '" + value + "'");
                         if (value == "")
-                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = false;
+                             WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
                         else
-                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = true;
+                             WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
                         if (value != "" && !value.ToUpper().StartsWith("HTTP://"))
                             value = "http://" + value;
-                         WorkSpace.UserProfile.SolutionSourceControlProxyAddress = value;
+                         WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress = value;
                         break;
 
                     case "SourceControlProxyPort":
                         if (value == "")
-                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = false;
+                             WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
                         else
-                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = true;
+                             WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
                         Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
-                         WorkSpace.UserProfile.SolutionSourceControlProxyPort = value;
+                         WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort = value;
                         break;
 
                     case "Solution":
@@ -721,7 +719,7 @@ namespace Ginger.Repository
                         ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
                         if (env != null)
                         {
-                           App.RunsetExecutor.RunsetExecutionEnvironment = env;
+                           WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment = env;
                         }
                         else
                         {
@@ -736,7 +734,7 @@ namespace Ginger.Repository
                         RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
                         if (runSetConfig != null)
                         {
-                            WorkSpace.RunsetExecutor.RunSetConfig = runSetConfig;
+                            WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig;
                         }
                         else
                         {
@@ -770,7 +768,7 @@ namespace Ginger.Repository
                 {
                     if ((defectOpeningResult.Value != null) && (defectOpeningResult.Value != "0"))
                     {
-                        WorkSpace.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; });
+                        WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; });
                     }
                 }
             }

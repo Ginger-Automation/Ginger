@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -103,7 +103,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void AddNewReport(object sender, System.Windows.RoutedEventArgs e)
         {
             ReportTemplateTreeItem r = new ReportTemplateTreeItem();
-            r.ReportTemplate = (Ginger.Reports.ReportTemplate) WorkSpace.UserProfile.Solution.CreateNewReportTemplate();
+            r.ReportTemplate = (Ginger.Reports.ReportTemplate) WorkSpace.Instance.Solution.CreateNewReportTemplate();
             if (r.ReportTemplate!= null)                       
                 mTV.Tree.AddChildItemAndSelect(this, r);            
         }
@@ -114,7 +114,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             RTS.ShowAsWindow();
             if (RTS.SelectedReportTemplate != null)
             {
-                 WorkSpace.UserProfile.ReportTemplateName = RTS.SelectedReportTemplate.Name;
+                 WorkSpace.Instance.UserProfile.ReportTemplateName = RTS.SelectedReportTemplate.Name;
             }
         }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,18 +34,18 @@ namespace Ginger.ALM.Repository
 
         public string ALMPassword()
         {
-            return  WorkSpace.UserProfile.ALMPassword;
+            return  WorkSpace.Instance.UserProfile.ALMPassword;
         }
 
         public void SetALMPassword(string newPassword)
         {
-             WorkSpace.UserProfile.ALMPassword = newPassword;
+             WorkSpace.Instance.UserProfile.ALMPassword = newPassword;
         }
 
         public void SetALMProject(KeyValuePair<string, string> project)
         {
-            WorkSpace.UserProfile.Solution.ALMProject = project.Value;
-            WorkSpace.UserProfile.Solution.ALMProjectKey = project.Key;
+            WorkSpace.Instance.Solution.ALMProject = project.Value;
+            WorkSpace.Instance.Solution.ALMProjectKey = project.Key;
         }
 
         public abstract bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle);
@@ -53,7 +53,7 @@ namespace Ginger.ALM.Repository
         public abstract string SelectALMTestLabPath();
         public abstract bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null);
         public abstract void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups);
-        public abstract bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false);
+        public abstract bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null);
         public abstract void ImportALMTests(string importDestinationFolderPath);
         public abstract void ImportALMTestsById(string importDestinationFolderPath);
         public abstract eUserMsgKey GetDownloadPossibleValuesMessage();

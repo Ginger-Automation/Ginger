@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,20 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCore;
-using GingerCore.Actions.VisualTesting;
-using GingerCore.Drivers;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using static Ginger.ApplicationModelsLib.POMModels.PomAllElementsPage;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -113,7 +104,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xStopLoadButton.IsEnabled = true;
                     mWizard.mPomLearnUtils.ClearStopLearning();
                     xStopLoadButton.Visibility = Visibility.Visible;
-                                                            
+
                     await Task.Run(() => mWizard.mPomLearnUtils.Learn());
 
                     mWizard.IsLearningWasDone = true;
@@ -137,7 +128,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (mPomAllElementsPage == null)
             {
-                mPomAllElementsPage = new PomAllElementsPage(mWizard.mPomLearnUtils.POM, eAllElementsPageContext.AddPOMWizard);
+                mPomAllElementsPage = new PomAllElementsPage(mWizard.mPomLearnUtils.POM, PomAllElementsPage.eAllElementsPageContext.AddPOMWizard);
                 mPomAllElementsPage.ShowTestAllElementsButton = Visibility.Collapsed;
                 mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
                 xPomElementsMappingPageFrame.Content = mPomAllElementsPage;

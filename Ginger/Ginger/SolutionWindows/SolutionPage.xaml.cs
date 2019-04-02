@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -46,13 +46,13 @@ namespace Ginger.SolutionWindows
         {
             InitializeComponent();
             
-             WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
             Init();
         }
 
-        private void UserProfile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(UserProfile.Solution))
+            if(e.PropertyName == nameof(WorkSpace.Solution))
             {
                 Init();
             }
@@ -60,9 +60,9 @@ namespace Ginger.SolutionWindows
 
         private void Init()
         {
-            if ( WorkSpace.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.Solution != null)
             {
-                mSolution =  WorkSpace.UserProfile.Solution;
+                mSolution =  WorkSpace.Instance.Solution;
             }
             else
             {
@@ -73,9 +73,9 @@ namespace Ginger.SolutionWindows
             {
                 xLoadSolutionlbl.Visibility = Visibility.Collapsed;
                 xSolutionDetailsStack.Visibility = Visibility.Visible;
-                App.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Name));
-                App.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Folder));
-                App.ObjFieldBinding(AccountTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Account));
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Name));
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Folder));
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AccountTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Account));
             }
             else
             {

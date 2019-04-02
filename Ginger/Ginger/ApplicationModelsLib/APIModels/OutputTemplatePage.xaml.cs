@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,21 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationsModels.ModelsUsages;
 using Ginger.UserControls;
-using GingerCore;
 using GingerWPF.ApplicationModelsLib.ModelParams_Pages;
-using GingerWPF.BindingLib;
-using GingerWPF.UserControlsLib;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Amdocs.Ginger.Common.Enums;
-using Ginger.DataSource;
-using System.Collections.Generic;
 
 namespace GingerWPF.ApplicationModelsLib.APIModels
 {
@@ -55,7 +48,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
             xOutputValuesGrid.AddSeparator();
 
-            ControlsBinding.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.SupportSimulation));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.SupportSimulation));
             SetActReturnValuesGrid();
 
             xOutputValuesGrid.DataSourceList = mApplicationAPIModel.ReturnValues;

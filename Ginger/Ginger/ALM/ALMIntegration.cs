@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ namespace Ginger.ALM
 
         private ALMIntegration()
         {
-            UpdateALMType((eALMType) WorkSpace.UserProfile.Solution.AlmType);
+            UpdateALMType((eALMType) WorkSpace.Instance.Solution.AlmType);
         }
 
         public void UpdateALMType(eALMType AlmType)
@@ -53,7 +53,7 @@ namespace Ginger.ALM
             switch (AlmType)
             {
                 case eALMType.QC:
-                    if (! WorkSpace.UserProfile.Solution.UseRest)
+                    if (! WorkSpace.Instance.Solution.UseRest)
                     {
                         AlmCore = new QCCore();
                         AlmRepo = new QCRepository();
@@ -85,20 +85,24 @@ namespace Ginger.ALM
 
         public void SetALMCoreConfigurations()
         {
-            ALMCore.SolutionFolder = WorkSpace.UserProfile.Solution.Folder.ToUpper();
-            AlmCore.SetALMConfigurations(WorkSpace.UserProfile.Solution.ALMServerURL, WorkSpace.UserProfile.Solution.UseRest, WorkSpace.UserProfile.ALMUserName, WorkSpace.UserProfile.ALMPassword, WorkSpace.UserProfile.Solution.ALMDomain, WorkSpace.UserProfile.Solution.ALMProject, WorkSpace.UserProfile.Solution.ALMProjectKey);
+            ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+            AlmCore.SetALMConfigurations(WorkSpace.Instance.Solution.ALMServerURL, WorkSpace.Instance.Solution.UseRest, WorkSpace.Instance.UserProfile.ALMUserName, WorkSpace.Instance.UserProfile.ALMPassword, WorkSpace.Instance.Solution.ALMDomain, WorkSpace.Instance.Solution.ALMProject, WorkSpace.Instance.Solution.ALMProjectKey);
             SyncConfigurations();
         }
 
         public void SyncConfigurations()
         {
-            WorkSpace.UserProfile.Solution.ALMServerURL = ALMCore.AlmConfig.ALMServerURL;
-            WorkSpace.UserProfile.Solution.UseRest = ALMCore.AlmConfig.UseRest;
-            WorkSpace.UserProfile.ALMUserName = ALMCore.AlmConfig.ALMUserName;
-            WorkSpace.UserProfile.ALMPassword = ALMCore.AlmConfig.ALMPassword;
-            WorkSpace.UserProfile.Solution.ALMDomain = ALMCore.AlmConfig.ALMDomain;
-            WorkSpace.UserProfile.Solution.ALMProject = ALMCore.AlmConfig.ALMProjectName;
-            WorkSpace.UserProfile.Solution.ALMProjectKey = ALMCore.AlmConfig.ALMProjectKey;
+            WorkSpace.Instance.Solution.ALMServerURL = ALMCore.AlmConfig.ALMServerURL;
+            WorkSpace.Instance.Solution.UseRest = ALMCore.AlmConfig.UseRest;
+            WorkSpace.Instance.UserProfile.ALMUserName = ALMCore.AlmConfig.ALMUserName;
+            WorkSpace.Instance.UserProfile.ALMPassword = ALMCore.AlmConfig.ALMPassword;
+            WorkSpace.Instance.Solution.ALMDomain = ALMCore.AlmConfig.ALMDomain;
+            WorkSpace.Instance.Solution.ALMProject = ALMCore.AlmConfig.ALMProjectName;
+            WorkSpace.Instance.Solution.ALMProjectKey = ALMCore.AlmConfig.ALMProjectKey;
+            if ((eALMType)WorkSpace.Instance.Solution.AlmType == eALMType.Jira)
+            {
+                WorkSpace.Instance.Solution.ConfigPackageFolderPath = ALMCore.AlmConfig.ALMConfigPackageFolderPath;
+            }
         }
 
         public ALMConfig AlmConfigurations
@@ -242,7 +246,7 @@ namespace Ginger.ALM
 
         public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false)
         {
-            ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             bool isExportSucc = false;
             if (AutoALMProjectConnect(almConnectionType, false))
             {
@@ -353,7 +357,7 @@ namespace Ginger.ALM
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             Reporter.ToLog(eLogLevel.DEBUG, ("Exporting Activity Groups of business flow: " + businessFlow.Name + " to ALM"));
-            ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
                 AlmRepo.ExportBfActivitiesGroupsToALM(businessFlow, grdActivitiesGroups);
@@ -365,7 +369,7 @@ namespace Ginger.ALM
         public bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, bool performSaveAfterExport = false)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
             bool isExportSucc = false;
             if (AutoALMProjectConnect(eALMConnectType.Auto))
@@ -383,7 +387,7 @@ namespace Ginger.ALM
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             //Passing Solution Folder path to GingerCore
-            ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
             bool isExportSucc = true;
             if (AutoALMProjectConnect(eALMConnectType.Auto))
@@ -414,7 +418,7 @@ namespace Ginger.ALM
 
             Reporter.ToLog(eLogLevel.DEBUG, ("Exporting business flow: " + businessFlow.Name + " to ALM"));
             //Passing Solution Folder path to GingerCore
-            ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
             bool isExportSucc = false;
             if (AutoALMProjectConnect(eALMConnectType.Auto))
@@ -447,7 +451,7 @@ namespace Ginger.ALM
             Reporter.ToLog(eLogLevel.DEBUG, "Importing Business flow from ALM");
             if (AutoALMProjectConnect(eALMConnectType.Auto, true, true))
             {
-                ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+                ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
                 AlmRepo.ImportALMTests(importDestinationFolderPath);
                 DisconnectALMServer();
             }
@@ -459,7 +463,7 @@ namespace Ginger.ALM
             Reporter.ToLog(eLogLevel.DEBUG, "Importing Business flow from ALM By Id");
             if (AutoALMProjectConnect(eALMConnectType.Auto, true, true))
             {
-                ALMCore.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+                ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
                 AlmRepo.ImportALMTestsById(importDestinationFolderPath);
                 DisconnectALMServer();
             }
@@ -656,7 +660,7 @@ namespace Ginger.ALM
         }
         public eALMType GetALMType()
         {
-            return (eALMType)WorkSpace.UserProfile.Solution.AlmType;
+            return (eALMType)WorkSpace.Instance.Solution.AlmType;
         }
     }
 }

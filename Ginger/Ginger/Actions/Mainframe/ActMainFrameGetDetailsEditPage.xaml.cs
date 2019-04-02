@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -32,12 +32,12 @@ namespace Ginger.Actions.Mainframe
         {
             mAct = Act;
             InitializeComponent();
-            App.FillComboFromEnumVal (GetMainFrameDetailsCombo, mAct.DetailsToFetch);
-            App.ObjFieldBinding (GetMainFrameDetailsCombo, ComboBox.SelectedValueProperty, mAct, "DetailsToFetch");
+            GingerCore.General.FillComboFromEnumObj(GetMainFrameDetailsCombo, mAct.DetailsToFetch);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(GetMainFrameDetailsCombo, ComboBox.SelectedValueProperty, mAct, "DetailsToFetch");
 
-            App.FillComboFromEnumVal (TextDetailsInstanceCombo, mAct.TextInstanceType);
-            App.ObjFieldBinding (TextDetailsInstanceCombo, ComboBox.SelectedValueProperty, mAct, "TextInstanceType");
-            App.ObjFieldBinding (TextInstanceNumberTextBox,TextBox.TextProperty,mAct,"TextInstanceNumber");
+            GingerCore.General.FillComboFromEnumObj(TextDetailsInstanceCombo, mAct.TextInstanceType);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TextDetailsInstanceCombo, ComboBox.SelectedValueProperty, mAct, "TextInstanceType");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TextInstanceNumberTextBox,TextBox.TextProperty,mAct,"TextInstanceNumber");
         }
 
         private void GetMainFrameDetailsCombo_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

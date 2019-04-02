@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -62,13 +62,13 @@ namespace Ginger
 
         private void BaseInit(ObservableList<RepositoryItemTag> fullTagsList = null)
         {
-            if ( WorkSpace.UserProfile.Solution == null)
+            if ( WorkSpace.Instance.Solution == null)
                 return;
 
             if (fullTagsList == null)
             {
                 mUseSolutionTags = true;
-                mFullTagsList =  WorkSpace.UserProfile.Solution.Tags;
+                mFullTagsList =  WorkSpace.Instance.Solution.Tags;
 
                 if(mAddTags == true)
                 {
@@ -80,12 +80,14 @@ namespace Ginger
 
             mFullTagsList.CollectionChanged += mFullTagsList_CollectionChanged;
 
-            if(mItemTagsType == eItemTagsType.Guid)
+            LoadItemTagsToView();//show current saved tags
+
+            if (mItemTagsType == eItemTagsType.Guid)
                 mItemTagsGUID.CollectionChanged += MItemTags_CollectionChanged;
             else
                 mItemTagsKey.CollectionChanged += MItemTags_CollectionChanged;
 
-            LoadItemTagsToView();//show current saved tags
+           
             SetComboTagsSource();
             if (mAddTags == false)
             {
@@ -260,7 +262,7 @@ namespace Ginger
         private void TagsComboBox_DropDownOpened(object sender, EventArgs e)
         {
             if(mUseSolutionTags)
-                mFullTagsList =  WorkSpace.UserProfile.Solution.Tags;
+                mFullTagsList =  WorkSpace.Instance.Solution.Tags;
 
             RefreshComboSelectionTagsList();
             if (ComboTagsList.Count == 0)

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
 
         private void closeEventHandler(object sender, EventArgs e)
         {
-            App.AppSolutionRecover.CleanUp();            
+            //App.AppSolutionRecover.CleanUp();     //??why cleanup?       
         }
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
@@ -158,7 +158,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
             view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.Status), Header = "Status", WidthWeight = 15, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = "View Details", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.RecoveredItems.Resources["ViewDetailsButton"] });
 
-            App.ObjFieldBinding(xDoNotAskAgainChkbox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDoNotAskAgainChkbox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));
 
             xRecoveredItemsGrid.SetAllColumnsDefaultView(view);
             xRecoveredItemsGrid.InitViewItems();

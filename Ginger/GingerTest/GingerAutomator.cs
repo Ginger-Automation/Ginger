@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -76,8 +76,7 @@ namespace GingerTest
       
 
         private void StartGinger()
-        {            
-            Ginger.SplashWindow splash = null;
+        {                        
             // We start Ginger on STA thread
             mGingerThread = new Thread(() =>
             {
@@ -89,14 +88,14 @@ namespace GingerTest
                 Assembly asm1 = d.GetType().Assembly;                
                 // Set the app resources to Ginger so image an other will be locally to Ginger
                 Application.ResourceAssembly = asm1;
-
+                
                 app = new Ginger.App();
                 Ginger.App.RunningFromUnitTest = true;
-                splash = new Ginger.SplashWindow();
-                splash.Show();                
-                //Ginger. WorkSpace.UserProfile.AutoLoadLastSolution = false;                
+                app.StartGingerUI();
+                
+                //Ginger. WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;                
 
-                while (!app.IsReady && splash.IsVisible)
+                while (!app.IsReady)
                 {
                     Thread.Sleep(100);
                 }
@@ -122,15 +121,11 @@ namespace GingerTest
             int i = 0;
             while (MainWindowPOM == null && i <600)
             {
-                    Thread.Sleep(100);
+                Thread.Sleep(100);
                 i++;
             }
 
-
-            while (splash.IsVisible)
-            {
-                Thread.Sleep(100);
-            }            
+            
             // Here Ginger is live and visible
             isReady = true;
         }
@@ -271,7 +266,7 @@ namespace GingerTest
 
         internal void ReloadSolution()
         {
-            string path =  WorkSpace.UserProfile.Solution.ContainingFolderFullPath;
+            string path =  WorkSpace.Instance.Solution.ContainingFolderFullPath;
             CloseSolution();
             OpenSolution(path);
         }

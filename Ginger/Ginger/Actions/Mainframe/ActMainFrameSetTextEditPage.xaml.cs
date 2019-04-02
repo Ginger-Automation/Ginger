@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,10 +36,10 @@ namespace Ginger.Actions.Mainframe
         {
             mAct = Act;
             InitializeComponent();
-            App.ObjFieldBinding(SendAfterSettingText, CheckBox.IsCheckedProperty, mAct, "SendAfterSettingText");
-            App.FillComboFromEnumVal (SetTextModeCombo, mAct.SetTextMode);
-            App.ObjFieldBinding (SetTextModeCombo, ComboBox.SelectedValueProperty, mAct, "SetTextMode");
-            App.ObjFieldBinding (ReloadValue, CheckBox.IsCheckedProperty, mAct, "ReloadValue");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SendAfterSettingText, CheckBox.IsCheckedProperty, mAct, "SendAfterSettingText");
+            GingerCore.General.FillComboFromEnumObj(SetTextModeCombo, mAct.SetTextMode);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SetTextModeCombo, ComboBox.SelectedValueProperty, mAct, "SetTextMode");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ReloadValue, CheckBox.IsCheckedProperty, mAct, "ReloadValue");
             SetCaretValueGrid ();
             CaretValueGrid.btnAdd.AddHandler (Button.ClickEvent, new RoutedEventHandler (AddCaretValueItem));
         }
@@ -67,7 +67,7 @@ namespace Ginger.Actions.Mainframe
 
         private void LoadFields_Click(object sender, RoutedEventArgs e)
         {
-            App.AutomateTabGingerRunner.PrepActionValueExpression(mAct);
+            Context.GetAsContext(mAct.Context).Runner.PrepActionValueExpression(mAct);
             mAct.LoadCaretValueList ();
             CaretValueGrid.DataSourceList = mAct.CaretValueList;
         }

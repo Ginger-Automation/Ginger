@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,14 +29,17 @@ using System.Windows.Media;
 
 namespace GingerWPF
 {
-    //TODO: Add clear button, add copy to clipboard, save to file
+    //TODO: Add save to file
     /// <summary>
     /// Interaction logic for DebugConsole.xaml
     /// </summary>
     public partial class DebugConsoleWindow : Page
     {
+        //TODO: why we need to cosoletextwriter?
         public ConsoleTextWriter output;
         public ConsoleTextWriter errors;
+
+        GenericWindow mConsoleWindow;
         public DebugConsoleWindow()
         {
             InitializeComponent();
@@ -54,42 +57,44 @@ namespace GingerWPF
             Window.GetWindow(this).Topmost = true;
         }
 
-        static Window mWindow = null;
-        public static void Show()
+        public void ShowAsWindow()
         {
-            if (mWindow == null)
-            {
-                DebugConsoleWindow ConsoleWindow = new DebugConsoleWindow();
-                mWindow = new Window();
-                mWindow.Title = "Ginger - Smart Console";
-                mWindow.Content = ConsoleWindow;
-                Console.SetOut(ConsoleWindow.output);
-                Console.SetError(ConsoleWindow.errors);                
-            }
 
-            mWindow.Show();
+            Console.SetOut(this.output);
+            Console.SetError(this.errors);
+
+            Button CopyToClipboradBtn = new Button();
+            CopyToClipboradBtn.Content = "Copy to Clipboard";
+            CopyToClipboradBtn.Click += new RoutedEventHandler(CopyToClipboradBtn_Click);
+
+            Button clearConsoleButton = new Button();
+            clearConsoleButton.Content = "Clear";
+            clearConsoleButton.Click += new RoutedEventHandler(ClearButton_Click);
+
+           
+
+            Button onTopButton = new Button();
+            onTopButton.Content = "Pin on Top";
+            onTopButton.Click += new RoutedEventHandler(OnTopButton_Click);
+
+            Amdocs.Ginger.Common.ObservableList<Button> winButtons = new Amdocs.Ginger.Common.ObservableList<Button>();
+            
+                       
+            winButtons.Add(onTopButton);
+            winButtons.Add(clearConsoleButton);
+            winButtons.Add(CopyToClipboradBtn);
+
+
+            this.Width = 800;
+            this.Height = 600;
+            GingerCore.General.LoadGenericWindow(ref mConsoleWindow, App.MainWindow, eWindowShowStyle.Free, "Ginger - Smart Console", this, winButtons);
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        private void CopyToClipboradBtn_Click(object sender, RoutedEventArgs e)
         {
+            Clipboard.SetText(output.GetText()+"\n"+ errors.GetText());
         }
-
-        private void CrashButton_Click(object sender, RoutedEventArgs e)
-        {
-            ThreadStart newThreadStart = new ThreadStart(newThread_Execute);
-            Thread newThread = new Thread(newThreadStart);
-            newThread.Start();
-        }
-
-        void newThread_Execute()
-        {
-            throw new Exception("Thread crash");
-        }
-       
-        private void LongPathButton_Click(object sender, RoutedEventArgs e)
-        {
-            io.testPath();
-        }
+     
     }
 
 
@@ -102,6 +107,11 @@ namespace GingerWPF
         public ConsoleTextWriter(TextBlock output, Brush brush = null)
         {
             mTextBlock = output;
+        }
+
+        public string GetText()
+        {
+            return mTextBlock.Text;
         }
 
         public override void WriteLine(string value)

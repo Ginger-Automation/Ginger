@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -41,8 +41,8 @@ namespace Ginger.Actions.XML
             this.mAct = (ActXMLProcessing)act;            
 
             //// Bind Controls
-            App.ObjFieldBinding(XMLTemplateFileTextBox , TextBox.TextProperty, mAct.TemplateFileName , ActInputValue.Fields.Value);
-            TargetFileNameTextBox.Init(mAct.TargetFileName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(XMLTemplateFileTextBox , TextBox.TextProperty, mAct.TemplateFileName , ActInputValue.Fields.Value);
+            TargetFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.TargetFileName);
 
             SetGridView();
             DynamicParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPlaceHolder));
@@ -73,7 +73,7 @@ namespace Ginger.Actions.XML
          private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
          {
              ActInputValue AIV = (ActInputValue)DynamicParametersGrid.CurrentItem;
-             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
+             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mAct.Context));
              VEEW.ShowAsWindow();
          }
 
@@ -82,7 +82,7 @@ namespace Ginger.Actions.XML
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
             dlg.DefaultExt = "*.xml";
             dlg.Filter = "XML Template File (*.xml)|*.xml";
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
             if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

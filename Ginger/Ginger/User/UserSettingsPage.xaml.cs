@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -48,15 +48,15 @@ namespace Ginger.User
         {
             InitializeComponent();
 
-            mOriginalTerminologyType =  WorkSpace.UserProfile.TerminologyDictionaryType;
-            xTerminologyTypeComboBox.BindControl( WorkSpace.UserProfile, nameof(UserProfile.TerminologyDictionaryType));
+            mOriginalTerminologyType =  WorkSpace.Instance.UserProfile.TerminologyDictionaryType;
+            xTerminologyTypeComboBox.BindControl( WorkSpace.Instance.UserProfile, nameof(UserProfile.TerminologyDictionaryType));
             xTerminologyTypeNoteLbl.Visibility = Visibility.Collapsed;
 
-            xLoggingLevelComboBox.BindControl( WorkSpace.UserProfile, nameof(UserProfile.AppLogLevel));
+            xLoggingLevelComboBox.BindControl( WorkSpace.Instance.UserProfile, nameof(UserProfile.AppLogLevel));
 
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAutoLoadLastSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToUpgradeSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToRecoverSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoLoadLastSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAskToUpgradeSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAskToRecoverSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));            
         }
 
         private void xTerminologyTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -73,7 +73,7 @@ namespace Ginger.User
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
-             WorkSpace.UserProfile.SaveBackup();
+             WorkSpace.Instance.UserProfile.SaveBackup();
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button saveBtn = new Button();
@@ -96,7 +96,7 @@ namespace Ginger.User
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
-             WorkSpace.UserProfile.SaveUserProfile();
+             WorkSpace.Instance.UserProfile.SaveUserProfile();
             _pageGenericWin.Close();
         }
 
@@ -110,7 +110,7 @@ namespace Ginger.User
 
         private void UndoChangesAndClose()
         {
-             WorkSpace.UserProfile.RestoreFromBackup(true);
+             WorkSpace.Instance.UserProfile.RestoreFromBackup(true);
             _pageGenericWin.Close();
         }
     }

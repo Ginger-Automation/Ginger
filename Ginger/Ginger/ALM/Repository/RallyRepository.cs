@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -51,10 +51,10 @@ namespace Ginger.ALM.Repository
         public override bool ShowImportReviewPage(string importDestinationFolderPath, object selectedTestPlan = null)
         {
             if (importDestinationFolderPath == "")
-                importDestinationFolderPath =  WorkSpace.UserProfile.Solution.BusinessFlowsMainFolder;
+                importDestinationFolderPath =  WorkSpace.Instance.Solution.BusinessFlowsMainFolder;
 
             // get activities groups
-            RallyImportReviewPage win = new RallyImportReviewPage(RallyConnect.Instance.GetRallyTestPlanFullData( WorkSpace.UserProfile.Solution.ALMServerURL,  WorkSpace.UserProfile.ALMUserName,  WorkSpace.UserProfile.ALMPassword,  WorkSpace.UserProfile.Solution.ALMProject, (RallyTestPlan)selectedTestPlan), importDestinationFolderPath);
+            RallyImportReviewPage win = new RallyImportReviewPage(RallyConnect.Instance.GetRallyTestPlanFullData( WorkSpace.Instance.Solution.ALMServerURL,  WorkSpace.Instance.UserProfile.ALMUserName,  WorkSpace.Instance.UserProfile.ALMPassword,  WorkSpace.Instance.Solution.ALMProject, (RallyTestPlan)selectedTestPlan), importDestinationFolderPath);
             win.ShowAsWindow();
 
             return true;
@@ -112,20 +112,20 @@ namespace Ginger.ALM.Repository
                         // convert test set into BF
                         BusinessFlow tsBusFlow = ALMIntegration.Instance.AlmCore.ConvertRallyTestPlanToBF(testPlan);
 
-                        if ( WorkSpace.UserProfile.Solution.MainApplication != null)
+                        if ( WorkSpace.Instance.Solution.MainApplication != null)
                         {
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
                                 if (string.IsNullOrEmpty(activ.TargetApplication) == false)
                                     if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                                     {
-                                        ApplicationPlatform appAgent =  WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                        ApplicationPlatform appAgent =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                                         if (appAgent != null)
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
                                     }
                             //handle non mapped Activities
                             if (tsBusFlow.TargetApplications.Count == 0)
-                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.UserProfile.Solution.MainApplication });
+                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.Instance.Solution.MainApplication });
                             foreach (Activity activ in tsBusFlow.Activities)
                                 if (string.IsNullOrEmpty(activ.TargetApplication))
                                     activ.TargetApplication = tsBusFlow.MainApplication;
@@ -206,7 +206,7 @@ namespace Ginger.ALM.Repository
             string res = string.Empty;
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
 
-            exportRes = ((RallyCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRally(businessFlow,  WorkSpace.UserProfile.Solution.ExternalItemsFields, ref res);
+            exportRes = ((RallyCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRally(businessFlow,  WorkSpace.Instance.Solution.ExternalItemsFields, ref res);
 
             if (exportRes)
             {
@@ -239,7 +239,7 @@ namespace Ginger.ALM.Repository
             throw new NotImplementedException();
         }
 
-        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false)
+        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null)
         {
             throw new NotImplementedException();
         }

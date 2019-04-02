@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -52,20 +52,20 @@ namespace Ginger.Drivers.Common
 
         private void DoBindings()
         {
-            App.ObjFieldBinding(NameTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.Name);
-            App.ObjFieldBinding(DeviceNameTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceName);
-            App.ObjFieldBinding(DeviceImageTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImage);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NameTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceNameTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceImageTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImage);
 
-            App.ObjFieldBinding(DeviceScreenLeftTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenLeft );
-            App.ObjFieldBinding(DeviceScreenTopTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenTop);
-            App.ObjFieldBinding(DeviceScreenRightTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenRight);
-            App.ObjFieldBinding(DeviceScreenBottomTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenBottom);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceScreenLeftTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenLeft );
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceScreenTopTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenTop);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceScreenRightTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenRight);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceScreenBottomTextBox, TextBox.TextProperty, mDeviceConfig, DeviceConfig.Fields.DeviceImageScreenBottom);
             
         }
 
         private void InitDeviceList()
         {
-            string DevicesFolder = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\Devices\");
+            string DevicesFolder = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\Devices\");
             string[] devices = Directory.GetDirectories(DevicesFolder);
             foreach (string s in devices)
             {
@@ -101,7 +101,7 @@ namespace Ginger.Drivers.Common
         private void DeviceListBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
 
-            mDeviceConfigFolder = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\Devices", DeviceListBox.SelectedValue + @"\");
+            mDeviceConfigFolder = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\Devices", DeviceListBox.SelectedValue + @"\");
 
             mDeviceViewPage = new DeviceViewPage(mDeviceConfigFolder);
             mDeviceConfig = mDeviceViewPage.AndroidDeviceConfig;

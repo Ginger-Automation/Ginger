@@ -73,7 +73,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition x:Name="dummyWidth_Col"  Width="50"/>
                         </Grid.ColumnDefinitions>
-                        <Actions:UCValueExpression Grid.Column="0" x:Name="RunDescritpion" ToolTip="Subject" HorizontalAlignment="Stretch" Height="50" HideVEBusinessFlowAndActivityVariables="True" Margin="0,-13,0,13"/>
+                        <Actions:UCValueExpression Grid.Column="0" x:Name="RunDescritpion" ToolTip="Subject" HorizontalAlignment="Stretch" Height="50" Margin="0,-13,0,13"/>
                     </Grid>
                 </StackPanel>
             </StackPanel>
@@ -373,7 +373,7 @@
                     <Label x:Name="RTElapsedLabel" Grid.Row="1" Grid.Column="1" FontSize="14" Foreground="{DynamicResource $Color_DarkBlue}" FontWeight="Bold" Style="{StaticResource @InputFieldLabelStyle}"/>
 
                     <Label Content="Extra Information:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch" Style="{StaticResource @InputFieldLabelStyle}"/>
-                    <TextBox x:Name="RTExInfoLabel" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" FontSize="12" Style="{StaticResource @MultiRowsTextBoxStyle}" Background="{StaticResource $BackgroundColor_LightGray}" />
+                    <TextBox x:Name="RTExInfoLabel" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" IsReadOnly="True" FontSize="12" Style="{StaticResource @MultiRowsTextBoxStyle}" Background="{StaticResource $BackgroundColor_LightGray}" />
 
                     <Label Content="Error Details:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Stretch" Style="{StaticResource @InputFieldLabelStyle}"/>
                     <TextBox x:Name="RTErrorLabel" Grid.Row="3" Grid.Column="1" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" IsReadOnly="True" FontSize="14" Foreground="Red" FontWeight="Bold" Style="{StaticResource @MultiRowsTextBoxStyle}" Background="{StaticResource $BackgroundColor_LightGray}"></TextBox>

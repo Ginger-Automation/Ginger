@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ namespace Ginger.TagsLib
         private void ShowTags()
         {
             TagsListBox.Items.Clear();
-            IEnumerable<RepositoryItemTag> ttg =  WorkSpace.UserProfile.Solution.Tags.ItemsAsEnumerable();
+            IEnumerable<RepositoryItemTag> ttg =  WorkSpace.Instance.Solution.Tags.ItemsAsEnumerable();
             foreach (Guid g in mTags)
             {
                 // Get the Name for solution tags                

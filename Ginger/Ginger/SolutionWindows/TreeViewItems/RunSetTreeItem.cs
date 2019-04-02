@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.Run;
 using GingerWPF.TreeViewItemsLib;
@@ -86,9 +87,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (base.DeleteTreeItem(mRunSetConfig, deleteWithoutAsking, refreshTreeAfterDelete))
             {
-                if (App.RunsetExecutor.RunSetConfig.Equals(mRunSetConfig))//update Run tab in case the loaded run set was deleted
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.Equals(mRunSetConfig))//update Run tab in case the loaded run set was deleted
                 {
-                    App.RunsetExecutor.RunSetConfig = null;
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig = null;
                 }
 
                 return true;

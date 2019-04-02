@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -72,8 +72,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             eBaseWindow = BaseWindow.WindowExplorer;
             mAct = new ActUIElement();
             mAct.Description = "UI Element Table";
-            string targetApp = App.BusinessFlow.CurrentActivity.TargetApplication;
-            mPlatform = PlatformInfoBase.GetPlatformImpl((from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetApp select x.Platform).FirstOrDefault());
+            string targetApp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
+            mPlatform = PlatformInfoBase.GetPlatformImpl((from x in  WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetApp select x.Platform).FirstOrDefault());
 
             if (ElementInfo.ElementType.Contains("JEditor"))
             {
@@ -111,7 +111,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             WhereColumnTitle.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle)), isVENeeded: true, UCselectionChange: WhereColumnTitle_SelectionChanged);
             WhereProperty.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, mAct.GetInputParamValue(ActUIElement.Fields.WhereProperty)), typeof(ActUIElement.eTableElementRunColPropertyValue), isVENeeded: false, UCselectionChange: WhereProperty_SelectionChanged);
             WhereOperator.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, mAct.GetInputParamValue(ActUIElement.Fields.WhereOperator)), typeof(ActUIElement.eTableElementRunColOperator), isVENeeded: false, UCselectionChange: WhereOperator_SelectionChanged);
-            WhereColumnValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnValue)));
+            WhereColumnValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnValue)));
             
             RowSelectorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue), isVENeeded: true, UCselectionChange: RowSelectorValue_SelectionChanged);          
         }
@@ -444,7 +444,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void RowSelectorValueVE_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActTableElement.Fields.LocateRowValue);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActTableElement.Fields.LocateRowValue, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             RowSelectorValue.ComboBox.Text = mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue).ToString();
         }
@@ -452,7 +452,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private void RowSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {            
             mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, RowSelectorValue.ComboBox.SelectedValue.ToString());
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
             SetDescriptionDetails();
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
             {
@@ -505,7 +505,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         Width = 180
                     };
 
-                    textboxControlAction.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ControlActionValue), isVENeeded: true);
+                    textboxControlAction.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.ControlActionValue), isVENeeded: true);
                     controlActionPanel.Children.Add(textboxControlAction);
                     getControlActionValuePage.Content = controlActionPanel;
                 }

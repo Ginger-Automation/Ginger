@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,11 +34,11 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
     public class UploadItemToRepositoryWizard : WizardBase
     {
         public override string Title { get { return "Add Items to Shared Repository"; } }
-                         
-        public UploadItemToRepositoryWizard(IEnumerable<object> items)
+        public Context Context;
+        public UploadItemToRepositoryWizard(Context context, IEnumerable<object> items)
         {
             UploadItemSelection.mSelectedItems.Clear();
-        
+            Context = context;
             foreach (object i in items)
             {
                 UploadItemSelection.mSelectedItems.Add(CreateUploadItem((RepositoryItemBase)i));
@@ -72,7 +72,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
 
                 if (activity.ActivitiesGroupID != null && activity.ActivitiesGroupID != string.Empty)
                 {
-                    ActivitiesGroup group =(ActivitiesGroup) App.BusinessFlow.ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
+                    ActivitiesGroup group =(ActivitiesGroup)Context.BusinessFlow.ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
                     if (group != null)
                     {
                         ObservableList<ActivitiesGroup> repoGroups = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,9 +44,9 @@ namespace Ginger.Actions.Locators.ASCF
         //TODO: use me
         private void InjectHTMLSpyButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: remove hard code [0]
-            ASCFDriver d = (ASCFDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
-            d.InjectHTMLSpy(mPath);           
+            //TODO: fix if been used
+            //ASCFDriver d = (ASCFDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
+            //d.InjectHTMLSpy(mPath);           
         }
     }
 }

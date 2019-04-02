@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -198,7 +198,7 @@ namespace Ginger.Run
         }
         private void AddHTMLReport(object sender, RoutedEventArgs e)
         {
-            if (! WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationIsEnabled)
+            if (! WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationIsEnabled)
             {
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
@@ -213,7 +213,7 @@ namespace Ginger.Run
 
         private void AddAutomatedALMDefectsOperation(object sender, RoutedEventArgs e)
         {
-            if (! WorkSpace.UserProfile.Solution.UseRest && WorkSpace.UserProfile.Solution.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
+            if (! WorkSpace.Instance.Solution.UseRest && WorkSpace.Instance.Solution.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
             {
                 Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI);
                 return;

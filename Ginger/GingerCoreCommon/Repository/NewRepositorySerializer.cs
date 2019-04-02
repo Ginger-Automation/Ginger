@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -204,7 +204,7 @@ namespace Amdocs.Ginger.Repository
                         value = ri.GetType().GetField(mi.Name).GetValue(ri);
                     }
 
-
+                   
                     RIAttr rIAttr = new RIAttr() { Name = mi.Name, ttt = tt, value = value, attrIS = isSerialziedAttr };
                     if (value is IObservableList || value is List<string> || value is RepositoryItemBase) 
                     {
@@ -394,24 +394,27 @@ namespace Amdocs.Ginger.Repository
             xml.WriteWhitespace("\n");
             xml.WriteStartElement(Name);
             foreach (var v in list)
-            {
-                xml.WriteWhitespace("\n");
+            {                
                 if (v is RepositoryItemBase)
                 {                    
                     if (!((RepositoryItemBase)v).IsTempItem) // Ignore temp items like dynamic activities or some output values if marked as temp
                     {
+                        xml.WriteWhitespace("\n");
                         xmlwriteObject(xml, (RepositoryItemBase)v);
                     }
                 }
                 else if (v is RepositoryItemKey)
                 {
+                    xml.WriteWhitespace("\n");
                     xml.WriteElementString(v.GetType().Name, v.ToString());
                 }
                 else
                 {
+                    xml.WriteWhitespace("\n");
                     //TODO: use generic type write
                     xml.WriteElementString(v.GetType().FullName, v.ToString());
                 }
+                
             }
 
 
@@ -503,7 +506,6 @@ namespace Amdocs.Ginger.Repository
 
         public RepositoryItemBase DeserializeFromFile(string FileName)
         {
-
             if (FileName.Length > 0 && File.Exists(FileName))
             {
                 string xml = File.ReadAllText(FileName);

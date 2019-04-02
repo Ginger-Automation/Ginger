@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,21 +36,20 @@ namespace Ginger.BusinessFlowWindows
     /// </summary>
     public partial class ExecutionSummaryPage : Page
     {
-        private BusinessFlow mBusinessFlow;
+        private Context mContext;
 
-        public ExecutionSummaryPage(GingerCore.BusinessFlow businessFlow)
+        public ExecutionSummaryPage(Context context)
         {
             InitializeComponent();
 
             this.Title = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Execution Summary";
 
-            // TODO: Complete member initialization
-            this.mBusinessFlow = businessFlow;
-            lblBizFlowName.Content = mBusinessFlow.Name;
+            mContext = context;
+            lblBizFlowName.Content = mContext.BusinessFlow.Name;
 
             ShowStatus();
 
-            lblElapsed.Content = "Elapsed (Seconds): " + mBusinessFlow.ElapsedSecs;
+            lblElapsed.Content = "Elapsed (Seconds): " + mContext.BusinessFlow.ElapsedSecs;
             ShowPie();
         }
 
@@ -64,7 +63,7 @@ namespace Ginger.BusinessFlowWindows
             else
                 ActivityChart.Palette.Clear();
             List<StatItems> activityStatList = new List<StatItems>();           
-            List<StatItem> st = mBusinessFlow.GetActivitiesStats();
+            List<StatItem> st = mContext.BusinessFlow.GetActivitiesStats();
             foreach (var v in st)
             {
                 if (v.Description != "Running" &&  v.Description != "Pending" && v.Description != "Passed" && v.Description != "Failed" && v.Description != "Stopped" && !string.IsNullOrEmpty(v.Description))
@@ -86,7 +85,7 @@ namespace Ginger.BusinessFlowWindows
             else
                 ActionChart.Palette.Clear();
             List<StatItems> actionStatList = new List<StatItems>();
-            List<StatItem> act = mBusinessFlow.GetActionsStat();           
+            List<StatItem> act = mContext.BusinessFlow.GetActionsStat();           
             foreach (var v in act)
             {
                 if (v.Description != "Running" && v.Description != "Pending" && v.Description != "Passed" && v.Description != "Failed" && v.Description != "Stopped" && v.Description != "FailIgnored" && !string.IsNullOrEmpty(v.Description))
@@ -110,8 +109,8 @@ namespace Ginger.BusinessFlowWindows
                 stck.Children.Add(Ginger.General.makeImgFromControl(ActionChart, totalAction.ToString(),2));
             }
             {                
-                App.RunsetActivityTextbox.Text = totalActivity.ToString();
-                App.RunsetActionTextbox.Text = totalAction.ToString();
+                //App.RunsetActivityTextbox.Text = totalActivity.ToString();
+                //App.RunsetActionTextbox.Text = totalAction.ToString();
             }
         }
         public void HideAllLegend()
@@ -156,13 +155,13 @@ namespace Ginger.BusinessFlowWindows
         private void ShowStatus()
         {
             GingerRunner Gr = new GingerRunner();           
-            foreach (Activity activity in mBusinessFlow.Activities)
+            foreach (Activity activity in mContext.BusinessFlow.Activities)
             {
                 Gr.CalculateActivityFinalStatus(activity);
             }
-            Gr.CalculateBusinessFlowFinalStatus(mBusinessFlow);
-            StatusLabel.Content = mBusinessFlow.RunStatus;
-            StatusLabel.Foreground = General.GetStatusBrush(mBusinessFlow.RunStatus);            
+            Gr.CalculateBusinessFlowFinalStatus(mContext.BusinessFlow);
+            StatusLabel.Content = mContext.BusinessFlow.RunStatus;
+            StatusLabel.Foreground = General.GetStatusBrush(mContext.BusinessFlow.RunStatus);            
         }
 
         internal void ShowAsWindow()
@@ -192,10 +191,10 @@ namespace Ginger.BusinessFlowWindows
         private void ExportExecutionDetails(object sender, RoutedEventArgs e)
         {            
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
-            bfs.Add(mBusinessFlow);           
+            bfs.Add(mContext.BusinessFlow);           
             if(!ExportResultsToALMConfigPage.Instance.IsProcessing)
             {
-                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
+                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(mContext.Environment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
                 ExportResultsToALMConfigPage.Instance.ShowAsWindow();
             }
             else

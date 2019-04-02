@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -215,22 +215,21 @@ namespace Amdocs.Ginger.Repository
         public RepositoryFolderBase GetRepositoryFolderByPath(string folderPath)
         {
             RepositoryFolderBase repoFolder = null;
+            var inputURI = new Uri(folderPath+"\\"); // path must end with slash for isBaseOf to work correctly
             Parallel.ForEach(mSolutionRootFolders, folder =>
             {
-                if (repoFolder == null)
-                {
-                    if (Path.GetFullPath(folderPath) == Path.GetFullPath(folder.FolderFullPath))
-                    {
-                        repoFolder = folder;
-                    }
-                    else if (Path.GetFullPath(folderPath).ToLower().Contains(Path.GetFullPath(folder.FolderFullPath).ToLower()))
-                    {
-                        Uri fullPath = new Uri(folderPath, UriKind.Absolute);
-                        Uri relRoot = new Uri(folder.FolderFullPath, UriKind.Absolute);
-                        string relPath = "~\\" + Uri.UnescapeDataString(relRoot.MakeRelativeUri(fullPath).ToString().Replace("/", "\\"));
-                        repoFolder = folder.GetSubFolderByName(relPath, true);
-                    }
-                }
+                 if (repoFolder == null)
+                 {
+                     if (Path.GetFullPath(folderPath) == Path.GetFullPath(folder.FolderFullPath))
+                     {
+                         repoFolder = folder;
+                     }
+                     else if (new Uri(folder.FolderFullPath+"\\").IsBaseOf(inputURI))
+                     {
+                         string relPath = "~" + folderPath.Replace(SolutionFolder, "");
+                         repoFolder = folder.GetSubFolderByName(relPath, true);
+                     }
+                 }
             });
             return repoFolder;
         }
@@ -333,6 +332,24 @@ namespace Amdocs.Ginger.Repository
         {
             SolutionRepositoryItemInfo<T> SRII = GetSolutionRepositoryItemInfo<T>();
             return SRII.GetAllItemsCache();
+        }
+
+        /// <summary>
+        /// Get first cached Repository Item from provided Repository Item Type (if list is empty then null will be returned)
+        /// </summary>
+        /// <typeparam name="T">Repository Item Type</typeparam>
+        /// <returns></returns>
+        public dynamic GetFirstRepositoryItem<T>()
+        {
+            SolutionRepositoryItemInfo<T> SRII = GetSolutionRepositoryItemInfo<T>();
+            if (SRII.GetAllItemsCache().Count > 0)
+            {
+                return (SRII.GetAllItemsCache()[0]);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -677,7 +694,7 @@ namespace Amdocs.Ginger.Repository
             if (RF != null && targetRF != null)
             {
                 RF.DeleteRepositoryItem(repositoryItem);
-                targetRF.AddRepositoryItem(repositoryItem);                              
+                targetRF.AddRepositoryItem(repositoryItem);
             }
             else
             {
@@ -694,20 +711,20 @@ namespace Amdocs.Ginger.Repository
         {
             if (repositoryItem.FileName != null && File.Exists(repositoryItem.FileName))
             {
-                RepositoryFolderBase repostitoryFolder = GetItemRepositoryFolder(repositoryItem);
+                RepositoryFolderBase repostitoryRootFolder = GetItemRepositoryRootFolder(repositoryItem);
                 
-                string targetPath=Path.Combine(repostitoryFolder.FolderFullPath, "PrevVersions");
+                string targetPath=Path.Combine(repostitoryRootFolder.FolderFullPath, "PrevVersions");
                 if (!Directory.Exists(targetPath))
                 {
-                    repostitoryFolder.PauseFileWatcher();
+                    repostitoryRootFolder.PauseFileWatcher();
                     //We do not want to file watcher track PrevVersions Folder. So creating it explicity using Create directory
                     Directory.CreateDirectory(targetPath);
-                    repostitoryFolder.ResumeFileWatcher();
+                    repostitoryRootFolder.ResumeFileWatcher();
                 }
                             
                 string dts = DateTime.Now.ToString("yyyyMMddHHmm");
               
-                string targetFileName = Path.GetFileName(repositoryItem.FileName)+"." + dts + "." + repositoryItem.ObjFileExt;
+                string targetFileName = repositoryItem.ItemName +"." + dts + "." + repositoryItem.ObjFileExt+".xml";
 
                 targetFileName = Path.Combine(targetPath, targetFileName);
 
@@ -723,8 +740,9 @@ namespace Amdocs.Ginger.Repository
                         File.Delete(targetFileName);
                     }
                     //We want to delete the item and remove it from cache. So first we copy it to destination and then delete using Repository Folder.
-                    File.Copy(repositoryItem.FileName, targetFileName);                   
-                    repostitoryFolder.DeleteRepositoryItem(repositoryItem);
+                    File.Copy(repositoryItem.FileName, targetFileName);
+                    RepositoryFolderBase repositoryFolder = GetItemRepositoryFolder(repositoryItem);
+                    repositoryFolder.DeleteRepositoryItem(repositoryItem);
 
                 }
                 catch (IOException ex)

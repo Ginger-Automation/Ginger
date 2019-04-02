@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -54,25 +54,25 @@ namespace Ginger.Run.RunSetActions
                 CustomHTMLReportComboBox.Items.Add(HT.Name);
             }
 
-            App.ObjFieldBinding(SMTPMailHostTextBox , TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPMailHost);
-            App.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPPort);
-            App.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPUser);
-            App.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPPass);
-            App.ObjFieldBinding(MailFromTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.MailFrom);
-            App.ObjFieldBinding(MailToTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.MailTo);
-            App.ObjFieldBinding(MailCCTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.MailCC);
-            App.ObjFieldBinding(SubjectTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.Subject);
-            App.ObjFieldBinding(BodyTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.Body);
-            App.FillComboFromEnumVal(HTMLReportComboBox, runSetActionSendEmail.HTMLReportTemplate);
-            App.ObjFieldBinding(HTMLReportComboBox, ComboBox.SelectedValueProperty, runSetActionSendEmail, RunSetActionSendEmail.Fields.HTMLReportTemplate);
-            App.ObjFieldBinding(CustomHTMLReportComboBox, ComboBox.SelectedValueProperty, runSetActionSendEmail, RunSetActionSendEmail.Fields.CustomHTMLReportTemplate);
-            App.FillComboFromEnumVal(EmailMethodComboBox, runSetActionSendEmail.Email.EmailMethod);
-            App.ObjFieldBinding(EmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendEmail.Email, Email.Fields.EmailMethod);
-            App.ObjFieldBinding(SMTPMailHostTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPMailHost);
-            App.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPPort);
-            App.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPUser);
-            App.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPPass);
-            App.ObjFieldBinding(cbEnableSSL, CheckBox.IsCheckedProperty, runSetActionSendEmail.Email, Email.Fields.EnableSSL);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPMailHostTextBox , TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPMailHost);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPPort);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPUser);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPPass);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MailFromTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.MailFrom);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MailToTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.MailTo);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MailCCTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.MailCC);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SubjectTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.Subject);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BodyTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.Body);
+            GingerCore.General.FillComboFromEnumObj(HTMLReportComboBox, runSetActionSendEmail.HTMLReportTemplate);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(HTMLReportComboBox, ComboBox.SelectedValueProperty, runSetActionSendEmail, RunSetActionSendEmail.Fields.HTMLReportTemplate);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CustomHTMLReportComboBox, ComboBox.SelectedValueProperty, runSetActionSendEmail, RunSetActionSendEmail.Fields.CustomHTMLReportTemplate);
+            GingerCore.General.FillComboFromEnumObj(EmailMethodComboBox, runSetActionSendEmail.Email.EmailMethod);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendEmail.Email, Email.Fields.EmailMethod);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPMailHostTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPMailHost);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPPort);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPUser);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPPass);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbEnableSSL, CheckBox.IsCheckedProperty, runSetActionSendEmail.Email, Email.Fields.EnableSSL);
             */
             InitAttachmentsGrid();
         }
@@ -140,7 +140,7 @@ namespace Ginger.Run.RunSetActions
                 BodyWebBrowser.Visibility = System.Windows.Visibility.Visible;
                 BodyTextBox.Visibility = System.Windows.Visibility.Collapsed;
 
-                ReportInfo RI = new ReportInfo(App.RunsetExecutor.RunsetExecutionEnvironment, App.RunsetExecutor);
+                ReportInfo RI = new ReportInfo(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, WorkSpace.Instance.RunsetExecutor);
                 runSetActionEmailReport.SetBodyFromHTMLReport(RI);
 
                 BodyWebBrowser.NavigateToString(runSetActionEmailReport.Email.Body);
@@ -152,7 +152,7 @@ namespace Ginger.Run.RunSetActions
         {  
             
             BodyWebBrowser.Visibility = System.Windows.Visibility.Visible;
-            ReportInfo RI = new ReportInfo(App.RunsetExecutor.RunsetExecutionEnvironment, App.RunsetExecutor);
+            ReportInfo RI = new ReportInfo(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, WorkSpace.Instance.RunsetExecutor);
             string html = String.Empty;
             
             if (CustomHTMLReportComboBox.SelectedItem == null)

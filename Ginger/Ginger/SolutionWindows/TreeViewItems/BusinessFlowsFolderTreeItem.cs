@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -148,9 +148,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 TreeViewUtils.AddSubMenuItem(importMenu, "Import ALM Test Set", ALMTSImport, null, "@ALM_16x16.png");
                 TreeViewUtils.AddSubMenuItem(importMenu, "Import ALM Test Set By ID", ALMTSImportById, null, "@ALM_16x16.png");
                 TreeViewUtils.AddSubMenuItem(importMenu, "Import Gherkin Feature File", ImportGherkinFeature, null, "@FeatureFile_16X16.png");
-                TreeViewUtils.AddSubMenuItem(importMenu, "Import Selenium Script", ImportSeleniumScript, null, eImageType.ImportFile);
-                TreeViewUtils.AddSubMenuItem(importMenu, "Import QTP Script", ImportAQTPScript, null, eImageType.ImportFile);
-                TreeViewUtils.AddSubMenuItem(importMenu, "Import ASAP Script", ImportASAPScript, null, eImageType.ImportFile);
+                //TreeViewUtils.AddSubMenuItem(importMenu, "Import Selenium Script", ImportSeleniumScript, null, eImageType.ImportFile);
+                //TreeViewUtils.AddSubMenuItem(importMenu, "Import QTP Script", ImportAQTPScript, null, eImageType.ImportFile);
+                //TreeViewUtils.AddSubMenuItem(importMenu, "Import ASAP Script", ImportASAPScript, null, eImageType.ImportFile);
                 MenuItem exportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
                 TreeViewUtils.AddSubMenuItem(exportMenu, "Export All to ALM", ExportAllToALM, null, "@ALM_16x16.png");
             }
@@ -218,7 +218,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     //customize the imported BF
                     importedBF.Guid = Guid.NewGuid();
                     for (int i = 0; i < importedBF.TargetApplications.Count; i++)
-                        if ( WorkSpace.UserProfile.Solution.ApplicationPlatforms.Where(x => x.AppName == importedBF.TargetApplications[i].Name).FirstOrDefault() == null)
+                        if ( WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == importedBF.TargetApplications[i].Name).FirstOrDefault() == null)
                         {
                             importedBF.TargetApplications.RemoveAt(i);//No such Application so Delete it
                             i--;
@@ -226,7 +226,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     if (importedBF.TargetApplications.Count == 0)
                     {
                         TargetApplication ta = new TargetApplication();
-                        ta.AppName =  WorkSpace.UserProfile.Solution.ApplicationPlatforms[0].AppName;
+                        ta.AppName =  WorkSpace.Instance.Solution.ApplicationPlatforms[0].AppName;
                         importedBF.TargetApplications.Add(ta);
                     }
 
@@ -249,7 +249,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 BusinessFlow BizFlow = App.GetNewBusinessFlow(BizFlowName);
 
-                if (WorkSpace.UserProfile.Solution.ApplicationPlatforms.Count != 1)
+                if (WorkSpace.Instance.Solution.ApplicationPlatforms.Count != 1)
                 {
                     EditBusinessFlowAppsPage EBFP = new EditBusinessFlowAppsPage(BizFlow,true);
                     EBFP.ResetPlatformSelection();
@@ -258,7 +258,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 else
                 {
-                    BizFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.UserProfile.Solution.MainApplication });
+                    BizFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
                     BizFlow.CurrentActivity.TargetApplication = BizFlow.TargetApplications[0].Name;
                 }
 

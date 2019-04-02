@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
             if(mContext == eImportGherkinFileContext.DocumentsFolder)
             {
-                AddPage(Name: "SelectBusinessFlowFolder", Title: "Target Business Flow Path", SubTitle: "Select Target Folder...", Page: importGherkinTargetFolder);
+                AddPage(Name: "SelectBusinessFlowFolder", Title: "Target " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Path", SubTitle: "Select Target Folder...", Page: importGherkinTargetFolder);
             }
 
             AddPage(Name: "Summary", Title: "Summary", SubTitle: "here is what will happen when you click finish", Page: new ImportGherkinFeatureSummaryPage());

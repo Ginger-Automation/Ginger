@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ using System.Xml.Linq;
 using GingerCore;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Reports
 {
@@ -31,7 +32,7 @@ namespace Ginger.Reports
     public abstract class XMLReportBase : ITestNGResultReport
     {
         public ReportInfo RI;
-        public abstract string CreateReport(ReportInfo RI, bool statusByGroupActivity);
+        public abstract string CreateReport(ReportInfo RI, bool statusByGroupActivity, ObservableList<ActInputValue> DynamicParameters);
         public int Passcount { get { return RI.TotalBusinessFlowsPassed; } }
         public int Failcount { get { return RI.TotalBusinessFlowsFailed; } }
         public int ActivityCount { get { return RI.TotalActivitiesCount;} }

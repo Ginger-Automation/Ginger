@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
@@ -60,7 +61,7 @@ namespace Ginger.Actions.PlugIns
                 param.ParamType = (from x in actionInputsDetails where x.Param == param.Param select x.ParamType).SingleOrDefault();
                 
                 // Add ActionInputValueUserControl for the param value to edit
-                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(param);
+                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(Context.GetAsContext(mAct.Context), param);
                 DockPanel.SetDock(actionInputValueUserControl, Dock.Top);
                 actionInputValueUserControl.Margin = new Thickness(0,10,0,0);
                 xActionInputControlsPnl.Children.Add(actionInputValueUserControl);
@@ -90,7 +91,7 @@ namespace Ginger.Actions.PlugIns
         //            ActInputValue v = mAct.GetOrCreateInputParam(name);
 
         //            //Bind a text box
-        //            App.ObjFieldBinding((Control)e, TextBox.TextProperty, v, "Value");
+        //            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding((Control)e, TextBox.TextProperty, v, "Value");
 
         //            //TODO: check control type and bind per type
         //        }

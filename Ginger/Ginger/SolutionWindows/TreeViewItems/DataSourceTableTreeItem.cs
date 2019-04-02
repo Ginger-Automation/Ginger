@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -71,6 +71,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         Page ITreeViewItem.EditPage()
         {
             DSDetails.SaveBackup();//to mark the Data Source as changed
+            DSDetails.StartDirtyTracking();
             if (mDataSourceTablePage == null)
             {
                 mDataSourceTablePage = new DataSourceTablePage(DSTableDetails);                
@@ -137,7 +138,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Ginger.DataSource.DataSourceExportToExcel DSEE = new Ginger.DataSource.DataSourceExportToExcel(DSTableDetails.Name);
             DSEE.ShowAsWindow();
 
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             string sExcelPath = DSEE.ExcelPath;
             string sSheetName = DSEE.SheetName;
             

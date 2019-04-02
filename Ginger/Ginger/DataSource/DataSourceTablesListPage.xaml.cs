@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2018 European Support Limited
+Copyright © 2014-2019 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -127,7 +127,7 @@ namespace Ginger.DataSource
                     if (ds.FilePath.StartsWith("~"))
                     {
                         ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
-                        ds.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, ds.FileFullPath);
+                        ds.FileFullPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, ds.FileFullPath);
                     }
                     ds.Init(ds.FileFullPath);                    
                     List<string> dsTableNames = new List<string>();
