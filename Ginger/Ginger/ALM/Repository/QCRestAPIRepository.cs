@@ -239,7 +239,13 @@ namespace Ginger.ALM.Repository
         public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null)
         {
             if (activtiesGroup == null) return false;
-            
+            //if it is called from shared repository need to select path
+            if (uploadPath == null)
+            {
+                QCTestPlanExplorerPage win = new QCTestPlanExplorerPage();
+                win.xCreateBusinessFlowFolder.Visibility = Visibility.Collapsed;//no need to create separate folder
+                uploadPath = win.ShowAsWindow(eWindowShowStyle.Dialog);
+            }
             //upload the Activities Group
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);
             string res = string.Empty;
