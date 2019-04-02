@@ -540,7 +540,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
             //Assert
             Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");
-            Assert.AreEqual("Node: Texas was not found", actJavaElement.Error, "Node not found validation");
+            Assert.AreEqual("Node: Texas was not found under: [Root, Canada]", actJavaElement.Error, "Node not found validation");
         }
 
         [TestMethod]
