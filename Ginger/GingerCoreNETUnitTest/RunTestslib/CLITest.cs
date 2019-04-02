@@ -13,7 +13,7 @@ using System.Text;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
-    [Level2]
+    [Level3]
     [TestClass]
     public class CLITest
     {

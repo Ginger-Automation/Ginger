@@ -56,6 +56,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             runsetExecutor.InitRunners();
             BusinessFlow bf  = runsetExecutor.Runners[0].BusinessFlows[0];
             runsetExecutor.RunRunset();
+            
+            string json = runsetExecutor.CreateSummary(runsetExecutor);
+            // temp !!!!!!!!!!!!!!!!!!!!
+            System.IO.File.WriteAllText(@"c:\temp\ExecutionSummary.json", json, System.Text.Encoding.Default);
         }
 
         public static SolutionRepository SR;

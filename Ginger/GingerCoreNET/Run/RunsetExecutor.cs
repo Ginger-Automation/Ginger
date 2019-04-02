@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Run.RunSetActions;
@@ -28,6 +29,7 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -87,6 +89,9 @@ namespace Ginger.Run
         }
 
         private ProjEnvironment mRunsetExecutionEnvironment = null;
+
+        
+
         public ProjEnvironment RunsetExecutionEnvironment
         {
             get
@@ -638,7 +643,48 @@ namespace Ginger.Run
             return x;
         }
 
-         
+        internal string CreateSummary(RunsetExecutor runsetExecutor)
+        {
+            ExecutionSummary executionSummary = new ExecutionSummary();
+            //General
+
+
+            // Runners
+            executionSummary.Runners.Count = runsetExecutor.Runners.Count;
+            foreach(GingerRunner runner in runsetExecutor.Runners)
+            {
+                foreach(BusinessFlow businessFlow in runner.BusinessFlows)
+                {
+                    executionSummary.BusinessFlows.Total++;
+                    switch (businessFlow.RunStatus)
+                    {
+                        case eRunStatus.Passed:
+                            executionSummary.BusinessFlows.Pass++;
+                            break;
+                        case eRunStatus.Failed:
+                            executionSummary.BusinessFlows.Fail++;
+                            break;
+                        default:
+                            // Err !!!!!!!!!!!
+                            break;
+                    }
+
+                    foreach (Activity activity in businessFlow.Activities)
+                    {
+                        // executionSummary.acti .BusinessFlows.Total++;
+                    }
+                }
+            }
+
+
+
+
+            string json = JsonConvert.SerializeObject(executionSummary, Formatting.Indented);
+            return json;
+        }
+
+
+
 
     }
 }
