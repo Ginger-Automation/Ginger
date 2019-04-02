@@ -21,7 +21,6 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Run;
 using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
@@ -45,6 +44,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
 using GingerCore.DataSource;
+using GingerCore.Drivers;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
@@ -75,8 +75,10 @@ namespace Ginger
     /// </summary>
     public partial class AutomatePage : Page 
     {
+        GingerRunner mRunner;
         BusinessFlow mBusinessFlow = null;
         Activity mCurrentActivity = null;
+        ProjEnvironment mEnvironment = null;
         Context mContext = new Context();
         BusinessFlowPage mCurrentBusPage;
         VariablesPage mVariablesPage;
@@ -96,17 +98,17 @@ namespace Ginger
         readonly GridLength mMinRowsExpanderSize = new GridLength(35);
         readonly GridLength mMinColsExpanderSize = new GridLength(35);
 
-        AutomatePageRunnerListener mAutomatePageRunnerListener;
-        ExecutionLoggerManager mExecutionLogger;
+        
 
         public AutomatePage(BusinessFlow businessFlow)
         {
             InitializeComponent();
 
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
-            WorkSpace.UserProfile.PropertyChanged += UserProfilePropertyChanged;
-            mContext.Runner = App.AutomateTabGingerRunner;
-            AddRunnerListeners();
+            WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+
+            SetAutomateRunner();
+            UpdateAutomateRunner();
             LoadBusinessFlowToAutomate(businessFlow);           
 
             //UI Updates
@@ -118,15 +120,15 @@ namespace Ginger
             btnResetFromCurrentActivity.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 14);
             btnResetFromCurrentAction.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 14);
             cboSpeed.Text = "0";
-            App.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, App.AutomateTabGingerRunner, Ginger.Run.GingerRunner.Fields.RunInSimulationMode);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, mRunner, Ginger.Run.GingerRunner.Fields.RunInSimulationMode);
             AppAgentsMappingExpander2Frame.Content = new ApplicationAgentsMapPage(mContext);
             SetExpanders();
             //Bind between Menu expanders and actual grid expanders
-            App.ObjFieldBinding(BFVariablesExpander, Expander.IsExpandedProperty, BFVariablesExpander2, "IsExpanded");
-            App.ObjFieldBinding(BFActivitiesGroupsExpander, Expander.IsExpandedProperty, BFActivitiesGroupsExpander2, "IsExpanded");
-            App.ObjFieldBinding(BFActivitiesExpander, Expander.IsExpandedProperty, BFActivitiesExpander2, "IsExpanded");
-            App.ObjFieldBinding(ActivityVariablesExpander, Expander.IsExpandedProperty, ActivityVariablesExpander2, "IsExpanded");
-            App.ObjFieldBinding(ActivityActionsExpander, Expander.IsExpandedProperty, ActivityActionsExpander2, "IsExpanded");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BFVariablesExpander, Expander.IsExpandedProperty, BFVariablesExpander2, "IsExpanded");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BFActivitiesGroupsExpander, Expander.IsExpandedProperty, BFActivitiesGroupsExpander2, "IsExpanded");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BFActivitiesExpander, Expander.IsExpandedProperty, BFActivitiesExpander2, "IsExpanded");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActivityVariablesExpander, Expander.IsExpandedProperty, ActivityVariablesExpander2, "IsExpanded");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActivityActionsExpander, Expander.IsExpandedProperty, ActivityActionsExpander2, "IsExpanded");
             BFVariablesExpander.IsExpanded = false;
             BFActivitiesGroupsExpander.IsExpanded = false;
             ActivityVariablesExpander.IsExpanded = false;
@@ -173,18 +175,6 @@ namespace Ginger
             xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
             xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
             xToBusinessFlowsListBtn.Click += clickHandler;
-        }
-
-        private void AddRunnerListeners()
-        {            
-            // Add Listener so we can do GiveUserFeedback            
-            mAutomatePageRunnerListener = new AutomatePageRunnerListener();
-            mAutomatePageRunnerListener.AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback;
-            App.AutomateTabGingerRunner.RunListeners.Add(mAutomatePageRunnerListener);
-            mExecutionLogger = new ExecutionLoggerManager(App.AutomateTabEnvironment, eExecutedFrom.Automation);
-            mExecutionLogger.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-
-            WorkSpace.AutomateTabGingerRunner.ExecutionLoggerManager.Configuration = WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
 
         private void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
@@ -255,7 +245,7 @@ namespace Ginger
             mActivitiesGroupsPage.grdActivitiesGroups.ShowTitle = System.Windows.Visibility.Collapsed;
             BFActivitiesGroupsFrame.Content = mActivitiesGroupsPage;
 
-            mActivitiesPage = new ActivitiesPage(mBusinessFlow, General.RepositoryItemPageViewMode.Automation);
+            mActivitiesPage = new ActivitiesPage(mBusinessFlow, General.RepositoryItemPageViewMode.Automation, mContext);
             mActivitiesPage.grdActivities.ShowTitle = System.Windows.Visibility.Collapsed;
             BFActivitiesFrame.Content = mActivitiesPage;
 
@@ -263,7 +253,7 @@ namespace Ginger
             mActivityVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
             ActivityVariablesFrame.Content = mActivityVariablesPage;
 
-            mActionsPage = new ActionsPage(businessFlow:mBusinessFlow, editMode: General.RepositoryItemPageViewMode.Automation);
+            mActionsPage = new ActionsPage(businessFlow:mBusinessFlow, editMode: General.RepositoryItemPageViewMode.Automation, context: mContext);
             mActionsPage.grdActions.ShowTitle = System.Windows.Visibility.Collapsed;
             ActivityActionsFrame.Content = mActionsPage;
 
@@ -488,35 +478,70 @@ namespace Ginger
             }
         }
 
-        private void UserProfilePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(UserProfile.Solution))
+            if (e.PropertyName == nameof(WorkSpace.Solution))
             {                
                 lstEnvs.ItemsSource = null;
 
-                if ( WorkSpace.UserProfile.Solution == null)
+                if (WorkSpace.Instance.Solution == null)
                 {
+                    DoCleanUp();
                     return;
                 }
 
-                if (mReposiotryPage != null)
-                {
-                    mReposiotryPage.RefreshCurrentRepo();
-                }
-               
-                BindEnvsCombo();
-                AddRunnerListeners();
+                UpdateToNewSolution();
             }
         }
 
-        public void UpdateApplicationsAgentsMapping(bool useAgentsCache = true)
+        private void SetAutomateRunner()
         {
-            if (WorkSpace.UserProfile.Solution != null && mBusinessFlow != null)
+            mRunner = new GingerRunner(eExecutedFrom.Automation);
+            mRunner.ExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+
+            // Add Listener so we can do GiveUserFeedback            
+            AutomatePageRunnerListener automatePageRunnerListener = new AutomatePageRunnerListener();
+            automatePageRunnerListener.AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback;
+            mRunner.RunListeners.Add(automatePageRunnerListener);
+
+            mContext.Runner = mRunner;
+        }
+
+        private void UpdateAutomateRunner()
+        {            
+            mRunner.CurrentSolution = WorkSpace.Instance.Solution;
+            mRunner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
+            mRunner.SolutionAgents = new ObservableList<Agent>();
+            mRunner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
+            mRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            mRunner.ExecutionLogger.ExecutionLogfolder = string.Empty;
+            mRunner.ExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();            
+        }
+
+        private void DoCleanUp()
+        {
+            mRunner.ClearAgents();
+        }
+
+        private void UpdateToNewSolution()
+        {
+            if (mReposiotryPage != null)
+            {
+                mReposiotryPage.RefreshCurrentRepo();
+            }
+
+            BindEnvsCombo();
+            UpdateAutomateRunner();
+        }
+
+        private void SetBusinessFlowTargetAppIfNeeded()
+        {
+            if (WorkSpace.Instance.Solution != null && mBusinessFlow != null)
             {
                 //First we check if biz flow have target apps if not add one based on solution, fast convert for old or deleted
                 if (mBusinessFlow.TargetApplications.Count() == 0)
                 {
-                    if (string.IsNullOrEmpty(WorkSpace.UserProfile.Solution.MainApplication))
+                    if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.MainApplication))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You must have at least one Target Application configured, please set it up.");
                         return;
@@ -525,22 +550,27 @@ namespace Ginger
                     {
                         // take it from solution main platform
                         if (mBusinessFlow.TargetApplications == null)
+                        {
                             mBusinessFlow.TargetApplications = new ObservableList<TargetBase>();
+                        }
 
-                        mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.UserProfile.Solution.MainApplication });
+                        mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
                     }
                 }
             }
+        }
 
-            if (WorkSpace.UserProfile.Solution != null)
+        public void UpdateApplicationsAgentsMapping(bool useAgentsCache = true)
+        {
+            if (WorkSpace.Instance.Solution != null)
             {
-                App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+                mRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
             }
             else
             {
-                App.AutomateTabGingerRunner.SolutionAgents = null;
+                mRunner.SolutionAgents = null;
             }
-            App.AutomateTabGingerRunner.UpdateApplicationAgents();
+            mRunner.UpdateApplicationAgents();
         }
 
         private void BindEnvsCombo()
@@ -549,16 +579,16 @@ namespace Ginger
             lstEnvs.DisplayMemberPath = nameof(ProjEnvironment.Name);
             lstEnvs.SelectedValuePath = nameof(ProjEnvironment.Guid);
 
-            if ( WorkSpace.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.Solution != null)
             {
                 //select last used environment
                 if (lstEnvs.Items != null && lstEnvs.Items.Count > 0)
                 {
-                    if (lstEnvs.Items.Count > 1 &&  WorkSpace.UserProfile.RecentEnvironment != null &&  WorkSpace.UserProfile.RecentEnvironment != Guid.Empty)
+                    if (lstEnvs.Items.Count > 1 &&  WorkSpace.Instance.UserProfile.RecentEnvironment != null &&  WorkSpace.Instance.UserProfile.RecentEnvironment != Guid.Empty)
                     {
                         foreach (object env in lstEnvs.Items)
                         {
-                            if (((ProjEnvironment)env).Guid ==  WorkSpace.UserProfile.RecentEnvironment)
+                            if (((ProjEnvironment)env).Guid ==  WorkSpace.Instance.UserProfile.RecentEnvironment)
                             {
                                 lstEnvs.SelectedIndex = lstEnvs.Items.IndexOf(env);
                                 return;
@@ -587,7 +617,7 @@ namespace Ginger
                 ProjEnvironment newEnv = new ProjEnvironment() { Name = "Default" };
 
                 // Add all solution target app
-                foreach (ApplicationPlatform AP in  WorkSpace.UserProfile.Solution.ApplicationPlatforms)
+                foreach (ApplicationPlatform AP in  WorkSpace.Instance.Solution.ApplicationPlatforms)
                 {
                     EnvApplication EA = new EnvApplication();
                     EA.Name = AP.AppName;
@@ -859,6 +889,7 @@ namespace Ginger
                         mCurrentActivity.PropertyChanged -= MCurrentActivity_PropertyChanged;
                     }
                     mCurrentActivity =(Activity) mBusinessFlow.CurrentActivity;
+                    mContext.Activity = mCurrentActivity;
                     if (mCurrentActivity != null)
                     {
                         //Add current Activity events registration
@@ -910,25 +941,39 @@ namespace Ginger
                 RemoveCurrentBusinessFlow();
                 mBusinessFlow = businessFlowToLoad;
                 mContext.BusinessFlow = mBusinessFlow;
+                mContext.Activity = mBusinessFlow.CurrentActivity;
                 if (businessFlowToLoad != null)
                 {                    
                     mBusinessFlow.SaveBackup();
                     mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
-                    mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
-                    
+                                        
                     SetExpanders();
                     SetGherkinOptions();
                     if (mBusinessFlow.Activities.Count > 0)
                     {
                         mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
                     }
-                    //Set Business Flow on AutomateTabGingerRunner
-                                   
-                    App.AutomateTabGingerRunner.BusinessFlows.Add(mBusinessFlow);
-                    App.AutomateTabGingerRunner.CurrentBusinessFlow = mBusinessFlow;
-                    UpdateApplicationsAgentsMapping();
-                }
 
+                    mRunner.BusinessFlows.Add(mBusinessFlow);
+                    mRunner.CurrentBusinessFlow = mBusinessFlow;
+
+                    SetBusinessFlowTargetAppIfNeeded();
+                    UpdateApplicationsAgentsMapping();
+                    mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
+
+                    UpdateRunnerAgentsUsedBusinessFlow();
+                }
+            }
+        }
+
+        public void UpdateRunnerAgentsUsedBusinessFlow()
+        {
+            foreach (ApplicationAgent appAgent in mRunner.ApplicationAgents)
+            {
+                if (appAgent.Agent != null && appAgent.Agent.Status == Agent.eStatus.Running)
+                {
+                    ((DriverBase)appAgent.Agent.Driver).UpdateContext(mContext);                   
+                }
             }
         }
 
@@ -939,8 +984,8 @@ namespace Ginger
             {
                 mBusinessFlow.PropertyChanged -= mBusinessFlow_PropertyChanged;
                 mBusinessFlow.TargetApplications.CollectionChanged -= mBusinessFlowTargetApplications_CollectionChanged;
-                mBusinessFlow = null;                
-                App.AutomateTabGingerRunner.BusinessFlows.Clear();
+                mBusinessFlow = null;
+                mRunner.BusinessFlows.Clear();
             }            
         }
 
@@ -990,7 +1035,7 @@ namespace Ginger
             AutoLogProxy.UserOperationStart("AutomateAnalyzerButton_Click");
 
             AnalyzerPage AP = new AnalyzerPage();
-            AP.Init( WorkSpace.UserProfile.Solution, mBusinessFlow);
+            AP.Init( WorkSpace.Instance.Solution, mBusinessFlow);
             AP.ShowAsWindow();
 
             AutoLogProxy.UserOperationEnd();
@@ -1024,18 +1069,18 @@ namespace Ginger
         {
             try
             {
-                AutoLogProxy.UserOperationStart("ResetStatusFrom" + resetFrom.ToString() + "_Click",  WorkSpace.UserProfile.Solution.Name, App.GetProjEnvironmentName());
-                App.AutomateTabGingerRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.Reset;
+                AutoLogProxy.UserOperationStart("ResetStatusFrom" + resetFrom.ToString() + "_Click",  WorkSpace.Instance.Solution.Name, GetProjEnvironmentName());
+                mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.Reset;
                 switch (resetFrom)
                 {
                     case Run.GingerRunner.eResetStatus.All:
-                        App.AutomateTabGingerRunner.ResetStatus(eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.All, mBusinessFlow);
+                        mRunner.ResetStatus(eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.All, mBusinessFlow);
                         break;
                     case Run.GingerRunner.eResetStatus.FromSpecificActivityOnwards:
-                        App.AutomateTabGingerRunner.ResetStatus(eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActivityOnwards, mBusinessFlow, (Activity)mBusinessFlow.CurrentActivity);
+                        mRunner.ResetStatus(eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActivityOnwards, mBusinessFlow, (Activity)mBusinessFlow.CurrentActivity);
                         break;
                     case Run.GingerRunner.eResetStatus.FromSpecificActionOnwards:
-                        App.AutomateTabGingerRunner.ResetStatus(eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActionOnwards, mBusinessFlow, (Activity)mBusinessFlow.CurrentActivity, (Act)mBusinessFlow.CurrentActivity.Acts.CurrentItem);
+                        mRunner.ResetStatus(eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActionOnwards, mBusinessFlow, (Activity)mBusinessFlow.CurrentActivity, (Act)mBusinessFlow.CurrentActivity.Acts.CurrentItem);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -1050,6 +1095,13 @@ namespace Ginger
             }
         }
 
+        private string GetProjEnvironmentName()
+        {
+            if (mEnvironment != null)
+                return mEnvironment.Name;
+            else
+                return null;
+        }
         private void FindAndReplaceAutomatePage_Click(object sender, RoutedEventArgs e)
         {
             AutomateFindAndReplace();
@@ -1089,7 +1141,7 @@ namespace Ginger
 
         private void OpenFeatureFileButton_Click(object sender, RoutedEventArgs e)
         {
-            DocumentEditorPage documentEditorPage = new DocumentEditorPage(App.AutomateTabGingerRunner.CurrentBusinessFlow.ExternalID.Replace("~",  WorkSpace.UserProfile.Solution.Folder), true);
+            DocumentEditorPage documentEditorPage = new DocumentEditorPage(mRunner.CurrentBusinessFlow.ExternalID.Replace("~",  WorkSpace.Instance.Solution.Folder), true);
             documentEditorPage.Title = "Gherkin Page";
             documentEditorPage.Height = 700;
             documentEditorPage.Width = 1000;
@@ -1109,11 +1161,11 @@ namespace Ginger
                 btnGridViewExecution_Click(sender, e);
 
                 DisableGridSelectedItemChangeOnClick(ActPage.grdActions);
-                AutoLogProxy.UserOperationStart("btnRunActivity_Click",  WorkSpace.UserProfile.Solution.Name, App.GetProjEnvironmentName());
+                AutoLogProxy.UserOperationStart("btnRunActivity_Click",  WorkSpace.Instance.Solution.Name, GetProjEnvironmentName());
 
                 SetAutomateTabRunnerForExecution();
 
-                mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
+                mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
                 
                 RunActivity();
                 AutoLogProxy.UserOperationEnd();
@@ -1121,9 +1173,9 @@ namespace Ginger
             finally
             {
                 EnabelGridSelectedItemChangeOnClick(ActPage.grdActions);
-                if (App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
+                if (mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
                 {
-                   ((Agent) App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
+                   ((Agent)mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
                 }                    
             }
         }
@@ -1131,16 +1183,16 @@ namespace Ginger
         // Run Preparations before execution of Action/activity/Flow/start agent
         public void SetAutomateTabRunnerForExecution()
         {
-            App.AutomateTabGingerRunner.ProjEnvironment = App.AutomateTabEnvironment;
-            App.AutomateTabGingerRunner.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
-            App.AutomateTabGingerRunner.DSList = new ObservableList<DataSourceBase>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
-            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<Agent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>());
-            App.AutomateTabGingerRunner.SolutionApplications =  WorkSpace.UserProfile.Solution.ApplicationPlatforms;
+            mRunner.ProjEnvironment = mEnvironment;
+            mRunner.SolutionFolder =  WorkSpace.Instance.Solution.Folder;
+            mRunner.DSList = new ObservableList<DataSourceBase>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+            mRunner.SolutionAgents = new ObservableList<Agent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>());
+            mRunner.SolutionApplications =  WorkSpace.Instance.Solution.ApplicationPlatforms;
         }
 
         public async Task RunActivity()
         {
-            await App.AutomateTabGingerRunner.RunActivityAsync((Activity)mBusinessFlow.CurrentActivity, false).ConfigureAwait(false);
+            await mRunner.RunActivityAsync((Activity)mBusinessFlow.CurrentActivity, false).ConfigureAwait(false);
 
             //When running Runactivity as standalone from GUI, SetActionSkipStatus is not called. Handling it here for now.
             foreach (Act act in mBusinessFlow.CurrentActivity.Acts)
@@ -1187,7 +1239,7 @@ namespace Ginger
                 try
                 {
                     AnalyzerPage analyzerPage = new AnalyzerPage();
-                    analyzerPage.Init( WorkSpace.UserProfile.Solution, mBusinessFlow);
+                    analyzerPage.Init( WorkSpace.Instance.Solution, mBusinessFlow);
                     await analyzerPage.AnalyzeWithoutUI();
 
                     Reporter.HideStatusMessage();
@@ -1214,7 +1266,7 @@ namespace Ginger
                     RunAutomateTabFlowConf("Run Automate Tab Flow");
                 }
                 //execute
-                await App.AutomateTabGingerRunner.RunBusinessFlowAsync(mBusinessFlow, true, false).ConfigureAwait(false);
+                await mRunner.RunBusinessFlowAsync(mBusinessFlow, true, false).ConfigureAwait(false);
                 this.Dispatcher.Invoke(() =>
                 {
                     AutoLogProxy.UserOperationEnd();
@@ -1224,8 +1276,7 @@ namespace Ginger
                     }
                     else
                     {
-                        ExecutionSummaryPage w = new ExecutionSummaryPage(mBusinessFlow);
-                        w.ShowAsWindow();
+                        ShowExecutionSummaryPage();
                     }
                 });
 
@@ -1238,23 +1289,29 @@ namespace Ginger
             {
                 //enable grids
                 EnableDisableAutomateTabGrids(true);
-                App.AutomateTabGingerRunner.ResetFailedToStartFlagForAgents();
+                mRunner.ResetFailedToStartFlagForAgents();
             }
         }
 
+        private void ShowExecutionSummaryPage()
+        {
+            ExecutionSummaryPage w = new ExecutionSummaryPage(mContext);
+            w.ShowAsWindow();
+        }
+    
         private void RunAutomateTabFlowConf(string runType)
         {
             btnGridViewExecution_Click(null, null);//shift to execution view
 
-            AutoLogProxy.UserOperationStart(runType,  WorkSpace.UserProfile.Solution.Name, App.GetProjEnvironmentName());
+            AutoLogProxy.UserOperationStart(runType,  WorkSpace.Instance.Solution.Name, GetProjEnvironmentName());
 
             //disable grids  
             EnableDisableAutomateTabGrids(false);
 
             //execute preparations
             SetAutomateTabRunnerForExecution();
-            App.AutomateTabGingerRunner.ResetRunnerExecutionDetails();
-            mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
+            mRunner.ResetRunnerExecutionDetails();
+            mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
             
         }
 
@@ -1265,7 +1322,7 @@ namespace Ginger
                 this.Dispatcher.Invoke(() =>
                 {
                     ActivitiesPage AP = null;
-                    if (BFActivitiesFrame.Content.GetType() == typeof(ActivitiesPage)) // it can be the Activities MiniView
+                    if (BFActivitiesFrame.Content != null && BFActivitiesFrame.Content.GetType() == typeof(ActivitiesPage)) // it can be the Activities MiniView
                     {
                         AP = (ActivitiesPage)BFActivitiesFrame.Content;
                     }
@@ -1305,7 +1362,7 @@ namespace Ginger
 
         public async Task RunCurrentAutomatePageAction(bool checkIfActionAllowedToRun = true)
         {
-            AutoLogProxy.UserOperationStart("RunActionButton_Click",  WorkSpace.UserProfile.Solution.Name, App.GetProjEnvironmentName());
+            AutoLogProxy.UserOperationStart("RunActionButton_Click",  WorkSpace.Instance.Solution.Name, GetProjEnvironmentName());
 
             //TODO: Check if grid we are in execution view, no need to try and change of already in correct view
             btnGridViewExecution_Click(null, null);
@@ -1325,24 +1382,24 @@ namespace Ginger
             }
 
             //No need of agent for actions like DB and read for excel. For other need agent  
-            Type actType = App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem.GetType();
+            Type actType = mRunner.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem.GetType();
             
             if (!(typeof(ActWithoutDriver).IsAssignableFrom(actType)) || actType == typeof(ActAgentManipulation))   // ActAgentManipulation not needed
             {
-                App.AutomateTabGingerRunner.SetCurrentActivityAgent();
+                mRunner.SetCurrentActivityAgent();
             }
             
             if ((typeof(ActPlugIn).IsAssignableFrom(actType)))
             {
-                App.AutomateTabGingerRunner.SetCurrentActivityAgent(); 
+                mRunner.SetCurrentActivityAgent(); 
             }
 
-            mExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
-            var result = await App.AutomateTabGingerRunner.RunActionAsync((Act)mBusinessFlow.CurrentActivity.Acts.CurrentItem, checkIfActionAllowedToRun, true).ConfigureAwait(false);
+            mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+            var result = await mRunner.RunActionAsync((Act)mBusinessFlow.CurrentActivity.Acts.CurrentItem, checkIfActionAllowedToRun, true).ConfigureAwait(false);
 
-            if (App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
+            if (mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
             {
-                ((Agent)App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
+                ((Agent)mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
             }
 
             AutoLogProxy.UserOperationEnd();
@@ -1357,7 +1414,7 @@ namespace Ginger
         {
             try
             {
-                App.AutomateTabGingerRunner.StopRun();
+                mRunner.StopRun();
             }
             finally
             {
@@ -1382,18 +1439,18 @@ namespace Ginger
                 btnGridViewExecution_Click(null, null);
                 EnableDisableAutomateTabGrids(false);
 
-                AutoLogProxy.UserOperationStart("ContinuteRunFrom" + continueFrom.ToString() + "_Click",  WorkSpace.UserProfile.Solution.Name, App.GetProjEnvironmentName());
-                App.AutomateTabGingerRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
+                AutoLogProxy.UserOperationStart("ContinuteRunFrom" + continueFrom.ToString() + "_Click",  WorkSpace.Instance.Solution.Name, GetProjEnvironmentName());
+                mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
                 switch (continueFrom)
                 {
                     case eContinueFrom.LastStoppedAction:
-                        await App.AutomateTabGingerRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.LastStoppedAction);
+                        await mRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.LastStoppedAction);
                         break;
                     case eContinueFrom.SpecificAction:
-                        await App.AutomateTabGingerRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificAction, mBusinessFlow, (Activity)mBusinessFlow.CurrentActivity, (Act)mBusinessFlow.CurrentActivity.Acts.CurrentItem);
+                        await mRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificAction, mBusinessFlow, (Activity)mBusinessFlow.CurrentActivity, (Act)mBusinessFlow.CurrentActivity.Acts.CurrentItem);
                         break;
                     case eContinueFrom.SpecificActivity:
-                        await App.AutomateTabGingerRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificActivity, mBusinessFlow,(Activity) mBusinessFlow.CurrentActivity);
+                        await mRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificActivity, mBusinessFlow,(Activity) mBusinessFlow.CurrentActivity);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -1420,12 +1477,12 @@ namespace Ginger
         {
             AutoLogProxy.UserOperationStart("StartAgent_Click");
 
-            string agentsNames = App.AutomateTabGingerRunner.GetAgentsNameToRun();
+            string agentsNames = mRunner.GetAgentsNameToRun();
             Reporter.ToStatus(eStatusMsgKey.StartAgents, null, agentsNames);
 
-            App.AutomateTabGingerRunner.StopAgents();
+            mRunner.StopAgents();
             SetAutomateTabRunnerForExecution();
-            App.AutomateTabGingerRunner.StartAgents();
+            mRunner.StartAgents();
 
             Reporter.HideStatusMessage();
             AutoLogProxy.UserOperationEnd();
@@ -1448,8 +1505,7 @@ namespace Ginger
 
         private void SummeryReportButton_Click(object sender, RoutedEventArgs e)
         {
-            ExecutionSummaryPage w = new ExecutionSummaryPage(mBusinessFlow);
-            w.ShowAsWindow();
+            ShowExecutionSummaryPage();
         }
 
         public void btnLastExecutionHTMLReport_click(object sender, RoutedEventArgs e)
@@ -1459,15 +1515,15 @@ namespace Ginger
 
         private void GenerateLastExecutedItemReport()
         {
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
             }
-            HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             //get logger files
-            string exec_folder = Ginger.Run.ExecutionLoggerManager.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLoggerManager.defaultAutomationTabLogName);
+            string exec_folder = Ginger.Run.ExecutionLogger.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLogger.defaultAutomationTabLogName);
             //create the report
             string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), true, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
 
@@ -1491,15 +1547,15 @@ namespace Ginger
 
         private void btnOfflineExecutionHTMLReport_click(object sender, RoutedEventArgs e)
         {
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
             }
-            HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             //create the execution logger files            
-            string exec_folder = Ginger.Run.ExecutionLoggerManager.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLoggerManager.defaultAutomationTabOfflineLogName);
+            string exec_folder = Ginger.Run.ExecutionLogger.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLogger.defaultAutomationTabOfflineLogName);
 
             if (Directory.Exists(exec_folder))
             {
@@ -1510,7 +1566,7 @@ namespace Ginger
                 Directory.CreateDirectory(exec_folder);
             }
             
-            if (((ExecutionLoggerManager)App.AutomateTabGingerRunner.ExecutionLoggerManager).OfflineBusinessFlowExecutionLog(mBusinessFlow, exec_folder))
+            if (((ExecutionLogger)mRunner.ExecutionLogger).OfflineBusinessFlowExecutionLog(mBusinessFlow, exec_folder))
             {
                 //create the HTML report
                 try
@@ -1571,7 +1627,7 @@ namespace Ginger
         {
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
             bfs.Add(mBusinessFlow);
-            ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
+            ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(mEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
             ExportResultsToALMConfigPage.Instance.ShowAsWindow();
         }
 
@@ -1579,10 +1635,25 @@ namespace Ginger
         {
             if (lstEnvs != null && lstEnvs.SelectedItem != null)
             {
-                App.AutomateTabEnvironment = (ProjEnvironment)lstEnvs.SelectedItem;                
-                mExecutionLogger.ExecutionEnvironment = (ProjEnvironment)lstEnvs.SelectedItem;
+                UpdateUsedEnvironment((ProjEnvironment)lstEnvs.SelectedItem);                
+            }
+            else
+            {
+                UpdateUsedEnvironment(null);
             }
                 
+        }
+
+        private void UpdateUsedEnvironment(ProjEnvironment env)
+        {
+            mEnvironment = env;
+            mContext.Environment = mEnvironment;
+            mRunner.ProjEnvironment = mEnvironment;
+            mRunner.ExecutionLogger.ExecutionEnvironment = mEnvironment;
+            if (mEnvironment != null)
+            {
+                WorkSpace.Instance.UserProfile.RecentEnvironment = mEnvironment.Guid;
+            }
         }
 
         private void xRibbon_Loaded(object sender, RoutedEventArgs e)
@@ -1598,14 +1669,14 @@ namespace Ginger
 
         private void TimeLineReportButton_Click(object sender, RoutedEventArgs e)
         {
-            GingerRunnerTimeLine gingerRunnerTimeLine = (GingerRunnerTimeLine)(from x in App.AutomateTabGingerRunner.RunListeners where x.GetType() == typeof(GingerRunnerTimeLine) select x).SingleOrDefault();
+            GingerRunnerTimeLine gingerRunnerTimeLine = (GingerRunnerTimeLine)(from x in mRunner.RunListeners where x.GetType() == typeof(GingerRunnerTimeLine) select x).SingleOrDefault();
             TimeLinePage timeLinePage = new TimeLinePage(gingerRunnerTimeLine.timeLineEvents);
             timeLinePage.ShowAsWindow();
         }
 
         private void CboSpeed_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            App.AutomateTabGingerRunner.SetSpeed(int.Parse(cboSpeed.Text));
+            mRunner.SetSpeed(int.Parse(cboSpeed.Text));
         }
     }
 }

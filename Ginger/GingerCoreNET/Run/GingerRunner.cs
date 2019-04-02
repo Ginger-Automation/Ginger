@@ -25,7 +25,6 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
 using GingerCore;
@@ -287,6 +286,7 @@ namespace Ginger.Run
             set
             {
                 mProjEnvironment = (ProjEnvironment)value;
+                ExecutionLogger.ExecutionEnvironment = (ProjEnvironment)value;
                 NotifyEnvironmentChanged();                
             }
         }
@@ -559,7 +559,7 @@ namespace Ginger.Run
 
                     if (doContinueRun == false)
                     {
-                        // ExecutionLogger.GingerEnd();
+                        // ExecutionLogger.GingerEnd();                    
                         NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
                     }
                 }   

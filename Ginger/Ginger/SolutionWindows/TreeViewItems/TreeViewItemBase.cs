@@ -44,15 +44,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override void AddSourceControlOptions(ContextMenu CM, bool addDetailsOption = true, bool addLocksOption = true)
         {
-            if ( WorkSpace.UserProfile.Solution != null &&  WorkSpace.UserProfile.Solution.SourceControl != null)
+            if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.SourceControl != null)
             {
                 MenuItem sourceControlMenu = TreeViewUtils.CreateSubMenu(CM, "Source Control");
                 if (addDetailsOption)
                     TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Get Info", SourceControlGetInfo, null, "@Info_16x16.png");
                 TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Check-In Changes", SourceControlCheckIn, null, "@CheckIn2_16x16.png");
-                if ( WorkSpace.UserProfile.Solution.SourceControl.IsSupportingGetLatestForIndividualFiles)
+                if ( WorkSpace.Instance.Solution.SourceControl.IsSupportingGetLatestForIndividualFiles)
                     TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Get Latest Version", SourceControlGetLatestVersion, null, "@GetLatest2_16x16.png");
-                if ( WorkSpace.UserProfile.Solution.ShowIndicationkForLockedItems &&  WorkSpace.UserProfile.Solution.SourceControl.IsSupportingLocks && addLocksOption)
+                if ( WorkSpace.Instance.Solution.ShowIndicationkForLockedItems &&  WorkSpace.Instance.Solution.SourceControl.IsSupportingLocks && addLocksOption)
                     if (ItemSourceControlStatus == SourceControlFileInfo.eRepositoryItemStatus.LockedByAnotherUser || ItemSourceControlStatus == SourceControlFileInfo.eRepositoryItemStatus.LockedByMe)
                     {
                         TreeViewUtils.AddSubMenuItem(sourceControlMenu, "UnLock Item", SourceControlUnlock, null, "@Unlock_16x16.png");
@@ -67,14 +67,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void SourceControlGetInfo(object sender, RoutedEventArgs e)
         {
-            SourceControlItemInfoDetails SCIID = SourceControlIntegration.GetInfo( WorkSpace.UserProfile.Solution.SourceControl, this.NodePath());
+            SourceControlItemInfoDetails SCIID = SourceControlIntegration.GetInfo( WorkSpace.Instance.Solution.SourceControl, this.NodePath());
             SourceControlItemInfoPage SCIIP = new SourceControlItemInfoPage(SCIID);
             SCIIP.ShowAsWindow();
         }
 
         private void SourceControlUnlock(object sender, RoutedEventArgs e)
         {
-            SourceControlIntegration.UnLock( WorkSpace.UserProfile.Solution.SourceControl, this.NodePath());
+            SourceControlIntegration.UnLock( WorkSpace.Instance.Solution.SourceControl, this.NodePath());
             mTreeView.Tree.RefreshHeader((ITreeViewItem)this);
         }
 
@@ -83,7 +83,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             string lockComment = string.Empty;
             if (GingerCore.General.GetInputWithValidation("Lock", "Lock Comment:", ref lockComment))
             {
-                SourceControlIntegration.Lock( WorkSpace.UserProfile.Solution.SourceControl, this.NodePath(), lockComment);
+                SourceControlIntegration.Lock( WorkSpace.Instance.Solution.SourceControl, this.NodePath(), lockComment);
                 mTreeView.Tree.RefreshHeader((ITreeViewItem)this);
             }
         }
@@ -99,7 +99,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (Reporter.ToUser(eUserMsgKey.SureWantToDoRevert) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 Reporter.ToStatus(eStatusMsgKey.RevertChangesFromSourceControl);
-                SourceControlIntegration.Revert( WorkSpace.UserProfile.Solution.SourceControl, this.NodePath());                
+                SourceControlIntegration.Revert( WorkSpace.Instance.Solution.SourceControl, this.NodePath());                
                 mTreeView.Tree.RefreshSelectedTreeNodeParent();
                 Reporter.HideStatusMessage();
             }
@@ -113,7 +113,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (string.IsNullOrEmpty(this.NodePath()))
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
-                SourceControlIntegration.GetLatest(this.NodePath(),  WorkSpace.UserProfile.Solution.SourceControl);
+                SourceControlIntegration.GetLatest(this.NodePath(),  WorkSpace.Instance.Solution.SourceControl);
             
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
             Reporter.HideStatusMessage();

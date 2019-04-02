@@ -16,11 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerWPF.DragDropLib;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
+using Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
+using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,12 +33,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using Ginger.BusinessFlowFolder;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
-using Ginger.Repository;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Actions
 {
@@ -45,12 +44,22 @@ namespace Ginger.Actions
         Activity mCurrentActivity;        
         public General.RepositoryItemPageViewMode EditMode { get; set; }
         BusinessFlow mBusinessFlow;
-        Context mContext = new Context();
+        Context mContext;
 
-        public ActionsPage(Activity activity=null, BusinessFlow businessFlow=null, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
+        public ActionsPage(Activity activity=null, BusinessFlow businessFlow=null, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation, Context context=null)
         {
             InitializeComponent();            
             EditMode = editMode;
+
+            if (context != null)
+            {
+                mContext = context;
+            }
+            else
+            {
+                mContext = new Context();
+            }
+
             if (activity != null)
             {
                 //static Activity               
@@ -234,7 +243,8 @@ namespace Ginger.Actions
             }
             else
             {
-                AddActionPage addAction = new AddActionPage(new Context() { BusinessFlow = mBusinessFlow , Activity= mCurrentActivity});
+
+                AddActionPage addAction = new AddActionPage(mContext);
                 addAction.ShowAsWindow(mCurrentActivity.Acts);
             }
         }
@@ -243,7 +253,7 @@ namespace Ginger.Actions
         {  
             if (e.PropertyName == "CurrentItem")
             {
-                App.AutomateTabGingerRunner.HighlightActElement((Act)grdActions.CurrentItem);
+                mContext.Runner.HighlightActElement((Act)grdActions.CurrentItem);
             }            
         }
 
@@ -258,7 +268,7 @@ namespace Ginger.Actions
         public void UpdateParentBusinessFlow(BusinessFlow bf)
         {            
             mBusinessFlow = bf;
-            mContext.BusinessFlow = bf;
+            //mContext.BusinessFlow = bf;
             if (mBusinessFlow != null)
             {
                 if (mBusinessFlow.CurrentActivity == null)
@@ -286,11 +296,17 @@ namespace Ginger.Actions
 
         private void EditAction(object sender, RoutedEventArgs e)
         {
+            EditSelectedAction();
+        }
+
+        private void EditSelectedAction()
+        {
             if (grdActions.CurrentItem != null)
             {
-                Act a=(Act)grdActions.CurrentItem;
-                a.Context = new Context() { BusinessFlow = mBusinessFlow };
-                ActionEditPage actedit = new ActionEditPage(a,EditMode);
+                Act a = (Act)grdActions.CurrentItem;
+                a.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+                a.Context = mContext;
+                ActionEditPage actedit = new ActionEditPage(a, EditMode);
                 actedit.ap = this;
                 actedit.ShowAsWindow();
             }
@@ -430,12 +446,7 @@ namespace Ginger.Actions
 
         private void grdActions_grdMain_MouseDoubleClick(object sender, EventArgs e)
         {
-            Act a = (Act)grdActions.CurrentItem;
-            a.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
-            a.Context = new Context() { BusinessFlow = mBusinessFlow };
-            ActionEditPage actedit = new ActionEditPage(a, EditMode);
-            actedit.ap = this;
-            actedit.ShowAsWindow();
+            EditSelectedAction();
         }
     }
 }

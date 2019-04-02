@@ -51,16 +51,16 @@ namespace Ginger.Reports
 
         private void Init()
         {
-            GingerCore.General.ObjFieldBinding(DefaultTemplatePickerCbx, ComboBox.SelectedValueProperty, mEmailAttachment, EmailHtmlReportAttachment.Fields.SelectedHTMLReportTemplateID);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DefaultTemplatePickerCbx, ComboBox.SelectedValueProperty, mEmailAttachment, EmailHtmlReportAttachment.Fields.SelectedHTMLReportTemplateID);
             HTMLReportFolderTextBox.Init(null, mEmailAttachment, EmailAttachment.Fields.ExtraInformation, true, true, UCValueExpression.eBrowserType.Folder,"*.*", null); 
             
-            GingerCore.General.ObjFieldBinding(UseAlternativeHTMLReportFolderCbx, CheckBox.IsCheckedProperty, mEmailAttachment, EmailHtmlReportAttachment.Fields.IsAlternameFolderUsed);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseAlternativeHTMLReportFolderCbx, CheckBox.IsCheckedProperty, mEmailAttachment, EmailHtmlReportAttachment.Fields.IsAlternameFolderUsed);
             RadioButtonInit(mEmailAttachment.IsLinkEnabled);
 
             DefaultTemplatePickerCbx.ItemsSource = null;
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            if ( WorkSpace.UserProfile.Solution != null  && HTMLReportConfigurations.Count > 0)
+            if ( WorkSpace.Instance.Solution != null  && HTMLReportConfigurations.Count > 0)
             {
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;
@@ -89,7 +89,7 @@ namespace Ginger.Reports
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpression mVE=new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+            ValueExpression mVE=new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
             string extraInformationCalculated = string.Empty;
             mVE.Value = mEmailAttachment.ExtraInformation;
             extraInformationCalculated = mVE.ValueCalculated;

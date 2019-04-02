@@ -42,7 +42,7 @@ namespace Ginger.Run.RunSetActions
             public static string toAttachActivitiesGroupReport = "toAttachActivitiesGroupReport";
         }
         PublishToALMConfig PublishToALMConfig = new PublishToALMConfig();
-        readonly ValueExpression mVE = new ValueExpression(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);                
+        readonly ValueExpression mVE = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);                
 
         private string mVariableForTCRunName;
         [IsSerializedForLocalRepository]
@@ -80,7 +80,7 @@ namespace Ginger.Run.RunSetActions
         {
             //Set flag for each BF to execute runset when BF execute finish
             SetExportToALMConfig();
-            foreach (GingerRunner GR in WorkSpace.RunsetExecutor.Runners)
+            foreach (GingerRunner GR in WorkSpace.Instance.RunsetExecutor.Runners)
             {
                 GR.PublishToALMConfig = PublishToALMConfig;
             }               

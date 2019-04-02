@@ -61,7 +61,7 @@ namespace Ginger
         public static string ConvertSolutionRelativePath(string fileName)
         {
             //string s = fileName;
-            //s= s.ToUpper().Replace( WorkSpace.UserProfile.Solution.Folder.ToUpper(), @"~\");
+            //s= s.ToUpper().Replace( WorkSpace.Instance.Solution.Folder.ToUpper(), @"~\");
             //return s;
             return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(fileName);
         }
@@ -71,7 +71,7 @@ namespace Ginger
             //string s = filename;
             //if (s.StartsWith(@"~\"))
             //{
-            //    s = s.Replace(@"~\",  WorkSpace.UserProfile.Solution.Folder);
+            //    s = s.Replace(@"~\",  WorkSpace.Instance.Solution.Folder);
             //}
             //return s;
             return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(filename);
@@ -246,18 +246,18 @@ namespace Ginger
             grd.Children.Add(control);
             grd.Children.Add(CreateAnEllipse());          
             TextBlock txt = new TextBlock { Margin = new Thickness(xAxis, 168, 0, 0)};
-            if(typ==0)
-            {
-                App.RunsetBFTextbox = txt;
-            }
-           else if(typ==1)
-            {
-                App.RunsetActivityTextbox = txt;
-            }
-            else
-            {
-                App.RunsetActionTextbox = txt;
-            }        
+           // if(typ==0)
+           // {
+           //     App.RunsetBFTextbox = txt;
+           // }
+           //else if(typ==1)
+           // {
+           //     App.RunsetActivityTextbox = txt;
+           // }
+           // else
+           // {
+           //     App.RunsetActionTextbox = txt;
+           // }        
             grd.Children.Add(txt);        
             viewbox.Child = grd;
             viewbox.Measure(new System.Windows.Size(400, 200));

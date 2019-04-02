@@ -649,10 +649,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     mActWebService.AddOrUpdateReturnParamActual("Saved Request File Name", createRequestOrResponseXML("Request", mRequest));
                 }
 
-                if (SaveResponseXML)
-                {
-                    mActWebService.AddOrUpdateReturnParamActual("Saved Response File Name", createRequestOrResponseXML("Response", resp));
-                }
 
                 if (mIsDriverWindowLaunched)
                 {
@@ -670,7 +666,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 }
 
                 if (SaveResponseXML)
-                    createRequestOrResponseXML("response", resp);
+                {
+                    mActWebService.AddOrUpdateReturnParamActual("Saved Response File Name", createRequestOrResponseXML("Response", resp));
+                }
                 try
                 {
                     List<GingerCore.General.XmlNodeItem> outputList = new List<GingerCore.General.XmlNodeItem>();

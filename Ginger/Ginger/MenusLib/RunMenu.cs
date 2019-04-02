@@ -39,15 +39,15 @@ namespace Ginger.MenusLib
                 if (mMenusPage == null)
                 {
                     mMenusPage = new TwoLevelMenuPage(GetMenu());
-                     WorkSpace.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+                     WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
                 }
                 return mMenusPage;
             }
         }
 
-        private static void UserProfile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private static void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(UserProfile.Solution))
+            if (e.PropertyName == nameof(WorkSpace.Solution))
             {
                 MenusPage.Reset();
             }

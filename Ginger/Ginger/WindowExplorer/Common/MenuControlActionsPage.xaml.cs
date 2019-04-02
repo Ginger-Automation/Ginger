@@ -127,7 +127,7 @@ namespace Ginger.WindowExplorer.Common
             act.ValueForDriver = act.Value;
             act.Active = true;
             //TODO: remove hard coded selecting first agent
-            ((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).RunAction(act);
+            //((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).RunAction(act);
         }
 
         private void MenuItemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
