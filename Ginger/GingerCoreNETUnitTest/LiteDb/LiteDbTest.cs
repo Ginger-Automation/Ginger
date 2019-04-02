@@ -23,6 +23,7 @@ namespace GingerCoreNETUnitTest.LiteDb
             var acgColl = this.GetGingerActvityGroup();
             dbConector.SetCollection(bfLiteColl, this.GetGingerBf(acgColl));
             dbConector.SetCollection(acgLiteColl, acgColl);
+            Assert.IsTrue(acgLiteColl.Count() > 0);
 
         }
 
@@ -33,10 +34,10 @@ namespace GingerCoreNETUnitTest.LiteDb
             var filterData = dbConector.FilterCollection(bfLiteColl, Query.Contains("Name", "bf name"));
             filterData.ForEach(a => a.Name = a.Name + " Modified BF");
             dbConector.SetCollection(bfLiteColl, filterData);
+            Assert.IsTrue(bfLiteColl.Count() > 0);
         }
 
-        [ClassInitialize]
-        public void InitTest()
+        public LiteDbTest()
         {
             dbConector = new LiteDbConnector("LiteDbData.db");
             var mapper = dbConector.GetMapper<GingerBusinessFlow>();
