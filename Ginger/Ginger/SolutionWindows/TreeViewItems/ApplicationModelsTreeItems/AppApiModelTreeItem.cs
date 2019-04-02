@@ -63,7 +63,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         public Page EditPage()
         {
             if(mAPIModelPage == null)
-                mAPIModelPage = new APIModelPage(mApiModel);            
+                mAPIModelPage = new APIModelPage(mApiModel);
             else
                 mAPIModelPage.BindUiControls();
 
@@ -91,35 +91,26 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             mContextMenu = new ContextMenu();
 
             AddItemNodeBasicManipulationsOptions(mContextMenu);
-            
+
             AddSourceControlOptions(mContextMenu);
         }
 
         public override void DuplicateTreeItem(object item)
         {
-            if (item is RepositoryItemBase)
+            RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)item);
+            if (copiedItem != null)
             {
-                RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)item);
-                HandleGlobalModelParameters(item, copiedItem);
-                if (copiedItem != null)
-                    (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)item))).AddRepositoryItem(copiedItem);
-            }
-            else
-            {
-                //implement for other item types
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Item type " + item.GetType().Name + " - operation for this item type was not implemented yet.");
+                HandleGlobalModelParameters(item, copiedItem);          // avoid generating new GUIDs for Global Model Parameters associated to API Model being copied
+                (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)item))).AddRepositoryItem(copiedItem);
             }
         }
 
         // avoid generating new GUIDs for Global Model Parameters associated to API Model being copied
-        private void HandleGlobalModelParameters(object item, RepositoryItemBase copiedItem)
+        public static void HandleGlobalModelParameters(object item, RepositoryItemBase copiedItem)
         {
-            if (item.GetType() == typeof(ApplicationAPIModel))
+            foreach (GlobalAppModelParameter gAMPara in (copiedItem as ApplicationAPIModel).GlobalAppModelParameters)
             {
-                foreach (GlobalAppModelParameter gAMPara in (copiedItem as ApplicationAPIModel).GlobalAppModelParameters)
-                {
-                    gAMPara.Guid = (item as ApplicationAPIModel).GlobalAppModelParameters.Where(m => m.ElementName == gAMPara.ElementName).FirstOrDefault().Guid;
-                }
+                gAMPara.Guid = (item as ApplicationAPIModel).GlobalAppModelParameters.Where(m => m.ElementName == gAMPara.ElementName).FirstOrDefault().Guid;
             }
         }
     }
