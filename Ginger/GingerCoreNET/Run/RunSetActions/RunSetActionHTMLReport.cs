@@ -66,7 +66,7 @@ namespace Ginger.Run.RunSetActions
                 OnPropertyChanged(nameof(HTMLReportFolderName));
             }
         }
-        private string mHTMLReportFolderNameCalculated = null;
+        private string mHTMLReportFolderNameCalculated;
         public string HTMLReportFolderNameCalculated
         {
             get
@@ -107,9 +107,6 @@ namespace Ginger.Run.RunSetActions
                     ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
                     if ((isHTMLReportFolderNameUsed) && (HTMLReportFolderName != null) && (HTMLReportFolderName != string.Empty))
                     {
-                        //mVE.Value = HTMLReportFolderName;
-                        //string selectedHTMLReportFolderName = mVE.ValueCalculated;
-
                         string currentHTMLFolderName = string.Empty;
                         if (!isHTMLReportPermanentFolderNameUsed)
                         {
