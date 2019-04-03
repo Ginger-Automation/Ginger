@@ -342,18 +342,7 @@ namespace Ginger.ALM.Repository
                     //create upload path if checked to create separete folder
                     if (QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder)
                     {
-                        bool flag = false;
                         try
-                        {
-                            string isFolderId = QCRestAPIConnect.GetLastTestPlanIdFromPath(testPlanUploadPath + "\\" + businessFlow.Name).ToString();
-                            testPlanUploadPath = testPlanUploadPath + "\\" + businessFlow.Name;
-                            flag = true;
-                        }
-                        catch (Exception ex)
-                        {
-                            flag = false;
-                        }
-                        if (flag == false)
                         {
                             string newFolderId = QCRestAPIConnect.GetLastTestPlanIdFromPath(testPlanUploadPath).ToString();
                             QCItem newFolder = new QCItem();
@@ -362,6 +351,10 @@ namespace Ginger.ALM.Repository
                             ALMResponseData responseData = QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_FOLDERS, newFolder);
                             newFolderId = responseData.IdCreated;
                             testPlanUploadPath = testPlanUploadPath + "\\" + businessFlow.Name;
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to get create folder for Test Plan with REST API", ex);
                         }
                     }
                 }
