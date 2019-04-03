@@ -181,8 +181,6 @@ namespace GingerCoreNET.RosLynLib
 
             Console.WriteLine("Executing script code complete");
             
-            //!!!
-            globals.WaitforallNodesShutDown();
 
             return null;
         }

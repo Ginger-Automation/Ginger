@@ -32,11 +32,7 @@ namespace GingerCoreNET.CommandProcessorLib
             var rc = CodeProcessor.Execute(txt);
         }
 
-        public static string CreateStartNodeScript(string driverID, string name, string host, int port)
-        {
-            return String.Format(nameof(GingerConsoleScriptGlobals.StartNode) + "(\"{0}\",\"{1}\",\"{2}\",{3}); ", driverID, name, host, port) + Environment.NewLine;
-        }
-
+        // !!!! Cleanup
         public static string CreateLoadPluginScript(string PackageFolder)
         {
             return String.Format(nameof(GingerConsoleScriptGlobals.LoadPluginPackage) + "(@\"{0}\");", PackageFolder) + Environment.NewLine;
