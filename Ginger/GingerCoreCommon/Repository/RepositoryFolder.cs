@@ -545,6 +545,7 @@ namespace Amdocs.Ginger.Repository
 
                     break;
             }
+            SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(e.FullPath));
             return;
         }
 

@@ -314,10 +314,10 @@ namespace Ginger.SourceControl
             }
 
             //refresh parent folders
-            foreach (string folder in parentFolders)
-            {
-                WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(folder);
-            }
+            //foreach (string folder in parentFolders)
+            //{
+            //    WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(folder);
+            //}
         }
 
         /// <summary>

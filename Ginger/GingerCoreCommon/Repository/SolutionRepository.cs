@@ -161,7 +161,7 @@ namespace Amdocs.Ginger.Repository
             repositoryItem.FileName = filePath;
             repositoryItem.FilePath = filePath;
             repositoryItem.RefreshSourceControlStatus();
-            RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(repositoryItem.FilePath));
+            //RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(repositoryItem.FilePath));
             if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
                 repositoryItem.SetDirtyStatusToNoChange();
         }      
@@ -239,28 +239,13 @@ namespace Amdocs.Ginger.Repository
         /// Refresh source control status of all parent folders
         /// </summary>
         /// <param name="folderPath"></param>
-        public void RefreshParentFoldersSoucerControlStatus(string folderPath, bool pullParentFolder = false)
+        public void RefreshParentFoldersSoucerControlStatus(string folderPath)
         {
-            if (pullParentFolder)
-            {
-                FileAttributes attr;
-                attr = File.GetAttributes(folderPath);
-
-                if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-                {
-                    folderPath = Directory.GetParent(folderPath).FullName;
-                }
-                else
-                {
-                    folderPath = Path.GetDirectoryName(folderPath);
-                }
-            }
-
             RepositoryFolderBase repoFolder = GetRepositoryFolderByPath(folderPath);
             if (repoFolder != null)
             {
-                repoFolder.RefreshFolderSourceControlStatus();
-                RefreshParentFoldersSoucerControlStatus(Directory.GetParent(folderPath).FullName);
+                repoFolder.RefreshFolderSourceControlStatus().ConfigureAwait(true);
+                RefreshParentFoldersSoucerControlStatus(Directory.GetParent(folderPath)?.FullName);
             }
         }
 
