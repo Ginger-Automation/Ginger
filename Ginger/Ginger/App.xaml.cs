@@ -52,6 +52,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -864,12 +865,19 @@ namespace Ginger
             }
         }
 
+
+       
+
+        // This is the main entry point to Ginger UI/CLI
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            Console.Title = "Ginger";
             Console.WriteLine("Starting Ginger");
+            Console.WriteLine("Version: " + AppVersion);            
 
             if (e.Args.Length == 0)
             {
+                HideConsoleWindow();
                 // start regular Ginger UI
                 StartGingerUI();                
             }
@@ -886,6 +894,27 @@ namespace Ginger
                     RunNewCLI(e.Args);                    
                 }
             }
+        }
+
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        const int SW_SHOW = 5;
+
+        private void HideConsoleWindow()
+        {
+            var handle = GetConsoleWindow();
+
+            // Hide
+            ShowWindow(handle, SW_HIDE);
+
+            // Show
+            // ShowWindow(handle, SW_SHOW);
         }
 
         private void RunNewCLI(string[] args)
