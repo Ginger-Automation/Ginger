@@ -6,6 +6,7 @@ using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Environments;
+using GingerCoreNET.RosLynLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,50 +19,35 @@ namespace Amdocs.Ginger.CoreNET.RunLib
     {
         public static void ExecuteArgs(string[] args)
         {
+
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
-
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
-            
-            // OpenSolution(@"C:\yaron\GingerSolution\Plugins\Plugins");
 
-            // Temp !!!!!
-            //string solutionFolder = @"C:\temp\CLI\CLI";
-            string solutionFolder = @"C:\Yaron\GingerSolutions\Ginger Demo";
-            OpenSolution(solutionFolder);
-            string SolFile = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");            
-            WorkSpace.Instance.Solution = WorkSpace.Instance.Solution = Solution.LoadSolution(SolFile);
-            WorkSpace.Instance.Solution.SetReportsConfigurations();
-            RunRunSet();
+            
+
+            string[] param = args[0].Split('=');
+            if (param[0].StartsWith("ScriptFile"))
+            {
+                ExecutScript(param[1]);
+            }            
         }
 
-        private static void RunRunSet()
-        {
-            // !!!!!!!! cleanup
-            //var zz = SR.GetAllRepositoryItems<RunSetConfig>();
-            var envs = SR.GetAllRepositoryItems<ProjEnvironment>();
+        private static void ExecutScript(string scriptFile)
+        {            
+            if (!System.IO.File.Exists(scriptFile))
+            {
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, "File not found");
+                return;
+            }
+            string script = System.IO.File.ReadAllText(scriptFile);
+            var rc = CodeProcessor.ExecuteNew(script);
 
-            // ProjEnvironment projEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == "Default" select x).SingleOrDefault();
-            ProjEnvironment projEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == "CMI IIS test server - DEV" select x).SingleOrDefault();
-            // 
-            RunSetConfig runSetConfig = (from x in SR.GetAllRepositoryItems<RunSetConfig>() where x.Name == "Default Run Set" select x).SingleOrDefault();
-            RunsetExecutor runsetExecutor = new RunsetExecutor();
-            WorkSpace.Instance.RunsetExecutor = runsetExecutor;
-            runsetExecutor.RunSetConfig = runSetConfig;
-            runsetExecutor.RunsetExecutionEnvironment = projEnvironment;
-            //runsetExecutor.ConfigureAllRunnersForExecution();
-            // runsetExecutor.LoadRunSetConfig(runSetConfig);
-            // runsetExecutor.SetRunnersExecutionLoggerConfigs();
 
-            runsetExecutor.InitRunners();
-            BusinessFlow bf  = runsetExecutor.Runners[0].BusinessFlows[0];
-            runsetExecutor.RunRunset();
-            
-            string json = runsetExecutor.CreateSummary(runsetExecutor);
-            // temp !!!!!!!!!!!!!!!!!!!!
-            System.IO.File.WriteAllText(@"c:\temp\ExecutionSummary.json", json, System.Text.Encoding.Default);
+          
         }
 
+       
         public static SolutionRepository SR;
         private static void RunBF()
         {
@@ -78,23 +64,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
 
-        // Combine to one in core !!!!!!!!!!!!!!!!!!!!!
-
-        private static void OpenSolution(string sFolder)
-        {
-            if (Directory.Exists(sFolder))
-            {
-                Console.WriteLine("Opening Solution at folder: " + sFolder);
-                SR = GingerSolutionRepository.CreateGingerSolutionRepository();
-                WorkSpace.Instance.SolutionRepository = SR;
-                SR.Open(sFolder);
-            }
-            else
-            {
-                Console.WriteLine("Directory not found: " + sFolder);
-            }
-        }
-
+       
 
         static void RunFlow(BusinessFlow businessFlow)
         {

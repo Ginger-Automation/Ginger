@@ -241,5 +241,27 @@ namespace GingerCoreNET.RosLynLib
 
             return result;
         }
+
+        public static object ExecuteNew(string code)
+        {
+            Console.WriteLine("Executing script code: " + code);
+
+            // Add ref to DLLs needed
+            ScriptOptions options = ScriptOptions.Default.AddReferences(Assembly.GetAssembly(typeof(PluginPackage)));
+
+            //Globals to pass in vars
+            GingerConsoleScriptGlobals globals = new GingerConsoleScriptGlobals();
+
+            scriptState = scriptState == null ? CSharpScript.RunAsync(code, options, globals).Result : scriptState.ContinueWithAsync(code).Result;
+            if (scriptState.ReturnValue != null && !string.IsNullOrEmpty(scriptState.ReturnValue.ToString()))
+            {
+                return scriptState.ReturnValue;
+            }
+
+            Console.WriteLine("Executing script code complete");
+
+            return null;
+        }
+
     }
 }

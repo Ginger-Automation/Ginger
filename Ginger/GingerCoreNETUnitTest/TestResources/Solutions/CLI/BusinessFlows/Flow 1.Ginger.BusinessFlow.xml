@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="2db992cd-c5f7-43a6-beb6-cd4de10fece7" ItemType="BusinessFlow" CreatedBy="YARONWE" Created="201904012027" GingerVersion="3.2.0.0" Version="2" LastUpdateBy="YARONWE" LastUpdate="201904012027" />
+<BusinessFlow Guid="2db992cd-c5f7-43a6-beb6-cd4de10fece7" Name="Flow 1" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="23efe99f-88c1-4de3-bf60-047d7b5accc0" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="app1">
+<Acts>
+<ActDummy Active="True" Description="Dummy Action" Guid="ad4c0f32-64bf-4711-8fe4-591ddeb1d282" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="8c98f3df-a04d-4b99-96ea-0c47783e1411" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="ggg" Value="ggg" />
+</InputValues>
+</ActDummy>
+</Acts>
+</Activity>
+</Activities>
+
+<TargetApplications>
+<TargetApplication AppName="app1" Guid="17da3c22-96ca-49f9-bee6-37a185bf9317" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>
