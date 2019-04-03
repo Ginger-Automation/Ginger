@@ -325,7 +325,7 @@
     <Compile Include="NonUITests\RESTTest.cs" />
     <Compile Include="NonUITests\SolutionTest.cs" />
     <Compile Include="UITests\PBDriverWidgetTest.cs" />
-    <Compile Include="UITests\WebDriverTest.cs" />
+    <Compile Include="UITests\WebDriverUnitTestCase.cs" />
     <Compile Include="UITests\UIAAutomationTest.cs" />
     <Compile Include="NonUITests\UnixShellTest.cs" />
     <Compile Include="NonUITests\ValueExpressionTest.cs" />

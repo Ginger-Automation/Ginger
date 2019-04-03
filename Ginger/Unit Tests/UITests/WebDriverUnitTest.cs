@@ -18,7 +18,7 @@ namespace UnitTests.UITests
 {
     [TestClass]
     [Level3]
-   public class WebDriverTest
+   public class WebDriverUnitTest
     {
         static BusinessFlow mBF;
         static GingerRunner mGR = null;
