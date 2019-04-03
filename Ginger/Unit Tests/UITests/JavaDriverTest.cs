@@ -456,66 +456,85 @@ namespace UnitTests.UITests.JavaDriverTest
         [TestMethod]  [Timeout(60000)]
         public void GetValueTreeNode()
         {
-            PayLoad PLClick = new PayLoad("ElementAction");
-            PLClick.AddValue(ActJavaElement.eControlAction.Click.ToString());
-            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
-            PLClick.AddValue(eLocateBy.ByName.ToString());
-            PLClick.AddValue("countriesTree");
-            PLClick.AddValue("Canada");
-            PLClick.ClosePackage();
-            mDriver.Send(PLClick);
+            try
+            {
+                PayLoad PLClick = new PayLoad("ElementAction");
+                PLClick.AddValue(ActJavaElement.eControlAction.Click.ToString());
+                PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+                PLClick.AddValue(eLocateBy.ByName.ToString());
+                PLClick.AddValue("countriesTree");
+                PLClick.AddValue("Canada");
+                PLClick.ClosePackage();
+                mDriver.Send(PLClick);
 
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.GetValue;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
-            mBF.CurrentActivity.Acts.Add(actJavaElement);
-            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+                ActJavaElement actJavaElement = new ActJavaElement();
+                actJavaElement.LocateBy = eLocateBy.ByName;
+                actJavaElement.ControlAction = ActJavaElement.eControlAction.GetValue;
+                actJavaElement.LocateValueCalculated = "countriesTree";
+                actJavaElement.Active = true;
+                actJavaElement.AddNewReturnParams = true;
+                mBF.CurrentActivity.Acts.Add(actJavaElement);
+                mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
-            mGR.RunAction(actJavaElement, false);
-            //TODO: Find a better way to get ExInfo.
-            String ExInfo = actJavaElement.ExInfo.Substring(actJavaElement.ExInfo.LastIndexOf("M -") + 4);
-            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
-            Assert.AreEqual(actJavaElement.ActReturnValues.FirstOrDefault().Actual, "Canada", "ExInfo");
-            Assert.AreEqual(actJavaElement.Error, null, "Act.Error");
+                mGR.RunAction(actJavaElement, false);
+                //TODO: Find a better way to get ExInfo.
+                String ExInfo = actJavaElement.ExInfo.Substring(actJavaElement.ExInfo.LastIndexOf("M -") + 4);
+                Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+                Assert.AreEqual(actJavaElement.ActReturnValues.FirstOrDefault().Actual, "Canada", "ExInfo");
+                Assert.AreEqual(actJavaElement.Error, null, "Act.Error");
+            }
+            finally
+            {
+                CleanActvitity();
+            }
+
         }
 
-
+        private void CleanActvitity()
+        {
+            mBF.CurrentActivity.Acts.ClearAll();
+        }
 
         [TestMethod]
         [Timeout(60000)]
         public void ClickTreeNodeWithSlash()
-        {         
-            //Arrange
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value= "US/California//Texas";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
-            mBF.CurrentActivity.Acts.Add(actJavaElement);
-            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+        {
+            try
+            {
+                //Arrange
+                ActJavaElement actJavaElement = new ActJavaElement();
+                actJavaElement.LocateBy = eLocateBy.ByName;
+                actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+                actJavaElement.LocateValueCalculated = "countriesTree";
+                actJavaElement.Value = "US/California//Texas";
+                actJavaElement.Active = true;
+                actJavaElement.AddNewReturnParams = true;
+                mBF.CurrentActivity.Acts.Add(actJavaElement);
+                mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
-            //Act
-            mGR.RunAction(actJavaElement, false);
+                //Act
+                mGR.RunAction(actJavaElement, false);
 
-                                 
-           //Assert
-            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
-                       
-            PayLoad PLClick = new PayLoad("ElementAction");
-            PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
-            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
-            PLClick.AddValue(eLocateBy.ByName.ToString());
-            PLClick.AddValue("countriesTree");
-            PLClick.ClosePackage();
-            PayLoad response = mDriver.Send(PLClick);
 
-            Assert.IsFalse(response.IsErrorPayLoad());
-            Assert.AreEqual("California/Texas", response.GetListString().FirstOrDefault(), "Selected node value");
+                //Assert
+                Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+
+                PayLoad PLClick = new PayLoad("ElementAction");
+                PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
+                PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+                PLClick.AddValue(eLocateBy.ByName.ToString());
+                PLClick.AddValue("countriesTree");
+                PLClick.ClosePackage();
+                PayLoad response = mDriver.Send(PLClick);
+
+                Assert.IsFalse(response.IsErrorPayLoad());
+                Assert.AreEqual("California/Texas", response.GetListString().FirstOrDefault(), "Selected node value");
+            }
+            finally
+            {
+                CleanActvitity();
+            }
+
         }
 
 
@@ -523,24 +542,32 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ClickTreeNodeNegativeTest()
         {
-            //Arrange
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "Canada/Texas";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
-            mBF.CurrentActivity.Acts.Add(actJavaElement);
-            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+            try
+            {
+                //Arrange
+                ActJavaElement actJavaElement = new ActJavaElement();
+                actJavaElement.LocateBy = eLocateBy.ByName;
+                actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+                actJavaElement.LocateValueCalculated = "countriesTree";
+                actJavaElement.Value = "Canada/Texas";
+                actJavaElement.Active = true;
+                actJavaElement.AddNewReturnParams = true;
+                mBF.CurrentActivity.Acts.Add(actJavaElement);
+                mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
-            //Act
-            mGR.RunAction(actJavaElement, false);
+                //Act
+                mGR.RunAction(actJavaElement, false);
 
 
-            //Assert
-            Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");
-            Assert.AreEqual("Node: Texas was not found under: [Root, Canada]", actJavaElement.Error, "Node not found validation");
+                //Assert
+                Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");
+                Assert.AreEqual("Node: Texas was not found under: Canada", actJavaElement.Error, "Node not found validation");
+            }
+            finally
+            {
+                CleanActvitity();
+            }
+
         }
 
         [TestMethod]
@@ -552,34 +579,42 @@ namespace UnitTests.UITests.JavaDriverTest
             //2. Texas
             //Texas should be selected and not the first one
 
-            //Arrange
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "Us/Texas";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
-            mBF.CurrentActivity.Acts.Add(actJavaElement);
-            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+            try
+            {
+                //Arrange
+                ActJavaElement actJavaElement = new ActJavaElement();
+                actJavaElement.LocateBy = eLocateBy.ByName;
+                actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+                actJavaElement.LocateValueCalculated = "countriesTree";
+                actJavaElement.Value = "Us/Texas";
+                actJavaElement.Active = true;
+                actJavaElement.AddNewReturnParams = true;
+                mBF.CurrentActivity.Acts.Add(actJavaElement);
+                mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
-            //Act
-            mGR.RunAction(actJavaElement, false);
-            
+                //Act
+                mGR.RunAction(actJavaElement, false);
 
-            //Assert
-            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
 
-            PayLoad PLClick = new PayLoad("ElementAction");
-            PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
-            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
-            PLClick.AddValue(eLocateBy.ByName.ToString());
-            PLClick.AddValue("countriesTree");
-            PLClick.ClosePackage();
-            PayLoad response = mDriver.Send(PLClick);
+                //Assert
+                Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
 
-            Assert.IsFalse(response.IsErrorPayLoad());
-            Assert.AreEqual("Texas", response.GetListString().FirstOrDefault(), "Selected node value");
+                PayLoad PLClick = new PayLoad("ElementAction");
+                PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
+                PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+                PLClick.AddValue(eLocateBy.ByName.ToString());
+                PLClick.AddValue("countriesTree");
+                PLClick.ClosePackage();
+                PayLoad response = mDriver.Send(PLClick);
+
+                Assert.IsFalse(response.IsErrorPayLoad());
+                Assert.AreEqual("Texas", response.GetListString().FirstOrDefault(), "Selected node value");
+            }
+            finally
+            {
+                CleanActvitity();
+            }
+
         }
 
 
@@ -587,136 +622,155 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ClickTreeNodeSingleNodeValueTest()
         {
-            //Arrange
+            try
+            {
+                //Arrange
+
+                ActJavaElement actJavaElement = new ActJavaElement();
+                actJavaElement.LocateBy = eLocateBy.ByName;
+                actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+                actJavaElement.LocateValueCalculated = "countriesTree";
+                actJavaElement.Value = "US";
+                actJavaElement.Active = true;
+                actJavaElement.AddNewReturnParams = true;
+                mBF.CurrentActivity.Acts.Add(actJavaElement);
+                mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+
+                //Act
+                mGR.RunAction(actJavaElement, false);
+
+                //Assert
+                Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+
+                PayLoad PLClick = new PayLoad("ElementAction");
+                PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
+                PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+                PLClick.AddValue(eLocateBy.ByName.ToString());
+                PLClick.AddValue("countriesTree");
+                PLClick.ClosePackage();
+                PayLoad response = mDriver.Send(PLClick);
+
+                Assert.IsFalse(response.IsErrorPayLoad());
+                Assert.AreEqual("US", response.GetListString().FirstOrDefault(), "Selected node value");
+            }
+            finally
+            {
+                CleanActvitity();
+            }
             
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "US";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
-            mBF.CurrentActivity.Acts.Add(actJavaElement);
-            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
-
-            //Act
-            mGR.RunAction(actJavaElement, false);
-
-            //Assert
-            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
-
-            PayLoad PLClick = new PayLoad("ElementAction");
-            PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
-            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
-            PLClick.AddValue(eLocateBy.ByName.ToString());
-            PLClick.AddValue("countriesTree");
-            PLClick.ClosePackage();
-            PayLoad response = mDriver.Send(PLClick);
-
-            Assert.IsFalse(response.IsErrorPayLoad());
-            Assert.AreEqual("US", response.GetListString().FirstOrDefault(), "Selected node value");
         }
 
         [TestMethod]
         [Timeout(60000)]
         public void ClickChildTreeNodeSingleNodeValueTest()
         {
-            //Arrange
+            try
+            {
+                //Arrange
 
-            PayLoad PLClick = new PayLoad("ElementAction");
-            PLClick.AddValue(ActJavaElement.eControlAction.Click.ToString());
-            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
-            PLClick.AddValue(eLocateBy.ByName.ToString());
-            PLClick.AddValue("countriesTree");
-            PLClick.AddValue("Canada");
-            PLClick.ClosePackage();
-            mDriver.Send(PLClick);
+                PayLoad PLClick = new PayLoad("ElementAction");
+                PLClick.AddValue(ActJavaElement.eControlAction.Click.ToString());
+                PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+                PLClick.AddValue(eLocateBy.ByName.ToString());
+                PLClick.AddValue("countriesTree");
+                PLClick.AddValue("Canada");
+                PLClick.ClosePackage();
+                mDriver.Send(PLClick);
 
 
-           
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "Ontario";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
-            mBF.CurrentActivity.Acts.Add(actJavaElement);
-            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
-            //Act
-            mGR.RunAction(actJavaElement, false);
-                                 
-            //Assert
-            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+                ActJavaElement actJavaElement = new ActJavaElement();
+                actJavaElement.LocateBy = eLocateBy.ByName;
+                actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+                actJavaElement.LocateValueCalculated = "countriesTree";
+                actJavaElement.Value = "Ontario";
+                actJavaElement.Active = true;
+                actJavaElement.AddNewReturnParams = true;
+                mBF.CurrentActivity.Acts.Add(actJavaElement);
+                mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
-            PLClick = new PayLoad("ElementAction");
-            PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
-            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
-            PLClick.AddValue(eLocateBy.ByName.ToString());
-            PLClick.AddValue("countriesTree");
-            PLClick.ClosePackage();
-            PayLoad response = mDriver.Send(PLClick);
+                //Act
+                mGR.RunAction(actJavaElement, false);
 
-            Assert.IsFalse(response.IsErrorPayLoad());
-            Assert.AreEqual("Ontario", response.GetListString().FirstOrDefault(), "Selected node value");
+                //Assert
+                Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+
+                PLClick = new PayLoad("ElementAction");
+                PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
+                PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+                PLClick.AddValue(eLocateBy.ByName.ToString());
+                PLClick.AddValue("countriesTree");
+                PLClick.ClosePackage();
+                PayLoad response = mDriver.Send(PLClick);
+
+                Assert.IsFalse(response.IsErrorPayLoad());
+                Assert.AreEqual("Ontario", response.GetListString().FirstOrDefault(), "Selected node value");
+            }
+            finally
+            {
+                CleanActvitity();
+            }
+
         }
 
 
         [TestMethod]  [Timeout(60000)]
         public void DoubleClickTreeNode()
         {
-            ActJavaElement doubleClickAction = new ActJavaElement();
-            doubleClickAction.LocateBy = eLocateBy.ByName;
-            doubleClickAction.ControlAction = ActJavaElement.eControlAction.DoubleClick;
-            doubleClickAction.Active = true;
-            doubleClickAction.LocateValueCalculated = "countriesTree";
-            doubleClickAction.Value = "US";
-            mBF.CurrentActivity.Acts.Add(doubleClickAction);
-            mBF.CurrentActivity.Acts.CurrentItem = doubleClickAction;
+            try
+            {
+                ActJavaElement doubleClickAction = new ActJavaElement();
+                doubleClickAction.LocateBy = eLocateBy.ByName;
+                doubleClickAction.ControlAction = ActJavaElement.eControlAction.DoubleClick;
+                doubleClickAction.Active = true;
+                doubleClickAction.LocateValueCalculated = "countriesTree";
+                doubleClickAction.Value = "US";
+                mBF.CurrentActivity.Acts.Add(doubleClickAction);
+                mBF.CurrentActivity.Acts.CurrentItem = doubleClickAction;
 
-            mGR.RunAction(doubleClickAction, false);
-            //TODO: Find a better way to get ExInfo.
-            String ExInfo = doubleClickAction.ExInfo.Substring(doubleClickAction.ExInfo.LastIndexOf("M -") + 4);
-            Assert.AreEqual(eRunStatus.Passed, doubleClickAction.Status, "Action Status");
-            Assert.AreEqual(ExInfo, "Click Activity Passed", "ExInfo");
-            Assert.AreEqual(doubleClickAction.Error, null, "Act.Error");
+                mGR.RunAction(doubleClickAction, false);
+                //TODO: Find a better way to get ExInfo.
+                String ExInfo = doubleClickAction.ExInfo.Substring(doubleClickAction.ExInfo.LastIndexOf("M -") + 4);
+                Assert.AreEqual(eRunStatus.Passed, doubleClickAction.Status, "Action Status");
+                Assert.AreEqual(ExInfo, "Click Activity Passed", "ExInfo");
+                Assert.AreEqual(doubleClickAction.Error, null, "Act.Error");
+            }
+            finally
+            {
+                CleanActvitity();
+            }
+           
         }
 
         [TestMethod]
         [Timeout(180000)]
         public void ClickNotExistChildNodeValidationTest()
         {
-            //Arrange
-            var actJavaElement = InitActJavaElementAction(eLocateBy.ByName, ActJavaElement.eControlAction.Click, "countriesTree", "Canada/Ontario", true);
-            var actJavaElement2 = InitActJavaElementAction(eLocateBy.ByName, ActJavaElement.eControlAction.Click, "countriesTree", "Root", true);
-            var actJavaElement3 = InitActJavaElementAction(eLocateBy.ByName, ActJavaElement.eControlAction.Click, "countriesTree", "US/Ontario", true);
+            try
+            {
+                //Arrange
+                ActJavaElement actJavaElement = new ActJavaElement();
+                actJavaElement.LocateBy = eLocateBy.ByName;
+                actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+                actJavaElement.LocateValueCalculated = "countriesTree";
+                actJavaElement.Value = "US/Ontario";
+                actJavaElement.Active = true;
+                actJavaElement.AddNewReturnParams = true;
 
-            mBF.CurrentActivity.Acts.Add(actJavaElement);
-            mBF.CurrentActivity.Acts.Add(actJavaElement2);
-            mBF.CurrentActivity.Acts.Add(actJavaElement3);
+                mBF.CurrentActivity.Acts.Add(actJavaElement);
 
-            //Act
-            mGR.RunAction(actJavaElement, false);
-            mGR.RunAction(actJavaElement2, false);
-            mGR.RunAction(actJavaElement3, false);
+                //Act
+                mGR.RunAction(actJavaElement, false);
 
-            //Assert
-            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
-            Assert.AreEqual(eRunStatus.Passed, actJavaElement2.Status, "Action Status");
-            Assert.AreEqual(eRunStatus.Failed, actJavaElement3.Status, "Action Status");
-            Assert.AreEqual("Node: Ontario was not found under: [Root, US]", actJavaElement3.Error, "Node not found validation");
-        }
-        private ActJavaElement InitActJavaElementAction(eLocateBy eLocateBy, ActJavaElement.eControlAction eControlAction, string locatValueCalculated, string value, bool returnParam)
-        {
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = locatValueCalculated;
-            actJavaElement.Value = value;
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
-            return actJavaElement;
+                //Assert
+                Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");
+                Assert.AreEqual("Node: Ontario was not found under: US", actJavaElement.Error, "Node not found validation");
+            }
+            finally
+            {
+                 CleanActvitity();
+            }
+
         }
 
         /**

@@ -1738,7 +1738,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 				  	if current node parent is not matched with previous node 
 				  	for example: us/Ontario where Ontario is not child of us node.
 				 */
-				searchResult.append("Node: "+ node +" was not found under: " + matchingNodePath.getParentPath());
+				searchResult.append("Node: "+ node +" was not found under: " + parentNode);
 				return null;
 			}
 			
