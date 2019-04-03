@@ -21,6 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.Actions;
 using Ginger.Reports;
 
 namespace Ginger.Run.RunSetActions
@@ -38,7 +39,8 @@ namespace Ginger.Run.RunSetActions
 
             this.runSetActionHTMLReport = RunSetActionHTMLReport;
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(HTMLReportFolderTextBox, TextBox.TextProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.HTMLReportFolderName);
+            HTMLReportFolderTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionHTMLReport, nameof(RunSetActionHTMLReport.HTMLReportFolderName), true, true, UCValueExpression.eBrowserType.Folder, "*.*", null);
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseAlternativeHTMLReportFolderCbx, CheckBox.IsCheckedProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.isHTMLReportFolderNameUsed);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UsePermanentHTMLReportFolderCbx, CheckBox.IsCheckedProperty, RunSetActionHTMLReport, RunSetActionHTMLReport.Fields.isHTMLReportPermanentFolderNameUsed);
             CurrentTemplatePickerCbx_Binding();
@@ -70,15 +72,6 @@ namespace Ginger.Run.RunSetActions
                 {
                     CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault());
                 }
-            }
-        }
-
-        private void SelectFolderButton_Click(object sender, RoutedEventArgs e)
-        {
-            string s = General.OpenSelectFolderDialog("Create HTML Report at Folder");
-            if (s != null)
-            {
-                HTMLReportFolderTextBox.Text = s;
             }
         }
 
