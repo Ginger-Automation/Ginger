@@ -627,7 +627,10 @@ namespace Ginger.Run
                 else
                 {
                     //if input variable value mapped to none , we reset it to initial value
-                    inputVar.ResetValue();
+                    if (inputVar.DiffrentFromOrigin == false)
+                    {
+                        inputVar.ResetValue();
+                    }                        
                 }
 
                 if (mappedValue != "")
@@ -3948,7 +3951,7 @@ namespace Ginger.Run
             if (doNotResetBusFlows == false)
             {
                 foreach (BusinessFlow businessFlow in BusinessFlows)
-                {
+                {                  
                     businessFlow.Reset();                   
                     NotifyBusinessflowWasReset(businessFlow);
                 }
