@@ -73,6 +73,10 @@ namespace Ginger
             mObj = obj;
             mAttrName = AttrName;
             mContext = context;
+            if (mContext == null)
+            {
+                mContext = new Context();
+            }
 
             ValueUCTextEditor.Bind(obj, AttrName);
             ValueUCTextEditor.HideToolBar();
@@ -666,10 +670,16 @@ namespace Ginger
                     ((Solution) WorkSpace.Instance.Solution).AddVariable(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
-                    ((BusinessFlow)mContext.BusinessFlow).AddVariable(newStringVar);
+                    if (mContext != null && mContext.BusinessFlow != null)
+                    {
+                        ((BusinessFlow)mContext.BusinessFlow).AddVariable(newStringVar);
+                    }
                     break;
                 case eVariablesLevel.Activity:
-                    ((Activity)mContext.BusinessFlow.CurrentActivity).AddVariable(newStringVar);
+                    if (mContext != null && mContext.BusinessFlow != null && mContext.BusinessFlow.CurrentActivity != null)
+                    {
+                        ((Activity)mContext.BusinessFlow.CurrentActivity).AddVariable(newStringVar);
+                    }
                     break;
             }
 
@@ -683,10 +693,16 @@ namespace Ginger
                     ((Solution) WorkSpace.Instance.Solution).SetUniqueVariableName(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
-                    ((BusinessFlow)mContext.BusinessFlow).SetUniqueVariableName(newStringVar);
+                    if (mContext != null && mContext.BusinessFlow != null)
+                    {
+                        ((BusinessFlow)mContext.BusinessFlow).SetUniqueVariableName(newStringVar);
+                    }
                     break;
                 case eVariablesLevel.Activity:
-                    ((Activity)mContext.BusinessFlow.CurrentActivity).SetUniqueVariableName(newStringVar);
+                    if (mContext != null && mContext.BusinessFlow != null && mContext.BusinessFlow.CurrentActivity != null)
+                    {
+                        ((Activity)mContext.BusinessFlow.CurrentActivity).SetUniqueVariableName(newStringVar);
+                    }
                     break;
             }
 
