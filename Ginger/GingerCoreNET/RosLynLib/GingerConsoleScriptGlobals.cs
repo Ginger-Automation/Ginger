@@ -151,9 +151,9 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
             BusinessFlow bf = runsetExecutor.Runners[0].BusinessFlows[0]; // !!!!!!!!!!!!!!
             runsetExecutor.RunRunset();
 
-            string json = runsetExecutor.CreateSummary(runsetExecutor);
-            // temp !!!!!!!!!!!!!!!!!!!!
-            System.IO.File.WriteAllText(@"c:\temp\ExecutionSummary.json", json, System.Text.Encoding.Default);   //!!!!!!!!!!!
+            // move to seperate function
+            // string json = runsetExecutor.CreateSummary(runsetExecutor);            
+            // System.IO.File.WriteAllText(@"c:\temp\ExecutionSummary.json", json, System.Text.Encoding.Default);   //!!!!!!!!!!!
         }
 
         // ================================================================
