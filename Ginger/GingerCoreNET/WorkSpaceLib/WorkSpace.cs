@@ -154,7 +154,7 @@ namespace amdocs.ginger.GingerCoreNET
         //    list.Add((t).Name, t);
         //}
 
-        public void InitApp(WorkSpaceReporterBase workSpaceReporterBase, IRepositoryItemFactory repositoryItemFactory)
+        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, IRepositoryItemFactory repositoryItemFactory)
         {
             // Add event handler for handling non-UI thread exceptions.
             AppDomain currentDomain = AppDomain.CurrentDomain;

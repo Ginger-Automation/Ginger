@@ -420,7 +420,7 @@ namespace Ginger
 
         private void RunNewCLI(string[] args)
         {
-            WorkSpace.Instance.InitApp(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
+            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
             
@@ -431,7 +431,7 @@ namespace Ginger
 
         private void StartGingerExecutor()
         {
-            WorkSpace.Instance.InitApp(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
+            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
             HandleAutoRunMode();
@@ -449,7 +449,7 @@ namespace Ginger
             MainWindow.Show();
             GingerCore.General.DoEvents();
 
-            WorkSpace.Instance.InitApp(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
+            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
 
             MainWindow.Init();
             MainWindow.HideSplash();
