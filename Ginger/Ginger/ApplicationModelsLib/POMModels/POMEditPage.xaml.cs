@@ -141,10 +141,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 xBusinessFlowRadioBtn.IsChecked = true;
             }
-            if (mPOM.MappedBusinessFlow != null)
-            {
-                mBusinessFlowControl.BusinessFlow = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(mPOM.MappedBusinessFlow.Guid); 
-            }
         }
 
         private void FillTargetAppsComboBox()

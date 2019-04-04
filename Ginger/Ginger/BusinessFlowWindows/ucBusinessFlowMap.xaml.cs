@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using Ginger.SolutionWindows.TreeViewItems;
 using System;
 using Amdocs.Ginger.Common;
+using System.Text;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -47,17 +48,36 @@ namespace Ginger.BusinessFlowWindows
             }
             set
             {
-                mBusinessFlow = value;
-                xBFTextBox.Text = mBusinessFlow.FilePath.Substring(0, mBusinessFlow.FilePath.LastIndexOf("\\")).Substring(mBusinessFlow.ContainingFolderFullPath.Length) + @"\" + mBusinessFlow.ItemName;
+                mBusinessFlow = value;                                
+                xBFTextBox.Text = GetBusinessFlowDisplayPath();
                 xGoToAutomateBtn.Visibility = Visibility.Visible;
                 mBusinessFlowRepositoryKey = new RepositoryItemKey();
                 mBusinessFlowRepositoryKey.Guid = mBusinessFlow.Guid;
                 mBusinessFlowRepositoryKey.ItemName = mBusinessFlow.Name;
                 if (mObjectElementType != null)
                 {
-                    mObjectElementType.GetType().GetProperty(mElementTypeFieldName).SetValue(mObjectElementType, mBusinessFlowRepositoryKey); 
+                    mObjectElementType.GetType().GetProperty(mElementTypeFieldName).SetValue(mObjectElementType, mBusinessFlowRepositoryKey);
                 }
             }
+        }
+
+        private string GetBusinessFlowDisplayPath()
+        {
+            StringBuilder actualPath = new StringBuilder();
+            string path = mBusinessFlow.FilePath.Substring(mBusinessFlow.FilePath.IndexOf("BusinessFlows") + "BusinessFlows".Length);
+            if (!string.IsNullOrEmpty(path))
+            {
+                string[] item = path.Split('\\');
+                if (item != null && item.Length > 0)
+                {
+                    for (int i = 0; i <= item.Length - 2; i++)
+                    {
+                        actualPath.Append(item[i] + "\\");
+                    }
+                    actualPath.Append(mBusinessFlow.ItemName);
+                }
+            }
+            return actualPath.ToString();
         }
 
         RepositoryItemKey mBusinessFlowRepositoryKey;
@@ -93,6 +113,13 @@ namespace Ginger.BusinessFlowWindows
 
             mObjectElementType = objectElementType;
             mElementTypeFieldName = elementTypeFieldName;
+            object key = mObjectElementType.GetType().GetProperty(mElementTypeFieldName).GetValue(mObjectElementType);
+            if (key != null && key.GetType() == typeof(RepositoryItemKey))
+            {
+                mBusinessFlowRepositoryKey = (RepositoryItemKey)key;
+                BusinessFlow = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(mBusinessFlowRepositoryKey.Guid);
+                xBFTextBox.Text = GetBusinessFlowDisplayPath();
+            }
         }
 
         private void xSelectBF_Click(object sender, RoutedEventArgs e)
