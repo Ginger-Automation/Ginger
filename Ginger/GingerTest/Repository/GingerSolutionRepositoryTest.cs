@@ -16,12 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore.Environments;
 using GingerTestHelper;
+using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -46,6 +48,7 @@ namespace GingerTest
             
             // Init SR
             mSolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+            WorkSpace.Init(new WorkSpaceEventHandler());
             Ginger.App.InitClassTypesDictionary();            
             string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTemp");            
             mSolutionRepository.Open(TempRepositoryFolder);
