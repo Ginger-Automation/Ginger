@@ -627,6 +627,7 @@ namespace Ginger
             if (WorkSpace.Instance.RunningFromUnitTest)
             {
                 LoadApplicationDictionaries();
+                InitClassTypesDictionary();
             }
 
             MainWindow = new MainWindow();

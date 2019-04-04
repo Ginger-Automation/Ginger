@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using GingerWPF.WorkSpaceLib;
 using GingerWPFUnitTest.POMs;
 using System;
 using System.Reflection;
@@ -89,7 +90,10 @@ namespace GingerTest
                 Application.ResourceAssembly = asm1;
                 
                 app = new Ginger.App();
+                WorkSpace.Init(new WorkSpaceEventHandler());
                 WorkSpace.Instance.RunningFromUnitTest = true;
+                // Ginger.App.InitClassTypesDictionary();
+                
                 app.StartGingerUI();
                 
 
