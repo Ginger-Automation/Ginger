@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
 
 namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 {
@@ -49,7 +50,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         }
 
         override public string NodePath()
-        {           
+        {
             return mAPIModelFolder.FolderFullPath;
         }
 
@@ -59,7 +60,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {            
+        {
             return NewTVItemFolderHeaderStyle(mAPIModelFolder);
         }
 
@@ -69,7 +70,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         }
 
         public override ITreeViewItem GetTreeItem(object item)
-        {            
+        {
             if (item is ApplicationAPIModel)
             {
                 return new AppApiModelTreeItem((ApplicationAPIModel)item);
@@ -102,7 +103,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             mChildAPIs.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
             foreach (ApplicationAPIModel api in mChildAPIs.OrderBy(nameof(ApplicationAPIModel.Name)))
             {
-                AppApiModelTreeItem apiTI = new AppApiModelTreeItem(api);                
+                AppApiModelTreeItem apiTI = new AppApiModelTreeItem(api);
                 Childrens.Add(apiTI);
             }
 
@@ -116,8 +117,8 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         Page ITreeViewItem.EditPage()
         {
-            if(mAPIModelsPage == null)          
-                mAPIModelsPage = new APIModelsPage(mAPIModelFolder);            
+            if(mAPIModelsPage == null)
+                mAPIModelsPage = new APIModelsPage(mAPIModelFolder);
             return mAPIModelsPage;
         }
 
@@ -126,16 +127,16 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         {
             return mContextMenu;
         }
-        
+
         void ITreeViewItem.SetTools(ITreeView TV)
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
             MenuItem addMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Add API Model", eImageType.Add);
-            TreeViewUtils.AddSubMenuItem(addMenu, "Import API's", AddAPIModelFromDocument, null, eImageType.Download); 
+            TreeViewUtils.AddSubMenuItem(addMenu, "Import API's", AddAPIModelFromDocument, null, eImageType.Download);
             TreeViewUtils.AddSubMenuItem(addMenu, "SOAP API Model", AddSoapAPIModel, null, eImageType.APIModel);
-            TreeViewUtils.AddSubMenuItem(addMenu, "REST API Model", AddRESTAPIModel, null, eImageType.APIModel); 
+            TreeViewUtils.AddSubMenuItem(addMenu, "REST API Model", AddRESTAPIModel, null, eImageType.APIModel);
             if (mAPIModelFolder.IsRootFolder)
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew:false, allowDeleteFolder:false, allowRenameFolder:false, allowRefresh: false);
             else
@@ -143,7 +144,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
             AddSourceControlOptions(mContextMenu);
         }
-        
+
         private void AddSoapAPIModel(object sender, RoutedEventArgs e)
         {
             AddSingleAPIModel(ApplicationAPIUtils.eWebApiType.SOAP);
@@ -162,14 +163,26 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
                 ApplicationAPIModel newApi = new ApplicationAPIModel();
                 newApi.APIType = type;
                 newApi.Name = apiName;
-                newApi.ContainingFolder = mAPIModelFolder.FolderFullPath;              
-                mAPIModelFolder.AddRepositoryItem(newApi);                            
+                newApi.ContainingFolder = mAPIModelFolder.FolderFullPath;
+                mAPIModelFolder.AddRepositoryItem(newApi);
             }
         }
 
         public void AddAPIModelFromDocument(object sender, RoutedEventArgs e)
-        {            
+        {
             WizardWindow.ShowWizard(new AddAPIModelWizard(mAPIModelFolder), 1000);
+        }
+
+        public override bool PasteCopiedTreeItem(object nodeItemToCopy, TreeViewItemGenericBase targetFolderNode, bool toRefreshFolder = true)
+        {
+            RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)nodeItemToCopy);
+            if (copiedItem != null)
+            {
+                AppApiModelTreeItem.HandleGlobalModelParameters(nodeItemToCopy, copiedItem);            // avoid generating new GUIDs for Global Model Parameters associated to API Model being copied
+                ((RepositoryFolderBase)(((ITreeViewItem)targetFolderNode).NodeObject())).AddRepositoryItem(copiedItem);
+                return true;
+            }
+            return false;
         }
     }
 }
