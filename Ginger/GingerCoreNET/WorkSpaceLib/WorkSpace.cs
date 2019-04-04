@@ -114,45 +114,8 @@ namespace amdocs.ginger.GingerCoreNET
 
             // Add gingerCoreNET classes                        
             NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
-
-            //Dictionary<string, Type> list = new Dictionary<string, Type>();
-
-
-            // !!!!!!!!!! Cleanup
-            //AddClass(list, typeof(RunSetConfig));
-            //AddClass(list, typeof(RunSetActionSendEmail));
-            //AddClass(list, typeof(BusinessFlowReport));
-            //AddClass(list, typeof(HTMLReportConfiguration));
-            //AddClass(list, typeof(HTMLReportConfigFieldToSelect));
-            //AddClass(list, typeof(Agent));
-            //AddClass(list, typeof(DriverConfigParam));
-            //AddClass(list, typeof(GingerRunner));
-            //AddClass(list, typeof(ApplicationAgent));
-
-            //AddClass(list, typeof(RunSetActionHTMLReportSendEmail));
-            //AddClass(list, typeof(EmailHtmlReportAttachment));
-            //AddClass(list, typeof(RunSetActionAutomatedALMDefects));
-            //AddClass(list, typeof(RunSetActionGenerateTestNGReport));
-            //AddClass(list, typeof(RunSetActionHTMLReport));
-            //AddClass(list, typeof(RunSetActionSaveResults));
-            //AddClass(list, typeof(RunSetActionSendFreeEmail));
-            //AddClass(list, typeof(RunSetActionSendSMS));
-            //AddClass(list, typeof(RunSetActionPublishToQC));
-            //AddClass(list, typeof(ActSetVariableValue));
-            //AddClass(list, typeof(ActClearAllVariables));
-            //AddClass(list, typeof(ActAgentManipulation));
-            //AddClass(list, typeof(UserProfile));
-            //AddClass(list, typeof(Solution));
-            //AddClass(list, typeof(Email));
-            //AddClass(list, typeof(EmailAttachment));
-            //AddClass(list, typeof(RunSetActionScript));
         }
 
-        //private static void AddClass(Dictionary<string, Type> list, Type t)
-        //{
-        //    list.Add((t).FullName, t);
-        //    list.Add((t).Name, t);
-        //}
 
         public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, IRepositoryItemFactory repositoryItemFactory)
         {
