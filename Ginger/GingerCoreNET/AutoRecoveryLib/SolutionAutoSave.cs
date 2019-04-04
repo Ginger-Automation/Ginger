@@ -21,19 +21,14 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
-using GingerCore.Repository;
-using GingerWPF.GeneralLib;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace Ginger.Functionalties
 {
-    
+
     public class SolutionAutoSave
     {
         DispatcherTimer AutoSaveTimer;
@@ -65,7 +60,7 @@ namespace Ginger.Functionalties
         }
 
         public void SolutionAutoSaveStart()
-        {
+        {            
             AutoSaveTimer.Stop();
 
             if (!System.IO.Directory.Exists(mAutoSaveFolderPath))
@@ -74,7 +69,7 @@ namespace Ginger.Functionalties
             }
             else
             {
-                App.AppSolutionRecover.SolutionRecoverNeeded(mAutoSaveFolderPath);
+                WorkSpace.Instance.AppSolutionRecover.SolutionRecoverNeeded(mAutoSaveFolderPath);
             }
 
             AutoSaveTimer.Start();
@@ -148,7 +143,7 @@ namespace Ginger.Functionalties
         {
             try
             {
-            RepositoryItemBase itemCopy = itemToSave.CreateCopy(false);
+                RepositoryItemBase itemCopy = itemToSave.CreateCopy(false);
             
                 //create similar folders structure
                 string ItemOriginalpath = itemToSave.ContainingFolderFullPath;
@@ -166,6 +161,33 @@ namespace Ginger.Functionalties
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("AutoSave: Failed to AutoSave the item:'{0}'", itemToSave.ItemName), ex);
+            }
+        }
+
+        private void CleanAutoSaveFolders()
+        {
+            //To Clear the AutoSave Directory Folder
+            if (Directory.Exists(AutoSaveFolderPath))
+            {
+                try
+                {
+                    Directory.Delete(AutoSaveFolderPath, true);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to delete Auto Save folder", ex);
+                }
+            }
+            if (Directory.Exists(WorkSpace.Instance.RecoverFolderPath))
+            {
+                try
+                {
+                    Directory.Delete(WorkSpace.Instance.RecoverFolderPath, true);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to delete Recover folder", ex);
+                }
             }
         }
 

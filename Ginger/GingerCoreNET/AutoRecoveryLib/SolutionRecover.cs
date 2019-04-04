@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionAutoSaveAndRecover;
@@ -41,7 +42,7 @@ namespace Ginger.Functionalties
             }
             set
             {
-                App.RecoverFolderPath = mRecoverFolderPath;
+                WorkSpace.Instance.RecoverFolderPath = mRecoverFolderPath;
             }
         }
 
@@ -142,5 +143,21 @@ namespace Ginger.Functionalties
             }
         }
 
+        
+        public void DoSolutionAutoSaveAndRecover()
+        {            
+            //Init
+            WorkSpace.Instance.AppSolutionAutoSave.SolutionInit(WorkSpace.Instance.Solution.Folder);
+            SolutionInit(WorkSpace.Instance.Solution.Folder);
+
+            //start Auto Save
+            WorkSpace.Instance.AppSolutionAutoSave.SolutionAutoSaveStart();
+
+            //check if Recover is needed
+            if (!WorkSpace.Instance.UserProfile.DoNotAskToRecoverSolutions)
+            {
+                SolutionRecoverStart();
+            }
+        }
     }
 }

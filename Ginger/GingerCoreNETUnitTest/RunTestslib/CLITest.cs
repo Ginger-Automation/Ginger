@@ -52,10 +52,12 @@ namespace GingerCoreNETUnitTest.RunTestslib
             // Arrange
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
+            
+            WorkSpace.Instance.InitApp(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
 
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(ProjEnvironment).Assembly);
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
+            // NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
+            // NewRepositorySerializer.AddClassesFromAssembly(typeof(ProjEnvironment).Assembly);
+            // NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
 
             // Create script file
             string CLISolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\CLI");                        

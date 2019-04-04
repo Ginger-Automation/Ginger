@@ -60,21 +60,23 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
         public static SolutionRepository SR;   // !!!!!!!!!!!!!!!
         public void  OpenSolution(string solutionFolder)
         {
-            if (Directory.Exists(solutionFolder))
-            {
-                Console.WriteLine("Opening Solution at folder: " + solutionFolder);
-                SR = GingerSolutionRepository.CreateGingerSolutionRepository();
-                WorkSpace.Instance.SolutionRepository = SR;
-                SR.Open(solutionFolder);
+            WorkSpace.Instance.OpenSolution(solutionFolder);
 
-                string SolFile = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");
-                WorkSpace.Instance.Solution = WorkSpace.Instance.Solution = Solution.LoadSolution(SolFile);
-                WorkSpace.Instance.Solution.SetReportsConfigurations();
-            }
-            else
-            {
-                Console.WriteLine("Directory not found: " + solutionFolder);
-            }
+            //if (Directory.Exists(solutionFolder))
+            //{
+            //    Console.WriteLine("Opening Solution at folder: " + solutionFolder);
+            //    SR = GingerSolutionRepository.CreateGingerSolutionRepository();
+            //    WorkSpace.Instance.SolutionRepository = SR;
+            //    SR.Open(solutionFolder);
+
+            //    string SolFile = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");
+            //    WorkSpace.Instance.Solution = WorkSpace.Instance.Solution = Solution.LoadSolution(SolFile);
+            //    WorkSpace.Instance.Solution.SetReportsConfigurations();
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Directory not found: " + solutionFolder);
+            //}
         }
 
         public void OpenRunSet(string runSetName, string envName)

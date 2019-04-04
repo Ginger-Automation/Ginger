@@ -101,8 +101,8 @@ namespace Ginger.SolutionWindows
                     Reporter.ToUser(eUserMsgKey.SolutionAlreadyExist);
                     return;
                 }
-                
-                App.SetSolution(mSolution.Folder);
+
+                WorkSpace.Instance.OpenSolution(mSolution.Folder);
 
                 //Create default items                
                 AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);                

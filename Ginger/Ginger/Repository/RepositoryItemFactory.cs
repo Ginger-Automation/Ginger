@@ -607,6 +607,7 @@ namespace Ginger.Repository
             return ReportTemplate.GenerateReport(templatename, reportInfo);
         }
 
+        // Move to CLI !!!!!!!!!!!!!!!!! 0 usage??
         public bool ProcessCommandLineArgs(string[] lines)
         {
             string scURL = null;
@@ -700,7 +701,7 @@ namespace Ginger.Repository
                         Reporter.ToLog(eLogLevel.DEBUG, "Loading the Solution: '" + value + "'");
                         try
                         {
-                            if (App.SetSolution(value) == false)
+                            if (WorkSpace.Instance.OpenSolution(value) == false)
                             {
                                 Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
                                 return false;

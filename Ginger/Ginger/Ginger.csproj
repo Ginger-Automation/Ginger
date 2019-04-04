@@ -795,7 +795,6 @@
     <Compile Include="SolutionAutoSaveAndRecover\RecoverPage.xaml.cs">
       <DependentUpon>RecoverPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionAutoSaveAndRecover\SolutionAutoSave.cs" />
     <Compile Include="BDD\BDDIntegration.cs" />
     <Compile Include="BetaFeaturesLib\BetaFeaturesPage.xaml.cs">
       <DependentUpon>BetaFeaturesPage.xaml</DependentUpon>
@@ -999,7 +998,6 @@
     <Compile Include="Run\RunSetsALMDefectsOpeningPage.xaml.cs">
       <DependentUpon>RunSetsALMDefectsOpeningPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionAutoSaveAndRecover\SolutionRecover.cs" />
     <Compile Include="SolutionLibNew\NewSolutionAgentsWizardPage.xaml.cs">
       <DependentUpon>NewSolutionAgentsWizardPage.xaml</DependentUpon>
     </Compile>

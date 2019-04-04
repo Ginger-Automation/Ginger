@@ -80,7 +80,6 @@ namespace GingerTest
             // We start Ginger on STA thread
             mGingerThread = new Thread(() =>
             {
-
                 SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
 
                 // we need sample class - Dummy
@@ -90,15 +89,11 @@ namespace GingerTest
                 Application.ResourceAssembly = asm1;
                 
                 app = new Ginger.App();
-                Ginger.App.RunningFromUnitTest = true;
+                WorkSpace.Instance.RunningFromUnitTest = true;
                 app.StartGingerUI();
                 
-                //Ginger. WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;                
 
-                while (!app.IsReady)
-                {
-                    Thread.Sleep(100);
-                }
+                
 
                 GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();
 
@@ -239,7 +234,7 @@ namespace GingerTest
             GingerPOMBase.Dispatcher.Invoke(() =>
             {
                 // TODO: do it like user with open solution page
-                Ginger.App.SetSolution(folder);                
+                WorkSpace.Instance.OpenSolution(folder);                
             });
         }
 

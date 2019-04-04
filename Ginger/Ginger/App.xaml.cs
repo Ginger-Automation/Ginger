@@ -21,42 +21,27 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
 using Ginger.ReporterLib;
-using Ginger.Reports;
 using Ginger.Repository;
-using Ginger.Run;
-using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
-using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using GingerCore;
-using GingerCore.Actions;
-using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Repository;
-using GingerCore.Repository.UpgradeLib;
 using GingerCore.SourceControl;
 using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
-using GingerWPF;
 using GingerWPF.WorkSpaceLib;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Threading;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
@@ -74,92 +59,10 @@ namespace Ginger
 
         public static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//?????
 
-        public static System.Diagnostics.FileVersionInfo ApplicationInfo
-        {
-            get
-            {
-                return System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
-            }
-        }
-        public static string AppName = ApplicationInfo.FileDescription;//"Ginger"
-        public static string AppFullProductName = ApplicationInfo.ProductName;//"Ginger by Amdocs"
+      
 
-        private static string mAppVersion = String.Empty;
-        public static string AppVersion
-        {
-            get
-            {
-                if (mAppVersion == string.Empty)
-                {
-                    if (ApplicationInfo.ProductPrivatePart != 0)//Alpha
-                    {
-                        mAppVersion = string.Format("{0}.{1}.{2}.{3}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart, ApplicationInfo.ProductBuildPart, ApplicationInfo.ProductPrivatePart);
-                        mAppVersion += "(Alpha, Build Time: " + App.AppBuildTime.ToString("dd-MMM-yyyy hh:mm tt") + ")";
-                    }
-                    else if (ApplicationInfo.ProductBuildPart != 0)//Beta
-                    {
-                        mAppVersion = string.Format("{0}.{1}.{2}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart, ApplicationInfo.ProductBuildPart);
-                        mAppVersion += "(Beta, Build Date: " + App.AppBuildTime.ToString("dd-MMM-yyyy") + ")";
-                    }
-                    else//Official Release
-                    {
-                        mAppVersion = string.Format("{0}.{1}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart);
-                    }
-                }
-
-                return mAppVersion;
-            }
-        }
-
-        private static string mAppShortVersion = String.Empty;
-        public static string AppShortVersion
-        {
-            get
-            {
-                if (mAppShortVersion == string.Empty)
-                {
-                    if (ApplicationInfo.ProductPrivatePart != 0)//Alpha
-                    {
-                        mAppShortVersion = string.Format("{0}.{1}.{2}.{3}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart, ApplicationInfo.ProductBuildPart, ApplicationInfo.ProductPrivatePart);
-                    }
-                    else if (ApplicationInfo.ProductBuildPart != 0)//Beta
-                    {
-                        mAppShortVersion = string.Format("{0}.{1}.{2}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart, ApplicationInfo.ProductBuildPart);
-                    }
-                    else//Official Release
-                    {
-                        mAppShortVersion = string.Format("{0}.{1}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart);
-                    }
-                }
-
-                return mAppShortVersion;
-            }
-        }
-
-        public static Ginger.Functionalties.SolutionAutoSave AppSolutionAutoSave = new Ginger.Functionalties.SolutionAutoSave();//To move it workspace
-        public static Ginger.Functionalties.SolutionRecover AppSolutionRecover = new Ginger.Functionalties.SolutionRecover();//To move it workspace
-        public static string RecoverFolderPath = null; //???
-
-        static bool mIsReady = false;//???
-        public bool IsReady { get { return mIsReady; } }//???
-
-        private static bool mAppBuildTimeCalculated = false;
-        private static DateTime mAppBuildTime;
-        public static DateTime AppBuildTime
-        {
-            get
-            {
-                if (mAppBuildTimeCalculated == false)
-                {
-                    System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                    System.IO.FileInfo fileInfo = new System.IO.FileInfo(assembly.Location);
-                    mAppBuildTime = fileInfo.LastWriteTime;
-                    mAppBuildTimeCalculated = true;
-                }
-
-                return mAppBuildTime;
-            }
-        }
+        
+        
 
         public new static MainWindow MainWindow { get; set; }
         
@@ -174,10 +77,7 @@ namespace Ginger
                 handler(null, new PropertyChangedEventArgs(name));
             }
         }
-        
-       
-
-        public static bool RunningFromUnitTest = false;
+                
 
         public static void LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType SkinDicType = Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType TerminologyType = GingerCore.eTerminologyType.Default)
         {
@@ -209,140 +109,16 @@ namespace Ginger
             GingerTerminology.TERMINOLOGY_TYPE = TerminologyType;
         }
 
-        public static void InitApp()
-        {
-            // Add event handler for handling non-UI thread exceptions.
-            AppDomain currentDomain = AppDomain.CurrentDomain;
-            currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StandAloneThreadExceptionHandler);
 
-            Reporter.WorkSpaceReporter = new GingerWorkSpaceReporter();
+        
 
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-
-            string phase = string.Empty;
-
-            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
-
-            WorkSpace.Instance.BetaFeatures = BetaFeatures.LoadUserPref();
-            WorkSpace.Instance.BetaFeatures.PropertyChanged += BetaFeatureChanged;            
-
-            if (WorkSpace.Instance.BetaFeatures.ShowDebugConsole)
-            {
-                DebugConsoleWindow debugConsole = new DebugConsoleWindow();
-                debugConsole.ShowAsWindow();
-                WorkSpace.Instance.BetaFeatures.DisplayStatus();
-            }
-
-            Reporter.ToLog(eLogLevel.INFO, "######################## Application version " + App.AppVersion + " Started ! ########################");
-
-            SetLoadingInfo("Init Application");
-            WorkSpace.AppVersion = App.AppShortVersion;
-            // We init the classes dictionary for the Repository Serializer only once
-            InitClassTypesDictionary();
-
-            // TODO: need to add a switch what we get from old ginger based on magic key
-
-            phase = "Loading User Profile";
-            Reporter.ToLog(eLogLevel.DEBUG, phase);
-            SetLoadingInfo(phase);
-            WorkSpace.Instance.UserProfile = UserProfile.LoadUserProfile();
-
-            phase = "Configuring User Type";
-            Reporter.ToLog(eLogLevel.DEBUG, phase);
-            SetLoadingInfo(phase);
-            WorkSpace.Instance.UserProfile.LoadUserTypeHelper();
-
-
-            phase = "Loading User Selected Resource Dictionaries";
-            Reporter.ToLog(eLogLevel.DEBUG, phase);
-            SetLoadingInfo(phase);
-            if (WorkSpace.Instance.UserProfile != null)
-                LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, WorkSpace.Instance.UserProfile.TerminologyDictionaryType);
-            else
-                LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
-
-            Reporter.ToLog(eLogLevel.DEBUG, "Loading user messages pool");
-            UserMsgsPool.LoadUserMsgsPool();
-            StatusMsgsPool.LoadStatusMsgsPool();
-
-            Reporter.ToLog(eLogLevel.DEBUG, "Init the Centralized Auto Log");
-            AutoLogProxy.Init(App.AppVersion);
-
-            Reporter.ToLog(eLogLevel.DEBUG, "Initializing the Source control");
-            SetLoadingInfo(phase);
-
-            phase = "Loading the Main Window";
-            Reporter.ToLog(eLogLevel.DEBUG, phase);
-            SetLoadingInfo(phase);            
-            
-
-            AutoLogProxy.LogAppOpened();
-            
-
-            // Register our own Ginger tool tip handler
-            //--Canceling customize tooltip for now due to many issues and no real added value            
-
-            phase = "Application was loaded and ready";
-            Reporter.ToLog(eLogLevel.INFO, phase);
-            mIsReady = true;
-       
-        }
-
-        private static void SetLoadingInfo(string text)
-        {
-            if (MainWindow != null)
-            {
-                MainWindow.LoadingInfo(text);
-            }
-            
-            Console.WriteLine("Loading Info: " + text);            
-        }
-
-        private static void StandAloneThreadExceptionHandler(object sender, UnhandledExceptionEventArgs e)
-        {
-            if (RunningFromUnitTest)
-            {
-                // happen when we close Ginger from unit tests
-                if (e.ExceptionObject is System.Runtime.InteropServices.InvalidComObjectException || e.ExceptionObject is System.Threading.Tasks.TaskCanceledException)
-                {
-                    Console.WriteLine("StandAloneThreadExceptionHandler: Running from unit test ignoring error on ginger close");
-                    return;
-                }
-            }
-            Reporter.ToLog(eLogLevel.FATAL, ">>>>>>>>>>>>>> Error occurred on stand alone thread(non UI) - " + e.ExceptionObject);
-            //Reporter.ToUser(eUserMsgKey.ThreadError, "Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
-
-            if ( WorkSpace.Instance.RunningInExecutionMode == false)
-            {
-                App.AppSolutionAutoSave.DoAutoSave();
-            }
-
-            /// if (e.IsTerminating)...
-            /// 
-            //TODO: show exception
-            // save work to temp folder
-            // enable user to save work
-            // ask if to restart/close
-            // when loading check restore and restore
-        }
-
-        static bool bDone = false;
+        // Remove 
         public static void InitClassTypesDictionary()
         {
-            //TODO: cleanup after all RIs moved to GingerCoreCommon
-
-            if (bDone) return;
-            bDone = true;
-
+            
             // TODO: remove after we don't need old serializer to load old repo items
             NewRepositorySerializer.NewRepositorySerializerEvent += RepositorySerializer.NewRepositorySerializer_NewRepositorySerializerEvent;
 
-            // Add all RI classes from GingerCoreNET
-            // NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
-
-            // Add all RI classes from GingerCoreCommon
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
             
             // Add all RI classes from GingerCore
             NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActButton).Assembly); // GingerCore.dll
@@ -358,34 +134,7 @@ namespace Ginger
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
             
-            // TODO: remove after it moved to common
-            AddClass(list, typeof(RunSetConfig));
-            AddClass(list, typeof(RunSetActionSendEmail));
-            AddClass(list, typeof(BusinessFlowReport));
-            AddClass(list, typeof(HTMLReportConfiguration));
-            AddClass(list, typeof(HTMLReportConfigFieldToSelect));
-            AddClass(list, typeof(Agent));
-            AddClass(list, typeof(DriverConfigParam));
-            AddClass(list, typeof(GingerRunner));
-            AddClass(list, typeof(ApplicationAgent));
-
-            AddClass(list, typeof(RunSetActionHTMLReportSendEmail));
-            AddClass(list, typeof(EmailHtmlReportAttachment));
-            AddClass(list, typeof(RunSetActionAutomatedALMDefects));
-            AddClass(list, typeof(RunSetActionGenerateTestNGReport));
-            AddClass(list, typeof(RunSetActionHTMLReport));
-            AddClass(list, typeof(RunSetActionSaveResults));
-            AddClass(list, typeof(RunSetActionSendFreeEmail));
-            AddClass(list, typeof(RunSetActionSendSMS));
-            AddClass(list, typeof(RunSetActionPublishToQC));
-            AddClass(list, typeof(ActSetVariableValue));
-            AddClass(list, typeof(ActClearAllVariables));
-            AddClass(list, typeof(ActAgentManipulation));       
-            AddClass(list, typeof(UserProfile));
-            AddClass(list, typeof(Solution));
-            AddClass(list, typeof(Email));
-            AddClass(list, typeof(EmailAttachment));
-            AddClass(list, typeof(RunSetActionScript));
+           
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
 
@@ -415,11 +164,7 @@ namespace Ginger
 
         }
 
-        private static void AddClass(Dictionary<string, Type> list, Type t)
-        {
-            list.Add((t).FullName, t);
-            list.Add((t).Name, t);
-        }
+       
 
         private static async void HandleAutoRunMode()
         {
@@ -427,8 +172,8 @@ namespace Ginger
             Reporter.ToLog(eLogLevel.INFO, phase);
             
             AutoLogProxy.LogAppOpened();
-            SetLoadingInfo(phase);
-
+            
+            // TODO: use same CLI !!!!!!!!!!!!!
             var result = await WorkSpace.Instance.RunsetExecutor.RunRunSetFromCommandLine();
 
             Reporter.ToLog(eLogLevel.INFO, "Closing Ginger automatically...");
@@ -530,181 +275,137 @@ namespace Ginger
             }
         }
 
-        private static void SolutionCleanup()
-        {
-            if (WorkSpace.Instance.SolutionRepository != null)
-            {
-                WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
-            }
+        
 
-            if (! WorkSpace.Instance.RunningInExecutionMode)
-            {
-                AppSolutionAutoSave.SolutionAutoSaveEnd();
-            }
+        
+        // public static bool SetSolution(string SolutionFolder)
+        // {            
+            //try
+            //{
+            //    Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", SolutionFolder));
+            //    mLoadingSolution = true;
+            //    OnPropertyChanged(nameof(LoadingSolution));
 
-            WorkSpace.Instance.Solution = null;
-            
-            CloseAllRunningAgents();
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ClearAutomate, null);
-            AutoLogProxy.SetAccount("");
-            WorkSpace.Instance.SolutionRepository = null;
-            WorkSpace.Instance.SourceControl = null;
-        }
+            //    //Cleanup
+            //    SolutionCleanup();
 
-        public static void CloseAllRunningAgents()
-        {
-            if (WorkSpace.Instance.SolutionRepository != null)
-            {
-                List<Agent> runningAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Status == Agent.eStatus.Running).ToList();
-                if (runningAgents != null && runningAgents.Count > 0)
-                {
-                    foreach (Agent agent in runningAgents)
-                    {
-                        try
-                        {
-                            agent.Close();
-                        }
-                        catch (Exception ex)
-                        {
-                            if (agent.Name != null)
-                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Close the '{0}' Agent", agent.Name), ex);
-                            else
-                                Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
-                        }
-                        agent.IsFailedToStart = false;
-                    }
-                }
-            }
-        }
+            //    //Load new Solution
+            //    string SolFile = System.IO.Path.Combine(SolutionFolder, @"Ginger.Solution.xml");
+            //    if (File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(SolFile)))
+            //    {
+            //        //get Solution files
+            //        IEnumerable<string> solutionFiles = Solution.SolutionFiles(SolutionFolder);
+            //        ConcurrentBag<Tuple<SolutionUpgrade.eGingerVersionComparisonResult, string>> solutionFilesWithVersion = null; 
 
-        public static bool SetSolution(string SolutionFolder)
-        {            
-            try
-            {
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", SolutionFolder));
-                mLoadingSolution = true;
-                OnPropertyChanged(nameof(LoadingSolution));
+            //        //check if Ginger Upgrade is needed for loading this Solution
+            //        try
+            //        {
+            //            Reporter.ToLog(eLogLevel.DEBUG, "Checking if Ginger upgrade is needed for loading the Solution");
+            //            if (solutionFilesWithVersion == null)
+            //            {
+            //                solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
+            //            }
+            //            ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
+            //            if (higherVersionFiles.Count > 0)
+            //            {
+            //                if ( WorkSpace.Instance.RunningInExecutionMode == false && RunningFromUnitTest == false)
+            //                {
+            //                    MainWindow.HideSplash();
+            //                    UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, SolutionFolder, string.Empty, higherVersionFiles.ToList());
+            //                    gingerUpgradePage.ShowAsWindow();
+            //                }
+            //                Reporter.ToLog(eLogLevel.WARN, "Ginger upgrade is needed for loading the Solution, aborting Solution load.");
+            //                return false;
+            //            }
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution requires Ginger Upgrade", ex);
+            //        }
 
-                //Cleanup
-                SolutionCleanup();
+            //        Solution sol = Solution.LoadSolution(SolFile);
 
-                //Load new Solution
-                string SolFile = System.IO.Path.Combine(SolutionFolder, @"Ginger.Solution.xml");
-                if (File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(SolFile)))
-                {
-                    //get Solution files
-                    IEnumerable<string> solutionFiles = Solution.SolutionFiles(SolutionFolder);
-                    ConcurrentBag<Tuple<SolutionUpgrade.eGingerVersionComparisonResult, string>> solutionFilesWithVersion = null; 
+            //        if (sol != null)
+            //        {
+            //            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+            //            WorkSpace.Instance.SolutionRepository.Open(SolutionFolder);
 
-                    //check if Ginger Upgrade is needed for loading this Solution
-                    try
-                    {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Checking if Ginger upgrade is needed for loading the Solution");
-                        if (solutionFilesWithVersion == null)
-                        {
-                            solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
-                        }
-                        ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
-                        if (higherVersionFiles.Count > 0)
-                        {
-                            if ( WorkSpace.Instance.RunningInExecutionMode == false && RunningFromUnitTest == false)
-                            {
-                                MainWindow.HideSplash();
-                                UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, SolutionFolder, string.Empty, higherVersionFiles.ToList());
-                                gingerUpgradePage.ShowAsWindow();
-                            }
-                            Reporter.ToLog(eLogLevel.WARN, "Ginger upgrade is needed for loading the Solution, aborting Solution load.");
-                            return false;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution requires Ginger Upgrade", ex);
-                    }
+            //            WorkSpace.Instance.PlugInsManager.SolutionChanged(WorkSpace.Instance.SolutionRepository);
 
-                    Solution sol = Solution.LoadSolution(SolFile);
+            //            HandleSolutionLoadSourceControl(sol);                        
 
-                    if (sol != null)
-                    {
-                        WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-                        WorkSpace.Instance.SolutionRepository.Open(SolutionFolder);
+            //            ValueExpression.SolutionFolder = SolutionFolder;
+            //            BusinessFlow.SolutionVariables = sol.Variables;
+            //            sol.SetReportsConfigurations();
 
-                        WorkSpace.Instance.PlugInsManager.SolutionChanged(WorkSpace.Instance.SolutionRepository);
-
-                        HandleSolutionLoadSourceControl(sol);                        
-
-                        ValueExpression.SolutionFolder = SolutionFolder;
-                        BusinessFlow.SolutionVariables = sol.Variables;
-                        sol.SetReportsConfigurations();
-
-                        WorkSpace.Instance.Solution = sol;
+            //            WorkSpace.Instance.Solution = sol;
                                                 
-                        WorkSpace.Instance.UserProfile.LoadRecentAppAgentMapping();
-                        AutoLogProxy.SetAccount(sol.Account);
+            //            WorkSpace.Instance.UserProfile.LoadRecentAppAgentMapping();
+            //            AutoLogProxy.SetAccount(sol.Account);
 
-                        //SetDefaultBusinessFlow();
+            //            //SetDefaultBusinessFlow();
 
-                        if (! WorkSpace.Instance.RunningInExecutionMode)
-                        {
-                            DoSolutionAutoSaveAndRecover();
-                        }
+            //            if (! WorkSpace.Instance.RunningInExecutionMode)
+            //            {
+            //                DoSolutionAutoSaveAndRecover();
+            //            }
 
-                        //Offer to upgrade Solution items to current version
-                        try
-                        {
-                            if (WorkSpace.Instance.UserProfile.DoNotAskToUpgradeSolutions == false &&  WorkSpace.Instance.RunningInExecutionMode == false && RunningFromUnitTest == false)
-                            {
-                                if (solutionFilesWithVersion == null)
-                                {
-                                    solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
-                                }
-                                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
-                                if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
-                                {
-                                    UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, sol.Folder, sol.Name, lowerVersionFiles.ToList());
-                                    solutionUpgradePage.ShowAsWindow();
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution files should be Upgraded", ex);
-                        }
+            //            //Offer to upgrade Solution items to current version
+            //            try
+            //            {
+            //                if (WorkSpace.Instance.UserProfile.DoNotAskToUpgradeSolutions == false &&  WorkSpace.Instance.RunningInExecutionMode == false && RunningFromUnitTest == false)
+            //                {
+            //                    if (solutionFilesWithVersion == null)
+            //                    {
+            //                        solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
+            //                    }
+            //                    ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
+            //                    if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
+            //                    {
+            //                        UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, sol.Folder, sol.Name, lowerVersionFiles.ToList());
+            //                        solutionUpgradePage.ShowAsWindow();
+            //                    }
+            //                }
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution files should be Upgraded", ex);
+            //            }
 
-                        // No need to add solution to recent if running from CLI
-                        if (!WorkSpace.Instance.RunningInExecutionMode && !RunningFromUnitTest)
-                        {
-                            WorkSpace.Instance.UserProfile.AddSolutionToRecent(sol);
-                        }
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Load solution from file failed.");
-                        return false;
-                    }
-                }
-                else
-                {
-                    Reporter.ToUser(eUserMsgKey.BeginWithNoSelectSolution);
-                    return false;
-                }
+            //            // No need to add solution to recent if running from CLI
+            //            if (!WorkSpace.Instance.RunningInExecutionMode && !RunningFromUnitTest)
+            //            {
+            //                WorkSpace.Instance.UserProfile.AddSolutionToRecent(sol);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Load solution from file failed.");
+            //            return false;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Reporter.ToUser(eUserMsgKey.BeginWithNoSelectSolution);
+            //        return false;
+            //    }
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while loading the solution", ex);
-                SolutionCleanup();
-                throw ex;
-            }
-            finally
-            {
-                mLoadingSolution = false;
-                OnPropertyChanged(nameof(LoadingSolution));
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading the Solution '{0}'", SolutionFolder));
-                Mouse.OverrideCursor = null;
-            }
-        }
+            //    return true;
+            //}
+            //catch (Exception ex)
+            //{
+            //    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while loading the solution", ex);
+            //    SolutionCleanup();
+            //    throw ex;
+            //}
+            //finally
+            //{
+            //    mLoadingSolution = false;
+            //    OnPropertyChanged(nameof(LoadingSolution));
+            //    Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading the Solution '{0}'", SolutionFolder));
+            //    Mouse.OverrideCursor = null;
+            //}
+        // }
 
         private static void HandleSolutionLoadSourceControl(Solution solution)
         {
@@ -754,19 +455,7 @@ namespace Ginger
             }
         }
 
-        private static void DoSolutionAutoSaveAndRecover()
-        {
-            //Init
-            AppSolutionAutoSave.SolutionInit( WorkSpace.Instance.Solution.Folder);
-            AppSolutionRecover.SolutionInit( WorkSpace.Instance.Solution.Folder);
-
-            //start Auto Save
-            AppSolutionAutoSave.SolutionAutoSaveStart();
-
-            //check if Recover is needed
-            if (! WorkSpace.Instance.UserProfile.DoNotAskToRecoverSolutions)
-                AppSolutionRecover.SolutionRecoverStart();
-        }
+        
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
@@ -825,9 +514,7 @@ namespace Ginger
         }
         
 
-        private static void BetaFeatureChanged(object sender, PropertyChangedEventArgs e)
-        {
-        }
+        
 
         public Dispatcher GetMainWindowDispatcher()
         {
@@ -866,14 +553,17 @@ namespace Ginger
         }
 
 
-       
-
         // This is the main entry point to Ginger UI/CLI
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            WorkSpace.Init(new WorkSpaceEventHandler());
+
+            // add additional classed from Ginger and GingerCore
+            InitClassTypesDictionary();
+
             Console.Title = "Ginger";
             Console.WriteLine("Starting Ginger");
-            Console.WriteLine("Version: " + AppVersion);            
+            Console.WriteLine("Version: " + WorkSpace.Instance.ApplicationInfo.AppVersion);            
 
             if (e.Args.Length == 0)
             {
@@ -919,7 +609,7 @@ namespace Ginger
 
         private void RunNewCLI(string[] args)
         {
-            InitApp();
+            WorkSpace.Instance.InitApp(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
             
@@ -929,8 +619,8 @@ namespace Ginger
         }
 
         private void StartGingerExecutor()
-        {            
-            InitApp();
+        {
+            WorkSpace.Instance.InitApp(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
             HandleAutoRunMode();
@@ -938,7 +628,7 @@ namespace Ginger
 
         public void StartGingerUI()
         {            
-            if (RunningFromUnitTest)
+            if (WorkSpace.Instance.RunningFromUnitTest)
             {
                 LoadApplicationDictionaries();
             }
@@ -947,7 +637,7 @@ namespace Ginger
             MainWindow.Show();
             GingerCore.General.DoEvents();
 
-            InitApp();
+            WorkSpace.Instance.InitApp(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
 
             MainWindow.Init();
             MainWindow.HideSplash();
