@@ -46,39 +46,39 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
 
 
-        [TestMethod]
-        public void RunRunSet()
-        {
-            // Arrange
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
+        //[TestMethod]
+        //public void RunRunSet()
+        //{
+        //    // Arrange
+        //    WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+        //    WorkSpace.Init(WSEH);
             
-            WorkSpace.Instance.InitApp(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
+        //    WorkSpace.Instance.InitApp(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
 
-            // NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
-            // NewRepositorySerializer.AddClassesFromAssembly(typeof(ProjEnvironment).Assembly);
-            // NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
+        //    // NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
+        //    // NewRepositorySerializer.AddClassesFromAssembly(typeof(ProjEnvironment).Assembly);
+        //    // NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
 
-            // Create script file
-            string CLISolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\CLI");                        
-            string scriptFile = TestResources.GetTempFile("runset1.ginger.script");
-            string txt = "int i=1;" + Environment.NewLine;
-            txt += "i++;" + Environment.NewLine;            
-            txt += "OpenSolution(@\"" + CLISolutionFolder + "\");" + Environment.NewLine;
-            txt += "OpenRunSet(\"Default Run Set\", \"Default\");" + Environment.NewLine;    // Runset, env
-            txt += "i" + Environment.NewLine;  // script rc
-            System.IO.File.WriteAllText(scriptFile, txt);
+        //    // Create script file
+        //    string CLISolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\CLI");                        
+        //    string scriptFile = TestResources.GetTempFile("runset1.ginger.script");
+        //    string txt = "int i=1;" + Environment.NewLine;
+        //    txt += "i++;" + Environment.NewLine;            
+        //    txt += "OpenSolution(@\"" + CLISolutionFolder + "\");" + Environment.NewLine;
+        //    txt += "OpenRunSet(\"Default Run Set\", \"Default\");" + Environment.NewLine;    // Runset, env
+        //    txt += "i" + Environment.NewLine;  // script rc
+        //    System.IO.File.WriteAllText(scriptFile, txt);
 
 
-            string arg = "ScriptFile=" + scriptFile;
+        //    string arg = "ScriptFile=" + scriptFile;
 
-            // Act
-            CLIProcessor.ExecuteArgs(new string[] { arg });
+        //    // Act
+        //    CLIProcessor.ExecuteArgs(new string[] { arg });
 
-            // Assert
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
+        //    // Assert
+        //    Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
 
-        }
+        //}
 
         [TestMethod]
         public void ResultsJSON()
