@@ -110,7 +110,7 @@ namespace Ginger.SolutionWindows
                 AddDefaultDataSource();
                 AddDeafultReportTemplate();
                 AutomatePage.CreateDefaultEnvironment();
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(App.GetNewBusinessFlow("Flow 1", true));
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(WorkSpace.Instance.GetNewBusinessFlow("Flow 1", true));
 
                 //show success message to user
                 Mouse.OverrideCursor = null;

@@ -19,7 +19,7 @@ limitations under the License.
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using Amdocs.Ginger.CoreNET.WorkSpaceLib;
@@ -29,6 +29,8 @@ using Ginger.Functionalties;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
+using GingerCore.Platforms;
+using GingerCore.Variables;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SourceControl;
 using System;
@@ -679,6 +681,28 @@ namespace amdocs.ginger.GingerCoreNET
         public SolutionAutoSave AppSolutionAutoSave = new SolutionAutoSave();
         public SolutionRecover AppSolutionRecover = new SolutionRecover();
         public string RecoverFolderPath = null; //???  move to above ? !!!!!!!!!!!
+
+        public BusinessFlow GetNewBusinessFlow(string Name, bool setTargetApp = false)
+        {
+            BusinessFlow biz = new BusinessFlow();
+            biz.Name = Name;
+            biz.Activities = new ObservableList<Activity>();
+            biz.Variables = new ObservableList<VariableBase>();
+            Activity a = new Activity() { Active = true };
+            a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
+            a.Acts = new ObservableList<IAct>();
+            biz.Activities.Add(a);
+            biz.Activities.CurrentItem = a;
+            biz.CurrentActivity = a;
+
+            if (setTargetApp == true && WorkSpace.Instance.Solution.ApplicationPlatforms.Count > 0)
+            {
+                biz.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
+                biz.CurrentActivity.TargetApplication = biz.TargetApplications[0].Name;
+            }
+
+            return biz;
+        }
 
 
     }

@@ -454,7 +454,7 @@ namespace Ginger.GherkinLib
                 targetFolder = targetBFFolder;                
             }
 
-            mBizFlow = App.GetNewBusinessFlow(BizFlowName);
+            mBizFlow = WorkSpace.Instance.GetNewBusinessFlow(BizFlowName);
             mBizFlow.Source = BusinessFlow.eSource.Gherkin;
             mBizFlow.ExternalID = GherkinTextEditor.FileName.Replace( WorkSpace.Instance.Solution.Folder, "~") ;                                                
             mBizFlow.Name = BizFlowName;

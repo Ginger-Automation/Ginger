@@ -351,27 +351,7 @@ namespace Ginger
             e.Handled = true;
         }
 
-        public static BusinessFlow GetNewBusinessFlow(string Name, bool setTargetApp=false)
-        {
-            BusinessFlow biz = new BusinessFlow();
-            biz.Name = Name;
-            biz.Activities = new ObservableList<Activity>();
-            biz.Variables = new ObservableList<VariableBase>();
-            Activity a = new Activity() { Active = true };
-            a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
-            a.Acts = new ObservableList<IAct>();
-            biz.Activities.Add(a);
-            biz.Activities.CurrentItem = a;
-            biz.CurrentActivity = a;
-
-            if (setTargetApp == true && WorkSpace.Instance.Solution.ApplicationPlatforms.Count > 0)
-            {
-                biz.TargetApplications.Add(new TargetApplication() {AppName = WorkSpace.Instance.Solution.MainApplication});
-                biz.CurrentActivity.TargetApplication = biz.TargetApplications[0].Name;
-            }
-
-            return biz;
-        }
+        
 
         internal static void CheckIn(string Path)
         {
