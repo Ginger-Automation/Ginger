@@ -599,8 +599,13 @@ namespace Ginger.Run
 
         private void SetVariableMappedValues()
         {
+            BusinessFlowRun businessFlowRun = GetCurrenrtBusinessFlowRun();
+
+            BusinessFlow cachedBusinessFlow = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(CurrentBusinessFlow.Guid);
+            List<VariableBase> cachedVariables = cachedBusinessFlow?.GetBFandActivitiesVariabeles(true).ToList();
+
             //set the vars to update
-            List<VariableBase> inputVars = CurrentBusinessFlow.GetBFandActivitiesVariabeles(false).ToList();
+            List<VariableBase> inputVars = CurrentBusinessFlow.GetBFandActivitiesVariabeles(true).ToList();
             List<VariableBase> outputVariables = null;
 
             //do actual value update
@@ -626,11 +631,21 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    //if input variable value mapped to none , we reset it to initial value
-                    if (inputVar.DiffrentFromOrigin == false)
+                    //if input variable value mapped to none, and value is differt from origin                   
+                    if (inputVar.DiffrentFromOrigin)
                     {
-                        inputVar.ResetValue();
-                    }                        
+                        // we take copy of customized variable from run set config 
+                        VariableBase runVar = businessFlowRun?.BusinessFlowCustomizedRunVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
+
+                        RepositoryItemBase.ObjectsDeepCopy(runVar, inputVar);
+                        inputVar.DiffrentFromOrigin = runVar.DiffrentFromOrigin;
+                    }
+                    else
+                    {
+                        //If value is not different from origin we take original value business flow on cache
+                       VariableBase cacheVariable= cachedVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
+                       inputVar.Value = cacheVariable.Value;
+                    }
                 }
 
                 if (mappedValue != "")
@@ -692,6 +707,17 @@ namespace Ginger.Run
             return outputVariables;
                  
         }      
+
+        private BusinessFlowRun GetCurrenrtBusinessFlowRun()
+        {
+            BusinessFlowRun businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowGuid == CurrentBusinessFlow.Guid select x).FirstOrDefault();
+
+            if (businessFlowRun == null)
+            {
+                businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowName == CurrentBusinessFlow.Name select x).FirstOrDefault();
+            }
+            return businessFlowRun;
+        }
 
         public void StartAgent(Agent Agent)
         {
