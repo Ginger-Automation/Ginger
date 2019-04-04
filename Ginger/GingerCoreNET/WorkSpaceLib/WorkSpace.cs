@@ -46,7 +46,7 @@ namespace amdocs.ginger.GingerCoreNET
     // For Ginger.Exe it is one per running app
     // For Web it can be one per user connected
     // DO NOT ADD STATIC FIELDS
-    public class WorkSpace : RepositoryItemBase
+    public class WorkSpace 
     {
         private static WorkSpace mWorkSpace;
         public static WorkSpace Instance { get { return mWorkSpace; } }
@@ -249,14 +249,11 @@ namespace amdocs.ginger.GingerCoreNET
 
         public bool OpenSolution(string SolutionFolder)
         {
-            mPluginsManager = null;
-            //TODO: remove later since below init only RS2
-            // SolutionRepository.Open(SolutionFolder);
+            mPluginsManager = null;            
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", SolutionFolder));
-                // mLoadingSolution = true;   // !!!!!!
-                // OnPropertyChanged(nameof(LoadingSolution));   // !!!!!!
+                LoadingSolution = true;                  
 
                 //Cleanup
                 SolutionCleanup();
@@ -378,10 +375,8 @@ namespace amdocs.ginger.GingerCoreNET
             }
             finally
             {
-                // mLoadingSolution = false;    // !!!!!!!!!!!!!!!!!!!!!!!!!
-                // OnPropertyChanged(nameof(LoadingSolution));   // !!!!!!!!!!!!!!!!!!!!!!!!!
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading the Solution '{0}'", SolutionFolder));
-                // Mouse.OverrideCursor = null;   // !!!!!!!!!!!!!!!!!!!!!!!!!
+                LoadingSolution = false;                  
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading the Solution '{0}'", SolutionFolder));                
             }
         }
 
@@ -566,8 +561,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         // Running from CLI
         public bool RunningInExecutionMode = false;
-        
-        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+                
 
         public void RefreshGlobalAppModelParams(ApplicationModelBase AppModel)
         {
@@ -666,7 +660,32 @@ namespace amdocs.ginger.GingerCoreNET
             return biz;
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(null, new PropertyChangedEventArgs(name));
+            }
+        }
 
+        bool mLoadingSolution;
+        public bool LoadingSolution
+        {
+            get
+            {
+                return mLoadingSolution;
+            }
+            set
+            {
+                if (mLoadingSolution != value)
+                {
+                    mLoadingSolution = value;
+                    OnPropertyChanged(nameof(LoadingSolution));
+                }
+            }
+        }
 
 
     }

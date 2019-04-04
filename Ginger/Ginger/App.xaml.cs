@@ -59,17 +59,7 @@ namespace Ginger
         public new static MainWindow MainWindow { get; set; }
         
         private Dictionary<string, Int32> mExceptionsDic = new Dictionary<string, int>();
-
-        public static event PropertyChangedEventHandler PropertyChanged;
-        protected static void OnPropertyChanged(string name)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {                
-                handler(null, new PropertyChangedEventArgs(name));
-            }
-        }
-                
+        
 
         public static void LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType SkinDicType = Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType TerminologyType = GingerCore.eTerminologyType.Default)
         {
@@ -234,15 +224,6 @@ namespace Ginger
                 getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
         }
 
-        static bool mLoadingSolution;
-        public static bool LoadingSolution
-        {
-            get
-            {
-                return mLoadingSolution;
-            }
-        }
-        
 
 
         private static void HandleSolutionLoadSourceControl(Solution solution)

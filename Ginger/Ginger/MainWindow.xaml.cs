@@ -72,8 +72,8 @@ namespace Ginger
                 App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
 
                 //User Profile
-                App.PropertyChanged += App_PropertyChanged;
-                 WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+                WorkSpace.Instance.PropertyChanged += Workspace_PropertyChanged;
+                WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
                 if ( WorkSpace.Instance.UserProfile.GingerStatus == eGingerStatus.Active)
                 {
                     Reporter.ToStatus(eStatusMsgKey.ExitMode);
@@ -168,11 +168,11 @@ namespace Ginger
             }
         }
 
-        private void App_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Workspace_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(App.LoadingSolution))
+            if (e.PropertyName == nameof(WorkSpace.LoadingSolution))
             {
-                if (App.LoadingSolution)
+                if (WorkSpace.Instance.LoadingSolution)
                 {
                     xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
                     xMainWindowFrame.Content = new LoadingPage("Loading Solution...");
