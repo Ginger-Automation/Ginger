@@ -59,11 +59,6 @@ namespace Ginger
 
         public static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//?????
 
-      
-
-        
-        
-
         public new static MainWindow MainWindow { get; set; }
         
         private Dictionary<string, Int32> mExceptionsDic = new Dictionary<string, int>();
@@ -110,12 +105,13 @@ namespace Ginger
         }
 
 
-        
 
-        // Remove 
+        static bool bDone = false;
+        
         public static void InitClassTypesDictionary()
         {
-            
+            if (bDone) return;
+            bDone = true;                
             // TODO: remove after we don't need old serializer to load old repo items
             NewRepositorySerializer.NewRepositorySerializerEvent += RepositorySerializer.NewRepositorySerializer_NewRepositorySerializerEvent;
 
