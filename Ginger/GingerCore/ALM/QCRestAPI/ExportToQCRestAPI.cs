@@ -517,7 +517,7 @@ namespace GingerCore.ALM.QCRestAPI
                     //set item fields for test instances
                     foreach (ExternalItemFieldBase field in testInstancesFields)
                     {
-                        if ((field.ToUpdate || field.Mandatory) && (!(field.ExternalID == "test-id") && !(field.ExternalID == "cycle-id") && (field.ExternalID != "order-id") && (field.ExternalID != "test-order")))
+                        if ((field.ToUpdate || field.Mandatory) && ((field.ExternalID != "test-id") && (field.ExternalID != "cycle-id") && (field.ExternalID != "order-id") && (field.ExternalID != "test-order")))
                         {
                             if (string.IsNullOrEmpty(field.ExternalID) == false && field.SelectedValue != "NA")
                                 testInstance.ElementsField[field.ExternalID] = field.SelectedValue;

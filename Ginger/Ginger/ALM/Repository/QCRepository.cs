@@ -332,9 +332,9 @@ namespace Ginger.ALM.Repository
                         //ask user if want to continue
                         Amdocs.Ginger.Common.eUserMsgSelection userSelect = Reporter.ToUser(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, ag.Name, matchingTC["TS_SUBJECT"].Path + "\\" + matchingTC.Name);
                         if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
-                            return false;
+                        { return false; }
                         else if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.No)
-                            matchingTC = null;
+                        { matchingTC = null; }
                     }
                 }
 
@@ -356,7 +356,7 @@ namespace Ginger.ALM.Repository
                         {
                             if (QCConnect.CreateFolder(testPlanUploadPath, businessFlow.Name))
                             {
-                                testPlanUploadPath = testPlanUploadPath + "\\" + businessFlow.Name;
+                                testPlanUploadPath += "\\" + businessFlow.Name;
                             }
                         }
                         catch (Exception ex)
