@@ -263,7 +263,7 @@ namespace Ginger
                             break;                                                
                     }
                     
-                    // GingerCore.General.DoEvents();
+                    GingerCore.General.DoEvents();
                 }
                 else
                 {

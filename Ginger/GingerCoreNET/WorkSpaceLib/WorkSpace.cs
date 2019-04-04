@@ -179,6 +179,10 @@ namespace amdocs.ginger.GingerCoreNET
 
             Reporter.ToLog(eLogLevel.INFO, "######################## Application version " + ApplicationInfo.AppVersion + " Started ! ########################");
 
+            Reporter.ToLog(eLogLevel.DEBUG, "Loading user messages pool");
+            UserMsgsPool.LoadUserMsgsPool();
+            StatusMsgsPool.LoadStatusMsgsPool();
+
             SetLoadingInfo("Init Application");
             // AppVersion = AppShortVersion;
             // We init the classes dictionary for the Repository Serializer only once
@@ -211,9 +215,7 @@ namespace amdocs.ginger.GingerCoreNET
             //    LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
             //}
 
-            Reporter.ToLog(eLogLevel.DEBUG, "Loading user messages pool");
-            UserMsgsPool.LoadUserMsgsPool();
-            StatusMsgsPool.LoadStatusMsgsPool();
+            
 
             Reporter.ToLog(eLogLevel.DEBUG, "Init the Centralized Auto Log");
             AutoLogProxy.Init(ApplicationInfo.AppVersion);
@@ -242,13 +244,9 @@ namespace amdocs.ginger.GingerCoreNET
 
         private static void SetLoadingInfo(string text)
         {
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //if (MainWindow != null)
-            //{
-            //    MainWindow.LoadingInfo(text);
-            //}
+           // FIX Message not shown !!!!!!!!!!!
 
-            // Reporter.ToStatus(eStatusMsgKey.)
+            Reporter.ToStatus(eStatusMsgKey.GingerLoadingInfo, text);
             Console.WriteLine("Loading Info: " + text);
         }
 
