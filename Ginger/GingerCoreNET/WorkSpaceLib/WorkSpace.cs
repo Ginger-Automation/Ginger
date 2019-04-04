@@ -83,7 +83,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public eRunStatus RunSetExecutionStatus = eRunStatus.Failed;
+        
         
         
         

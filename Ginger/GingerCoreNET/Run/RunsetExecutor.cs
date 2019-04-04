@@ -53,6 +53,8 @@ namespace Ginger.Run
             }
         }
 
+        public eRunStatus RunSetExecutionStatus = eRunStatus.Failed;
+
         private Stopwatch mStopwatch = new Stopwatch();
         public TimeSpan Elapsed { get { return mStopwatch.Elapsed; } }
         private ExecutionLoggerConfiguration mSelectedExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
@@ -570,7 +572,7 @@ namespace Ginger.Run
                     return 1;
                 }
 
-                if (WorkSpace.Instance.RunSetExecutionStatus == eRunStatus.Passed)//TODO: improve
+                if (RunSetExecutionStatus == eRunStatus.Passed)//TODO: improve
                     return 0;
                 else
                     return 1;
