@@ -24,22 +24,21 @@ using GingerCore;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows.Threading;
+using System.Timers;
 
 namespace Ginger.Functionalties
 {
 
     public class SolutionAutoSave
     {
-        DispatcherTimer AutoSaveTimer;
+        Timer AutoSaveTimer;
                
         public string mAutoSaveFolderPath = null;
         public string AutoSaveFolderPath
         {
             get
             {
-                return mAutoSaveFolderPath;
-               
+                return mAutoSaveFolderPath;               
             }
         }
 
@@ -47,10 +46,11 @@ namespace Ginger.Functionalties
         
         public SolutionAutoSave()
         {
-            AutoSaveTimer = new DispatcherTimer();
-            AutoSaveTimer.Interval = new TimeSpan(0,5,0);
-
-            AutoSaveTimer.Tick += AutoSaveTimer_Tick;
+            AutoSaveTimer = new Timer();            
+            AutoSaveTimer.Interval = new TimeSpan(0,5,0).TotalMilliseconds;
+            AutoSaveTimer.Elapsed += AutoSaveTimer_Tick;
+            AutoSaveTimer.AutoReset = true;
+            AutoSaveTimer.Enabled = true;
         }
 
         public void SolutionInit(string solutionFolderPath)
@@ -63,9 +63,9 @@ namespace Ginger.Functionalties
         {            
             AutoSaveTimer.Stop();
 
-            if (!System.IO.Directory.Exists(mAutoSaveFolderPath))
+            if (!Directory.Exists(mAutoSaveFolderPath))
             {
-                System.IO.Directory.CreateDirectory(mAutoSaveFolderPath);
+                Directory.CreateDirectory(mAutoSaveFolderPath);
             }
             else
             {
@@ -89,9 +89,13 @@ namespace Ginger.Functionalties
                     //Clear previously saved items (so if user already saved them we won't have them)
                     DirectoryInfo di = new DirectoryInfo(mAutoSaveFolderPath);
                     foreach (FileInfo file in di.GetFiles())
+                    {
                         file.Delete();
+                    }
                     foreach (DirectoryInfo dir in di.GetDirectories())
+                    {
                         dir.Delete(true);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -164,7 +168,7 @@ namespace Ginger.Functionalties
             }
         }
 
-        private void CleanAutoSaveFolders()
+        public void CleanAutoSaveFolders()
         {
             //To Clear the AutoSave Directory Folder
             if (Directory.Exists(AutoSaveFolderPath))

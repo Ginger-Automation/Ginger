@@ -16,17 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using GingerCore.Repository;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ginger.SolutionAutoSaveAndRecover
 {

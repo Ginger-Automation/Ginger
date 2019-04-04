@@ -791,7 +791,6 @@
     <Compile Include="UserControlsLib\TwoLevelMenuLib\TwoLevelMenuPage.xaml.cs">
       <DependentUpon>TwoLevelMenuPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionAutoSaveAndRecover\RecoveredItem.cs" />
     <Compile Include="SolutionAutoSaveAndRecover\RecoverPage.xaml.cs">
       <DependentUpon>RecoverPage.xaml</DependentUpon>
     </Compile>
