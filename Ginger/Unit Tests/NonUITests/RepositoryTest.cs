@@ -16,12 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
-using Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using GingerCore;
@@ -29,6 +28,7 @@ using GingerCore.Actions;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 using GingerTestHelper;
+using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -43,8 +43,7 @@ namespace UnitTests.NonUITests
         [Level1]
         public static void ClassInitialize(TestContext TC)
         {
-            //??
-            // RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+            WorkSpace.Init(new WorkSpaceEventHandler());
             Ginger.App.InitClassTypesDictionary();
         }
 

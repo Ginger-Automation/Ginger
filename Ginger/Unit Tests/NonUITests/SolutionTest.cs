@@ -16,8 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Ginger.SolutionGeneral;
 using GingerTestHelper;
+using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
@@ -29,7 +31,7 @@ namespace UnitTests.NonUITests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            Ginger.App.InitClassTypesDictionary();
+            WorkSpace.Init(new WorkSpaceEventHandler());            
         }
 
         [TestInitialize]

@@ -52,6 +52,7 @@ namespace amdocs.ginger.GingerCoreNET
         {
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
+            mWorkSpace.InitClassTypesDictionary();
         }
 
         public SolutionRepository SolutionRepository;
@@ -108,7 +109,7 @@ namespace amdocs.ginger.GingerCoreNET
         /// <summary>
         /// Init core classes type dictionary for RepositorySerializer
         /// </summary>
-        public void InitClassTypesDictionary()
+        void InitClassTypesDictionary()
         {
             if (bDone) return;
             bDone = true;
