@@ -2912,8 +2912,14 @@ namespace Ginger.Run
                     return;
                 }
             }
-            
-            if (ARC.ExpectedCalculated.ToUpper().Trim() == "TRUE" && ARC.Actual.ToUpper().Trim() != "TRUE")
+
+            if (ARC.ExpectedCalculated.ToUpper().Trim() == "TRUE" && string.IsNullOrEmpty(ARC.Actual))
+            {
+                ARC.Status = ActReturnValue.eStatus.Failed;
+                return;
+            }
+
+            else if (ARC.ExpectedCalculated.ToUpper().Trim() == "TRUE" && ARC.Actual.ToUpper().Trim() != "TRUE")
             {
                 ARC.Status = ActReturnValue.eStatus.Failed;
                 return;
