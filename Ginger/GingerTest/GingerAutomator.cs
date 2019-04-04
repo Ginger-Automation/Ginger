@@ -91,8 +91,7 @@ namespace GingerTest
                 
                 app = new Ginger.App();
                 WorkSpace.Init(new WorkSpaceEventHandler());
-                WorkSpace.Instance.RunningFromUnitTest = true;
-                // Ginger.App.InitClassTypesDictionary();
+                WorkSpace.Instance.RunningFromUnitTest = true;                
                 
                 app.StartGingerUI();
                 
