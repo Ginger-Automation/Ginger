@@ -592,15 +592,16 @@ namespace Ginger
         const int SW_HIDE = 0;
         const int SW_SHOW = 5;
 
-        private void HideConsoleWindow()
+        public void HideConsoleWindow()
         {
             var handle = GetConsoleWindow();
-
-            // Hide
             ShowWindow(handle, SW_HIDE);
+        }
 
-            // Show
-            // ShowWindow(handle, SW_SHOW);
+        public static void ShowConsoleWindow()
+        {                        
+            var handle = GetConsoleWindow();
+            ShowWindow(handle, SW_SHOW);            
         }
 
         private void RunNewCLI(string[] args)

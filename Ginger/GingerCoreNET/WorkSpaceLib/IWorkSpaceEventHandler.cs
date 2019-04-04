@@ -30,5 +30,6 @@ namespace amdocs.ginger.GingerCoreNET
         void AddApplication();
         // void SolutionChanged(Solution solution);
         void SolutionClosed();
+        void ShowDebugConsole(bool visible = true);
     }
 }

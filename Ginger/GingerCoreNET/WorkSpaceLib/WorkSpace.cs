@@ -83,10 +83,6 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        
-        
-        
-        
 
         PluginsManager mPluginsManager = null;
         public PluginsManager PlugInsManager
@@ -171,14 +167,13 @@ namespace amdocs.ginger.GingerCoreNET
             WorkSpace.Instance.BetaFeatures = BetaFeatures.LoadUserPref();
             WorkSpace.Instance.BetaFeatures.PropertyChanged += BetaFeatureChanged;
 
-
-            // !!!!!!!!!!!
-            //if (WorkSpace.Instance.BetaFeatures.ShowDebugConsole)
-            //{
-            //    DebugConsoleWindow debugConsole = new DebugConsoleWindow();
-            //    debugConsole.ShowAsWindow();
-            //    WorkSpace.Instance.BetaFeatures.DisplayStatus();
-            //}
+            
+            if (WorkSpace.Instance.BetaFeatures.ShowDebugConsole)
+            {
+                EventHandler.ShowDebugConsole(true);
+                
+                WorkSpace.Instance.BetaFeatures.DisplayStatus();
+            }
 
             Reporter.ToLog(eLogLevel.INFO, "######################## Application version " + ApplicationInfo.AppVersion + " Started ! ########################");
 

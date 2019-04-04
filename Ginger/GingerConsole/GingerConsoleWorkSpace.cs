@@ -50,6 +50,11 @@ namespace Amdocs.Ginger.GingerConsole
             throw new NotImplementedException();
         }
 
+        public void ShowDebugConsole(bool visible = true)
+        {
+            throw new NotImplementedException();
+        }
+
         //public void SolutionChanged(Solution solution)
         //{
         //    throw new NotImplementedException();

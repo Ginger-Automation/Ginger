@@ -50,7 +50,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
         }
 
-       
+        public void ShowDebugConsole(bool visible = true)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void SolutionClosed()
         {
         }

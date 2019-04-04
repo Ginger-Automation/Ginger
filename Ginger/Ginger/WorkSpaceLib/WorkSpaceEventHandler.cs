@@ -26,9 +26,7 @@ using System.IO;
 namespace GingerWPF.WorkSpaceLib
 {
     public class WorkSpaceEventHandler : IWorkSpaceEventHandler
-    {
-        public MainWindow GingerMainWindow;
-
+    {        
         public void AddApplication()
         {
         }
@@ -54,9 +52,19 @@ namespace GingerWPF.WorkSpaceLib
         {
         }
 
-        //public void SolutionChanged(Solution solution)
-        //{          
-        //}
+        public void ShowDebugConsole(bool visible = true)
+        {
+            // TODO: decide if we want both or one and done !!!!!!!!!!!!
+
+
+            // Ginger WPF window with buttons like clear and we can customize
+            DebugConsoleWindow debugConsole = new DebugConsoleWindow();
+            debugConsole.ShowAsWindow();
+
+            // windows black console window
+            App.ShowConsoleWindow();
+        }
+
 
         public void SolutionClosed()
         {
