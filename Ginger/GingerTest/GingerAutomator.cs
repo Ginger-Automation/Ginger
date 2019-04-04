@@ -247,8 +247,7 @@ namespace GingerTest
             GingerPOMBase.Dispatcher.Invoke(() =>
             {
                 // TODO: do it like user with open solution page
-                Ginger.App.CloseSolution();
-
+                WorkSpace.Instance.CloseSolution();
             });
 
         }

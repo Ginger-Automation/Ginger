@@ -525,6 +525,7 @@ namespace amdocs.ginger.GingerCoreNET
             SolutionRepository = null;
             SourceControl = null;
             EventHandler.SolutionClosed();
+            Solution = null;
         }        
 
         public UserProfile UserProfile { get; set; }
@@ -703,6 +704,8 @@ namespace amdocs.ginger.GingerCoreNET
 
             return biz;
         }
+
+
 
 
     }

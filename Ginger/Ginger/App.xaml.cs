@@ -20,7 +20,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
@@ -30,10 +29,8 @@ using Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.SourceControl;
 using GingerCore;
-using GingerCore.Platforms;
 using GingerCore.Repository;
 using GingerCore.SourceControl;
-using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
 using GingerWPF.WorkSpaceLib;
 using System;
@@ -114,7 +111,6 @@ namespace Ginger
             bDone = true;                
             // TODO: remove after we don't need old serializer to load old repo items
             NewRepositorySerializer.NewRepositorySerializerEvent += RepositorySerializer.NewRepositorySerializer_NewRepositorySerializerEvent;
-
             
             // Add all RI classes from GingerCore
             NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActButton).Assembly); // GingerCore.dll
@@ -128,36 +124,12 @@ namespace Ginger
             list.Add("GingerCore.Actions.ActInputValue", typeof(ActInputValue));
             list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
-            list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
-            
+            list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));            
            
-            // Put back for Lazy load of BF.Acitvities
+            // Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
-
-
-            // Verify the old name used in XML
-            //list.Add("GingerCore.Actions.RepositoryItemTag", typeof(RepositoryItemTag));
-            //list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
-
-            // TODO: change to SR2  if we want the files to be loaded convert and save with the new SR2
-
-            //if (WorkSpace.Instance.BetaFeatures.UseNewRepositorySerializer)
-            //{
-            //RepositorySerializer2 RS2 = new RepositorySerializer2();
-
-            //SolutionRepository.mRepositorySerializer = RS2;
-            //RepositoryFolderBase.mRepositorySerializer = RS2;
-            //    ObservableListSerializer.RepositorySerializer = RS2;
-
-            //}
-            //else
-            //{
-            //        SolutionRepository.mRepositorySerializer = new RepositorySerializer();
-            //        RepositoryFolderBase.mRepositorySerializer = new RepositorySerializer();
-            //}
-
+            
             NewRepositorySerializer.AddClasses(list);
-
         }
 
        
@@ -360,8 +332,6 @@ namespace Ginger
         }
         
 
-        
-
         public Dispatcher GetMainWindowDispatcher()
         {
             return MainWindow.Dispatcher;
@@ -378,12 +348,6 @@ namespace Ginger
                 }
             }
             return null;
-        }
-
-
-        public static void CloseSolution()///????
-        {
-             WorkSpace.Instance.Solution = null;
         }
 
 
