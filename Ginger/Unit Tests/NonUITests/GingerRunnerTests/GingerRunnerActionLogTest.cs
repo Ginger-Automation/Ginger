@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Repository;
@@ -23,6 +24,7 @@ using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerTestHelper;
+using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -40,6 +42,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public static void ClassInitialize(TestContext TestContext)
         {
             EmptyTempActionLogFolder();
+            WorkSpace.Init(new WorkSpaceEventHandler());
             Ginger.App.InitClassTypesDictionary();
         }
 
