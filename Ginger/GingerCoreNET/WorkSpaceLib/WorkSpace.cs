@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
+using Amdocs.Ginger.CoreNET.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.Functionalties;
@@ -60,7 +61,8 @@ namespace amdocs.ginger.GingerCoreNET
         public SourceControlBase SourceControl;
 
         public ApplicationInfo ApplicationInfo = new ApplicationInfo();
-        
+
+        public ReportsInfo ReportsInfo = new ReportsInfo();
         /// <summary>
         /// Hold all Run Set execution data + execution methods
         /// </summary>    
@@ -83,13 +85,8 @@ namespace amdocs.ginger.GingerCoreNET
 
         public eRunStatus RunSetExecutionStatus = eRunStatus.Failed;
         
-        public static string EmailReportTempFolder
-        {
-            get
-            {
-                return System.IO.Path.GetDirectoryName(System.IO.Path.GetTempFileName()) + "\\Ginger_Email_Reports";
-            }
-        }
+        
+        
 
         PluginsManager mPluginsManager = null;
         public PluginsManager PlugInsManager
@@ -311,7 +308,7 @@ namespace amdocs.ginger.GingerCoreNET
                 if (File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(SolFile)))
                 {
 
-                    // !!!!!!!!!!!!!!!!!!!!!!!!
+                    // !!!!!!!!!!!!!!!!!!!!!!!!!!
 
                     //get Solution files
                     //IEnumerable<string> solutionFiles = Solution.SolutionFiles(SolutionFolder);
