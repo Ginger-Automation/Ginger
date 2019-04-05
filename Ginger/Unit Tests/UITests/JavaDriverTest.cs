@@ -40,8 +40,8 @@ namespace UnitTests.UITests.JavaDriverTest
 {
     [TestClass]
     [Level3]
-    
-    public class JavaDriverTest 
+
+    public class JavaDriverTest
     {
         static BusinessFlow mBF;
 
@@ -58,12 +58,12 @@ namespace UnitTests.UITests.JavaDriverTest
                 .Select(x => pool[random.Next(0, pool.Length)]);
             return new string(chars.ToArray());
         }
-        
+
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
             if (mGR == null)
-            {                
+            {
 
                 mGR = new GingerRunner();
                 mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
@@ -71,7 +71,7 @@ namespace UnitTests.UITests.JavaDriverTest
                 mBF.Activities = new ObservableList<Activity>();
                 mBF.Name = "BF Test Java Driver";
                 Platform p = new Platform();
-                p.PlatformType = ePlatformType.Java;                
+                p.PlatformType = ePlatformType.Java;
                 mBF.TargetApplications.Add(new TargetApplication() { AppName = "JavaTestApp" });
                 Activity activity = new Activity();
                 activity.TargetApplication = "JavaTestApp";
@@ -83,7 +83,7 @@ namespace UnitTests.UITests.JavaDriverTest
                 LJA.LaunchWithAgent = true;
                 LJA.WaitForWindowTitle = "Java";
                 LJA.AddOrUpdateInputParamValue(ActLaunchJavaWSApplication.Fields.PortConfigParam, ActLaunchJavaWSApplication.ePortConfigType.Manual.ToString());
-                LJA.Port ="9898";
+                LJA.Port = "9898";
                 LJA.URL = TestResources.GetTestResourcesFile(@"JavaTestApp\JavaTestApp.jar");
                 activity.Acts.Add(LJA);
                 mGR.PrepActionValueExpression(LJA);
@@ -91,12 +91,12 @@ namespace UnitTests.UITests.JavaDriverTest
                 // TODO: add wait till action done and check status
                 //if (!string.IsNullOrEmpty(LJA.Error))
                 //{
-                 //   throw new Exception(LJA.Error);
+                //   throw new Exception(LJA.Error);
                 //}
 
                 mDriver = new JavaDriver(mBF);
                 mDriver.JavaAgentHost = "127.0.0.1";
-                mDriver.JavaAgentPort =9898;
+                mDriver.JavaAgentPort = 9898;
                 mDriver.CommandTimeout = 120;
                 mDriver.cancelAgentLoading = false;
                 mDriver.DriverLoadWaitingTime = 30;
@@ -105,7 +105,7 @@ namespace UnitTests.UITests.JavaDriverTest
                 Agent a = new Agent();
                 a.Active = true;
                 a.DriverType = Agent.eDriverType.JavaDriver;
-                
+
                 a.Name = "Java Agent";
                 a.Driver = mDriver;
 
@@ -121,7 +121,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
                 mGR.SetCurrentActivityAgent();
 
-                PayLoad PL = new PayLoad("SwitchWindow");                
+                PayLoad PL = new PayLoad("SwitchWindow");
                 PL.AddValue("Java Swing Test App");
                 PL.ClosePackage();
                 PayLoad RC = mDriver.Send(PL);
@@ -139,18 +139,25 @@ namespace UnitTests.UITests.JavaDriverTest
             AWC.LocateBy = eLocateBy.ByTitle;
             AWC.LocateValue = "Java";
             AWC.WindowActionType = ActWindow.eWindowActionType.Close;
-            mGR.RunAction(AWC,false);
+            mGR.RunAction(AWC, false);
             mGR.StopAgents();
             // mDriver.CloseDriver();
             mDriver = null;
-            mGR = null;            
+            mGR = null;
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            mBF.CurrentActivity.Acts.ClearAll();
         }
 
         #region Unit Test For ActJavaElement
         /**
          * TextField Test Cases  
         */
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SetTextFieldValue()
         {
             ActJavaElement a = new ActJavaElement();
@@ -165,12 +172,13 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR.RunAction(a, false);
             //TODO: Find a better way to get ExInfo.
             String ExInfo = a.ExInfo.Substring(a.ExInfo.LastIndexOf("M -") + 4);
-            Assert.AreEqual(eRunStatus.Passed,a.Status, "Action Status");
+            Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
             Assert.AreEqual(a.Error, null, "Act.Error");
-            Assert.AreEqual(ExInfo, "Text Field Value Set to - " + a.Value, "ExInfo");          
+            Assert.AreEqual(ExInfo, "Text Field Value Set to - " + a.Value, "ExInfo");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetTextFieldValue()
         {
             PayLoad plText = new PayLoad("ElementAction");
@@ -193,13 +201,14 @@ namespace UnitTests.UITests.JavaDriverTest
             a.AddNewReturnParams = true;
 
             mGR.RunAction(a, false);
-           
+
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
             Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, setText, "ExInfo");
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void IsTextFieldEnabled()
         {
             ActJavaElement a = new ActJavaElement();
@@ -217,8 +226,9 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
-       
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void AsyncDialogClickandDismiss()
         {
             ActJavaElement asyncClickAction = new ActJavaElement();
@@ -233,7 +243,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
             //TODO: Find a better way to get ExInfo.
             String ExInfo = asyncClickAction.ExInfo.Substring(asyncClickAction.ExInfo.LastIndexOf("M -") + 4);
-                        
+
             Assert.AreEqual(ExInfo, "Click Activity Passed", "ExInfo");
             Assert.AreEqual(asyncClickAction.Error, null, "Act.Error");
 
@@ -249,10 +259,11 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR.RunAction(acceptdialogAction, false);
 
             Assert.AreEqual(eRunStatus.Passed, acceptdialogAction.Status, "Action Status");
-            Assert.AreEqual(acceptdialogAction.Error, null, "Act.Error");            
-        }      
-        
-        [TestMethod]  [Timeout(60000)]
+            Assert.AreEqual(acceptdialogAction.Error, null, "Act.Error");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
         public void GetDialogText()
         {
             //*************Create Dialog*********************//
@@ -262,7 +273,7 @@ namespace UnitTests.UITests.JavaDriverTest
             actClickSubmitBtn.ControlAction = ActJavaElement.eControlAction.AsyncClick;
             actClickSubmitBtn.Active = true;
             mBF.CurrentActivity.Acts.Add(actClickSubmitBtn);
-            mBF.CurrentActivity.Acts.CurrentItem = actClickSubmitBtn;            
+            mBF.CurrentActivity.Acts.CurrentItem = actClickSubmitBtn;
             mGR.RunAction(actClickSubmitBtn, false);
 
             // Remove Timestamp from ExInfo
@@ -277,12 +288,12 @@ namespace UnitTests.UITests.JavaDriverTest
             //*************Get a Dialog Text*********************//
             ActJavaElement actGetDialogText = new ActJavaElement();
             actGetDialogText.LocateBy = eLocateBy.ByTitle;
-            actGetDialogText.LocateValueCalculated = "Message";          
+            actGetDialogText.LocateValueCalculated = "Message";
             actGetDialogText.ControlAction = ActJavaElement.eControlAction.GetDialogText;
             actGetDialogText.AddNewReturnParams = true;
             actGetDialogText.Active = true;
             mBF.CurrentActivity.Acts.Add(actGetDialogText);
-            mBF.CurrentActivity.Acts.CurrentItem = actGetDialogText;            
+            mBF.CurrentActivity.Acts.CurrentItem = actGetDialogText;
             mGR.RunAction(actGetDialogText, false);
 
             //Assert
@@ -305,7 +316,8 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actAcceptDialog.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void AcceptDialog()
         {
             //*************Create Dialog*********************//
@@ -333,7 +345,8 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actAcceptDialog.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SelectComponentByXPathInDialog()
         {
 
@@ -374,7 +387,7 @@ namespace UnitTests.UITests.JavaDriverTest
             PayLoad Request = new PayLoad(JavaDriver.CommandType.WindowExplorerOperation.ToString());
             Request.AddEnumValue(JavaDriver.WindowExplorerOperationType.Highlight);
             Request.AddValue("ByXPath");
-            Request.AddValue(xpath); 
+            Request.AddValue(xpath);
             Request.ClosePackage();
             PayLoad Response = mDriver.Send(Request);
             //*************Choose No Button Dialog(Yes\No)*********************//
@@ -392,14 +405,15 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actChoosetDialog.Error, null, "Act.Error");
 
 
-             PLSwitch = new PayLoad("SwitchWindow");
+            PLSwitch = new PayLoad("SwitchWindow");
             // PL.AddValue("ByTitle");
             PLSwitch.AddValue("Java Swing Test App");
             PLSwitch.ClosePackage();
-             RCSwitch = mDriver.Send(PLSwitch);
+            RCSwitch = mDriver.Send(PLSwitch);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SelectComponentByNameIndexInDialog()
         {
             PayLoad PLSwitch = new PayLoad("SwitchWindow");
@@ -424,7 +438,7 @@ namespace UnitTests.UITests.JavaDriverTest
             PL.ClosePackage();
             GingerCore.Drivers.CommunicationProtocol.PayLoad RC = mDriver.Send(PL);
             //*************Highlight No Dialog Button*********************
-            PayLoad Request = new PayLoad(JavaDriver.CommandType.WindowExplorerOperation.ToString());                                                                                          
+            PayLoad Request = new PayLoad(JavaDriver.CommandType.WindowExplorerOperation.ToString());
             Request.AddEnumValue(JavaDriver.WindowExplorerOperationType.Highlight);
             Request.AddValue("ByXPath");
             Request.AddValue(nameIndex);
@@ -444,96 +458,81 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, actChoosetDialog.Status, "Action Status");
             Assert.AreEqual(actChoosetDialog.Error, null, "Act.Error");
 
-             PLSwitch = new PayLoad("SwitchWindow");
+            PLSwitch = new PayLoad("SwitchWindow");
             PLSwitch.AddValue("Java Swing Test App");
             PLSwitch.ClosePackage();
-             RCSwitch = mDriver.Send(PLSwitch);
+            RCSwitch = mDriver.Send(PLSwitch);
         }
 
         /**
          * TreeNode Test Cases  
         */
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetValueTreeNode()
         {
-            try
-            {
-                PayLoad PLClick = new PayLoad("ElementAction");
-                PLClick.AddValue(ActJavaElement.eControlAction.Click.ToString());
-                PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
-                PLClick.AddValue(eLocateBy.ByName.ToString());
-                PLClick.AddValue("countriesTree");
-                PLClick.AddValue("Canada");
-                PLClick.ClosePackage();
-                mDriver.Send(PLClick);
 
-                ActJavaElement actJavaElement = new ActJavaElement();
-                actJavaElement.LocateBy = eLocateBy.ByName;
-                actJavaElement.ControlAction = ActJavaElement.eControlAction.GetValue;
-                actJavaElement.LocateValueCalculated = "countriesTree";
-                actJavaElement.Active = true;
-                actJavaElement.AddNewReturnParams = true;
-                mBF.CurrentActivity.Acts.Add(actJavaElement);
-                mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+            PayLoad PLClick = new PayLoad("ElementAction");
+            PLClick.AddValue(ActJavaElement.eControlAction.Click.ToString());
+            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+            PLClick.AddValue(eLocateBy.ByName.ToString());
+            PLClick.AddValue("countriesTree");
+            PLClick.AddValue("Canada");
+            PLClick.ClosePackage();
+            mDriver.Send(PLClick);
 
-                mGR.RunAction(actJavaElement, false);
-                //TODO: Find a better way to get ExInfo.
-                String ExInfo = actJavaElement.ExInfo.Substring(actJavaElement.ExInfo.LastIndexOf("M -") + 4);
-                Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
-                Assert.AreEqual(actJavaElement.ActReturnValues.FirstOrDefault().Actual, "Canada", "ExInfo");
-                Assert.AreEqual(actJavaElement.Error, null, "Act.Error");
-            }
-            finally
-            {
-                CleanActvitity();
-            }
+            ActJavaElement actJavaElement = new ActJavaElement();
+            actJavaElement.LocateBy = eLocateBy.ByName;
+            actJavaElement.ControlAction = ActJavaElement.eControlAction.GetValue;
+            actJavaElement.LocateValueCalculated = "countriesTree";
+            actJavaElement.Active = true;
+            actJavaElement.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(actJavaElement);
+            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+
+            mGR.RunAction(actJavaElement, false);
+            //TODO: Find a better way to get ExInfo.
+            String ExInfo = actJavaElement.ExInfo.Substring(actJavaElement.ExInfo.LastIndexOf("M -") + 4);
+            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+            Assert.AreEqual(actJavaElement.ActReturnValues.FirstOrDefault().Actual, "Canada", "ExInfo");
+            Assert.AreEqual(actJavaElement.Error, null, "Act.Error");
 
         }
 
-        private void CleanActvitity()
-        {
-            mBF.CurrentActivity.Acts.ClearAll();
-        }
+
 
         [TestMethod]
         [Timeout(60000)]
         public void ClickTreeNodeWithSlash()
         {
-            try
-            {
-                //Arrange
-                ActJavaElement actJavaElement = new ActJavaElement();
-                actJavaElement.LocateBy = eLocateBy.ByName;
-                actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-                actJavaElement.LocateValueCalculated = "countriesTree";
-                actJavaElement.Value = "US/California//Texas";
-                actJavaElement.Active = true;
-                actJavaElement.AddNewReturnParams = true;
-                mBF.CurrentActivity.Acts.Add(actJavaElement);
-                mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+            //Arrange
+            ActJavaElement actJavaElement = new ActJavaElement();
+            actJavaElement.LocateBy = eLocateBy.ByName;
+            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+            actJavaElement.LocateValueCalculated = "countriesTree";
+            actJavaElement.Value = "US/California//Texas";
+            actJavaElement.Active = true;
+            actJavaElement.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(actJavaElement);
+            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
-                //Act
-                mGR.RunAction(actJavaElement, false);
+            //Act
+            mGR.RunAction(actJavaElement, false);
 
 
-                //Assert
-                Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
 
-                PayLoad PLClick = new PayLoad("ElementAction");
-                PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
-                PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
-                PLClick.AddValue(eLocateBy.ByName.ToString());
-                PLClick.AddValue("countriesTree");
-                PLClick.ClosePackage();
-                PayLoad response = mDriver.Send(PLClick);
+            PayLoad PLClick = new PayLoad("ElementAction");
+            PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
+            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+            PLClick.AddValue(eLocateBy.ByName.ToString());
+            PLClick.AddValue("countriesTree");
+            PLClick.ClosePackage();
+            PayLoad response = mDriver.Send(PLClick);
 
-                Assert.IsFalse(response.IsErrorPayLoad());
-                Assert.AreEqual("California/Texas", response.GetListString().FirstOrDefault(), "Selected node value");
-            }
-            finally
-            {
-                CleanActvitity();
-            }
+            Assert.IsFalse(response.IsErrorPayLoad());
+            Assert.AreEqual("California/Texas", response.GetListString().FirstOrDefault(), "Selected node value");
 
         }
 
@@ -542,31 +541,25 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ClickTreeNodeNegativeTest()
         {
-            try
-            {
-                //Arrange
-                ActJavaElement actJavaElement = new ActJavaElement();
-                actJavaElement.LocateBy = eLocateBy.ByName;
-                actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-                actJavaElement.LocateValueCalculated = "countriesTree";
-                actJavaElement.Value = "Canada/Texas";
-                actJavaElement.Active = true;
-                actJavaElement.AddNewReturnParams = true;
-                mBF.CurrentActivity.Acts.Add(actJavaElement);
-                mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
-                //Act
-                mGR.RunAction(actJavaElement, false);
+            //Arrange
+            ActJavaElement actJavaElement = new ActJavaElement();
+            actJavaElement.LocateBy = eLocateBy.ByName;
+            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+            actJavaElement.LocateValueCalculated = "countriesTree";
+            actJavaElement.Value = "Canada/Texas";
+            actJavaElement.Active = true;
+            actJavaElement.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(actJavaElement);
+            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+
+            //Act
+            mGR.RunAction(actJavaElement, false);
 
 
-                //Assert
-                Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");
-                Assert.AreEqual("Node: Texas was not found under: Canada", actJavaElement.Error, "Node not found validation");
-            }
-            finally
-            {
-                CleanActvitity();
-            }
+            //Assert
+            Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");
+            Assert.AreEqual("Node: Texas was not found under: [Root, Canada]", actJavaElement.Error, "Node not found validation");
 
         }
 
@@ -579,41 +572,34 @@ namespace UnitTests.UITests.JavaDriverTest
             //2. Texas
             //Texas should be selected and not the first one
 
-            try
-            {
-                //Arrange
-                ActJavaElement actJavaElement = new ActJavaElement();
-                actJavaElement.LocateBy = eLocateBy.ByName;
-                actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-                actJavaElement.LocateValueCalculated = "countriesTree";
-                actJavaElement.Value = "Us/Texas";
-                actJavaElement.Active = true;
-                actJavaElement.AddNewReturnParams = true;
-                mBF.CurrentActivity.Acts.Add(actJavaElement);
-                mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+            //Arrange
+            ActJavaElement actJavaElement = new ActJavaElement();
+            actJavaElement.LocateBy = eLocateBy.ByName;
+            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+            actJavaElement.LocateValueCalculated = "countriesTree";
+            actJavaElement.Value = "Us/Texas";
+            actJavaElement.Active = true;
+            actJavaElement.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(actJavaElement);
+            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
-                //Act
-                mGR.RunAction(actJavaElement, false);
+            //Act
+            mGR.RunAction(actJavaElement, false);
 
 
-                //Assert
-                Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
 
-                PayLoad PLClick = new PayLoad("ElementAction");
-                PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
-                PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
-                PLClick.AddValue(eLocateBy.ByName.ToString());
-                PLClick.AddValue("countriesTree");
-                PLClick.ClosePackage();
-                PayLoad response = mDriver.Send(PLClick);
+            PayLoad PLClick = new PayLoad("ElementAction");
+            PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
+            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+            PLClick.AddValue(eLocateBy.ByName.ToString());
+            PLClick.AddValue("countriesTree");
+            PLClick.ClosePackage();
+            PayLoad response = mDriver.Send(PLClick);
 
-                Assert.IsFalse(response.IsErrorPayLoad());
-                Assert.AreEqual("Texas", response.GetListString().FirstOrDefault(), "Selected node value");
-            }
-            finally
-            {
-                CleanActvitity();
-            }
+            Assert.IsFalse(response.IsErrorPayLoad());
+            Assert.AreEqual("Texas", response.GetListString().FirstOrDefault(), "Selected node value");
 
         }
 
@@ -622,161 +608,137 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ClickTreeNodeSingleNodeValueTest()
         {
-            try
-            {
-                //Arrange
 
-                ActJavaElement actJavaElement = new ActJavaElement();
-                actJavaElement.LocateBy = eLocateBy.ByName;
-                actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-                actJavaElement.LocateValueCalculated = "countriesTree";
-                actJavaElement.Value = "US";
-                actJavaElement.Active = true;
-                actJavaElement.AddNewReturnParams = true;
-                mBF.CurrentActivity.Acts.Add(actJavaElement);
-                mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+            //Arrange
 
-                //Act
-                mGR.RunAction(actJavaElement, false);
+            ActJavaElement actJavaElement = new ActJavaElement();
+            actJavaElement.LocateBy = eLocateBy.ByName;
+            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+            actJavaElement.LocateValueCalculated = "countriesTree";
+            actJavaElement.Value = "US";
+            actJavaElement.Active = true;
+            actJavaElement.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(actJavaElement);
+            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
-                //Assert
-                Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+            //Act
+            mGR.RunAction(actJavaElement, false);
 
-                PayLoad PLClick = new PayLoad("ElementAction");
-                PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
-                PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
-                PLClick.AddValue(eLocateBy.ByName.ToString());
-                PLClick.AddValue("countriesTree");
-                PLClick.ClosePackage();
-                PayLoad response = mDriver.Send(PLClick);
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
 
-                Assert.IsFalse(response.IsErrorPayLoad());
-                Assert.AreEqual("US", response.GetListString().FirstOrDefault(), "Selected node value");
-            }
-            finally
-            {
-                CleanActvitity();
-            }
-            
+            PayLoad PLClick = new PayLoad("ElementAction");
+            PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
+            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+            PLClick.AddValue(eLocateBy.ByName.ToString());
+            PLClick.AddValue("countriesTree");
+            PLClick.ClosePackage();
+            PayLoad response = mDriver.Send(PLClick);
+
+            Assert.IsFalse(response.IsErrorPayLoad());
+            Assert.AreEqual("US", response.GetListString().FirstOrDefault(), "Selected node value");
+
         }
 
         [TestMethod]
         [Timeout(60000)]
         public void ClickChildTreeNodeSingleNodeValueTest()
         {
-            try
-            {
-                //Arrange
+            //Arrange
 
-                PayLoad PLClick = new PayLoad("ElementAction");
-                PLClick.AddValue(ActJavaElement.eControlAction.Click.ToString());
-                PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
-                PLClick.AddValue(eLocateBy.ByName.ToString());
-                PLClick.AddValue("countriesTree");
-                PLClick.AddValue("Canada");
-                PLClick.ClosePackage();
-                mDriver.Send(PLClick);
+            PayLoad PLClick = new PayLoad("ElementAction");
+            PLClick.AddValue(ActJavaElement.eControlAction.Click.ToString());
+            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+            PLClick.AddValue(eLocateBy.ByName.ToString());
+            PLClick.AddValue("countriesTree");
+            PLClick.AddValue("Canada");
+            PLClick.ClosePackage();
+            mDriver.Send(PLClick);
 
 
 
-                ActJavaElement actJavaElement = new ActJavaElement();
-                actJavaElement.LocateBy = eLocateBy.ByName;
-                actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-                actJavaElement.LocateValueCalculated = "countriesTree";
-                actJavaElement.Value = "Ontario";
-                actJavaElement.Active = true;
-                actJavaElement.AddNewReturnParams = true;
-                mBF.CurrentActivity.Acts.Add(actJavaElement);
-                mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
+            ActJavaElement actJavaElement = new ActJavaElement();
+            actJavaElement.LocateBy = eLocateBy.ByName;
+            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+            actJavaElement.LocateValueCalculated = "countriesTree";
+            actJavaElement.Value = "Ontario";
+            actJavaElement.Active = true;
+            actJavaElement.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(actJavaElement);
+            mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
-                //Act
-                mGR.RunAction(actJavaElement, false);
+            //Act
+            mGR.RunAction(actJavaElement, false);
 
-                //Assert
-                Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
 
-                PLClick = new PayLoad("ElementAction");
-                PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
-                PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
-                PLClick.AddValue(eLocateBy.ByName.ToString());
-                PLClick.AddValue("countriesTree");
-                PLClick.ClosePackage();
-                PayLoad response = mDriver.Send(PLClick);
+            PLClick = new PayLoad("ElementAction");
+            PLClick.AddValue(ActJavaElement.eControlAction.GetValue.ToString());
+            PLClick.AddEnumValue(ActJavaElement.eWaitForIdle.Medium);
+            PLClick.AddValue(eLocateBy.ByName.ToString());
+            PLClick.AddValue("countriesTree");
+            PLClick.ClosePackage();
+            PayLoad response = mDriver.Send(PLClick);
 
-                Assert.IsFalse(response.IsErrorPayLoad());
-                Assert.AreEqual("Ontario", response.GetListString().FirstOrDefault(), "Selected node value");
-            }
-            finally
-            {
-                CleanActvitity();
-            }
+            Assert.IsFalse(response.IsErrorPayLoad());
+            Assert.AreEqual("Ontario", response.GetListString().FirstOrDefault(), "Selected node value");
 
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void DoubleClickTreeNode()
         {
-            try
-            {
-                ActJavaElement doubleClickAction = new ActJavaElement();
-                doubleClickAction.LocateBy = eLocateBy.ByName;
-                doubleClickAction.ControlAction = ActJavaElement.eControlAction.DoubleClick;
-                doubleClickAction.Active = true;
-                doubleClickAction.LocateValueCalculated = "countriesTree";
-                doubleClickAction.Value = "US";
-                mBF.CurrentActivity.Acts.Add(doubleClickAction);
-                mBF.CurrentActivity.Acts.CurrentItem = doubleClickAction;
 
-                mGR.RunAction(doubleClickAction, false);
-                //TODO: Find a better way to get ExInfo.
-                String ExInfo = doubleClickAction.ExInfo.Substring(doubleClickAction.ExInfo.LastIndexOf("M -") + 4);
-                Assert.AreEqual(eRunStatus.Passed, doubleClickAction.Status, "Action Status");
-                Assert.AreEqual(ExInfo, "Click Activity Passed", "ExInfo");
-                Assert.AreEqual(doubleClickAction.Error, null, "Act.Error");
-            }
-            finally
-            {
-                CleanActvitity();
-            }
-           
+            ActJavaElement doubleClickAction = new ActJavaElement();
+            doubleClickAction.LocateBy = eLocateBy.ByName;
+            doubleClickAction.ControlAction = ActJavaElement.eControlAction.DoubleClick;
+            doubleClickAction.Active = true;
+            doubleClickAction.LocateValueCalculated = "countriesTree";
+            doubleClickAction.Value = "US";
+            mBF.CurrentActivity.Acts.Add(doubleClickAction);
+            mBF.CurrentActivity.Acts.CurrentItem = doubleClickAction;
+
+            mGR.RunAction(doubleClickAction, false);
+            //TODO: Find a better way to get ExInfo.
+            String ExInfo = doubleClickAction.ExInfo.Substring(doubleClickAction.ExInfo.LastIndexOf("M -") + 4);
+            Assert.AreEqual(eRunStatus.Passed, doubleClickAction.Status, "Action Status");
+            Assert.AreEqual(ExInfo, "Click Activity Passed", "ExInfo");
+            Assert.AreEqual(doubleClickAction.Error, null, "Act.Error");
+
         }
 
         [TestMethod]
         [Timeout(180000)]
         public void ClickNotExistChildNodeValidationTest()
         {
-            try
-            {
-                //Arrange
-                ActJavaElement actJavaElement = new ActJavaElement();
-                actJavaElement.LocateBy = eLocateBy.ByName;
-                actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-                actJavaElement.LocateValueCalculated = "countriesTree";
-                actJavaElement.Value = "US/Ontario";
-                actJavaElement.Active = true;
-                actJavaElement.AddNewReturnParams = true;
+            //Arrange
+            ActJavaElement actJavaElement = new ActJavaElement();
+            actJavaElement.LocateBy = eLocateBy.ByName;
+            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
+            actJavaElement.LocateValueCalculated = "countriesTree";
+            actJavaElement.Value = "US/Ontario";
+            actJavaElement.Active = true;
+            actJavaElement.AddNewReturnParams = true;
 
-                mBF.CurrentActivity.Acts.Add(actJavaElement);
+            mBF.CurrentActivity.Acts.Add(actJavaElement);
 
-                //Act
-                mGR.RunAction(actJavaElement, false);
+            //Act
+            mGR.RunAction(actJavaElement, false);
 
-                //Assert
-                Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");
-                Assert.AreEqual("Node: Ontario was not found under: US", actJavaElement.Error, "Node not found validation");
-            }
-            finally
-            {
-                 CleanActvitity();
-            }
+            //Assert
+            Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");
+            Assert.AreEqual("Node: Ontario was not found under: [Root, US]", actJavaElement.Error, "Node not found validation");
 
         }
 
         /**
          * Menu Item Test Cases  
         */
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ClickMenu()
         {
             ActJavaElement menuClickAction = new ActJavaElement();
@@ -792,7 +754,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
             Assert.AreEqual(eRunStatus.Passed, menuClickAction.Status, "Action Status");
             Assert.AreEqual(menuClickAction.Error, null, "Act.Error");
-             
+
             System.Threading.Thread.Sleep(100);
 
             ActJavaElement submenuClickAction_1 = new ActJavaElement();
@@ -812,7 +774,7 @@ namespace UnitTests.UITests.JavaDriverTest
             System.Threading.Thread.Sleep(100);
 
             // Click Document SubMenu;
-            ActJavaElement submenuClickAction_2 = new ActJavaElement();           
+            ActJavaElement submenuClickAction_2 = new ActJavaElement();
             submenuClickAction_2.LocateBy = eLocateBy.ByName;
             submenuClickAction_2.LocateValueCalculated = "documentSubMenuItem";
             submenuClickAction_2.Value = "";
@@ -842,8 +804,9 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, actDismissDialog.Status, "Action Status");
             Assert.AreEqual(actDismissDialog.Error, null, "Act.Error");
         }
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void GetButtonText()
         {
 
@@ -861,12 +824,13 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR.RunAction(a, false);
 
             //Assert
-           Assert.AreEqual(eRunStatus.Passed,a.Status, "Action Status");
-           Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "Submit", "ExInfo");
-           Assert.AreEqual(a.Error, null, "Act.Error");
+            Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
+            Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "Submit", "ExInfo");
+            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void IsButtonEnabled()
         {
             ActJavaElement a = new ActJavaElement();
@@ -883,12 +847,13 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR.RunAction(a, false);
 
             //Assert
-           Assert.AreEqual(eRunStatus.Passed,a.Status, "Action Status");
-           Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
-           Assert.AreEqual(a.Error, null, "Act.Error");
+            Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
+            Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
+            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ToggleCheckBox()
         {
             ActJavaElement a = new ActJavaElement();
@@ -902,11 +867,12 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR.RunAction(a, false);
 
             //Assert
-           Assert.AreEqual(eRunStatus.Passed,a.Status, "Action Status");
-           Assert.AreEqual(a.Error, null, "Act.Error");
+            Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
+            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void IfCheckboxChecked()
         {
             ActJavaElement a = new ActJavaElement();
@@ -921,7 +887,8 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetCheckBoxValue()
         {
             ActJavaElement a = new ActJavaElement();
@@ -936,12 +903,13 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR.RunAction(a, false);
 
             //Assert
-           Assert.AreEqual(eRunStatus.Passed,a.Status, "Action Status");
-           Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "Works at Amdocs", "ExInfo");
-           Assert.AreEqual(a.Error, null, "Act.Error");
+            Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
+            Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "Works at Amdocs", "ExInfo");
+            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void IsCheckBoxEnabled()
         {
             ActJavaElement a = new ActJavaElement();
@@ -956,12 +924,13 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR.RunAction(a, false);
 
             //Assert
-           Assert.AreEqual(eRunStatus.Passed,a.Status, "Action Status");
-           Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
-           Assert.AreEqual(a.Error, null, "Act.Error");
-        }        
+            Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
+            Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
+            Assert.AreEqual(a.Error, null, "Act.Error");
+        }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SelectRadioButton()
         {
             ActJavaElement a = new ActJavaElement();
@@ -974,11 +943,12 @@ namespace UnitTests.UITests.JavaDriverTest
             //Act
             mGR.RunAction(a, false);
             //Assert
-           Assert.AreEqual(eRunStatus.Passed,a.Status, "Action Status");
-           Assert.AreEqual(a.Error, null, "Act.Error");
+            Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
+            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetRadioButtonValue()
         {
             ActJavaElement a = new ActJavaElement();
@@ -993,12 +963,13 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR.RunAction(a, false);
 
             //Assert
-           Assert.AreEqual(eRunStatus.Passed,a.Status, "Action Status");
-           Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "Bachelor", "ExInfo");
-           Assert.AreEqual(a.Error, null, "Act.Error");
+            Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
+            Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "Bachelor", "ExInfo");
+            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void IsRadioButtonSelected()
         {
             ActJavaElement a = new ActJavaElement();
@@ -1013,12 +984,13 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR.RunAction(a, false);
 
             //Assert
-           Assert.AreEqual(eRunStatus.Passed,a.Status, "Action Status");
-           Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
-           Assert.AreEqual(a.Error, null, "Act.Error");
+            Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
+            Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
+            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SelectComboBoxValue()
         {
             ActJavaElement a = new ActJavaElement();
@@ -1032,11 +1004,12 @@ namespace UnitTests.UITests.JavaDriverTest
             //Act
             mGR.RunAction(a, false);
             //Assert
-           Assert.AreEqual(eRunStatus.Passed,a.Status, "Action Status");
-           Assert.AreEqual(a.Error, null, "Act.Error");
+            Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
+            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetComboBoxSelectedValue()
         {
             ActJavaElement a = new ActJavaElement();
@@ -1051,12 +1024,13 @@ namespace UnitTests.UITests.JavaDriverTest
             //Act
             mGR.RunAction(a, false);
             //Assert
-           Assert.AreEqual(eRunStatus.Passed,a.Status, "Action Status");
-           Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "India", "ExInfo");
-           Assert.AreEqual(a.Error, null, "Act.Error");
+            Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
+            Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "India", "ExInfo");
+            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SetTabSelected()
         {
             ActJavaElement actSelectTab = new ActJavaElement();
@@ -1071,11 +1045,12 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR.RunAction(actSelectTab, false);
 
             //Assert
-           Assert.AreEqual(eRunStatus.Passed,actSelectTab.Status, "Action Status");           
-           Assert.AreEqual(actSelectTab.Error, null, "Act.Error");
+            Assert.AreEqual(eRunStatus.Passed, actSelectTab.Status, "Action Status");
+            Assert.AreEqual(actSelectTab.Error, null, "Act.Error");
         }
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void GetSelectedTabText()
         {
             ActJavaElement actSelectTab = new ActJavaElement();
@@ -1107,12 +1082,13 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR.RunAction(a, false);
 
             //Assert
-           Assert.AreEqual(eRunStatus.Passed,a.Status, "Action Status");
-           Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "tab2", "ExInfo");
-           Assert.AreEqual(a.Error, null, "Act.Error");
+            Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
+            Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "tab2", "ExInfo");
+            Assert.AreEqual(a.Error, null, "Act.Error");
         }
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void ClickButton()
         {
             ActJavaElement a = new ActJavaElement();
@@ -1128,9 +1104,9 @@ namespace UnitTests.UITests.JavaDriverTest
             //Assert
             //TODO: Find a better way to get ExInfo.
             String ExInfo = a.ExInfo.Substring(a.ExInfo.LastIndexOf("M -") + 4);
-            Assert.AreEqual(eRunStatus.Passed,a.Status, "Action Status");
-           Assert.AreEqual(ExInfo, "Click Activity Passed", "ExInfo");
-           Assert.AreEqual(a.Error, null, "Act.Error");
+            Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
+            Assert.AreEqual(ExInfo, "Click Activity Passed", "ExInfo");
+            Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
 
@@ -1158,7 +1134,8 @@ namespace UnitTests.UITests.JavaDriverTest
 
         #region Unit test for ActTableElement
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SetValueInTableCell()
         {
             PayLoad PLTable = new PayLoad("TableAction");
@@ -1207,7 +1184,8 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(ExInfo, "Text Field Value Set to - " + actTableElement.Value, "ExInfo");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ActivateRowInTable()
         {
             ActTableElement actTableElement = new ActTableElement();
@@ -1231,7 +1209,8 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetValueFromTable()
         {
             ActTableElement actTableElement = new ActTableElement();
@@ -1256,7 +1235,8 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "2", "ExInfo");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetRowCountFromTable()
         {
             ActTableElement actTableElement = new ActTableElement();
@@ -1281,7 +1261,8 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "4", "ExInfo");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void CheckIsCellVisibleInTable()
         {
             ActTableElement actTableElement = new ActTableElement();
@@ -1306,7 +1287,8 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void CheckIsCellEnabledInTable()
         {
             ActTableElement actTableElement = new ActTableElement();
@@ -1331,7 +1313,8 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetValueFromTableUsingWhereClause()
         {
             ActTableElement actTableElement = new ActTableElement();
@@ -1361,7 +1344,8 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "1", "ExInfo");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void DoubleClickOnTableCell()
         {
             ActTableElement actTableElement = new ActTableElement();
@@ -1434,7 +1418,7 @@ namespace UnitTests.UITests.JavaDriverTest
             action.Active = true;
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
-           
+
             //Act
             mGR.RunAction(action, false);
 
@@ -1636,7 +1620,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
             foreach (FileInfo file in di.GetFiles())
             {
-                if(file.Extension.ToLower().Contains(@".jpg"))
+                if (file.Extension.ToLower().Contains(@".jpg"))
                 {
                     file.Delete();
                 }

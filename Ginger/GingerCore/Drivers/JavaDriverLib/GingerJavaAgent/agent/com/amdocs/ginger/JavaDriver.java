@@ -1711,7 +1711,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 		List<String> nodes= Utils.SplitStringWithForwardSlash(locateValue);		
 		
 		TreePath matchingNodePath=null;
-
+		TreePath parentNodePath=null;
 		int row =0;
 		int i=0;
 		String node;
@@ -1721,24 +1721,18 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			tree.expandRow(row);	
 			matchingNodePath = tree.getNextMatch(node.trim(), row, Position.Bias.Forward);
 
-			String parentNode=null;
-			if(matchingNodePath != null && i > 0)
-			{
-				parentNode = nodes.get(i-1);
-			}
-			
 			if(matchingNodePath==null)
 			{
 				searchResult.append("Node: "+ node +" was not found");
 				break;
 			}
-			else if(parentNode!=null && !matchingNodePath.getParentPath().getLastPathComponent().toString().equalsIgnoreCase(parentNode))
+			else if(parentNodePath!=null && !matchingNodePath.getParentPath().equals(parentNodePath))
 			{
 				/* 
 				  	if current node parent is not matched with previous node 
 				  	for example: us/Ontario where Ontario is not child of us node.
 				 */
-				searchResult.append("Node: "+ node +" was not found under: " + parentNode);
+				searchResult.append("Node: "+ node +" was not found under: " + parentNodePath);
 				return null;
 			}
 			
@@ -1757,7 +1751,8 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 		
 			if(node.equalsIgnoreCase(nodeText)) 
 			{			
-				row= tree.getRowForPath(matchingNodePath);				
+				row= tree.getRowForPath(matchingNodePath);		
+				parentNodePath= matchingNodePath;
 				i++;
 			}
 			else
