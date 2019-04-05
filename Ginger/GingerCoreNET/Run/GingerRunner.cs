@@ -91,7 +91,8 @@ namespace Ginger.Run
             StopAllBusinessFlows = 1,
         }
 
-      
+        public Context mContext = new Context();
+
         
         // !!! change name to runContext - and remove the ExecutionLogConfiguration
         // public AutomationTabContext ExecutionLoggerAutomationTabContext { get; set; }
@@ -140,7 +141,19 @@ namespace Ginger.Run
 
         //!!! remove from here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public string ExecutionLogFolder { get; set; }
-        public BusinessFlow CurrentBusinessFlow { get; set; }        
+        private BusinessFlow mCurrentBusinessFlow;
+        public BusinessFlow CurrentBusinessFlow
+        {
+            get
+            {
+                return mCurrentBusinessFlow;
+            }
+            set
+            {
+                mCurrentBusinessFlow = value;
+                mContext.BusinessFlow = mCurrentBusinessFlow;
+            }
+        }        
         public bool AgentsRunning = false;
         public ExecutionWatch RunnerExecutionWatch = new ExecutionWatch();        
         public eExecutedFrom ExecutedFrom;        
@@ -286,7 +299,8 @@ namespace Ginger.Run
             set
             {
                 mProjEnvironment = (ProjEnvironment)value;
-                ExecutionLogger.ExecutionEnvironment = (ProjEnvironment)value;
+                //ExecutionLogger.ExecutionEnvironment = (ProjEnvironment)value;
+                mContext.Environment = mProjEnvironment;
                 NotifyEnvironmentChanged();                
             }
         }
@@ -317,7 +331,7 @@ namespace Ginger.Run
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
 
-            RunListeners.Add(new ExecutionLogger(this.ProjEnvironment, ExecutedFrom));
+            RunListeners.Add(new ExecutionLogger(mContext, ExecutedFrom));
         }
 
         public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
@@ -326,7 +340,7 @@ namespace Ginger.Run
 
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
-            RunListeners.Add(new ExecutionLogger(this.ProjEnvironment, ExecutedFrom));
+            RunListeners.Add(new ExecutionLogger(mContext, ExecutedFrom));
         }
 
 

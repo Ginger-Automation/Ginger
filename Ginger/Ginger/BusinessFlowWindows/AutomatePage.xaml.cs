@@ -1657,7 +1657,7 @@ namespace Ginger
             mEnvironment = env;
             mContext.Environment = mEnvironment;
             mRunner.ProjEnvironment = mEnvironment;
-            mRunner.ExecutionLogger.ExecutionEnvironment = mEnvironment;
+            //mRunner.ExecutionLogger.ExecutionEnvironment = mEnvironment;
             if (mEnvironment != null)
             {
                 WorkSpace.Instance.UserProfile.RecentEnvironment = mEnvironment.Guid;
