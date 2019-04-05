@@ -129,15 +129,13 @@ namespace amdocs.ginger.GingerCoreNET
 
             RepositoryItemHelper.RepositoryItemFactory = repositoryItemFactory;
 
-            WorkSpace.Instance.BetaFeatures = BetaFeatures.LoadUserPref();
-            WorkSpace.Instance.BetaFeatures.PropertyChanged += BetaFeatureChanged;
-
+            BetaFeatures = BetaFeatures.LoadUserPref();
+            BetaFeatures.PropertyChanged += BetaFeatureChanged;
             
-            if (WorkSpace.Instance.BetaFeatures.ShowDebugConsole)
+            if (BetaFeatures.ShowDebugConsole)
             {
-                EventHandler.ShowDebugConsole(true);
-                
-                WorkSpace.Instance.BetaFeatures.DisplayStatus();
+                EventHandler.ShowDebugConsole(true);                
+                BetaFeatures.DisplayStatus();
             }
 
             Reporter.ToLog(eLogLevel.INFO, "######################## Application version " + ApplicationInfo.AppVersion + " Started ! ########################");
@@ -156,12 +154,12 @@ namespace amdocs.ginger.GingerCoreNET
             phase = "Loading User Profile";
             Reporter.ToLog(eLogLevel.DEBUG, phase);
             SetLoadingInfo(phase);
-            WorkSpace.Instance.UserProfile = UserProfile.LoadUserProfile();
+            UserProfile = UserProfile.LoadUserProfile();
 
             phase = "Configuring User Type";
             Reporter.ToLog(eLogLevel.DEBUG, phase);
             SetLoadingInfo(phase);
-            WorkSpace.Instance.UserProfile.LoadUserTypeHelper();
+            UserProfile.LoadUserTypeHelper();
 
 
             phase = "Loading User Selected Resource Dictionaries";
@@ -233,9 +231,9 @@ namespace amdocs.ginger.GingerCoreNET
             Reporter.ToLog(eLogLevel.FATAL, ">>>>>>>>>>>>>> Error occurred on stand alone thread(non UI) - " + e.ExceptionObject);
             //Reporter.ToUser(eUserMsgKey.ThreadError, "Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
 
-            if (WorkSpace.Instance.RunningInExecutionMode == false)
+            if (RunningInExecutionMode == false)
             {                
-                WorkSpace.Instance.AppSolutionAutoSave.DoAutoSave();
+                AppSolutionAutoSave.DoAutoSave();
             }
 
             /// if (e.IsTerminating)...
@@ -304,7 +302,7 @@ namespace amdocs.ginger.GingerCoreNET
                         SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
                         SolutionRepository.Open(SolutionFolder);
 
-                        PlugInsManager.SolutionChanged(WorkSpace.Instance.SolutionRepository);
+                        PlugInsManager.SolutionChanged(SolutionRepository);
 
                         HandleSolutionLoadSourceControl(sol);
 
@@ -321,7 +319,7 @@ namespace amdocs.ginger.GingerCoreNET
 
                         if (!RunningInExecutionMode)
                         {
-                            WorkSpace.Instance.AppSolutionRecover.DoSolutionAutoSaveAndRecover();   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            AppSolutionRecover.DoSolutionAutoSaveAndRecover();   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         }
 
                         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -451,9 +449,9 @@ namespace amdocs.ginger.GingerCoreNET
 
         public void CloseAllRunningAgents()
         {
-            if (WorkSpace.Instance.SolutionRepository != null)
+            if (SolutionRepository != null)
             {
-                List<Agent> runningAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Status == Agent.eStatus.Running).ToList();
+                List<Agent> runningAgents = SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Status == Agent.eStatus.Running).ToList();
                 if (runningAgents != null && runningAgents.Count > 0)
                 {
                     foreach (Agent agent in runningAgents)

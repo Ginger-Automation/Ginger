@@ -73,19 +73,13 @@ namespace GingerWPF.BusinessFlowsLib
 
             //WorkSpace.Instance.GingerRunner.CurrentBusinessFlow.PropertyChanged += CurrentBusinessFlow_PropertyChanged;
             //WorkSpace.Instance.GingerRunner.GingerRunnerEvent += GingerRunner_GingerRunnerEvent;
-
-
-            App.PropertyChanged += App_PropertyChanged;
+            
 
             CurrentActivityFrame.Content = new ActivityPage((Activity)mBusinessFlow.Activities[0], mContext);  // TODO: use binding? or keep each activity page
 
             InitGingerRunnerControls();
         }
 
-        private void App_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            throw new System.NotImplementedException();
-        }
 
         static GingerRunnerControlsPage mGingerRunnerControlsPage;
         private void InitGingerRunnerControls()
