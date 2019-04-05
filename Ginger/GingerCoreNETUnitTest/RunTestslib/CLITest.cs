@@ -50,10 +50,6 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
 
-            // NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
-            // NewRepositorySerializer.AddClassesFromAssembly(typeof(ProjEnvironment).Assembly);
-            // NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
-
             // Create script file
             string CLISolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\CLI");
             string scriptFile = TestResources.GetTempFile("runset1.ginger.script");

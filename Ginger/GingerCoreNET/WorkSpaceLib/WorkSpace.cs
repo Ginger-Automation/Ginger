@@ -155,14 +155,11 @@ namespace amdocs.ginger.GingerCoreNET
             Reporter.ToLog(eLogLevel.DEBUG, phase);
             SetLoadingInfo(phase);
             UserProfile = UserProfile.LoadUserProfile();
-
-            if (!RunningFromUnitTest)
-            {
-                phase = "Configuring User Type";
-                Reporter.ToLog(eLogLevel.DEBUG, phase);
-                SetLoadingInfo(phase);
-                UserProfile.LoadUserTypeHelper();
-            }
+            
+            phase = "Configuring User Type";
+            Reporter.ToLog(eLogLevel.DEBUG, phase);
+            SetLoadingInfo(phase);
+            UserProfile.LoadUserTypeHelper();            
 
             phase = "Loading User Selected Resource Dictionaries";
             Reporter.ToLog(eLogLevel.DEBUG, phase);
@@ -247,20 +244,32 @@ namespace amdocs.ginger.GingerCoreNET
             // when loading check restore and restore
         }
 
-        public bool OpenSolution(string SolutionFolder)
+        public bool OpenSolution(string solutionFolder)
         {
             mPluginsManager = null;            
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", SolutionFolder));
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", solutionFolder));
                 LoadingSolution = true;                  
 
                 //Cleanup
                 SolutionCleanup();
 
                 //Load new Solution
-                string SolFile = System.IO.Path.Combine(SolutionFolder, @"Ginger.Solution.xml");
-                if (File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(SolFile)))
+
+                Reporter.ToConsole(eLogLevel.DEBUG, "Opening Solution located at: " + solutionFolder);
+                string solutionFile = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");
+                Reporter.ToConsole(eLogLevel.DEBUG, "Loading Solution File: " + solutionFile);
+                if (System.IO.File.Exists(solutionFile))
+                {
+                    Reporter.ToConsole(eLogLevel.DEBUG, "Solution File exist");
+                }
+                else
+                {
+                    Reporter.ToConsole(eLogLevel.DEBUG, "Solution File Not Found");
+                }
+                Reporter.ToConsole(eLogLevel.DEBUG, "Loading Solution File: " + solutionFile);
+                if (File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(solutionFile)))
                 {
 
                     // !!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -297,12 +306,12 @@ namespace amdocs.ginger.GingerCoreNET
                     //    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution requires Ginger Upgrade", ex);
                     //}
 
-                    Solution sol = Solution.LoadSolution(SolFile);
+                    Solution sol = Solution.LoadSolution(solutionFile);
 
                     if (sol != null)
                     {
                         SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-                        SolutionRepository.Open(SolutionFolder);
+                        SolutionRepository.Open(solutionFolder);
 
                         PlugInsManager.SolutionChanged(SolutionRepository);
 
@@ -376,7 +385,7 @@ namespace amdocs.ginger.GingerCoreNET
             finally
             {
                 LoadingSolution = false;                  
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading the Solution '{0}'", SolutionFolder));                
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading the Solution '{0}'", solutionFolder));                
             }
         }
 

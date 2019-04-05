@@ -102,6 +102,11 @@ namespace Ginger.Functionalties
                     Reporter.ToLog(eLogLevel.ERROR, "AutoSave: Failed to clear the AutoSave folder before doing new save", ex);
                 }
 
+                if (WorkSpace.Instance.SolutionRepository == null)
+                {
+                    return;
+                }
+
                 //get all dirty items for AutoSave
                 //BusinesFlows           
                 foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
