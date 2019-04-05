@@ -736,11 +736,11 @@ namespace Ginger.Run
 
         private BusinessFlowRun GetCurrenrtBusinessFlowRun()
         {
-            BusinessFlowRun businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowGuid == CurrentBusinessFlow.Guid select x).FirstOrDefault();
+            BusinessFlowRun businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowGuid == CurrentBusinessFlow?.Guid select x).FirstOrDefault();
 
             if (businessFlowRun == null)
             {
-                businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowName == CurrentBusinessFlow.Name select x).FirstOrDefault();
+                businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowName == CurrentBusinessFlow?.Name select x).FirstOrDefault();
             }
             return businessFlowRun;
         }
