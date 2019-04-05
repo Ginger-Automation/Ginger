@@ -156,11 +156,13 @@ namespace amdocs.ginger.GingerCoreNET
             SetLoadingInfo(phase);
             UserProfile = UserProfile.LoadUserProfile();
 
-            phase = "Configuring User Type";
-            Reporter.ToLog(eLogLevel.DEBUG, phase);
-            SetLoadingInfo(phase);
-            UserProfile.LoadUserTypeHelper();
-
+            if (!RunningFromUnitTest)
+            {
+                phase = "Configuring User Type";
+                Reporter.ToLog(eLogLevel.DEBUG, phase);
+                SetLoadingInfo(phase);
+                UserProfile.LoadUserTypeHelper();
+            }
 
             phase = "Loading User Selected Resource Dictionaries";
             Reporter.ToLog(eLogLevel.DEBUG, phase);

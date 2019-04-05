@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -35,7 +36,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         public void ShowDebugConsole(bool visible = true)
         {
-            throw new System.NotImplementedException();
+            Console.WriteLine("ShowDebugConsole visible=" + visible);
         }
 
         public void SolutionClosed()

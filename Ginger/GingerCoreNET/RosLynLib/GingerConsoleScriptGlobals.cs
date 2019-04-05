@@ -57,30 +57,15 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
         }
 
 
-        public static SolutionRepository SR;   // !!!!!!!!!!!!!!!
+        
         public void  OpenSolution(string solutionFolder)
         {
-            WorkSpace.Instance.OpenSolution(solutionFolder);
-
-            //if (Directory.Exists(solutionFolder))
-            //{
-            //    Console.WriteLine("Opening Solution at folder: " + solutionFolder);
-            //    SR = GingerSolutionRepository.CreateGingerSolutionRepository();
-            //    WorkSpace.Instance.SolutionRepository = SR;
-            //    SR.Open(solutionFolder);
-
-            //    string SolFile = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");
-            //    WorkSpace.Instance.Solution = WorkSpace.Instance.Solution = Solution.LoadSolution(SolFile);
-            //    WorkSpace.Instance.Solution.SetReportsConfigurations();
-            //}
-            //else
-            //{
-            //    Console.WriteLine("Directory not found: " + solutionFolder);
-            //}
+            WorkSpace.Instance.OpenSolution(solutionFolder);           
         }
 
         public void OpenRunSet(string runSetName, string envName)
-        {            
+        {
+            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
             var envs = SR.GetAllRepositoryItems<ProjEnvironment>();
 
             // ProjEnvironment projEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == "Default" select x).SingleOrDefault();
@@ -95,10 +80,6 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
             runsetExecutor.InitRunners();
             BusinessFlow bf = runsetExecutor.Runners[0].BusinessFlows[0]; // !!!!!!!!!!!!!!
             runsetExecutor.RunRunset();
-
-            // move to seperate function
-            // string json = runsetExecutor.CreateSummary(runsetExecutor);            
-            // System.IO.File.WriteAllText(@"c:\temp\ExecutionSummary.json", json, System.Text.Encoding.Default);   //!!!!!!!!!!!
         }
 
         

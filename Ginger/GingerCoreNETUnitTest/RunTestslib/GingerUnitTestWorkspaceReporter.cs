@@ -14,7 +14,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         public override void ToStatus(eStatusMsgType messageType, string statusText)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("ToStatus:" + messageType + " - " + statusText);
         }
 
         public override eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt)
