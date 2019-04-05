@@ -616,8 +616,8 @@ namespace Ginger.Run
         {
             BusinessFlowRun businessFlowRun = GetCurrenrtBusinessFlowRun();
 
-            BusinessFlow cachedBusinessFlow = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(CurrentBusinessFlow.Guid);
-            List<VariableBase> cachedVariables = cachedBusinessFlow?.GetBFandActivitiesVariabeles(true).ToList();
+
+            List<VariableBase> cachedVariables = null;
 
             //set the vars to update
             List<VariableBase> inputVars = CurrentBusinessFlow.GetBFandActivitiesVariabeles(true).ToList();
@@ -661,8 +661,15 @@ namespace Ginger.Run
                     }
                     else
                     {
+
+                        if(cachedVariables==null)
+                        {
+                            BusinessFlow cachedBusinessFlow = WorkSpace.Instance?.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(CurrentBusinessFlow.Guid);
+                            cachedVariables = cachedBusinessFlow?.GetBFandActivitiesVariabeles(true).ToList();
+                        }
+
                         //If value is not different from origin we take original value from business flow on cache
-                       VariableBase cacheVariable= cachedVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
+                        VariableBase cacheVariable= cachedVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
                         if(cacheVariable!= null)
                         {
                             mappedValue = cacheVariable.Value;
