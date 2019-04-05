@@ -417,7 +417,8 @@ namespace Ginger.Run
                 {
                     if (var.DiffrentFromOrigin == true || string.IsNullOrEmpty(var.MappedOutputValue) == false)//save only variables which were modified in this run configurations
                     {
-                        BFR.BusinessFlowCustomizedRunVariables.Add(var);
+                        VariableBase varCopy = (VariableBase)var.CreateCopy(false);
+                        BFR.BusinessFlowCustomizedRunVariables.Add(varCopy);
                     }
                 }
                 BFR.BusinessFlowRunDescription = bf.RunDescription;
@@ -613,8 +614,13 @@ namespace Ginger.Run
 
         private void SetVariableMappedValues()
         {
+            BusinessFlowRun businessFlowRun = GetCurrenrtBusinessFlowRun();
+
+
+            List<VariableBase> cachedVariables = null;
+
             //set the vars to update
-            List<VariableBase> inputVars = CurrentBusinessFlow.GetBFandActivitiesVariabeles(false).ToList();
+            List<VariableBase> inputVars = CurrentBusinessFlow.GetBFandActivitiesVariabeles(true).ToList();
             List<VariableBase> outputVariables = null;
 
             //do actual value update
@@ -640,8 +646,35 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    //if input variable value mapped to none , we reset it to initial value
-                    inputVar.ResetValue();
+                    //if input variable value mapped to none, and value is differt from origin                   
+                    if (inputVar.DiffrentFromOrigin)
+                    {
+                        // we take value of customized variable from BusinessFlowRun
+                        VariableBase runVar = businessFlowRun?.BusinessFlowCustomizedRunVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
+
+                       
+                        if(runVar!=null)
+                        {
+                           mappedValue = runVar.Value;
+                        }
+                       
+                    }
+                    else
+                    {
+
+                        if(cachedVariables==null)
+                        {
+                            BusinessFlow cachedBusinessFlow = WorkSpace.Instance?.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(CurrentBusinessFlow.Guid);
+                            cachedVariables = cachedBusinessFlow?.GetBFandActivitiesVariabeles(true).ToList();
+                        }
+
+                        //If value is not different from origin we take original value from business flow on cache
+                        VariableBase cacheVariable= cachedVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
+                        if(cacheVariable!= null)
+                        {
+                            mappedValue = cacheVariable.Value;
+                        }                       
+                    }
                 }
 
                 if (mappedValue != "")
@@ -671,6 +704,10 @@ namespace Ginger.Run
                     if (inputVar.GetType() == typeof(VariableDynamic))
                     {
                         ((VariableDynamic)inputVar).ValueExpression = mappedValue;
+                    }
+                    if (inputVar.GetType() == typeof(VariableTimer))
+                    {
+                        ((VariableTimer)inputVar).Value = mappedValue;
                     }
                 }
             }
@@ -703,6 +740,17 @@ namespace Ginger.Run
             return outputVariables;
                  
         }      
+
+        private BusinessFlowRun GetCurrenrtBusinessFlowRun()
+        {
+            BusinessFlowRun businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowGuid == CurrentBusinessFlow?.Guid select x).FirstOrDefault();
+
+            if (businessFlowRun == null)
+            {
+                businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowName == CurrentBusinessFlow?.Name select x).FirstOrDefault();
+            }
+            return businessFlowRun;
+        }
 
         public void StartAgent(Agent Agent)
         {
@@ -3962,8 +4010,8 @@ namespace Ginger.Run
             if (doNotResetBusFlows == false)
             {
                 foreach (BusinessFlow businessFlow in BusinessFlows)
-                {
-                    businessFlow.Reset();                   
+                {                    
+                    businessFlow.Reset();    
                     NotifyBusinessflowWasReset(businessFlow);
                 }
             }
