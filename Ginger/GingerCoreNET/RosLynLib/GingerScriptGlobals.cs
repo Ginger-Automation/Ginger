@@ -17,14 +17,10 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
-using Ginger.SolutionGeneral;
-using GingerCore;
 using GingerCore.Environments;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -34,7 +30,7 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
     // DO NOT put here general code unless it is intended to be used from script
     // DO NOT change functions signature once published as we might have script which use them, or make sure it is backward compatible
 
-    public class GingerConsoleScriptGlobals
+    public class GingerScriptGlobals
     {
         //TODO: we can put global vars too
         // TODO: Just example delete me later
@@ -46,7 +42,7 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
         public void LoadPluginPackage(string folder)
         {
             Console.WriteLine("* Loading Plugin - " + folder);
-            P = new PluginPackage(folder);            
+            P = new PluginPackage(folder);
             Console.WriteLine("* Plugin Loaded");
         }
 
@@ -57,31 +53,39 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
         }
 
 
-        
-        public void  OpenSolution(string solutionFolder)
+
+        public void OpenSolution(string solutionFolder)
         {
-            WorkSpace.Instance.OpenSolution(solutionFolder);           
+            WorkSpace.Instance.OpenSolution(solutionFolder);
         }
 
         public void OpenRunSet(string runSetName, string envName)
         {
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
             var envs = SR.GetAllRepositoryItems<ProjEnvironment>();
-
-            // ProjEnvironment projEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == "Default" select x).SingleOrDefault();
             ProjEnvironment projEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == envName select x).SingleOrDefault();
-            // 
             RunSetConfig runSetConfig = (from x in SR.GetAllRepositoryItems<RunSetConfig>() where x.Name == runSetName select x).SingleOrDefault();
             RunsetExecutor runsetExecutor = new RunsetExecutor();
             WorkSpace.Instance.RunsetExecutor = runsetExecutor;
             runsetExecutor.RunSetConfig = runSetConfig;
-            runsetExecutor.RunsetExecutionEnvironment = projEnvironment;            
-
+            runsetExecutor.RunsetExecutionEnvironment = projEnvironment;
             runsetExecutor.InitRunners();
-            BusinessFlow bf = runsetExecutor.Runners[0].BusinessFlows[0]; // !!!!!!!!!!!!!!
             runsetExecutor.RunRunset();
+
+            
         }
 
-        
+        /// <summary>
+        /// Create summary json of the execution
+        /// </summary>
+        /// <param name="fileName"></param>
+        public void CreateExecutionSummaryJSON(string fileName)
+        {            
+            string s = WorkSpace.Instance.RunsetExecutor.CreateSummary();
+            System.IO.File.WriteAllText(fileName, s);
+        }
+
+
+
     }
 }

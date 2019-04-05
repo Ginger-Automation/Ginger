@@ -173,7 +173,7 @@ namespace GingerCoreNET.RosLynLib
             ScriptOptions options = ScriptOptions.Default.AddReferences(Assembly.GetAssembly(typeof(PluginPackage)));
 
             //Globals to pass in vars
-            GingerConsoleScriptGlobals globals = new GingerConsoleScriptGlobals();
+            GingerScriptGlobals globals = new GingerScriptGlobals();
 
             scriptState = scriptState == null ? CSharpScript.RunAsync(code, options, globals).Result : scriptState.ContinueWithAsync(code).Result;
             if (scriptState.ReturnValue != null && !string.IsNullOrEmpty(scriptState.ReturnValue.ToString()))
@@ -248,7 +248,7 @@ namespace GingerCoreNET.RosLynLib
             ScriptOptions options = ScriptOptions.Default.AddReferences(Assembly.GetAssembly(typeof(PluginPackage)));
 
             //Globals to pass in vars
-            GingerConsoleScriptGlobals globals = new GingerConsoleScriptGlobals();
+            GingerScriptGlobals globals = new GingerScriptGlobals();
 
             scriptState = scriptState == null ? CSharpScript.RunAsync(code, options, globals).Result : scriptState.ContinueWithAsync(code).Result;
             if (scriptState.ReturnValue != null && !string.IsNullOrEmpty(scriptState.ReturnValue.ToString()))

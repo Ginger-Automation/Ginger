@@ -514,7 +514,7 @@ namespace Ginger.Run
             }
         }
 
-
+        // Move to CLI !!!!!!!!!
         public async Task<int> RunRunSetFromCommandLine()
         {
             //0- success
@@ -645,44 +645,43 @@ namespace Ginger.Run
             return x;
         }
 
-        internal string CreateSummary(RunsetExecutor runsetExecutor)
+        /// <summary>
+        /// Create a summary json of the execution 
+        /// Example:
+        /// {
+        /// "StartTime": "0001-01-01T00:00:00",
+        /// "EndTime": "0001-01-01T00:00:00",
+        /// "Elapsed": "00:00:00",
+        /// "Runners": {
+        /// "Total": 1,
+        ///"Parallel": false
+        ///},
+        ///"BusinessFlowsSummary": {
+        ///"Total": 1,
+        ///"Pass": 1,
+        ///"Fail": 0,
+        ///"Blocked": 0
+        ///},
+        ///"ActivitiesSummary": {
+        ///"Total": 1,
+        ///"Pass": 1,
+        ///"Fail": 0,
+        ///"Blocked": 0
+        ///},
+        ///"ActionsSummary": {
+        ///"Total": 1,
+        ///"Pass": 1,
+        ///"Fail": 0,
+        ///"Blocked": 0
+        ///}
+        ///}
+        /// </summary>
+        /// <returns>json string</returns>
+        public string CreateSummary()
         {
             ExecutionSummary executionSummary = new ExecutionSummary();
-            //General
-
-
-            // Runners
-            executionSummary.Runners.Count = runsetExecutor.Runners.Count;
-            foreach(GingerRunner runner in runsetExecutor.Runners)
-            {
-                foreach(BusinessFlow businessFlow in runner.BusinessFlows)
-                {
-                    executionSummary.BusinessFlows.Total++;
-                    switch (businessFlow.RunStatus)
-                    {
-                        case eRunStatus.Passed:
-                            executionSummary.BusinessFlows.Pass++;
-                            break;
-                        case eRunStatus.Failed:
-                            executionSummary.BusinessFlows.Fail++;
-                            break;
-                        default:
-                            // Err !!!!!!!!!!!
-                            break;
-                    }
-
-                    foreach (Activity activity in businessFlow.Activities)
-                    {
-                        // executionSummary.acti .BusinessFlows.Total++;
-                    }
-                }
-            }
-
-
-
-
-            string json = JsonConvert.SerializeObject(executionSummary, Formatting.Indented);
-            return json;
+            string json = executionSummary.Create(this);
+            return json;            
         }
 
 

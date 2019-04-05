@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Run.ExecutionSummary
 {
-    public class BusinessFlows
+    public class ActionsSummary
     {
         public int Total { get; set; }
         public int Pass { get; set; }

@@ -35,7 +35,7 @@ namespace GingerCoreNET.CommandProcessorLib
         // !!!! Cleanup
         public static string CreateLoadPluginScript(string PackageFolder)
         {
-            return String.Format(nameof(GingerConsoleScriptGlobals.LoadPluginPackage) + "(@\"{0}\");", PackageFolder) + Environment.NewLine;
+            return String.Format(nameof(GingerScriptGlobals.LoadPluginPackage) + "(@\"{0}\");", PackageFolder) + Environment.NewLine;
         }
 
         //public static string CreateStartServiceScript(string driverID, string name, string host, int port)
