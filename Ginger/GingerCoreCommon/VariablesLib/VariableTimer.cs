@@ -149,7 +149,8 @@ namespace GingerCore.Variables
         public override void ResetValue()
         {
             StopTimer();
-            RunWatch.Reset();            
+            RunWatch.Reset();
+            Value = GetElapsedValue();
         }
 
         private void dispatcherTimerElapsedTick(object sender, System.EventArgs e)
