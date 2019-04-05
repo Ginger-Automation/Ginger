@@ -35,25 +35,25 @@ namespace Ginger.Run.RunSetActions
             if (runSetActionSendSMS.SMSEmail == null)
             {
                 runSetActionSendSMS.SMSEmail = new Email();                
-            }/*
+            }
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPMailHostTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPMailHost);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPPort);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPUser);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPPass);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MailFromTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.MailFrom);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MailToTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.MailTo);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SubjectTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.Subject);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BodyTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.Body);
+            BindingHandler.ObjFieldBinding(SMTPMailHostTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPMailHost));
+            BindingHandler.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPPort));
+            BindingHandler.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPUser));
+            BindingHandler.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPPass));
+            BindingHandler.ObjFieldBinding(MailFromTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.MailFrom));
+            BindingHandler.ObjFieldBinding(MailToTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.MailTo));
+            BindingHandler.ObjFieldBinding(SubjectTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.Subject));
+            BindingHandler.ObjFieldBinding(BodyTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.Body));
 
             GingerCore.General.FillComboFromEnumObj(EmailMethodComboBox, runSetActionSendSMS.SMSEmail.EmailMethod);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendSMS.SMSEmail, Email.Fields.EmailMethod);
+            BindingHandler.ObjFieldBinding(EmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendSMS.SMSEmail, nameof(Email.EmailMethod));
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPMailHostTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPMailHost);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPPort);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPUser);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPPass);
-        */}
+            BindingHandler.ObjFieldBinding(SMTPMailHostTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPMailHost));
+            BindingHandler.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPPort));
+            BindingHandler.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPUser));
+            BindingHandler.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPPass));
+        }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
