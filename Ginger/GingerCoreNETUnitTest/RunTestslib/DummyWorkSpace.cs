@@ -23,26 +23,13 @@ namespace GingerCoreNETUnitTest.RunTestslib
 {
     public class DummyWorkSpace : IWorkSpaceEventHandler
     {
-        public void AddApplication()
-        {
-            throw new NotImplementedException();
-        }
-
-        //public void AutomateBusinessFlow(BusinessFlow BF)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
+        
         public void OpenAddAPIModelWizard()
         {
             throw new NotImplementedException();
         }
 
-        public void OpenContainingFolder(string folderPath)
-        {
-            throw new NotImplementedException();
-        }
-
+       
         public void ShowBusinessFlows()
         {
             throw new NotImplementedException();
@@ -53,7 +40,6 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
-       
 
         public void SolutionClosed()
         {

@@ -25,22 +25,7 @@ namespace Amdocs.Ginger.GingerConsole
 {
     public class GingerConsoleWorkSpace : IWorkSpaceEventHandler
     {
-        public void AddApplication()
-        {
-            throw new NotImplementedException();
-        }
-
-        //public void AutomateBusinessFlow(BusinessFlow BF)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
         public void OpenAddAPIModelWizard()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OpenContainingFolder(string folderPath)
         {
             throw new NotImplementedException();
         }
@@ -55,10 +40,6 @@ namespace Amdocs.Ginger.GingerConsole
             throw new NotImplementedException();
         }
 
-        //public void SolutionChanged(Solution solution)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         public void SolutionClosed()
         {

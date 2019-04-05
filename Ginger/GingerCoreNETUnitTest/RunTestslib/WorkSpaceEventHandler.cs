@@ -24,26 +24,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
 {
     public class WorkSpaceEventHandler : IWorkSpaceEventHandler
     {
-        
-        public void AddApplication()
-        {
-        }
-
         public void OpenAddAPIModelWizard()
         {
-        }
-
-        public void OpenContainingFolder(string folderPath)
-        {
-            string FullPath = WorkSpace.Instance.SolutionRepository.GetFolderFullPath(folderPath);
-            if (string.IsNullOrEmpty(FullPath))
-                return;
-
-            if (!Directory.Exists(FullPath))
-            {
-                Directory.CreateDirectory(FullPath);
-            }
-            Process.Start(FullPath);
+            throw new System.NotImplementedException();
         }
 
         public void ShowBusinessFlows()

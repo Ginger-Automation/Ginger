@@ -18,10 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Ginger;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib;
-using GingerWPF.ApplicationPlatformsLib;
-using System.Diagnostics;
-using System.IO;
 
 namespace GingerWPF.WorkSpaceLib
 {
@@ -35,22 +31,25 @@ namespace GingerWPF.WorkSpaceLib
         {
         }
 
-        public void OpenContainingFolder(string folderPath)
-        {
-            string FullPath = WorkSpace.Instance.SolutionRepository.GetFolderFullPath(folderPath);
-            if (string.IsNullOrEmpty(FullPath))
-                return;
-
-            if (!Directory.Exists(FullPath))
-            {
-                Directory.CreateDirectory(FullPath);
-            }
-            Process.Start(FullPath);
-        }
-
         public void ShowBusinessFlows()
         {
+            throw new System.NotImplementedException();
         }
+
+        //public void OpenContainingFolder(string folderPath)
+        //{
+        //    string FullPath = WorkSpace.Instance.SolutionRepository.GetFolderFullPath(folderPath);
+        //    if (string.IsNullOrEmpty(FullPath))
+        //        return;
+
+        //    if (!Directory.Exists(FullPath))
+        //    {
+        //        Directory.CreateDirectory(FullPath);
+        //    }
+        //    Process.Start(FullPath);
+        //}
+
+
 
         public void ShowDebugConsole(bool visible = true)
         {

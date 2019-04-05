@@ -15,32 +15,18 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using System;
-// using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.BusinessFlowLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib;
 
 namespace Amdocs.Ginger
 {
     public class ConsoleWorkspaceEventHandler : IWorkSpaceEventHandler
     {
-        public void AddApplication()
-        {
-            throw new NotImplementedException();
-        }
-
-        //public void AutomateBusinessFlow(BusinessFlow BF)
-        //{
-        //    throw new NotImplementedException();
-        //}
+       
 
         public void OpenAddAPIModelWizard()
         {
             throw new NotImplementedException();
         }
 
-        public void OpenContainingFolder(string folderPath)
-        {
-            throw new NotImplementedException();
-        }
 
         public void ShowBusinessFlows()
         {
