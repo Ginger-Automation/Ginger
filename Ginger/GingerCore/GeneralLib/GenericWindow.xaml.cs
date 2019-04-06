@@ -57,8 +57,10 @@ namespace Ginger
         {
             InitializeComponent();   
             this.Owner = Owner;
-            this.Owner.Closing += Owner_Closing;
-
+            if (this.Owner != null)
+            {
+                this.Owner.Closing += Owner_Closing;
+            }
             CurrentWindow = this;
 
             //set style
