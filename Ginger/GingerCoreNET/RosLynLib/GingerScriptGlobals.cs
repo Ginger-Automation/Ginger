@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
+using GingerCore;
 using GingerCore.Environments;
 using System;
 using System.Linq;
@@ -85,6 +86,56 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
             System.IO.File.WriteAllText(fileName, s);
         }
 
+
+        
+        public void RunBusinessFlow(string name)
+        {                        
+            BusinessFlow BF = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where x.Name == name select x).SingleOrDefault();
+            if (BF == null)
+            {
+                // !!! Err
+            }
+
+            RunFlow(BF);
+        }
+
+
+        private void RunFlow(BusinessFlow businessFlow)
+        {
+            GingerRunner gingerRunner = new GingerRunner();
+            ExecutionLogger ex = (ExecutionLogger)gingerRunner.RunListeners[0];  // temp until we remove it from GR constructor and add manually
+
+
+            //!!!!!!!!!!!
+
+            ex.ExecutionLogfolder = @"c:\temp\jj";   // !!!!!!!!!!!!!!!!!
+            ex.Configuration.ExecutionLoggerConfigurationIsEnabled = true;
+            //ex.exec
+            // ex.Configuration.exe
+            // TODO: add dumper
+
+            ProjEnvironment projEnvironment = new ProjEnvironment();
+            //ExecutionDumperListener executionDumperListener = new ExecutionDumperListener(@"c:\temp\dumper");   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! temp
+            //gingerRunner.RunListeners.Add(executionDumperListener);
+
+
+            // executionLogger = new ExecutionLogger(projEnvironment, eExecutedFrom.Automation);
+            // executionLogger.Configuration.ExecutionLoggerConfigurationIsEnabled = true;
+            // gingerRunner.RunListeners.Add(executionLogger);
+            gingerRunner.BusinessFlows.Clear();
+            gingerRunner.BusinessFlows.Add(businessFlow);
+            gingerRunner.CurrentBusinessFlow = businessFlow;
+            gingerRunner.RunRunner();
+
+            Console.WriteLine("Execution Completed");
+            Console.WriteLine("----------------------------");
+            Console.WriteLine("Elapsed: " + businessFlow.Elapsed);
+            Console.WriteLine("Business Flow: " + businessFlow.Name);
+            Console.WriteLine("Business Flow Description: " + businessFlow.Description);
+            Console.WriteLine("Business Flow Status: " + businessFlow.RunStatus);
+            Console.WriteLine("Activities Count: " + businessFlow.Activities.Count);
+            Console.WriteLine("----------------------------");
+        }
 
 
     }
