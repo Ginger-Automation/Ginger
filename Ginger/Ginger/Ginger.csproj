@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3EFCB931-48FC-45BF-9598-0F8138802411}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ginger</RootNamespace>
     <AssemblyName>Ginger</AssemblyName>
@@ -93,6 +93,10 @@
   <PropertyGroup />
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
@@ -796,8 +800,6 @@
     <Compile Include="BetaFeaturesLib\BetaFeaturesPage.xaml.cs">
       <DependentUpon>BetaFeaturesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BindingLib\ComboEnumItem.cs" />
-    <Compile Include="BindingLib\ControlsBinding.cs" />
     <Compile Include="BusinessFlowsLibNew\ActivityActionsPage.xaml.cs">
       <DependentUpon>ActivityActionsPage.xaml</DependentUpon>
     </Compile>
@@ -1966,9 +1968,6 @@
     <Compile Include="ALM\QC\UploadBusinessFlowsPage.xaml.cs">
       <DependentUpon>UploadBusinessFlowsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SplashWindow.xaml.cs">
-      <DependentUpon>SplashWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
     </Compile>
@@ -2053,7 +2052,7 @@
     <Resource Include="Agents\AddAgentWizardLib\AddAgentIntro.md" />
     <Resource Include="Actions\ActionConversion\ActionConversionIntro.md" />
     <None Include="ALMRESTConfiguration\appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Resource Include="PluginsLibNew\AddPluginWizardLib\AddPluginIntro.md" />
     <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
@@ -2597,7 +2596,7 @@
     <Resource Include="Images\Workflow32x32.png" />
     <Resource Include="Images\X16x16.png" />
     <Content Include="Reports\GingerExecutionReport\ActivityGroupReport.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\assets\img\%40item_next.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -4302,10 +4301,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SplashWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="StartPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -4536,7 +4531,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="GingerIconNew.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\assets\fonts\fontawesome-webfont.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -4590,7 +4585,7 @@
     <Content Include="CI\increasebuildNum.vbs" />
     <Resource Include="Reports\Designer\ScreenShot1.png" />
     <Content Include="Reports\GingerExecutionReport\ActionReport.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\ActivityReport.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

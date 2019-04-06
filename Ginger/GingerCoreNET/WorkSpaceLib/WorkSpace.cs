@@ -18,19 +18,16 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.Run;
-using GingerCore;
-using GingerCore.Environments;
+using Ginger.SolutionGeneral;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -38,31 +35,38 @@ using System.Reflection;
 namespace amdocs.ginger.GingerCoreNET
 {
     // WorkSpace is one object per user accessible from anywhere and hold the current status of the user selection
-    // For GingerWPF it is one per running app
+    // For Ginger.Exe it is one per running app
     // For Web it can be one per user connected
+    // DO NOT ADD STATIC FIELDS
     public class WorkSpace : RepositoryItemBase
     {
         private static WorkSpace mWorkSpace;
+        public static WorkSpace Instance { get { return mWorkSpace; } }
 
-        // public UserProfile UserProfile;
+        public static void Init(IWorkSpaceEventHandler WSEH)
+        {
+            mWorkSpace = new WorkSpace();
+            mWorkSpace.EventHandler = WSEH;
+        }
 
-        public SolutionRepository SolutionRepository;        
+        public SolutionRepository SolutionRepository;
 
-        // Will be back when we moved GR to GingerCoreNET
-        // public GingerRunner GingerRunner;
-
-        // public ProjEnvironment CurrentEnvironment;
-  
         public SourceControlBase SourceControl;
-        public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
+
+        /// <summary>
+        /// Hold all Run Set execution data + execution methods
+        /// </summary>    
+        public RunsetExecutor RunsetExecutor = new RunsetExecutor();
+
         public static string AppVersion="0.0.0.0.0";
 
-        // move from App to here
-        //public static GingerRunner AutomateTabGingerRunner = new GingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
-        public  ISolution mSolution { get; set; }
-        public  ISolution Solution
+        private Solution mSolution;
+        public Solution Solution
         {
-            get { return mSolution; }
+            get
+            {
+                return mSolution;
+            }
             set
             {
                 mSolution = value;
@@ -70,15 +74,16 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public static eRunStatus RunSetExecutionStatus = eRunStatus.Failed;
+        public eRunStatus RunSetExecutionStatus = eRunStatus.Failed;
         
-        public static string TempFolder
+        public static string EmailReportTempFolder
         {
             get
             {
                 return System.IO.Path.GetDirectoryName(System.IO.Path.GetTempFileName()) + "\\Ginger_Email_Reports";
             }
         }
+
         PluginsManager mPluginsManager = null;
         public PluginsManager PlugInsManager
         {
@@ -92,70 +97,25 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        // Here we will have knwon GingerGrids - !!!!!!!!!!!!!!!!!!! Design, think..........
-        // public IObservable<GingerGrid> GingerGrids;
-        public static GingerRunner AutomateTabGingerRunner { get; set; }
         public void OpenSolution(string SolutionFolder)
         {
             mPluginsManager = null;
             //TODO: remove later since below init only RS2
             SolutionRepository.Open(SolutionFolder);
-            
-            // AutoLogProxy.Init("Ginger Test");  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            // ValueExpression.Solutionfolder = SolutionFolder;
-
-            //if (UserProfile != null)
-            //{
-            //    UserProfile.AddsolutionToRecent(SolutionFolder);
-            //    string UserProfileFileName = UserProfile.CreateUserProfileFileName();
-            //    UserProfile.Save(UserProfileFileName);
-            //}
-        }
-
-        //public void CleanupBeforeAppClosing()
-        //{
-        //    if (mLocalGingerGrid != null)
-        //    {
-        //        mLocalGingerGrid.Stop();
-        //    }
-        //}
-
-        public void InitPluginsManager()
-        {
-            //WorkSpace.Instance.PlugInsManager = new PluginsManager();
-
-            ////TODO: load plugin on demand, meanwhile we load all
-            //ObservableList<PluginPackage> list = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
-            //foreach (PluginPackage p in list)
-            //{
-            //    PlugInsManager.AddPluginPackage(p.Folder);
-            //}
         }
 
         public void CloseSolution()
         {
             SolutionRepository = null;
-            // PlugInsManager = null;
-            // GingerRunner = null;
-            // CurrentEnvironment = null;
             SourceControl = null;
             EventHandler.SolutionClosed();
-        }
+        }        
 
-        public static void Init(IWorkSpaceEventHandler WSEH)
-        {
-            mWorkSpace = new WorkSpace();
-            mWorkSpace.EventHandler = WSEH;
-        }
-        public static UserProfile UserProfile { get; set; }
-        public static WorkSpace Instance { get { return mWorkSpace; } }
+        public UserProfile UserProfile { get; set; }
+       
 
         public IWorkSpaceEventHandler EventHandler { get; set; }
 
-        //public void SetCurrentBusinessFlow(BusinessFlow BF)
-        //{
-        //}
 
         // This is the local one 
         GingerGrid mLocalGingerGrid;
@@ -180,7 +140,6 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-
         public string DefualtUserLocalWorkingFolder
         {
             get
@@ -190,7 +149,6 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public BetaFeatures mBetaFeatures;
-
         public BetaFeatures BetaFeatures
         {
             get
@@ -207,8 +165,9 @@ namespace amdocs.ginger.GingerCoreNET
                 mBetaFeatures = value;
             }
         }
-        private static VEReferenceList mVERefrences;
-        public static VEReferenceList VERefrences
+
+        private VEReferenceList mVERefrences;
+        public VEReferenceList VERefrences
         {
             get
             {
@@ -225,70 +184,12 @@ namespace amdocs.ginger.GingerCoreNET
 
                 mVERefrences = value;
             }
-        }
-        public static BusinessFlow Businessflow { get;  set; }
+        }        
 
-        public static bool RunningInExecutionMode = false;
-
-        public static ProjEnvironment AutomateTabEnvironment;
-        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-
-        //TODO: move to GingerRunner - pass the obj needed
-        private void HookAgents()
-        {
-            // this.GingerRunner.ApplicationAgents.CollectionChanged += ApplicationAgents_CollectionChanged;            
-        }
-
-        //private void AA_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        //{
-        //    if (e.PropertyName == nameof(ApplicationAgent.Agent))
-        //    {
-        //        ((ApplicationAgent)sender).Agent.PlugInsManager = PlugInsManager;s
-        //        ((ApplicationAgent)sender).Agent.LocalGingerGrid = LocalGingerGrid;
-        //    }
-        //}
-
-        //private void SaveUserProfile()
-        //{
-        //    string filename = UserProfile.CreateUserProfileFileName();
-        //    UserProfile.Save(filename);
-        //}
-
-        private void ApplicationAgents_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            //foreach (ApplicationAgent AA in this.GingerRunner.ApplicationAgents)
-            //{
-            //    CheckAssignAgent(AA);
-            //    if (AA.Agent != null)
-            //    {
-            //        AA.Agent.PlugInsManager = PlugInsManager;
-            //        AA.Agent.LocalGingerGrid = LocalGingerGrid;
-            //    }
-            //    AA.PropertyChanged += AA_PropertyChanged;
-            //}
-        }
-
+        // Running from CLI
+        public bool RunningInExecutionMode = false;
         
-
-        public void LoadUserProfile()
-        {
-            //string UserProfileFileName = UserProfile.CreateUserProfileFileName();
-            //if (File.Exists(UserProfileFileName))
-            //{
-            //    UserProfile = UserProfile.LoadUserProfile(UserProfileFileName);
-            //}
-            //else
-            //{
-            //    string gingerFolder = UserProfile.GetUserGingerFolder();
-            //    if (!Directory.Exists(gingerFolder))
-            //    {
-            //        Directory.CreateDirectory(gingerFolder);
-            //    }
-            //    UserProfile = new UserProfile();
-            //    UserProfile.Save(UserProfileFileName);
-            //}
-        }
+        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public void RefreshGlobalAppModelParams(ApplicationModelBase AppModel)
         {
@@ -359,11 +260,5 @@ namespace amdocs.ginger.GingerCoreNET
                 }
             }
         }
-
-
-    }
-    public interface IUserprofile
-    {
-
     }
 }

@@ -67,7 +67,7 @@ namespace Ginger.Run
             view.GridColsView = viewCols;
             viewCols.Add(new GridColView() { Field = FlowControl.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
             viewCols.Add(new GridColView() { Field = nameof(FlowControl.Operator), Header = "Operator", WidthWeight = 150, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = OperatorList });
-            view.GridColsView.Add(new GridColView() { Field = FlowControl.Fields.Condition, Header = "Custom Condition", WidthWeight = 250, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.getDataColValueExpressionTemplate("ConditionVE") });
+            view.GridColsView.Add(new GridColView() { Field = FlowControl.Fields.Condition, Header = "Custom Condition", WidthWeight = 250, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.getDataColValueExpressionTemplate("ConditionVE", new Context() { BusinessFlow = mActParentBusinessFlow }) });
            
             viewCols.Add(new GridColView() { Field = FlowControl.Fields.ConditionCalculated, Header = "Condition Calculated", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = FlowControl.Fields.BusinessFlowControlAction, Header = "Action", WidthWeight = 250, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = GetDataColActionFlowControlTemplate("ActionForEdit") });
@@ -79,7 +79,7 @@ namespace Ginger.Run
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
             FlowControl FC = (FlowControl)FlowControlGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(FC, FlowControl.Fields.Condition,true);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(FC, FlowControl.Fields.Condition, new Context() { BusinessFlow = mActParentBusinessFlow });
             VEEW.ShowAsWindow();
         }
 

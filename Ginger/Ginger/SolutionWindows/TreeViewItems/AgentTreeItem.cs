@@ -92,13 +92,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         public override void PostSaveTreeItemHandler()
-        {
-            App.UpdateApplicationsAgentsMapping();
+        {            
+            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
         }
 
         public override void PostDeleteTreeItemHandler()
-        {
-            App.UpdateApplicationsAgentsMapping();
+        {            
+            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
         }
     }
 }

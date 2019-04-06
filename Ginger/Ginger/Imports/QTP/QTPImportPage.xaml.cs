@@ -82,14 +82,14 @@ namespace Ginger.Imports.QTP
             SetActivitiesGridView();
 
             eFilter mFilter = eFilter.AllLines;
-            App.FillComboFromEnumVal(FilterComboBox, mFilter);
+            GingerCore.General.FillComboFromEnumObj(FilterComboBox, mFilter);
             
             InitCommonFunctionMappingUCGrid();
 
             TargetApplication sTarget = new TargetApplication();
-            if ( WorkSpace.UserProfile.Solution != null)
+            if ( WorkSpace.Instance.Solution != null)
             {
-                sTarget.AppName =  WorkSpace.UserProfile.Solution.MainApplication.ToString();
+                sTarget.AppName =  WorkSpace.Instance.Solution.MainApplication.ToString();
                 sTarget.Selected = true;
                 TargetApplicationsList.Add(sTarget);
                 mBusinessFlow.TargetApplications = TargetApplicationsList;
@@ -398,11 +398,11 @@ namespace Ginger.Imports.QTP
             at.ActivityName = "Activity1";
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
-            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
-            App.BusinessFlow = mBusinessFlow;
+            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.Instance.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
+            //App.BusinessFlow = mBusinessFlow;
            
-            AddActionPage addAction = new AddActionPage();
-            addAction.ShowAsWindow(ActionsList);
+            //AddActionPage addAction = new AddActionPage();
+            //addAction.ShowAsWindow(ActionsList);
 
             // We will get only one action currently
             Act a =(Act) ActionsList[0];

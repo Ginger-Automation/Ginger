@@ -73,7 +73,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             xValidationElementTypeComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElement), mPlatform.GetPlatformUIElementsType(), false, null);
             xValidationElementLocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocateBy), mPlatform.GetPlatformUIElementLocatorsList(), false, null);
             SetLocateValueFrame();
-            GingerCore.General.ActInputValueBinding(LoopThroughClicks, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.LoopThroughClicks, "False"));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(LoopThroughClicks, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.LoopThroughClicks, "False"));
 
             xValidationElementLocateByComboBox.ComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
         }
@@ -112,12 +112,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 case eLocateBy.POMElement:
                     xValidationElementTypeComboBox.IsEnabled = false;                    
-                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(objValidationElementType, nameof(ActInputValue.Value), objValidationElementLocatorValue, nameof(ActInputValue.Value));
+                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(Context.GetAsContext(mAct.Context), objValidationElementType, nameof(ActInputValue.Value), objValidationElementLocatorValue, nameof(ActInputValue.Value));
                     return locateByPOMElementPage;
                 case eLocateBy.ByXY:
                     return new LocateByXYEditPage(mAct, objValidationElementLocatorValue, nameof(ActInputValue.Value));
                 default:
-                    return new LocateValueEditPage(objValidationElementLocatorValue, nameof(ActInputValue.Value));
+                    return new LocateValueEditPage(Context.GetAsContext(mAct.Context), objValidationElementLocatorValue, nameof(ActInputValue.Value));
             }
         }
 
@@ -149,8 +149,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private ePlatformType GetActionPlatform()
         {
-            string targetapp = App.BusinessFlow.CurrentActivity.TargetApplication;
-            ePlatformType platform = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
+            ePlatformType platform = (from x in  WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             return platform;
         }
     }

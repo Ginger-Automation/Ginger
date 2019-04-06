@@ -62,7 +62,7 @@ namespace Ginger.BusinessFlowWindows
              AppsGrid.SetAllColumnsDefaultView(view);
              AppsGrid.InitViewItems();
 
-             foreach (ApplicationPlatform AP in  WorkSpace.UserProfile.Solution.ApplicationPlatforms)
+             foreach (ApplicationPlatform AP in  WorkSpace.Instance.Solution.ApplicationPlatforms)
              {
                  ApplicationPlatform AP1 = new ApplicationPlatform();
                  AP1.AppName = AP.AppName;
@@ -99,10 +99,6 @@ namespace Ginger.BusinessFlowWindows
                         activity.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
                     }
                 }
-            }
-            if (App.BusinessFlow == mBusinessFlow)
-            {
-                App.UpdateApplicationsAgentsMapping();
             }
             if (mBusinessFlow.TargetApplications.Count > 0|| mApplicationsPlatforms.Count==0)
             {

@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using System;
@@ -41,14 +42,14 @@ namespace Ginger.Actions
                 InitializeComponent();
                 mAct = act;
                 Bind();
-                mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();                   
+                mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();                   
         }
                 
         public void Bind()
         {
-            DataFileNameTextBox.Init(mAct.GetOrCreateInputParam(ActCreatePDFChart.Fields.DataFileName), ActInputValue.Fields.Value);
-            GingerCore.General.ObjFieldBinding(ParamsComboBox.ComboBox, ComboBox.SelectedValueProperty, mAct, ActCreatePDFChart.Fields.ParamName);
-            GingerCore.General.ObjFieldBinding(ParamsComboBox.ComboBox, ComboBox.ItemsSourceProperty, mAct, ActCreatePDFChart.Fields.ParamList);
+            DataFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActCreatePDFChart.Fields.DataFileName), ActInputValue.Fields.Value);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ParamsComboBox.ComboBox, ComboBox.SelectedValueProperty, mAct, ActCreatePDFChart.Fields.ParamName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ParamsComboBox.ComboBox, ComboBox.ItemsSourceProperty, mAct, ActCreatePDFChart.Fields.ParamList);
             DataFileNameTextBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
             mAct.ParamList = SetParamsCombo();
         }
@@ -64,7 +65,7 @@ namespace Ginger.Actions
 
             dlg.DefaultExt = "*.csv";
             dlg.Filter = "csv Files (*.csv)|*.csv";
-            string SolutionFolder = WorkSpace.UserProfile.Solution.Folder.ToUpper(); 
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper(); 
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

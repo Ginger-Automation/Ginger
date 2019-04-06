@@ -18,6 +18,7 @@ limitations under the License.
 
 using System.Collections.Generic;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 
 namespace Ginger.Actions
@@ -37,15 +38,15 @@ namespace Ginger.Actions
                 l.Add(v);
             }
             // List<object> l = a.AvailableLocateBy(). .ToList<object>();
-            App.FillComboFromEnumVal(cbooLocateBy, f.AvailableLocateBy(), l);
+            GingerCore.General.FillComboFromEnumObj(cbooLocateBy, f.AvailableLocateBy(), l);
 
-            App.ObjFieldBinding(cbooLocateBy, ComboBox.TextProperty, f, ActPWL.Fields.OLocateBy);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbooLocateBy, ComboBox.TextProperty, f, ActPWL.Fields.OLocateBy);
 
-            App.ObjFieldBinding(txtoLocateValue, TextBox.TextProperty, f, ActPWL.Fields.OLocateValue);
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.PWLAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtoLocateValue, TextBox.TextProperty, f, ActPWL.Fields.OLocateValue);
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.PWLAction);
             //TODO: fix hard coded ButtonAction use Fields
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "PWLAction");
-            txtoLocateValue.Init(f, ActPWL.Fields.OLocateValue);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "PWLAction");
+            txtoLocateValue.Init(Context.GetAsContext(f.Context), f, ActPWL.Fields.OLocateValue);
 
             txtoLocateValue.ValueTextBox.Text = f.OLocateValue;
         }

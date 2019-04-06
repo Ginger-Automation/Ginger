@@ -77,7 +77,7 @@ namespace Ginger.Actions.WebServices
                     ResponseTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString()), typeof(ApplicationAPIUtils.eContentType), false, ResponseTypeComboBox_SelectionChanged);
 
                     //Request Template file:
-                    TemplateFileNameFileBrowser.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), true, true, UCValueExpression.eBrowserType.File, "txt; *.xml; *.json;", new RoutedEventHandler(BrowseTemplateFileButton_Click));
+                    TemplateFileNameFileBrowser.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), true, true, UCValueExpression.eBrowserType.File, "txt; *.xml; *.json;", new RoutedEventHandler(BrowseTemplateFileButton_Click));
                     break;
 
                 case ApplicationAPIUtils.eWebApiType.SOAP:
@@ -87,10 +87,10 @@ namespace Ginger.Actions.WebServices
                     UseWSSecurityHeader.Visibility = Visibility.Visible;
                     //binding
                     //SOAP Action
-                    SoapActionUCValueExpression.Init(mAct.GetOrCreateInputParam(ActWebAPISoap.Fields.SOAPAction), true, false, UCValueExpression.eBrowserType.Folder);
+                    SoapActionUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPISoap.Fields.SOAPAction), true, false, UCValueExpression.eBrowserType.Folder);
 
                     //Request Template file:
-                    TemplateFileNameFileBrowser.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), true, true, UCValueExpression.eBrowserType.File, "txt; *.xml;", new RoutedEventHandler(BrowseTemplateFileButton_Click));
+                    TemplateFileNameFileBrowser.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), true, true, UCValueExpression.eBrowserType.File, "txt; *.xml;", new RoutedEventHandler(BrowseTemplateFileButton_Click));
                     break;
             }
         }
@@ -99,10 +99,10 @@ namespace Ginger.Actions.WebServices
         {
             //URL fields:
 
-            URLUCValueExpression.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.EndPointURL), true, false, UCValueExpression.eBrowserType.Folder);
-            URLUserUCValueExpression.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.URLUser), true, false, UCValueExpression.eBrowserType.Folder);
-            URLDomainUCValueExpression.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.URLDomain), true, false, UCValueExpression.eBrowserType.Folder);
-            URLPasswordUCValueExpression.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.URLPass), true, false, UCValueExpression.eBrowserType.Folder);
+            URLUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.EndPointURL), true, false, UCValueExpression.eBrowserType.Folder);
+            URLUserUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.URLUser), true, false, UCValueExpression.eBrowserType.Folder);
+            URLDomainUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.URLDomain), true, false, UCValueExpression.eBrowserType.Folder);
+            URLPasswordUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.URLPass), true, false, UCValueExpression.eBrowserType.Folder);
 
             //Network Credential selection radio button:
             NetworkCredentialsRadioButton.Init(typeof(ApplicationAPIUtils.eNetworkCredentials), NetworkCeredentials, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Default.ToString()), NetworkCreds_SelectionChanged);
@@ -114,25 +114,25 @@ namespace Ginger.Actions.WebServices
             CertificateTypeRadioButton.Init(typeof(ApplicationAPIUtils.eCretificateType), CertificateSelection, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString()), CertificateSelection_Changed);
 
             //Response validation checkbox: 
-            GingerCore.General.ActInputValueBinding(DoNotFailActionOnBadRespose, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, "False"));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotFailActionOnBadRespose, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, "False"));
 
             //Use Legacy JSON Parsing
-            GingerCore.General.ObjFieldBinding(UseLegacyJSONParsingCheckBox, CheckBox.IsCheckedProperty, mAct, ActWebAPIBase.Fields.UseLegacyJSONParsing);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseLegacyJSONParsingCheckBox, CheckBox.IsCheckedProperty, mAct, ActWebAPIBase.Fields.UseLegacyJSONParsing);
 
             //Request Body fields:
-            RequestBodyUCValueExpression.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.RequestBody), true, false, UCValueExpression.eBrowserType.Folder, "*", null);
+            RequestBodyUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.RequestBody), true, false, UCValueExpression.eBrowserType.Folder, "*", null);
             RequestBodyUCValueExpression.AdjustHight(200);
             RequestBodyUCValueExpression.ValueTextBox.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
 
             //Import Request File
-            GingerCore.General.ActInputValueBinding(DoNotImportRequestFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.ImportRequestFile, "False"));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotImportRequestFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.ImportRequestFile, "False"));
 
             //SSL Certificates:
-            CertificatePath.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificatePath), true, true, UCValueExpression.eBrowserType.File, "*.*", new RoutedEventHandler(BrowseSSLCertificate));
-            CertificatePasswordUCValueExpression.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificatePassword), true, false, UCValueExpression.eBrowserType.Folder);
+            CertificatePath.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificatePath), true, true, UCValueExpression.eBrowserType.File, "*.*", new RoutedEventHandler(BrowseSSLCertificate));
+            CertificatePasswordUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificatePassword), true, false, UCValueExpression.eBrowserType.Folder);
 
             //Import Certificate
-            GingerCore.General.ActInputValueBinding(DoNotCertificateImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.ImportCetificateFile, "False"));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotCertificateImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.ImportCetificateFile, "False"));
 
             //Security:
             SecurityTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString()), typeof(ApplicationAPIUtils.eSercurityType), false, null);
@@ -141,12 +141,12 @@ namespace Ginger.Actions.WebServices
             AuthTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString()), typeof(ApplicationAPIUtils.eAuthType), false, AuthorizationBox);
 
             //Authorization
-            AuthUserUCValueExpression.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.AuthUsername), true, false, UCValueExpression.eBrowserType.Folder);
-            AuthPasswordUCValueExpression.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.AuthPassword), true, false, UCValueExpression.eBrowserType.Folder);
+            AuthUserUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.AuthUsername), true, false, UCValueExpression.eBrowserType.Folder);
+            AuthPasswordUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.AuthPassword), true, false, UCValueExpression.eBrowserType.Folder);
 
-            DynamicElementsGrid.Init(mAct.DynamicElements, "Body Content Parameters", "Place Holder", "Value", "Calculated Value");
+            DynamicElementsGrid.Init(Context.GetAsContext(mAct.Context), mAct.DynamicElements, "Body Content Parameters", "Place Holder", "Value", "Calculated Value");
 
-            HttpHeadersGrid.Init(mAct.HttpHeaders, "Request Headers", "Header", "Value", "Calculated Value");
+            HttpHeadersGrid.Init(Context.GetAsContext(mAct.Context), mAct.HttpHeaders, "Request Headers", "Header", "Value", "Calculated Value");
 
             //FormDataGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddRow));
             SetKeyValuesGrid(mAct.RequestKeyValues);
@@ -271,7 +271,7 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseTemplateFileButton_Click(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             if (TemplateFileNameFileBrowser.ValueTextBox.Text != null)
             {
                 // replace Absolute file name with relative to solution
@@ -341,7 +341,7 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseSSLCertificate(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             if (CertificatePath.ValueTextBox.Text != null)
             {
                 // replace Absolute file name with relative to solution
@@ -527,7 +527,7 @@ namespace Ginger.Actions.WebServices
         private void VEGridInputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)FormDataGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mAct.Context));
             VEEW.ShowAsWindow();
         }
 
@@ -543,7 +543,7 @@ namespace Ginger.Actions.WebServices
 
                 dlg.DefaultExt = "*.*";
                 dlg.Filter = "All files (All Files)|*.*";
-                string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+                string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

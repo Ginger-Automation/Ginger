@@ -36,23 +36,23 @@ namespace Ginger.Run.RunSetActions
             {
                 runSetActionSendFreeEmail.Email = new Email();
             }
-            MailFromTextBox.Init(runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFrom));
-            MailToTextBox.Init(runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailTo));
-            MailCCTextBox.Init(runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailCC));
-            SubjectTextBox.Init(runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Subject));
-            BodyTextBox.Init(runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Bodytext));
+            MailFromTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFrom));
+            MailToTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailTo));
+            MailCCTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailCC));
+            SubjectTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Subject));
+            BodyTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Bodytext));
             BodyTextBox.AdjustHight(100);
-            App.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, nameof(Email.SMTPPort));
-            App.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, nameof(Email.SMTPPass));
-            App.FillComboFromEnumVal(xEmailMethodComboBox, runSetActionSendFreeEmail.Email.EmailMethod);
-            xSMTPMailHostTextBox.Init(runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailHost));
-            xSMTPUserTextBox.Init(runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailUser));
-            App.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendFreeEmail.Email, nameof(Email.EmailMethod));
-            App.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, nameof(Email.EnableSSL));
-            App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, nameof(Email.ConfigureCredential));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, nameof(Email.SMTPPort));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, nameof(Email.SMTPPass));
+            GingerCore.General.FillComboFromEnumObj(xEmailMethodComboBox, runSetActionSendFreeEmail.Email.EmailMethod);
+            xSMTPMailHostTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailHost));
+            xSMTPUserTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailUser));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendFreeEmail.Email, nameof(Email.EmailMethod));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, nameof(Email.EnableSSL));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, nameof(Email.ConfigureCredential));
             if (string.IsNullOrEmpty(runSetActionSendFreeEmail.MailTo))
             {
-                runSetActionSendFreeEmail.MailFrom =  WorkSpace.UserProfile.UserEmail;
+                runSetActionSendFreeEmail.MailFrom =  WorkSpace.Instance.UserProfile.UserEmail;
             }
         }
 

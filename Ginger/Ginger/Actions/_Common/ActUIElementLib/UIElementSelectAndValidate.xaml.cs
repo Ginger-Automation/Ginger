@@ -47,15 +47,15 @@ namespace Ginger.Actions._Common.ActUIElementLib
             InitializeComponent();
 
             //TODO: Binding of all UI elements            
-            Value.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.Value), true, false, UCValueExpression.eBrowserType.Folder);
+            Value.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.Value), true, false, UCValueExpression.eBrowserType.Folder);
             HandleElementType.BindControl(mAct,ActUIElement.Fields.HandleElementType, Platform.GetPlatformUIElementsType());
             HandleLocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.HandleElementLocateBy), Platform.GetPlatformUIElementLocatorsList(), false, null);
-            HandleLocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.HandleElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
+            HandleLocatorValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.HandleElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
 
             SubElement.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementType), Platform.GetSubElementType(mAct.ElementType).ToList(), false, null);
             SubElementLocateBy.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementLocateBy), Platform.GetPlatformUIElementLocatorsList(), false, null);
-            SubElementLocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);            
-            GingerCore.General.ActInputValueBinding(DefineHandleAction, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.DefineHandleAction, "False"));         
+            SubElementLocatorValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);            
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DefineHandleAction, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.DefineHandleAction, "False"));         
         }        
         
         public Page GetPlatformEditPage()
@@ -82,8 +82,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private ePlatformType GetActionPlatform()
         {
-            string targetapp = App.BusinessFlow.CurrentActivity.TargetApplication;
-            ePlatformType platform = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
+            ePlatformType platform = (from x in  WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             return platform;
         }
 

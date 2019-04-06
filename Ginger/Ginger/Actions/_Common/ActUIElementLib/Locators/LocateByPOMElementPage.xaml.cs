@@ -56,6 +56,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         public delegate void ElementChangedEventHandler();
 
         public event ElementChangedEventHandler ElementChangedPageEvent;
+        Context mContext;
 
         string mTargetApplication;
 
@@ -67,7 +68,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
-        public LocateByPOMElementPage(Object objectElementType, string elementTypeFieldName, Object objectLocateValue, string locateValueFieldName, bool onlyPOMRequest = false)
+        public LocateByPOMElementPage(Context context, Object objectElementType, string elementTypeFieldName, Object objectLocateValue, string locateValueFieldName, bool onlyPOMRequest = false)
         {
             InitializeComponent();
 
@@ -76,13 +77,22 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mObjectLocateValue = objectLocateValue;
             mLocateValueFieldName = locateValueFieldName;
             mOnlyPOMRequest = onlyPOMRequest;
-            if (App.BusinessFlow != null)//temp wrokaround, full is in Master 
+            mContext = context;
+
+            if (mContext.BusinessFlow != null)//temp wrokaround, full is in Master 
             {
-                mTargetApplication = App.BusinessFlow.CurrentActivity.TargetApplication;
+                if (mContext.BusinessFlow.CurrentActivity != null)
+                {
+                    mTargetApplication = mContext.BusinessFlow.CurrentActivity.TargetApplication;
+                }
+                else if (mContext.Activity != null)
+                {
+                    mTargetApplication = mContext.Activity.TargetApplication;
+                }
             }
             else
             {
-                mTargetApplication = WorkSpace.UserProfile.Solution.MainApplication;
+                mTargetApplication = WorkSpace.Instance.Solution.MainApplication;
             }
             DataContext = this;
 
@@ -283,7 +293,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void HighlightElementClicked(object sender, RoutedEventArgs e)
         {
-            ApplicationAgent currentAgent = (ApplicationAgent)App.AutomateTabGingerRunner.ApplicationAgents.Where(z => z.AppName == mTargetApplication).FirstOrDefault();
+            ApplicationAgent currentAgent = (ApplicationAgent)mContext.Runner.ApplicationAgents.Where(z => z.AppName == mTargetApplication).FirstOrDefault();
             if ((currentAgent == null) || !(((Agent)currentAgent.Agent).Driver is IWindowExplorer) || (((Agent)currentAgent.Agent).Status != Agent.eStatus.Running))
             {
                 Reporter.ToUser(eUserMsgKey.NoRelevantAgentInRunningStatus);

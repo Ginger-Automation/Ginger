@@ -54,25 +54,25 @@ namespace Ginger.Run.RunSetActions
             {
                 runSetActionHTMLReportSendEmail.Email = new Email();
             }
-            MailFromTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailFrom));
-            MailToTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailTo));
-            MailCCTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailCC));
-            SubjectTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Subject));
+            MailFromTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailFrom));
+            MailToTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailTo));
+            MailCCTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailCC));
+            SubjectTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Subject));
 
-            BodyTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Bodytext));
-            CommentTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Comments));
+            BodyTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Bodytext));
+            CommentTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Comments));
             BodyTextBox.AdjustHight(100);
-            App.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.SMTPPort));
-            App.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.SMTPPass));
-            App.FillComboFromEnumVal(xEmailMethodComboBox, runSetActionHTMLReportSendEmail.Email.EmailMethod);
-            xSMTPMailHostTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailHost));
-            xSMTPUserTextBox.Init(runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailUser));
-            App.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.EmailMethod));
-            App.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.EnableSSL));
-            App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.ConfigureCredential));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.SMTPPort));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.SMTPPass));
+            GingerCore.General.FillComboFromEnumObj(xEmailMethodComboBox, runSetActionHTMLReportSendEmail.Email.EmailMethod);
+            xSMTPMailHostTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailHost));
+            xSMTPUserTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailUser));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.EmailMethod));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.EnableSSL));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.ConfigureCredential));
             if (string.IsNullOrEmpty(runSetActionHTMLReportSendEmail.MailTo))
             {
-                runSetActionHTMLReportSendEmail.MailFrom =  WorkSpace.UserProfile.UserEmail;
+                runSetActionHTMLReportSendEmail.MailFrom =  WorkSpace.Instance.UserProfile.UserEmail;
             }
             InitAttachmentsGrid();
             RadioButtonInit();
@@ -208,7 +208,7 @@ namespace Ginger.Run.RunSetActions
             DefaultTemplatePickerCbx.ItemsSource = null;
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            if (( WorkSpace.UserProfile.Solution != null) &&  (HTMLReportConfigurations.Count > 0))
+            if (( WorkSpace.Instance.Solution != null) &&  (HTMLReportConfigurations.Count > 0))
             {
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;
@@ -238,7 +238,7 @@ namespace Ginger.Run.RunSetActions
             
             if(item.AttachmentType == EmailAttachment.eAttachmentType.File)
             {
-                ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AttachmentsGrid.CurrentItem, EmailAttachment.Fields.Name, true);
+                ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AttachmentsGrid.CurrentItem, EmailAttachment.Fields.Name, null);
 
                 VEEW.ShowAsWindow();
             }

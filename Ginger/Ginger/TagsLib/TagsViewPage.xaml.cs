@@ -43,7 +43,7 @@ namespace Ginger.TagsLib
         private void ShowTags()
         {
             TagsListBox.Items.Clear();
-            IEnumerable<RepositoryItemTag> ttg =  WorkSpace.UserProfile.Solution.Tags.ItemsAsEnumerable();
+            IEnumerable<RepositoryItemTag> ttg =  WorkSpace.Instance.Solution.Tags.ItemsAsEnumerable();
             foreach (Guid g in mTags)
             {
                 // Get the Name for solution tags                

@@ -335,6 +335,24 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
+        /// Get first cached Repository Item from provided Repository Item Type (if list is empty then null will be returned)
+        /// </summary>
+        /// <typeparam name="T">Repository Item Type</typeparam>
+        /// <returns></returns>
+        public dynamic GetFirstRepositoryItem<T>()
+        {
+            SolutionRepositoryItemInfo<T> SRII = GetSolutionRepositoryItemInfo<T>();
+            if (SRII.GetAllItemsCache().Count > 0)
+            {
+                return (SRII.GetAllItemsCache()[0]);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Convert relative path to full path - for example: '~/BusinessFlow' will convert to 'C:\abc\sol1\BusinessFlow'
         /// </summary>
         /// <param name="Folder"></param>
@@ -369,16 +387,21 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         public string ConvertSolutionRelativePath(string relativePath)
         {
-            if (relativePath.TrimStart().StartsWith("~"))
+            try
             {
-                string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
-                fullPath = Path.Combine(mSolutionFolderPath, fullPath);
-                return fullPath;
+                if (relativePath.TrimStart().StartsWith("~"))
+                {
+                    string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
+                    fullPath = Path.Combine(mSolutionFolderPath, fullPath);
+                    return fullPath;
+                }
             }
-            else
+            catch(Exception ex)
             {
-                return relativePath;
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to replace relative path sign '~' with Solution path for the path: '" + relativePath + "'", ex);
             }
+
+            return relativePath;
         }
 
         /// <summary>

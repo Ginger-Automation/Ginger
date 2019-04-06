@@ -83,16 +83,11 @@ namespace Ginger.WindowExplorer
         Page mControlFrameContentPage = null;
         WindowExplorerPOMPage mWindowExplorerPOMPage;
 
-        public enum eWindowExplorerPageContext
-        {
-            WindowExplorerPage,
-        }
-
-        private eWindowExplorerPageContext mContext;
+        Context mContext;
 
         // We can open it from agents grid, or from Action Edit page with Action 
         // If we open from ActionEdit Page then we update the act with Locator
-        public WindowExplorerPage(ApplicationAgent ApplicationAgent,  Act Act = null, eWindowExplorerPageContext Context = eWindowExplorerPageContext.WindowExplorerPage)
+        public WindowExplorerPage(ApplicationAgent ApplicationAgent, Context context, Act Act = null)
         {           
             InitializeComponent();
             WindowControlsTreeView.TreeGrid.RowDefinitions[0].Height = new GridLength(0);
@@ -101,7 +96,7 @@ namespace Ginger.WindowExplorer
             WindowControlsTreeView.SearchCancelled += WindowControlsTreeView_SearchCancelled;
             WindowControlsTreeView.SearchCompleted += WindowControlsTreeView_SearchCompleted;
 
-            mContext = Context;
+            mContext = context;
             
             mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
 
@@ -673,7 +668,7 @@ namespace Ginger.WindowExplorer
                         {
                             Page DataPage = mCurrentControlTreeViewItem.EditPage();
                             actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
-                            CAP = new ControlActionsPage(mWindowExplorerDriver, EI, list, DataPage, actInputValuelist);
+                            CAP = new ControlActionsPage(mWindowExplorerDriver, EI, list, DataPage, actInputValuelist, mContext);
                         }
                     }
                     ControlActionsFrame.Content = CAP;
@@ -840,8 +835,8 @@ namespace Ginger.WindowExplorer
             WindowControlsGridView.ShowUpDown = Visibility.Collapsed;
             WindowControlsGridView.ShowRefresh = Visibility.Collapsed;
 
-            if (mContext == eWindowExplorerPageContext.WindowExplorerPage)
-                WindowControlsGridView.AddToolbarTool("@Filter16x16.png", "Filter Elements to show", new RoutedEventHandler(FilterElementButtonClicked));
+            
+             WindowControlsGridView.AddToolbarTool("@Filter16x16.png", "Filter Elements to show", new RoutedEventHandler(FilterElementButtonClicked));
             //TODO: enable refresh to do refresh
 
             WindowControlsGridView.ShowEdit = System.Windows.Visibility.Collapsed;

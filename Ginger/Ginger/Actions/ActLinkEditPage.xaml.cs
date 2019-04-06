@@ -30,9 +30,9 @@ namespace Ginger.Actions
 
             this.f = Act;
 
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.LinkAction);
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.LinkAction);
             //TODO: fix hard coded ButtonAction use Fields
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "LinkAction");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "LinkAction");
         }
     }
 }

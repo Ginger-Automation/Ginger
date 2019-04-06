@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using GingerCore.Actions;
-using GingerWPF.BindingLib;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -71,7 +71,7 @@ namespace Ginger.ActionLib
                 l.Style = App.GetStyle("@InputFieldLabelStyle");                
                 Grid.SetRow(l, rnum);
 
-                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(param);             
+                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(Context.GetAsContext(mAct.Context), param);             
                 actionInputValueUserControl.Margin = new Thickness(5);
                 ActionConfigGrid.Children.Add(actionInputValueUserControl);
                 Grid.SetRow(actionInputValueUserControl, rnum);
@@ -119,13 +119,13 @@ namespace Ginger.ActionLib
                     ActInputValue v = mAct.GetOrCreateInputParam(tag);
                     if (e is TextBox)
                     {
-                        ControlsBinding.ObjFieldBinding((Control)e, TextBox.TextProperty, v, "Value");
+                        GingerCore.GeneralLib.BindingHandler.ObjFieldBinding((Control)e, TextBox.TextProperty, v, "Value");
                     }
 
                     if (e is ComboBox)
                     {
                         //TODO: fill combo from enum val
-                        ControlsBinding.ObjFieldBinding((Control)e, ComboBox.SelectedValueProperty, v, "Value");
+                        GingerCore.GeneralLib.BindingHandler.ObjFieldBinding((Control)e, ComboBox.SelectedValueProperty, v, "Value");
                     }
                     //TODO: check control type and bind per type
                 }

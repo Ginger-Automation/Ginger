@@ -73,7 +73,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             ProjEnvironment.StartDirtyTracking();
             if (mApplicationPage == null)
             {
-                mApplicationPage = new ApplicationPage(EnvApplication);
+                mApplicationPage = new ApplicationPage(EnvApplication, new Context() { Environment = ProjEnvironment });
             }
             return mApplicationPage;
         }
