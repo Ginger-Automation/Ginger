@@ -18,11 +18,9 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
-using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -32,23 +30,20 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static Ginger.Actions.UCValueExpression;
 
 namespace UnitTests.UITests
 {
     [TestClass]
     [Level3]
-   public class WebDriverUnitTest
+    public class WebDriverUnitTest
     {
         static BusinessFlow mBF;
         static GingerRunner mGR = null;
         static SeleniumDriver mDriver = null;
 
-       [ClassInitialize()]
+        [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            //AutoLogProxy.Init("Screen Shot Action");
-            //RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
             mGR = new GingerRunner();
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
@@ -67,6 +62,7 @@ namespace UnitTests.UITests
             mBF.CurrentActivity.TargetApplication = "WebApp";
             mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
             mDriver.StartDriver();
+
             Agent a = new Agent();
             a.Active = true;
             a.Driver = mDriver;
@@ -90,7 +86,7 @@ namespace UnitTests.UITests
         }
 
         [TestMethod]
-        public void TakeScreenShot()
+        public void TakeScreenShotAction()
         {
             //Arrange
             ActScreenShot action = new ActScreenShot();
@@ -106,20 +102,442 @@ namespace UnitTests.UITests
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
-            Assert.AreEqual(action.Error, null, "Act.Error");
-        }
 
-        [ClassCleanup()]
-        public static void ClassCleanup()
-        {
+            //Delete folder files
             System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(TestResources.GetTestResourcesFolder("ScreenShot"));
 
             foreach (System.IO.FileInfo file in di.GetFiles())
             {
                 file.Delete();
             }
-        s}
+        }
+
+        [TestMethod]
+        public void GotoURLWithCurrent()
+        {
+            //Arrange
+            string inputURL = "www.gmail.com";
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser.GetOrCreateInputParam("Value", inputURL);
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+
+            //validate using getpageurl
+            ActBrowserElement actGetPageURL = ValidatePageURL();
+            Assert.AreEqual(eRunStatus.Passed, actGetPageURL.Status, "Action Status");
+        }
+
+        public ActBrowserElement ValidatePageURL()
+        {
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GetPageURL;
+            actBrowser.AddNewReturnParams = true;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            return actBrowser;
+
+        }
+
+        [TestMethod]
+        public void GotoURLWithNewTab()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser.GetOrCreateInputParam("Value", "www.gmail.com");
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+
+            //validate using getpageurl
+            ActBrowserElement actGetPageURL = ValidatePageURL();
+            Assert.AreEqual(eRunStatus.Passed, actGetPageURL.Status, "Action Status");
+
+        }
+
+        [TestMethod]
+        public void GotoURLWithNewWindow()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser.GetOrCreateInputParam("Value", "www.gmail.com");
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewWindow.ToString());
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+
+            //validate using getpageurl
+            ActBrowserElement actGetPageURL = ValidatePageURL();
+            Assert.AreEqual(eRunStatus.Passed, actGetPageURL.Status, "Action Status");
+
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void AcceptMessageBox()
+        {
+
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.AcceptMessageBox;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void CloseAll()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.CloseAll;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+        }
+
+        [TestMethod]
+        public void CloseTabExceptByURL()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser.GetOrCreateInputParam("Value", "www.gmail.com");
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
+
+            ActBrowserElement actBrowser1 = new ActBrowserElement();
+            actBrowser1.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser1.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser1.GetOrCreateInputParam("Value", "https://opensource-demo.orangehrmlive.com/");
+            actBrowser1.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
+
+            ActBrowserElement actBrowser2 = new ActBrowserElement();
+            actBrowser2.ControlAction = ActBrowserElement.eControlAction.CloseTabExcept;
+            actBrowser2.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByUrl;
+            actBrowser2.LocateValue = "https://opensource-demo.orangehrmlive.com/";
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+            mGR.RunAction(actBrowser1, false);
+            mGR.RunAction(actBrowser2, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser2.Status, "Action Status");
+
+            //validate using getpageurl
+            ActBrowserElement actGetPageURL = ValidatePageURL();
+            Assert.AreEqual(eRunStatus.Passed, actGetPageURL.Status, "Action Status");
+        }
+
         
+        [TestMethod]
+        public void CloseTabExceptByTitle()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser.GetOrCreateInputParam("Value", "www.gmail.com");
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
+
+            ActBrowserElement actBrowser1 = new ActBrowserElement();
+            actBrowser1.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser1.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser1.GetOrCreateInputParam("Value", "https://opensource-demo.orangehrmlive.com/");
+            actBrowser1.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
+
+            ActBrowserElement actBrowser2 = new ActBrowserElement();
+            actBrowser2.ControlAction = ActBrowserElement.eControlAction.CloseTabExcept;
+            actBrowser2.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByTitle;
+            actBrowser2.LocateValue = "OrangeHRM";
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+            mGR.RunAction(actBrowser1, false);
+            mGR.RunAction(actBrowser2, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser2.Status, "Action Status");
+
+            //validate using getpageurl
+            ActBrowserElement actGetPageURL = ValidatePageURL();
+            Assert.AreEqual(eRunStatus.Passed, actGetPageURL.Status, "Action Status");
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void DeleteAllCookies()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.DeleteAllCookies;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void DismissMessageBox()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.DismissMessageBox;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void GetMessageBoxText()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GetMessageBoxText;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+        }
+
+        [TestMethod]
+        public void GetPageSource()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GetPageSource;
+            actBrowser.AddNewReturnParams = true;
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+            Assert.AreEqual(1, actBrowser.ReturnValues.Count);
+        }
+
+        [TestMethod]
+        public void GetPageURL()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GetPageURL;
+            actBrowser.AddNewReturnParams = true;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+            Assert.AreEqual(4, actBrowser.ReturnValues.Count);
+        }
+
+        [TestMethod]
+        public void GetWindowTitle()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser.GetOrCreateInputParam("Value", "https://opensource-demo.orangehrmlive.com/");
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
+
+            ActBrowserElement actBrowser1 = new ActBrowserElement();
+            actBrowser1.ControlAction = ActBrowserElement.eControlAction.GetWindowTitle;
+            actBrowser1.AddNewReturnParams = true;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+            mGR.RunAction(actBrowser1, false);
+            
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser1.Status, "Action Status");
+            Assert.AreEqual("OrangeHRM", actBrowser1.ReturnValues[0].Actual);
+        }
+
+        [TestMethod]
+        public void MaximizeWindow()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser.GetOrCreateInputParam("Value", "www.gmail.com");
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewWindow.ToString());
+            ActBrowserElement actBrowser1 = new ActBrowserElement();
+            actBrowser1.ControlAction = ActBrowserElement.eControlAction.Maximize;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+            mGR.RunAction(actBrowser1, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser1.Status, "Action Status");
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void NevigateBack()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.NavigateBack;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+        }
+
+        [TestMethod]
+        public void OpenURLInNewTab()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.OpenURLNewTab;
+            actBrowser.GetOrCreateInputParam("Value", "www.gmail.com");
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+
+            //validate using getpageurl
+            ActBrowserElement actGetPageURL = ValidatePageURL();
+            Assert.AreEqual(eRunStatus.Passed, actGetPageURL.Status, "Action Status");
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void Refresh()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.Refresh;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+        }
+
+        [TestMethod]
+        public void RunJavaScript()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser.GetOrCreateInputParam("Value", "www.google.com");
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewWindow.ToString());
+
+            ActBrowserElement actBrowser1 = new ActBrowserElement();
+            actBrowser1.ControlAction = ActBrowserElement.eControlAction.RunJavaScript;
+            actBrowser1.GetOrCreateInputParam("Value", "document.getElementById('hplogo');");
+            actBrowser1.AddNewReturnParams = true;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+            mGR.RunAction(actBrowser1, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser1.Status, "Action Status");
+            Assert.AreEqual(1, actBrowser1.ReturnValues.Count);
+
+        }
+
+        [TestMethod]
+        public void InjectJavaScript()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser.GetOrCreateInputParam("Value", "www.google.com");
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewWindow.ToString());
+
+            ActBrowserElement actBrowser1 = new ActBrowserElement();
+            actBrowser1.ControlAction = ActBrowserElement.eControlAction.InjectJS;
+            actBrowser1.GetOrCreateInputParam("Value", "document.getElementById('hplogo');");
+            actBrowser1.AddNewReturnParams = true;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+            mGR.RunAction(actBrowser1, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser1.Status, "Action Status");
+            Assert.AreEqual(0, actBrowser1.ReturnValues.Count);
+
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void SetAlertBox()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.SetAlertBoxText;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void WaitTillPageLoaded()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.CheckPageLoaded;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
+        }
     }
 }
 
