@@ -1,10 +1,12 @@
-    <Page   x:Class="GingerWPF.BusinessFlowsLib.ActivityActionsPage"
+<Page   x:Class="GingerWPF.BusinessFlowsLib.ActivityActionsPage"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
         xmlns:local1="clr-namespace:GingerWPF.GeneralLib"
+        xmlns:userControlsLib="clr-namespace:Ginger.UserControlsLib"
+        xmlns:userControlsLib1="clr-namespace:Ginger.UserControlsLib.UCListView"
         mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
       Title="ActivityActionsPage">
@@ -15,22 +17,22 @@
     <Grid>
         
 
-        <ListView x:Name="ActionsListBox">
+        <!--<ListView x:Name="ActionsListBox">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="4">
                         <Grid.ColumnDefinitions>
-                            <!--Action Number-->
+                            --><!--Action Number--><!--
                             <ColumnDefinition Width="50"/>
-                            <!--Description-->
+                            --><!--Description--><!--
                             <ColumnDefinition Width="250"/>
-                            <!--Status-->
+                            --><!--Status--><!--
                             <ColumnDefinition Width="50"/>
-                            <!--Status Icon-->
+                            --><!--Status Icon--><!--
                             <ColumnDefinition Width="50"/>
-                            <!--Elapsed-->
+                            --><!--Elapsed--><!--
                             <ColumnDefinition Width="50"/>
-                            <!--Error-->
+                            --><!--Error--><!--
                             <ColumnDefinition Width="150"/>
                             
                             
@@ -41,7 +43,7 @@
                         </Grid.RowDefinitions>
                         
                         
-                        <!--Show round button-->
+                        --><!--Show round button--><!--
                         <Button x:Name="ActionNumberButton" Height="35" Width="35" Grid.Column="0">
                             <Button.Style>
                                 <Style TargetType="{x:Type Button}">
@@ -55,7 +57,7 @@
                                                         </Path.Data>
                                                     </Path>
 
-                                                     <!--Show Row Number-->
+                                                     --><!--Show Row Number--><!--
                                                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF3EA7FC" FontSize="12" Text="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource RowNumberConverter}}" />
 
                                                 </Grid>
@@ -88,19 +90,32 @@
                         
                         
 
-                        <!--show line between rows-->
+                        --><!--show line between rows--><!--
                         <Rectangle Grid.Row="1" Grid.ColumnSpan="5" HorizontalAlignment="Stretch"  VerticalAlignment="Center" Fill="LightGray" Height="1"/>
 
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
             
-        </ListView>
+        </ListView>-->
+        <userControlsLib1:UcListView x:Name="xActionsListView" >
+            <!--<xlis>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Description}" Foreground="Black"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </xlis>-->
+        </userControlsLib1:UcListView>
+        <!--<DataTemplate x:Name="xActionListItemTemplate">-->
+            <!--<userControlsLib1:ListViewItem1 x:Name="xActionListItem" />-->
+        <!--</DataTemplate>-->
 
-        <StackPanel x:Name="FloatingStackPanel" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
+
+        <!--<StackPanel x:Name="FloatingStackPanel" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
             <Button x:Name="EditButton" UserControls:ImageMaker.Content="Edit" Click="EditButton_Click" Width="32" Height="32"/>
             <Button x:Name="DeleteButton" UserControls:ImageMaker.Content="Delete" Click="DeleteButton_Click"  Width="32" Height="32"/>
-        </StackPanel>
+        </StackPanel>-->
         
     </Grid>
 </Page>

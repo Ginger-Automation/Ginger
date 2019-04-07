@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using Ginger;
+using Ginger.BusinessFlowPages_New.ItemsListControls;
+using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
 using System.Windows;
@@ -36,70 +38,83 @@ namespace GingerWPF.BusinessFlowsLib
             InitializeComponent();
 
             mActivity = Activity;
-            ActionsListBox.ItemsSource = mActivity.Acts;
+
+            SetListView();
+            xActionsListView.List.ItemsSource = mActivity.Acts;
             
             Activity.Acts.PropertyChanged += Acts_PropertyChanged;
-            ActionsListBox.SelectionChanged += ActionsListBox_SelectionChanged;
+            xActionsListView.List.SelectionChanged += ActionsListBox_SelectionChanged;
         }
 
         private void SetListView()
         {
-            GridView GV = new GridView();
-            //TODO: add row num
+            DataTemplate dataTemp = new DataTemplate();
 
-            GridViewColumn GVC1 = new GridViewColumn() { Header = "Description", Width = 250, DisplayMemberBinding = new Binding(nameof(Act.Description)) };
-            GV.Columns.Add(GVC1);
+            FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(ActionListItem));
+            listItemFac.SetBinding(ActionListItem.ActionProperty, new Binding());
 
-            GridViewColumn GVC2 = new GridViewColumn() { Header = "Status", Width = 100, DisplayMemberBinding = new Binding(nameof(Act.Status)) };
-            GV.Columns.Add(GVC2);
-         
-            GridViewColumn GVC3 = new GridViewColumn() { Header = "Elapsed", Width = 50, DisplayMemberBinding = new Binding(nameof(Act.Elapsed)) };
-            GV.Columns.Add(GVC3);
-
-            GridViewColumn GVC4 = new GridViewColumn() { Header = "Error", Width = 100, DisplayMemberBinding = new Binding(nameof(Act.Error)) };
-            GV.Columns.Add(GVC4);
-
-            //Hide the List View header
-            System.Windows.Style style = new System.Windows.Style();
-            style.Setters.Add(new Setter() { Property = VisibilityProperty, Value = Visibility.Collapsed });
-            GV.ColumnHeaderContainerStyle = style;
-
-            ActionsListBox.View = GV;
+            dataTemp.VisualTree = listItemFac;
+            xActionsListView.List.ItemTemplate = dataTemp; 
         }
+
+        //private void SetListView()
+        //{
+        //    GridView GV = new GridView();
+        //    //TODO: add row num
+
+        //    GridViewColumn GVC1 = new GridViewColumn() { Header = "Description", Width = 250, DisplayMemberBinding = new Binding(nameof(Act.Description)) };
+        //    GV.Columns.Add(GVC1);
+
+        //    GridViewColumn GVC2 = new GridViewColumn() { Header = "Status", Width = 100, DisplayMemberBinding = new Binding(nameof(Act.Status)) };
+        //    GV.Columns.Add(GVC2);
+
+        //    GridViewColumn GVC3 = new GridViewColumn() { Header = "Elapsed", Width = 50, DisplayMemberBinding = new Binding(nameof(Act.Elapsed)) };
+        //    GV.Columns.Add(GVC3);
+
+        //    GridViewColumn GVC4 = new GridViewColumn() { Header = "Error", Width = 100, DisplayMemberBinding = new Binding(nameof(Act.Error)) };
+        //    GV.Columns.Add(GVC4);
+
+        //    //Hide the List View header
+        //    System.Windows.Style style = new System.Windows.Style();
+        //    style.Setters.Add(new Setter() { Property = VisibilityProperty, Value = Visibility.Collapsed });
+        //    GV.ColumnHeaderContainerStyle = style;
+
+        //    ActionsListBox.View = GV;
+        //}
 
         private void ActionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Make the list synced with the Activity Acts, so if user change action the activity current act is the same
-            mActivity.Acts.CurrentItem = ActionsListBox.SelectedItem;            
-            UpdateFloatingButtons();            
+            mActivity.Acts.CurrentItem = xActionsListView.List.SelectedItem;
+            //UpdateFloatingButtons();
         }
 
-        private void UpdateFloatingButtons()
-        {
-            if (ActionsListBox.SelectedItem != null)
-            {
-                ListViewItem lvi = (ListViewItem)ActionsListBox.ItemContainerGenerator.ContainerFromItem(ActionsListBox.SelectedItem);
-                if (lvi != null)
-                {
-                    Point rel = lvi.TranslatePoint(new Point(0, 0), ActionsListBox);
-                    FloatingStackPanel.Margin = new Thickness(0, rel.Y, 0, 0);
-                    FloatingStackPanel.Visibility = Visibility.Visible;
-                }
-            }
-            else
-            {
-                FloatingStackPanel.Visibility = Visibility.Collapsed;
-            }
-        }
+        //private void UpdateFloatingButtons()
+        //{
+        //    if (xActionsListView.List.SelectedItem != null)
+        //    {
+        //        ListViewItem lvi = (ListViewItem)xActionsListView.List.ItemContainerGenerator.ContainerFromItem(xActionsListView.List.SelectedItem);
+        //        if (lvi != null)
+        //        {
+        //            Point rel = lvi.TranslatePoint(new Point(0, 0), xActionsListView.List);
+        //            FloatingStackPanel.Margin = new Thickness(0, rel.Y, 0, 0);
+        //            FloatingStackPanel.Visibility = Visibility.Visible;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        FloatingStackPanel.Visibility = Visibility.Collapsed;
+        //    }
+        //}
 
         private void Acts_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "CurrentItem")
             {
                 // since we can get event while GingerRunner is on another thread we need dispatcher
-                ActionsListBox.Dispatcher.Invoke(() => {
-                    ActionsListBox.SelectedItem = mActivity.Acts.CurrentItem;
-                    ActionsListBox.Refresh();
+                xActionsListView.List.Dispatcher.Invoke(() => {
+                    xActionsListView.List.SelectedItem = mActivity.Acts.CurrentItem;
+                    xActionsListView.List.Refresh();
                 });
             }
         }
@@ -129,7 +144,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
             mActivity.Acts.Remove(act);
             mActivity.Acts.CurrentItem = newSelectedAct;
-            UpdateFloatingButtons();
+            //UpdateFloatingButtons();
         }
     }
 }

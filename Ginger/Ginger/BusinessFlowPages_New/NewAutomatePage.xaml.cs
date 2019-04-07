@@ -73,7 +73,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             App.PropertyChanged += App_PropertyChanged;
 
-            xCurrentActivityFrame.Content = new ActivityPage((Activity)mBusinessFlow.Activities[0], mContext);  // TODO: use binding? or keep each activity page
+            xCurrentActivityFrame.Content = new NewActivityEditPage((Activity)mBusinessFlow.Activities[0], mContext);  // TODO: use binding? or keep each activity page
 
             InitGingerRunnerControls();
 
@@ -87,7 +87,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void App_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         static GingerRunnerControlsPage mGingerRunnerControlsPage;
@@ -169,7 +169,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 SelectedActivity.Acts.CurrentItem = SelectedActivity.Acts[0];
             }
-            xCurrentActivityFrame.Content = new ActivityPage(SelectedActivity, mContext);
+            xCurrentActivityFrame.Content = new NewActivityEditPage(SelectedActivity, mContext);
         }
 
         private void BusinessFlowsHyperlink_Click(object sender, RoutedEventArgs e)

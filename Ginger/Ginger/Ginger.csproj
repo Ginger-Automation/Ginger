@@ -613,6 +613,9 @@
     <Compile Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml.cs">
       <DependentUpon>WindowsExplorerNavPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\ItemsListControls\ActionListItem.xaml.cs">
+      <DependentUpon>ActionListItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BusinessFlowWindows\AutomateEventArgs.cs" />
     <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
       <DependentUpon>BusinessFlowsAutomatePage.xaml</DependentUpon>
@@ -660,6 +663,12 @@
     </Compile>
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\UCListView\UcListViewItem.xaml.cs">
+      <DependentUpon>UcListViewItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\UCListView\UcListView.xaml.cs">
+      <DependentUpon>UcListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\UCWindowsGrid.xaml.cs">
       <DependentUpon>UCWindowsGrid.xaml</DependentUpon>
@@ -828,8 +837,8 @@
     <Compile Include="BusinessFlowPages_New\ActivityActionsPage.xaml.cs">
       <DependentUpon>ActivityActionsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ActivityPage.xaml.cs">
-      <DependentUpon>ActivityPage.xaml</DependentUpon>
+    <Compile Include="BusinessFlowPages_New\NewActivityEditPage.xaml.cs">
+      <DependentUpon>NewActivityEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowPages_New\ActivityVariablesPage.xaml.cs">
       <DependentUpon>ActivityVariablesPage.xaml</DependentUpon>
@@ -2865,7 +2874,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowPages_New\ActivityPage.xaml">
+    <Page Include="BusinessFlowPages_New\ItemsListControls\ActionListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\NewActivityEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3144,6 +3157,14 @@
     <Page Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinTargetFolder.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControlsLib\UCListView\UcListViewItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\UCListView\UcListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\UCWindowsGrid.xaml">
       <SubType>Designer</SubType>

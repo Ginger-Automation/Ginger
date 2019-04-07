@@ -34,13 +34,13 @@ namespace GingerWPF.BusinessFlowsLib
     /// <summary>
     /// Interaction logic for ActivityPage.xaml
     /// </summary>
-    public partial class ActivityPage : Page
+    public partial class NewActivityEditPage : Page
     {
         Activity mActivity;
         Context mContext;
 
         // We keep a static page so even if we move between activities the Run controls and info stay the same
-        public ActivityPage(Activity Activity, Context context)
+        public NewActivityEditPage(Activity Activity, Context context)
         {
             InitializeComponent();
 
