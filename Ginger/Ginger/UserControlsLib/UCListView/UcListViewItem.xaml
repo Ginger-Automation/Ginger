@@ -5,89 +5,88 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
              xmlns:state="clr-namespace:Ginger.MoveToGingerWPF.Run_Set_Pages"
+             xmlns:local1="clr-namespace:GingerWPF.GeneralLib"
              mc:Ignorable="d" 
-             d:DesignHeight="50" d:DesignWidth="510">
+             d:DesignHeight="50" d:DesignWidth="600">
+
+    <UserControl.Resources>
+        <local1:ListItemIndexConverter x:Key="ListItemIndexConverter" />
+    </UserControl.Resources>
     
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" Width="510">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200*"/>
-            <ColumnDefinition Width="55"/>
-        </Grid.ColumnDefinitions>
+    <Grid HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="0"/>
+            <RowDefinition x:Name="xExtraDetailsRow" Height="25"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="xExpanderCol" Width="16"/>
+            <ColumnDefinition x:Name="xNumCol" Width="20"/>
+            <ColumnDefinition x:Name="xIconCol" Width="20"/>
+            <ColumnDefinition x:Name="xDetailsCol" Width="100*"/>
+            <ColumnDefinition x:Name="xStatusCol" Width="20"/>
+        </Grid.ColumnDefinitions>
+
+        <usercontrols:ucButton x:Name="xDetailViewBtn" Grid.Row="0" Grid.Column="0" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="15" ButtonImageHeight="11" ButtonImageType="Expand" Click="xDetailViewBtn_Click" VerticalAlignment="Top" Visibility="Visible" />
+
+        <TextBlock x:Name="xItemIndexTxt" Grid.RowSpan="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{StaticResource $BackgroundColor_Gray}" FontSize="12" Text="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Converter={StaticResource ListItemIndexConverter}}" />
         
-        <Border x:Name="NormalBorder" BorderBrush="{DynamicResource $Color_DarkBlue}" BorderThickness="1" Grid.RowSpan="2" Grid.ColumnSpan="2" Visibility="Collapsed"/>
+        <usercontrols:ImageMakerControl x:Name="xItemIcon" Grid.RowSpan="2" Grid.Column="2" ImageType="Unknown" SetAsFontImageWithSize="16" Height="16" Width="16" HorizontalAlignment="Center" Margin="0,0,0,0"/>
 
-        <state:BorderStatus x:Name="xBorder" Grid.RowSpan="2"  Grid.ColumnSpan="2" Visibility="Collapsed"/>
+        <TextBlock x:Name="xItemNameTxtBlock" Grid.Row="0" Grid.Column="3" HorizontalAlignment="Left" Text="Title" FontSize="13" MaxWidth="250" Margin="2,0,0,0" Foreground="{StaticResource $BackgroundColor_DarkBlue}" TextTrimming="CharacterEllipsis"  />
 
-        <state:StatusItem x:Name="xStatus" Grid.Column="1"  Grid.Row="0" Width="60" Height="60" Margin="0 0 -2 0"/>
-        <Label Grid.Row="0" Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="15"  Width="Auto" Grid.Column="1"  Margin="0 -3 0 0">
-            <Label.Content >
-                <StackPanel Orientation="Horizontal">
-                    <usercontrols:ImageMakerControl x:Name="xStatusIcon" Foreground="White" SetAsFontImageWithSize="15" Width="15" Height="15" FontWeight="Thin"/>
-                </StackPanel>
-            </Label.Content>
-        </Label>
-
-        <StackPanel x:Name="xItemDetailsPnl" Orientation="Horizontal">
-            <usercontrols:ucButton x:Name="xDetailView" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="15" ButtonImageHeight="11" ButtonImageType="Expand" Click="xDetailView_Click" VerticalAlignment="Bottom" Visibility="Visible" />
-            <TextBlock x:Name="xItemNameTxtBlock" FontSize="13" MaxWidth="250" Margin="0,3,0,0" Foreground="{StaticResource $BackgroundColor_DarkBlue}" TextTrimming="CharacterEllipsis"  ></TextBlock>
-            <Label x:Name="xItemSeparatorLbl" Content=" :" Margin="0,-2,0,0"></Label>
-            <TextBlock x:Name="xItemDescriptionTxtBlock" MaxWidth="170" FontSize="11" Margin="0 6 0 0" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontStyle="Normal" FontWeight="Normal" TextTrimming="CharacterEllipsis" TextWrapping="Wrap"  HorizontalAlignment="Left"></TextBlock>
-        </StackPanel>
-
-        <DockPanel x:Name="xItemToolsBarPnl" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Grid.ColumnSpan="2" Margin="0 0 0 0" Visibility="Collapsed">
-            <usercontrols:ucButton x:Name="xItemContinue" DockPanel.Dock="Right" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xRunnerItemContinue_Click" VerticalAlignment="Bottom" Visibility="Visible" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"/>
-            <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $SelectionColor_Pink}"    />
-            <Menu x:Name="xItemMenu" Margin="0,5,0,0" DockPanel.Dock="Right" Visibility="Collapsed" >
-                <MenuItem >
-                    <MenuItem.Icon>
-                        <usercontrols:ImageMakerControl  ImageType="EllipsisH" SetAsFontImageWithSize="16" Height="16" Width="16" HorizontalAlignment="Center" Margin="0,0,0,0"/>
-                    </MenuItem.Icon>
-                    <!--<MenuItem x:Name="xDuplicateBusinessflow" Style="{StaticResource $MenuItemStyle}" Click="xDuplicateBusinessflow_Click">
+        <DockPanel x:Name="xExtraDetailsPnl" Grid.Row="1" Grid.Column="3">
+            <TextBlock x:Name="xItemDescriptionTxtBlock" DockPanel.Dock="Left" Text="Description"  MaxWidth="250" FontSize="11" Margin="2 0 0 0" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontStyle="Normal" FontWeight="Normal" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left"/>
+            <DockPanel x:Name="xItemActionsPnl" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                <usercontrols:ucButton x:Name="xItemContinue" DockPanel.Dock="Right" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xRunnerItemContinue_Click" VerticalAlignment="Bottom" Visibility="Visible" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"/>
+                <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $SelectionColor_Pink}"/>
+                <Menu x:Name="xItemMenu" Margin="0,5,0,0" DockPanel.Dock="Right" Visibility="Collapsed" >
+                    <MenuItem >
                         <MenuItem.Icon>
-                            <usercontrols:ImageMakerControl ImageType="Duplicate" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
+                            <usercontrols:ImageMakerControl  ImageType="EllipsisH" SetAsFontImageWithSize="16" Height="16" Width="16" HorizontalAlignment="Center" Margin="0,0,0,0"/>
                         </MenuItem.Icon>
-                        <MenuItem.Header>
-                            <GingerCore:ucTextDicResource Text="Duplicate [BusinessFlow]"/>
-                        </MenuItem.Header>
+                        <!--<MenuItem x:Name="xDuplicateBusinessflow" Style="{StaticResource $MenuItemStyle}" Click="xDuplicateBusinessflow_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl ImageType="Duplicate" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Duplicate [BusinessFlow]"/>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem x:Name="xautomateBusinessflow" Style="{StaticResource $MenuItemStyle}" Click="xautomateBusinessflow_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl ImageType="Automate" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Automate [BusinessFlow]"/>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem x:Name="xGenerateReport" Style="{StaticResource $MenuItemStyle}" Click="xGenerateReport_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl ImageType="Report" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Generate [BusinessFlow] Report"/>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem x:Name="xExportToAlm" Style="{StaticResource $MenuItemStyle}" Click="xExportToAlm_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl ImageType="Export" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Export [BusinessFlow] Activities Group to ALM"/>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem x:Name="xResetStatus_Buss_Flow_Actions" Style="{StaticResource $MenuItemStyle}" Click="xResetStatus_Buss_Flow_Actions_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl ImageType="Reset" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Reset Status of [BusinessFlow]"/>
+                                </MenuItem.Header>
+                            </MenuItem>-->
                     </MenuItem>
-                    <MenuItem x:Name="xautomateBusinessflow" Style="{StaticResource $MenuItemStyle}" Click="xautomateBusinessflow_Click">
-                        <MenuItem.Icon>
-                            <usercontrols:ImageMakerControl ImageType="Automate" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                        </MenuItem.Icon>
-                        <MenuItem.Header>
-                            <GingerCore:ucTextDicResource Text="Automate [BusinessFlow]"/>
-                        </MenuItem.Header>
-                    </MenuItem>
-                    <MenuItem x:Name="xGenerateReport" Style="{StaticResource $MenuItemStyle}" Click="xGenerateReport_Click">
-                        <MenuItem.Icon>
-                            <usercontrols:ImageMakerControl ImageType="Report" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                        </MenuItem.Icon>
-                        <MenuItem.Header>
-                            <GingerCore:ucTextDicResource Text="Generate [BusinessFlow] Report"/>
-                        </MenuItem.Header>
-                    </MenuItem>
-                    <MenuItem x:Name="xExportToAlm" Style="{StaticResource $MenuItemStyle}" Click="xExportToAlm_Click">
-                        <MenuItem.Icon>
-                            <usercontrols:ImageMakerControl ImageType="Export" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                        </MenuItem.Icon>
-                        <MenuItem.Header>
-                            <GingerCore:ucTextDicResource Text="Export [BusinessFlow] Activities Group to ALM"/>
-                        </MenuItem.Header>
-                    </MenuItem>
-                    <MenuItem x:Name="xResetStatus_Buss_Flow_Actions" Style="{StaticResource $MenuItemStyle}" Click="xResetStatus_Buss_Flow_Actions_Click">
-                        <MenuItem.Icon>
-                            <usercontrols:ImageMakerControl ImageType="Reset" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                        </MenuItem.Icon>
-                        <MenuItem.Header>
-                            <GingerCore:ucTextDicResource Text="Reset Status of [BusinessFlow]"/>
-                        </MenuItem.Header>
-                    </MenuItem>-->
-                </MenuItem>
-            </Menu>
+                </Menu>
+            </DockPanel>
 
             <usercontrols:ucButton x:Name="xViewItemBtn" DockPanel.Dock="Right"  ButtonImageType="View"   ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"   VerticalAlignment="Bottom"  Visibility="Collapsed"/>
             <!--<usercontrols:ucButton x:Name="xconfig" DockPanel.Dock="Right" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Config" Click="xconfig_Click"  VerticalAlignment="Bottom" Visibility="Collapsed"   >
@@ -106,5 +105,15 @@
                 </usercontrols:ucButton.ToolTip>
             </usercontrols:ucButton>-->
         </DockPanel>
+
+        <state:StatusItem x:Name="xStatusImage"  Grid.Column="4"  Grid.RowSpan="2" Width="20" Height="20"/>
+        <!--<Label Grid.Row="0" Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="15"  Width="Auto" Grid.Column="1"  Margin="0 -3 0 0">
+            <Label.Content >
+                <StackPanel Orientation="Horizontal">
+                    <usercontrols:ImageMakerControl x:Name="xStatusIcon" Foreground="White" SetAsFontImageWithSize="15" Width="15" Height="15" FontWeight="Thin"/>
+                </StackPanel>
+            </Label.Content>
+        </Label>-->
+        
     </Grid>
 </UserControl>

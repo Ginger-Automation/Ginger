@@ -46,7 +46,7 @@ namespace Ginger.UserControlsLib.UCListView
         //}
         
 
-        private void xDetailView_Click(object sender, RoutedEventArgs e)
+        private void xDetailViewBtn_Click(object sender, RoutedEventArgs e)
         {
 
         }
