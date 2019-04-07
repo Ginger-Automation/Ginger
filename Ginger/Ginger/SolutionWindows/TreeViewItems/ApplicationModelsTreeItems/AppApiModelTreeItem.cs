@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionWindows.TreeViewItems;
@@ -24,6 +26,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using System.Linq;
 
 namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 {
@@ -60,7 +63,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         public Page EditPage()
         {
             if(mAPIModelPage == null)
-                mAPIModelPage = new APIModelPage(mApiModel);            
+                mAPIModelPage = new APIModelPage(mApiModel);
             else
                 mAPIModelPage.BindUiControls();
 
@@ -88,8 +91,27 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             mContextMenu = new ContextMenu();
 
             AddItemNodeBasicManipulationsOptions(mContextMenu);
-            
+
             AddSourceControlOptions(mContextMenu);
+        }
+
+        public override void DuplicateTreeItem(object item)
+        {
+            RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)item);
+            if (copiedItem != null)
+            {
+                HandleGlobalModelParameters(item, copiedItem);          // avoid generating new GUIDs for Global Model Parameters associated to API Model being copied
+                (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)item))).AddRepositoryItem(copiedItem);
+            }
+        }
+
+        // avoid generating new GUIDs for Global Model Parameters associated to API Model being copied
+        public static void HandleGlobalModelParameters(object item, RepositoryItemBase copiedItem)
+        {
+            foreach (GlobalAppModelParameter gAMPara in (copiedItem as ApplicationAPIModel).GlobalAppModelParameters)
+            {
+                gAMPara.Guid = (item as ApplicationAPIModel).GlobalAppModelParameters.Where(m => m.ElementName == gAMPara.ElementName).FirstOrDefault().Guid;
+            }
         }
     }
 }

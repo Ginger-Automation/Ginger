@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.Actions.UserControls;
+using Ginger.BusinessFlowWindows;
 using GingerCore.Actions.VisualTesting;
 using GingerWPF.WizardLib;
 using System;
@@ -38,6 +39,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     {
         AddPOMWizard mWizard;
         ScreenShotViewPage mScreenshotPage;
+        ucBusinessFlowMap mBusinessFlowControl;
 
         public POMGeneralDetailsWizardPage()
         {
@@ -58,6 +60,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                     xDescriptionTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.Description));
                     xTagsViewer.Init(mWizard.mPomLearnUtils.POM.TagsKeys);
+
+                    mBusinessFlowControl = new ucBusinessFlowMap(mWizard.mPomLearnUtils.POM, nameof(mWizard.mPomLearnUtils.POM.MappedBusinessFlow));
+                    xFrameBusinessFlowControl.Content = mBusinessFlowControl;
+                    SetDefaultPage();
                     break;
                 case EventType.Active:
                     ShowScreenShot();
@@ -68,9 +74,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     else
                     {
                         xTakeScreenShotLoadButton.Visibility = Visibility.Visible;
-                    }
+                    }                                   
                     break;
             }
+        }
+
+        private void SetDefaultPage()
+        {
+            xPageUrlRadioBtn.IsChecked = true;
+            mBusinessFlowControl.TargetApplication = mWizard.mPomLearnUtils.POM.TargetApplicationKey.ItemName;
         }
 
         public void ShowScreenShot()
@@ -111,6 +123,22 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 {
                     Reporter.ToUser(eUserMsgKey.ImageSize, "500");
                 }
+            }
+        }
+        
+        private void xRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Convert.ToBoolean(xPageUrlRadioBtn.IsChecked))
+            {
+                mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.PageURL;
+                xURLTextBox.Visibility = Visibility.Visible;
+                xFrameBusinessFlowControl.Visibility = Visibility.Hidden; 
+            }
+            else
+            {
+                mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.BusinessFlow;
+                xFrameBusinessFlowControl.Visibility = Visibility.Visible;
+                xURLTextBox.Visibility = Visibility.Hidden;
             }
         }
     }
