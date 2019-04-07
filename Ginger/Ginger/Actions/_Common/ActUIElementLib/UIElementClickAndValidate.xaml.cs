@@ -73,7 +73,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             xValidationElementTypeComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElement), mPlatform.GetPlatformUIElementsType(), false, null);
             xValidationElementLocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocateBy), mPlatform.GetPlatformUIElementLocatorsList(), false, null);
             SetLocateValueFrame();
-            GingerCore.General.ActInputValueBinding(LoopThroughClicks, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.LoopThroughClicks, "False"));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(LoopThroughClicks, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.LoopThroughClicks, "False"));
 
             xValidationElementLocateByComboBox.ComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
         }
@@ -150,7 +150,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private ePlatformType GetActionPlatform()
         {
             string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
-            ePlatformType platform = (from x in  WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            ePlatformType platform = (from x in  WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             return platform;
         }
     }

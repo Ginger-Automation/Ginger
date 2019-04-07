@@ -33,7 +33,7 @@ namespace Ginger.Run.RunSetActions
 
             mRunSetActionScript = RunSetActionScript;
 
-            App.ObjFieldBinding(ScriptFileNameTextBox, TextBox.TextProperty, mRunSetActionScript, RunSetActionScript.Fields.ScriptFileName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptFileNameTextBox, TextBox.TextProperty, mRunSetActionScript, RunSetActionScript.Fields.ScriptFileName);
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -42,7 +42,7 @@ namespace Ginger.Run.RunSetActions
 
             dlg.DefaultExt = "*.VBS";
             dlg.Filter = "Script File (*.VBS)|*.VBS";
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             
             if(dlg.ShowDialog()==System.Windows.Forms.DialogResult.OK)
             {

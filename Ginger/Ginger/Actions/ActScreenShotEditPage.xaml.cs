@@ -48,7 +48,7 @@ namespace Ginger.Actions
             {
                 String Name = folderDlg.SelectedPath;
                 Environment.SpecialFolder root = folderDlg.RootFolder;
-                string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+                string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
                 string FileName = Name.ToUpper();
                 if (FileName.Contains(SolutionFolder))
                 {

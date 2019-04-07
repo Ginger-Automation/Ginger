@@ -50,9 +50,9 @@ namespace Ginger.Run
 
             VariableForTCRunName.Init(null, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.VariableForTCRunName);
 
-            App.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.VariableForTCRunName);
-            App.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.isVariableInTCRunUsed);
-            App.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.toAttachActivitiesGroupReport);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.VariableForTCRunName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.isVariableInTCRunUsed);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.toAttachActivitiesGroupReport);
             xFilterByStatusDroplist.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.FilterStatus));            
         }
         private ExportResultsToALMConfigPage()
@@ -64,9 +64,9 @@ namespace Ginger.Run
                 VariableForTCRunName.Content = "GingerRun_{VBS Eval=now()}";
             }
             VariableForTCRunName.Init(null, mPublishToALMConfig, nameof(PublishToALMConfig.VariableForTCRunName));
-            App.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, mPublishToALMConfig, nameof(PublishToALMConfig.VariableForTCRunName));
-            App.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.IsVariableInTCRunUsed));
-            App.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.ToAttachActivitiesGroupReport));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, mPublishToALMConfig, nameof(PublishToALMConfig.VariableForTCRunName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.IsVariableInTCRunUsed));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.ToAttachActivitiesGroupReport));
             xFilterByStatusDroplist.BindControl(mPublishToALMConfig, nameof(PublishToALMConfig.FilterStatus));
         }
 

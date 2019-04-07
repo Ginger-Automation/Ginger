@@ -47,7 +47,7 @@ namespace Ginger.Drivers.AndroidDeviceADBLib
 
         private void InitDeviceView()
         {
-            string DeviceConfigFolder = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\Devices\nexus_4\");
+            string DeviceConfigFolder = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\Devices\nexus_4\");
             mDeviceViewPage = new DeviceViewPage(DeviceConfigFolder);
             DeviceViewFrame.Content = mDeviceViewPage;
             RefreshConnectedDevices();

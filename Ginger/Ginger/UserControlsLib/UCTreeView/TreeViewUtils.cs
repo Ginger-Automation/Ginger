@@ -103,7 +103,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             {
                 Label itemTitleLbl = new Label();
                 if (itemObj != null)
-                    BindingLib.ControlsBinding.ObjFieldBinding(itemTitleLbl, Label.ContentProperty, itemObj, itemObjTitleProperty);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(itemTitleLbl, Label.ContentProperty, itemObj, itemObjTitleProperty);
                 else
                     itemTitleLbl.Content = itemObjTitleProperty;
                 headerStack.Children.Add(itemTitleLbl);
@@ -127,7 +127,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     modifiedIcon.Margin = new Thickness(0, 10, 10, 0);
                     modifiedIcon.ToolTip = "This item was modified";
                     if (string.IsNullOrEmpty(objItemModifiedIndicationBoolPropertyName) == false)
-                        BindingLib.ControlsBinding.ObjFieldBinding(modifiedIcon, ImageMakerControl.VisibilityProperty, itemObj, objItemModifiedIndicationBoolPropertyName, BindingMode:BindingMode.OneWay, bindingConvertor: new System.Windows.Controls.BooleanToVisibilityConverter());
+                        GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(modifiedIcon, ImageMakerControl.VisibilityProperty, itemObj, objItemModifiedIndicationBoolPropertyName, BindingMode:BindingMode.OneWay, bindingConvertor: new System.Windows.Controls.BooleanToVisibilityConverter());
                     headerStack.Children.Add(modifiedIcon);
                 }
                 catch

@@ -124,13 +124,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             HTMLReportConfiguration copiedItem = (HTMLReportConfiguration)CopyTreeItemWithNewName((RepositoryItemBase)item);
 
-            //TODO: why below is needed??
-            copiedItem.ID = copiedItem.SetReportTemplateSequence(true);
-            copiedItem.IsDefault = false;
             if (copiedItem != null)
             {
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(copiedItem);
-                WorkSpace.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+                //TODO: why below is needed??
+                copiedItem.ID = copiedItem.SetReportTemplateSequence(true);
+                copiedItem.IsDefault = false;
+                if (copiedItem != null)
+                {
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(copiedItem);
+                    WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+                }
             }
         }
     }

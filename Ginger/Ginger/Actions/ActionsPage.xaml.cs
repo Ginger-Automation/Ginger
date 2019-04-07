@@ -233,6 +233,8 @@ namespace Ginger.Actions
                mCurrentActivity.Acts.Remove(a1);
             }
             mBusinessFlow.AddActivity(activity);
+            mBusinessFlow.Activities.CurrentItem = activity;
+
         }
 
         private void AddAction(object sender, RoutedEventArgs e)
@@ -253,7 +255,7 @@ namespace Ginger.Actions
         {  
             if (e.PropertyName == "CurrentItem")
             {
-                App.AutomateTabGingerRunner.HighlightActElement((Act)grdActions.CurrentItem);
+                mContext.Runner.HighlightActElement((Act)grdActions.CurrentItem);
             }            
         }
 
@@ -304,7 +306,7 @@ namespace Ginger.Actions
             if (grdActions.CurrentItem != null)
             {
                 Act a = (Act)grdActions.CurrentItem;
-                a.SolutionFolder = WorkSpace.UserProfile.Solution.Folder.ToUpper();
+                a.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
                 a.Context = mContext;
                 ActionEditPage actedit = new ActionEditPage(a, EditMode);
                 actedit.ap = this;

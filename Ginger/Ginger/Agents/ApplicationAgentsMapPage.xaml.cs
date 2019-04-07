@@ -151,7 +151,7 @@ namespace Ginger.Agents
 
             ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
             ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow; 
-            ((Agent)AG.Agent).SolutionFolder =  WorkSpace.UserProfile.Solution.Folder;
+            ((Agent)AG.Agent).SolutionFolder =  WorkSpace.Instance.Solution.Folder;
             ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             ((Agent)AG.Agent).StartDriver();               
             //For ASCF, launch explorer automatically when launching Agent
