@@ -29,7 +29,7 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
 
-            GingerCore.General.ActInputValueBinding(xSetEmptyValueForStringVariable, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(nameof(ActClearAllVariables.SetEmptyValue), "True"));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(xSetEmptyValueForStringVariable, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(nameof(ActClearAllVariables.SetEmptyValue), "True"));
         }
     }
 }

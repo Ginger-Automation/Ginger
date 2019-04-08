@@ -77,7 +77,13 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
             }
         }
-        
+
+        public override void UpdateContext(Context context)
+        {
+            base.UpdateContext(context);
+            mUIAutomationHelper.BusinessFlow = context.BusinessFlow;
+        }
+
         public override void CloseDriver()
         {
             mUIAutomationHelper.StopRecording();

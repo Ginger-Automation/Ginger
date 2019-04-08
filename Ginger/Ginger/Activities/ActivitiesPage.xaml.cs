@@ -141,7 +141,7 @@ namespace Ginger.BusinessFlowFolder
 
         private void RunFloatingButtonClicked(object sender, RoutedEventArgs e)
         {
-            App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
+            mContext.Runner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActivity, null); 
         }
                
@@ -166,7 +166,8 @@ namespace Ginger.BusinessFlowFolder
                 
                 mBusinessFlow.SetActivityTargetApplication(instance);
                 mBusinessFlow.AddActivity(instance);
-                
+                mBusinessFlow.Activities.CurrentItem = instance;
+
             }                
             else if (droppedItem.GetType() == typeof(ActivitiesGroup))
             {

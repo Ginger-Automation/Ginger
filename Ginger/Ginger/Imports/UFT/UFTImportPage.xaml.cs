@@ -84,7 +84,7 @@ namespace Ginger.Imports.UFT
             SetActivitiesGridView();
 
             eFilter mFilter = eFilter.AllLines;
-            App.FillComboFromEnumVal(FilterComboBox, mFilter);
+            GingerCore.General.FillComboFromEnumObj(FilterComboBox, mFilter);
             
             //Pre Load all the Target Applications
             TargetApplication.Items.Add("Google");
@@ -97,7 +97,7 @@ namespace Ginger.Imports.UFT
             InitCommonFunctionMappingUCGrid();
 
             TargetApplication sTarget = new TargetApplication();
-            sTarget.AppName =  WorkSpace.UserProfile.Solution.MainApplication.ToString();
+            sTarget.AppName =  WorkSpace.Instance.Solution.MainApplication.ToString();
             sTarget.Selected = true;
             TargetApplicationsList.Add(sTarget);
             mBusinessFlow.TargetApplications = TargetApplicationsList;
@@ -183,7 +183,7 @@ namespace Ginger.Imports.UFT
             at.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + "1";
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
-            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.UserProfile.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
+            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.Instance.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
             //App.BusinessFlow = mBusinessFlow;
            
             //AddActionPage addAction = new AddActionPage();
