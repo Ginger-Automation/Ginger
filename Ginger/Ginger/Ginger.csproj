@@ -664,6 +664,9 @@
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\UCListView\UCITemExecutionStatus.xaml.cs">
+      <DependentUpon>UCITemExecutionStatus.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\UCListView\UcListViewItem.xaml.cs">
       <DependentUpon>UcListViewItem.xaml</DependentUpon>
     </Compile>
@@ -3157,6 +3160,10 @@
     <Page Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinTargetFolder.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControlsLib\UCListView\UCITemExecutionStatus.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\UCListView\UcListViewItem.xaml">
       <SubType>Designer</SubType>

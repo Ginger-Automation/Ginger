@@ -12,12 +12,13 @@
             <RowDefinition Height="40" />
             <RowDefinition Height="300*" />
         </Grid.RowDefinitions>
+        
         <DockPanel Grid.Row="0" Margin="35,0,40,0" HorizontalAlignment="Stretch">
-            <StackPanel x:Name="xListTitlePnl" Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal">
                 <usercontrols:ImageMakerControl x:Name="xListTitleImage" SetAsFontImageWithSize="20" ImageType="Unknown"  Width="20" Height="20" FontWeight="Thin" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 <Label x:Name="xListTitleLbl" Margin="10,10,0,0" Content="Title" Height="40" HorizontalAlignment="Left"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20" VerticalAlignment="Center" />
             </StackPanel>
-            <DockPanel x:Name="xListToolsBarPnl" HorizontalAlignment="Right" Margin="0 0 10 0">
+            <DockPanel x:Name="xListToolsBarPnl" HorizontalAlignment="Right" Margin="10 0 10 0">
                 <usercontrols:ucButton x:Name="xAddBtn" ToolTip="Add" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18"  ButtonImageType="Add" />
                 <usercontrols:ucButton x:Name="xDeleteAllBtn" ToolTip="Delete All" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Delete" Click="XDeleteAllBtn_Click"/>
                 <usercontrols:ucButton x:Name="xMoveUpBtn" ToolTip="Move Up" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="MoveUp" Click="XMoveUpBtn_Click" />
@@ -25,16 +26,17 @@
                 <usercontrols:ucButton x:Name="xExpandCollapseBtn" ToolTip="Expand/Collapse All" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="CollapseAll" Click="XExpandCollapseBtn_Click" Visibility="Visible" />
             </DockPanel>
         </DockPanel>
+        
         <usercontrols:ImageMakerControl x:Name="xLoadingListImage" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" Visibility="Collapsed" />
-        <ListView x:Name="xListView" Grid.Row="1" Margin="0 0 10 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" IsSynchronizedWithCurrentItem="True"  ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
+
+        <ListView x:Name="xListView" Grid.Row="1" Margin="0 0 0 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible"  VerticalContentAlignment="Top" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" IsSynchronizedWithCurrentItem="True" ItemContainerStyle="{StaticResource $ListViewItemStyle}" >
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Vertical"></StackPanel>
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <!--<ListView.ItemTemplate>
-                <DataTemplate>
-                    
+                <DataTemplate>                    
                 </DataTemplate>
             </ListView.ItemTemplate>-->
         </ListView>

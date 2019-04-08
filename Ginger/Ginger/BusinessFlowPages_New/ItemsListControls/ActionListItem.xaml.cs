@@ -36,7 +36,8 @@ namespace Ginger.BusinessFlowPages_New.ItemsListControls
         {
             InitializeComponent();
 
-            xActionListItem.ItemNameField = nameof(Act.Description);            
+
+            xActionListItem.ConfigItem(itemNameField: nameof(Act.Description), itemDescriptionField: nameof(Act.ActionType), itemIconField: null, itemExecutionStatusField: nameof(Act.Status));
         }
 
     }

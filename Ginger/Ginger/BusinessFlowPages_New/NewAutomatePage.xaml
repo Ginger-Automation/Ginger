@@ -114,7 +114,7 @@
 
             <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="15" HorizontalAlignment="Left"  VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" Margin="0,1,0,0"/>
             
-            <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Frame" Background="Pink" Margin="5,0,0,0" />
+            <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Frame" Background="Green" Margin="5,0,0,0" />
 
             <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="10" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="{StaticResource $SelectionColor_LightBlue}" IsEnabled="False" />
             

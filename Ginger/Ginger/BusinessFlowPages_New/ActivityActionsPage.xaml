@@ -3,10 +3,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
-        xmlns:local1="clr-namespace:GingerWPF.GeneralLib"
-        xmlns:userControlsLib="clr-namespace:Ginger.UserControlsLib"
         xmlns:userControlsLib1="clr-namespace:Ginger.UserControlsLib.UCListView"
+        xmlns:local1="clr-namespace:GingerWPF.GeneralLib"
         mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
       Title="ActivityActionsPage">
