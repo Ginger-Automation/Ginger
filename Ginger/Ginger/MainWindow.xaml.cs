@@ -993,18 +993,18 @@ namespace Ginger
         }
 
         internal void HideSplash()
-        {
-            if (xSplashGrid.Visibility == Visibility.Collapsed)
-            {
-                return;
-            }
+        {            
             // Hide the splash after one second
             Task.Factory.StartNew(() => {
                 this.Dispatcher.Invoke(() => {
+                    if (xSplashGrid.Visibility == Visibility.Collapsed)
+                    {
+                        return;
+                    }
                     Thread.Sleep(1000);
                     xSplashGrid.Visibility = Visibility.Collapsed;
                 });
-            });            
+            });
         }
     }
 }

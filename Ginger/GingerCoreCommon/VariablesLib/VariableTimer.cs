@@ -63,23 +63,10 @@ namespace GingerCore.Variables
         {
             get
             {
-                switch (TimerUnit)
+
+                if (RunWatch.IsRunning)
                 {
-                    case eTimerUnit.MilliSeconds:
-                        mValue = Math.Round(RunWatch.Elapsed.TotalMilliseconds, 2).ToString();
-                        break;
-
-                    case eTimerUnit.Seconds:
-                        mValue = Math.Round(RunWatch.Elapsed.TotalSeconds, 2).ToString();
-                        break;
-
-                    case eTimerUnit.Minutes:
-                        mValue = Math.Round(RunWatch.Elapsed.TotalMinutes, 2).ToString();
-                        break;
-
-                    case eTimerUnit.Hours:
-                        mValue = Math.Round(RunWatch.Elapsed.TotalHours, 2).ToString();
-                        break;
+                  mValue= GetElapsedValue();
                 }
 
                 return mValue;
@@ -90,6 +77,31 @@ namespace GingerCore.Variables
                 mValue = value;
                 OnPropertyChanged("Value");
             }
+        }
+
+
+        private string GetElapsedValue()
+        {
+            string elapsed = "";
+            switch (TimerUnit)
+            {
+                case eTimerUnit.MilliSeconds:
+                    elapsed = Math.Round(RunWatch.Elapsed.TotalMilliseconds, 2).ToString();
+                    break;
+
+                case eTimerUnit.Seconds:
+                    elapsed = Math.Round(RunWatch.Elapsed.TotalSeconds, 2).ToString();
+                    break;
+
+                case eTimerUnit.Minutes:
+                    elapsed = Math.Round(RunWatch.Elapsed.TotalMinutes, 2).ToString();
+                    break;
+
+                case eTimerUnit.Hours:
+                    elapsed = Math.Round(RunWatch.Elapsed.TotalHours, 2).ToString();
+                    break;
+            }
+            return elapsed;
         }
 
         public void StartTimer(bool isContinue=false)
@@ -120,7 +132,8 @@ namespace GingerCore.Variables
         public void StopTimer()
         {
             if (RunWatch.IsRunning)
-            {              
+            {
+                Value = GetElapsedValue();
                 RunWatch.Stop();
                 timer.Stop();
                 timer.Elapsed -= dispatcherTimerElapsedTick;
@@ -136,7 +149,8 @@ namespace GingerCore.Variables
         public override void ResetValue()
         {
             StopTimer();
-            RunWatch.Reset();            
+            RunWatch.Reset();
+            Value = GetElapsedValue();
         }
 
         private void dispatcherTimerElapsedTick(object sender, System.EventArgs e)
