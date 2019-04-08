@@ -134,6 +134,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             // Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
         }
 
+        [Ignore]
         [TestMethod]
         public void TestRunSetHTMLReport()
         {
