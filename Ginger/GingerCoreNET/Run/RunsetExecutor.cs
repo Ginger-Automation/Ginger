@@ -406,6 +406,7 @@ namespace Ginger.Run
                 WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });                
             }
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            
             CreateGingerExecutionReportAutomaticly();
             CloseAllEnvironments();
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
@@ -420,7 +421,7 @@ namespace Ginger.Run
                 if (mSelectedExecutionLoggerConfiguration.ExecutionLoggerHTMLReportsAutomaticProdIsEnabled)
                 {
                     string runSetReportName;
-                    if ((RunSetConfig.Name != null) && (RunSetConfig.Name != string.Empty))
+                    if (!string.IsNullOrEmpty(RunSetConfig.Name))
                     {
                         runSetReportName = RunSetConfig.Name;
                     }

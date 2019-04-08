@@ -17,11 +17,15 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.Reports;
+using Ginger.Reports.GingerExecutionReport;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -87,7 +91,49 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
         }
 
 
-        
+        /// <summary>
+        /// Create summary json of the execution
+        /// </summary>
+        /// <param name="fileName"></param>
+        public void CreateExecutionHTMLReport(string fileName)
+        {
+            WorkSpace.Instance.RunsetExecutor.CreateGingerExecutionReportAutomaticly();
+
+
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportConfiguration htmlRep = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems< HTMLReportConfiguration>().Where(x => (x.IsSelected == true)).FirstOrDefault();
+            //if (grdExecutionsHistory.CurrentItem == null)
+            //{
+            //    Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            //    return;
+            //}
+
+            // string runSetFolder = ExecutionLogger.GetLoggerDirectory(((RunSetReport)grdExecutionsHistory.CurrentItem).LogFolder);
+
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! temp 
+            string runSetFolder = @"C:\Users\yaronwe\source\repos\Ginger\Ginger\GingerCoreNETUnitTest\bin\Debug\netcoreapp2.2\TestResources\Solutions\CLI\ExecutionResults\Default Run Set_04082019_115742";
+
+            string reportsResultFolder = ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder), false, htmlRep, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
+
+            if (reportsResultFolder == string.Empty)
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+                return;
+            }
+            else
+            {
+                Process.Start(reportsResultFolder);
+                Process.Start(reportsResultFolder + "\\" + "GingerExecutionReport.html");
+            }
+
+
+            // System.IO.File.WriteAllText(fileName, s);
+
+            // ExtensionMethods.CreateGingerExecutionReport()
+        }
+
+
+
         public void RunBusinessFlow(string name)
         {                        
             BusinessFlow BF = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where x.Name == name select x).SingleOrDefault();

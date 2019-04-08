@@ -18,8 +18,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
         public override eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt)
-        {
-            throw new NotImplementedException();
+        {            
+            Console.WriteLine("ToStatus select: " + caption + " - " + messageText + " - AutoSelect - " + defualtResualt);
+            return defualtResualt;
         }
     }
 
