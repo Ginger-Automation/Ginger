@@ -626,10 +626,13 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    //if input variable value mapped to none , we reset it to initial value
-                    inputVar.ResetValue();
-                }
+                    //if input variable value mapped to none , we reset it to initial value                    
+                    if(inputVar.GetType()==typeof(VariableString) || inputVar.GetType()==typeof(VariableTimer))
+                    {
+                        inputVar.ResetValue();
+                    }
 
+                }
                 if (mappedValue != "")
                 {
                     if (inputVar.GetType() == typeof(VariableString))
