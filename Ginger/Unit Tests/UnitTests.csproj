@@ -921,6 +921,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TestResources\AutoPilot\ImportOptionalValue\" />
+    <Folder Include="TestResources\ScreenShot\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestResources\UIA Form\FormEmbeddedBrowser.resx">
