@@ -18,13 +18,17 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
+
+    // GingerCoreNETUnitTest Workspace Event Handler
     public class WorkSpaceEventHandler : IWorkSpaceEventHandler
     {
+        
         public void OpenAddAPIModelWizard()
         {
             throw new System.NotImplementedException();
@@ -37,6 +41,16 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void ShowDebugConsole(bool visible = true)
         {
             Console.WriteLine("ShowDebugConsole visible=" + visible);
+        }
+
+        public void ShowUpgradeGinger(string solutionFolder, List<string> higherVersionFiles)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowUpgradeSolutionItems(SolutionUpgradePageViewMode upgradeSolution, string solutionFolder, string solutionName, List<string> list)
+        {
+            throw new NotImplementedException();
         }
 
         public void SolutionClosed()

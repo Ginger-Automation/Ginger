@@ -35,6 +35,7 @@ using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -276,73 +277,49 @@ namespace amdocs.ginger.GingerCoreNET
                     return false;
                 }
 
+                //get Solution files
+                IEnumerable<string> solutionFiles = Solution.SolutionFiles(solutionFolder);
 
-                SolutionUpgrade.CheckSolutionUpgrade(solutionFolder); 
-                    
-
-                  
+                SolutionUpgrade.CheckGingerUpgrade(solutionFolder, solutionFiles);                     
 
                 Solution solution = Solution.LoadSolution(solutionFile);
+                if (solution == null)
+                {
+                    Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Load solution from file failed.");
+                    return false;
+                }
 
-                    if (solution != null)
-                    {
-                        SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-                        SolutionRepository.Open(solutionFolder);
 
-                        PlugInsManager.SolutionChanged(SolutionRepository);
+                SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+                SolutionRepository.Open(solutionFolder);
 
-                        HandleSolutionLoadSourceControl(solution);
+                PlugInsManager.SolutionChanged(SolutionRepository);
 
-                        ValueExpression.SolutionFolder = solutionFolder;
-                        BusinessFlow.SolutionVariables = solution.Variables; 
-                        solution.SetReportsConfigurations();
+                HandleSolutionLoadSourceControl(solution);
 
-                        Solution = solution;
+                ValueExpression.SolutionFolder = solutionFolder;
+                BusinessFlow.SolutionVariables = solution.Variables; 
+                solution.SetReportsConfigurations();
 
-                        UserProfile.LoadRecentAppAgentMapping();
-                        AutoLogProxy.SetAccount(solution.Account);
+                Solution = solution;
+
+                UserProfile.LoadRecentAppAgentMapping();
+                AutoLogProxy.SetAccount(solution.Account);
     
 
-                        if (!RunningInExecutionMode)
-                        {
-                            AppSolutionRecover.DoSolutionAutoSaveAndRecover();   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        }
+                if (!RunningInExecutionMode)
+                {
+                    AppSolutionRecover.DoSolutionAutoSaveAndRecover();   
+                }
 
-                        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        //Offer to upgrade Solution items to current version
-                        //try
-                        //{
-                        //    if (WorkSpace.Instance.UserProfile.DoNotAskToUpgradeSolutions == false && WorkSpace.Instance.RunningInExecutionMode == false && RunningFromUnitTest == false)
-                        //    {
-                        //        if (solutionFilesWithVersion == null)
-                        //        {
-                        //            solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
-                        //        }
-                        //        ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
-                        //        if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
-                        //        {
-                        //            UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, sol.Folder, sol.Name, lowerVersionFiles.ToList());
-                        //            solutionUpgradePage.ShowAsWindow();
-                        //        }
-                        //    }
-                        //}
-                        //catch (Exception ex)
-                        //{
-                        //    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution files should be Upgraded", ex);
-                        //}
+                SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
+                
 
-                        // No need to add solution to recent if running from CLI
-                        if (!RunningInExecutionMode)   // && !RunningFromUnitTest)     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        {
-                            UserProfile.AddSolutionToRecent(solution);
-                        }
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Load solution from file failed.");
-                        return false;
-                    }
-               
+                // No need to add solution to recent if running from CLI
+                if (!RunningInExecutionMode)  
+                {
+                    UserProfile.AddSolutionToRecent(solution);
+                }                    
 
                 return true;
             }

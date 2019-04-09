@@ -44,7 +44,11 @@ namespace Amdocs.Ginger
         {
             throw new NotImplementedException();
         }
-      
+
+        public void ShowUpgradeSolutionItems(SolutionUpgradePageViewMode upgradeSolution, string solutionFolder, string solutionName, List<string> list)
+        {
+            throw new NotImplementedException();
+        }
 
         public void SolutionClosed()
         {

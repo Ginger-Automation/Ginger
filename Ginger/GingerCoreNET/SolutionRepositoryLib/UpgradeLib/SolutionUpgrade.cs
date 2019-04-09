@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
-using Ginger.SolutionGeneral;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -45,6 +44,8 @@ public enum eGingerVersionComparisonResult
     ComparisonFailed
 }
 
+
+// TODO: change all static to regular method so can be reused better !!!!!!
 
 namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
 {
@@ -167,6 +168,8 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
         }
 
 
+        static ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = new ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>>();
+
         /// <summary>
         /// Return list of Solution files path with their version compare result
         /// </summary>
@@ -174,8 +177,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
         /// <param name="addInfoExtention"></param>
         /// <returns></returns>
         public static ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> GetSolutionFilesWithVersion(IEnumerable<string> solutionFiles, bool addInfoExtention = true)
-        {
-            ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = new ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>>();
+        {            
             // read all XMLs and check for version
             Parallel.ForEach(solutionFiles, FileName =>
             {
@@ -191,11 +193,9 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
             return solutionFilesWithVersion;
         }
 
-        internal static void CheckSolutionUpgrade(string solutionFolder)
+        internal static void CheckGingerUpgrade(string solutionFolder, IEnumerable<string> solutionFiles)
         {
-            
-            //get Solution files
-            IEnumerable<string> solutionFiles = Solution.SolutionFiles(solutionFolder);
+                        
             ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = null;
 
             //check if Ginger Upgrade is needed for loading this Solution
@@ -290,6 +290,8 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
             }
         }
 
+        
+
         /// <summary>
         /// Pull and return the Ginger Version (in String format) which the Solution file was created with 
         /// </summary>
@@ -369,6 +371,33 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
         {
             string fileGingerVersion = GetSolutonFileGingerVersion(xmlFilePath, xml);
             return GingerCoreNET.GeneralLib.General.GetGingerVersionAsLong(fileGingerVersion);
+        }
+
+
+        // Offer to upgrade Solution items to current version
+        internal static void CheckSolutionItemsUpgrade(string solutionFolder, string solutionName, List<string> solutionFiles)
+        {
+            
+            try
+            {
+                if (WorkSpace.Instance.UserProfile.DoNotAskToUpgradeSolutions == false && WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
+                {
+                    if (solutionFilesWithVersion == null)
+                    {
+                        solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
+                    }
+                    ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, eGingerVersionComparisonResult.LowerVersion);
+                    if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
+                    {
+                        WorkSpace.Instance.EventHandler.ShowUpgradeSolutionItems(SolutionUpgradePageViewMode.UpgradeSolution, solutionFolder, solutionName, lowerVersionFiles.ToList());
+                        
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution files should be Upgraded", ex);
+            }
         }
 
     }

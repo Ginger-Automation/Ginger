@@ -23,6 +23,8 @@ using System.Collections.Generic;
 
 namespace GingerWPF.WorkSpaceLib
 {
+    // Ginger.exe Workspace Event Handler
+
     public class WorkSpaceEventHandler : IWorkSpaceEventHandler
     {        
         public void AddApplication()
@@ -71,6 +73,12 @@ namespace GingerWPF.WorkSpaceLib
         {
             UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, solutionFolder, string.Empty, higherVersionFiles);
             gingerUpgradePage.ShowAsWindow();
+        }
+
+        public void ShowUpgradeSolutionItems(SolutionUpgradePageViewMode upgradeSolution, string solutionFolder, string solutionName, List<string> list)
+        {
+            UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, solutionFolder, solutionName, list);
+            solutionUpgradePage.ShowAsWindow();
         }
 
         public void SolutionClosed()

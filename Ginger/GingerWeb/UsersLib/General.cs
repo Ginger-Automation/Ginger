@@ -38,7 +38,7 @@ namespace GingerWeb.UsersLib
             Reporter.WorkSpaceReporter = new GingerConsoleWorkspaceReporter();
             // NewRepositorySerializer RS = new NewRepositorySerializer();
 
-            GingerConsoleWorkSpace ws = new GingerConsoleWorkSpace();
+            GingerWebWorkspace ws = new GingerWebWorkspace();
             WorkSpace.Init(ws);
             
             // WorkSpace.Instance.OpenSolution(@"C:\yaron\GingerSolution\Plugins\Plugins");
