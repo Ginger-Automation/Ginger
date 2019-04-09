@@ -18,6 +18,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Ginger;
+using Ginger.SolutionWindows;
+using System.Collections.Generic;
 
 namespace GingerWPF.WorkSpaceLib
 {
@@ -64,6 +66,12 @@ namespace GingerWPF.WorkSpaceLib
             App.ShowConsoleWindow();
         }
 
+
+        public void ShowUpgradeGinger(string solutionFolder, List<string> higherVersionFiles)
+        {
+            UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, solutionFolder, string.Empty, higherVersionFiles);
+            gingerUpgradePage.ShowAsWindow();
+        }
 
         public void SolutionClosed()
         {

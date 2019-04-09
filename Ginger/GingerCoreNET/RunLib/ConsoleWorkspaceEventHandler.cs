@@ -15,6 +15,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Amdocs.Ginger
 {
@@ -38,7 +40,11 @@ namespace Amdocs.Ginger
             throw new NotImplementedException();
         }
 
-       
+        public void ShowUpgradeGinger(string solutionFolder, List<string> higherVersionFiles)
+        {
+            throw new NotImplementedException();
+        }
+      
 
         public void SolutionClosed()
         {

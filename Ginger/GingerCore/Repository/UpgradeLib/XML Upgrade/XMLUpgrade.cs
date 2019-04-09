@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
+using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using System;
 using System.IO;
-using Amdocs.Ginger.Common;
-using GingerCore.Repository;
-using GingerCore.Repository.UpgradeLib;
 
 namespace GingerCore.XMLConverters
 {
@@ -38,7 +38,7 @@ namespace GingerCore.XMLConverters
             try
             {
                 long currentXmlVersion = xmlVersion;
-                long latestGingerVersion = RepositorySerializer.GetCurrentGingerVersionAsLong();
+                long latestGingerVersion = GingerVersion.GetCurrentVersionAsLong();
 
                 string updatedXML = null;
                 string inputXML = xml;
@@ -213,7 +213,7 @@ namespace GingerCore.XMLConverters
             long xmlGingerVersion = SolutionUpgrade.GetSolutonFileGingerVersionAsLong(xmlFilePath, xml);
             if (xmlGingerVersion <= 0) return null;//failed to get the version
             
-            if (RepositorySerializer.GetCurrentGingerVersionAsLong() > xmlGingerVersion)
+            if (GingerVersion.GetCurrentVersionAsLong() > xmlGingerVersion)
             {
                 //upgrade
                 GingerCore.XMLConverters.XMLConverterBase.eGingerFileType FileType = XMLConverterBase.GetGingerFileTypeFromFilename(xmlFilePath);

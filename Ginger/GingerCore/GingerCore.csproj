@@ -752,7 +752,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Reporter\GingerHelperEventArgs.cs" />
-    <Compile Include="Repository\UpgradeLib\SolutionUpgrade.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v2060000_to_V2070000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v2070000_to_V3000000.cs" />
     <Compile Include="SourceControl\GITSourceControl.cs" />
