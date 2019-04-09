@@ -14,6 +14,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Ginger.SolutionGeneral;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -29,6 +30,10 @@ namespace Amdocs.Ginger
             throw new NotImplementedException();
         }
 
+        public void SetSolutionSourceControl(Solution solution)
+        {
+            throw new NotImplementedException();
+        }
 
         public void ShowBusinessFlows()
         {

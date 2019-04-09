@@ -21,6 +21,7 @@ using System;
 // using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.BusinessFlowLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib;
 using System.Collections.Generic;
+using Ginger.SolutionGeneral;
 
 namespace Amdocs.Ginger.GingerConsole
 {
@@ -33,6 +34,11 @@ namespace Amdocs.Ginger.GingerConsole
         }
 
         public void OpenAddAPIModelWizard()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetSolutionSourceControl(Solution solution)
         {
             throw new NotImplementedException();
         }
