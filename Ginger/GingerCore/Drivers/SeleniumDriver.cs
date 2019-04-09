@@ -3651,7 +3651,7 @@ namespace GingerCore.Drivers
                 List<ElementInfo> list = new List<ElementInfo>();
                 Driver.SwitchTo().DefaultContent();
                 allReadElem.Clear();
-                list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, learnOnlyMappedElements));
+                list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList));
                 allReadElem.Clear();
                 CurrentFrame = "";
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
@@ -3666,7 +3666,7 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnOnlyMappedElements = false)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
@@ -3731,7 +3731,7 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, learnOnlyMappedElements);
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
                             Driver.SwitchTo().ParentFrame();
                         }
 
